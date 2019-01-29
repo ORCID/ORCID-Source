@@ -1,16 +1,6 @@
 package org.orcid.integration.api.t2;
 
-import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.core.api.OrcidApiConstants.BIO_PATH_NO_REGEX;
-import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
-import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
-import static org.orcid.core.api.OrcidApiConstants.FUNDING_PATH;
-import static org.orcid.core.api.OrcidApiConstants.PROFILE_DELETE_PATH;
-import static org.orcid.core.api.OrcidApiConstants.PROFILE_POST_PATH;
-import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
-import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
-import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
-import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,12 +9,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
-import org.orcid.api.common.OrcidClientHelper;
+import org.orcid.api.common.OrcidApiService;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+
+import org.orcid.api.common.OrcidClientHelper;
 
 public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
 
@@ -319,11 +311,255 @@ public class T2OrcidApiClientImpl implements T2OrcidApiService<ClientResponse> {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(STATUS_PATH).build(), MediaType.TEXT_PLAIN);
     }
 
+    /**
+     * GETs the HTML representation of the ORCID record
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewBioDetailsHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only the
+     * Biography details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewBioDetailsXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only the
+     * Biography details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewBioDetailsJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_PATH_NO_REGEX).build(orcid), VND_ORCID_JSON);
+    }
+
+    /**
+     * GETs the HTML representation of the ORCID external identifiers
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewExternalIdentifiersHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(EXTERNAL_IDENTIFIER_PATH).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only the
+     * external identifiers
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewExternalIdentifiersXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(EXTERNAL_IDENTIFIER_PATH).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only the
+     * external identifiers
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewExternalIdentifiersJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(EXTERNAL_IDENTIFIER_PATH).build(orcid), VND_ORCID_JSON);
+    }
+
+    /**
+     * GETs the HTML representation of the ORCID record containing all details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewFullDetailsHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(PROFILE_GET_PATH).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing all details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewFullDetailsXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(PROFILE_GET_PATH).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing all details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewFullDetailsJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(PROFILE_GET_PATH).build(orcid), VND_ORCID_JSON);
+    }
+
+    /**
+     * GETs the HTML representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewAffiliationsDetailsHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewAffiliationsDetailsXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only affiliation
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewAffiliationsDetailsJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(AFFILIATIONS_PATH).build(orcid), VND_ORCID_JSON);
+    }
+
+    /**
+     * GETs the HTML representation of the ORCID record containing only grant
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewFundingDetailsHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only grant
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewFundingDetailsXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only grant
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewFundingDetailsJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(FUNDING_PATH).build(orcid), VND_ORCID_JSON);
+    }
+    
+    /**
+     * GETs the HTML representation of the ORCID record containing only work
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the HTML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewWorksDetailsHtml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(WORKS_PATH).build(orcid), MediaType.TEXT_HTML);
+    }
+
+    /**
+     * GETs the XML representation of the ORCID record containing only work
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the XML representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewWorksDetailsXml(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(WORKS_PATH).build(orcid), VND_ORCID_XML);
+    }
+
+    /**
+     * GETs the JSON representation of the ORCID record containing only work
+     * details
+     * 
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @return the JSON representation of the ORCID record
+     */
+    @Override
+    public ClientResponse viewWorksDetailsJson(@PathParam("orcid") String orcid) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(WORKS_PATH).build(orcid), VND_ORCID_JSON);
+    }
+    
     @Override
     public ClientResponse viewClient(String clientId) {
         return orcidClientHelper.getClientResponse(UriBuilder.fromPath(CLIENT_PATH).build(clientId), MediaType.WILDCARD);
     }
 
+    /**
+     * @see OrcidApiService#searchByQueryJSON(String)
+     */
+    @Override
+    public ClientResponse searchByQueryJSON(String query) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_SEARCH_PATH).replaceQuery(query).build(), VND_ORCID_JSON);
+    }
+
+    /**
+     * @see OrcidApiService#searchByQueryXML(String)
+     */
+    @Override
+    public ClientResponse searchByQueryXML(String query) {
+        return orcidClientHelper.getClientResponse(UriBuilder.fromPath(BIO_SEARCH_PATH).replaceQuery(query).build(), VND_ORCID_XML);
+    }
 
     /**
      * TODO

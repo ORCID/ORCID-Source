@@ -34,7 +34,7 @@
                     <div class="col-md-9 col-sm-8 col-xs-9" *ngIf="!loading">    
                         <strong><@orcid.msg 'externalwork.addworkfrom' /> {{externalIdType}}</strong>
                         <div> <@orcid.msg 'externalwork.typeorpaste'/> {{externalIdType}} <@orcid.msg 'externalwork.typeorpaste2'/></div>
-                        <input id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="externalId[externalIdType].value" placeholder="{{externalId[externalIdType].placeHolder}}"/>
+                        <input #search (keydown)="onKeydown($event)" id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="externalId[externalIdType].value" placeholder="{{externalId[externalIdType].placeHolder}}"/>
                         <div class="orcid-error" *ngIf="metadataNotFound">
                             <@orcid.msg 'externalwork.error'/> {{externalIdType}}.
                         </div>

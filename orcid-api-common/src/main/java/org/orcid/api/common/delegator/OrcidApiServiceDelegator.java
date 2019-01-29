@@ -1,5 +1,8 @@
 package org.orcid.api.common.delegator;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.ws.rs.core.Response;
 
 /**
@@ -31,6 +34,8 @@ public interface OrcidApiServiceDelegator {
      */
     Response findBioDetails(String orcid);
 
+    Response findBioDetailsFromPublicCache(String orcid);
+
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link Response} with only the profile's external identifier
@@ -43,6 +48,8 @@ public interface OrcidApiServiceDelegator {
      */
     Response findExternalIdentifiers(String orcid);
 
+    Response findExternalIdentifiersFromPublicCache(String orcid);
+
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link Response} with all of the profile's details
@@ -53,6 +60,8 @@ public interface OrcidApiServiceDelegator {
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     Response findFullDetails(String orcid);
+
+    Response findFullDetailsFromPublicCache(String orcid);
 
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
@@ -65,6 +74,9 @@ public interface OrcidApiServiceDelegator {
      */
     Response findAffiliationsDetails(String orcid);
 
+    Response findAffiliationsDetailsFromPublicCache(String orcid);
+
+    
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link Response} with only the funding details
@@ -76,6 +88,8 @@ public interface OrcidApiServiceDelegator {
      */
     Response findFundingDetails(String orcid);
 
+    Response findFundingDetailsFromPublicCache(String orcid);
+    
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
      * wrapped in a {@link Response} with only the work details
@@ -87,6 +101,8 @@ public interface OrcidApiServiceDelegator {
      */
     Response findWorksDetails(String orcid);
 
+    Response findWorksDetailsFromPublicCache(String orcid);
+    
     /**
      * Sends a redirect from the client URI to the group URI
      * 
@@ -96,4 +112,40 @@ public interface OrcidApiServiceDelegator {
      */
     Response redirectClientToGroup(String clientId);
 
+    /**
+     * finds and returns the
+     * {@link org.orcid.jaxb.model.message.OrcidSearchResult} wrapped in a
+     * {@link Response} with only bio details returned.
+     * 
+     * @param queryMap
+     *            any set of query params accepted by SOLR. *NB* currently the
+     *            SOLRDAO only applies the first value for each key in the map
+     *            when building a query for SOLR.
+     * @See {@link SolrDao}
+     * 
+     * @return the {@link Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidSearchResult} within it.
+     */
+    Response searchByQuery(Map<String, List<String>> queryMap);
+
+    /**
+     * NOTE:
+     * Helper method used during the transition of public searches with and without bearer authentication 
+     * When we finish the transition and all public searches require the bearer, we must remove this one 
+     * 
+     * 
+     * finds and returns the
+     * {@link org.orcid.jaxb.model.message.OrcidSearchResult} wrapped in a
+     * {@link Response} with only bio details returned.
+     * 
+     * @param queryMap
+     *            any set of query params accepted by SOLR. *NB* currently the
+     *            SOLRDAO only applies the first value for each key in the map
+     *            when building a query for SOLR.
+     * @See {@link SolrDao}
+     * 
+     * @return the {@link Response} with the
+     *         {@link org.orcid.jaxb.model.message.OrcidSearchResult} within it. 
+     * */
+    Response publicSearchByQuery(Map<String, List<String>> queryMap);
 }

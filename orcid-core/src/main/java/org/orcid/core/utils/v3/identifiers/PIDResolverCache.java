@@ -78,7 +78,7 @@ public class PIDResolverCache {
                         con.addRequestProperty("Accept", "application/vnd.citationstyles.csl+json");
                         con.setRequestMethod("HEAD");
                         con.setInstanceFollowRedirects(false);
-                        return (con.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP);
+                        return (con.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM);
                     } catch (IOException e) {
                         //nope.
                     }  
