@@ -105,14 +105,13 @@ public class MailGunManager {
             formData.add("html", html);
         }
         formData.add("o:testmode", testmode);
-        if (testmode.equals("yes"))
-            LOGGER.error("Email form data: \n" + formData.toString());
+
         // the filter is used to prevent sending email to users in qa and
         // sandbox
         if (to.matches(filter)) {
             ClientResponse cr = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
             if (cr.getStatus() != 200) {
-                LOGGER.error("Post MailGunManager.sendEmail not accepted: " + formData.toString());
+                LOGGER.error("Post MailGunManager.sendEmail to {} not accepted", formData.get("to"));
                 return false;
             }
         }

@@ -16,6 +16,7 @@ import org.orcid.listener.solr.OrcidProfileToSolrDocument;
 import org.orcid.listener.solr.OrcidRecordToSolrDocument;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 
 public class OrcidRecordToSolrDocumentTest {
@@ -27,7 +28,7 @@ public class OrcidRecordToSolrDocumentTest {
         Record record = getRecord("/v20record.xml");
         OrcidMessage message = getOrcidMessage();
         OrcidSolrDocument v12Doc = v12.convert(message.getOrcidProfile());
-        OrcidSolrDocument v20Doc = v20.convert(record, new ArrayList<Funding>());
+        OrcidSolrDocument v20Doc = v20.convert(record, new ArrayList<Funding>(), new ArrayList<ResearchResource>());
         Assert.assertEquals(v12Doc.getOrcid(), v20Doc.getOrcid());
         Assert.assertEquals(v12Doc.getFamilyName(), v20Doc.getFamilyName());
         Assert.assertEquals(v12Doc.getGivenNames(), v20Doc.getGivenNames());
@@ -51,7 +52,7 @@ public class OrcidRecordToSolrDocumentTest {
         //as above, but with PDB identifier
         Record record = getRecord("/v20recordWithPDB.xml");
         OrcidRecordToSolrDocument v20 = new  OrcidRecordToSolrDocument(false);
-        OrcidSolrDocument v20Doc = v20.convert(record,new ArrayList<Funding>());
+        OrcidSolrDocument v20Doc = v20.convert(record,new ArrayList<Funding>(), new ArrayList<ResearchResource>());
         
         Assert.assertEquals("cite-self",v20Doc.getSelfIds().get("cit-self").get(0));
         Assert.assertEquals("pdb-value-self",v20Doc.getSelfIds().get("pdb-self").get(0));
@@ -67,7 +68,7 @@ public class OrcidRecordToSolrDocumentTest {
     public void testOrgIDAndGrantNumber() throws JAXBException {
         Record record = getRecord("/v20record.xml");
         OrcidRecordToSolrDocument v20 = new  OrcidRecordToSolrDocument(false);
-        OrcidSolrDocument v20Doc = v20.convert(record,new ArrayList<Funding>());
+        OrcidSolrDocument v20Doc = v20.convert(record,new ArrayList<Funding>(), new ArrayList<ResearchResource>());
         
         Assert.assertTrue(v20Doc.getOrganisationIds().containsKey("ringgold-org-id"));
         Assert.assertTrue(v20Doc.getOrganisationIds().get("ringgold-org-id").contains("5488"));

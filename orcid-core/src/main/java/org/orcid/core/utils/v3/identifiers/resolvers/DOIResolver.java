@@ -275,6 +275,40 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 // ignore if language value doesn't match our LanguageCode
             }
         }
+        
+        if (result.getPublicationDate() == null && json.has("issued")) {
+            JSONObject issued = (JSONObject) json.get("issued");
+            JSONArray dateParts = issued.getJSONArray("date-parts");
+            JSONArray date = dateParts.getJSONArray(0);
+            
+            if (date != null) {
+                int year = 0;
+                int month = 0;
+                int day = 0;
+                if (date.length() > 0 && !JSONObject.NULL.equals(date.get(0))) {
+                    year = date.getInt(0);
+                }
+                if (date.length() > 1 && !JSONObject.NULL.equals(date.get(1))) {
+                    month = date.getInt(1);
+                }
+                if (date.length() > 2 && !JSONObject.NULL.equals(date.get(2))) {
+                    day = date.getInt(2);
+                }
+                
+                if (year != 0) {
+                    PublicationDate publicationDate = new PublicationDate();
+                    publicationDate.setYear(new Year(year));
+                    if (month != 0) {
+                        publicationDate.setMonth(new Month(month));
+                    }
+                    if (day != 0) {
+                        publicationDate.setDay(new Day(day));
+                    }
+                    result.setPublicationDate(publicationDate);
+                }
+            }
+            
+        }
         return result;
     }
 }

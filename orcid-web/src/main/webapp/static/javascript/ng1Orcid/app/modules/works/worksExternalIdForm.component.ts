@@ -44,7 +44,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     externalIdType
-    serverError
+    metadataNotFound
     loading
 
     externalId = {
@@ -59,7 +59,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
             url: () => "/works/resolve/arxiv?value="
         },
         pubMed : {
-            placeHolder: "12345678",
+            placeHolder: "12345678 " + om.get('common.or') + " PMC1234567",
             value: "",
             url: (value) => {
                 // Looks for a "pmc" string at the end of a url or a "PMC" string follow by at least 5 numbers 
@@ -89,11 +89,10 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
                     if(res.action == "open") {
                         this.externalIdType = res.externalIdType;
                         this.externalId[this.externalIdType].value = ""
-                        this.serverError = false;
                         setTimeout( () => {
                             this.renderer.selectRootElement( this.searchElement.nativeElement).focus();
                         })
-                        
+                        this.metadataNotFound = false;
                     }
                 }
             }
@@ -101,18 +100,21 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     };
 
     addWork() {
-        this.serverError = false
+        this.metadataNotFound = false
         this.loading = true
         this.genericService.getData(this.externalId[this.externalIdType].url(this.externalId[this.externalIdType].value) + this.externalId[this.externalIdType].value).subscribe( data => {
-            this.loading = false
-            this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
-            this.worksService.removeBadContributors(data);
-            this.worksService.removeBadExternalIdentifiers(data);
-            this.worksService.addBibtexJson(data);
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false, externalWork: data, bibtexWork: false});
+            this.loading = false;
+            if (!data) {
+                this.metadataNotFound = true;
+            } else {
+                this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
+                this.worksService.removeBadContributors(data);
+                this.worksService.removeBadExternalIdentifiers(data);
+                this.worksService.addBibtexJson(data);
+                this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false, externalWork: data, bibtexWork: false});
+            }
         }, 
         (error)=> {
-            this.serverError = true
             this.loading = false
             setTimeout( () => {
                 this.renderer.selectRootElement( this.searchElement.nativeElement).focus();
