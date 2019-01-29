@@ -8,7 +8,7 @@ declare var workIdLinkJs: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ElementRef } 
     from '@angular/core';
 
 import { Observable, of, Subject, Subscription } 
@@ -38,6 +38,9 @@ import { GenericService }
 })
 
 export class WorksExternalIdFormComponent implements AfterViewInit {
+
+    @ViewChild('search') searchElement: ElementRef;
+
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
     externalIdType
@@ -68,10 +71,12 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
         }
     }
 
+
     constructor( 
         private worksService : WorksService,
         private modalService: ModalService,
-        private genericService: GenericService
+        private genericService: GenericService,
+        private cd: ChangeDetectorRef
     ) {
 
     }
@@ -88,6 +93,8 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
                 }
             }
         );
+        this.cd.detectChanges();
+        this.searchElement.nativeElement.focus();
     };
 
     addWork() {
@@ -110,4 +117,9 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
         this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
     }
 
+    onKeydown(event) {
+        if (event.key === "Enter") {
+          this.addWork()
+        }
+      }
 }
