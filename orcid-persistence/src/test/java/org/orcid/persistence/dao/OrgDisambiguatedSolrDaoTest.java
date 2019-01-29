@@ -62,10 +62,6 @@ public class OrgDisambiguatedSolrDaoTest {
 
         orgDisambiguatedSolrDao.getOrgs("test", 0, 10, false);
         
-        SolrQuery query = captor.getValue();
-        String queryString = query.getQuery();
-        assertTrue(queryString.contains(SolrConstants.ORG_CHOSEN_BY_MEMBER + " desc"));
-        
         ReflectionTestUtils.setField(orgDisambiguatedSolrDao, "solrServerReadOnly", defaultSolrServer);
     }
 
