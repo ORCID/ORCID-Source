@@ -289,7 +289,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", emailFrequencyManager);
         profileDao.remove(DELEGATE_ORCID);
         profileDao.remove(APPLICATION_ORCID);
-        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test
@@ -725,62 +724,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         assertNull(retrievedProfile.getOrcidBio().getDelegation());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testUpdatePasswordInformationLeavesSecurityQuestionsUnchanged() {
-        OrcidProfile profile1 = createBasicProfile();
-        assertEquals("password", profile1.getPassword());
-        assertEquals("random answer", profile1.getSecurityQuestionAnswer());
-        orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-
-        String hashedPasswordValue = retrievedProfile.getPassword();
-        assertTrue("Should have hashed password", 108 == hashedPasswordValue.length() && !"password".equals(hashedPasswordValue));
-        assertEquals("Should have security question", 3, retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
-        assertEquals("Should have decrypted security answer", "random answer", retrievedProfile.getSecurityQuestionAnswer());
-
-        retrievedProfile.setPassword("A new password");
-
-        orcidProfileManager.updatePasswordInformation(retrievedProfile);
-
-        OrcidProfile updatedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-
-        String updatedPassword = updatedProfile.getPassword();
-        assertEquals("Password should be hashed", 108, updatedPassword.length());
-        assertFalse("Password should have changed but was still: " + updatedPassword, hashedPasswordValue.equals(updatedPassword));
-        assertEquals("Should have security question", 3, updatedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
-        assertEquals("Should have decrypted security answer", "random answer", updatedProfile.getSecurityQuestionAnswer());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testSecurityQuestionsUpdateLeavePasswordInformationUnchanged() {
-        OrcidProfile profile1 = createBasicProfile();
-        assertEquals("password", profile1.getPassword());
-        assertEquals("random answer", profile1.getSecurityQuestionAnswer());
-        orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-
-        String hashedPasswordValue = retrievedProfile.getPassword();
-        assertTrue("Should have hashed password", 108 == hashedPasswordValue.length() && !"password".equals(hashedPasswordValue));
-        assertEquals("Should have security question", 3, retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
-        assertTrue("Should have decrypted security answer", "random answer".equals(retrievedProfile.getSecurityQuestionAnswer()));
-
-        retrievedProfile.setSecurityQuestionAnswer("A new random answer");
-
-        orcidProfileManager.updateSecurityQuestionInformation(retrievedProfile);
-
-        OrcidProfile updatedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-
-        assertTrue("Password should not have changed", hashedPasswordValue.equals(updatedProfile.getPassword()));
-        assertEquals("Should have security question", 3, updatedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
-        assertEquals("A new random answer", updatedProfile.getSecurityQuestionAnswer());
     }
 
     @Test

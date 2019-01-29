@@ -6,7 +6,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.persistence.jpa.entities.IndexingStatus;
 
 /**
  * @author Will Simpson
@@ -70,23 +69,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * @see #updatePersonalInformation(OrcidProfile)
      */
     OrcidProfile updateFundings(OrcidProfile orcidProfile);
-
-    /**
-     * Overwrites the password and security details in the DB with the values in
-     * the OrcidProfile object passed into the method.
-     * 
-     * @param updatedOrcidProfile
-     */
-    void updatePasswordInformation(OrcidProfile updatedOrcidProfile);
-
-    /**
-     * Overwrites security details ONLY in the DB with the values in the
-     * OrcidProfile object passed into the method.
-     * 
-     * @param updatedOrcidProfile
-     * @return
-     */
-    void updateSecurityQuestionInformation(OrcidProfile updatedOrcidProfile);
 
     void updatePreferences(String orcid, Preferences preferences);
 
@@ -180,8 +162,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 
     void updateLastModifiedDate(String orcid);
-
-    void clearOrcidProfileCache();    
 
     public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList);
     

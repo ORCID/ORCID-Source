@@ -71,7 +71,6 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
 
     @Before
     public void before() {
-        orcidProfileManager.clearOrcidProfileCache();        
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", mockSourceManager);

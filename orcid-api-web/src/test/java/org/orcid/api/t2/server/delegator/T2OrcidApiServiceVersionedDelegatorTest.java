@@ -192,7 +192,6 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
     @After
     public void after() {
         SecurityContextHolder.clearContext();
-        orcidProfileManager.clearOrcidProfileCache();
         TargetProxyHelper.injectIntoProxy(t2OrcidApiServiceDelegatorLatest, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(jaxb2JpaAdapter, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(orcidProfileManager, "sourceManager", sourceManager);        

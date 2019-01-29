@@ -11,7 +11,6 @@ import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
@@ -59,8 +58,6 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     @Resource
     protected EncryptionManager encryptionManager;
     @Resource
-    protected OrcidProfileCacheManager orcidProfileCacheManager;
-    @Resource
     protected JpaJaxbEntityAdapter adapter;
     protected TransactionTemplate transactionTemplate;
     
@@ -68,10 +65,6 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
 
     public void setProfileDao(ProfileDao profileDao) {
         this.profileDao = profileDao;
-    }
-
-    public void setOrcidProfileCacheManager(OrcidProfileCacheManager orcidProfileCacheManager) {
-        this.orcidProfileCacheManager = orcidProfileCacheManager;
     }
 
     public void setClaimWaitPeriodDays(int claimWaitPeriodDays) {
@@ -121,11 +114,7 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     }
 
     @Override
-    public OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions) {
-        if (LoadOptions.ALL.equals(loadOptions))
-            return orcidProfileCacheManager.retrieve(orcid);
-        if (LoadOptions.BIO_AND_INTERNAL_ONLY.equals(loadOptions))
-            return orcidProfileCacheManager.retrieveProfileBioAndInternal(orcid);
+    public OrcidProfile retrieveOrcidProfile(String orcid, LoadOptions loadOptions) {        
         return retrieveFreshOrcidProfile(orcid, loadOptions);
     }
 

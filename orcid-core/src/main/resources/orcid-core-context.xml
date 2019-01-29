@@ -737,17 +737,8 @@
 	<bean id="orcidProfileManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileManagerReadOnlyImpl">
         <property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
         <property name="profileDao" ref="profileDaoReadOnly" />
-        <property name="transactionTemplate" ref="transactionTemplateReadOnly" />
-        <property name="orcidProfileCacheManager" ref="orcidProfileCacheManagerReadOnly" />
-    </bean>
-	
-	<bean id="orcidProfileCacheManager" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl">
-	    <property name="orcidProfileManager" ref="orcidProfileManager" />
-	</bean>
-	
-	<bean id="orcidProfileCacheManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl">
-	    <property name="orcidProfileManager" ref="orcidProfileManagerReadOnly" />
-	</bean>		
+        <property name="transactionTemplate" ref="transactionTemplateReadOnly" />        
+    </bean>	
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>
 	

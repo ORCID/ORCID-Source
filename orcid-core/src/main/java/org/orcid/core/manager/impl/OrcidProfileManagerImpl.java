@@ -786,23 +786,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return profileToReturn;
     }
 
-    @Override
-    @Transactional
-    public void updatePasswordInformation(OrcidProfile updatedOrcidProfile) {
-        String orcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
-        String hashedPassword = hash(updatedOrcidProfile.getPassword());
-        profileDao.updateEncryptedPassword(orcid, hashedPassword);
-        OrcidProfile cachedProfile = orcidProfileCacheManager.retrieve(orcid);
-        if (cachedProfile != null) {
-            profileDao.flush();
-            SecurityDetails securityDetails = initSecurityDetails(cachedProfile);
-            securityDetails.setEncryptedPassword(new EncryptedPassword(hashedPassword));
-            cachedProfile.setPassword(hashedPassword);
-            orcidProfileCacheManager.put(cachedProfile);
-        }
-        updateSecurityQuestionInformation(updatedOrcidProfile);
-    }
-
     private SecurityDetails initSecurityDetails(OrcidProfile cachedProfile) {
         OrcidInternal internal = cachedProfile.getOrcidInternal();
         if (internal == null) {
@@ -815,28 +798,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             internal.setSecurityDetails(securityDetails);
         }
         return securityDetails;
-    }
-
-    @Override
-    public void updateSecurityQuestionInformation(OrcidProfile updatedOrcidProfile) {
-        String orcid = updatedOrcidProfile.getOrcidIdentifier().getPath();
-        SecurityQuestionId securityQuestionId = updatedOrcidProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId();
-        Integer questionId = null;
-        if (securityQuestionId != null) {
-            questionId = new Long(securityQuestionId.getValue()).intValue();
-        }
-        String unencryptedAnswer = updatedOrcidProfile.getSecurityQuestionAnswer();
-        String encryptedAnswer = encrypt(unencryptedAnswer);
-        profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
-        OrcidProfile cachedProfile = orcidProfileCacheManager.retrieve(orcid);
-        if (cachedProfile != null) {
-            profileDao.flush();
-            SecurityDetails securityDetails = initSecurityDetails(cachedProfile);
-            securityDetails.setSecurityQuestionId(questionId != null ? new SecurityQuestionId(questionId) : null);
-            securityDetails.setEncryptedSecurityAnswer(encryptedAnswer != null ? new EncryptedSecurityAnswer(encryptedAnswer) : null);
-            cachedProfile.setSecurityQuestionAnswer(encryptedAnswer != null ? unencryptedAnswer : null);
-            orcidProfileCacheManager.put(cachedProfile);
-        }
     }
 
     @Override
@@ -1178,8 +1139,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             WorkEntity workEntity = jaxb2JpaAdapter.getWorkEntity(orcid, updatedOrcidWork, null);            
             workDao.persist(workEntity);
             updatedOrcidWork.setPutCode(String.valueOf(workEntity.getId()));            
-        }
-        orcidProfileCacheManager.remove(orcid);
+        }        
     }
 
     /**
@@ -1497,8 +1457,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         for (Affiliation updatedAffiliation : updatedAffiliationsList) {
             OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(updatedAffiliation, profileEntity);
             orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
-        }
-        orcidProfileCacheManager.remove(orcid);
+        }        
     }
 
     private void dedupeFundings(OrcidProfile orcidProfile) {
@@ -1547,8 +1506,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             ProfileFundingEntity profileFundingEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(updatedFunding, profileEntity);
             // Save the profile grant
             profileFundingDao.addProfileFunding(profileFundingEntity);
-        }
-        orcidProfileCacheManager.remove(orcid);
+        }        
     }
 
     @Override
@@ -1570,7 +1528,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         profileDao.remove(profileEntity);
         profileDao.flush();
         orcidIndexManager.deleteOrcidProfile(orcid);
-        orcidProfileCacheManager.remove(orcid);
         // There seems to be a Hibernate problem relating
         // OrcidOauth2TokenDetail, when getting and deleting in same
         // transaction. So not possible to return deleted profile, and probably
@@ -1679,11 +1636,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Deprecated
     public void updateLastModifiedDate(String orcid) {
         profileEntityManager.updateLastModifed(orcid);
-    }
-
-    @Override
-    public void clearOrcidProfileCache() {
-        orcidProfileCacheManager.removeAll();
     }
 
     /**
