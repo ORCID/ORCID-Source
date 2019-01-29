@@ -637,9 +637,9 @@
 		<dynamicField name="*-org-name" type="text_general" indexed="true" stored="false" multiValued="true"/>
 			
 		<!-- research resources -->
-		<field name="research-resource-proposal-title" type="string" indexed="true"
+		<field name="research-resource-proposal-title" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
-		<field name="research-resource-item-name" type="string" indexed="true"
+		<field name="research-resource-item-name" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
 			
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
