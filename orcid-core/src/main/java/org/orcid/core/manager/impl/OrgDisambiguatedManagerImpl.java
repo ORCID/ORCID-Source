@@ -9,12 +9,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.togglz.Features;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
@@ -116,6 +116,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         } else {
             document.setFundingOrg(false);
         }
+        
+        document.setOrgChosenByMember(entity.getMemberChosenOrgDisambiguatedEntity() != null);
 
         return document;
     }
@@ -136,7 +138,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Override
     public List<OrgDisambiguated> searchOrgsFromSolr(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
-        List<OrgDisambiguatedSolrDocument> docs = orgDisambiguatedSolrDao.getOrgs(searchTerm, firstResult, maxResult, fundersOnly);
+        List<OrgDisambiguatedSolrDocument> docs = orgDisambiguatedSolrDao.getOrgs(searchTerm, firstResult, maxResult, fundersOnly, Features.ENABLE_PROMOTION_OF_CHOSEN_ORGS.isActive());
         List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
         for (OrgDisambiguatedSolrDocument doc: docs){
             OrgDisambiguated org = convertSolrDocument(doc);
@@ -229,4 +231,5 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         return org;
     }
+
 }

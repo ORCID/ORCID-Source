@@ -22,6 +22,8 @@ import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
@@ -30,7 +32,6 @@ import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
 import org.orcid.pojo.PIDResolutionResult;
@@ -51,6 +52,8 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
     PIDResolverCache cache;
 
     private String metadataEndpoint = "https://export.arxiv.org/api/query?id_list=";
+    
+    private static final String ARXIV_PREFIX = "arXiv:";
 
     List<String> types = Lists.newArrayList("arxiv");
 
@@ -90,7 +93,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             return null;
 
         try {
-            InputStream inputStream = cache.get(metadataEndpoint + value, MediaType.APPLICATION_ATOM_XML);
+            InputStream inputStream = cache.get(metadataEndpoint + getArXivPID(apiTypeName, value), MediaType.APPLICATION_ATOM_XML);
             InputSource is = new InputSource(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
             is.setEncoding(StandardCharsets.UTF_8.name());
 
@@ -101,6 +104,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
 
             saxParser.parse(is, handler);
             Work w = handler.getWork();
+            w.setWorkType(WorkType.PREPRINT); // default type for arXiv (arXiv data has no type)s
             return w;
         } catch (UnexpectedResponseCodeException e) {
             // TODO: For future projects, we might want to retry when
@@ -111,6 +115,12 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
         }
 
         return null;
+    }
+    
+    // returns PID number without arXiv prefix or URL etc
+    private String getArXivPID(String apiTypeName, String userInput) {
+        String normalised = normalizationService.normalise(apiTypeName, userInput);
+        return normalised.replaceFirst(ARXIV_PREFIX, "");
     }
 
     private class WorksHandler extends DefaultHandler {

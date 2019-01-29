@@ -1,3 +1,5 @@
+declare var OrcidCookie: any;
+
 //Angular imports
 import 'reflect-metadata';
 
@@ -224,18 +226,6 @@ import { bioNg2Module }
 import { printIdBannerNg2Module } 
     from './printIdBanner/printIdBanner.ts';
     
-export class MetaXSRFStrategy implements XSRFStrategy {
-    constructor() {
-    }
-
-    configureRequest(req: Request): any {
-        let token = document.querySelector("meta[name='_csrf']").getAttribute("content");
-        let header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-        if (token && header) {
-            req.headers.set(header, token);
-        }
-    }
-}
 ///////////////////
 import {Injectable} 
     from '@angular/core';
@@ -251,39 +241,25 @@ import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor() {}
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-      let token = document.querySelector("meta[name='_csrf']").getAttribute("content");
-      let header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-    
-    /*request = request.clone({
-      setHeaders: {
-        header: token
-      }
-    });
-    return next.handle(request);*/
-    let _request = request.clone();
-    //_request.headers.append(header, token);
-    //console.log('headers', header, 'token', token);
-    _request.headers.set(header, token);
+   constructor() {}
+   
+   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+       if(request.method == 'GET') {
+           return next.handle(request)
+       } else {
+           // Add CSRF headers for non GET requests
+           const newHeaders: {[name: string]: string | string[]; } = {};
+           for (const key of request.headers.keys()) {
+               newHeaders[key] = request.headers.getAll(key);
+           }          
+           newHeaders['x-xsrf-token'] = OrcidCookie.getCookie('XSRF-TOKEN');           
+           let _request = request.clone({headers: new HttpHeaders(newHeaders)});
 
-
-    let headers2 = new HttpHeaders();
-    //console.log('headers2a', headers2);
-    headers2 = headers2.append(header, token);
-    //console.log('headers2b', headers2);
-
-    //console.log('interceptor', _request, _request.headers, _request.headers.get(header));
-    return next.handle(_request);
-  }
+           return next.handle(_request);
+       }            
+   }
 }
-/*
-let token = document.querySelector("meta[name='_csrf']").getAttribute("content");
-let header = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-if (token && header) {
-    req.headers.set(header, token);
-}
-*/
+
 ///////////////////////////////
 
 @Component(
@@ -381,14 +357,10 @@ export class RootCmp {
     ],
     providers: [
         { 
-            provide: XSRFStrategy, 
-            useClass: MetaXSRFStrategy
-        },
-        /*{
             provide: HTTP_INTERCEPTORS,
             useClass: TokenInterceptor,
             multi: true
-        }*/
+        }
     ]
 
 })

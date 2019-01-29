@@ -44,6 +44,12 @@
 		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>
 	</bean>
 	
-	<bean id="orcidRecordIndexer" class="org.orcid.scheduler.indexer.impl.OrcidRecordIndexerImpl" />	
+	<bean id="orcidRecordIndexer" class="org.orcid.scheduler.indexer.impl.OrcidRecordIndexerImpl" />
+	
+	<!-- PUBLIC API VALIDATION - the following beans can be removed once we have validated (and fixed) all profiles against public api v3 -->
+	<bean id="publicProfileValidator" class="org.orcid.scheduler.validation.PublicProfileValidator">
+	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.baseUrl:https://localhost:8443/orcid-pub-web/v3.0_rc2/}" />
+	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.developmentMode:false}" />
+	</bean>
 
 </beans>

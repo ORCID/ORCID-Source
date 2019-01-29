@@ -49,8 +49,10 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     editSources: any;
     emails: any;
     fundingImportWizard: boolean;
+    fundingImportWizardList: any;
     groups: any;
     moreInfo: any;
+    noLinkFlag: boolean;
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
@@ -75,6 +77,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.fundingImportWizard = false;
         this.groups = new Array();
         this.moreInfo = {};
+        this.noLinkFlag = true;
         this.privacyHelp = {};
         this.privacyHelpCurKey = null;
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
@@ -246,6 +249,25 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         return '';
     };
 
+    loadFundingImportWizards(): void {
+        this.fundingService.getFundingImportWizardList()
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.fundingImportWizardList = data;
+                    if(data == null || data.length == 0) {
+                        this.noLinkFlag = false;
+                    }
+                },
+                error => {
+                    console.log('getFundingImportWizardsError', error);
+                } 
+            );
+    }
+
+
     makeDefault(group, putCode): any {
         this.fundingService.updateToMaxDisplay(group, putCode)
         .pipe(    
@@ -314,6 +336,11 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     openImportWizardUrl(url): void {
+        openImportWizardUrl(url);
+    };
+
+    openImportWizardUrlFilter(url, client): void {
+        url = url + '?client_id=' + client.id + '&response_type=code&scope=' + client.scopes + '&redirect_uri=' + client.redirectUri;
         openImportWizardUrl(url);
     };
 
@@ -435,5 +462,6 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.getFundingGroups();
+        this.loadFundingImportWizards();
     }; 
 }

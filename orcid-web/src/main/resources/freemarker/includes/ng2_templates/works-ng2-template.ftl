@@ -98,10 +98,35 @@
                                     <li [ngClass]="{'green-bg' : showBibtexImportWizard == true || workImportWizard == true}"> 
                                         <span class="glyphicon glyphicon-plus"></span>
                                         <@orcid.msg 'groups.common.add_works'/>
+                                        <span class="ai ai-arxiv" style="opacity: 0;width: 0;"></span>
                                         <ul class="menu-options works">
+                                            <ng-container *ngIf="TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID">
+                                            <li>
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
+                                                    <span class="ai ai-arxiv"></span>
+                                                    Add ArXiv Id
+                                                    <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
+                                                    <span class="ai ai-doi"></span>
+                                                    Add DOI
+                                                    <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
+                                                </a>
+                                            </li>
+                                            <li >
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
+                                                    <span class="ai ai-pubmed"></span>
+                                                    Add PubMed Id
+                                                    <!--  <@orcid.msg 'manual_orcid_record_contents.search_link'/>  -->
+                                                </a>
+                                            </li>
+                                            </ng-container>
                                           <!--Search & link-->
-                                            <li *ngIf="noLinkFlag">
-                                                <a *ngIf="noLinkFlag" class="action-option manage-button" (click)="showWorkImportWizard()">
+                                            <li>
+                                                <a class="action-option manage-button" (click)="showWorkImportWizard()">
                                                     <span class="glyphicon glyphicon-cloud-upload"></span>
                                                     <@orcid.msg 'manual_orcid_record_contents.search_link'/>
                                                 </a>
@@ -402,8 +427,19 @@
         <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
             <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
                 <#if !(isPublicProfile??)>
-                    <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
                         <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
+                                <@orcid.checkFeatureStatus featureName='GROUPING_SUGGESTIONS'>
+                                    <div class="pull-right" *ngIf="groupingSuggestionPresent">
+                                        <div class="orcid-error font-size-small">
+                                            <span class="edit-option-toolbar glyphicon glyphicon-exclamation-sign"></span>
+                                            {{groupingSuggestion.putCodes.length}} <@orcid.msg 'groups.merge.suggestion.alert'/>
+                                            <button class="btn btn-primary leftBuffer" (click)="mergeSuggestionConfirm()">
+                                                <@orcid.msg 'groups.merge.suggestion.manage_duplicates'/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </@orcid.checkFeatureStatus>
                             <ul class="sources-actions">
                                 <li>
                                     <div class="left">
@@ -420,7 +456,7 @@
                                         <div class="popover top" [ngClass]="showElement['worksBulkEditMerge'] == true ? 'block' : ''">
                                             <div class="arrow"></div>
                                             <div class="popover-content">
-                                                <@orcid.msg 'groups.merge.helpPopoverMerge_1'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'groups.merge.helpPopoverMerge_2'/></a>
+                                                <@orcid.msg 'groups.merge.helpPopoverMerge_1'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'common.learn_more'/></a>
                                             </div>                
                                         </div>
                                     </div>
@@ -450,9 +486,14 @@
                                     </div>
                                 </li>
                             </ul>
-                            <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError">
-                                <@orcid.msg 'groups.merge.no_external_ids_1'/> <a target="groups.merge.no_external_ids_2" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_2'/></a>
-                                <button class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksExtIdsError')">
+                            <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError || showMergeWorksApiMissingExtIdsError">
+                                <@orcid.msg 'groups.merge.no_external_ids_1'/>&nbsp; 
+                                <span *ngIf="showMergeWorksExtIdsError"><@orcid.msg 'groups.merge.no_external_ids_2_user_source'/></span>
+                                <span *ngIf="showMergeWorksApiMissingExtIdsError"><@orcid.msg 'groups.merge.no_external_ids_2_client_source'/></span>&nbsp;<a target="groups.merge.no_external_ids_3" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_3'/></a>
+                                <button *ngIf="showMergeWorksExtIdsError" class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksExtIdsError')">
+                                     <@orcid.msg 'common.cookies.dismiss'/>
+                                </button>
+                                <button *ngIf="showMergeWorksApiMissingExtIdsError" class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksApiMissingExtIdsError')">
                                      <@orcid.msg 'common.cookies.dismiss'/>
                                 </button>
                             </div>

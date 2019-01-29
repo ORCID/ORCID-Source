@@ -21,7 +21,8 @@ public class MemberDetailsForm implements ErrorsInterface, Serializable {
     private List<String> errors = new ArrayList<String>();
     private Text name;
     private Text website;
-    private Text email;
+    private Text email; 
+    private URL logo;
     private Text description;
     private Text community;
     private List<Contact> contactsList;
@@ -68,8 +69,17 @@ public class MemberDetailsForm implements ErrorsInterface, Serializable {
         return email;
     }
 
+    public URL getLogo() {
+        return logo;
+    }
+
+
     public void setEmail(Text email) {
         this.email = email;
+    }
+
+    public void setLogo(URL logo) {
+        this.logo = logo;
     }
 
     public Text getDescription() {
@@ -147,6 +157,7 @@ public class MemberDetailsForm implements ErrorsInterface, Serializable {
         form.setSubMembers(memberDetails.getSubMembers());
         String consortiumLeadId = member.getConsortiumLeadId();
         form.setConsortiumLead(consortiumLeadId == null || consortiumLeadId.equals(member.getId()));
+        form.setLogo(member.getLogoUrl());
         return form;
     }
 

@@ -83,13 +83,6 @@
     <works-merge-ng2></works-merge-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
-<@orcid.checkFeatureStatus 'GROUPING_SUGGESTIONS'>
-<#include "/includes/ng2_templates/works-merge-suggestions-ng2-template.ftl">
-<modalngcomponent elementHeight="300" elementId="modalWorksMergeSuggestions" elementWidth="600">
-    <works-merge-suggestions-ng2></works-merge-suggestions-ng2>
-</modalngcomponent><!-- Ng2 component -->
-</@orcid.checkFeatureStatus>
-
 <#include "/includes/ng2_templates/works-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalWorksDelete" elementWidth="300">
     <works-delete-ng2></works-delete-ng2> 
@@ -148,6 +141,11 @@
 <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
 <modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="820">
     <works-form-ng2></works-form-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/works-external-id-form-ng2-template.ftl">
+<modalngcomponent elementHeight="300" elementId="modalExternalIdForm" elementWidth="700">
+    <works-external-id-form-ng2></works-external-id-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
 <!--Org ID popover template used in v3 affiliations and research resources-->

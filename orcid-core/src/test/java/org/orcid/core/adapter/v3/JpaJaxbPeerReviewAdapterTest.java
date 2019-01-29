@@ -14,11 +14,12 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
+import org.orcid.jaxb.model.common.PeerReviewSubjectType;
+import org.orcid.jaxb.model.common.PeerReviewType;
+import org.orcid.jaxb.model.common.Role;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReviewType;
-import org.orcid.jaxb.model.v3.rc2.record.Role;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -188,5 +189,15 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         result.setId(12345L);
         
         return result;
+    }
+    
+    @Test
+    public void dissertationThesisModelToEntityTest() throws JAXBException {
+        PeerReview p = getPeerReview(true);
+        p.setSubjectType(PeerReviewSubjectType.DISSERTATION_THESIS);
+
+        PeerReviewEntity pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(p);
+        assertNotNull(pe);
+        assertEquals(PeerReviewSubjectType.DISSERTATION_THESIS.name(), pe.getSubjectType());
     }
 }

@@ -3,6 +3,8 @@ package org.orcid.frontend.spring.web.social.config;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.orcid.frontend.spring.web.social.GoogleSignIn;
+import org.orcid.frontend.spring.web.social.GoogleSignInImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +24,6 @@ import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.google.api.Google;
-import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.connect.GoogleConnectionFactory;
 
 /**
@@ -31,84 +32,82 @@ import org.springframework.social.google.connect.GoogleConnectionFactory;
 @Configuration
 public class SocialConfig implements InitializingBean {
 
-	private static final Logger logger = LoggerFactory.getLogger(SocialConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(SocialConfig.class);
 
-	@Value("${org.orcid.social.fb.key}")
-	private String fb_key;
-	@Value("${org.orcid.social.fb.secret}")
-	private String fb_secret;
-	@Value("${org.orcid.social.gg.key}")
-	private String gg_key;
-	@Value("${org.orcid.social.gg.secret}")
-	private String gg_secret;
+    @Value("${org.orcid.social.fb.key}")
+    private String fb_key;
+    @Value("${org.orcid.social.fb.secret}")
+    private String fb_secret;
+    @Value("${org.orcid.social.gg.key}")
+    private String gg_key;
+    @Value("${org.orcid.social.gg.secret}")
+    private String gg_secret;
 
-	private SocialContext socialContext;
+    private SocialContext socialContext;
 
-	private UsersConnectionRepository usersConnectionRepositiory;
+    private UsersConnectionRepository usersConnectionRepositiory;
 
-	@Resource
-	private DataSource simpleDataSource;
-	
-	@Value("${org.orcid.core.baseUri}")
-	private String appUrl;
+    @Resource
+    private DataSource simpleDataSource;
 
-	@Bean
-	public SocialContext socialContext() {
+    @Value("${org.orcid.core.baseUri}")
+    private String appUrl;
 
-		return socialContext;
-	}
+    @Bean
+    public SocialContext socialContext() {
 
-	@Bean
-	public ConnectionFactoryLocator connectionFactoryLocator() {
-		logger.info("getting connectionFactoryLocator");
-		ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
-		registry.addConnectionFactory(new FacebookConnectionFactory(fb_key, fb_secret));
-		registry.addConnectionFactory(new GoogleConnectionFactory(gg_key, gg_secret));
-		return registry;
-	}
+        return socialContext;
+    }
 
-	@Bean
-	public UsersConnectionRepository usersConnectionRepository() {
-		return usersConnectionRepositiory;
-	}
+    @Bean
+    public ConnectionFactoryLocator connectionFactoryLocator() {
+        logger.info("getting connectionFactoryLocator");
+        ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
+        registry.addConnectionFactory(new FacebookConnectionFactory(fb_key, fb_secret));
+        registry.addConnectionFactory(new GoogleConnectionFactory(gg_key, gg_secret));
+        return registry;
+    }
 
-	@Bean
-	@Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
-	public ConnectionRepository connectionRepository() {
-		String userId = socialContext.getUserId();
-		return usersConnectionRepository().createConnectionRepository(userId);
-	}
+    @Bean
+    public UsersConnectionRepository usersConnectionRepository() {
+        return usersConnectionRepositiory;
+    }
 
-	@Bean
-	@Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
-	public Facebook facebook() {
-		String accessToken = connectionRepository().getPrimaryConnection(Facebook.class).createData().getAccessToken();
-		return new FacebookTemplate(accessToken);
-	}
-	
-	@Bean
-	@Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
-	public Google google() {
-		String accessToken = connectionRepository().getPrimaryConnection(Google.class).createData().getAccessToken();
-		return new GoogleTemplate(accessToken);
-	}
-	
-	@Bean
-	public ProviderSignInController providerSignInController() {
-		ProviderSignInController providerSigninController = new ProviderSignInController(connectionFactoryLocator(),
-				usersConnectionRepository(), socialContext);
-		providerSigninController.setPostSignInUrl(appUrl + "/social/access");
-		providerSigninController.setApplicationUrl(appUrl);
-		return providerSigninController;
-	}
+    @Bean
+    @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
+    public ConnectionRepository connectionRepository() {
+        String userId = socialContext.getUserId();
+        return usersConnectionRepository().createConnectionRepository(userId);
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
+    @Bean
+    @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
+    public Facebook facebook() {
+        String accessToken = connectionRepository().getPrimaryConnection(Facebook.class).createData().getAccessToken();
+        return new FacebookTemplate(accessToken);
+    }
 
-		JdbcUsersConnectionRepository usersConnectionRepositiory = new JdbcUsersConnectionRepository(simpleDataSource,
-				connectionFactoryLocator(), Encryptors.noOpText());
-		socialContext = new SocialContext(usersConnectionRepositiory, new UserCookieGenerator(), facebook(), google());
-		usersConnectionRepositiory.setConnectionSignUp(socialContext);
-		this.usersConnectionRepositiory = usersConnectionRepositiory;
-	}
+    @Bean
+    @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
+    public GoogleSignIn google() {
+        String accessToken = connectionRepository().getPrimaryConnection(Google.class).createData().getAccessToken();
+        return new GoogleSignInImpl(accessToken);
+    }
+
+    @Bean
+    public ProviderSignInController providerSignInController() {
+        ProviderSignInController providerSigninController = new ProviderSignInController(connectionFactoryLocator(), usersConnectionRepository(), socialContext);
+        providerSigninController.setPostSignInUrl(appUrl + "/social/access");
+        providerSigninController.setApplicationUrl(appUrl);
+        return providerSigninController;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+        JdbcUsersConnectionRepository usersConnectionRepositiory = new JdbcUsersConnectionRepository(simpleDataSource, connectionFactoryLocator(), Encryptors.noOpText());
+        socialContext = new SocialContext(usersConnectionRepositiory, new UserCookieGenerator(), facebook(), google());
+        usersConnectionRepositiory.setConnectionSignUp(socialContext);
+        this.usersConnectionRepositiory = usersConnectionRepositiory;
+    }
 }

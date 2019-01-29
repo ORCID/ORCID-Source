@@ -3,8 +3,6 @@
     <title>${title!"ORCID"}</title>
     <meta name="description" content="">
     <meta name="author" content="ORCID">
-    <meta name="_csrf" content="${(_csrf.token)!}"/>
-    <meta name="_csrf_header" content="${(_csrf.headerName)!}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     
@@ -101,6 +99,7 @@
     <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeng.min.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
+    <link rel="stylesheet" href="${staticCdn}/css/academicons.css"/>
     
     <#if springMacroRequestContext.requestUri?contains("/print")>
         <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>

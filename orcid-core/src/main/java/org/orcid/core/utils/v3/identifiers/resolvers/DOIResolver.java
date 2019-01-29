@@ -20,6 +20,8 @@ import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
@@ -29,10 +31,8 @@ import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -164,7 +164,15 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         }
 
         if (json.has("subtitle")) {
-            workTitle.setSubtitle(new Subtitle(json.getString("subtitle")));
+            String subtitleText = json.getString("subtitle");
+            if (subtitleText.startsWith("[") && subtitleText.endsWith("]")) {
+                subtitleText = subtitleText.substring(1, subtitleText.length() - 1);
+            }
+            
+            if (subtitleText.startsWith("\"") && subtitleText.endsWith("\"")) {
+                subtitleText = subtitleText.substring(1, subtitleText.length() - 1);
+            }
+            workTitle.setSubtitle(new Subtitle(subtitleText));
         }
 
         result.setWorkTitle(workTitle);
@@ -214,7 +222,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                     String issn = issns.getString(i);
                     ExternalID extId = new ExternalID();
                     extId.setType("issn");
-                    extId.setRelationship(Relationship.SELF);
+                    extId.setRelationship(Relationship.PART_OF);
                     extId.setValue(issn);
                     if (idType != null && !PojoUtil.isEmpty(idType.getResolutionPrefix())) {
                         extId.setUrl(new Url(idType.getResolutionPrefix() + issn));
@@ -261,7 +269,45 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         }
 
         if (json.has("language")) {
-            result.setLanguageCode(json.getString("language"));
+            try {
+                result.setLanguageCode(json.getString("language"));
+            } catch (IllegalArgumentException e) {
+                // ignore if language value doesn't match our LanguageCode
+            }
+        }
+        
+        if (result.getPublicationDate() == null && json.has("issued")) {
+            JSONObject issued = (JSONObject) json.get("issued");
+            JSONArray dateParts = issued.getJSONArray("date-parts");
+            JSONArray date = dateParts.getJSONArray(0);
+            
+            if (date != null) {
+                int year = 0;
+                int month = 0;
+                int day = 0;
+                if (date.length() > 0 && !JSONObject.NULL.equals(date.get(0))) {
+                    year = date.getInt(0);
+                }
+                if (date.length() > 1 && !JSONObject.NULL.equals(date.get(1))) {
+                    month = date.getInt(1);
+                }
+                if (date.length() > 2 && !JSONObject.NULL.equals(date.get(2))) {
+                    day = date.getInt(2);
+                }
+                
+                if (year != 0) {
+                    PublicationDate publicationDate = new PublicationDate();
+                    publicationDate.setYear(new Year(year));
+                    if (month != 0) {
+                        publicationDate.setMonth(new Month(month));
+                    }
+                    if (day != 0) {
+                        publicationDate.setDay(new Day(day));
+                    }
+                    result.setPublicationDate(publicationDate);
+                }
+            }
+            
         }
         return result;
     }

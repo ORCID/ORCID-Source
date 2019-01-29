@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -23,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -71,14 +75,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -145,9 +144,6 @@ public class BaseController {
 
     @Resource
     private InternalSSOManager internalSSOManager;
-
-    @Resource(name = "csrfTokenRepo")
-    protected CsrfTokenRepository csrfTokenRepository;
     
     @Resource
     private SecurityQuestionManager securityQuestionManager;
@@ -321,10 +317,7 @@ public class BaseController {
         }
         if (authentication != null && authentication.isAuthenticated()) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
-        }
-        CsrfToken token = csrfTokenRepository.generateToken(request);
-        csrfTokenRepository.saveToken(token, request, response);
-        request.setAttribute("_csrf", token);
+        }        
     }
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
@@ -679,27 +672,38 @@ public class BaseController {
         validateUrl(url, "common.invalid_url");
     }
     
-    protected void validateUrl(Text url, String errorCode) {
-        // Clear previous errors
-        url.setErrors(new ArrayList<String>());
-        if (!PojoUtil.isEmpty(url.getValue())) {
-            // trim if required
-            if (!url.getValue().equals(url.getValue().trim()))
-                url.setValue(url.getValue().trim());
+    protected void validateUrl(Text urlString, String errorCode) {
+        urlString.setErrors(new ArrayList<String>());
+        if (!PojoUtil.isEmpty(urlString.getValue())) {
+            urlString.setValue(urlString.getValue().trim());
+            validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, urlString);
 
-            // check length
-            validateNoLongerThan(SiteConstants.URL_MAX_LENGTH, url);
 
             // add protocol if missing
-            if (!urlValidator.isValid(url.getValue())) {
-                String tempUrl = "http://" + url.getValue();
-                // test validity again
-                if (urlValidator.isValid(tempUrl))
-                    url.setValue("http://" + url.getValue());
-                else
-                    setError(url, errorCode);
+            boolean valid = false;
+            try {
+                valid = urlValidator.isValid(encodeUrl(urlString.getValue()));
+                if (!valid) {
+                    String tempUrl = encodeUrl("http://" + urlString.getValue());
+                    // test validity again
+                    valid = urlValidator.isValid(tempUrl);
+                    if (valid) {
+                        urlString.setValue("http://" + urlString.getValue());
+                    } 
+                }
+            } catch (Exception e) {
+            }
+
+            if (!valid) {
+                setError(urlString, errorCode);
             }
         }
+    }
+    
+    private String encodeUrl(String urlString) throws MalformedURLException, URISyntaxException {
+        URL url = new URL(urlString);
+        URI encoded = new URI(url.getProtocol(), url.getHost(), url.getPath(), null);
+        return encoded.toASCIIString();
     }
     
     /**

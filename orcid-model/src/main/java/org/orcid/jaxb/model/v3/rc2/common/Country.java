@@ -14,6 +14,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.adapters.Iso3166CountryAdapter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -36,6 +40,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Country implements Serializable, Comparable<Country> {
 
     private final static long serialVersionUID = 1L;
+    @XmlJavaTypeAdapter(Iso3166CountryAdapter.class)
     @XmlValue
     protected Iso3166Country value;
 

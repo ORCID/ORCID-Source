@@ -1,6 +1,7 @@
 package org.orcid.record.v3.rc1;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -9,6 +10,7 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.v3.rc1.record.Funding;
+import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.Work;
 import org.orcid.jaxb.model.v3.rc1.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.rc1.record.summary.Fundings;
@@ -71,4 +73,12 @@ public class SchemaValidateTest {
         assertEquals("http://tempuri.org",w.getDistinctions().getDistinctionGroups().iterator().next().getActivities().get(0).getUrl().getValue());
         assertEquals("external-id-value",w.getEducations().getEducationGroups().iterator().next().getActivities().get(0).getExternalIDs().getExternalIdentifier().get(0).getValue());
     } 
+    
+    @Test
+    public void testReadPeerReviewSchemaValidate() throws JAXBException {
+        OrcidTranslator<PeerReview> t = OrcidTranslator.forSchema(SchemaVersion.V3_0RC1_PEER_REVIEW);
+        Reader reader = new InputStreamReader(getClass().getResourceAsStream("/record_3.0_rc1/samples/read_samples/peer-review-3.0_rc1.xml"));
+        PeerReview p = t.readXmlRecord(reader);
+        assertNotNull(p);
+    }
 }

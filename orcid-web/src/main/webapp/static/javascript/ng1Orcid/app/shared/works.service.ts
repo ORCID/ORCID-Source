@@ -44,8 +44,7 @@ export class WorksService {
         this.headers = new HttpHeaders(
             {
                 'Access-Control-Allow-Origin':'*',
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+                'Content-Type': 'application/json'
             }
         );
 
@@ -370,7 +369,6 @@ export class WorksService {
     }
 
     getLabelMapping (workCategory, workType): any {
-        console.log("getting label mapping for " + workCategory + ", " + workType);
         var result = this.labelsMapping.default.types[0];
         var tempI = null;
 
@@ -458,34 +456,6 @@ export class WorksService {
         return this.http.get(
             getBaseUri() + '/workspace/retrieve-work-import-wizards.json'
         )
-        .pipe(
-            tap(
-                () => {
-                    /*
-                    if(data == null || data.length == 0) {
-                        $scope.noLinkFlag = false;
-                    }
-                    $scope.selectedWorkType = om.get('workspace.works.import_wizzard.all');
-                    $scope.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
-                    $scope.workImportWizardsOriginal = data;
-                    $scope.bulkEditShow = false;
-                    $scope.showBibtexImportWizard = false;
-                    for(var idx in data) {                            
-                        for(var i in data[idx].actTypes) {
-                            if(!utilsService.contains($scope.workType, data[idx].actTypes[i])) {
-                                $scope.workType.push(data[idx].actTypes[i]);
-                            }                                
-                        }
-                        for(var j in data[idx].geoAreas) {
-                            if(!utilsService.contains($scope.geoArea, data[idx].geoAreas[j])) {
-                                $scope.geoArea.push(data[idx].geoAreas[j]);
-                            }                                
-                        }                            
-                    }
-                    */
-                }
-            )
-        ); 
     }
 
     loadWorkTypes( workCategory ): Observable<any>{
@@ -517,18 +487,20 @@ export class WorksService {
         );
     }
     
-    markSuggestionAccepted(suggestionId): any {
+    markSuggestionAccepted(suggestion): any {
+        let encoded_data = JSON.stringify(suggestion);
         return this.http.post( 
-            getBaseUri() + '/works/acceptGroupingSuggestion/' + suggestionId, 
-            {}, 
+            getBaseUri() + '/works/acceptGroupingSuggestion.json', 
+            encoded_data, 
             { headers: this.headers }
         );
     }
     
-    markSuggestionRejected(suggestionId): any {
+    markSuggestionRejected(suggestion): any {
+        let encoded_data = JSON.stringify(suggestion);
         return this.http.post( 
-            getBaseUri() + '/works/rejectGroupingSuggestion/' + suggestionId, 
-            {}, 
+            getBaseUri() + '/works/rejectGroupingSuggestion.json', 
+            encoded_data,  
             { headers: this.headers }
         );
     }

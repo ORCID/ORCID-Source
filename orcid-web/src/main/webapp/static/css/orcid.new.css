@@ -2489,7 +2489,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     display: none;
     position: absolute;
     left: -134px;
-    top: 17px;
+    top: 10px;
     min-width: 270px;
     width: auto;
     max-width: none;
@@ -2498,8 +2498,17 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 .workspace-private-toolbar .popover-help-container .popover {
     left: -267px;
-    top: -172px;
+    top: -163px;
 }
+
+/* Firefox */
+@-moz-document url-prefix() {
+    .workspace-private-toolbar .popover-help-container .popover {
+        left: -267px;
+        top: -148px;
+    }
+  }
+
 
 .work-bulk-actions .popover-help-container .bulk-works-privacy-popover {
     display: none;
@@ -4967,7 +4976,7 @@ ul.toggle-menu li:hover ul {
 }
 
 .bulk-edit-merge .popover {
-    top: -84px;
+    top: -60px;
     left: -100px;
 }
 
@@ -5099,7 +5108,7 @@ ul.sources-actions>li .popover-tooltip>.arrow,ul.sources-options>li .popover-too
 }
 
 .work-bulk-actions .privacy-bulk-works {
-	bottom: 45px;
+	bottom: 36px;
     right: -5px;
     top: -170px;
     left: 186px;
@@ -6366,6 +6375,12 @@ a#reset-password-toggle-text:hover:active {
     float: left;
     width: 100%;
     word-wrap: break-word;
+
+}
+
+.public-content.column{
+    display: flex;
+    flex-direction: column;
 }
 
 .public-profile .workspace-section .workspace-section-header .inline-list .right .popover {
@@ -6848,6 +6863,10 @@ ul.comma li:last-child:after {
 
 .font-size-small {
     font-size: 12px
+}
+
+.line-height-normal {
+    line-height: normal
 }
 
 .no-padding {
@@ -8690,4 +8709,16 @@ span.notYouUrl > a {
 .readLimitedIcon {
     height: 20px;
     margin-top: -2px;
+}
+
+.externalIdWorkForm .buttons-container {
+    margin-top: 15px;
+}
+
+.externalIdWorkForm input#work-title {
+    margin-top: 10px;
+}
+
+_::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
+    z-index: unset;
 }

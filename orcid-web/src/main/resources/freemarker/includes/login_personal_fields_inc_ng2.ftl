@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <#if (oauthRequest)??>
     <input type="hidden" name="oauthRequest" value="true"/>
 <#else>

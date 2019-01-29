@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc2.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Iso3166Country;
 
 public class Iso2Country implements ErrorsInterface, Required, Serializable {
     /**
@@ -32,7 +32,7 @@ public class Iso2Country implements ErrorsInterface, Required, Serializable {
 
     public static Iso2Country valueOf(Iso3166Country country) {
         Iso2Country c = new Iso2Country();
-        c.setValue(org.orcid.jaxb.model.message.Iso3166Country.fromValue(country.value()));
+        c.setValue(org.orcid.jaxb.model.message.Iso3166Country.fromValue(country.name()));
       return c;
     }
     

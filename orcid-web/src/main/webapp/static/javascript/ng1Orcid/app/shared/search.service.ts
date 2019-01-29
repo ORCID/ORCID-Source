@@ -31,8 +31,7 @@ export class SearchService {
         this.publicApiHeaders = new HttpHeaders(
             {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+                'Accept': 'application/json'
             }
         );
 
@@ -62,7 +61,7 @@ export class SearchService {
     }
 
     getNames(orcid): Observable<any> {
-        var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/person';
+        var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/personal-details';
 
 
         return this.http.get(url, {headers: this.publicApiHeaders})

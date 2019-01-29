@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.frontend.spring.web.social.GoogleSignIn;
 import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.User;
 import org.springframework.social.google.api.Google;
+import org.springframework.social.google.api.oauth2.UserInfo;
 import org.springframework.social.google.api.plus.Person;
 
 public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSuccessHandlerBase {
@@ -65,11 +67,13 @@ public class SocialAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSu
             userMap.put("userName", user.getName());
             userMap.put("email", user.getEmail());
         } else if (SocialType.GOOGLE.equals(connectionType)) {
-            Google google = socialContext.getGoogle();
-            Person person = google.plusOperations().getGoogleProfile();
-            userMap.put("providerUserId", person.getId());
-            userMap.put("userName", person.getDisplayName());
-            userMap.put("email", person.getAccountEmail());
+            GoogleSignIn google = socialContext.getGoogle();
+            UserInfo userInfo = google.getUserInfo();
+            userMap.put("providerUserId", userInfo.getId());
+            userMap.put("userName", userInfo.getName());
+            userMap.put("email", userInfo.getEmail());
+            userMap.put("firstName", userInfo.getGivenName());
+            userMap.put("lastName", userInfo.getFamilyName());            
         }
 
         return userMap;

@@ -5,7 +5,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.orcid.jaxb.model.common.ResourceType;
+import org.orcid.jaxb.model.common.adapters.ResourceTypeAdapter;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -15,8 +18,9 @@ public class ResearchResourceItem {
 
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-name")
     protected String resourceName;
+    @XmlJavaTypeAdapter(ResourceTypeAdapter.class)
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-type")
-    protected String resourceType;
+    protected ResourceType resourceType;
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "hosts")
     protected ResearchResourceHosts hosts;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "external-ids")
@@ -32,11 +36,11 @@ public class ResearchResourceItem {
         this.resourceName = resourceName;
     }
 
-    public String getResourceType() {
+    public ResourceType getResourceType() {
         return resourceType;
     }
 
-    public void setResourceType(String resourceType) {
+    public void setResourceType(ResourceType resourceType) {
         this.resourceType = resourceType;
     }
 

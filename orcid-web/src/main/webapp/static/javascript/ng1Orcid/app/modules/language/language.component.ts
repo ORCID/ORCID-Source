@@ -93,6 +93,10 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
                     "label": "čeština"
                 },
                 {
+                    "value": "de",
+                    "label": "Deutsch"
+                },
+                {
                     "value": "en",
                     "label": "English"
                 },
@@ -271,7 +275,5 @@ export class LanguageComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
         this.getCurrentLanguage();
-        
-        
     }; 
 }

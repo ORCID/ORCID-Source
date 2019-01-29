@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -77,7 +78,7 @@ public class PIDResolverCache {
                         con.addRequestProperty("Accept", "application/vnd.citationstyles.csl+json");
                         con.setRequestMethod("HEAD");
                         con.setInstanceFollowRedirects(false);
-                        return (con.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP);
+                        return (con.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_TEMP || con.getResponseCode() == HttpURLConnection.HTTP_MOVED_PERM);
                     } catch (IOException e) {
                         //nope.
                     }  

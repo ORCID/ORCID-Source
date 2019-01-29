@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.jaxb.model.common.LanguageCode;
 import org.orcid.persistence.constants.SiteConstants;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -30,10 +31,10 @@ public class LanguagesMap {
 
     /* get all ISO languages, remove zh and add in zh_TW and zh_CN */ 
     static private Locale[] getLanguages() {
-        String[] codes = SiteConstants.AVAILABLE_ISO_LANGUAGES;
+        LanguageCode[] codes = LanguageCode.values();
         Locale[] orcidCodes = new Locale[codes.length];
         for (int i = 0; i< codes.length; i++) {
-            orcidCodes[i] = LocaleUtils.toLocale(codes[i]);           
+            orcidCodes[i] = LocaleUtils.toLocale(codes[i].name());           
         }
         return orcidCodes;
     }

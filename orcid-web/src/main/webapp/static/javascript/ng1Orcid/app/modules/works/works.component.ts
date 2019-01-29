@@ -72,6 +72,11 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     fixedTitle: any;
     formData: any;
     geoArea: any;
+    groupingSuggestionExtIdsPresent: boolean;
+    groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');
+    groupingSuggestionPresent: boolean;
+    groupingSuggestion: any;
+    groupingSuggestionWorksToMerge: any;
     loadingScripts: any;
     moreInfo: any;
     moreInfoOpen: boolean;
@@ -84,6 +89,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     showBibtexExport: boolean;
     showBibtexImportWizard: boolean;
     showElement: any;
+    showMergeWorksApiMissingExtIdsError: boolean;
     showMergeWorksExtIdsError: boolean;
     sortState: any;
     textFiles: any;
@@ -94,6 +100,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
+    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean
     bibTexIntervals: object
 
     constructor( 
@@ -107,6 +114,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private worksService: WorksService
     ) {
 
+        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
         this.addingWork = false;
         this.bibtexExportError = false;
         this.bibtexExportLoading = false;
@@ -129,6 +137,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             works: null
         };
         this.geoArea = ['All'];
+        this.groupingSuggestionExtIdsPresent = false;
+        this.groupingSuggestionPresent = false;
         this.loadingScripts = false;
         this.moreInfo = {};
         this.moreInfoOpen = false;
@@ -143,6 +153,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showBibtexExport = false;
         this.showBibtexImportWizard = false;
         this.showElement = {};
+        this.showMergeWorksApiMissingExtIdsError = false;
         this.showMergeWorksExtIdsError = false;
         this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
         this.textFiles = [];
@@ -197,6 +208,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if (this.bibtexWork != false){
                         this.worksFromBibtex.splice(this.bibtexWorkIndex, 1);
                         this.bibtexWork = false;
+                        if (!this.worksFromBibtex.length) {
+                            this.openBibTextWizard()
+                        }
                     }
                     this.refreshWorkGroups();
                 }
@@ -233,6 +247,26 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    addWorkExternalIdModal(externalIdType): void {
+        this.emailService.getEmails()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.emails = data;
+                if( this.emailService.getEmailPrimary().verified ){
+                        this.modalService.notifyOther({action:'open', moduleId: 'modalExternalIdForm', externalIdType: externalIdType});                
+                }else{
+                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
+                }
+            },
+            error => {
+                console.log('getEmails', error);
+            } 
+        );
+    };
+
     bibtexShowToggle(putCode): void {
         this.showBibtex[putCode] = !(this.showBibtex[putCode]);
     };
@@ -257,6 +291,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.bulkSelectedCount++;
             }
         }
+        console.log(this.bulkEditMap);
     }
 
     canBeCombined(work): any {
@@ -296,6 +331,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         if(error == "showMergeWorksExtIdsError"){
             this.showMergeWorksExtIdsError = false;
         }
+        if(error == "showMergeWorksApiMissingExtIdsError"){
+            this.showMergeWorksApiMissingExtIdsError = false;
+        }
     }
     
     mergeConfirm(): void {
@@ -308,7 +346,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }
         if (mergeCount > 1) {
-            var externalIdsPresent = false;
+            var apiWorkMissingExtIds = false;
+            var apiWorkPresent = false;
+            var externalIdsPresent = false; 
             for (var putCode in this.bulkEditMap) {
                 if (this.bulkEditMap[putCode]) { 
                     this.worksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
@@ -317,11 +357,35 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             forkJoin(this.worksToMerge).subscribe(
                 dataGroup => {
                     for(var i in dataGroup){
-                        if(dataGroup[i].workExternalIdentifiers.length > 0){
-                            externalIdsPresent = true;
+                        console.log(dataGroup[i]);
+                        if(dataGroup[i].source != orcidVar.orcidId){
+                            console.log("api work")
+                            apiWorkPresent = true;
+                            if(dataGroup[i].workExternalIdentifiers.length == 0){
+                                apiWorkMissingExtIds = true;
+                                break;
+                            } else {
+                                var currentApiWorkExtIds = 0;
+                                for(var j in dataGroup[i].workExternalIdentifiers){ 
+                                    if(dataGroup[i].workExternalIdentifiers[j].relationship.value == 'self'){
+                                        currentApiWorkExtIds++;
+                                    }
+                                }
+                                if(currentApiWorkExtIds == 0){
+                                    apiWorkMissingExtIds = true;   
+                                }
+                            }
+                        } else {
+                            for(var j in dataGroup[i].workExternalIdentifiers){ 
+                                if(dataGroup[i].workExternalIdentifiers[j].relationship.value == 'self'){
+                                    externalIdsPresent = true;
+                                }
+                            }
                         }
                     }
-                    if(!externalIdsPresent){
+                    if(apiWorkMissingExtIds){
+                        this.showMergeWorksApiMissingExtIdsError = true;
+                    } else if(!externalIdsPresent){
                         this.showMergeWorksExtIdsError = true;
                     } else {
                         this.worksService.notifyOther({worksToMerge:dataGroup});       
@@ -336,6 +400,25 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         }
+    };
+
+    mergeSuggestionConfirm(): void {
+        this.groupingSuggestionWorksToMerge = new Array();
+        for (var i in this.groupingSuggestion.putCodes) {
+            var putCode = this.groupingSuggestion.putCodes[i];
+            this.groupingSuggestionWorksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
+        }
+        forkJoin(this.groupingSuggestionWorksToMerge).subscribe(
+            dataGroup => {
+                this.worksService.notifyOther({worksToMerge:dataGroup});
+                this.worksService.notifyOther({groupingSuggestion:this.groupingSuggestion});    
+                this.worksService.notifyOther({mergeCount:this.groupingSuggestion.putCodes.length});
+                this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+            },
+            error => {
+                console.log('mergeSuggestionConfirm', error);
+            } 
+        );
     };
     
     deleteWorkConfirm(putCode, deleteGroup): void {
@@ -536,7 +619,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                                 throw "bibtex parse return nothing";
                             }
                         } catch(err){
-                            console.log("bibtexParse error");
                             this.bibtexParsingError = true;
                         }
                         this.worksService.getBlankWork()
@@ -654,7 +736,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.formData = data;
                     this.worksService.handleWorkGroupData( this.formData );
                     this.worksService.loading = false;
-                    this.loadGroupingSuggestions();
+                    if(this.groupingSuggestionFeatureEnabled){
+                        this.loadGroupingSuggestions();
+                    }
                 },
                 error => {
                     this.worksService.loading = false;
@@ -665,6 +749,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     loadGroupingSuggestions(): void {
+        this.groupingSuggestionPresent = false;
         if(this.publicView != "true") {
             this.worksService.getWorksGroupingSuggestions(
             )
@@ -674,26 +759,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             .subscribe(
                 data => {
                     if (data) {
-                        var worksToMerge = new Array();
-                        var externalIdsPresent = false;
-                        for (var i in data.putCodes.workPutCodes) {
-                            var workPutCode = data.putCodes.workPutCodes[i];
-                            var work = this.worksService.getWork(workPutCode);
-                            worksToMerge.push({ work: work, preferred: false});
-                            if (work.workExternalIdentifiers.length > 0) {
-                                externalIdsPresent = true;
-                            }
-                        }
-                        this.worksService.notifyOther({suggestionId:data.id});
-                        this.worksService.notifyOther({worksToMerge:worksToMerge});
-                        this.worksService.notifyOther({externalIdsPresent:externalIdsPresent});     
-                        this.worksService.notifyOther({mergeCount:worksToMerge.length});
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeSuggestions'});
+                        this.groupingSuggestionPresent = true;
+                        this.groupingSuggestion = data;
                     }
                 },
                 error => {
-                    this.worksService.loading = false;
-                    console.log('worksLoadMore', error);
+                    console.log('loadGroupingSuggestions', error);
                 } 
             );
         }
@@ -830,6 +901,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         let index = this.worksFromBibtex.indexOf(work);
         
         this.worksFromBibtex.splice(index, 1);
+        if (!this.worksFromBibtex.length) {
+            this.openBibTextWizard() // CLOSE BIBTEX
+        }
     };
 
     saveAllFromBibtex(): any{
@@ -878,6 +952,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                                         this.closeAllMoreInfo();
                                         this.refreshWorkGroups();
                                         this.savingBibtex = false;
+                                        this.openBibTextWizard(); // CLOSE BIBTEX
+                                        
                                     }
                                 }
 
@@ -1162,6 +1238,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
+                        this.loadMore();
                         this.allSelected = false;
                         this.bulkEditMap = {};
                         this.bulkEditSelect();

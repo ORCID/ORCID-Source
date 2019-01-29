@@ -24,7 +24,8 @@ import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.resolvers.PubMedResolver;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.test.TargetProxyHelper;
@@ -175,6 +176,9 @@ public class PubMedResolverTest {
         assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
         assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(2).getRelationship());
+        
+        assertNotNull(work.getWorkType());
+        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
     }
 
     @Test
@@ -203,5 +207,8 @@ public class PubMedResolverTest {
         assertEquals("https://doi/doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getUrl().getValue());
         assertEquals("doi1", work.getExternalIdentifiers().getExternalIdentifier().get(2).getValue());
         assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(2).getRelationship());
+        
+        assertNotNull(work.getWorkType());
+        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
     }
 }

@@ -49,11 +49,12 @@ export class ManageMembersFindComponent
   find(id) {
     this.updateMessage = null;
     this.memberObject = null;
+    this.clientObject = null;
     this.manageMembersService.findMember(id).subscribe(
       (response: any) => {
         if (response.client) {
           this.clientObject = response.clientObject;
-        } else if (response.email != null) {
+        } else if (response.memberObject != null) {
           this.memberObject = response.memberObject;
         }
       },

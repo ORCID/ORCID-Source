@@ -30,6 +30,7 @@ export class ManageMembersFindMemberComponent
   private ngUnsubscribe: Subject<void> = new Subject<void>();
   @Input() member;
   @Output() update = new EventEmitter<string> ();
+  modalSubscription: Subscription
 
   constructor(private manageMembers: ManageMembersService, private modalService: ModalService) {}
 
@@ -39,25 +40,27 @@ export class ManageMembersFindMemberComponent
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    if (this.modalSubscription)
+      this.modalSubscription.unsubscribe()
   }
 
   ngOnInit() {
-    this.modalService.notifyObservable$.subscribe ( (data)=>{
+    this.modalSubscription = this.modalService.notifyObservable$.subscribe ( (data)=>{
+      
       if (data && data.moduleId === "modalFindMemberConfirm" && data.action === "close" && data.input === "update") {
-        this.manageMembers.updateMember(this.member).subscribe(
+         this.manageMembers.updateMember(this.member).subscribe(
           response => {
             this.member = response;
             if (this.member.errors.length === 0) {
               this.update.emit(om.get('manage_member.edit_member.success'))
             }
+            
           },
           error => {
             console.log("Error updating the member ", error);
           }
         );
-
+        this.modalSubscription.unsubscribe()
       }
     })
   }

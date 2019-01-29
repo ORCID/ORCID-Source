@@ -179,7 +179,7 @@
 						</div>
 						<div class="row" *ngIf="_client.redirectUris.length == 0 || _client.redirectUris == null">
 							<div class="controls save-btns col-md-12 col-sm-12 col-xs-12 margin-top-box margin-bottom-box">
-								<a href="" (click)="addRedirectUri()"><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
+								<a (click)="addRedirectUri()"><@orcid.msg 'manage.developer_tools.edit.add_redirect_uri' /></a>
 							</div>
 						</div>
 						<div class="row">

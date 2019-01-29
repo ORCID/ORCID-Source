@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -24,11 +25,12 @@ import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.v3.rc2.record.Relationship;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.WorkCategory;
-import org.orcid.jaxb.model.v3.rc2.record.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.PIDResolutionResult;
@@ -62,13 +64,13 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
-    
+
     @Resource
     private WorksPaginator worksPaginator;
 
     @Resource
     private IdentifierTypeManager identifierTypeManager;
-    
+
     @Resource
     private LocaleManager localeManager;
 
@@ -86,10 +88,10 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource(name = "bibtexManagerV3")
     private BibtexManager bibtexManager;
-    
+
     @Resource(name = "groupingSuggestionManagerV3")
     private GroupingSuggestionManager groupingSuggestionManager;
-    
+
     @Resource
     PIDResolverService resolverService;
 
@@ -106,13 +108,20 @@ public class WorksController extends BaseWorkspaceController {
         }
         return workIdLs;
     }
-    
 
     @RequestMapping(value = "/group/{workIdsStr}", method = RequestMethod.POST)
-    public @ResponseBody List<Long> groupWorks(@PathVariable("workIdsStr") String workIdsStr) {
+    public @ResponseBody GroupedWorks groupWorks(@PathVariable("workIdsStr") String workIdsStr) {
         List<Long> workIds = Arrays.stream(workIdsStr.split(",")).mapToLong(n -> Long.parseLong(n)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-        workManager.createNewWorkGroup(workIds, getCurrentUserOrcid());
-        return workIds;
+        GroupedWorks groupedWorks = new GroupedWorks();
+
+        try {
+            workManager.createNewWorkGroup(workIds, getCurrentUserOrcid());
+        } catch (MissingGroupableExternalIDException e) {
+            groupedWorks.getErrors().add(getMessage("groups.merge.no_groupable_external_ids"));
+            return groupedWorks;
+        }
+        groupedWorks.setWorkIds(workIds);
+        return groupedWorks;
     }
 
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
@@ -130,24 +139,24 @@ public class WorksController extends BaseWorkspaceController {
         initializeFields(w);
         return w;
     }
-    
+
     @RequestMapping(value = "/groupingSuggestions.json", method = RequestMethod.GET)
-    public @ResponseBody WorkGroupingSuggestion getGroupingSuggestion() {     
+    public @ResponseBody WorkGroupingSuggestion getGroupingSuggestion() {
         return groupingSuggestionManager.getGroupingSuggestion(getCurrentUserOrcid());
     }
-    
+
     @RequestMapping(value = "/rejectGroupingSuggestion.json", method = RequestMethod.POST)
-    public @ResponseBody Boolean declineGroupingSuggestion(@RequestBody WorkGroupingSuggestion suggestion) {     
+    public @ResponseBody Boolean declineGroupingSuggestion(@RequestBody WorkGroupingSuggestion suggestion) {
         groupingSuggestionManager.markGroupingSuggestionAsRejected(suggestion);
         return true;
     }
-    
+
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
             org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
-            Visibility v = profile.getActivitiesVisibilityDefault() == null
-                    ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility()) : Visibility.valueOf(defaultVis);
+            Visibility v = profile.getActivitiesVisibilityDefault() == null ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility())
+                    : Visibility.valueOf(defaultVis);
             w.setVisibility(v);
         }
 
@@ -188,7 +197,7 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         initializePublicationDate(w);
-        
+
         if (w.getCitation() == null) {
             w.setCitation(new Citation());
             w.getCitation().setCitationType(new Text());
@@ -240,7 +249,7 @@ public class WorksController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(w.getCountryName())) {
             w.setCountryName(new Text());
         }
-        
+
     }
 
     private void initializePublicationDate(WorkForm w) {
@@ -280,53 +289,53 @@ public class WorksController extends BaseWorkspaceController {
                     workForm.getPublicationDate().setYear(new String());
                 }
             }
-            
+
             if (workForm.getShortDescription() == null) {
                 workForm.setShortDescription(new Text());
             }
-            
+
             if (workForm.getUrl() == null) {
                 workForm.setUrl(new Text());
             }
-            
+
             if (workForm.getJournalTitle() == null) {
                 workForm.setJournalTitle(new Text());
             }
-            
+
             if (workForm.getLanguageCode() == null) {
                 workForm.setLanguageCode(new Text());
             }
-            
+
             if (workForm.getLanguageCode() == null) {
                 workForm.setLanguageCode(new Text());
             }
-            
+
             if (workForm.getLanguageName() == null) {
                 workForm.setLanguageName(new Text());
             }
-            
+
             if (workForm.getCitation() == null) {
                 workForm.setCitation(new Citation());
                 workForm.getCitation().setCitationType(new Text());
                 workForm.getCitation().setCitation(new Text());
             }
-            
+
             if (workForm.getSubtitle() == null) {
                 workForm.setSubtitle(new Text());
             }
-            
+
             if (workForm.getTranslatedTitle() == null) {
                 workForm.setTranslatedTitle(new TranslatedTitleForm());
             }
-            
+
             if (workForm.getCountryCode() == null) {
                 workForm.setCountryCode(new Text());
             }
-            
+
             if (workForm.getCountryName() == null) {
                 workForm.setCountryName(new Text());
             }
-            
+
             if (workForm.getJournalTitle() == null) {
                 workForm.setJournalTitle(new Text());
             }
@@ -352,7 +361,8 @@ public class WorksController extends BaseWorkspaceController {
                     if (!PojoUtil.isEmpty(contributor.getOrcid())) {
                         String contributorOrcid = contributor.getOrcid().getValue();
                         if (profileEntityManager.orcidExists(contributorOrcid)) {
-                            // contributor is an ORCID user - visibility of user's name in record must be taken into account 
+                            // contributor is an ORCID user - visibility of
+                            // user's name in record must be taken into account
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = activityManager.getPublicCreditName(profileEntity);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));
@@ -423,7 +433,7 @@ public class WorksController extends BaseWorkspaceController {
         Work updatedWork = workForm.toWork();
         // Edit work
         workManager.updateWork(userOrcid, updatedWork, false);
-    }   
+    }
 
     @RequestMapping(value = "/worksValidate.json", method = RequestMethod.POST)
     public @ResponseBody List<WorkForm> validatesWork(@RequestBody List<WorkForm> works) {
@@ -605,7 +615,7 @@ public class WorksController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/work/workTypeValidate.json", method = RequestMethod.POST)
     public @ResponseBody WorkForm workWorkTypeValidate(@RequestBody WorkForm work) {
-        if(work.getWorkType() == null) {
+        if (work.getWorkType() == null) {
             work.setWorkType(new Text());
         } else {
             work.getWorkType().setErrors(new ArrayList<String>());
@@ -628,7 +638,7 @@ public class WorksController extends BaseWorkspaceController {
                 wId.setExternalIdentifierType(new Text());
             wId.getExternalIdentifierId().setErrors(new ArrayList<String>());
             wId.getExternalIdentifierType().setErrors(new ArrayList<String>());
-            if(wId.getRelationship() != null)
+            if (wId.getRelationship() != null)
                 wId.getRelationship().setErrors(new ArrayList<String>());
             // if has id type must be specified
             if (wId.getExternalIdentifierId().getValue() != null && !wId.getExternalIdentifierId().getValue().trim().equals("")
@@ -643,29 +653,28 @@ public class WorksController extends BaseWorkspaceController {
                 setError(wId.getExternalIdentifierId(), "NotBlank.currentWorkExternalIds.id");
             }
 
-            //check type is valid
-            Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
-            if (wId.getExternalIdentifierType().getValue() != null  
-                    && !wId.getExternalIdentifierType().getValue().trim().isEmpty() 
-                    && !types.keySet().contains(wId.getExternalIdentifierType().getValue())){
+            // check type is valid
+            Map<String, IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
+            if (wId.getExternalIdentifierType().getValue() != null && !wId.getExternalIdentifierType().getValue().trim().isEmpty()
+                    && !types.keySet().contains(wId.getExternalIdentifierType().getValue())) {
                 setError(wId.getExternalIdentifierType(), "manualWork.id_invalid");
             }
-            
+
             if (wId.getUrl() != null)
-                validateUrl(wId.getUrl());  
-            
-            if(wId.getRelationship() != null) {
-                if(Relationship.VERSION_OF.value().equals(wId.getRelationship().getValue())) {
+                validateUrl(wId.getUrl());
+
+            if (wId.getRelationship() != null) {
+                if (Relationship.VERSION_OF.value().equals(wId.getRelationship().getValue())) {
                     lastVersionOfIdentifier = wId;
                 }
-                
-                if(Relationship.SELF.value().equals(wId.getRelationship().getValue())) {
+
+                if (Relationship.SELF.value().equals(wId.getRelationship().getValue())) {
                     hasSelfOfIdentifier = true;
                 }
             }
         }
-        
-        if(lastVersionOfIdentifier != null && !hasSelfOfIdentifier) {
+
+        if (lastVersionOfIdentifier != null && !hasSelfOfIdentifier) {
             setError(lastVersionOfIdentifier.getRelationship(), "manualWork.ext_ids.self_required");
         }
 
@@ -720,19 +729,21 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@RequestParam("offset") int offset, @RequestParam("sort") String sort,
+            @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.getWorksPage(orcid, offset, false, sort, sortAsc);
     }
-    
+
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.getAllWorks(orcid, false, sort, sortAsc);
     }
-    
+
     @RequestMapping(value = "/refreshWorks.json", method = RequestMethod.GET)
-    public @ResponseBody Page<WorkGroup> refreshWorkGroupsJson(@RequestParam("limit") int limit, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page<WorkGroup> refreshWorkGroupsJson(@RequestParam("limit") int limit, @RequestParam("sort") String sort,
+            @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.refreshWorks(orcid, limit, sort, sortAsc);
     }
@@ -786,64 +797,71 @@ public class WorksController extends BaseWorkspaceController {
         return types;
     }
 
-    /** Returns the works in bibtex format.  
-     * This format encodes everything it can using latex encoding and leaves the rest as UTF-8
-     * Note, you must specifically set the encoding to UTF-8 in the produces argument to enforce the encoding over the wire.
+    /**
+     * Returns the works in bibtex format. This format encodes everything it can
+     * using latex encoding and leaves the rest as UTF-8 Note, you must
+     * specifically set the encoding to UTF-8 in the produces argument to
+     * enforce the encoding over the wire.
      */
     @RequestMapping(value = "/works.bib", method = RequestMethod.GET, produces = "text/plain; charset=utf-8")
     public @ResponseBody String fetchBibtex() {
         return bibtexManager.generateBibtexReferenceList(getEffectiveUserOrcid());
     }
-    
+
     /**
-     * Search DB for id types to suggest to user
-     * if list empty, suggest the top ten.
+     * Search DB for id types to suggest to user if list empty, suggest the top
+     * ten.
      */
     @RequestMapping(value = "/idTypes.json", method = RequestMethod.GET)
-    public @ResponseBody
-    List<Map<String, String>> searchExternalIDTypes(@RequestParam("query") String query) {
+    public @ResponseBody List<Map<String, String>> searchExternalIDTypes(@RequestParam("query") String query) {
         List<Map<String, String>> datums = new ArrayList<>();
-        
-        //fetch results
-        List<IdentifierType> types;             
-        if (query == null || query.trim().isEmpty()){
+
+        // fetch results
+        List<IdentifierType> types;
+        if (query == null || query.trim().isEmpty()) {
             types = identifierTypeManager.fetchDefaultIdentifierTypes(getLocale());
         } else {
             types = identifierTypeManager.queryByPrefix(query, getLocale());
         }
-                
-        //format for output
-        for (IdentifierType t : types){
-            if (IdentifierType.PRIMARY_USE_WORK.equals(t.getPrimaryUse())){
-                Map<String, String> datum1 = new HashMap<String,String>();
+
+        // format for output
+        for (IdentifierType t : types) {
+            if (IdentifierType.PRIMARY_USE_WORK.equals(t.getPrimaryUse())) {
+                Map<String, String> datum1 = new HashMap<String, String>();
                 datum1.put("name", t.getName());
                 datum1.put("description", t.getDescription());
                 datum1.put("resolutionPrefix", t.getResolutionPrefix());
-                datums.add(datum1);                                
+                datums.add(datum1);
             }
         }
-        
+
         return datums;
     }
-    
-    /** Attempts to resolve an identifier to a landing page.
+
+    /**
+     * Attempts to resolve an identifier to a landing page.
      * 
      * Do it real time (on exit)
      * 
      * @param type
      * @param value
-     * @return "resolved" if it can be resolved, "resolvableType" if we attempted to resolve it.
+     * @return "resolved" if it can be resolved, "resolvableType" if we
+     *         attempted to resolve it.
      */
-    //TODO: move to PIDController.
+    // TODO: move to PIDController.
     @RequestMapping(value = "/id/{type}", method = RequestMethod.GET)
-    public @ResponseBody PIDResolutionResult checkIdResolution(@PathVariable("type") String type, @RequestParam("value") String value){        
+    public @ResponseBody PIDResolutionResult checkIdResolution(@PathVariable("type") String type, @RequestParam("value") String value) {
         return resolverService.resolve(type, value);
     }
 
     @RequestMapping(value = "/resolve/{type}", method = RequestMethod.GET)
-    public @ResponseBody WorkForm fetchWorkData(@PathVariable("type") String type, @RequestParam("value") String value){        
+    public @ResponseBody WorkForm fetchWorkData(@PathVariable("type") String type, @RequestParam("value") String value) {
         Work w = resolverService.resolveMetadata(type, value);
+        if (w == null) {
+            return null;
+        }
         WorkForm workForm = WorkForm.valueOf(w);
+        initializeFields (workForm);
         validateWork(workForm);
         return workForm;
     }

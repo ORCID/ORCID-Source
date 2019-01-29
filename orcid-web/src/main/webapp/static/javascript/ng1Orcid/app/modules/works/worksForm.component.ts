@@ -51,6 +51,8 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     externalIDTypeCache: any;
     types: any;
     togglzDialogPrivacyOption: boolean;
+    sortedCountryNames: any;
+    countryNamesToCountryCodes: any;
 
     constructor( 
         private cdr: ChangeDetectorRef,
@@ -72,7 +74,27 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.externalIDNamesToDescriptions = [];//caches name->description lookup so we can display the description not the name after selection
         this.externalIDTypeCache = [];//cache responses
         this.types = null;
+        this.initCountries();
     }
+    
+    initCountries(): void {
+        this.commonService.getCountryNamesMappedToCountryCodes().pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.countryNamesToCountryCodes = data;
+                this.sortedCountryNames = [];
+                for (var key in this.countryNamesToCountryCodes) {
+                    this.sortedCountryNames.push(key);
+                }
+                this.sortedCountryNames.sort();
+            },
+            error => {
+                console.log('error fetching country names to country codes map', error);
+            } 
+        );
+    };
 
     search = (text$: Observable<string>) =>
     text$.pipe(
@@ -123,16 +145,14 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     applyLabelWorkType(): void {
-        console.log("applyLabelWorkType function");
         var obj = null;
         var that = this;
         setTimeout(
             function() {
                 obj = that.worksService.getLabelMapping(that.editWork.workCategory.value, that.editWork.workType.value);
-                console.log("found " + JSON.stringify(obj));
                 that.contentCopy = obj;
             }, 
-            100
+            500
         );
 
     };
@@ -444,20 +464,10 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.viewSubscription = this.modalService.notifyObservable$.subscribe(
             (res) => {
                 this.bibtexWork = res.bibtexWork;
-                if(res.moduleId == "modalWorksForm'") {
-                    if(res.action == "open" && res.edit == false) {
-                        this.worksService.getBlankWork()
-                        .pipe(    
-                            takeUntil(this.ngUnsubscribe)
-                        )
-                        .subscribe(
-                            data => {
-                                this.editWork = data
-                            },
-                            error => {
-                                console.log('Error getting blankwork', error);
-                            } 
-                        );
+                if (res.moduleId == "modalWorksForm") {
+                    if (res.externalWork) {
+                        this.editWork = res.externalWork;
+                        this.loadWorkTypes();
                     }
                 }
             }

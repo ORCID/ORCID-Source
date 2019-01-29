@@ -13,26 +13,23 @@
 		    	<@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>		    	
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-    			<@emailMacros.msg "email.deactivate.gdpr_you_have_asked.1" /><a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a>
+    			<@emailMacros.msg "email.deactivate.gdpr_you_have_asked.1" /><a href="${baseUri}/${orcid}?lang=${locale}" target="_blank">${baseUri}/${orcid}</a>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-    			<@emailMacros.msg "email.deactivate.you_have_requested.2" /><a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}">${baseUri}${deactivateUrlEndpointUrl}</a>
+    			<@emailMacros.msg "email.deactivate.you_have_requested.2" /><a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}" target="_blank">${baseUri}${deactivateUrlEndpointUrl}</a>
     		</p>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 	    		<@emailMacros.msg "email.deactivate.gdpr_if_you_do_not" />
 		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		    		<@emailMacros.msg "email.deactivate.gdpr_please_note" />
+    		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+		        <@emailMacros.msg "email.deactivate.please_note.1" /> <a href="https://en.wikipedia.org/wiki/Cryptographic_hash_function" target="_blank"><@emailMacros.msg "email.deactivate.please_note.2" /></a> <@emailMacros.msg "email.deactivate.please_note.3" />
 		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		    		<@emailMacros.msg "email.deactivate.gdpr_once_you_have" />
+	        <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+		        <@emailMacros.msg "email.deactivate.more_info" /><br/><a href="https://support.orcid.org/hc/articles/360006973813" target="_blank">https://support.orcid.org/hc/articles/360006973813</a>
+  			</p>
+	        <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+                <@emailMacros.msg "email.deactivate.if_you_did" /> <a href="https://orcid.org/help/contact-us" target="_blank">https://orcid.org/help/contact-us</a> <@emailMacros.msg "email.deactivate.gdpr_or_by_replying" />
 		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		    		<@emailMacros.msg "email.deactivate.gdpr_if_you_would" /> <a target="orcid.contact" href="${baseUri}/help/contact-us"><@emailMacros.msg "email.deactivate.gdpr_orcid_support" /></a> <@emailMacros.msg "email.deactivate.gdpr_to_request_removal" /> <a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a> <@emailMacros.msg "email.deactivate.gdpr_at_any_point" />
-		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-	  			<@emailMacros.msg "email.deactivate.if_you_did" /> <a target="orcid.blank" href="${baseUri}/help/contact-us">${baseUri}/help/contact-us</a> <@emailMacros.msg "email.deactivate.gdpr_or_by_replying" />
-	    	</p>			    	
-		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
+	  		<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
 <@emailMacros.msg "email.common.warm_regards" />
 <a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
 			</p>
