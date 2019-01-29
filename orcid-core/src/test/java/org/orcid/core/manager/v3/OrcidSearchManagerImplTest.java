@@ -1,4 +1,4 @@
-package org.orcid.core.manager;
+package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,7 +25,9 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.manager.impl.OrcidSearchManagerImpl;
+import org.orcid.core.manager.OrcidProfileCacheManager;
+import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -53,7 +55,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.jaxb.model.v3.rc2.search.Search;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.test.TargetProxyHelper;
@@ -76,7 +78,7 @@ import org.springframework.test.annotation.Rollback;
  */
 public class OrcidSearchManagerImplTest extends BaseTest {
 
-    @Resource
+    @Resource(name = "orcidSearchManagerV3")
     private OrcidSearchManagerImpl orcidSearchManager;
 
     @Mock
@@ -87,10 +89,10 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     
     @Mock
     private OrcidSecurityManager mockOrcidSecurityManager;
-    
+
     @Mock
     private ProfileDao mockProfileDao;
-
+    
     @Resource
     private SolrDao solrDao;
 
@@ -312,7 +314,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertNotNull(orcidBio2.getContactDetails());
         assertEquals("don@semantico.com", orcidBio2.getContactDetails().retrievePrimaryEmail().getValue());
     }
-       
+
     private OrcidSolrResult getOrcidSolrResult(String orcid, Float relevancy) {
         OrcidSolrResult solrResult = new OrcidSolrResult();
         solrResult.setOrcid(orcid);
@@ -404,7 +406,6 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         work2ExternalIdentifiers.getWorkExternalIdentifier().add(work2ExternalIdentifier1);
         work2ExternalIdentifiers.getWorkExternalIdentifier().add(work2ExternalIdentifier2);
         orcidWork2.setWorkExternalIdentifiers(work2ExternalIdentifiers);
-
     }
     
     @Test
@@ -469,4 +470,5 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         orcidSolrResults.setNumFound(2);
         return orcidSolrResults;
     }
+
 }

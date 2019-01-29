@@ -1,11 +1,7 @@
 package org.orcid.core.adapter.v3.impl;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.orcid.core.adapter.v3.JpaJaxbNameAdapter;
 import org.orcid.jaxb.model.v3.rc2.record.Name;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 import ma.glasnost.orika.MapperFacade;
@@ -44,4 +40,5 @@ public class JpaJaxbNameAdapterImpl implements JpaJaxbNameAdapter {
         mapperFacade.map(name, existing);
         return existing;
     }
+
 }
