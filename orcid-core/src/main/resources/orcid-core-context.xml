@@ -537,13 +537,9 @@
             value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
     </bean>
     
-    <bean id="orcidSearchManagerV3" class="org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl" >
-        <property name="orcidProfileCacheManager" ref="orcidProfileCacheManager" />
-    </bean>
+    <bean id="orcidSearchManagerReadOnlyV3" class="org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl" />
     
-    <bean id="orcidSearchManagerReadOnlyV3" class="org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl" >
-        <property name="orcidProfileCacheManager" ref="orcidProfileCacheManagerReadOnly" />
-    </bean>
+    <bean id="orcidSearchManagerV3" class="org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl" />
     
     <bean id="orcidSecurityManagerV3" class="org.orcid.core.manager.v3.impl.OrcidSecurityManagerImpl" />
 
@@ -741,17 +737,8 @@
 	<bean id="orcidProfileManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileManagerReadOnlyImpl">
         <property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
         <property name="profileDao" ref="profileDaoReadOnly" />
-        <property name="transactionTemplate" ref="transactionTemplateReadOnly" />
-        <property name="orcidProfileCacheManager" ref="orcidProfileCacheManagerReadOnly" />
-    </bean>
-	
-	<bean id="orcidProfileCacheManager" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl">
-	    <property name="orcidProfileManager" ref="orcidProfileManager" />
-	</bean>
-	
-	<bean id="orcidProfileCacheManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileCacheManagerImpl">
-	    <property name="orcidProfileManager" ref="orcidProfileManagerReadOnly" />
-	</bean>		
+        <property name="transactionTemplate" ref="transactionTemplateReadOnly" />        
+    </bean>	
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>
 	
@@ -772,13 +759,9 @@
 
 	<bean id="subjectManager" class="org.orcid.core.manager.impl.SubjectManagerImpl" />
 
-	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" >
-	    <property name="orcidProfileCacheManager" ref="orcidProfileCacheManager" />
-	</bean>
-	
-	<bean id="orcidSearchManagerReadOnly" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" >
-        <property name="orcidProfileCacheManager" ref="orcidProfileCacheManagerReadOnly" />
-    </bean>
+	<bean id="orcidSearchManagerReadOnly" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />
+
+	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />
 
 	<bean id="orcidIndexManager" class="org.orcid.core.manager.impl.OrcidIndexManagerImpl" />
 

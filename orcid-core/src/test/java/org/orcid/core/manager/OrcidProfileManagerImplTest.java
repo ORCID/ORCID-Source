@@ -9,8 +9,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +33,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.adapter.JpaJaxbEntityAdapter;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
@@ -52,7 +51,6 @@ import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdCommonName;
 import org.orcid.jaxb.model.message.ExternalIdReference;
@@ -289,7 +287,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", emailFrequencyManager);
         profileDao.remove(DELEGATE_ORCID);
         profileDao.remove(APPLICATION_ORCID);
-        orcidProfileManager.clearOrcidProfileCache();
     }
 
     @Test
@@ -725,62 +722,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         assertNull(retrievedProfile.getOrcidBio().getDelegation());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testUpdatePasswordInformationLeavesSecurityQuestionsUnchanged() {
-        OrcidProfile profile1 = createBasicProfile();
-        assertEquals("password", profile1.getPassword());
-        assertEquals("random answer", profile1.getSecurityQuestionAnswer());
-        orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-
-        String hashedPasswordValue = retrievedProfile.getPassword();
-        assertTrue("Should have hashed password", 108 == hashedPasswordValue.length() && !"password".equals(hashedPasswordValue));
-        assertEquals("Should have security question", 3, retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
-        assertEquals("Should have decrypted security answer", "random answer", retrievedProfile.getSecurityQuestionAnswer());
-
-        retrievedProfile.setPassword("A new password");
-
-        orcidProfileManager.updatePasswordInformation(retrievedProfile);
-
-        OrcidProfile updatedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-
-        String updatedPassword = updatedProfile.getPassword();
-        assertEquals("Password should be hashed", 108, updatedPassword.length());
-        assertFalse("Password should have changed but was still: " + updatedPassword, hashedPasswordValue.equals(updatedPassword));
-        assertEquals("Should have security question", 3, updatedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
-        assertEquals("Should have decrypted security answer", "random answer", updatedProfile.getSecurityQuestionAnswer());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testSecurityQuestionsUpdateLeavePasswordInformationUnchanged() {
-        OrcidProfile profile1 = createBasicProfile();
-        assertEquals("password", profile1.getPassword());
-        assertEquals("random answer", profile1.getSecurityQuestionAnswer());
-        orcidProfileManager.createOrcidProfile(profile1, false, false);
-
-        OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-
-        String hashedPasswordValue = retrievedProfile.getPassword();
-        assertTrue("Should have hashed password", 108 == hashedPasswordValue.length() && !"password".equals(hashedPasswordValue));
-        assertEquals("Should have security question", 3, retrievedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
-        assertTrue("Should have decrypted security answer", "random answer".equals(retrievedProfile.getSecurityQuestionAnswer()));
-
-        retrievedProfile.setSecurityQuestionAnswer("A new random answer");
-
-        orcidProfileManager.updateSecurityQuestionInformation(retrievedProfile);
-
-        OrcidProfile updatedProfile = orcidProfileManager.retrieveOrcidProfile(profile1.getOrcidIdentifier().getPath());
-
-        assertTrue("Password should not have changed", hashedPasswordValue.equals(updatedProfile.getPassword()));
-        assertEquals("Should have security question", 3, updatedProfile.getOrcidInternal().getSecurityDetails().getSecurityQuestionId().getValue());
-        assertEquals("A new random answer", updatedProfile.getSecurityQuestionAnswer());
     }
 
     @Test
