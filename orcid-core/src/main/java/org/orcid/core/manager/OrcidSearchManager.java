@@ -20,9 +20,9 @@ public interface OrcidSearchManager {
 
     static final int DEFAULT_SEARCH_ROWS = 100;
 
-    static final int MAX_SEARCH_ROWS = 200;
-
     static final int MAX_SEARCH_START = 10000;
+    
+    static final int MAX_SEARCH_ROWS = 200;
 
     Search findOrcidIds(Map<String, List<String>> queryParameters);
 }

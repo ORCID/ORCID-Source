@@ -20,23 +20,15 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidSearchManagerImpl.class);
     
-    @Resource
-    private SolrDao solrDao;
-    
     @Resource(name = "recordManagerReadOnlyV3")
     private RecordManagerReadOnly recordManagerReadOnly;
     
     @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
-    @Override
-    public Search findOrcidsByQuery(String query, Integer start, Integer rows) {
-        Search search = new Search();
-        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(query, start, rows);
-        setSearchResults(orcidSolrResults, search);
-        return search;
-    }
-
+    @Resource
+    private SolrDao solrDao;
+    
     @Override
     public Search findOrcidIds(Map<String, List<String>> queryParameters) {
         Search search = new Search();
@@ -45,6 +37,14 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         return search;
     }
     
+    @Override
+    public Search findOrcidsByQuery(String query, Integer start, Integer rows) {
+        Search search = new Search();
+        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(query, start, rows);
+        setSearchResults(orcidSolrResults, search);
+        return search;
+    }
+
     private void setSearchResults(OrcidSolrResults solrResults, Search searchResults) {
         if(solrResults != null && solrResults.getResults() != null) {
             searchResults.setNumFound(Long.valueOf(solrResults.getResults().size()));

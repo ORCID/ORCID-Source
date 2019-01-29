@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
+import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.dao.SolrDao;
@@ -21,13 +22,13 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     private String cachingSource;
 
     @Resource
-    private SolrDao solrDao;
-    
-    @Resource
     private RecordManagerReadOnly recordManagerReadOnly;
     
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+
+    @Resource
+    private SolrDao solrDao;
     
     @Override
     public Search findOrcidIds(Map<String, List<String>> queryParameters) {
@@ -38,7 +39,8 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                 try {
                     orcidSecurityManager.checkProfile(r.getOrcid());
                     Result result = new Result();
-                    result.setOrcidIdentifier(recordManagerReadOnly.getOrcidIdentifier(r.getOrcid()));
+                    OrcidIdentifier id = recordManagerReadOnly.getOrcidIdentifier(r.getOrcid());
+                    result.setOrcidIdentifier(id);
                     return result;
                 } catch(Exception e) {
                     return null;
@@ -51,5 +53,4 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         }                                
         return search;
     }
-
 }
