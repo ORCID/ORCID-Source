@@ -100,9 +100,10 @@ public enum Features implements Feature {
     WORK_GROUP_LOGGING,
     
     @Label("Grouping suggestions")
-    GROUPING_SUGGESTIONS;
+    GROUPING_SUGGESTIONS,
     
-
+    @Label("Enable promotion of chosen orgs in search")
+    ENABLE_PROMOTION_OF_CHOSEN_ORGS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
