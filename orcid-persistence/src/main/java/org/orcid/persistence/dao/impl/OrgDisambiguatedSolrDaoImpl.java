@@ -65,14 +65,17 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
     }
 
     @Override
-    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult) {
-        return getOrgs(searchTerm, firstResult, maxResult, false);
+    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean promoteChosenOrgs) {
+        return getOrgs(searchTerm, firstResult, maxResult, false, promoteChosenOrgs);
     }
 
     @Override
-    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
+    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly, boolean promoteChosenOrgs) {
         StringBuilder queryString = new StringBuilder("{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 ");
-        queryString.append("sort='").append(SolrConstants.ORG_CHOSEN_BY_MEMBER).append(" desc, ");
+        queryString.append("sort='");
+        if (promoteChosenOrgs) {
+            queryString.append(SolrConstants.ORG_CHOSEN_BY_MEMBER).append(" desc, ");
+        }
         queryString.append("score desc, ");
         queryString.append("org-disambiguated-popularity desc'}");
         queryString.append(searchTerm).append("*");

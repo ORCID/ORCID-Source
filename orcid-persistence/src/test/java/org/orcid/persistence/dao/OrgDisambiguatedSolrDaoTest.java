@@ -60,11 +60,7 @@ public class OrgDisambiguatedSolrDaoTest {
         ArgumentCaptor<SolrQuery> captor = ArgumentCaptor.forClass(SolrQuery.class);
         Mockito.when(mockSolrServerReadOnly.query(captor.capture())).thenReturn(Mockito.mock(QueryResponse.class));
 
-        orgDisambiguatedSolrDao.getOrgs("test", 0, 10);
-        
-        SolrQuery query = captor.getValue();
-        String queryString = query.getQuery();
-        assertTrue(queryString.contains(SolrConstants.ORG_CHOSEN_BY_MEMBER + " desc"));
+        orgDisambiguatedSolrDao.getOrgs("test", 0, 10, false);
         
         ReflectionTestUtils.setField(orgDisambiguatedSolrDao, "solrServerReadOnly", defaultSolrServer);
     }
