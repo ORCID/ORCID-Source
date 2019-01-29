@@ -401,6 +401,9 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
 
     }
    
+    getMyData(): void {
+        this.accountService.downloadBlogFile(getBaseUri() + '/get-my-data', 'application/octet-stream');
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

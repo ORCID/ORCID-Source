@@ -26,6 +26,7 @@ import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Day;
 import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
@@ -96,13 +97,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
             return null;
 
         try {
-            String endpoint = metadataEndpoint.replace("{id}", value);
-
-            if (apiTypeName.equals("pmid")) {
-                endpoint = endpoint.replace("{type}", "EXT_ID");
-            } else {
-                endpoint = endpoint.replace("{type}", "PMCID");
-            }
+            String endpoint = getPubMedEndpoint(apiTypeName, value);
             InputStream inputStream = cache.get(endpoint, MediaType.APPLICATION_JSON);
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
 
@@ -125,9 +120,21 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
         }
         return null;
     }
+    
+    // returns PID without prefix or URL etc
+    private String getPubMedEndpoint(String apiTypeName, String userInput) {
+        String normalised = normalizationService.normalise(apiTypeName, userInput);
+        String endpoint = metadataEndpoint.replace("{id}", normalised);
+        if (apiTypeName.equals("pmid")) {
+            return endpoint.replace("{type}", "EXT_ID");
+        }
+        return endpoint.replace("{type}", "PMCID");
+    }
 
     private Work getWork(JSONObject json) throws JSONException, ParseException {
         Work work = new Work();
+        work.setWorkType(WorkType.JOURNAL_ARTICLE); // default for pubMed
+        
         Locale locale = localeManager.getLocale();
         JSONObject resultsList = json.getJSONObject("resultList");
 

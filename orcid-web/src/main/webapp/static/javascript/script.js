@@ -354,13 +354,16 @@ function myTest() {
     return 'a success';
 }
 
-function checkOrcidLoggedIn() {	
+function checkOrcidLoggedIn() {	    
     if (OrcidCookie.checkIfCookiesEnabled()) {    
-        if ($("meta[name='_csrf']").attr("content") != ''){
+        if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {
             $.ajax({
                 url : orcidVar.baseUri + '/userStatus.json?callback=?',
                 type : 'POST',
                 dataType : 'json',
+                headers: {
+                    'x-xsrf-token': OrcidCookie.getCookie('XSRF-TOKEN')
+                },
                 success : function(data) {
                     if (data.loggedIn == false
                             && (basePath.startsWith(baseUrl
@@ -382,8 +385,7 @@ function checkOrcidLoggedIn() {
                 // people are signing in. Ingore if singing in.
                 if (!signinLocked)
                      window.location.reload(true);
-            });
-            
+            });            
         }
     }
 }
@@ -521,7 +523,7 @@ $(function() {
         }
 
     }
-
+    
     $(document)
             .on('submit', 'form#loginForm',
 
@@ -1236,7 +1238,6 @@ function populateWorkAjaxForm(bibJson, work) {
                   throw "Runaway key";
               };
                               // а-яА-Я is Cyrillic
-              //console.log(this.input[this.pos]);
               if (this.notKey.indexOf(this.input[this.pos]) >= 0) {
                   if (optional && this.input[this.pos] != ',') {
                       this.pos = start;

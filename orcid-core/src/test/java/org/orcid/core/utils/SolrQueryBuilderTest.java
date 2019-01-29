@@ -47,21 +47,4 @@ public class SolrQueryBuilderTest {
         solrQueryBuilder.appendNOTCondition(SolrConstants.ORCID, orcidsToExclude);
         assertEquals("given-names:Will -orcid:(1877\\-5816\\-0747\\-5659 6181\\-9093\\-3346\\-6284)", solrQueryBuilder.retrieveQuery());
     }
-
-    @Test
-    public void testEDisMaxNameQuery() {
-        SolrQueryBuilder solrQueryBuilder = new SolrQueryBuilder();
-        List<SolrFieldWeight> fields = new ArrayList<SolrFieldWeight>();
-        fields.add(new SolrFieldWeight(SolrConstants.FAMILY_NAME, 1.0f));
-        fields.add(new SolrFieldWeight(SolrConstants.GIVEN_NAMES, 2.0f));
-        solrQueryBuilder.appendEDisMaxQuery(fields);
-        solrQueryBuilder.appendValue("Will");
-        List<String> orcidsToExclude = new ArrayList<String>();
-        orcidsToExclude.add("1877-5816-0747-5659");
-        orcidsToExclude.add("6181-9093-3346-6284");
-        solrQueryBuilder.appendNOTCondition(SolrConstants.ORCID, orcidsToExclude);
-
-        assertEquals("{!edismax qf='family-name^1.0 given-names^2.0'}Will -orcid:(1877\\-5816\\-0747\\-5659 6181\\-9093\\-3346\\-6284)", solrQueryBuilder.retrieveQuery());
-    }
-
 }

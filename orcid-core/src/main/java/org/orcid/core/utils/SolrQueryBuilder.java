@@ -2,7 +2,6 @@ package org.orcid.core.utils;
 
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,9 +23,7 @@ public class SolrQueryBuilder {
     private static final String NOT_CONDITION = " -";
     private static final String OPEN_BRACKET = "(";
     private static final String CLOSE_BRACKET = ")";
-    private static final String OPEN_EDISMAX = "{!edismax qf='";
-    private static final String CLOSE_EDISMAX = "'}";
-
+    
     // Need to escape + - && || ! ( ) { } [ ] ^ " ~ : \ and any white space
     private static final Pattern SPECIAL_CHARACTER_PATTERN = Pattern.compile("([+\\-&|!(){}\\[\\]^\"~:\\\\])");
 
@@ -92,18 +89,7 @@ public class SolrQueryBuilder {
 
     public void appendValue(String value) {
         queryString.append(escapeValue(value));
-    }
-
-    public void appendEDisMaxQuery(List<SolrFieldWeight> fields) {
-        queryString.append(OPEN_EDISMAX);
-        StringBuilder fieldQuery = new StringBuilder();
-        for (SolrFieldWeight field : fields) {
-            fieldQuery.append(MessageFormat.format("{0}^{1,number,0.0} ", new Object[] { field.getField(), field.getWeight() }));
-        }
-        // Snip off the extra space character and append
-        queryString.append(fieldQuery.toString().trim());
-        queryString.append(CLOSE_EDISMAX);
-    }
+    }    
 
     public void openNestedANDOperation() {
         queryString.append(AND_CONDITION).append(OPEN_BRACKET);

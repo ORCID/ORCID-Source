@@ -31,8 +31,7 @@ export class SearchService {
         this.publicApiHeaders = new HttpHeaders(
             {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector("meta[name='_csrf']").getAttribute("content")
+                'Accept': 'application/json'
             }
         );
 
