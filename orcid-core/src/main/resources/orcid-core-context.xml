@@ -731,7 +731,6 @@
 		<property name="claimReminderAfterDays" value="${org.orcid.core.claimReminderAfterDays:8}" />
 		<property name="profileDao" ref="profileDao" />
         <property name="transactionTemplate" ref="transactionTemplate" />
-		<property name="orcidProfileCacheManager" ref="orcidProfileCacheManager" />
 	</bean>
 	
 	<bean id="orcidProfileManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileManagerReadOnlyImpl">
