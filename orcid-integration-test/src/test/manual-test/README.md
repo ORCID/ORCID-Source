@@ -35,8 +35,7 @@
 	Password: [DD][month][YYYY]
 18. Visit https://qa.orcid.org/signout
 
-## Sign In
-## Testing Institutional Login
+## Institutional Login
 19. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
 20. Visit https://qa.orcid.org/signin and use the Institutional account option to sign in using "United ID" as the institution and the UnitedID account you just created. Complete steps to link it to the Individual account the account created in steps 1 and 2.
 21. On the notification in the orange box at the top of the page to link the account to State University, click connect, you'll be taken to the OAuth page. Click 'Deny'  and return to the record.
@@ -65,7 +64,7 @@
 41. Add a biography: "Bio!"
 42. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
 43. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list)
-44. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value “0000” click through warning about the identifier validation
+44. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value '1234' click through warning about the identifier validation
 45. Set the work you just added to private
 46. Visit public page (https://qa.orcid.org/[orcid id])
     * Verify information added in the steps above is visible, but not the private work or email addresses
@@ -104,24 +103,7 @@
 
 ## Test Self Service
 
-57. Set up a new Self Service Org account using [this document](https://docs.google.com/document/d/1FlpmgtubCEnD21EpJLWu4AXh4DH0moC9pe6R_5clA78/edit) or alternatively use 0000-0003-0641-4661.
-
-58. Sign in to 0000-0003-0641-4661 and visit https://qa.orcid.org/self-service
-
- ** Note Salesforce to Registry changes may take an hour to appear due to caching.**
-
-59. Update org info- make sure it feeds into Salesforce.
-
-60. Add new consortium org contact- make sure info feeds to SF.
-
-61. Add new member org- make sure request feeds to SF.
-
-62. Set new org as a member in SF- see that the status updates.
-
-63. Delete existing org make sure it does delete.
-
-
-
+Follow instructions at https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/manual-test/Self-service-manual-test.md
 
 ## Run the automated Independent Tests
 
@@ -163,7 +145,7 @@
 
 72. Use the switch user option to change to the record created during the OAuth process
 
-73. Sign in to Browsersrtack.com and using IE 11 visit the follow pages and make sure everything loads
+73. Sign in to Browserstack.com and using IE 11 visit the follow pages and make sure everything loads
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
@@ -175,7 +157,5 @@
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
-
-75. Run the Self-service tests here https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/manual-test/Self-service-manual-test.md
 
 * Finally help out by improving these instructions!      
