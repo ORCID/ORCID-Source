@@ -1,6 +1,6 @@
 # ORCID APIs
 
-ORCID offers two APIs. The Member API which allows writing and reading limited access information and is available to organizations who are members of ORCID, and the Public API which allows reading public access information and is available for anyone to use. Both APIs use the same workflow for requesting access and making calls. 
+ORCID offers two APIs. The Member API which allows writing and reading limited access information and is available to organizations who are members of ORCID, and the Public API which allows reading public access information and is available for anyone to use. Both APIs use the same workflow for requesting access and making calls.
 
 In addition to the production environment at https://orcid.org, ORCID offers a developers sandbox at https://sandbox.orcid.org/ for testing, you do not need to be an ORCID member to test on the Member API on the sandbox.
 
@@ -48,7 +48,7 @@ Most API integrations use OAuth to get access to specific records they want to r
 Generating an access token requires interacting with the Registry interface as a user would when granting access. You will need to set up a user account to test granting access.
 
 **1. Create an Authorization URL to request access**
-	
+
 | Parameter             |Contents               |
 |--------------------|--------------------------|
 | host 				| https://sandbox.orcid.org/oauth/authorize|
@@ -57,18 +57,23 @@ Generating an access token requires interacting with the Registry interface as a
 | scope				| [*Your selected scopes*](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1#scopes)|
 | redirect\_uri		| *Your landing page*|
 
-Example Authorization URL
+Example Authorization url
 
-```https://sandbox.orcid.org/oauth/authorize?client_id=APP-674MCQQR985VZZQ2&response_type=code&scope=/activities/update%20/read-limited&redirect_uri=https://developers.google.com/oauthplayground```
+```
+https://sandbox.orcid.org/oauth/authorize?client_id=APP-674MCQQR985VZZQ2&response_type=code&scope=/activities/update%20/read-limited&redirect_uri=https://developers.google.com/oauthplayground
+```
 
-[More information](http://members.orcid.org/api/resources/customize)
+For more information on customising sign in screen go to [Customizing the Oauth Sign-in screen ](http://members.orcid.org/api/resources/customize)
 
 **2. Visit the URL and grant access**
 
 You will need to log into your ORCID record using the Registry Interface. After granting access you will be taken to the redirect URI with a six digit authorization code appended to the url.
 
 Example redirect_uri with authorization code
-```https://developers.google.com/oauthplayground/?code=WkiYjn```
+
+```
+https://developers.google.com/oauthplayground/?code=WkiYjn
+```
 
 **3. Exchange the authorization code for an access token**
 
@@ -150,4 +155,3 @@ Request a second - Number of request that can be made a second.
 * [Documentation on the latest XSD version](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/README.md)
 
 * [Members.orcid.org](https://members.orcid.org/api/) for detailed tutorials and workflows
-
