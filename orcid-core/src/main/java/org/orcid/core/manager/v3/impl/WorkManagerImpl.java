@@ -167,7 +167,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
         } else {
             // validate external ID vocab
-            externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
+            externalIDValidator.validateWork(work.getExternalIdentifiers());
         }
 
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
@@ -330,7 +330,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
         }else{
             //validate external ID vocab
-            externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());            
+            externalIDValidator.validateWork(work.getExternalIdentifiers());            
         }
                         
         orcidSecurityManager.checkSourceAndThrow(workEntity);

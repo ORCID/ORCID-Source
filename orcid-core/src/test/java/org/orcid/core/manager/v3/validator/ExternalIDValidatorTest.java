@@ -67,7 +67,7 @@ public class ExternalIDValidatorTest{
         //IDS one invalid
         id1.setType("invalid");
         try{
-            validator.validateWorkOrPeerReview(ids);
+            validator.validatePeerReview(ids);
             fail("no exception thrown for invalid type");
         }catch(Exception e){
             if (!(e instanceof ActivityIdentifierValidationException))
@@ -76,7 +76,7 @@ public class ExternalIDValidatorTest{
 
         //IDS one valid (lowercase)
         id1.setType("doi");
-        validator.validateWorkOrPeerReview(ids);
+        validator.validatePeerReview(ids);
         
         //IDS two valid
         ExternalID id2 = new ExternalID();
@@ -85,17 +85,79 @@ public class ExternalIDValidatorTest{
         id2.setValue("value2");
         id2.setUrl(new Url("http://value1.com"));        
         ids.getExternalIdentifier().add(id2);
-        validator.validateWorkOrPeerReview(ids);
+        validator.validatePeerReview(ids);
         
         //IDS one invalid, one valid
         id2.setType("not-a-type");
         try{
-            validator.validateWorkOrPeerReview(ids);
+            validator.validatePeerReview(ids);
             fail("no exception thrown for invalid type");
         }catch(Exception e){
             if (!(e instanceof ActivityIdentifierValidationException))
                 throw e;
-        }                
+        }    
+    }
+    
+    @Test
+    public void testValidateWork() {
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("doi");
+        id1.setValue("value1");
+        id1.setUrl(new Url("http://value1.com"));
+        
+        ExternalIDs externalIds = new ExternalIDs();
+        externalIds.getExternalIdentifier().add(id1);
+        validator.validateWork(externalIds);
+
+        try {
+            id1.setType("invalid");
+            validator.validateWork(externalIds);
+            fail("no exception thrown for invalid type");
+        } catch (Exception e) {
+            if (!(e instanceof ActivityIdentifierValidationException))
+                throw e;
+        }
+
+        try {
+            id1.setType(null);
+            validator.validateWork(externalIds);
+            fail("no exception thrown for invalid type");
+        } catch (Exception e) {
+            if (!(e instanceof ActivityIdentifierValidationException))
+                throw e;
+        }
+
+        id1.setType("doi");
+        
+        ExternalID id2 = new ExternalID();
+        id2.setRelationship(Relationship.SELF);
+        id2.setType("source-work-id");
+        id2.setValue("value2");
+        id2.setUrl(new Url("http://value1.com"));
+        externalIds.getExternalIdentifier().add(id2);
+        validator.validateWork(externalIds);
+
+        // IDS one invalid, one valid
+        id2.setType("not-a-type");
+        try {
+            validator.validateWork(externalIds);
+            fail("no exception thrown for invalid type");
+        } catch (Exception e) {
+            if (!(e instanceof ActivityIdentifierValidationException))
+                throw e;
+        }
+
+        // missing 'self' external id
+        id1.setRelationship(Relationship.PART_OF);
+        id2.setRelationship(Relationship.PART_OF);
+        try {
+            validator.validateWork(externalIds);
+            fail("no exception thrown for invalid type");
+        } catch (Exception e) {
+            if (!(e instanceof ActivityIdentifierValidationException))
+                throw e;
+        }
     }
 
     @Test(expected = ActivityIdentifierValidationException.class)
@@ -153,7 +215,7 @@ public class ExternalIDValidatorTest{
         extIds.getExternalIdentifier().add(id2);
         extIds.getExternalIdentifier().add(id3);
         
-        validator.validateWorkOrPeerReview(extIds);
+        validator.validatePeerReview(extIds);
         fail("no exception thrown for invalid type");
     }
     
@@ -183,7 +245,7 @@ public class ExternalIDValidatorTest{
         extIds.getExternalIdentifier().add(id2);
         extIds.getExternalIdentifier().add(id3);
         
-        validator.validateWorkOrPeerReview(extIds);
+        validator.validatePeerReview(extIds);
     }
     
     @Test
@@ -213,7 +275,7 @@ public class ExternalIDValidatorTest{
         extIds.getExternalIdentifier().add(id2);
         extIds.getExternalIdentifier().add(id3);
         
-        validator.validateWorkOrPeerReview(extIds);
+        validator.validatePeerReview(extIds);
     }
     
     @Test
@@ -242,7 +304,7 @@ public class ExternalIDValidatorTest{
         extIds.getExternalIdentifier().add(id2);
         extIds.getExternalIdentifier().add(id3);
         
-        validator.validateWorkOrPeerReview(extIds);
+        validator.validatePeerReview(extIds);
     }
     
     @Test

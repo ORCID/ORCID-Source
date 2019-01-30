@@ -256,7 +256,7 @@ public class ActivityValidator {
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
 
-        externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
+        externalIDValidator.validateWork(work.getExternalIdentifiers());
     }
 
     public void validateFunding(Funding funding, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
@@ -395,7 +395,7 @@ public class ActivityValidator {
             throw new ActivityTypeValidationException();
         }
 
-        externalIDValidator.validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+        externalIDValidator.validatePeerReview(peerReview.getExternalIdentifiers());
 
         if (peerReview.getSubjectExternalIdentifier() != null) {
             externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
@@ -490,7 +490,7 @@ public class ActivityValidator {
         if (rr.getProposal().getExternalIdentifiers() == null || rr.getProposal().getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Proposal");
         }
-        externalIDValidator.validateWorkOrPeerReview(rr.getProposal().getExternalIdentifiers());
+        externalIDValidator.validatePeerReview(rr.getProposal().getExternalIdentifiers());
         if (isApiRequest) {
             validateDisambiguatedOrg(rr.getProposal().getHosts());
             if (rr.getProposal().getEndDate() != null && rr.getProposal().getStartDate() == null) {
@@ -502,7 +502,7 @@ public class ActivityValidator {
             if (i.getExternalIdentifiers() == null || i.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                 throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Item");
             }
-            externalIDValidator.validateWorkOrPeerReview(i.getExternalIdentifiers());
+            externalIDValidator.validatePeerReview(i.getExternalIdentifiers());
             if (isApiRequest)
                 validateDisambiguatedOrg(i.getHosts());
         }
