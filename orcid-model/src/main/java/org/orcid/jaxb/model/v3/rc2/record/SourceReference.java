@@ -7,12 +7,15 @@
 
 package org.orcid.jaxb.model.v3.rc2.record;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import java.io.Serializable;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -24,6 +27,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "sourceReference")
+@ApiModel(value = "SourceReferenceV3_0_rc2")
 public class SourceReference implements Serializable {
 
     /**

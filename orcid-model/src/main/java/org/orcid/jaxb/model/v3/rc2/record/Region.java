@@ -8,11 +8,14 @@
 package org.orcid.jaxb.model.v3.rc2.record;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  * Region within a country
@@ -29,6 +32,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "region")
+@ApiModel(value = "RegionV3_0_rc2")
 public class Region implements Serializable {
 
     private final static long serialVersionUID = 1L;

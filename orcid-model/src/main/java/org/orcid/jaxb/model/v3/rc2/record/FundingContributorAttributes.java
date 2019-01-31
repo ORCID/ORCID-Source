@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.orcid.jaxb.model.common.FundingContributorRole;
 import org.orcid.jaxb.model.common.adapters.FundingContributorRoleAdapter;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -30,6 +32,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributorRole" })
 @XmlRootElement(name = "contributorAttributes", namespace = "http://www.orcid.org/ns/funding")
+@ApiModel(value = "FundingContributorAttributesV3_0_rc2")
 public class FundingContributorAttributes implements Serializable {
 
     /**

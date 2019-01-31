@@ -9,9 +9,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "resourceItems" })
 @XmlRootElement(name = "resource-items", namespace = "http://www.orcid.org/ns/research-resource")
+@ApiModel(value = "ResearchResourceItemsV3_0_rc2")
 public class ResearchResourceItems {
 
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-item")

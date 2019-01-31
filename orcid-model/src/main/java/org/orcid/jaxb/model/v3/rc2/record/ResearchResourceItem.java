@@ -11,9 +11,12 @@ import org.orcid.jaxb.model.common.ResourceType;
 import org.orcid.jaxb.model.common.adapters.ResourceTypeAdapter;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "resourceName", "resourceType", "hosts", "externalIdentifiers", "url" })
 @XmlRootElement(name = "resource-item", namespace = "http://www.orcid.org/ns/research-resource")
+@ApiModel(value = "ResearchResourceItemV3_0_rc2")
 public class ResearchResourceItem {
 
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-name")
