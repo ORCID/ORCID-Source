@@ -256,7 +256,7 @@ public class ActivityValidator {
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
 
-        externalIDValidator.validateWork(work.getExternalIdentifiers());
+        externalIDValidator.validateWork(work.getExternalIdentifiers(), true);
     }
 
     public void validateFunding(Funding funding, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {

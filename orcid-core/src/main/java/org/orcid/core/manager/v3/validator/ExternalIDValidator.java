@@ -90,7 +90,7 @@ public class ExternalIDValidator {
         checkAndThrow(errors);
     }
     
-    public void validateWork(ExternalIDs ids) {
+    public void validateWork(ExternalIDs ids, boolean apiRequest) {
         if (ids == null) // yeuch
             return;
         List<String> errors = Lists.newArrayList();
@@ -115,7 +115,7 @@ public class ExternalIDValidator {
             }
         }
         
-        if(!hasSelfIdentifier) {
+        if(apiRequest && !hasSelfIdentifier) {
             errors.add("At least one identifier with 'self' relationship is required");
         } 
         

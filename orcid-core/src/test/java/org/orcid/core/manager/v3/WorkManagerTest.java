@@ -281,17 +281,6 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(work1.getPutCode());
         Long putCode1 = work1.getPutCode();
         
-        // Create the work again but with a PART_OF identifier
-        work1.setPutCode(null);
-        work1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.PART_OF);
-        
-        work1 = workManager.createWork(orcid, work1, true);
-        assertNotNull(work1);
-        assertNotNull(work1.getPutCode());
-        assertNotEquals(putCode1, work1.getPutCode());
-        
-        Long putCode2 = work1.getPutCode();
-        
         // Create the work again but with a VERSION_OF identifier
         work1.setPutCode(null);
         work1.getExternalIdentifiers().getExternalIdentifier().get(0).setRelationship(Relationship.VERSION_OF);
@@ -307,9 +296,8 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(work1);
         assertNotNull(work1.getPutCode());
         assertNotEquals(putCode1, work1.getPutCode());
-        assertNotEquals(putCode2, work1.getPutCode());
         
-        Long putCode3 = work1.getPutCode();
+        Long putCode2 = work1.getPutCode();
         
         // Remove the extra identifier
         work1.getExternalIdentifiers().getExternalIdentifier().remove(1);
@@ -337,11 +325,10 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(work1.getPutCode());
         assertNotEquals(putCode1, work1.getPutCode());
         assertNotEquals(putCode2, work1.getPutCode());
-        assertNotEquals(putCode3, work1.getPutCode());
         
         Long putCode4 = work1.getPutCode();
         
-        workManager.removeWorks(orcid, Arrays.asList(putCode1, putCode2, putCode3, putCode4));
+        workManager.removeWorks(orcid, Arrays.asList(putCode1, putCode2, putCode2, putCode4));
     }
     
     @Test
@@ -448,6 +435,14 @@ public class WorkManagerTest extends BaseTest {
         extId2.setUrl(new Url("http://isbn/1/" + time));
         extId2.setValue("isbn-1");
         extIds2.getExternalIdentifier().add(extId2);
+        
+        ExternalID selfId = new ExternalID();
+        selfId.setRelationship(Relationship.SELF);
+        selfId.setType("doi");
+        selfId.setUrl(new Url("http://doi.org/something" + time));
+        selfId.setValue("something");
+        extIds2.getExternalIdentifier().add(selfId);
+        
         work2.setWorkExternalIdentifiers(extIds2);
         work2.setWorkType(WorkType.BOOK);
         bulk.getBulk().add(work2);

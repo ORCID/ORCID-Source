@@ -108,11 +108,11 @@ public class ExternalIDValidatorTest{
         
         ExternalIDs externalIds = new ExternalIDs();
         externalIds.getExternalIdentifier().add(id1);
-        validator.validateWork(externalIds);
+        validator.validateWork(externalIds, false);
 
         try {
             id1.setType("invalid");
-            validator.validateWork(externalIds);
+            validator.validateWork(externalIds, false);
             fail("no exception thrown for invalid type");
         } catch (Exception e) {
             if (!(e instanceof ActivityIdentifierValidationException))
@@ -121,7 +121,7 @@ public class ExternalIDValidatorTest{
 
         try {
             id1.setType(null);
-            validator.validateWork(externalIds);
+            validator.validateWork(externalIds, false);
             fail("no exception thrown for invalid type");
         } catch (Exception e) {
             if (!(e instanceof ActivityIdentifierValidationException))
@@ -136,12 +136,12 @@ public class ExternalIDValidatorTest{
         id2.setValue("value2");
         id2.setUrl(new Url("http://value1.com"));
         externalIds.getExternalIdentifier().add(id2);
-        validator.validateWork(externalIds);
+        validator.validateWork(externalIds, false);
 
         // IDS one invalid, one valid
         id2.setType("not-a-type");
         try {
-            validator.validateWork(externalIds);
+            validator.validateWork(externalIds, false);
             fail("no exception thrown for invalid type");
         } catch (Exception e) {
             if (!(e instanceof ActivityIdentifierValidationException))
@@ -152,7 +152,7 @@ public class ExternalIDValidatorTest{
         id1.setRelationship(Relationship.PART_OF);
         id2.setRelationship(Relationship.PART_OF);
         try {
-            validator.validateWork(externalIds);
+            validator.validateWork(externalIds, true);
             fail("no exception thrown for invalid type");
         } catch (Exception e) {
             if (!(e instanceof ActivityIdentifierValidationException))
