@@ -24,6 +24,7 @@ orcid-web/src/main/webapp/static/javascript/angular_orcid_generated.js
 orcid-web/src/main/webapp/static/javascript/ng1Orcid/angular_orcid_generated.js
 orcid-web/src/main/webapp/static/javascript/app.js
 orcid-web/src/main/webapp/static/javascript/home.js
+orcid-web/src/main/webapp/static/javascript/polyfills.js
 orcid-web/src/main/webapp/static/javascript/signin.js
 orcid-web/src/main/webapp/static/javascript/ng1Orcid/angular_orcid_generated.js
 orcid-web/src/main/webapp/static/javascript/ng1Orcid/node_modules/
