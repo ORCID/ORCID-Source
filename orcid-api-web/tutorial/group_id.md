@@ -1,4 +1,5 @@
 # GROUP-ID-RECORD API TUTORIAL
+## DEPRECATED please visit [Write, update and delete peer-review and group-id items](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md) instead
 
 ## Overview
 
@@ -35,7 +36,7 @@ Returns a list of group-id-records which belong to the page number 1, when the g
 
 **Example curl call**
 
-``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0/group-id-record?page-size=5&page=1'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET https:/~/api.sandbox.orcid.org/v2.0/group-id-record?page-size=5&page=1'``
 
 ## Search Group-id-records by Name
 
@@ -44,20 +45,20 @@ Returns a list of group-id-records with name "my-name".
 
 **Example curl call**
 
-``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0/group-id-record?name=my-name'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET https:/~/api.sandbox.orcid.org/v2.0/group-id-record?name=my-name'``
 
 
 ## Create Group-id-record
 
 Creates a new record
 
-``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/group-id-record'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/roup-~id-record'``
 
 ## View Group-id-record
 
 Returns a record with put-code 1000
 
-``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.0/group-id-record/1000'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET https:/~/api.sandbox.orcid.org/v2.0/group-id-record/1000'``
 
 ## Update Group-id-record
 
