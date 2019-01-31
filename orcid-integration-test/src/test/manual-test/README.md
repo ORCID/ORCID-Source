@@ -166,15 +166,16 @@ For this test there is a fair amount of set up. You need to have a Consortium Le
 	* Password: [DD][month][YYYY]
 
 68. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
-	* 3 other names
-	* 3 countries
+	* 4 other names
+	* 4 countries
 	* 4 keywords
 	* 4 websites
 	* 3 external id
 	* 4 education items - open one to view details
 	* 4 funding items
+	* 1 research-resource
 	* 3 works (one being a group of 2) - open one to view details
-	* 1 peer-review item (with two reviews) - open one to view details
+	* 2 peer-review item (one with two reviews) - open one to view details
 
 69. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
 	* Check that the group of works with doi:0000 only displays the public version
