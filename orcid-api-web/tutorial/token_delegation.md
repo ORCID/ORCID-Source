@@ -1,10 +1,10 @@
-## What is On Behalf Of 
+## What is Token Delegation
 
-Member On Behalf Of (OBO) allows an ORCID member to transfer permissions granted to their client to another member client. This allows the second client to take an action, such as posting to the user's ORCID record on behalf of the original client.
+Token Delegation allows an ORCID member to transfer permissions granted to their client to another member client. This allows the second client to take an action, such as posting to the user's ORCID record on behalf of the original client.
 
 ## How does it work?
 
-**Via OAuth**
+**Via OAuth or Implicit flow**
 An ORCID user grants permission to the original client following the standard [3 step OAuth process](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#authenticating-users-and-using-oauth--openid-connect) with the openid scope, as well as any other scopes the client wants. When the authorization code is exchanged, in addition to the access token an id_token is returned
 This id_token is then securely passed to the second client. The second client exchanges the id_token for a new access token that they can use to read and update the record.
 
@@ -13,6 +13,8 @@ The original client uses the existing access token to request an id_token. This 
 
 
 ## Example OAuth flow using curl
+
+Note: this example uses the OAuth 'authorization code' flow. For the implicit/token flow please see the notes at the end of the document.
 
 1. The original client (APP-CY6IU882C8WLCEVB) Sends the user to an authorization url with the openid scope and the other scopes they are requesting access to (/activities/update and /read/limited in this example)
 
