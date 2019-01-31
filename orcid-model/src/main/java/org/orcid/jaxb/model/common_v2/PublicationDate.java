@@ -14,6 +14,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -27,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "publicationDate")
+@ApiModel(value = "PublicationDateV2_0")
 public class PublicationDate extends FuzzyDate implements Serializable {
 
     public PublicationDate() {

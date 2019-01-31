@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for fuzzy-date complex type.
@@ -29,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "fuzzyDate", propOrder = { "year", "month", "day" }, namespace = "http://www.orcid.org/ns/common")
 @XmlSeeAlso({ PublicationDate.class })
+@ApiModel(value = "FuzzyDateV2_0")
 public class FuzzyDate implements Serializable {
 
     private final static long serialVersionUID = 1L;

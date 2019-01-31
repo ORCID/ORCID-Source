@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -21,6 +23,7 @@ import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "keywords" })
 @XmlRootElement(name = "keywords", namespace = "http://www.orcid.org/ns/keyword")
+@ApiModel(value = "KeywordsV2_0")
 public class Keywords implements Serializable {
     private static final long serialVersionUID = 8977681069375479763L;
 

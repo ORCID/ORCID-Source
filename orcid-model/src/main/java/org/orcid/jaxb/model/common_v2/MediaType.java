@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -24,6 +26,7 @@ import java.io.Serializable;
  */
 @XmlType(name = "mediaType")
 @XmlEnum
+@ApiModel(value = "MediaTypeV2_0")
 public enum MediaType implements Serializable {
 
     @XmlEnumValue("print")

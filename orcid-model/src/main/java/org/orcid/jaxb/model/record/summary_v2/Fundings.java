@@ -16,9 +16,12 @@ import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.record_v2.Group;
 import org.orcid.jaxb.model.record_v2.GroupsContainer;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "fundingGroup" })
 @XmlRootElement(name = "fundings", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "FundingsV2_0")
 public class Fundings implements GroupsContainer, Serializable {
     
     private static final long serialVersionUID = -1446924819201177350L;

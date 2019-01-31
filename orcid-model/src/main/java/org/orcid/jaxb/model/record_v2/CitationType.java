@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>Java class for citation-type.
  * 
@@ -20,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @XmlType(name = "citationType", namespace = "http://www.orcid.org/ns/work")
 @XmlEnum
+@ApiModel(value = "CitationTypeV2_0")
 public enum CitationType {
 
     @XmlEnumValue("formatted-unspecified")

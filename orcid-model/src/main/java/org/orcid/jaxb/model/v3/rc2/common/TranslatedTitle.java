@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.common.LanguageCode;
 import org.orcid.jaxb.model.common.adapters.LanguageCodeAdapter;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -27,6 +29,7 @@ import org.orcid.jaxb.model.common.adapters.LanguageCodeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "translatedTitle")
+@ApiModel(value = "TranslatedTitleV3_0_rc2")
 public class TranslatedTitle implements Serializable {
     /**
      * 

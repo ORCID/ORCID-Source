@@ -21,9 +21,12 @@ import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "externalIdentifiers", "completionDate", "groupId", "organization" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
+@ApiModel(value = "PeerReviewSummaryV2_0")
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable, SourceAware {
     
     private static final long serialVersionUID = -7769331531691171324L;    

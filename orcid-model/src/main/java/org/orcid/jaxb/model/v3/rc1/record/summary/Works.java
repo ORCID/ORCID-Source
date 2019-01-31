@@ -16,9 +16,12 @@ import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.record.Group;
 import org.orcid.jaxb.model.v3.rc1.record.GroupsContainer;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "workGroup" })
 @XmlRootElement(name = "works", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "WorksSummaryV3_0_rc1")
 public class Works implements GroupsContainer, Serializable {
 
     private static final long serialVersionUID = 3293976926416154039L;

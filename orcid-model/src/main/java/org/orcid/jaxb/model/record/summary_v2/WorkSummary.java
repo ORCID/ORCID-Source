@@ -29,6 +29,8 @@ import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -43,6 +45,7 @@ import org.orcid.jaxb.model.record_v2.WorkType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "publicationDate" })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
+@ApiModel(value = "WorkSummaryV2_0")
 public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
 
     private static final long serialVersionUID = 1L;

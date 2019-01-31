@@ -6,6 +6,9 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(value = "WorkTypeV2_0")
 public enum WorkType implements Serializable {
     @XmlEnumValue("artistic-performance")
     ARTISTIC_PERFORMANCE("artistic-performance"),

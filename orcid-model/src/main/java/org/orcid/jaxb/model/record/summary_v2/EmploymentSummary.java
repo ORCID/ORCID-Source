@@ -19,9 +19,12 @@ import org.orcid.jaxb.model.common_v2.VisibilityType;
 import org.orcid.jaxb.model.record_v2.Activity;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate",  "source", "departmentName", "roleTitle", "startDate", "endDate", "organization"})
 @XmlRootElement(name = "employment-summary", namespace = "http://www.orcid.org/ns/employment")
+@ApiModel(value = "EmploymentSummaryV2_0")
 public class EmploymentSummary implements VisibilityType, Activity, Serializable, SourceAware {
             
     private static final long serialVersionUID = 6988028860521476955L;
