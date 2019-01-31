@@ -16,7 +16,12 @@ var webpack = require('webpack');
 
 module.exports = {
     context: __dirname + "/",
-    entry: "./require.js",
+    entry: {
+        app: "./require.js",
+        home: "./app/bootstrap_home.ts",
+        signin: "./app/bootstrap_signin.ts",
+        polyfills: "./app/polyfills.ts",
+    },
     mode: 'development',
     module: {
         rules: [
@@ -31,8 +36,8 @@ module.exports = {
         ]
     },
     output: {
-        path: "/tmp-tomcat-orcid-web/wtpwebapps/orcid-web/static/javascript/ng1Orcid",
-        filename: "angular_orcid_generated.js"
+        path: __dirname + '/',
+        filename: "[name].js"
     },
     plugins: [
         new webpack.DefinePlugin({
