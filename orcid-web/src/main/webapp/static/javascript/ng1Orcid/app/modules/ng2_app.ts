@@ -94,9 +94,6 @@ import { FundingFormNg2Module }
 import { HeaderNg2Module } 
     from './header/header.ts';
 
-import { HeaderComponent } 
-    from './header/header.component.ts';
-
 import { LanguageNg2Module }
     from './language/language.ts';
 

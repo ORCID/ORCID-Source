@@ -1,3 +1,5 @@
+declare var OrcidCookie: any;
+
 //Angular imports
 import 'reflect-metadata';
 
@@ -49,11 +51,58 @@ import { HeaderComponent }
 import { LanguageNg2Module }
     from './language/language.ts';
 
+///////////////////
+import {Injectable} 
+    from '@angular/core';
+
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } 
+    from '@angular/common/http';
+
+import { Observable } 
+    from 'rxjs';
+
+import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
+
+@Injectable()
+export class TokenInterceptor implements HttpInterceptor {
+   constructor() {}
+   
+   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+       if(request.method == 'GET') {
+           return next.handle(request)
+       } else {
+           // Add CSRF headers for non GET requests
+           const newHeaders: {[name: string]: string | string[]; } = {};
+           for (const key of request.headers.keys()) {
+               newHeaders[key] = request.headers.getAll(key);
+           }          
+           newHeaders['x-xsrf-token'] = OrcidCookie.getCookie('XSRF-TOKEN');           
+           let _request = request.clone({headers: new HttpHeaders(newHeaders)});
+
+           return next.handle(_request);
+       }            
+   }
+}
+///////////////////
+@Component(
+    {
+        selector: 'root-cmp',
+        template: '<div class="ng-view"></div>'
+    }
+) 
+export class RootCmp {
+}
+
+
 @NgModule({
     bootstrap: [    
         HeaderComponent, 
         AlertBannerComponent, 
-        HomeComponent
+        HomeComponent,
+        RootCmp
+    ],
+    declarations: [
+        RootCmp
     ],
     imports: [
         /* Ng Modules */
@@ -70,6 +119,13 @@ import { LanguageNg2Module }
         HeaderNg2Module,
         HomeNg2Module,
         LanguageNg2Module,
+    ],
+    providers: [
+        { 
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true
+        }
     ]
 })
 

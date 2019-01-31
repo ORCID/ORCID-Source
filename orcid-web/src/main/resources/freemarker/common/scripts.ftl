@@ -10,18 +10,33 @@
 
 <script type="text/javascript" src="${staticCdn}/javascript/script.js"></script>
 
-${springMacroRequestContext.requestUri}
-${baseUri}
-
-<#if springMacroRequestContext.requestUri?contains("/signin")>
-	<script src="${staticCdn}/javascript/ng1Orcid/polyfills.js"></script>
-    <script src="${staticCdn}/javascript/ng1Orcid/signin.js"></script>
- <#elseif springMacroRequestContext.requestUri?ends_with("orcid-web") || springMacroRequestContext.requestUri?ends_with("orcid-web/")>
- 	<script src="${staticCdn}/javascript/ng1Orcid/polyfills.js"></script>
-    <script src="${staticCdn}/javascript/ng1Orcid/home.js"></script>
- <#else>
- 	<script src="${staticCdn}/javascript/ng1Orcid/app.js"></script>
- </#if>
+<script type="text/javascript">
+    var head = document.getElementsByTagName('head')[0];
+    if(window.location.href==orcidVar.baseUri || window.location.href==orcidVar.baseUriHttp || window.location.href==(orcidVar.baseUri + "/") || window.location.href==(orcidVar.baseUriHttp + "/")){
+        var polyfills = document.createElement("script");
+        polyfills.src = "${staticCdn}/javascript/ng1Orcid/polyfills.js";
+        polyfills.type = 'text/javascript';
+        head.appendChild(polyfills);
+        var angular = document.createElement("script");
+        angular.src = "${staticCdn}/javascript/ng1Orcid/home.js";
+        angular.type = 'text/javascript';
+        head.appendChild(angular);
+    } else if(window.location.pathname.indexOf("/signin") > -1){
+    var polyfills = document.createElement("script");
+        polyfills.src = "${staticCdn}/javascript/ng1Orcid/polyfills.js";
+        polyfills.type = 'text/javascript';
+        head.appendChild(polyfills);
+        var angular = document.createElement("script");
+        angular.src = "${staticCdn}/javascript/ng1Orcid/signin.js";
+        angular.type = 'text/javascript';
+        head.appendChild(angular);
+    } else {
+        var angular = document.createElement("script");
+        angular.src = "${staticCdn}/javascript/ng1Orcid/app.js";
+        angular.type = 'text/javascript';
+        head.appendChild(angular);
+    }
+</script>
 
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');

@@ -3,42 +3,41 @@
 <html class="no-js oldie" lang="en">
 <#include "/common/html-head.ftl" />
 <body data-baseurl="<@orcid.rootPath '/'/>">
-<#if !(springMacroRequestContext.requestUri?contains("/signin")) && !(springMacroRequestContext.requestUri?ends_with("orcid-web"))>
-    <root-cmp>
-        <style type="text/css">
-            body, html {
-                height: 100%;
-            }
-            .app-loading {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-            }
-        </style>
-        <noscript>
-            <div class="alert alert-banner">
-                 ${springMacroRequestContext.getMessage("common.browser-checks.functionalityofthissite")} <a href="http://www.enable-javascript.com/" target="common.browser-checks.instructionhowtoadd">
-                 ${springMacroRequestContext.getMessage("common.browser-checks.instructionhowtoadd")}</a>.<br>
-                 ${springMacroRequestContext.getMessage("common.cookies.orcid_uses")} <a href="${baseUri}/privacy-policy#TrackingTechnology" target="common.cookies.learn_more">
-                 ${springMacroRequestContext.getMessage("common.cookies.learn_more")}</a>.
-            </div>
-            <style type="text/css">
-            .app-loading {
-                display: none;
-            }
-        </style>
-        </noscript>
-        <div class="app-loading">
-            <i class="glyphicon glyphicon-refresh spin green x8" id="spinner"></i>
-            <!--[if lt IE 8]>    
-                <img src="${staticCdn}/img/spin-big.gif" class="spinner" width="85" height ="85"/>
-            <![endif]-->
+<root-cmp>
+    <style type="text/css">
+        body, html {
+            height: 100%;
+        }
+        .app-loading {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <noscript>
+        <div class="alert alert-banner">
+             ${springMacroRequestContext.getMessage("common.browser-checks.functionalityofthissite")} <a href="http://www.enable-javascript.com/" target="common.browser-checks.instructionhowtoadd">
+             ${springMacroRequestContext.getMessage("common.browser-checks.instructionhowtoadd")}</a>.<br>
+             ${springMacroRequestContext.getMessage("common.cookies.orcid_uses")} <a href="${baseUri}/privacy-policy#TrackingTechnology" target="common.cookies.learn_more">
+             ${springMacroRequestContext.getMessage("common.cookies.learn_more")}</a>.
         </div>
-    </root-cmp>
-</#if>
+        <style type="text/css">
+        .app-loading {
+            display: none;
+        }
+    </style>
+    </noscript>
+    <div class="app-loading">
+        <i class="glyphicon glyphicon-refresh spin green x8" id="spinner"></i>
+        <!--[if lt IE 8]>    
+            <img src="${staticCdn}/img/spin-big.gif" class="spinner" width="85" height ="85"/>
+        <![endif]-->
+    </div>
+</root-cmp>
 <#nested />
 <#include "/common/scripts.ftl" />
 <#if !hideSupportWidget??>  
