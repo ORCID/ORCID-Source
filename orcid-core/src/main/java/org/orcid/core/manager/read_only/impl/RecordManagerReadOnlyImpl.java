@@ -26,6 +26,8 @@ import org.orcid.jaxb.model.record_v2.SubmissionDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -34,6 +36,8 @@ import org.orcid.utils.DateUtils;
  */
 public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecordManagerReadOnlyImpl.class);
+    
     @Resource
     protected OrcidUrlManager orcidUrlManager;
     
@@ -100,13 +104,19 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
     }
     
     private Preferences getPreferences(String orcid) {
-        Preferences preferences = new Preferences();
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        Locale profileEntityLocale = Locale.valueOf(profile.getLocale());        
-        if (profileEntityLocale != null) {
-            preferences.setLocale(profileEntityLocale);
+        try {
+            Preferences preferences = new Preferences();
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+            
+            Locale profileEntityLocale = Locale.valueOf(profile.getLocale());        
+            if (profileEntityLocale != null) {
+                preferences.setLocale(profileEntityLocale);
+            }
+            return preferences;
+        } catch(Exception e) {
+            LOGGER.error("Exception loading preferences for " + orcid, e);
         }
-        return preferences;
+        return null;
     }
     
     private History getHistory(String orcid) {
