@@ -6,7 +6,7 @@ This feature is only available on the Member API and only for Premium ORCID Memb
 
 ## Generate a webhooks access token
 
-This process is completed using the [2 step token exchange](https://github.com/ORCID/ORCID-Source/tree/TechDocs/orcid-api-web#generate-a-two-step-read-public-access-token). A single token can be used to register webhooks for multiple records.
+This process is completed using the [2 step token exchange](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#generate-a-two-step-read-public-access-token). A single token can be used to register webhooks for multiple records.
 
 | Parameter | Value        |
 |--------------------|--------------------------|
@@ -84,7 +84,7 @@ The response should be 204 No Content.
 **Curl example:**
 
 ```
-curl -i -H "Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee" 
+curl -i -H "Authorization: Bearer 5eb23750-1e19-47a3-b6f6-26635c34e8ee"
   -X DELETE "https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%2Fnowhere2.com%2F0000-0002-7465-2162%2Fupdated"
   ```
 

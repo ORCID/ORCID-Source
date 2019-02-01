@@ -1,12 +1,12 @@
 # Search for public information on ORCID records
 
-This tutorial shows how to use the API to search for records in the ORCID Registry using the Solr query syntax. Search results only include the ORCID iD of each search hit. For information on retrieving data from a specific ORCID iD see our tutorial on [Reading Public information from an ORCID Record](/read_public.md).
+This tutorial shows how to use the API to search for records in the ORCID Registry using the Solr query syntax. Search results only include the ORCID iD of each search hit. For information on retrieving data from a specific ORCID iD see our tutorial on [Reading Public information from an ORCID Record](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/read_public.md).
 
 This workflow can be used with Public or Member API credentials on sandbox or the production servers.
 
 Depending on your use you should consider these alternatives to the ORCID API search:
 
-  * To get researchers' ORCID iDs, use OAuth to ensure there are no false matches. See the tutorial on [Getting Authenticate iDs](/get_id.md).
+  * To get researchers' ORCID iDs, use OAuth to ensure there are no false matches. See the tutorial on [Getting Authenticate iDs](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/get_id.md).
   * If you are parsing data from a large section of the registry you may want to use [ORCID's public data file](https://orcid.org/content/download-file) -- a snapshot of all public data. Premium ORCID members may want to use the [ORCID sync](https://github.com/ORCID/public-data-sync/blob/master/README.md) process to access a regularly updated data file.
   * For specific instructions on finding your institution’s researchers, see [tips on finding ORCID record-holders at your institution](https://members.orcid.org/api/resources/find-myresearchers).
 
@@ -88,7 +88,7 @@ Example response
 
  ## Search technical information
 
- The default behavior is a free-form, unrestricted search across the entire record. A basic search for "newman" will therefore turn up researchers with the published name Newman, given name Newman, or associated with a work with "newman" in the title, etc.
+ The default behaviour is a free-form, unrestricted search across the entire record. A basic search for "newman" will therefore turn up researchers with the published name Newman, given name Newman, or associated with a work with "newman" in the title, etc.
 
  The API supports Boolean searches using multiple keywords, exact phrases, and other Boolean search features. Keywords must be combined using brackets and “AND” or “OR” in uppercase.
 
@@ -98,7 +98,7 @@ Example response
 
  100 results are returned by default, up to 200 results can be returned with one query using paging -see examples.
 
- Like all API calls, search querys are restricted by the [API limits](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#api-limits).
+ Like all API calls, search queries are restricted by the [API limits](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#api-limits).
 
  ## Indexed fields
 
@@ -222,9 +222,9 @@ URL: ```https://pub.sandbox.orcid.org/v2.1/search/?defType=edismax&q=Raymond&qf=
 
 ### Example 7
 
-Description: Search given names and family names of all ORCID records for “Raymond” but boost the family name. Records with given names containing “Raymond” and family name containing “Raymond” will be returned, but those with family name will appear at the top of the list and will have a higher relevancy score.
+Description:
 
-The two records with ORCID ID https://sandbox.orcid.org/0000-0002-0879-455X and https://sandbox.orcid.org/0000-0001-6238-4490 will be excluded from the results.
+This is the same search as the one above except that the two records with ORCID ID https://sandbox.orcid.org/0000-0002-0879-455X and https://sandbox.orcid.org/0000-0001-6238-4490 will be excluded from the results.
 
 Syntax: Extended DisMax
 

@@ -1,8 +1,8 @@
 # Revoke an access token
 
-This tutorial covers how to use the API to revoke an access token that has been issued to your client. You can revoke tokens created via either the two-step or three-step OAuth processes. When revoking an access token the associated refresh token is also removed, the refresh token can also be used in the steps below to revoke an access token. If you have multiple tokens, all tokens with the same scope for a given ORCID iD will be revoked when you revoke any one token, tokens with a different set of scopes or issued for another iD will not be affected. 
+This tutorial covers how to use the API to revoke an access token that has been issued to your client. You can revoke tokens created via either the two-step or three-step OAuth processes. When revoking an access token the associated refresh token is also removed, the refresh token can also be used in the steps below to revoke an access token. If you have multiple tokens, all tokens with the same scope for a given ORCID iD will be revoked when you revoke any one token, tokens with a different set of scopes or issued for another iD will not be affected.
 
-Users can also revoke access tokens at any time by [removing trusted organization permissions](https://support.orcid.org/hc/articles/360006973893) from their personal account settings. 
+Users can also revoke access tokens at any time by [removing trusted organization permissions](https://support.orcid.org/hc/articles/360006973893) from their personal account settings.
 
 We suggest revoking access tokens in the following conditions:
 
@@ -10,7 +10,7 @@ We suggest revoking access tokens in the following conditions:
 * If the users disconnects their ORCID iD from your system;
 * To allow users to revoke tokens from within your system.
 
-We recommend using the [refresh tokens workflow](/orcid-api-web/tutorial/refresh_tokens.md) to limit the scope or duration of an existing access token or update a token if it has been compromised.
+We recommend using the [refresh tokens workflow](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/refresh_tokens.md) to limit the scope or duration of an existing access token or update a token if it has been compromised.
 
 This workflow can be used with Public or Member API credentials on sandbox or the production servers.
 

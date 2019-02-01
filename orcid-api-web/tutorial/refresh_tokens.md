@@ -1,6 +1,6 @@
 # Refresh tokens
 
-This tutorial covers how to exchange a refresh token for a new access token. We suggest using refresh tokens to revoke and replace access tokens that have been compromised or to give a third party limited access and/or access for a limited time. For removing your access to a record entirely, we recommend the [revoke token process](/revoke.md).
+This tutorial covers how to exchange a refresh token for a new access token. We suggest using refresh tokens to revoke and replace access tokens that have been compromised or to give a third party limited access and/or access for a limited time. For removing your access to a record entirely, we recommend the [revoke token process](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/revoke.md).
 
 This workflow can be used with Public or Member API credentials on sandbox or the production servers.
 
@@ -41,4 +41,3 @@ Create a new token with a subset of scopes, expiring in one day and do not revok
 ```
 curl -d 'refresh_token=4470d1ff-c817-45c1-86d1-b9062669c7cb' -d 'grant_type=refresh_token' -d 'client_id=APP-5GG5N5YFOKGV5N0X' -d 'client_secret=ce4db92f-d535-4014-a250-b5cdc27c0984' -d 'scope=/read-limited' -d 'expires_in=86400' https://api.sandbox.orcid.org/oauth/token
 ```
-  
