@@ -11,10 +11,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "results" })
 @XmlRootElement(name = "search", namespace = "http://www.orcid.org/ns/search")
-
+@ApiModel(value = "SearchV2_0")
 public class Search implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "result", namespace = "http://www.orcid.org/ns/search")
