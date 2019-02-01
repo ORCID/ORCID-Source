@@ -6,7 +6,10 @@ import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlRootElement(name = "employments", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "EmploymentsSummaryV3_0_rc1")
 public class Employments extends Affiliations<EmploymentSummary> implements Serializable {
     /**
      * 

@@ -16,6 +16,8 @@ import org.orcid.jaxb.model.v3.rc1.common.Source;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -24,6 +26,7 @@ import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "type", "value", "url", "relationship" })
 @XmlRootElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier")
+@ApiModel(value = "PersonExternalIdentifierV3_0_rc1")
 public class PersonExternalIdentifier implements Serializable, Filterable, SourceAware {
     private static final long serialVersionUID = 8340033850223164314L;
     

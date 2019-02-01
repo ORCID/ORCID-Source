@@ -48,7 +48,7 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
 @ApiModel(value = "WorkV3_0_rc1")
 public class Work implements Filterable, Activity, Serializable, SourceAware, BulkElement {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 871114911498819375L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle title;
     @XmlElement(name = "journal-title", namespace = "http://www.orcid.org/ns/work")

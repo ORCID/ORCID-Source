@@ -18,6 +18,8 @@ import org.orcid.jaxb.model.v3.rc1.common.ContributorEmail;
 import org.orcid.jaxb.model.v3.rc1.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.rc1.common.CreditName;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -31,12 +33,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributorOrcid", "creditName", "contributorEmail", "contributorAttributes" })
 @XmlRootElement(name = "contributor", namespace = "http://www.orcid.org/ns/funding")
+@ApiModel(value = "FundingContributorV3_0_rc1")
 public class FundingContributor implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -8050938590258004890L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "contributor-orcid")
     protected ContributorOrcid contributorOrcid;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "credit-name")

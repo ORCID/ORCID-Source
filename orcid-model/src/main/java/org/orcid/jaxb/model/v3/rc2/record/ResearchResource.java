@@ -25,9 +25,7 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "research-resource", namespace = "http://www.orcid.org/ns/research-resource")
 @ApiModel(value = "ResearchResourceV3_0_rc2")
 public class ResearchResource implements Filterable, Activity, Serializable, SourceAware {
-
-    private final static long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = -3117752351151578304L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")

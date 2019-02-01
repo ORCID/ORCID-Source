@@ -23,11 +23,14 @@ import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.Group;
 import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "researchResourceSummary" })
 @XmlRootElement(name = "research-resource-group", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "ResearchResourceGroupV3_0_rc1")
 public class ResearchResourceGroup implements Group, Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 9058107170194647459L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")

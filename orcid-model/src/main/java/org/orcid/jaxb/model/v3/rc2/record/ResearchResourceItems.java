@@ -1,5 +1,6 @@
 package org.orcid.jaxb.model.v3.rc2.record;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +16,8 @@ import io.swagger.annotations.ApiModel;
 @XmlType(propOrder = { "resourceItems" })
 @XmlRootElement(name = "resource-items", namespace = "http://www.orcid.org/ns/research-resource")
 @ApiModel(value = "ResearchResourceItemsV3_0_rc2")
-public class ResearchResourceItems {
-
+public class ResearchResourceItems implements Serializable {
+    private static final long serialVersionUID = 6414351720429265799L;
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-item")
     List<ResearchResourceItem> resourceItems;
 

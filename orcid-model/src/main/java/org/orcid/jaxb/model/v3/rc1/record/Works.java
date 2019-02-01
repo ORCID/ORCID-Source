@@ -38,9 +38,7 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "works")
 @ApiModel(value = "WorksV3_0_rc1")
 public class Works implements Serializable, ActivitiesContainer {
-
-    private static final long serialVersionUID = 1L;
-    
+    private static final long serialVersionUID = -430451482268079693L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "work")

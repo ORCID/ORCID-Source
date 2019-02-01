@@ -14,6 +14,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * Region within a country
  * 
@@ -29,9 +31,9 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "region")
+@ApiModel(value = "RegionV3_0_rc1")
 public class Region implements Serializable {
-
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5703797063917459271L;
     @XmlValue
     protected String content;
 

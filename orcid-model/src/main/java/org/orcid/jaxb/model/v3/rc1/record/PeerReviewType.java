@@ -6,8 +6,11 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlType(name = "type")
 @XmlEnum
+@ApiModel(value = "PeerReviewTypeV3_0_rc1")
 public enum PeerReviewType implements Serializable {
     @XmlEnumValue("review")
     REVIEW("review"),

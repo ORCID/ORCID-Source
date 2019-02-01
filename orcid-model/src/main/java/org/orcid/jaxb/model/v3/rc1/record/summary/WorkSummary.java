@@ -49,8 +49,7 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
 @ApiModel(value = "WorkSummaryV3_0_rc1")
 public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
-
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6713642491196013500L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle title;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
