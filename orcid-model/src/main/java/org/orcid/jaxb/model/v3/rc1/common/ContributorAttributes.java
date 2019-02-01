@@ -7,6 +7,8 @@
 
 package org.orcid.jaxb.model.v3.rc1.common;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.record.SequenceType;
 
-import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>
@@ -31,12 +33,12 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "contributorSequence", "contributorRole" })
 @XmlRootElement(name = "contributor-attributes")
+@ApiModel(value = "ContributorAttributesV3_0_rc1")
 public class ContributorAttributes implements Serializable {
-
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6353654398670177616L;
     @XmlElement(name = "contributor-sequence", namespace = "http://www.orcid.org/ns/work", required = true)
     protected SequenceType contributorSequence;
     @XmlElement(name = "contributor-role", namespace = "http://www.orcid.org/ns/work", required = true)

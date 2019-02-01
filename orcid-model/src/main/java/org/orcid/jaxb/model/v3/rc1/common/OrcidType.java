@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>
@@ -38,6 +38,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @XmlType(name = "orcid-type")
 @XmlEnum
+@ApiModel(value = "OrcidTypeV3_0_rc1")
 public enum OrcidType implements Serializable {
     @XmlEnumValue("admin")
     ADMIN("admin"), 
