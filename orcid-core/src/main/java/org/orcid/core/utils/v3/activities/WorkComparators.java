@@ -48,6 +48,16 @@ public class WorkComparators {
     });
     
     private static Comparator<WorkSummary> WORK_SUMMARY_CREATED_DATE = Comparator.nullsLast((w1, w2) -> {
+        if (w1.getCreatedDate() == null && w2.getCreatedDate() == null) {
+            return 0;
+        }
+        if (w1.getCreatedDate() != null && w2.getCreatedDate() == null) {
+            return -1;
+        }
+        if (w1.getCreatedDate() == null && w2.getCreatedDate() != null) {
+            return 1;
+        }
+        
         return w1.getCreatedDate().getValue().toGregorianCalendar().compareTo(w2.getCreatedDate().getValue().toGregorianCalendar());
     });
 
