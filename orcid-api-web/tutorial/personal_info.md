@@ -10,7 +10,7 @@ These calls can be used with Member API credentials on sandbox or the production
 
 **Method:** [3 step OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect)
 
-**Endpoints:** 
+**Endpoints:**
 * For reading the entire person section: ```/person```
 * For reading name, credit name and biography: ```/personal-details```
 * For other names ```/other-names```
@@ -22,10 +22,10 @@ These calls can be used with Member API credentials on sandbox or the production
 
 **Sample XML files:**
   * [Examples for reading personal information sections in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples)
-  * [Examples for writing personal information sections in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_samples)
-  * [Examples for reading affiliations sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples)
-  * [Examples writing affiliation sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_samples)
-  
+  * [Examples for writing personal information sections in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample)
+  * [Examples for reading personal information in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples)
+  * [Examples writing personal information sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples)
+
 ## Permission to edit the record
 
 Only the other names, country, keywords, website and personal identifier sections of the record can be written to. The name, credit name, biography, and email fields can be read using the API but can only be edited by the researcher.
@@ -34,7 +34,7 @@ Editing the person section of a record requires a 3 step OAuth token with the ``
 
 ## Personal inforamtion fields
 
-- **given-name** _(user edit only)_ The given name of the researcher, or the name they most commonly go by. This is field is required for researchers 
+- **given-name** _(user edit only)_ The given name of the researcher, or the name they most commonly go by. This is field is required for researchers
 
 - **family-name** _(user edit only)_ The family name or surname of the researcher
 
@@ -126,7 +126,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 | Method    | POST |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the work you are posting in json or xml format | 
+| data        | the work you are posting in json or xml format |
 
 **Example request in curl**
 ```
@@ -147,7 +147,7 @@ Location: http://api.qa.orcid.org/2.1/0000-0002-9227-8514/researcher-urls/41387
 | Method    | PUT |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the updated work in json or xml format | 
+| data        | the updated work in json or xml format |
 
 **Example request in curl**
 ```

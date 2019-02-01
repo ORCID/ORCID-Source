@@ -21,7 +21,7 @@ This workflow can be used with Public or Member API credentials on sandbox or th
 ```
 https://sandbox.orcid.org/oauth/authorize?client_id=APP-RU42Z8TDSYBG7T2S&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
 ```
-   
+
 ## Grant authorization
 
 Go to the authorization URL in your browser. If you have a sandbox ORCID account log into it then grant access. If you do not have and account, register for a new sandbox ORCID account and grant access.
@@ -34,7 +34,9 @@ After granting access, you will be sent to your redirect URI. Appended to the en
 
 Example redirect URI with authorization code:
 
-``` https://developers.google.com/oauthplayground?code=eUeiz2```
+```
+https://developers.google.com/oauthplayground?code=eUeiz2
+```
 
 ## Exchange the authorization code
 
@@ -55,19 +57,20 @@ The response will include an access_token and refresh_token and the scopes and e
 
 Example response:
 
-```HTTP/1.1 200 OK
+```
+HTTP/1.1 200 OK
   ...
   {"access_token":"89f0181c-168b-4d7d-831c-1fdda2d7bbbb","token_type":"bearer",
   "refresh_token":"69e883f6-d84e-4ae6-87f5-ef0044e3e9a7","expires_in":631138518,
   "scope":"/authenticate","orcid":"0000-0001-2345-6789","name":"Sofia Garcia "}
   ```
-  
+
 You will need to store at least the ORCID iD and access token in your local system.
-  
+
 ## Read the ORCID record
-  
-You can read public information on the ORCID record using the access token. 
-  
+
+You can read public information on the ORCID record using the access token.
+
 Version is the the version of the API you are using, the latest stable release is v2.1.
 
 Endpoint is the section of the record you want to read, 'record' returns the entire record. [List of 2.1 endpoints](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1#read-sections).
@@ -101,5 +104,3 @@ curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer 89f0
 ```
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v2.1/0000-0001-2345-6789/works' -i
 ```
-
-  

@@ -19,7 +19,7 @@ These calls can be used with Member API credentials on sandbox or the production
   * [reading the personal identifiers section in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/external-identifiers-3.0_dev1.xml)
   * [reading a personal identifier item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/external-identifier-3.0_dev1.xml)
   * [writing a personal identifier item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/external-identifier-3.0_dev1.xml)
-  
+
 ## Permission to edit the record
 Editing the personal identifiers section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading funding items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
 
@@ -46,7 +46,7 @@ Editing the personal identifiers section of a record requires a 3 step OAuth tok
 **Example request in curl**
 
 ```
-curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/external-identifiers'
+curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/external-identifiers'
 ```
 
 ## Read a single personal identifier item
@@ -73,7 +73,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 | Method    | POST |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the work you are posting in json or xml format | 
+| data        | the work you are posting in json or xml format |
 
 **Example request in curl**
 ```
@@ -94,7 +94,7 @@ Location: http://api.qa.orcid.org/v2.1/0000-0002-9227-8514/external-identifiers/
 | Method    | PUT |
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the updated work in json or xml format | 
+| data        | the updated work in json or xml format |
 
 **Example request in curl**
 ```

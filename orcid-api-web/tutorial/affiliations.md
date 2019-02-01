@@ -26,7 +26,7 @@ These calls can be used with Member API credentials on sandbox or the production
 
 **Method:** [3 step OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect)
 
-**Endpoints:** 
+**Endpoints:**
 * For education items: ```/education``` and ```/educations```
 * For employment items: ```/employment``` and ```/employments```
 * For distinction items (3.0+ only): ```/distinction``` and ```/distinctions```
@@ -44,13 +44,13 @@ These calls can be used with Member API credentials on sandbox or the production
   * [writing an employment item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/employment-2.1.xml)
   * [Examples for reading affiliations sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples)
   * [Examples writing affiliation sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples)
- 
+
 ## Permission to edit the record
-Editing the affiliations sections of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
+Editing the affiliations sections of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading items. See [Authenticating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
 
 ## Affiliations fields
 
-- **department-name** _(optional)_ The department or subdivision of the organization the affiliation is assocaited with 
+- **department-name** _(optional)_ The department or subdivision of the organization the affiliation is assocaited with
 
 - **role-title** _(optional)_ The title given for the position, or the degree earned
 
@@ -60,7 +60,7 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 - **organization** _(required)_ Information about the organization the affiliation was with, a Ringgold, Grid or Fundref organization identifier is requires in 3.0+
 
-- **url** _(optional in 3.0+ only)_ A URL to a resource about the affiliation 
+- **url** _(optional in 3.0+ only)_ A URL to a resource about the affiliation
 
 - **external-ids** _(optional in 3.0+ only)_ An identifier for the affiliation itself
 
@@ -71,7 +71,7 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/[affiliation section] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -110,9 +110,9 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/[affiliation section] |
 | Method    | POST |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the work you are posting in json or xml format | 
+| data        | the work you are posting in json or xml format |
 
 **Example request in curl**
 ```
@@ -131,9 +131,9 @@ Location: http://api.qa.orcid.org/2.1/0000-0002-9227-8514/education/54563
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/[affiliation section]/[put-code] |
 | Method    | PUT |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the updated work in json or xml format | 
+| data        | the updated work in json or xml format |
 
 **Example request in curl**
 ```
@@ -146,7 +146,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/[affiliation section]/[put-code] |
 | Method    | DELETE |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 
 **Example request in curl**

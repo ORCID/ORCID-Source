@@ -1,6 +1,6 @@
 # Read Public information from an ORCID Record
 
-This tutorial shows how to read public information from ORCID records without going through the 3-step OAuth process. If you do not have the list of autenticated ORCID iDs you want to read, we suggest using the OAuth process to collect iDs and read information on the records. See the [tutorial to get authenticate iDs](https://github.com/ORCID/ORCID-Source/blob/TechDocs/orcid-api-web/tutorial/get_id.md).
+This tutorial shows how to read public information from ORCID records without going through the 3-step OAuth process. If you do not have the list of autenticated ORCID iDs you want to read, we suggest using the OAuth process to collect iDs and read information on the records. See the [tutorial to get authenticate iDs](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/get_id.md).
 
 This workflow can be used with Public or Member API credentials on sandbox or the production servers.
 
