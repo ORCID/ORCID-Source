@@ -19,10 +19,11 @@ public class GroupingSuggestionsCacheManagerImpl implements GroupingSuggestionsC
         List<WorkGroupingSuggestion> suggestions = cache.get(orcid);
         List<WorkGroupingSuggestion> subList = new ArrayList<>();
         if (suggestions != null) {
-            for (int i = 0; i < suggestions.size() && i < max; i++) {
-                subList.add(suggestions.remove(i));
+            for (int i = 0; !suggestions.isEmpty() && i < max; i++) {
+                subList.add(suggestions.remove(0));
             }
         }
+        putGroupingSuggestions(orcid, suggestions);
         return subList;
     }
 
