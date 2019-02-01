@@ -3,6 +3,7 @@ package org.orcid.core.utils.v3.activities;
 import java.util.Comparator;
 
 import org.orcid.jaxb.model.common.WorkType;
+import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.Title;
 import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup;
@@ -45,8 +46,13 @@ public class WorkComparators {
     private static Comparator<WorkSummary> WORK_SUMMARY_WORK_TYPE = Comparator.nullsLast((w1, w2) -> {
         return WORK_TYPE.compare(w1.getType(), w2.getType());
     });
+    
+    private static Comparator<WorkSummary> WORK_SUMMARY_CREATED_DATE = Comparator.nullsLast((w1, w2) -> {
+        return w1.getCreatedDate().getValue().toGregorianCalendar().compareTo(w2.getCreatedDate().getValue().toGregorianCalendar());
+    });
 
-    public static Comparator<WorkSummary> ALL_EXCEPT_DISPLAY_INDEX = REVERSE_CHRONOLOGICAL.thenComparing(WORK_SUMMARY_WORK_TITLE).thenComparing(WORK_SUMMARY_WORK_TYPE);
+    public static Comparator<WorkSummary> ALL_EXCEPT_DISPLAY_INDEX = REVERSE_CHRONOLOGICAL.thenComparing(WORK_SUMMARY_WORK_TITLE).thenComparing(WORK_SUMMARY_WORK_TYPE).thenComparing(WORK_SUMMARY_CREATED_DATE);
+            ;
 
     public static Comparator<WorkSummary> ALL = DISPLAY_INDEX.thenComparing(ALL_EXCEPT_DISPLAY_INDEX);
 
