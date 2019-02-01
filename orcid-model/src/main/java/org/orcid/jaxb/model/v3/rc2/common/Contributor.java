@@ -30,11 +30,7 @@ import java.io.Serializable;
 @XmlRootElement(name = "contributor")
 @ApiModel(value = "ContributorV3_0_rc2")
 public class Contributor implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7839384026083240514L;
     @XmlElement(name = "contributor-orcid", namespace = "http://www.orcid.org/ns/common")
     protected ContributorOrcid contributorOrcid;
     @XmlElement(name="credit-name", namespace = "http://www.orcid.org/ns/work")

@@ -90,6 +90,8 @@ import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.v3.rc2.notification.Notification;
 import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.Addresses;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
 import org.orcid.jaxb.model.v3.rc2.record.Distinction;
 import org.orcid.jaxb.model.v3.rc2.record.Education;
 import org.orcid.jaxb.model.v3.rc2.record.Employment;
@@ -101,6 +103,7 @@ import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc2.record.Qualification;
+import org.orcid.jaxb.model.v3.rc2.record.Record;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.Service;
@@ -140,7 +143,7 @@ import io.swagger.annotations.AuthorizationScope;
 import io.swagger.annotations.ExternalDocs;
 import io.swagger.annotations.ResponseHeader;
 
-@Api("Development Member API v3.0_rc2s")
+@Api("Development Member API v3.0_rc2")
 @Path("/v3.0_rc2")
 public class MemberV3ApiServiceImplV3_0_rc2 extends MemberApiServiceImplHelper {
 
@@ -843,7 +846,7 @@ public class MemberV3ApiServiceImplV3_0_rc2 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIOGRAPHY)
-    @ApiOperation( nickname="viewBiographyv3Rc2", value = "Get biography details", authorizations = {
+    @ApiOperation( nickname="viewBiographyv3Rc2", response = Biography.class, value = "Get biography details", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewBiography(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewBiography(orcid);
@@ -910,7 +913,7 @@ public class MemberV3ApiServiceImplV3_0_rc2 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS)
-    @ApiOperation( nickname="viewAddressesv3Rc2", value = "Fetch all addresses of a profile", authorizations = {
+    @ApiOperation( nickname="viewAddressesv3Rc2", response = Addresses.class, value = "Fetch all addresses of a profile", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewAddresses(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewAddresses(orcid);
@@ -959,7 +962,7 @@ public class MemberV3ApiServiceImplV3_0_rc2 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OrcidApiConstants.RECORD_SIMPLE)
-    @ApiOperation( nickname="viewRecordv3Rc2", value = "Fetch record details", authorizations = {
+    @ApiOperation( nickname="viewRecordv3Rc2", response = Record.class, value = "Fetch record details", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })   
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
@@ -970,7 +973,7 @@ public class MemberV3ApiServiceImplV3_0_rc2 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OrcidApiConstants.RECORD_RECORD)
-    @ApiOperation( hidden=true,nickname="viewRecordRecordV3", value = "Fetch record details", authorizations = {
+    @ApiOperation( hidden=true,nickname="viewRecordRecordV3", response = Record.class, value = "Fetch record details", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })   
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecordRecord(@PathParam("orcid") String orcid) {

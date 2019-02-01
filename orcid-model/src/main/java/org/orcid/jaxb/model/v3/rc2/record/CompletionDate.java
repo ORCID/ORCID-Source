@@ -30,7 +30,7 @@ import java.io.Serializable;
 @XmlRootElement(name = "completion-date", namespace = "http://www.orcid.org/ns/history")
 @ApiModel(value = "CompletionDateV3_0_rc2")
 public class CompletionDate implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -960214156862087843L;
     @XmlValue
     @XmlSchemaType(name = "dateTime")
     @ApiModelProperty(readOnly = true)

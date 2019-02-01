@@ -35,7 +35,7 @@ import io.swagger.annotations.ApiModel;
 @XmlType(name = "citation", propOrder = { "citationType", "citation" })
 @ApiModel(value = "CitationV3_0_rc2")
 public class Citation implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6177533651147799332L;
     @XmlJavaTypeAdapter(CitationTypeAdapter.class)
     @XmlElement(name = "citation-type", required = true, defaultValue = "formatted-unspecified", namespace = "http://www.orcid.org/ns/work")
     protected CitationType citationType;

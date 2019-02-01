@@ -32,10 +32,7 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "amount", namespace = "http://www.orcid.org/ns/common")
 @ApiModel(value = "AmountV3_0_rc2")
 public class Amount implements Serializable {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3479057385911792849L;
     @XmlValue
     protected String content;
     @XmlJavaTypeAdapter(CurrencyAdapter.class)

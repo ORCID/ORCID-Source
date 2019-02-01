@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiModel;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "summaries" })
 @XmlRootElement(name = "educations", namespace = "http://www.orcid.org/ns/activities")
-@ApiModel(value = "EducationsV2_0")
+@ApiModel(value = "EducationsSummaryV2_0")
 public class Educations implements ActivitiesContainer, Serializable {
 
     private static final long serialVersionUID = 3293976926416154039L;

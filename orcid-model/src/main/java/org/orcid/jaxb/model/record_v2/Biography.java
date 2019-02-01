@@ -26,7 +26,7 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
 @ApiModel(value = "BiographyV2_0")
 public class Biography implements VisibilityType, Serializable {
-    private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = -4175282357037924108L;
 
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
