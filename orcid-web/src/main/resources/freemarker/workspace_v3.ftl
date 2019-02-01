@@ -83,6 +83,11 @@
     <works-merge-ng2></works-merge-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
+<#include "/includes/ng2_templates/works-merge-warning-ng2-template.ftl">
+<modalngcomponent elementHeight="160" elementId="modalWorksMerge" elementWidth="600">
+    <works-merge-warning-ng2></works-merge-warning-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
 <#include "/includes/ng2_templates/works-delete-ng2-template.ftl">
 <modalngcomponent elementHeight="160" elementId="modalWorksDelete" elementWidth="300">
     <works-delete-ng2></works-delete-ng2> 
