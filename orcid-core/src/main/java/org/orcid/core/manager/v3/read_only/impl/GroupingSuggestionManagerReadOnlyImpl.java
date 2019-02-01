@@ -9,6 +9,7 @@ import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.pojo.grouping.WorkGroupingSuggestions;
+import org.orcid.pojo.grouping.WorkGroupingSuggestionsCount;
 
 public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestionManagerReadOnly {
 
@@ -25,11 +26,20 @@ public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestion
         return getWorkGroupingSuggestions(suggestions, more);
     }
 
+    @Override
+    public WorkGroupingSuggestionsCount getGroupingSuggestionCount(String orcid) {
+        WorkGroupingSuggestionsCount count = new WorkGroupingSuggestionsCount();
+        count.setOrcid(orcid);
+        count.setCount(groupingSuggestionsCacheManager.getGroupingSuggestionCount(orcid));
+        return count;
+    }
+    
     private WorkGroupingSuggestions getWorkGroupingSuggestions(List<WorkGroupingSuggestion> suggestions, boolean more) {
         WorkGroupingSuggestions workGroupingSuggestions = new WorkGroupingSuggestions();
         workGroupingSuggestions.setMoreAvailable(more);
         workGroupingSuggestions.setSuggestions(suggestions);
         return workGroupingSuggestions;
     }
+
     
 }

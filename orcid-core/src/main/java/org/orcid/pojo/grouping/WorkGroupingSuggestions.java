@@ -11,10 +11,6 @@ public class WorkGroupingSuggestions implements Serializable {
     
     private boolean moreAvailable;
     
-    public WorkGroupingSuggestions() {
-        
-    }
-
     public List<WorkGroupingSuggestion> getSuggestions() {
         return suggestions;
     }

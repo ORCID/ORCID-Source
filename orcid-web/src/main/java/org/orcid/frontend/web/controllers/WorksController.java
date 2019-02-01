@@ -46,6 +46,7 @@ import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.pojo.grouping.WorkGroupingSuggestions;
+import org.orcid.pojo.grouping.WorkGroupingSuggestionsCount;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -144,6 +145,11 @@ public class WorksController extends BaseWorkspaceController {
     @RequestMapping(value = "/groupingSuggestions.json", method = RequestMethod.GET)
     public @ResponseBody WorkGroupingSuggestions getGroupingSuggestions() {
         return groupingSuggestionManager.getGroupingSuggestions(getCurrentUserOrcid());
+    }
+    
+    @RequestMapping(value = "/groupingSuggestionsCount.json", method = RequestMethod.GET)
+    public @ResponseBody WorkGroupingSuggestionsCount getGroupingSuggestionsCount() {
+        return groupingSuggestionManager.getGroupingSuggestionCount(getCurrentUserOrcid());
     }
 
     @RequestMapping(value = "/rejectGroupingSuggestion.json", method = RequestMethod.POST)
