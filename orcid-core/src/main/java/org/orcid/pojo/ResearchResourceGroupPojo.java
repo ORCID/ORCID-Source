@@ -139,6 +139,18 @@ public class ResearchResourceGroupPojo extends ActivityGroup {
             if(researchResourceSummary.getSource().getSourceName() != null) {
                 researchResource.setSourceName(researchResourceSummary.getSource().getSourceName().getContent());
             }
+            
+            if (researchResourceSummary.getSource().getAssertionOriginClientId() != null) {
+                researchResource.setAssertionOriginClientId(researchResourceSummary.getSource().getAssertionOriginClientId().getPath());
+            }
+            
+            if (researchResourceSummary.getSource().getAssertionOriginOrcid() != null) {
+                researchResource.setAssertionOriginOrcid(researchResourceSummary.getSource().getAssertionOriginOrcid().getPath());
+            }
+            
+            if (researchResourceSummary.getSource().getAssertionOriginName() != null) {
+                researchResource.setAssertionOriginName(researchResourceSummary.getSource().getAssertionOriginName().getContent());
+            }
         }
         
         if(researchResourceSummary.getVisibility() != null) {

@@ -80,7 +80,7 @@
           client_source_id="APP-5555555555555555"
           contributors_json="{&quot;contributor&quot;:[{&quot;contributorOrcid&quot;:{&quot;value&quot;:&quot;0000-0003-0172-7925&quot;},&quot;creditName&quot;:{&quot;content&quot;:&quot;Jaylen Kessler&quot;},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null},{&quot;creditName&quot;:{&quot;content&quot;:&quot;John Smith&quot;},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null},{&quot;contributorOrcid&quot;:{&quot;path&quot;:&quot;0000-0000-0000-0003&quot;},&quot;creditName&quot;:{&quot;content&quot;:&quot;Not This Name&quot;},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null},{&quot;contributorOrcid&quot;:{&quot;path&quot;:&quot;1000-0000-0000-0001&quot;},&quot;creditName&quot;:{&quot;content&quot;:&quot;Not This Name&quot;},&quot;contributorEmail&quot;:null,&quot;contributorAttributes&quot;:null}]}"
           added_to_profile_date="2013-10-22 11:09:28.636"
-          visibility="PUBLIC"          
+          visibility="PUBLIC"
             />
             
     <work work_id="6"

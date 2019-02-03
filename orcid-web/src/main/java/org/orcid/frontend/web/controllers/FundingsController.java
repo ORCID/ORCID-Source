@@ -100,6 +100,9 @@ public class FundingsController extends BaseWorkspaceController {
         result.setFundingName(new Text());
         result.setFundingType(Text.valueOf(""));
         result.setSourceName(new String());
+        result.setAssertionOriginClientId(new String());
+        result.setAssertionOriginName(new String());
+        result.setAssertionOriginOrcid(new String());
 
         OrgDefinedFundingSubType subtype = new OrgDefinedFundingSubType();
         subtype.setAlreadyIndexed(false);

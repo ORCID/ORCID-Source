@@ -52,6 +52,12 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     private String source;
 
     private String sourceName;
+    
+    private String assertionOriginOrcid;
+    
+    private String assertionOriginClientId;
+    
+    private String assertionOriginName;
 
     private Text title;
 
@@ -191,6 +197,18 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
             w.setSource(work.getSource().retrieveSourcePath());
             if(work.getSource().getSourceName() != null) {
                 w.setSourceName(work.getSource().getSourceName().getContent());
+            }
+            
+            if (work.getSource().getAssertionOriginClientId() != null) {
+                w.setAssertionOriginClientId(work.getSource().getAssertionOriginClientId().getPath());
+            }
+            
+            if (work.getSource().getAssertionOriginOrcid() != null) {
+                w.setAssertionOriginOrcid(work.getSource().getAssertionOriginOrcid().getPath());
+            }
+            
+            if (work.getSource().getAssertionOriginName() != null) {
+                w.setAssertionOriginName(work.getSource().getAssertionOriginName().getContent());
             }
         }
         return w;
@@ -582,6 +600,30 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+    
+    public String getAssertionOriginOrcid() {
+        return assertionOriginOrcid;
+    }
+
+    public void setAssertionOriginOrcid(String assertionOriginOrcid) {
+        this.assertionOriginOrcid = assertionOriginOrcid;
+    }
+
+    public String getAssertionOriginClientId() {
+        return assertionOriginClientId;
+    }
+
+    public void setAssertionOriginClientId(String assertionOriginClientId) {
+        this.assertionOriginClientId = assertionOriginClientId;
+    }
+
+    public String getAssertionOriginName() {
+        return assertionOriginName;
+    }
+
+    public void setAssertionOriginName(String assertionOriginName) {
+        this.assertionOriginName = assertionOriginName;
     }
 
     public String getDateSortString() {

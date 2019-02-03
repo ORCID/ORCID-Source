@@ -84,6 +84,12 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
     private String sourceName;
 
     private String source;
+    
+    private String assertionOriginOrcid;
+    
+    private String assertionOriginClientId;
+    
+    private String assertionOriginName;
 
     private String dateSortString;
 
@@ -163,6 +169,18 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
             form.setSource(source.retrieveSourcePath());
             if (source.getSourceName() != null) {
                 form.setSourceName(source.getSourceName().getContent());
+            }
+            
+            if (source.getAssertionOriginClientId() != null) {
+                form.setAssertionOriginClientId(summary.getSource().getAssertionOriginClientId().getPath());
+            }
+            
+            if (source.getAssertionOriginOrcid() != null) {
+                form.setAssertionOriginOrcid(summary.getSource().getAssertionOriginOrcid().getPath());
+            }
+            
+            if (source.getAssertionOriginName() != null) {
+                form.setAssertionOriginName(summary.getSource().getAssertionOriginName().getContent());
             }
         }
 
@@ -250,6 +268,18 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
             form.setSource(source.retrieveSourcePath());
             if (source.getSourceName() != null) {
                 form.setSourceName(source.getSourceName().getContent());
+            }
+            
+            if (affiliation.getSource().getAssertionOriginClientId() != null) {
+                form.setAssertionOriginClientId(affiliation.getSource().getAssertionOriginClientId().getPath());
+            }
+            
+            if (affiliation.getSource().getAssertionOriginOrcid() != null) {
+                form.setAssertionOriginOrcid(affiliation.getSource().getAssertionOriginOrcid().getPath());
+            }
+            
+            if (affiliation.getSource().getAssertionOriginName() != null) {
+                form.setAssertionOriginName(affiliation.getSource().getAssertionOriginName().getContent());
             }
         }
 
@@ -527,6 +557,30 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         this.source = source;
     }
     
+    public String getAssertionOriginOrcid() {
+        return assertionOriginOrcid;
+    }
+
+    public void setAssertionOriginOrcid(String assertionOriginOrcid) {
+        this.assertionOriginOrcid = assertionOriginOrcid;
+    }
+
+    public String getAssertionOriginClientId() {
+        return assertionOriginClientId;
+    }
+
+    public void setAssertionOriginClientId(String assertionOriginClientId) {
+        this.assertionOriginClientId = assertionOriginClientId;
+    }
+
+    public String getAssertionOriginName() {
+        return assertionOriginName;
+    }
+
+    public void setAssertionOriginName(String assertionOriginName) {
+        this.assertionOriginName = assertionOriginName;
+    }
+
     public String getOrgDisambiguatedCity() {
         return orgDisambiguatedCity;
     }

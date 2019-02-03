@@ -26,6 +26,12 @@ public class ResearchResource implements Serializable {
     private String source;
 
     private String sourceName;
+    
+    private String assertionOriginOrcid;
+    
+    private String assertionOriginClientId;
+    
+    private String assertionOriginName;
 
     private String putCode;
 
@@ -103,6 +109,30 @@ public class ResearchResource implements Serializable {
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+    
+    public String getAssertionOriginOrcid() {
+        return assertionOriginOrcid;
+    }
+
+    public void setAssertionOriginOrcid(String assertionOriginOrcid) {
+        this.assertionOriginOrcid = assertionOriginOrcid;
+    }
+
+    public String getAssertionOriginClientId() {
+        return assertionOriginClientId;
+    }
+
+    public void setAssertionOriginClientId(String assertionOriginClientId) {
+        this.assertionOriginClientId = assertionOriginClientId;
+    }
+
+    public String getAssertionOriginName() {
+        return assertionOriginName;
+    }
+
+    public void setAssertionOriginName(String assertionOriginName) {
+        this.assertionOriginName = assertionOriginName;
     }
 
     public String getPutCode() {
@@ -256,6 +286,18 @@ public class ResearchResource implements Serializable {
             researchResource.setSource(resource.getSource().retrieveSourcePath());
             if(resource.getSource().getSourceName() != null) {
                 researchResource.setSourceName(resource.getSource().getSourceName().getContent());
+            }
+            
+            if (resource.getSource().getAssertionOriginClientId() != null) {
+                researchResource.setAssertionOriginClientId(resource.getSource().getAssertionOriginClientId().getPath());
+            }
+            
+            if (resource.getSource().getAssertionOriginOrcid() != null) {
+                researchResource.setAssertionOriginOrcid(resource.getSource().getAssertionOriginOrcid().getPath());
+            }
+            
+            if (resource.getSource().getAssertionOriginName() != null) {
+                researchResource.setAssertionOriginName(resource.getSource().getAssertionOriginName().getContent());
             }
         }
         

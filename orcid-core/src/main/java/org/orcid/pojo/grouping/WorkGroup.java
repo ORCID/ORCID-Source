@@ -103,6 +103,18 @@ public class WorkGroup extends ActivityGroup {
         if (workSummary.getSource().getSourceName() != null) {
             workForm.setSourceName(workSummary.getSource().getSourceName().getContent());
         }
+        
+        if (workSummary.getSource().getAssertionOriginClientId() != null) {
+            workForm.setAssertionOriginClientId(workSummary.getSource().getAssertionOriginClientId().getPath());
+        }
+        
+        if (workSummary.getSource().getAssertionOriginOrcid() != null) {
+            workForm.setAssertionOriginOrcid(workSummary.getSource().getAssertionOriginOrcid().getPath());
+        }
+        
+        if (workSummary.getSource().getAssertionOriginName() != null) {
+            workForm.setAssertionOriginName(workSummary.getSource().getAssertionOriginName().getContent());
+        }
 
         workForm.setWorkType(Text.valueOf(workSummary.getType().value()));
         workForm.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(workSummary.getVisibility()));

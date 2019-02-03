@@ -20,6 +20,12 @@ public class Email implements ErrorsInterface {
     private String source;
 
     private String sourceName;
+    
+    private String assertionOriginOrcid;
+    
+    private String assertionOriginClientId;
+    
+    private String assertionOriginName;
 
     private List<String> errors = new ArrayList<String>();
 
@@ -32,6 +38,18 @@ public class Email implements ErrorsInterface {
             email.setValue(e.getEmail());
             email.setVerified(e.isVerified());
             email.setVisibility(e.getVisibility());
+            
+            if (e.getSource().getAssertionOriginClientId() != null) {
+                email.setAssertionOriginClientId(e.getSource().getAssertionOriginClientId().getPath());
+            }
+            
+            if (e.getSource().getAssertionOriginOrcid() != null) {
+                email.setAssertionOriginOrcid(e.getSource().getAssertionOriginOrcid().getPath());
+            }
+            
+            if (e.getSource().getAssertionOriginName() != null) {
+                email.setAssertionOriginName(e.getSource().getAssertionOriginName().getContent());
+            }
         }
         return email;
     }
@@ -97,6 +115,30 @@ public class Email implements ErrorsInterface {
 
     public String getSourceName() {
         return sourceName;
+    }
+    
+    public String getAssertionOriginOrcid() {
+        return assertionOriginOrcid;
+    }
+
+    public void setAssertionOriginOrcid(String assertionOriginOrcid) {
+        this.assertionOriginOrcid = assertionOriginOrcid;
+    }
+
+    public String getAssertionOriginClientId() {
+        return assertionOriginClientId;
+    }
+
+    public void setAssertionOriginClientId(String assertionOriginClientId) {
+        this.assertionOriginClientId = assertionOriginClientId;
+    }
+
+    public String getAssertionOriginName() {
+        return assertionOriginName;
+    }
+
+    public void setAssertionOriginName(String assertionOriginName) {
+        this.assertionOriginName = assertionOriginName;
     }
 
     public void setSourceName(String sourceName) {
