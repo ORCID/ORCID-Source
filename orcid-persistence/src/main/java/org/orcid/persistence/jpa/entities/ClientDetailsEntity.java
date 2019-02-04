@@ -61,8 +61,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private String emailAccessReason;
     private boolean allowAutoDeprecate = false;
     
-    private Set<MemberOBOWhitelistedClientEntity> oboWhitelist;
-
     public ClientDetailsEntity() {
     }
 
@@ -448,15 +446,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setAllowAutoDeprecate(boolean allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
-    }
-
-    @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "clientDetailsEntity")
-    public Set<MemberOBOWhitelistedClientEntity> getOboWhitelist() {
-        return oboWhitelist;
-    }
-
-    public void setOboWhitelist(Set<MemberOBOWhitelistedClientEntity> oboWhitelist) {
-        this.oboWhitelist = oboWhitelist;
     }
 
     @Override
