@@ -19,9 +19,11 @@ import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.dao.MemberOBOWhitelistedClientDao;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.MemberOBOWhitelistedClientEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -36,6 +38,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 
 import com.google.common.collect.Sets;
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
 /** Spec: https://tools.ietf.org/html/draft-ietf-oauth-token-exchange-15
@@ -64,6 +67,8 @@ public class IETFExchangeTokenGranter implements TokenGranter {
     private ProfileEntityManager profileEntityManager;
     @Resource
     private ProfileDao profileDao;
+    @Resource
+    private MemberOBOWhitelistedClientDao memberOBOWhitelistedClientDao;
     
     @Resource
     OpenIDConnectTokenEnhancer openIDConnectTokenEnhancer;
@@ -111,11 +116,44 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         }
         
         if (requestedTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN) && subjectTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN)) {
-            return generateAccessToken(tokenRequest, subjectToken);
+            JWTClaimsSet claimsSet = parseIdToken(subjectToken);
+            String oboClient = claimsSet.getAudience().get(0);
+            String oboOrcid = claimsSet.getSubject();
+            if (oboClientWhitelisted(oboClient, clientDetails.getId())) {
+                return generateAccessToken(tokenRequest, oboClient, oboOrcid);
+            } else {
+                throw new IllegalArgumentException(String.format("Client %s cannot act on behalf of client %s", oboClient, clientDetails.getId()));
+            }
         }else if (requestedTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN) && subjectTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN)) { 
             return generateIdToken(tokenRequest, subjectToken);
         }
         throw new IllegalArgumentException("Supported tokens types are "+OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN+" "+OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN);
+    }
+    
+    private boolean oboClientWhitelisted(String OBOClient, String clientDetailsId) {
+        List<MemberOBOWhitelistedClientEntity> whitelist = memberOBOWhitelistedClientDao.getWhitelistForClient(clientDetailsId);
+        if (whitelist == null || whitelist.isEmpty()) {
+            return true;
+        }
+        
+        for (MemberOBOWhitelistedClientEntity item : whitelist) {
+            if (item.getWhitelistedClientDetailsEntity().getId().equals(OBOClient)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private JWTClaimsSet parseIdToken(String token) {
+        try {
+            SignedJWT claims = SignedJWT.parse(token);
+            if (!openIDConnectKeyService.verify(claims)) {
+                throw new IllegalArgumentException("Invalid id token signature");
+            }
+            return claims.getJWTClaimsSet();
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Unexpected id token value, cannot parse the id_token");
+        }
     }
 
     /** Create an id token and return it.
@@ -167,22 +205,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
      * @param subjectToken
      * @return
      */
-    private OAuth2AccessToken generateAccessToken(TokenRequest tokenRequest, String subjectToken) {
-        //parse id_token
-        String OBOClient = null;
-        String OBOOrcid = null;
-        try {
-            SignedJWT claims = SignedJWT.parse(subjectToken);
-            if (!openIDConnectKeyService.verify(claims)) {
-                throw new IllegalArgumentException("Invalid id token signature");
-            }
-            OBOClient = claims.getJWTClaimsSet().getAudience().get(0);
-            OBOOrcid = claims.getJWTClaimsSet().getSubject();
-            //NOTE: we do not check expiration.  id_token exchange is independent of token life.            
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Unexpected id token value, cannot parse the id_token");
-        }
-        
+    private OAuth2AccessToken generateAccessToken(TokenRequest tokenRequest, String OBOClient, String OBOOrcid) {
         // Verify the token DOES NOT belong to requesting client (use refresh instead!)
         // NOTE: this is now disabled.  You can generate your own.
         if (OBOClient.equals(tokenRequest.getClientId())) {
