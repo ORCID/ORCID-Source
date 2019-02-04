@@ -23,10 +23,9 @@ import io.swagger.annotations.ApiModel;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "researcherUrls" })
 @XmlRootElement(name = "researcher-urls", namespace = "http://www.orcid.org/ns/researcher-url")
-@ApiModel(value = "ResearchUrlsV2_0")
-public class ResearcherUrls implements Serializable {
-    private static final long serialVersionUID = 6312730308815255894L;
-
+@ApiModel(value = "ResearcherUrlsV2_0")
+public class ResearcherUrls implements Serializable {    
+    private static final long serialVersionUID = 477511001780490593L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")

@@ -33,11 +33,10 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "work-contributors")
 @ApiModel(value = "WorkContributorsV2_0")
 public class WorkContributors implements Serializable {
-
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2576635743117833643L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected List<Contributor> contributor;
     

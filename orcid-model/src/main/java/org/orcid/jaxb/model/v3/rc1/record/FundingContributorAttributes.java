@@ -28,7 +28,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributorRole" })
 @XmlRootElement(name = "contributorAttributes", namespace = "http://www.orcid.org/ns/funding")
-@ApiModel(value = "V3_0_rc1")
+@ApiModel(value = "FundingContributorAttributesV3_0_rc1")
 public class FundingContributorAttributes implements Serializable {
     private static final long serialVersionUID = 6740468192942111824L;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding", name = "contributor-role")

@@ -52,7 +52,7 @@ import io.swagger.annotations.ApiModel;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "notificationSubject", "notificationIntro", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
-@ApiModel(value = "NotifiationPermissionV3_0_rc2")
+@ApiModel(value = "NotificationPermissionV3_0_rc2")
 public class NotificationPermission extends Notification {
     private static final long serialVersionUID = -1740905051692424869L;
     @XmlElement(name = "authorization-url", namespace = "http://www.orcid.org/ns/notification", required = true)

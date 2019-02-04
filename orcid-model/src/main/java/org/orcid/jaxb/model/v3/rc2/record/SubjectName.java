@@ -33,11 +33,7 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "title", namespace = "http://www.orcid.org/ns/peer-review")
 @ApiModel(value = "SubjectNameV3_0_rc2")
 public class SubjectName implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -5815902485841907220L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Title title;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")

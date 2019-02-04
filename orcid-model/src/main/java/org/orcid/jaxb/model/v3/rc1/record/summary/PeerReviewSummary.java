@@ -31,8 +31,7 @@ import io.swagger.annotations.ApiModel;
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
 @ApiModel(value = "PeerReviewSummaryV3_0_rc1")
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable, SourceAware {
-    
-    private static final long serialVersionUID = -7769331531691171324L;    
+    private static final long serialVersionUID = -8226055483787781697L;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     protected ExternalIDs externalIdentifiers;
     @XmlElement(name = "completion-date", namespace = "http://www.orcid.org/ns/peer-review")

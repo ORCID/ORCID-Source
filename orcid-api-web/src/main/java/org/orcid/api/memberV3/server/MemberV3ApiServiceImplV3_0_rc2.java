@@ -102,6 +102,7 @@ import org.orcid.jaxb.model.v3.rc2.record.Membership;
 import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.rc2.record.Qualification;
 import org.orcid.jaxb.model.v3.rc2.record.Record;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
@@ -132,6 +133,7 @@ import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.Services;
 import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
+import org.orcid.jaxb.model.v3.rc2.search.Search;
 import org.springframework.beans.factory.annotation.Value;
 
 import io.swagger.annotations.Api;
@@ -789,7 +791,7 @@ public class MemberV3ApiServiceImplV3_0_rc2 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSONAL_DETAILS)
-    @ApiOperation( nickname="viewPersonalDetailsv3Rc2", value = "Fetch personal details for an ORCID ID", authorizations = {
+    @ApiOperation( nickname="viewPersonalDetailsv3Rc2", response = PersonalDetails.class, value = "Fetch personal details for an ORCID ID", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewPersonalDetails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPersonalDetails(orcid);
@@ -983,7 +985,7 @@ public class MemberV3ApiServiceImplV3_0_rc2 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SEARCH_PATH)
-    @ApiOperation( nickname="searchByQueryv3Rc2", value = "Search records", authorizations = {
+    @ApiOperation( nickname="searchByQueryv3Rc2", response = Search.class, value = "Search records", authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
     public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {

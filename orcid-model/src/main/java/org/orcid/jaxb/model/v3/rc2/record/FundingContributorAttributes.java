@@ -34,11 +34,7 @@ import java.io.Serializable;
 @XmlRootElement(name = "contributorAttributes", namespace = "http://www.orcid.org/ns/funding")
 @ApiModel(value = "FundingContributorAttributesV3_0_rc2")
 public class FundingContributorAttributes implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 8970123534713615455L;
     @XmlJavaTypeAdapter(FundingContributorRoleAdapter.class)
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding", name = "contributor-role")
     protected FundingContributorRole contributorRole;    
