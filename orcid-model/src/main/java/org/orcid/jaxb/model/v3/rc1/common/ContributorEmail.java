@@ -7,12 +7,15 @@
 
 package org.orcid.jaxb.model.v3.rc1.common;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import java.io.Serializable;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -24,12 +27,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "contributor-email")
+@ApiModel(value = "ContributorEmailV3_0_rc1")
 public class ContributorEmail implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4094123334174911175L;
     @XmlValue
     protected String value;
 

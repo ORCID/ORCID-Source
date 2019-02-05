@@ -1,6 +1,5 @@
 package org.orcid.listener.converter;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -8,45 +7,17 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.listener.solr.OrcidProfileToSolrDocument;
-import org.orcid.listener.solr.OrcidRecordToSolrDocument;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.listener.solr.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 
 public class OrcidRecordToSolrDocumentTest {
-
-    @Test
-    public void test12SameAs20() throws IOException, SolrServerException, JAXBException{
-        OrcidProfileToSolrDocument v12 = new  OrcidProfileToSolrDocument();
-        OrcidRecordToSolrDocument v20 = new  OrcidRecordToSolrDocument(false);
-        Record record = getRecord("/v20record.xml");
-        OrcidMessage message = getOrcidMessage();
-        OrcidSolrDocument v12Doc = v12.convert(message.getOrcidProfile());
-        OrcidSolrDocument v20Doc = v20.convert(record, new ArrayList<Funding>(), new ArrayList<ResearchResource>());
-        Assert.assertEquals(v12Doc.getOrcid(), v20Doc.getOrcid());
-        Assert.assertEquals(v12Doc.getFamilyName(), v20Doc.getFamilyName());
-        Assert.assertEquals(v12Doc.getGivenNames(), v20Doc.getGivenNames());
-        Assert.assertEquals(v12Doc.getGivenAndFamilyNames(), v20Doc.getGivenAndFamilyNames());
-        Assert.assertTrue(v12Doc.getDigitalObjectIds().containsAll(v20Doc.getDigitalObjectIds()));
-        Assert.assertTrue(v20Doc.getDigitalObjectIds().containsAll(v12Doc.getDigitalObjectIds()));
-        Assert.assertTrue(v12Doc.getWorkTitles().containsAll(v20Doc.getWorkTitles()));
-        Assert.assertTrue(v20Doc.getWorkTitles().containsAll(v12Doc.getWorkTitles()));
-
-        Assert.assertTrue(v12Doc.getCit().containsAll(v20Doc.getCit()));
-        Assert.assertTrue(v20Doc.getCit().containsAll(v12Doc.getCit()));
-        Assert.assertTrue(v12Doc.getAgr().containsAll(v20Doc.getAgr()));
-        Assert.assertTrue(v20Doc.getAgr().containsAll(v12Doc.getAgr()));
         
-        Assert.assertEquals(v12Doc.getProfileLastModifiedDate(), v20Doc.getProfileLastModifiedDate());
-        Assert.assertEquals(v12Doc.getProfileSubmissionDate(), v20Doc.getProfileSubmissionDate());
-    }
-    
     @Test
     public void testNonSchemaExternalID() throws JAXBException{
         //as above, but with PDB identifier

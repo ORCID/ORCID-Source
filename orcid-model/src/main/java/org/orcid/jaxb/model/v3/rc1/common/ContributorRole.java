@@ -6,11 +6,14 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * @author Declan Newman (declan) Date: 07/08/2012
  */
 @XmlType(name = "contributorRole")
 @XmlEnum
+@ApiModel(value = "ContributorRoleV3_0_rc1")
 public enum ContributorRole implements Serializable {
 
     @XmlEnumValue("author")

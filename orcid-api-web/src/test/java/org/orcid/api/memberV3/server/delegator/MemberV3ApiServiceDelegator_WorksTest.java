@@ -626,7 +626,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
 
         ExternalIDs extIds = new ExternalIDs();
         ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.PART_OF);
+        extId.setRelationship(Relationship.SELF);
         extId.setType(WorkExternalIdentifierType.AGR.value());
         extId.setValue("ext-id-" + System.currentTimeMillis());
         extId.setUrl(new Url("http://thisIsANewUrl.com"));

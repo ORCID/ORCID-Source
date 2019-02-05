@@ -19,6 +19,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -50,9 +52,9 @@ import org.orcid.jaxb.model.notification_v2.NotificationType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "authorizationUrl", "notificationSubject", "notificationIntro", "items", "createdDate", "sentDate", "readDate", "actionedDate", "archivedDate", "source" })
 @XmlRootElement(name = "notification", namespace = "http://www.orcid.org/ns/notification")
+@ApiModel(value = "NotificationPermissionV2_0")
 public class NotificationPermission extends Notification {
-
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 9109472272556575757L;
     @XmlElement(name = "authorization-url", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected AuthorizationUrl authorizationUrl;
     @XmlElement(namespace = "http://www.orcid.org/ns/notification", required = true)

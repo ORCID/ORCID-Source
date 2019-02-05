@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -40,6 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "credit-name")
 @JsonIgnoreProperties({"visibility"})
+@ApiModel(value = "CreditNameV3_0_rc2")
 public class CreditName implements Serializable {
 
     private static final long serialVersionUID = 1L;

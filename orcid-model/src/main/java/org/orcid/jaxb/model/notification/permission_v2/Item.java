@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record_v2.ExternalID;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -45,9 +47,9 @@ import org.orcid.jaxb.model.record_v2.ExternalID;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "itemType", "itemName", "externalIdentifier" })
 @XmlRootElement(name = "item")
+@ApiModel(value = "ItemV2_0")
 public class Item implements Serializable {
-
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2132083722870067565L;
     @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlElement(name = "item-type", namespace = "http://www.orcid.org/ns/notification", required = true)

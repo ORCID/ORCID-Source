@@ -1,5 +1,7 @@
 package org.orcid.jaxb.model.v3.rc1.record;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -8,11 +10,14 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "resourceName", "resourceType", "hosts", "externalIdentifiers", "url" })
 @XmlRootElement(name = "resource-item", namespace = "http://www.orcid.org/ns/research-resource")
-public class ResearchResourceItem {
-
+@ApiModel(value = "ResearchResourceItemV3_0_rc1")
+public class ResearchResourceItem implements Serializable {
+    private static final long serialVersionUID = -5091579756595800382L;
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-name")
     protected String resourceName;
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "resource-type")

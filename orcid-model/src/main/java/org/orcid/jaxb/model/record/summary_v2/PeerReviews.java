@@ -16,9 +16,12 @@ import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.record_v2.Group;
 import org.orcid.jaxb.model.record_v2.GroupsContainer;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "peerReviewGroup" })
 @XmlRootElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "PeerReviewsV2_0")
 public class PeerReviews implements GroupsContainer, Serializable {
 
     private static final long serialVersionUID = 6779626621503362679L;

@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc2.common.Contributor;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>Java class for anonymous complex type.
  * 
@@ -29,12 +31,9 @@ import org.orcid.jaxb.model.v3.rc2.common.Contributor;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributor" })
 @XmlRootElement(name = "work-contributors")
+@ApiModel(value = "WorkContributorsV3_0_rc2")
 public class WorkContributors implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4322373773985616595L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected List<Contributor> contributor;
     

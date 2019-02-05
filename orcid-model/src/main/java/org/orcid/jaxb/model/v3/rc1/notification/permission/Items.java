@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -47,9 +49,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "items" })
 @XmlRootElement(name = "items", namespace = "http://www.orcid.org/ns/notification")
+@ApiModel(value = "ItemsV3_0_rc1")
 public class Items implements Serializable {
-
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2480983459388270061L;
     @XmlElement(name = "item", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected List<Item> items;
 

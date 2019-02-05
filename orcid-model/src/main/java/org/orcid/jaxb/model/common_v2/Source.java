@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -28,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "sourceOrcid", "sourceClientId", "sourceName" })
 @XmlRootElement(name = "source", namespace = "http://www.orcid.org/ns/common")
+@ApiModel(value = "SourceV2_0")
 public class Source implements Serializable {
 
     /**

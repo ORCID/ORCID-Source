@@ -15,6 +15,8 @@ import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -23,6 +25,7 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "content" })
 @XmlRootElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
+@ApiModel(value = "OtherNameV3_0_rc2")
 public class OtherName implements Filterable, Serializable, Comparable<OtherName>, SourceAware {
     private static final long serialVersionUID = 1047027166285177589L;
     @XmlElement(name = "content", namespace = "http://www.orcid.org/ns/other-name")

@@ -7,6 +7,8 @@
 
 package org.orcid.jaxb.model.v3.rc1.common;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,9 +17,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.commons.lang.StringUtils;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.io.Serializable;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -30,12 +31,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "day")
+@ApiModel(value = "DayV3_0_rc1")
 public class Day implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -5329795727004769924L;
     @XmlValue
     @ApiModelProperty(example = "28")
     protected String value;

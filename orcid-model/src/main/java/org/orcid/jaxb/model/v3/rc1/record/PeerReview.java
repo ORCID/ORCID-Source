@@ -20,10 +20,13 @@ import org.orcid.jaxb.model.v3.rc1.common.Title;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "role", "externalIdentifiers", "url", "type",  "completionDate",
         "groupId", "subjectExternalIdentifier", "subjectContainerName", "subjectType", "subjectName", "subjectUrl", "organization" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
+@ApiModel(value = "PeerReviewV3_0_rc1")
 public class PeerReview implements Filterable, Activity, Serializable, OrganizationHolder, SourceAware {
     private static final long serialVersionUID = -1112309604310926743L;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "reviewer-role")

@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.adapters.AvailableLocalesAdapter;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -20,6 +22,7 @@ import org.orcid.jaxb.model.common.adapters.AvailableLocalesAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "locale" })
 @XmlRootElement(name = "preferences", namespace = "http://www.orcid.org/ns/preferences")
+@ApiModel(value = "PreferencesV3_0_rc2")
 public class Preferences implements Serializable {    
     private static final long serialVersionUID = -2143886440930470817L;
     @XmlJavaTypeAdapter(AvailableLocalesAdapter.class)

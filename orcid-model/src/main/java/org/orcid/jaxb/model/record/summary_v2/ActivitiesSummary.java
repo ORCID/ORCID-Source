@@ -24,6 +24,8 @@ import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.record_v2.ActivitiesContainer;
 import org.orcid.jaxb.model.record_v2.Activity;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -38,6 +40,7 @@ import org.orcid.jaxb.model.record_v2.Activity;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "educations", "employments", "fundings", "peerReviews", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "ActivitiesSummaryV2_0")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
 
     private static final long serialVersionUID = 1L;

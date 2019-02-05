@@ -22,15 +22,19 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import io.swagger.annotations.ApiModel;
 
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(propOrder = { "uri", "path", "host" })
 @JsonPropertyOrder({ "uri", "path", "host" })
 @JsonIgnoreProperties({ "value", "valueAsString" })
+@ApiModel(value = "OrcidIdBaseV3_0_rc1")
 public class OrcidIdBase implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4799548153505397192L;
 
     protected String uri;
 

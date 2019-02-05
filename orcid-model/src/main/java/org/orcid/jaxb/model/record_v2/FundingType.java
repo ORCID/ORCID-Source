@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for orcid-type.
@@ -26,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 @XmlType(name = "grantType")
 @XmlEnum
+@ApiModel(value = "FundingTypeV2_0")
 public enum FundingType implements Serializable {
     @XmlEnumValue("grant")
     GRANT("grant"), 

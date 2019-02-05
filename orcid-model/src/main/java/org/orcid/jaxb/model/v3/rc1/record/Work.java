@@ -29,6 +29,8 @@ import org.orcid.jaxb.model.v3.rc1.common.Title;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -44,8 +46,9 @@ import org.orcid.jaxb.model.v3.rc1.common.Visibility;
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "title", "journalTitle", "shortDescription", "citation", "type", "publicationDate",
         "externalIdentifiers", "url", "contributors", "languageCode", "country" })
 @XmlRootElement(name = "work", namespace = "http://www.orcid.org/ns/work")
+@ApiModel(value = "WorkV3_0_rc1")
 public class Work implements Filterable, Activity, Serializable, SourceAware, BulkElement {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 871114911498819375L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkTitle title;
     @XmlElement(name = "journal-title", namespace = "http://www.orcid.org/ns/work")

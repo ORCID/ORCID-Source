@@ -7,6 +7,7 @@
 
 package org.orcid.jaxb.model.v3.rc1.record.summary;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,10 +20,13 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "workSummary" })
 @XmlRootElement(name = "work-group", namespace = "http://www.orcid.org/ns/activities")
-public class WorkGroup extends ActivityGroup {
+@ApiModel(value = "WorkGroupV3_0_rc1")
+public class WorkGroup extends ActivityGroup implements Serializable {
     
     private static final long serialVersionUID = -6172489241759247746L;
     @XmlElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")

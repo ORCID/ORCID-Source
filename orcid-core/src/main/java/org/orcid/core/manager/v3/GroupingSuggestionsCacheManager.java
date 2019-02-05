@@ -6,8 +6,10 @@ import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
 public interface GroupingSuggestionsCacheManager {
     
-    WorkGroupingSuggestion getGroupingSuggestion(String orcid);
+    List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid, int max);
     
     void putGroupingSuggestions(String orcid, List<WorkGroupingSuggestion> suggestions);
+    
+    int getGroupingSuggestionCount(String orcid);
 
 }

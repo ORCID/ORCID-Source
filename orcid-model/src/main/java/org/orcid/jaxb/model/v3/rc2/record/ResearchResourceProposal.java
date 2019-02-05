@@ -1,5 +1,7 @@
 package org.orcid.jaxb.model.v3.rc2.record;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,11 +11,14 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "title", "hosts", "externalIdentifiers", "startDate", "endDate", "url" })
 @XmlRootElement(name = "proposal", namespace = "http://www.orcid.org/ns/research-resource")
-public class ResearchResourceProposal {
-
+@ApiModel(value = "ResearchResourceProposalV3_0_rc2")
+public class ResearchResourceProposal implements Serializable {
+    private static final long serialVersionUID = 4396414540438557932L;
     @XmlElement(namespace = "http://www.orcid.org/ns/research-resource", name = "title")
     protected ResearchResourceTitle title;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "start-date")

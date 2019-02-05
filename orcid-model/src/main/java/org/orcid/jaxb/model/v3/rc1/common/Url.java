@@ -7,7 +7,7 @@
 
 package org.orcid.jaxb.model.v3.rc1.common;
 
-import org.apache.commons.lang.StringUtils;
+import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,7 +15,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import java.io.Serializable;
+
+import org.apache.commons.lang.StringUtils;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>
@@ -29,9 +32,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "url")
+@ApiModel(value = "UrlV3_0_rc1")
 public class Url implements Serializable, Comparable<Url> {
-
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 49190432080226567L;
     @XmlValue
     @XmlSchemaType(name = "anyURI")
     protected String value;

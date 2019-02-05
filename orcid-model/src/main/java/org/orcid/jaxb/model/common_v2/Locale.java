@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -39,6 +41,7 @@ import java.io.Serializable;
  */
 @XmlType(name = "locale")
 @XmlEnum
+@ApiModel(value = "LocaleV2_0")
 public enum Locale implements Serializable {
     @XmlEnumValue("ar")
     AR("ar"),

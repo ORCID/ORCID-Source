@@ -146,7 +146,6 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     @After
     public void after() {
         SecurityContextHolder.clearContext();
-        orcidProfileManager.clearOrcidProfileCache();
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);        
         TargetProxyHelper.injectIntoProxy(jpa2JaxbAdapter, "emailFrequencyManager", mockEmailFrequencyManager);        
     }

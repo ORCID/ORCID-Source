@@ -1,5 +1,6 @@
 package org.orcid.jaxb.model.v3.rc2.record.summary;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +11,13 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "summaries" })
 @XmlRootElement(name = "affiliation-group", namespace = "http://www.orcid.org/ns/activities")
-public class AffiliationGroup<T extends AffiliationSummary> extends ActivityGroup {
+@ApiModel(value = "AffiliationGroupV3_0_rc2")
+public class AffiliationGroup<T extends AffiliationSummary> extends ActivityGroup implements Serializable {
     
     private static final long serialVersionUID = -8293559217646416864L;
     

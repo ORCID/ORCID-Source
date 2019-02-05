@@ -10,9 +10,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcidIds" })
 @XmlRootElement(name = "orcid-ids", namespace = "http://www.orcid.org/ns/orcid-id")
+@ApiModel(value = "OrcidIdsV3_0_rc1")
 public class OrcidIds implements Serializable {
     private static final long serialVersionUID = 921607209700657276L;
     @XmlElement(name = "orcid-id", namespace = "http://www.orcid.org/ns/orcid-id")

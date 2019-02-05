@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
 
 /**
  * ISO 3611 country
@@ -33,9 +33,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "country")
+@ApiModel(value = "CountryV2_0")
 public class Country implements Serializable, Comparable<Country> {
-
-    private final static long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5965964351838303378L;
     @XmlValue
     protected Iso3166Country value;
 

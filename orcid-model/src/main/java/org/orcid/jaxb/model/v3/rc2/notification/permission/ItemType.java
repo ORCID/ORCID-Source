@@ -3,7 +3,7 @@ package org.orcid.jaxb.model.v3.rc2.notification.permission;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
 
 /**
  * 
@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  *
  */
 @XmlEnum
+@ApiModel(value = "ItemTypeV3_0_rc2")
 public enum ItemType {
     //@formatter:off
     @XmlEnumValue("distinction") DISTINCTION,

@@ -10,9 +10,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "notifications" })
 @XmlRootElement(name = "notifications", namespace = "http://www.orcid.org/ns/notification")
+@ApiModel(value = "NotificationPermissionsV3_0_rc1")
 public class NotificationPermissions implements Serializable {
 
 	private static final long serialVersionUID = 720972206804832580L;
