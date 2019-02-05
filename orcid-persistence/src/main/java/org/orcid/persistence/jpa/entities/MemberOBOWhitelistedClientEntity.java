@@ -20,7 +20,6 @@ public class MemberOBOWhitelistedClientEntity extends BaseEntity<Long> {
     private ClientDetailsEntity whitelistedClientDetailsEntity;
     
     @Id
-    @Column(name = "org_disambiguated_id")
     public Long getId() {
         return id;
     }

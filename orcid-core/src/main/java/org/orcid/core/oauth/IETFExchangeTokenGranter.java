@@ -127,7 +127,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
             if (oboClientWhitelisted(oboClient, clientDetails.getId())) {
                 return generateAccessToken(tokenRequest, oboClient, oboOrcid);
             } else {
-                throw new IllegalArgumentException(String.format("Client %s cannot act on behalf of client %s", oboClient, clientDetails.getId()));
+                throw new IllegalArgumentException(String.format("Client %s cannot act on behalf of client %s", clientDetails.getId(), oboClient));
             }
         } else if (requestedTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN) && subjectTokenType.equals(OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN)) {
             return generateIdToken(tokenRequest, subjectToken);
@@ -136,14 +136,14 @@ public class IETFExchangeTokenGranter implements TokenGranter {
                 "Supported tokens types are " + OrcidOauth2Constants.IETF_EXCHANGE_ID_TOKEN + " " + OrcidOauth2Constants.IETF_EXCHANGE_ACCESS_TOKEN);
     }
 
-    private boolean oboClientWhitelisted(String OBOClient, String clientDetailsId) {
-        List<MemberOBOWhitelistedClientEntity> whitelist = memberOBOWhitelistedClientDao.getWhitelistForClient(clientDetailsId);
+    private boolean oboClientWhitelisted(String oboClient, String clientDetailsId) {
+        List<MemberOBOWhitelistedClientEntity> whitelist = memberOBOWhitelistedClientDao.getWhitelistForClient(oboClient);
         if (whitelist == null || whitelist.isEmpty()) {
             return true;
         }
 
         for (MemberOBOWhitelistedClientEntity item : whitelist) {
-            if (item.getWhitelistedClientDetailsEntity().getId().equals(OBOClient)) {
+            if (item.getWhitelistedClientDetailsEntity().getId().equals(clientDetailsId)) {
                 return true;
             }
         }
