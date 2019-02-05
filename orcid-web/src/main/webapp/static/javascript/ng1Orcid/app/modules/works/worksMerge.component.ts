@@ -29,6 +29,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
 
     mergeCount: any;
     mergeSubmit: boolean;
+    showWorksMergeError: boolean;
     worksToMerge: Array<any>;
     externalIdsPresent: boolean;
     groupingSuggestion: any;
@@ -39,6 +40,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
         this.mergeSubmit = false;
         this.groupingSuggestion = false;
+        this.showWorksMergeError = false;
     }
 
     cancelEdit(): void {
@@ -47,10 +49,12 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     mergeConfirm(): void {
-        if(this.mergeCount > 20){
+        console.log(this.worksToMerge.length);
+        if(this.worksToMerge.length > 10){
             console.log("merging too many!");
             this.worksService.notifyOther({worksToMerge:this.worksToMerge});       
             this.worksService.notifyOther({mergeCount:this.mergeCount});
+            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});   
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeWarning'});   
         } else {
             this.merge();
@@ -76,6 +80,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
             },
             error => {
+                this.showWorksMergeError = true;
                 console.log('error calling mergeWorks', error);
             } 
         );
@@ -106,6 +111,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 if( res.worksToMerge ) {
                     this.worksToMerge = res.worksToMerge;
+                    console.log(this.worksToMerge);
                 }
                 if( res.externalIdsPresent != undefined ) {
                     this.externalIdsPresent = res.externalIdsPresent;

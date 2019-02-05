@@ -29,6 +29,7 @@ export class WorksMergeWarningComponent implements AfterViewInit, OnDestroy, OnI
 
     mergeCount: any;
     mergeSubmit: boolean;
+    showWorksMergeError: boolean;
     worksToMerge: Array<any>;
 
     constructor(
@@ -36,23 +37,12 @@ export class WorksMergeWarningComponent implements AfterViewInit, OnDestroy, OnI
         private modalService: ModalService
     ) {
         this.mergeSubmit = false;
+        this.showWorksMergeError = false;
     }
 
     cancelEdit(): void {
         this.mergeSubmit = false;
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeWarning'});
-    };
-
-    mergeConfirm(): void {
-        if(this.mergeCount > 20){
-            console.log("merging too many!");
-            this.worksService.notifyOther({worksToMerge:this.worksToMerge});       
-            this.worksService.notifyOther({mergeCount:this.mergeCount});
-            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeWarning'});   
-        } else {
-            this.merge();
-        }
     };
 
     merge(): void {
@@ -71,9 +61,10 @@ export class WorksMergeWarningComponent implements AfterViewInit, OnDestroy, OnI
         .subscribe(
             data => {
                 this.worksService.notifyOther({action:'merge', successful:true});
-                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
+                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeWarning'});
             },
             error => {
+                this.showWorksMergeError = true;
                 console.log('error calling mergeWorks', error);
             } 
         );

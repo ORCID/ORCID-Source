@@ -272,6 +272,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     bulkChangeAll(bool): void {
+        this.showMergeWorksExtIdsError = false;
+        this.showMergeWorksApiMissingExtIdsError = false;
         this.bulkSelectedCount = 0;
         this.bulkChecked = bool;
         this.bulkDisplayToggle = false;
@@ -284,6 +286,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     bulkEditSelect(): void {
+        this.showMergeWorksExtIdsError = false;
+        this.showMergeWorksApiMissingExtIdsError = false;
         this.allSelected = false;
         this.bulkSelectedCount = 0;
         for (var idx in this.worksService.groups){
@@ -291,7 +295,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.bulkSelectedCount++;
             }
         }
-        console.log(this.bulkEditMap);
     }
 
     canBeCombined(work): any {
@@ -339,27 +342,38 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     mergeConfirm(): void {
         this.worksToMerge = new Array();
         var idx: any;
+        var groupCount = 0;
         var mergeCount = 0;       
         for (idx in this.worksService.groups){
             if (this.bulkEditMap[this.worksService.groups[idx].activePutCode]){
-                mergeCount++;
+                groupCount++;
             }
         }
-        if (mergeCount > 1) {
+        if (groupCount > 1) {
             var apiWorkMissingExtIds = false;
             var apiWorkPresent = false;
             var externalIdsPresent = false; 
             for (var putCode in this.bulkEditMap) {
-                if (this.bulkEditMap[putCode]) { 
-                    this.worksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
+                if (this.bulkEditMap[putCode]) {
+                    for (var i in this.worksService.groups) {
+                        if(this.worksService.groups[i].activePutCode == putCode){
+                            for (var j in this.worksService.groups[i].works) {
+                                console.log(this.worksService.groups[i].works[j].putCode.value);
+                                this.worksToMerge.push(this.worksService.getDetails(this.worksService.groups[i].works[j].putCode.value, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
+                                mergeCount++;
+
+                            }
+                        
+                        }
+                    }
                 }
+
             }       
             forkJoin(this.worksToMerge).subscribe(
                 dataGroup => {
                     for(var i in dataGroup){
                         console.log(dataGroup[i]);
                         if(dataGroup[i].source != orcidVar.orcidId){
-                            console.log("api work")
                             apiWorkPresent = true;
                             if(dataGroup[i].workExternalIdentifiers.length == 0){
                                 apiWorkMissingExtIds = true;
@@ -383,9 +397,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             }
                         }
                     }
-                    if(apiWorkMissingExtIds){
+                    if(apiWorkPresent && apiWorkMissingExtIds){
                         this.showMergeWorksApiMissingExtIdsError = true;
-                    } else if(!externalIdsPresent){
+                    } else if(!apiWorkPresent && !externalIdsPresent){
                         this.showMergeWorksExtIdsError = true;
                     } else {
                         this.worksService.notifyOther({worksToMerge:dataGroup});       

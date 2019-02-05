@@ -84,7 +84,7 @@
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/works-merge-warning-ng2-template.ftl">
-<modalngcomponent elementHeight="160" elementId="modalWorksMerge" elementWidth="600">
+<modalngcomponent elementHeight="180" elementId="modalWorksMergeWarning" elementWidth="600">
     <works-merge-warning-ng2></works-merge-warning-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
