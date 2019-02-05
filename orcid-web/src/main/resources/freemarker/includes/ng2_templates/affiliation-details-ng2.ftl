@@ -180,6 +180,11 @@
                     <!--Source name-->
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.activePutCode]">
                         {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
+                        <#--  OBO  -->
+                        <ng-container *ngIf="(affiliation.source.assertionOriginClientId && addressSource.source.assertionOriginClientId !== addressSource.source.sourceClientId.path) ||
+                                        (addressSource.source.assertionOriginOrcid && addressSource.source.assertionOriginOrcid !== addressSource.source.sourceOrcid.path)">
+                        ${springMacroRequestContext.getMessage("public_profile.onBehalfOf")} {{addressSource.source.assertionOriginName || addressSource.source.assertionOriginOrcid}}
+                        </ng-container>
                     </div>
                     <!--Preferred source-->
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.activePutCode]">
