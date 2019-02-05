@@ -53,7 +53,7 @@ public class ExternalIDValidator {
         checkAndThrow(errors);
     }
 
-    public void validateWorkOrPeerReview(ExternalIDs ids) {
+    public void validatePeerReview(ExternalIDs ids) {
         if (ids == null) // yeuch
             return;
         List<String> errors = Lists.newArrayList();
@@ -85,6 +85,38 @@ public class ExternalIDValidator {
         
         if(hasVersionOfIdentifier && !hasSelfIdentifier) {
             errors.add("version-of requires at least one self identifier");
+        } 
+        
+        checkAndThrow(errors);
+    }
+    
+    public void validateWork(ExternalIDs ids, boolean apiRequest) {
+        if (ids == null) // yeuch
+            return;
+        List<String> errors = Lists.newArrayList();
+        boolean hasSelfIdentifier = false;
+        for (ExternalID id : ids.getExternalIdentifier()) {
+            if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
+                errors.add(id.getType());
+            }
+            
+            if(PojoUtil.isEmpty(id.getValue())) {
+                errors.add("value");
+            }
+            
+            if(requireRelationshipOnExternalIdentifier) {
+                if(id.getRelationship() == null) {
+                    errors.add("relationship");
+                }
+            }
+            
+            if(Relationship.SELF.equals(id.getRelationship())) {
+                hasSelfIdentifier = true;
+            }
+        }
+        
+        if(apiRequest && !hasSelfIdentifier) {
+            errors.add("At least one identifier with 'self' relationship is required");
         } 
         
         checkAndThrow(errors);
