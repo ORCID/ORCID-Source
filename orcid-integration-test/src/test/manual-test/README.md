@@ -35,8 +35,7 @@
 	Password: [DD][month][YYYY]
 18. Visit https://qa.orcid.org/signout
 
-## Sign In
-## Testing Institutional Login
+## Institutional Login
 19. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
 20. Visit https://qa.orcid.org/signin and use the Institutional account option to sign in using "United ID" as the institution and the UnitedID account you just created. Complete steps to link it to the Individual account the account created in steps 1 and 2.
 21. On the notification in the orange box at the top of the page to link the account to State University, click connect, you'll be taken to the OAuth page. Click 'Deny'  and return to the record.
@@ -65,7 +64,7 @@
 41. Add a biography: "Bio!"
 42. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
 43. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list)
-44. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value “0000” click through warning about the identifier validation
+44. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value '1234' click through warning about the identifier validation
 45. Set the work you just added to private
 46. Visit public page (https://qa.orcid.org/[orcid id])
     * Verify information added in the steps above is visible, but not the private work or email addresses
@@ -104,24 +103,49 @@
 
 ## Test Self Service
 
-57. Set up a new Self Service Org account using [this document](https://docs.google.com/document/d/1FlpmgtubCEnD21EpJLWu4AXh4DH0moC9pe6R_5clA78/edit) or alternatively use 0000-0003-0641-4661.
+For this test there is a fair amount of set up. You need to have a Consortium Lead account on QA and a Consortium Member account. For the purposes of testing you can use the accounts 0000-0003-0641-4661 for the consortium lead account and 0000-0001-5870-8499 for the consortium member account.
 
-58. Sign in to 0000-0003-0641-4661 and visit https://qa.orcid.org/self-service
+**Check Consortium Lead Functionality**
 
- ** Note Salesforce to Registry changes may take an hour to appear due to caching.**
+57. Go to https://qa.orcid.org/signin and sign in with
 
-59. Update org info- make sure it feeds into Salesforce.
+		0000-0003-0641-4661
+		Password: test1234. Check that there is a tab 'MEMBER TOOLS'
+		
+58. Click on the 'MEMBER TOOLS' tab, and check the page loads
 
-60. Add new consortium org contact- make sure info feeds to SF.
+59. Scroll to the bottom of the page to the Add a new consortium member section:
 
-61. Add new member org- make sure request feeds to SF.
+			Organization Name: [DD][month][YYYY]
+			Website : http://www.[DD][month][YYYY].com
+			**Contact Information**
+			First Name : Self_service
+			Last Name: [DD][month][YYYY]
+			Email: [DD][month][YYYY]@mailinator.com
 
-62. Set new org as a member in SF- see that the status updates.
+**Check the Saleforce staff email to check there is a notification**
 
-63. Delete existing org make sure it does delete.
+60. Visit mailinator.com and enter:	
 
+			selfservicesalesforcetest@mailinator.com
+			
+61. Check that there is an email titled "Consortium member addition requested - [DD][month][YYYY]"
 
+**Check that consortium member can add a contact**
 
+62.  Visit www.qa.orcid.org/signout
+
+		Sign in with
+		0000-0001-5870-8499
+		test1234
+		
+63. Go to https://qa.orcid.org/self-service
+
+64.  Add a contact in the Add Member Contacts email field
+
+		Email: ma_test_[DD][month][YYYY]@mailinator.com
+
+64. Visit https://qa.orcid.org/signout
 
 ## Run the automated Independent Tests
 
@@ -142,15 +166,16 @@
 	* Password: [DD][month][YYYY]
 
 68. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
-	* 3 other names
-	* 3 countries
+	* 4 other names
+	* 4 countries
 	* 4 keywords
 	* 4 websites
 	* 3 external id
 	* 4 education items - open one to view details
 	* 4 funding items
+	* 1 research-resource
 	* 3 works (one being a group of 2) - open one to view details
-	* 1 peer-review item (with two reviews) - open one to view details
+	* 2 peer-review item (one with two reviews) - open one to view details
 
 69. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
 	* Check that the group of works with doi:0000 only displays the public version
@@ -160,10 +185,12 @@
 	* notifications of updates to the record
 
 71. Archive the first notification in the list
+	
+70. Check there is a Member Tools tab and the page loads when you go to it
 
 72. Use the switch user option to change to the record created during the OAuth process
 
-73. Sign in to Browsersrtack.com and using IE 11 visit the follow pages and make sure everything loads
+73. Sign in to Browserstack.com and using IE 11 visit the follow pages and make sure everything loads
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
@@ -175,7 +202,5 @@
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
-
-75. Run the Self-service tests here https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/manual-test/Self-service-manual-test.md
 
 * Finally help out by improving these instructions!      
