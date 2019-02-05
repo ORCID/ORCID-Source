@@ -26,6 +26,9 @@ public class KeywordForm extends VisibilityForm implements ErrorsInterface, Seri
     private Date lastModified;
     private String source;
     private String sourceName;
+    private String assertionOriginOrcid;
+    private String assertionOriginClientId;
+    private String assertionOriginName;
 
     public static KeywordForm valueOf(Keyword keyword) {
         KeywordForm form = new KeywordForm();
@@ -68,6 +71,18 @@ public class KeywordForm extends VisibilityForm implements ErrorsInterface, Seri
             form.setSource(keyword.getSource().retrieveSourcePath());
             if (keyword.getSource().getSourceName() != null) {
                 form.setSourceName(keyword.getSource().getSourceName().getContent());
+            }
+            
+            if (keyword.getSource().getAssertionOriginClientId() != null) {
+                form.setAssertionOriginClientId(keyword.getSource().getAssertionOriginClientId().getPath());
+            }
+            
+            if (keyword.getSource().getAssertionOriginOrcid() != null) {
+                form.setAssertionOriginOrcid(keyword.getSource().getAssertionOriginOrcid().getPath());
+            }
+            
+            if (keyword.getSource().getAssertionOriginName() != null) {
+                form.setAssertionOriginName(keyword.getSource().getAssertionOriginName().getContent());
             }
         }
 
@@ -169,6 +184,30 @@ public class KeywordForm extends VisibilityForm implements ErrorsInterface, Seri
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+    
+    public String getAssertionOriginOrcid() {
+        return assertionOriginOrcid;
+    }
+
+    public void setAssertionOriginOrcid(String assertionOriginOrcid) {
+        this.assertionOriginOrcid = assertionOriginOrcid;
+    }
+
+    public String getAssertionOriginClientId() {
+        return assertionOriginClientId;
+    }
+
+    public void setAssertionOriginClientId(String assertionOriginClientId) {
+        this.assertionOriginClientId = assertionOriginClientId;
+    }
+
+    public String getAssertionOriginName() {
+        return assertionOriginName;
+    }
+
+    public void setAssertionOriginName(String assertionOriginName) {
+        this.assertionOriginName = assertionOriginName;
     }
 
     public Long getDisplayIndex() {

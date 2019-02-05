@@ -60,7 +60,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private boolean persistentTokensEnabled = false;
     private String emailAccessReason;
     private boolean allowAutoDeprecate = false;
-
+    
     public ClientDetailsEntity() {
     }
 

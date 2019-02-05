@@ -56,6 +56,12 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
     private String source;
 
     private String sourceName;
+    
+    private String assertionOriginOrcid;
+    
+    private String assertionOriginClientId;
+    
+    private String assertionOriginName;
 
     private Date createdDate;
 
@@ -155,6 +161,30 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+    
+    public String getAssertionOriginOrcid() {
+        return assertionOriginOrcid;
+    }
+
+    public void setAssertionOriginOrcid(String assertionOriginOrcid) {
+        this.assertionOriginOrcid = assertionOriginOrcid;
+    }
+
+    public String getAssertionOriginClientId() {
+        return assertionOriginClientId;
+    }
+
+    public void setAssertionOriginClientId(String assertionOriginClientId) {
+        this.assertionOriginClientId = assertionOriginClientId;
+    }
+
+    public String getAssertionOriginName() {
+        return assertionOriginName;
+    }
+
+    public void setAssertionOriginName(String assertionOriginName) {
+        this.assertionOriginName = assertionOriginName;
     }
 
     public Date getCreatedDate() {
@@ -266,6 +296,18 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         
         peerReviewForm.setSource(peerReviewSummary.getSource().retrieveSourcePath());
         peerReviewForm.setSourceName(peerReviewSummary.getSource().getSourceName().getContent());
+        
+        if (peerReviewSummary.getSource().getAssertionOriginClientId() != null) {
+            peerReviewForm.setAssertionOriginClientId(peerReviewSummary.getSource().getAssertionOriginClientId().getPath());
+        }
+        
+        if (peerReviewSummary.getSource().getAssertionOriginOrcid() != null) {
+            peerReviewForm.setAssertionOriginOrcid(peerReviewSummary.getSource().getAssertionOriginOrcid().getPath());
+        }
+        
+        if (peerReviewSummary.getSource().getAssertionOriginName() != null) {
+            peerReviewForm.setAssertionOriginName(peerReviewSummary.getSource().getAssertionOriginName().getContent());
+        }
 
         peerReviewForm.setRole(Text.valueOf(peerReviewSummary.getRole().value()));
         peerReviewForm.setType(Text.valueOf(peerReviewSummary.getType().value()));
@@ -432,8 +474,21 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         // Source
         if(peerReview.getSource() != null) {
             form.setSource(peerReview.getSource().retrieveSourcePath());
-            if(peerReview.getSource().getSourceName() != null)
+            if(peerReview.getSource().getSourceName() != null) {
                 form.setSourceName(peerReview.getSource().getSourceName().getContent());
+            }
+            
+            if (peerReview.getSource().getAssertionOriginClientId() != null) {
+                form.setAssertionOriginClientId(peerReview.getSource().getAssertionOriginClientId().getPath());
+            }
+            
+            if (peerReview.getSource().getAssertionOriginOrcid() != null) {
+                form.setAssertionOriginOrcid(peerReview.getSource().getAssertionOriginOrcid().getPath());
+            }
+            
+            if (peerReview.getSource().getAssertionOriginName() != null) {
+                form.setAssertionOriginName(peerReview.getSource().getAssertionOriginName().getContent());
+            }
         }        
 
         // Created Date

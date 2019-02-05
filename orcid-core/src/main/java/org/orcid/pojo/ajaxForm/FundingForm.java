@@ -58,6 +58,12 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
     private String sourceName;
 
     private String source;
+    
+    private String assertionOriginOrcid;
+    
+    private String assertionOriginClientId;
+    
+    private String assertionOriginName;
 
     private Text disambiguatedFundingSourceId;
 
@@ -189,6 +195,30 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+    
+    public String getAssertionOriginOrcid() {
+        return assertionOriginOrcid;
+    }
+
+    public void setAssertionOriginOrcid(String assertionOriginOrcid) {
+        this.assertionOriginOrcid = assertionOriginOrcid;
+    }
+
+    public String getAssertionOriginClientId() {
+        return assertionOriginClientId;
+    }
+
+    public void setAssertionOriginClientId(String assertionOriginClientId) {
+        this.assertionOriginClientId = assertionOriginClientId;
+    }
+
+    public String getAssertionOriginName() {
+        return assertionOriginName;
+    }
+
+    public void setAssertionOriginName(String assertionOriginName) {
+        this.assertionOriginName = assertionOriginName;
     }
 
     public List<ActivityExternalIdentifier> getExternalIdentifiers() {
@@ -376,6 +406,18 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
             if (source.getSourceName() != null) {
                 result.setSourceName(source.getSourceName().getContent());
             }
+            
+            if (source.getAssertionOriginClientId() != null) {
+                result.setAssertionOriginClientId(source.getAssertionOriginClientId().getPath());
+            }
+            
+            if (source.getAssertionOriginOrcid() != null) {
+                result.setAssertionOriginOrcid(source.getAssertionOriginOrcid().getPath());
+            }
+            
+            if (source.getAssertionOriginName() != null) {
+                result.setAssertionOriginName(source.getAssertionOriginName().getContent());
+            }
         }
 
         if (funding.getTitle() != null) {
@@ -552,6 +594,18 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
             funding.setSource(source.retrieveSourcePath());
             if (source.getSourceName() != null) {
                 funding.setSourceName(source.getSourceName().getContent());
+            }
+            
+            if (source.getAssertionOriginClientId() != null) {
+                funding.setAssertionOriginClientId(source.getAssertionOriginClientId().getPath());
+            }
+            
+            if (source.getAssertionOriginOrcid() != null) {
+                funding.setAssertionOriginOrcid(source.getAssertionOriginOrcid().getPath());
+            }
+            
+            if (source.getAssertionOriginName() != null) {
+                funding.setAssertionOriginName(source.getAssertionOriginName().getContent());
             }
         }
 
