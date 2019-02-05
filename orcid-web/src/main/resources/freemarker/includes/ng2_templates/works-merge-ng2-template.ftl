@@ -28,8 +28,11 @@
           <span class="glyphicon glyphicon-exclamation-sign"></span>
           <@orcid.msg 'groups.merge.confirm.cannot_undo'/>
       </div>
+      <div *ngIf="showWorksMergeError" class="orcid-error"> 
+          <@orcid.msg 'groups.merge.error'/>
+      </div>
       <div class="left topBuffer">     
-        <button class="btn btn-primary" (click)="merge()"><@orcid.msg 'freemarker.btnmerge'/></button>&nbsp;&nbsp;
+        <button class="btn btn-primary" (click)="mergeConfirm()"><@orcid.msg 'freemarker.btnmerge'/></button>&nbsp;&nbsp;
         <button class="btn btn-white-no-border cancel-right" *ngIf="!groupingSuggestion" (click)="cancelEdit()">
           <@orcid.msg 'freemarker.btncancel'/>
         </button>
