@@ -22,6 +22,8 @@ import * as xml2js from 'xml2js';
     providers: [BlogService]
 })
 export class HomeComponent implements OnInit {
+    private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private subscription: Subscription;
     blogFeed: any;
     
     constructor(
@@ -43,12 +45,27 @@ export class HomeComponent implements OnInit {
         return res;
     }
 
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
+    };
+
     ngOnInit() {
-        this.blogSrvc.getBlogFeed(orcidVar.baseUri + "/blog/feed").subscribe(
+        this.blogSrvc.getBlogFeed(orcidVar.baseUri + "/blog/feed")
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
             result => {
-                this.blogFeed=this.convertToJson(result);
+                //handle 302 response if blog is down
+                if (result.indexOf('<html') < 0){
+                    this.blogFeed=this.convertToJson(result);
+                }
                 this.cdr.detectChanges(); 
-            }
+            },
+            error => {
+                console.log('error fetching blog feed: ', error);
+            } 
         );
     }
 }

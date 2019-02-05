@@ -17,7 +17,7 @@ import { ModalService }
 
 @Component(
     {
-        selector: '[modalngcomponent]',
+        selector: 'modalngcomponent',
         template:  scriptTmpl("modal-ng2-template")
     }
 )

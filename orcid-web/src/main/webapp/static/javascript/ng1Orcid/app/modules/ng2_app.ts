@@ -24,11 +24,11 @@ import { BrowserModule }
 import { platformBrowserDynamic } 
     from '@angular/platform-browser-dynamic';
 
-import { RouterModule, UrlHandlingStrategy } 
-    from '@angular/router';
-
 import { UpgradeModule } 
     from '@angular/upgrade/static';
+
+import { RouterModule, UrlHandlingStrategy } 
+    from '@angular/router';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
 
@@ -91,9 +91,6 @@ import { FundingNg2Module }
 import { FundingFormNg2Module } 
     from './funding/fundingForm.ts';
 
-import { HomeNg2Module } 
-    from './home/home.ts';
-
 import { HeaderNg2Module } 
     from './header/header.ts';
 
@@ -130,9 +127,6 @@ import { PersonNg2Module }
 import { PrintRecordNg2Module } 
     from './printRecord/printRecord.ts';
 
-import { PublicEduAffiliationNg2Module }
-    from './publicEduAffiliation/publicEduAffiliation.ts';
-
 import { PublicRecordNg2Module } 
     from './publicRecord/publicRecord.ts';
 
@@ -144,9 +138,6 @@ import { OrgIdentifierPopoverNg2Module }
 
 import { ReactivationNg2Module } 
     from './reactivation/reactivation.ts';
-
-import { RegisterDuplicatesNg2Module } 
-    from './registerDuplicates/registerDuplicates.ts';
 
 import { RequestPasswordResetNg2Module } 
     from './requestPasswordReset/requestPasswordReset.ts';
@@ -316,7 +307,6 @@ export class RootCmp {
         FundingDeleteNg2Module,
         FundingFormNg2Module,
         FundingNg2Module,
-        HomeNg2Module,
         LanguageNg2Module,
         LinkAccountNg2Module,
         MembersListNg2Module, //Approved
@@ -328,12 +318,9 @@ export class RootCmp {
         PeerReviewDeleteNg2Module,
         PersonNg2Module,
         PrintRecordNg2Module,
-        PublicEduAffiliationNg2Module,
         PublicRecordNg2Module,
-        OauthAuthorizationNg2Module,
         OrgIdentifierPopoverNg2Module,
         ReactivationNg2Module,
-        RegisterDuplicatesNg2Module,
         RequestPasswordResetNg2Module,
         ResearchResourceNg2Module,
         ResearchResourceDeleteNg2Module,
@@ -380,4 +367,3 @@ export class Ng2AppModule {
         console.log('v0.9.23');
     }
 }
-

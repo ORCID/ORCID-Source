@@ -17,12 +17,6 @@ import { downgradeComponent, UpgradeModule }
 import { RegisterDuplicatesComponent } 
     from './registerDuplicates.component.ts';
 
-// This is the Angular 1 part of the module
-export const RegisterDuplicatesModule = angular.module(
-    'RegisterDuplicatesModule', 
-    []
-);
-
 // This is the Angular 2 part of the module
 
 @NgModule(
@@ -31,6 +25,9 @@ export const RegisterDuplicatesModule = angular.module(
             RegisterDuplicatesComponent
         ],
         entryComponents: [ 
+            RegisterDuplicatesComponent 
+        ],
+        exports: [
             RegisterDuplicatesComponent 
         ],
         imports: [
@@ -42,15 +39,3 @@ export const RegisterDuplicatesModule = angular.module(
     }
 )
 export class RegisterDuplicatesNg2Module {}
-
-// components migrated to angular 2 should be downgraded here
-//Must convert as much as possible of our code to directives
-
-RegisterDuplicatesModule.directive(
-    'registerDuplicatesNg2', 
-    <any>downgradeComponent(
-        {
-            component: RegisterDuplicatesComponent
-        }
-    )
-);

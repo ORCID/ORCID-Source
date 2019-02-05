@@ -4,16 +4,16 @@ import 'reflect-metadata';
 import 'zone.js';
 
 import { Component, NgModule } 
-	from '@angular/core';
+    from '@angular/core';
 
 import { BrowserModule } 
-	from "@angular/platform-browser";
+    from "@angular/platform-browser";
 
 import { platformBrowserDynamic } 
-	from '@angular/platform-browser-dynamic';
+    from '@angular/platform-browser-dynamic';
 
 import { UpgradeModule } 
-	from '@angular/upgrade/static';
+    from '@angular/upgrade/static';
 
 import { orcidApp } 
     from './modules/ng1_app.ts';
