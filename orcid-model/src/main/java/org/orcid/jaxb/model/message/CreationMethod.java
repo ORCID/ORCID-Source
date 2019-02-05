@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -34,6 +36,7 @@ import java.io.Serializable;
  * 
  */
 @XmlEnum
+@ApiModel(value = "CreationMethodV2_0")
 public enum CreationMethod implements Serializable {
 
     /**

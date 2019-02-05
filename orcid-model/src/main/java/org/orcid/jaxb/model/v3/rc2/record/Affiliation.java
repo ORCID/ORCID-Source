@@ -16,9 +16,12 @@ import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url",
         "externalIdentifiers", "displayIndex" })
+@ApiModel(value = "AffiliationV3_0_rc2")
 public abstract class Affiliation implements OrganizationHolder, Filterable, Activity, SourceAware {
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "department-name")
     protected String departmentName;

@@ -10,9 +10,12 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "summaries" })
 @XmlRootElement(name = "affiliation-group", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "AffiliationGroupV3_0_rc1")
 public class AffiliationGroup<T extends AffiliationSummary> extends ActivityGroup {
     
     private static final long serialVersionUID = -8293559217646416864L;

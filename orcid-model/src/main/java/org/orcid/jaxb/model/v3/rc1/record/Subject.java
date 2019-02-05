@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.v3.rc1.common.Title;
 import org.orcid.jaxb.model.v3.rc1.common.Url;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -20,6 +22,7 @@ import org.orcid.jaxb.model.v3.rc1.common.Url;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"externalIdentifiers","type","journalTitle","title","url"})
 @XmlRootElement(name = "subject", namespace = "http://www.orcid.org/ns/peer-review")
+@ApiModel(value = "SubjectV3_0_rc1")
 public class Subject implements Serializable {    
     private static final long serialVersionUID = -3011951615514804083L;
     

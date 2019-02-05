@@ -17,6 +17,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>
@@ -45,9 +48,9 @@ import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "itemType", "itemName", "externalIdentifier" })
 @XmlRootElement(name = "item")
+@ApiModel(value = "ItemV3_0_rc2")
 public class Item implements Serializable {
-
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5090603550709774075L;
     @XmlAttribute(name = "put-code")
     protected String putCode;
     @XmlElement(name = "item-type", namespace = "http://www.orcid.org/ns/notification", required = true)

@@ -85,6 +85,7 @@ import org.orcid.jaxb.model.v3.rc1.record.OtherName;
 import org.orcid.jaxb.model.v3.rc1.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc1.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc1.record.Qualification;
+import org.orcid.jaxb.model.v3.rc1.record.Record;
 import org.orcid.jaxb.model.v3.rc1.record.ResearchResource;
 import org.orcid.jaxb.model.v3.rc1.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc1.record.Service;
@@ -434,7 +435,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, JSON_LD })
     @Path(OrcidApiConstants.RECORD_SIMPLE)
-    @ApiOperation( nickname="viewRecordV3Rc1", value = "Fetch record details")
+    @ApiOperation( nickname="viewRecordV3Rc1", value = "Fetch record details", response = Record.class)
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
@@ -444,7 +445,7 @@ public class PublicV3ApiServiceImplV3_0_rc1 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(OrcidApiConstants.RECORD_RECORD)
-    @ApiOperation( nickname="viewRecordRecordV3Rc1", value = "Fetch record details2", hidden=true)
+    @ApiOperation( nickname="viewRecordRecordV3Rc1", value = "Fetch record details2", response = Record.class, hidden=true)
     @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/record-2.0.xsd")
     public Response viewRecordRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);

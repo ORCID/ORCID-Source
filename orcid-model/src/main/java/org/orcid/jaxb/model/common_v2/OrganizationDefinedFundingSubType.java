@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
+import io.swagger.annotations.ApiModel;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -19,6 +21,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "organizationDefinedType")
+@ApiModel(value = "OrganizationDefinedFundingSubTypeV2_0")
 public class OrganizationDefinedFundingSubType implements Serializable {
         
     private static final long serialVersionUID = 1L;

@@ -14,6 +14,8 @@ import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.common.VisibilityType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -22,8 +24,9 @@ import org.orcid.jaxb.model.v3.rc2.common.VisibilityType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "content" })
 @XmlRootElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
+@ApiModel(value = "BiographyV3_0_rc2")
 public class Biography implements VisibilityType, Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1765891136316486315L;
 
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;

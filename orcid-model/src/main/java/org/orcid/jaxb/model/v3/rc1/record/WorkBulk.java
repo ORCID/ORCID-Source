@@ -15,9 +15,12 @@ import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.bulk.BulkElementContainer;
 import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "bulk" })
 @XmlRootElement(name = "bulk", namespace=  "http://www.orcid.org/ns/bulk")
+@ApiModel(value = "WorkBulkV3_0_rc1")
 public class WorkBulk implements Serializable, BulkElementContainer {    
     private static final long serialVersionUID = 1338769097760031210L;
     

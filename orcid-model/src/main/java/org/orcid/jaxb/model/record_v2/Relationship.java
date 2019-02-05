@@ -15,9 +15,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
 
 @XmlType(namespace = "http://www.orcid.org/ns/common")
 @XmlEnum
+@ApiModel(value = "RelationshipV2_0")
 public enum Relationship implements Serializable {
     @XmlEnumValue("part-of")
     PART_OF("part-of"),

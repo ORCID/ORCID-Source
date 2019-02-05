@@ -4,7 +4,10 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlRootElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
+@ApiModel(value = "EducationSummaryV3_0_rc1")
 public class EducationSummary extends AffiliationSummary implements Serializable {
 
     /**

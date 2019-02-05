@@ -13,9 +13,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "externalIdentifiers" })
 @XmlRootElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/external-identifier")
+@ApiModel(value = "PersonExternalIdentifiersV2_0")
 public class PersonExternalIdentifiers implements Serializable {
     private static final long serialVersionUID = -9182106466010694574L;
     

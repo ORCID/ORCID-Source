@@ -16,6 +16,8 @@ import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -24,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcidIdentifier", "preferences", "history", "person", "activitiesSummary" })
 @XmlRootElement(name = "record", namespace = "http://www.orcid.org/ns/record")
+@ApiModel(value = "RecordV3_0_rc2")
 public class Record implements Serializable {
     private static final long serialVersionUID = 1086932594400451295L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "orcid-identifier")

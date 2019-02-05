@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * City
  * 
@@ -32,6 +34,7 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "city")
+@ApiModel(value = "CityV3_0_rc2")
 public class City implements Serializable {
 
     private final static long serialVersionUID = 1L;

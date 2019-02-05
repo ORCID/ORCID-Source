@@ -1,5 +1,7 @@
 package org.orcid.jaxb.model.v3.rc1.record.summary;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -19,10 +21,13 @@ import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.rc1.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc1.record.SourceAware;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url", "externalIdentifiers", "displayIndex" })
-public abstract class AffiliationSummary implements VisibilityType, Activity, SourceAware, GroupableActivity {
-
+@ApiModel(value = "AffiliationSummaryV3_0_rc1")
+public abstract class AffiliationSummary implements Serializable, VisibilityType, Activity, SourceAware, GroupableActivity {
+    private static final long serialVersionUID = -7091851116183573752L;
     @XmlElement(name = "department-name", namespace = "http://www.orcid.org/ns/common")
     protected String departmentName;
     @XmlElement(name = "role-title", namespace = "http://www.orcid.org/ns/common")

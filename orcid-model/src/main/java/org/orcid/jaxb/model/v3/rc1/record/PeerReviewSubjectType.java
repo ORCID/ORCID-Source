@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(value = "PeerReviewSubjectTypeV3_0_rc1")
 public enum PeerReviewSubjectType implements Serializable {
     @XmlEnumValue("artistic-performance")
     ARTISTIC_PERFORMANCE("artistic-performance"),

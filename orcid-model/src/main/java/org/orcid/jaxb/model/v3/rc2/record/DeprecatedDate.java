@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "deprecated-date", namespace = "http://www.orcid.org/ns/deprecated")
+@ApiModel(value = "DeprecatedDateV3_0_rc2")
 public class DeprecatedDate implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlValue

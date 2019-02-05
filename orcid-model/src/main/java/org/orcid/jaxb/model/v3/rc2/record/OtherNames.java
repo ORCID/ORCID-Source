@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
 
+import io.swagger.annotations.ApiModel;
+
 
 /**
  * 
@@ -22,6 +24,7 @@ import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "lastModifiedDate", "otherNames" })
 @XmlRootElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
+@ApiModel(value = "OtherNamesV3_0_rc2")
 public class OtherNames implements Serializable {        
     private static final long serialVersionUID = 6312730308815255894L;
     

@@ -8,8 +8,11 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlType(name = "role")
 @XmlEnum
+@ApiModel(value = "RoleV2_0")
 public enum Role implements Serializable {
     @XmlEnumValue("reviewer")
     REVIEWER("reviewer"),

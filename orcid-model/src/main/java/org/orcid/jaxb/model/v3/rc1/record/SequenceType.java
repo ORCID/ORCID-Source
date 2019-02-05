@@ -6,12 +6,15 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * @author Declan Newman (declan)
  *         Date: 07/08/2012
  */
 @XmlType(name = "sequence")
 @XmlEnum
+@ApiModel(value = "SequenceTypeV3_0_rc1")
 public enum SequenceType implements Serializable {
 
     @XmlEnumValue("first")

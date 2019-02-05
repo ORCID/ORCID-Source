@@ -16,12 +16,14 @@ import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.record.Group;
 import org.orcid.jaxb.model.v3.rc1.record.GroupsContainer;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "researchResourceGroup" })
 @XmlRootElement(name = "research-resources", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "ResearchResourcesV3_0_rc1")
 public class ResearchResources implements GroupsContainer, Serializable {
-
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1525075223212690343L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "group", namespace = "http://www.orcid.org/ns/activities")

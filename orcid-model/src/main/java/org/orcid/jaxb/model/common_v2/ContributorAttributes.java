@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record_v2.SequenceType;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -31,6 +33,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "contributorSequence", "contributorRole" })
 @XmlRootElement(name = "contributor-attributes")
+@ApiModel(value = "ContributorV2_0")
 public class ContributorAttributes implements Serializable {
 
     /**

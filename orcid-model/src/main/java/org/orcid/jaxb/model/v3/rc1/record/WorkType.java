@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlEnumValue;
 
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(value = "WorkTypeV3_0_rc1")
 public enum WorkType implements Serializable {
     @XmlEnumValue("artistic-performance")
     ARTISTIC_PERFORMANCE("artistic-performance"),

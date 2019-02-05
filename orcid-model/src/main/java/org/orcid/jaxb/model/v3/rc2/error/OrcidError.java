@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 
+import io.swagger.annotations.ApiModel;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -52,6 +54,7 @@ import org.orcid.jaxb.model.record.bulk.BulkElement;
     "moreInfo"
 })
 @XmlRootElement(name = "error", namespace = "http://www.orcid.org/ns/error")
+@ApiModel(value = "OrcidErrorV3_0_rc2")
 public class OrcidError implements Serializable, BulkElement {
 
     private final static long serialVersionUID = 1L;

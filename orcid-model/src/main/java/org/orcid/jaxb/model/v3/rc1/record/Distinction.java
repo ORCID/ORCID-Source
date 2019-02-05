@@ -11,6 +11,8 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -22,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 @XmlRootElement(name = "distinction", namespace = "http://www.orcid.org/ns/distinction")
+@ApiModel(value = "DistinctionV3_0_rc1")
 public class Distinction extends Affiliation implements Serializable {
 
     /**

@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * Container for organization location information
  * 
@@ -31,9 +33,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "organization-address", propOrder = { "city", "region", "country" })
 @XmlRootElement(name = "organizationAddress", namespace = "http://www.orcid.org/ns/common")
+@ApiModel(value = "OrganizationAddressV3_0_rc1")
 public class OrganizationAddress implements Serializable {
-
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6875976895707448521L;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/common")
     protected String city;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
