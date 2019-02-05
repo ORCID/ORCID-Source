@@ -49,9 +49,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     mergeConfirm(): void {
-        console.log(this.worksToMerge.length);
         if(this.worksToMerge.length > 10){
-            console.log("merging too many!");
             this.worksService.notifyOther({worksToMerge:this.worksToMerge});       
             this.worksService.notifyOther({mergeCount:this.mergeCount});
             this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});   
@@ -111,7 +109,6 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 if( res.worksToMerge ) {
                     this.worksToMerge = res.worksToMerge;
-                    console.log(this.worksToMerge);
                 }
                 if( res.externalIdsPresent != undefined ) {
                     this.externalIdsPresent = res.externalIdsPresent;

@@ -358,7 +358,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     for (var i in this.worksService.groups) {
                         if(this.worksService.groups[i].activePutCode == putCode){
                             for (var j in this.worksService.groups[i].works) {
-                                console.log(this.worksService.groups[i].works[j].putCode.value);
                                 this.worksToMerge.push(this.worksService.getDetails(this.worksService.groups[i].works[j].putCode.value, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
                                 mergeCount++;
 
@@ -372,7 +371,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             forkJoin(this.worksToMerge).subscribe(
                 dataGroup => {
                     for(var i in dataGroup){
-                        console.log(dataGroup[i]);
                         if(dataGroup[i].source != orcidVar.orcidId){
                             apiWorkPresent = true;
                             if(dataGroup[i].workExternalIdentifiers.length == 0){
