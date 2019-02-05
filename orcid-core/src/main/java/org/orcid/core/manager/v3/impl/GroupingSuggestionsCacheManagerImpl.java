@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -14,17 +15,26 @@ public class GroupingSuggestionsCacheManagerImpl implements GroupingSuggestionsC
     private Cache<String, List<WorkGroupingSuggestion>> cache;
 
     @Override
-    public WorkGroupingSuggestion getGroupingSuggestion(String orcid) {
+    public List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid, int max) {
         List<WorkGroupingSuggestion> suggestions = cache.get(orcid);
-        if (suggestions != null && !suggestions.isEmpty()) {
-            return suggestions.remove(0);
+        List<WorkGroupingSuggestion> subList = new ArrayList<>();
+        if (suggestions != null) {
+            for (int i = 0; !suggestions.isEmpty() && i < max; i++) {
+                subList.add(suggestions.remove(0));
+            }
         }
-        return null;
+        putGroupingSuggestions(orcid, suggestions);
+        return subList;
     }
 
     @Override
     public void putGroupingSuggestions(String orcid, List<WorkGroupingSuggestion> suggestions) {
         cache.put(orcid, suggestions);
+    }
+
+    @Override
+    public int getGroupingSuggestionCount(String orcid) {
+        return cache.get(orcid) != null ? cache.get(orcid).size() : 0;
     }
 
 }
