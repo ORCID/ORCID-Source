@@ -49,7 +49,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     mergeConfirm(): void {
-        if(this.worksToMerge.length > 10){
+        if(this.worksToMerge.length > 20){
             this.worksService.notifyOther({worksToMerge:this.worksToMerge});       
             this.worksService.notifyOther({mergeCount:this.mergeCount});
             this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});   
