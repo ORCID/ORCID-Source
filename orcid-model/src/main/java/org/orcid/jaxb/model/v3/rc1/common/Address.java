@@ -15,8 +15,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.message.AffiliationCountry;
 import org.orcid.jaxb.model.v3.rc1.record.City;
 import org.orcid.jaxb.model.v3.rc1.record.Region;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>
@@ -31,9 +34,9 @@ import org.orcid.jaxb.model.v3.rc1.record.Region;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "city", "region", "country" })
 @XmlRootElement(name = "address")
+@ApiModel(value = "AddressV3_0_rc1")
 public class Address implements Serializable {
-
-    private final static long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6584483568475643231L;
     @XmlElement(required = true)
     protected City city;
     @XmlElement(name = "region")

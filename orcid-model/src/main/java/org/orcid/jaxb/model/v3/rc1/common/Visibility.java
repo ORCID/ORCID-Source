@@ -7,13 +7,13 @@
 
 package org.orcid.jaxb.model.v3.rc1.common;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.io.Serializable;
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p/>
@@ -28,6 +28,7 @@ import java.io.Serializable;
  */
 @XmlType(name = "visibility")
 @XmlEnum
+@ApiModel(value = "VisibilityV3_0_rc1")
 public enum Visibility implements Serializable {
 
     // Note the order of declaration is is significant! It is in order of

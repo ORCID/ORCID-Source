@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -18,6 +20,7 @@ import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcidIdentifier" })
 @XmlRootElement(name = "primary-record", namespace = "http://www.orcid.org/ns/deprecated")
+@ApiModel(value = "PrimaryRecordV3_0_rc1")
 public class PrimaryRecord implements Serializable {
     private static final long serialVersionUID = -2996270049010073685L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "orcid-identifier")

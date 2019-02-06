@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.commons.lang.StringUtils;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -24,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "translatedTitle")
+@ApiModel(value = "TranslatedTitleV2_0")
 public class TranslatedTitle implements Serializable {
     /**
      * 

@@ -14,6 +14,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.common.adapters.CurrencyAdapter;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -28,11 +30,9 @@ import org.orcid.jaxb.model.common.adapters.CurrencyAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content" })
 @XmlRootElement(name = "amount", namespace = "http://www.orcid.org/ns/common")
+@ApiModel(value = "AmountV3_0_rc2")
 public class Amount implements Serializable {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3479057385911792849L;
     @XmlValue
     protected String content;
     @XmlJavaTypeAdapter(CurrencyAdapter.class)

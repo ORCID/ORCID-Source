@@ -15,6 +15,8 @@ import org.orcid.jaxb.model.v3.rc1.common.Url;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * New external identifier class
  * 
@@ -23,9 +25,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type", "value", "normalized", "normalizedError", "url", "relationship" })
+@ApiModel(value = "ExternalIDV3_0_rc1")
 public class ExternalID implements GroupAble, Cloneable, Serializable {
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = -8081196017392914381L;
     @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/common", required = true)
     protected String type;
     @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/common", required = true)

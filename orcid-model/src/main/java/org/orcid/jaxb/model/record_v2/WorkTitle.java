@@ -17,6 +17,8 @@ import org.orcid.jaxb.model.common_v2.Subtitle;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.TranslatedTitle;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -29,6 +31,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "title", "subtitle", "translatedTitle" })
 @XmlRootElement(name = "title", namespace = "http://www.orcid.org/ns/work")
+@ApiModel(value = "WorkTitleV2_0")
 public class WorkTitle implements Serializable {
 
     /**

@@ -37,7 +37,7 @@
                             <td (click)="toggleDisplayBody(notification.putCode)">
                                 <i class="glyphicon-chevron-down glyphicon x0" [ngClass]="{'glyphicon-chevron-right':!displayBody[notification.putCode]}"></i>
                                 <span *ngIf="notification.overwrittenSourceName">{{notification.overwrittenSourceName}}</span>
-                                <span *ngIf="!notification.overwrittenSourceName && notification.source" >{{notification.source.sourceName.content}}</span><span *ngIf="!notification.overwrittenSourceName && !notification.source">ORCID</span>
+                                <span *ngIf="!notification.overwrittenSourceName && notification.source && notification.source.sourceName" >{{notification.source.sourceName.content}}</span><span *ngIf="!notification.overwrittenSourceName && !notification.source || !notification.source.sourceName">ORCID</span>
                             </td>
                             <td (click)="toggleDisplayBody(notification.putCode)"><span >{{notification.subject}}</span></td>
                             <td (click)="toggleDisplayBody(notification.putCode)"><span >{{notification.createdDate | date:'yyyy-MM-dd'}}</span></td>

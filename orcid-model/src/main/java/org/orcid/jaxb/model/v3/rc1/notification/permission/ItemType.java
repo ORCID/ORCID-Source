@@ -5,12 +5,15 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Will Simpson
  *
  */
 @XmlEnum
+@ApiModel(value = "ItemTypeV3_0_rc1")
 public enum ItemType {
     //@formatter:off
     @XmlEnumValue("distinction") DISTINCTION,

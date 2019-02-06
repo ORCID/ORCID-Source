@@ -14,9 +14,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "peerReviewGroup" })
 @XmlRootElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "PeerReviewsV3_0_rc1")
 public class PeerReviews implements Serializable {
 
     private static final long serialVersionUID = 6779626621503362679L;

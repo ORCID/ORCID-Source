@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 import org.apache.commons.lang.StringUtils;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -25,11 +27,9 @@ import org.apache.commons.lang.StringUtils;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "content" })
 @XmlRootElement(name = "amount", namespace = "http://www.orcid.org/ns/common")
+@ApiModel(value = "AmountV3_0_rc1")
 public class Amount implements Serializable {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4877236095380567989L;
     @XmlValue
     protected String content;
     @XmlAttribute(required = true, name = "currency-code")

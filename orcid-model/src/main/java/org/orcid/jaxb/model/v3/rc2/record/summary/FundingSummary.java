@@ -27,9 +27,12 @@ import org.orcid.jaxb.model.v3.rc2.record.FundingTitle;
 import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "url", "type", "startDate", "endDate","organization" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
+@ApiModel(value = "FundingSummaryV3_0_rc2")
 public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware, OrganizationHolder {
 
     private static final long serialVersionUID = 7489792970949538708L;

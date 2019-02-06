@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -43,9 +45,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "uri", "path", "host" })
 @XmlRootElement(name = "authorization-url", namespace = "http://www.orcid.org/ns/notification")
+@ApiModel(value = "AuthorizationUrlV3_0_rc2")
 public class AuthorizationUrl implements Serializable {
-
-    private final static long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4942822562344458290L;
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI")
     protected String uri;

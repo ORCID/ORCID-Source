@@ -12,6 +12,8 @@ import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.common.Source;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -21,6 +23,7 @@ import org.orcid.jaxb.model.v3.rc1.common.Source;
 @XmlType(propOrder = { "creationMethod", "completionDate", "submissionDate", "lastModifiedDate", "claimed", "source", "deactivationDate", "verifiedEmail",
         "verifiedPrimaryEmail" })
 @XmlRootElement(name = "history", namespace = "http://www.orcid.org/ns/history")
+@ApiModel(value = "HistoryV3_0_rc1")
 public class History implements Serializable, SourceAware {
     private static final long serialVersionUID = 5662067844899740318L;
     @XmlElement(namespace = "http://www.orcid.org/ns/history", name = "creation-method")

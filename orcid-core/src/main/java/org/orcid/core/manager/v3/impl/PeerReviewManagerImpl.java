@@ -84,7 +84,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
                 }
             }else{
                 //check vocab of external identifiers
-                externalIDValidator.validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+                externalIDValidator.validatePeerReview(peerReview.getExternalIdentifiers());
                 externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
             }
 
@@ -134,7 +134,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             }
         }else{
             //check vocab of external identifiers
-            externalIDValidator.validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+            externalIDValidator.validatePeerReview(peerReview.getExternalIdentifiers());
             externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }
         PeerReviewEntity updatedEntity = new PeerReviewEntity();        

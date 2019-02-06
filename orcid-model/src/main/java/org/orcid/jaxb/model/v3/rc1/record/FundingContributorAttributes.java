@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -25,12 +28,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributorRole" })
 @XmlRootElement(name = "contributorAttributes", namespace = "http://www.orcid.org/ns/funding")
+@ApiModel(value = "FundingContributorAttributesV3_0_rc1")
 public class FundingContributorAttributes implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 6740468192942111824L;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding", name = "contributor-role")
     protected FundingContributorRole contributorRole;    
 

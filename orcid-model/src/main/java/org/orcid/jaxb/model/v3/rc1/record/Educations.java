@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -34,12 +36,9 @@ import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "education" })
 @XmlRootElement(name = "Educations")
+@ApiModel(value = "EducationsV3_0_rc1")
 public class Educations implements Serializable, ActivitiesContainer {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4513786098582144094L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     protected List<Education> education;

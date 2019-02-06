@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for disambiguated-organization complex type.
@@ -43,6 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "disambiguatedOrganizationIdentifier", "disambiguationSource" })
 @XmlRootElement(name = "disambiguatedOrganization", namespace = "http://www.orcid.org/ns/common")
+@ApiModel(value = "DisambiguatedOrganizationV2_0")
 public class DisambiguatedOrganization implements Serializable {
 
     private final static long serialVersionUID = 1L;

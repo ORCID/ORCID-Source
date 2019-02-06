@@ -7,12 +7,15 @@
 
 package org.orcid.jaxb.model.v3.rc1.common;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -25,12 +28,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "contributorOrcid", "creditName", "contributorEmail", "contributorAttributes" })
 @XmlRootElement(name = "contributor")
+@ApiModel(value = "ContributorV3_0_rc1")
 public class Contributor implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1502633925582200994L;
     @XmlElement(name = "contributor-orcid", namespace = "http://www.orcid.org/ns/common")
     protected ContributorOrcid contributorOrcid;
     @XmlElement(name="credit-name", namespace = "http://www.orcid.org/ns/work")

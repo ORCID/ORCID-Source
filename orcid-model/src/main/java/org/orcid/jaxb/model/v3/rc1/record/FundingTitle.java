@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.v3.rc1.common.Title;
 import org.orcid.jaxb.model.v3.rc1.common.TranslatedTitle;
 
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -28,12 +30,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "title", "translatedTitle" })
 @XmlRootElement(name = "title", namespace = "http://www.orcid.org/ns/funding")
+@ApiModel(value = "FundingTitleV3_0_rc1")
 public class FundingTitle implements Serializable {
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3611934719336308985L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Title title;    
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "translated-title")

@@ -1,5 +1,6 @@
 package org.orcid.jaxb.model.v3.rc1.record.summary;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,9 +12,14 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.record.GroupsContainer;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "groups" })
-public abstract class Affiliations<T extends AffiliationSummary> implements GroupsContainer {
+@ApiModel(value = "AffiliationsV3_0_rc1")
+public abstract class Affiliations<T extends AffiliationSummary> implements Serializable, GroupsContainer {
+    private static final long serialVersionUID = 2447374809865396844L;
+
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     

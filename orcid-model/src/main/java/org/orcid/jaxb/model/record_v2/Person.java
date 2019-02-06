@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -19,6 +21,7 @@ import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "name", "otherNames", "biography", "researcherUrls", "emails", "addresses", "keywords", "externalIdentifiers" })
 @XmlRootElement(name = "person", namespace = "http://www.orcid.org/ns/person")
+@ApiModel(value = "PersonV2_0")
 public class Person implements Serializable {
     private static final long serialVersionUID = 2200160976598223346L;
     

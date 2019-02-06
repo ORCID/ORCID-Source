@@ -9,11 +9,13 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcidIdentifier" })
+@ApiModel(value = "ResultV3_0_rc1")
 public class Result implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = -210059794106944917L;
     @XmlElement(name = "orcid-identifier", namespace = "http://www.orcid.org/ns/common")
     protected OrcidIdentifier orcidIdentifier;
 

@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -24,6 +27,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "title")
+@ApiModel(value = "TitleV3_0_rc2")
 public class Title implements Serializable {
 
     /**

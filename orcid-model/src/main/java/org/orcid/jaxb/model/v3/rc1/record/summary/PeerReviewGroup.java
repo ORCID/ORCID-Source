@@ -13,12 +13,14 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc1.record.ExternalIDs;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "peerReviewGroup" })
 @XmlRootElement(name = "peer-review-group", namespace = "http://www.orcid.org/ns/activities")
+@ApiModel(value = "PeerReviewGroupV3_0_rc1")
 public class PeerReviewGroup implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = -6953452708014737738L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")

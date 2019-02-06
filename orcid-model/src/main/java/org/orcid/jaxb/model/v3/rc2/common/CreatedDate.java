@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -33,6 +34,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
+@ApiModel(value = "CreatedDateV3_0_rc2")
 public class CreatedDate implements Serializable {
 
     /**

@@ -8,11 +8,14 @@
 package org.orcid.jaxb.model.v3.rc1.common;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import io.swagger.annotations.ApiModel;
 
 /**
  * <p>
@@ -27,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "publicationDate")
+@ApiModel(value = "PublicationDateV3_0_rc1")
 public class PublicationDate extends FuzzyDate implements Serializable {
 
     public PublicationDate() {

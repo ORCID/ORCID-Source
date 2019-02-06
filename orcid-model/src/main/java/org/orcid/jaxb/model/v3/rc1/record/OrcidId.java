@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
+import io.swagger.annotations.ApiModel;
+
 import java.io.Serializable;
 
 /**
@@ -36,10 +39,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "value" })
 @XmlRootElement(name = "orcid-id", namespace = "http://www.orcid.org/ns/orcid-id")
+@ApiModel(value = "OrcidIdV3_0_rc1")
 public class OrcidId implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = 2149661702997162101L;
     @XmlValue
     protected String value;
 

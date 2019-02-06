@@ -11,6 +11,8 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -21,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * 
  */
+@ApiModel(value = "ServiceV3_0_rc2")
 @XmlRootElement(name = "service", namespace = "http://www.orcid.org/ns/service")
 public class Service extends Affiliation implements Serializable {
 

@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -27,8 +28,9 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "value" })
 @XmlRootElement(name = "completion-date", namespace = "http://www.orcid.org/ns/history")
+@ApiModel(value = "CompletionDateV2_0")
 public class CompletionDate implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6396967482916858102L;
     @XmlValue
     @XmlSchemaType(name = "dateTime")
     @ApiModelProperty(readOnly = true)

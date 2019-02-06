@@ -12,12 +12,14 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 
+import io.swagger.annotations.ApiModel;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "externalIdentifiers" })
 @XmlRootElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
-
+@ApiModel(value = "ExternalIDsV3_0_rc1")
 public class ExternalIDs implements Serializable, ExternalIdentifiersContainer{
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2755948511740838554L;
     @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/common")
     protected List<ExternalID> externalIdentifiers;
     

@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Angel Montenegro
@@ -21,8 +23,9 @@ import org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "address" })
 @XmlRootElement(name = "addresses", namespace = "http://www.orcid.org/ns/address")
+@ApiModel(value = "AddressesV3_0_rc1")
 public class Addresses implements Serializable {
-    private static final long serialVersionUID = -128015751933210030L;
+    private static final long serialVersionUID = -8904176024688414567L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "address", namespace = "http://www.orcid.org/ns/address")

@@ -1,27 +1,19 @@
 package org.orcid.api.t2.server;
 
 import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
-import static org.orcid.core.api.OrcidApiConstants.APPLICATION_RDFXML;
 import static org.orcid.core.api.OrcidApiConstants.BIO_PATH;
-import static org.orcid.core.api.OrcidApiConstants.BIO_SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
 import static org.orcid.core.api.OrcidApiConstants.FUNDING_PATH;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.PROFILE_DELETE_PATH;
-import static org.orcid.core.api.OrcidApiConstants.PROFILE_GET_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PROFILE_POST_PATH;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
-import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
-import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WEBHOOKS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
-
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -35,7 +27,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -116,165 +107,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     }
 
     /**
-     * GETs the HTML representation of the ORCID record
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the HTML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { MediaType.TEXT_HTML })
-    @Path(BIO_PATH)
-    public Response viewBioDetailsHtml(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.findBioDetails(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-bio.xml\"").build();
-    }
-
-    /**
-     * GETs the XML representation of the ORCID record containing only the
-     * Biography details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(BIO_PATH)
-    public Response viewBioDetailsXml(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findBioDetails(orcid);
-    }
-
-    /**
-     * GETs the JSON representation of the ORCID record containing only the
-     * Biography details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(BIO_PATH)
-    public Response viewBioDetailsJson(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findBioDetails(orcid);
-    }
-
-    /**
-     * GETs the HTML representation of the ORCID external identifiers
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the HTML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { MediaType.TEXT_HTML })
-    @Path(EXTERNAL_IDENTIFIER_PATH)
-    public Response viewExternalIdentifiersHtml(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.findExternalIdentifiers(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-external-ids.xml\"").build();
-    }
-
-    /**
-     * GETs the XML representation of the ORCID record containing only the
-     * external identifiers
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(EXTERNAL_IDENTIFIER_PATH)
-    public Response viewExternalIdentifiersXml(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findExternalIdentifiers(orcid);
-    }
-
-    /**
-     * GETs the JSON representation of the ORCID record containing only the
-     * external identifiers
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(EXTERNAL_IDENTIFIER_PATH)
-    public Response viewExternalIdentifiersJson(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findExternalIdentifiers(orcid);
-    }
-
-    /**
-     * GETs the HTML representation of the ORCID record containing all details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the HTML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { MediaType.TEXT_HTML })
-    @Path(PROFILE_GET_PATH)
-    public Response viewFullDetailsHtml(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.findFullDetails(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-profile.xml\"").build();
-    }
-
-    /**
-     * GETs the XML representation of the ORCID record containing all details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the XML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(PROFILE_GET_PATH)
-    public Response viewFullDetailsXml(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findFullDetails(orcid);
-    }
-
-    /**
-     * GETs the JSON representation of the ORCID record containing all details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(PROFILE_GET_PATH)
-    public Response viewFullDetailsJson(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findFullDetails(orcid);
-    }
-
-    /**
-     * GETs the HTML representation of the ORCID record containing only
-     * affiliation details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the HTML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { MediaType.TEXT_HTML })
-    @Path(AFFILIATIONS_PATH)
-    public Response viewAffiliationsDetailsHtml(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.findAffiliationsDetails(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-affiliations.xml\"").build();
-    }
-
-    /**
      * GETs the XML representation of the ORCID record containing only
      * affiliation details
      * 
@@ -287,39 +119,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Path(AFFILIATIONS_PATH)
     public Response viewAffiliationsDetailsXml(@PathParam("orcid") String orcid) {
         return serviceDelegator.findAffiliationsDetails(orcid);
-    }
-
-    /**
-     * GETs the JSON representation of the ORCID record containing only
-     * affiliation details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(AFFILIATIONS_PATH)
-    public Response viewAffiliationsDetailsJson(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findAffiliationsDetails(orcid);
-    }
-
-    /**
-     * GETs the HTML representation of the ORCID record containing only funding
-     * details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the HTML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { MediaType.TEXT_HTML })
-    @Path(FUNDING_PATH)
-    public Response viewFundingDetailsHtml(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.findFundingDetails(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-grants.xml\"").build();
     }
 
     /**
@@ -336,40 +135,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     public Response viewFundingDetailsXml(@PathParam("orcid") String orcid) {
         return serviceDelegator.findFundingDetails(orcid);
     }
-
-    /**
-     * GETs the JSON representation of the ORCID record containing only funding
-     * details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(FUNDING_PATH)
-    public Response viewFundingDetailsJson(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findFundingDetails(orcid);
-    }
-
-    /**
-     * GETs the HTML representation of the ORCID record containing only work
-     * details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the HTML representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { MediaType.TEXT_HTML })
-    @Path(WORKS_PATH)
-    public Response viewWorksDetailsHtml(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.findWorksDetails(orcid);
-        return Response.fromResponse(response).header("Content-Disposition", "attachment; filename=\"" + orcid + "-works.xml\"").build();
-    }
-
+    
     /**
      * GETs the XML representation of the ORCID record containing only work
      * details
@@ -382,22 +148,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(WORKS_PATH)
     public Response viewWorksDetailsXml(@PathParam("orcid") String orcid) {
-        return serviceDelegator.findWorksDetails(orcid);
-    }
-
-    /**
-     * GETs the JSON representation of the ORCID record containing only work
-     * details
-     * 
-     * @param orcid
-     *            the ORCID that corresponds to the user's record
-     * @return the JSON representation of the ORCID record
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(WORKS_PATH)
-    public Response viewWorksDetailsJson(@PathParam("orcid") String orcid) {
         return serviceDelegator.findWorksDetails(orcid);
     }
 
@@ -759,51 +509,6 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@HeaderParam("Authorization") @DefaultValue(StringUtils.EMPTY) String authorization, @FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
         return orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
-    }
-
-    /**
-     * Gets the JSON representation any Orcid Profiles (BIO) only relevant to
-     * the given query
-     * 
-     * @param query
-     * @return
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(BIO_SEARCH_PATH)
-    public Response searchByQueryJSON(@QueryParam("bogus") @DefaultValue("") String query) {
-        Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
-        Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
-        registerSearchMetrics(jsonQueryResults);
-        return jsonQueryResults;
-    }
-
-    /**
-     * Gets the XML representation any Orcid Profiles (BIO) only relevant to the
-     * given query
-     * 
-     * @param query
-     * @return
-     */
-    @Override
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
-    @Path(BIO_SEARCH_PATH)
-    public Response searchByQueryXML(@QueryParam("bogus") @DefaultValue("") String query) {
-        Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
-        Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
-        registerSearchMetrics(xmlQueryResults);
-        return xmlQueryResults;
-    }
-
-    private void registerSearchMetrics(Response results) {
-        OrcidMessage orcidMessage = (OrcidMessage) results.getEntity();
-        if (orcidMessage != null && orcidMessage.getOrcidSearchResults() != null && !orcidMessage.getOrcidSearchResults().getOrcidSearchResult().isEmpty()) {
-            return;
-        }
-
-        
     }
 
     /**

@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_v2.DisambiguatedOrganizationExternalIdentifier;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * <p>
  * Java class for disambiguated-organization complex type.
@@ -45,6 +47,7 @@ import org.orcid.jaxb.model.common_v2.DisambiguatedOrganizationExternalIdentifie
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "disambiguatedOrganizationIdentifier", "disambiguationSource" })
 @XmlRootElement(name = "disambiguatedOrganization", namespace = "http://www.orcid.org/ns/common")
+@ApiModel(value = "DisambiguatedOrganizationV3_0_rc2")
 public class DisambiguatedOrganization implements Serializable {
 
     private final static long serialVersionUID = 1L;

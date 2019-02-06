@@ -226,6 +226,10 @@
     <bean id="orgDisambiguatedDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl" />
     
     <bean id="memberChosenOrgDisambiguatedDao" class="org.orcid.persistence.dao.impl.MemberChosenOrgDisambiguatedDaoImpl" />
+    	       
+    <bean id="memberOBOWhitelistedClientDaoReadOnly" class="org.orcid.persistence.dao.impl.MemberOBOWhitelistedClientDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
     	                     
     <bean id="orgDisambiguatedDaoReadOnly" class="org.orcid.persistence.dao.impl.OrgDisambiguatedDaoImpl">
     	<property name="entityManager" ref="entityManagerReadOnly" />

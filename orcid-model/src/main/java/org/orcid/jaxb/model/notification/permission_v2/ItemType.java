@@ -5,12 +5,15 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import io.swagger.annotations.ApiModel;
+
 /**
  * 
  * @author Will Simpson
  *
  */
 @XmlEnum
+@ApiModel(value = "ItemTypeV2_0")
 public enum ItemType {
     //@formatter:off
     @XmlEnumValue("education") EDUCATION,
