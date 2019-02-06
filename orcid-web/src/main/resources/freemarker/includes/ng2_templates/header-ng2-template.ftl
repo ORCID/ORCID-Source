@@ -1,6 +1,6 @@
 <#macro headerng2 nav="" >
 <script type="text/ng-template" id="header-ng2-template">
-<#if !(RequestParameters['oauth'])?? && !(springMacroRequestContext.requestUri?contains("/oauth"))??>    
+<#if !(RequestParameters['oauth'])?? && !(springMacroRequestContext.requestUri?contains("/oauth"))>    
     <div class="row">
         <div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12"
             id="search" *ngIf="searchVisible == true || settingsVisible == true" >
