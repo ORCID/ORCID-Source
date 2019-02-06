@@ -49,7 +49,7 @@ public interface NotificationManager {
 
     void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
 
-    void sendClaimReminderEmail(String userOrcid, int daysUntilActivation);
+    void sendClaimReminderEmail(String userOrcid, int daysUntilActivation, String email);
 
     void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link);
 

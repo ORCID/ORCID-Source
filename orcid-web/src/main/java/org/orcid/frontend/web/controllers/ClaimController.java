@@ -225,7 +225,7 @@ public class ClaimController extends BaseController {
             return resendClaimRequest;
         }
 
-        notificationManager.sendClaimReminderEmail(orcid, (claimWaitPeriodDays - claimReminderAfterDays));
+        notificationManager.sendClaimReminderEmail(orcid, (claimWaitPeriodDays - claimReminderAfterDays), email);
         resendClaimRequest.setSuccessMessage(getMessage("resend_claim.successful_resend"));
         return resendClaimRequest;
     }

@@ -859,7 +859,8 @@ public class AdminController extends BaseController {
                     if (entity.getClaimed()) {
                         claimedIds.add(emailOrOrcid);
                     } else {
-                        notificationManager.sendApiRecordCreationEmail(emailOrOrcid, orcidId);
+                        boolean emailSupplied = !OrcidStringUtils.isValidOrcid(emailOrOrcid);
+                        notificationManager.sendApiRecordCreationEmail(emailSupplied ? emailOrOrcid : null, orcidId);
                         successIds.add(emailOrOrcid);
                     }
                 }

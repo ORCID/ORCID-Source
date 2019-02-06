@@ -41,8 +41,8 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.rc2.notification.Notification;
 import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
 import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
@@ -633,17 +633,16 @@ public class NotificationManagerImpl implements NotificationManager {
     @Transactional
     public void sendApiRecordCreationEmail(String toEmail, String orcid) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
-        String sourceId = record.getSource() == null ? null : SourceEntityUtils.getSourceId(record.getSource());
         String creatorName = record.getSource() == null ? null : SourceEntityUtils.getSourceName(record.getSource());
         Locale userLocale = getUserLocaleFromProfileEntity(record);
-        String email = emailManager.findPrimaryEmail(orcid).getEmail();
+        
+        String email = toEmail != null ? toEmail : emailManager.findPrimaryEmail(orcid).getEmail();
         String emailName = deriveEmailFriendlyName(record);
         String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());        
 
         String subject = null;
         String body = null;
         String htmlBody = null;
-        String sender = null;
         
         subject = getSubject("email.subject.api_record_creation", userLocale);
         // Create map of template params
@@ -670,7 +669,7 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendClaimReminderEmail(String userOrcid, int daysUntilActivation) {
+    public void sendClaimReminderEmail(String userOrcid, int daysUntilActivation, String email) {
         ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
         String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
         Locale locale = getUserLocaleFromProfileEntity(record);
@@ -725,7 +724,7 @@ public class NotificationManagerImpl implements NotificationManager {
         
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, primaryEmail, getSubject("email.subject.claim_reminder", locale), body, htmlBody);
+            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, getSubject("email.subject.claim_reminder", locale), body, htmlBody);
             profileEventDao.persist(new ProfileEventEntity(userOrcid, ProfileEventType.CLAIM_REMINDER_SENT));
         } else {
             LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", body);
