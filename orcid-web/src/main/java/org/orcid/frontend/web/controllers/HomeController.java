@@ -146,9 +146,11 @@ public class HomeController extends BaseController {
         OrcidProfileUserDetails userDetails = getCurrentUser();
         if(userDetails != null) {
             String effectiveOrcid = getEffectiveUserOrcid();
-            info.put("REAL_USER_ORCID", getRealUserOrcid());
+            String realUserOrcid = getRealUserOrcid();
+            info.put("REAL_USER_ORCID", realUserOrcid);
             // REAL_USER_ORCID = EFFECTIVE_USER_ORCID unless it is in delegation mode
             info.put("EFFECTIVE_USER_ORCID", effectiveOrcid);
+            info.put("IN_DELEGATION_MODE", String.valueOf(!effectiveOrcid.equals(realUserOrcid)));
             info.put("PRIMARY_EMAIL", userDetails.getPrimaryEmail());
             info.put("HAS_VERIFIED_EMAIL", String.valueOf(emailManagerReadOnly.haveAnyEmailVerified(effectiveOrcid)));
             info.put("IS_PRIMARY_EMAIL_VERIFIED", String.valueOf(emailManagerReadOnly.isPrimaryEmailVerified(effectiveOrcid)));
@@ -182,7 +184,9 @@ public class HomeController extends BaseController {
             ProfileEntity p = profileEntityCacheManager.retrieve(effectiveOrcid);
             info.put("DEVELOPER_TOOLS_ENABLED", String.valueOf(p.getEnableDeveloperTools()));
             info.put("LOCKED", String.valueOf(!p.isAccountNonLocked()));
-        } 
+        } else {
+            info.put("SIGN_IN_MENU", String.valueOf(true));
+        }
         return info;
     }
 
