@@ -404,6 +404,16 @@ public class NotificationManagerTest extends DBUnitTest {
             notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
         }
     }
+    
+    @Test
+    public void testApiCreatedRecordEmailNullEmailSupplied() throws JAXBException, IOException, URISyntaxException {
+        resetMocks();
+        String userOrcid = "0000-0000-0000-0003";
+        for (AvailableLocales locale : AvailableLocales.values()) {
+            profileEntityManager.updateLocale(userOrcid, locale);
+            notificationManager.sendApiRecordCreationEmail(null, userOrcid);
+        }
+    }
 
     @Test
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
@@ -436,7 +446,7 @@ public class NotificationManagerTest extends DBUnitTest {
         for(AvailableLocales locale : AvailableLocales.values()) {
             profile.setLocale(locale.name());
             when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
-            notificationManager.sendClaimReminderEmail(userOrcid, 2);
+            notificationManager.sendClaimReminderEmail(userOrcid, 2, "test@test.com");
         }
     }
 
