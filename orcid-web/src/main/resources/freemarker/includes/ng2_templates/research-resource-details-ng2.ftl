@@ -339,6 +339,11 @@
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <a (click)="group.activePutCode = researchResource.putCode">                                
                             {{researchResource?.sourceName}}
+                            <#--  OBO  -->
+                            <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.sourceClientId) ||
+                            (researchResource.source.assertionOriginOrcid && researchResource.source.assertionOriginOrcid !== researchResource.source.sourceOrcid)">
+                            ${springMacroRequestContext.getMessage("public_profile.onBehalfOf")} {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}}
+                            </ng-container>
                         </a>
                     </div>                                        
                     <div class="col-md-3 col-sm-3 col-xs-10">
@@ -372,6 +377,11 @@
                 <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <@orcid.msg 'groups.common.source'/>: {{researchResource?.sourceName }}
+                        <#--  OBO  -->
+                        <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.sourceClientId) ||
+                        (researchResource.source.assertionOriginOrcid && researchResource.source.assertionOriginOrcid !== researchResource.source.sourceOrcid)">
+                        ${springMacroRequestContext.getMessage("public_profile.onBehalfOf")} {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}}
+                        </ng-container>
                     </div>
                     
                     <div class="col-md-3 col-sm-3 col-xs-9">
