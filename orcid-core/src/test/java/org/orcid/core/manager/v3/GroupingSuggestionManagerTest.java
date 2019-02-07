@@ -3,6 +3,7 @@ package org.orcid.core.manager.v3;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -82,7 +83,7 @@ public class GroupingSuggestionManagerTest {
         groupingSuggestionManager.cacheGroupingSuggestions("orcid", Arrays.asList(first, second, third));
         
         List<WorkGroupingSuggestion> retrieved = suggestionListCaptor.getValue();
-        assertNull(retrieved);
+        assertTrue(retrieved.isEmpty());
     }
     
     @Test
