@@ -35,7 +35,7 @@ public class GroupingSuggestionManagerImpl extends GroupingSuggestionManagerRead
             RejectedGroupingSuggestionEntity rejection = rejectedGroupingSuggestionDao.findGroupingSuggestionIdAndOrcid(s.getOrcid(), s.getPutCodesAsString());
             return rejection == null;
         }).collect(Collectors.toList());
-        groupingSuggestionsCacheManager.putGroupingSuggestions(orcid, suggestions.isEmpty() ? null : suggestions);
+        groupingSuggestionsCacheManager.putGroupingSuggestions(orcid, suggestions);
     }
     
     public void setRejectedGroupingSuggestionDao(RejectedGroupingSuggestionDao rejectedGroupingSuggestionDao) {
