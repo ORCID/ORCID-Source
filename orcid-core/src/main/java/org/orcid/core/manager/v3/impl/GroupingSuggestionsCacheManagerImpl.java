@@ -22,8 +22,8 @@ public class GroupingSuggestionsCacheManagerImpl implements GroupingSuggestionsC
             for (int i = 0; !suggestions.isEmpty() && i < max; i++) {
                 subList.add(suggestions.remove(0));
             }
+            putGroupingSuggestions(orcid, suggestions);
         }
-        putGroupingSuggestions(orcid, suggestions);
         return subList;
     }
 
