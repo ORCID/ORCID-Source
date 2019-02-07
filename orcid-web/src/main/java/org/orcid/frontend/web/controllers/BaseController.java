@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -36,6 +34,7 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
@@ -43,8 +42,10 @@ import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
+import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
@@ -56,6 +57,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.constants.SiteConstants;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -78,6 +80,8 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -158,6 +162,9 @@ public class BaseController {
 
     @Resource(name = "profileEntityManagerV3")
     protected ProfileEntityManager profileEntityManager;
+    
+    @Resource(name = "emailManagerReadOnlyV3")
+    protected EmailManagerReadOnly emailManagerReadOnly;
     
     @ModelAttribute("recaptchaWebKey")
     public String getRecaptchaWebKey() {
@@ -272,10 +279,6 @@ public class BaseController {
         return baseControllerUtil.getCurrentUser(SecurityContextHolder.getContext());
     }
 
-    protected String getCurrentUserOrcid() {
-        return getEffectiveUserOrcid();
-    }
-
     protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (internalSSOManager.enableCookie()) {
@@ -336,20 +339,6 @@ public class BaseController {
             }
         }
         return false;
-    }
-
-    @ModelAttribute("realUserOrcid")
-    public String getRealUserOrcid() {
-        return sourceManager.retrieveRealUserOrcid();
-    }
-
-    @ModelAttribute("effectiveUserOrcid")
-    public String getEffectiveUserOrcid() {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
-        if (currentUser == null) {
-            return null;
-        }
-        return currentUser.getOrcid();
     }
 
     @ModelAttribute("inDelegationMode")
@@ -770,15 +759,6 @@ public class BaseController {
         
     }
 
-    @ModelAttribute("locked")
-    public boolean isLocked() {
-        String orcid = getCurrentUserOrcid();
-        if (PojoUtil.isEmpty(orcid)) {
-            return false;
-        }
-        return orcidProfileManager.isLocked(orcid);
-    }
-
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
         String targetUrl = null;
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
@@ -968,4 +948,21 @@ public class BaseController {
             return false;
         }
     }
+    
+    public String getRealUserOrcid() {
+        return sourceManager.retrieveRealUserOrcid();
+    }
+
+    public String getEffectiveUserOrcid() {
+        OrcidProfileUserDetails currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return null;
+        }
+        return currentUser.getOrcid();
+    }
+    
+    protected String getCurrentUserOrcid() {
+        return getEffectiveUserOrcid();
+    }
+
 }

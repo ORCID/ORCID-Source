@@ -17,12 +17,14 @@ export class CommonService {
     private shownElement: any;
 
     public orgDisambiguatedDetails: any;
+    public userInfo: any;
 
     constructor(
         private http: HttpClient
     ) {
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
+        this.userInfo = null;
     }
 
     addComma(str): string {
@@ -284,4 +286,15 @@ export class CommonService {
                 getBaseUri() + '/countryNamesToCountryCodes.json', {}
         );
     };
+    
+    getUserInfo(): Observable<any> {  
+        if(this.userInfo != null) {
+            return this.userInfo;
+        } else {
+            this.userInfo = this.http.get(
+                    getBaseUri() + '/userInfo.json'
+                );  
+            return this.userInfo;
+        }               
+     };
 }

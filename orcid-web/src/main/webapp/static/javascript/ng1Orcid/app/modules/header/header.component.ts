@@ -20,10 +20,13 @@ import { takeUntil }
 import { NotificationsService } 
     from '../../shared/notifications.service.ts'; 
 
+import { CommonService } 
+    from '../../shared/common.service.ts';
 
 @Component({
     selector: 'header-ng2',
-    template:  scriptTmpl("header-ng2-template")
+    template:  scriptTmpl("header-ng2-template"),
+    providers: [CommonService]
 })
 export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -38,9 +41,11 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     secondaryMenuVisible: any;
     settingsVisible: boolean;
     tertiaryMenuVisible: any;
-
+    userInfo: any;
+    
     constructor(
-        private notificationsSrvc: NotificationsService
+        private notificationsSrvc: NotificationsService,
+        private commonSrvc: CommonService
     ) {
         this.conditionsActive = false;
         this.filterActive = false;
@@ -52,6 +57,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         this.secondaryMenuVisible = {};
         this.settingsVisible = false;
         this.tertiaryMenuVisible = {};
+        this.userInfo = {};
     }
 
     
@@ -174,5 +180,17 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.onResize(); 
         this.headerSearch.searchOption = 'registry'; 
+        this.commonSrvc.getUserInfo().pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.userInfo = data;
+                console.log(data)
+            },
+            error => {
+                console.log('ngOnInit: unable to fetch userInfo', error);
+            } 
+        );
     }; 
 }
