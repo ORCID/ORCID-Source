@@ -77,7 +77,7 @@
 
 <!--NON-OAUTH HEADER-->
 <!--hide header if oauth login-->
-<#if !(RequestParameters['oauth'])??>
+
 <div class="container">
     <#include "/includes/ng2_templates/header-ng2-template.ftl">
     <#include "/includes/ng2_templates/language-ng2-template.ftl">
@@ -86,13 +86,12 @@
         <header-ng2></header-ng2>
     </div><!-- .header -->
         <div id="main" role="main" class="main">
-</#if>
     <#include
         '../common/maintenance_header.ftl'/> <#-- wtf --> <#nested>
     </div>
 </div><!-- .container -->
 <!--hide footer if oauth login-->
-<#if !(RequestParameters['oauth'])??>
+<#if !(RequestParameters['oauth'])?? && !(springMacroRequestContext.requestUri?contains("/oauth"))>
     <@orcid.checkFeatureStatus 'NEW_FOOTER'>
         <footer class="footer-main">
             <div class="container">
