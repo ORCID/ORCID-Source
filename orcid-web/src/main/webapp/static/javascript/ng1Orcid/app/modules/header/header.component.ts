@@ -15,7 +15,7 @@ import { FormsModule }
 import { Observable, Subject, Subscription } 
     from 'rxjs';
     
-import { takeUntil, share } 
+import { takeUntil, shareReplay } 
     from 'rxjs/operators';
 
 import { NotificationsService } 
@@ -181,11 +181,10 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.onResize(); 
         this.headerSearch.searchOption = 'registry'; 
-        this.commonSrvc.getUserInfo().pipe(share())
+        this.commonSrvc.getUserInfo().pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
             data => {
-                this.userInfo = data;
-                console.log(data)
+                this.userInfo = data;                
             },
             error => {
                 console.log('ngOnInit: unable to fetch userInfo', error);

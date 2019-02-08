@@ -6,9 +6,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
      from '@angular/common/http';
 
-import { Observable, Subject } 
+import { Observable, Subject, ReplaySubject } 
     from 'rxjs';
 
+import { share, shareReplay } 
+    from 'rxjs/operators';    
+    
 import { OrgDisambiguated } 
     from '../modules/orgIdentifierPopover/orgDisambiguated.ts';
 
@@ -289,6 +292,6 @@ export class CommonService {
         console.log("getUserInfo")
         return this.http.get(
                 getBaseUri() + '/userInfo.json'
-            );             
+            ).pipe(shareReplay(1));             
      };
 }

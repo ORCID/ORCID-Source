@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, Component, OnDestroy } from "@angular/core";
 import { Observable, BehaviorSubject, Subject } from "rxjs";
-import { takeUntil, share } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { CommonService } from './common.service.ts';
 
 @Injectable()
@@ -20,9 +20,8 @@ export class PersonService {
   }
 
   getPerson() {      
-    if (!this.endpointWasCall) {
-        
-        this.commonSrvc.getUserInfo().pipe(share()).subscribe(
+    if (!this.endpointWasCall) {        
+        this.commonSrvc.getUserInfo().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
                 data => {
                     this.userInfo = data;
                     this.personEndpoint = this.http
