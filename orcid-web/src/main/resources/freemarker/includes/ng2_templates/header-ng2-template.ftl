@@ -432,17 +432,13 @@
                     
                     <!-- SIGN IN/OUT -->
                     <li class="last leaf">
-                        <@security.authorize
-                        access="!hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM',
-                        'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">
-                        <a href="<@orcid.rootPath "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
-                        </@security.authorize>
-                     
-                        <@security.authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN', 'ROLE_BASIC', 'ROLE_PREMIUM', 'ROLE_BASIC_INSTITUTION', 'ROLE_PREMIUM_INSTITUTION')">
+                        <div *ngIf="userInfo['SIGN_IN_MENU']">
+                            <a href="<@orcid.rootPath "/signin" />" title=""><@orcid.msg 'public-layout.sign_in'/></a>
+                        </div>                        
+                        <div *ngIf="userInfo['REAL_USER_ORCID']">
                             <a href="<@orcid.rootPath "/signout" />"><@orcid.msg 'public-layout.sign_out'/></a>
-                        </@security.authorize>
-                    
-                    </li>
+                        </div>                        
+                    </li>                    
 
                 </ul>
                 <#--<#if isProxy><#include "/common/change_proxy.ftl" /></#if>-->

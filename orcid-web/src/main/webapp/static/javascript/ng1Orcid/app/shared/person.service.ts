@@ -12,7 +12,7 @@ export class PersonService {
   private endpointWasCall: boolean = false;
   private personEndpoint;
   private response: BehaviorSubject<any> = new BehaviorSubject(null);
-  private userInfo: any;
+  public userInfo: any;
 
   constructor(private http: HttpClient, private commonSrvc: CommonService) {
     this.url = getBaseUri();

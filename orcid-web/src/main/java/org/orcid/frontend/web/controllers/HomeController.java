@@ -182,8 +182,17 @@ public class HomeController extends BaseController {
                 info.put("DELEGATED_BY_ADMIN", String.valueOf(true));
             }   
             ProfileEntity p = profileEntityCacheManager.retrieve(effectiveOrcid);
+            info.put("LAST_MODIFIED", String.valueOf(p.getLastModified()));
             info.put("DEVELOPER_TOOLS_ENABLED", String.valueOf(p.getEnableDeveloperTools()));
             info.put("LOCKED", String.valueOf(!p.isAccountNonLocked()));
+            info.put("CLAIMED", String.valueOf(p.getClaimed()));
+            if(p.getPrimaryRecord() != null) {
+                info.put("PRIMARY_RECORD", p.getPrimaryRecord().getId());                
+            }
+            if(!PojoUtil.isEmpty(p.getGroupType())) {
+                info.put("MEMBER_TYPE", p.getGroupType());
+            }
+            
         } else {
             info.put("SIGN_IN_MENU", String.valueOf(true));
         }

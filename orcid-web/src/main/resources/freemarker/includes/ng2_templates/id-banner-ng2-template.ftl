@@ -23,10 +23,10 @@
                 <div class="orcid-id-options">
                     <div class="orcid-id-info">
                         <span class="mini-orcid-icon-16"></span>
-                        <span id="orcid-id" class="orcid-id-https">${baseUri}/${(effectiveUserOrcid)!}</span>
+                        <span id="orcid-id" class="orcid-id-https">${baseUri}/{{personService.userInfo['EFFECTIVE_USER_ORCID']}}</span>
                     </div>
                     <#if springMacroRequestContext.requestUri?contains("/my-orcid")>
-                    <a href="${baseUri}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
+                    <a href="${baseUri}/{{personService.userInfo['EFFECTIVE_USER_ORCID']}}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
                     </#if> 
                 </div>
             </div>
