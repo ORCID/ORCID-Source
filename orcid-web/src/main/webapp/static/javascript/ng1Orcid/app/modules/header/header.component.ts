@@ -58,7 +58,15 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         this.secondaryMenuVisible = {};
         this.settingsVisible = false;
         this.tertiaryMenuVisible = {};
-        this.userInfo = {};
+        this.userInfo = this.commonSrvc.userInfo$
+        .subscribe(
+            data => {
+                this.userInfo = data;                
+            },
+            error => {
+                console.log('ngOnInit: unable to fetch userInfo', error);
+            } 
+        );
     }
 
     
@@ -180,15 +188,6 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.onResize(); 
-        this.headerSearch.searchOption = 'registry'; 
-        this.commonSrvc.getUserInfo().pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe(
-            data => {
-                this.userInfo = data;                
-            },
-            error => {
-                console.log('ngOnInit: unable to fetch userInfo', error);
-            } 
-        );
+        this.headerSearch.searchOption = 'registry';         
     }; 
 }

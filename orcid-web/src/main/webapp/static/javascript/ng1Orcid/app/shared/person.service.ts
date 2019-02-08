@@ -21,7 +21,7 @@ export class PersonService {
 
   getPerson() {      
     if (!this.endpointWasCall) {        
-        this.commonSrvc.getUserInfo().pipe(takeUntil(this.ngUnsubscribe)).subscribe(
+        this.commonSrvc.userInfo$.subscribe(
                 data => {
                     this.userInfo = data;
                     this.personEndpoint = this.http

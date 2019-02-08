@@ -20,12 +20,15 @@ export class CommonService {
     private shownElement: any;
 
     public orgDisambiguatedDetails: any;    
+    public userInfo$: Observable<any>;
 
     constructor(
         private http: HttpClient
     ) {
+        console.log('common.service constructor')
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
+        this.userInfo$ = this.getUserInfo().pipe(shareReplay(1));  
     }
 
     addComma(str): string {
@@ -289,9 +292,7 @@ export class CommonService {
     };
     
     getUserInfo(): Observable<any> { 
-        console.log("getUserInfo")
-        return this.http.get(
-                getBaseUri() + '/userInfo.json'
-            ).pipe(shareReplay(1));             
+        console.log('getUserInfo3')
+        return this.http.get(getBaseUri() + '/userInfo.json'); 
      };
 }
