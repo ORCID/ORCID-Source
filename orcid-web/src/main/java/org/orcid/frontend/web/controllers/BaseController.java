@@ -949,10 +949,12 @@ public class BaseController {
         }
     }
     
+    @ModelAttribute("realUserOrcid")
     public String getRealUserOrcid() {
         return sourceManager.retrieveRealUserOrcid();
     }
 
+    @ModelAttribute("effectiveUserOrcid")
     public String getEffectiveUserOrcid() {
         OrcidProfileUserDetails currentUser = getCurrentUser();
         if (currentUser == null) {
