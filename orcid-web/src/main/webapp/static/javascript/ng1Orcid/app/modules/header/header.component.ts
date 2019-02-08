@@ -26,8 +26,7 @@ import { CommonService }
 
 @Component({
     selector: 'header-ng2',
-    template:  scriptTmpl("header-ng2-template"),
-    providers: [CommonService]
+    template:  scriptTmpl("header-ng2-template")
 })
 export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();

@@ -15,7 +15,9 @@ import { share, shareReplay }
 import { OrgDisambiguated } 
     from '../modules/orgIdentifierPopover/orgDisambiguated.ts';
 
-@Injectable()
+@Injectable({
+ providedIn: 'root',
+})
 export class CommonService {
     private shownElement: any;
 
@@ -28,7 +30,7 @@ export class CommonService {
         console.log('common.service constructor')
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
-        this.userInfo$ = this.getUserInfo().pipe(shareReplay(1));  
+        this.userInfo$ = this.getUserInfo().pipe(share());  
     }
 
     addComma(str): string {
@@ -292,7 +294,7 @@ export class CommonService {
     };
     
     getUserInfo(): Observable<any> { 
-        console.log('getUserInfo3')
+        console.log('getUserInfo9')
         return this.http.get(getBaseUri() + '/userInfo.json'); 
      };
 }

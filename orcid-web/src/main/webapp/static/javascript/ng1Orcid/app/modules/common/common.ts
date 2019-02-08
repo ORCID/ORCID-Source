@@ -293,7 +293,6 @@ import { PersonService }
             BlogService,
             ClaimService,
             ClientService,
-            CommonService,
             ConsortiaService,
             DiscoService,
             EmailFrequencyService,
