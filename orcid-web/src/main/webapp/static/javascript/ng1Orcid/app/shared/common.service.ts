@@ -16,15 +16,13 @@ import { OrgDisambiguated }
 export class CommonService {
     private shownElement: any;
 
-    public orgDisambiguatedDetails: any;
-    public userInfo: any;
+    public orgDisambiguatedDetails: any;    
 
     constructor(
         private http: HttpClient
     ) {
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
-        this.userInfo = null;
     }
 
     addComma(str): string {
@@ -287,14 +285,10 @@ export class CommonService {
         );
     };
     
-    getUserInfo(): Observable<any> {  
-        if(this.userInfo != null) {
-            return this.userInfo;
-        } else {
-            this.userInfo = this.http.get(
-                    getBaseUri() + '/userInfo.json'
-                );  
-            return this.userInfo;
-        }               
+    getUserInfo(): Observable<any> { 
+        console.log("getUserInfo")
+        return this.http.get(
+                getBaseUri() + '/userInfo.json'
+            );             
      };
 }

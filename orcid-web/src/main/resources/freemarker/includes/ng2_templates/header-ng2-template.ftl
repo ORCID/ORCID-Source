@@ -113,29 +113,38 @@
                 <ul class="menu" *ngIf="menuVisible == true"  resize>
                     <!-- FOR RESEARCHERS -->
                     <li class="first expanded active-trail">
-                        <a href="${aboutUri}/about/what-is-orcid/mission" (click)="handleMobileMenuOption($event)" title=""><@orcid.msg
-                        'public-layout.for_researchers'/></a>
-                        <ul class="menu lang-fixes">
+                        <a href="${aboutUri}/about/what-is-orcid/mission" (click)="handleMobileMenuOption($event)" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
+                        <ul class="menu lang-fixes" *ngIf="userInfo['SIGN_IN_MENU'] == 'true'">
                             <!-- Mobile view Only -->
                             <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@orcid.rootPath "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
-                        
+                    
                             <!-- Menu -->
-                            <li class="leaf last" *ngIf="userInfo['SIGN_IN_MENU'] && userInfo['SIGN_IN_MENU'] == 'true'"><a ${(nav=="signin")?then('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
-                            <li class="leaf last" *ngIf="userInfo['SIGN_IN_MENU'] && userInfo['SIGN_IN_MENU'] == 'true'"><a ${(nav=="register")?then('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                              
-                            <li *ngIf="userInfo['REAL_USER_ORCID']">
+                            <li class="leaf last" *ngIf="userInfo['SIGN_IN_MENU'] == 'true'"><a ${(nav=="signin")?then('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
+                            <li class="leaf last" *ngIf="userInfo['SIGN_IN_MENU'] == 'true'"><a ${(nav=="register")?then('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                                                          
+                            <li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
+                        </ul>
+                        <ul class="menu lang-fixes" *ngIf="userInfo['REAL_USER_ORCID']">
+                            <li>
                                 <a ${(nav=="record")?then('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
-                                    <#if inDelegationMode><@orcid.msg 'public-layout.my_orcid'/><#else><@orcid.msg 'public-layout.my_orcid_record'/></#if>
+                                    <div *ngIf="userInfo['IN_DELEGATION_MODE'] == 'true'">
+                                        <@orcid.msg 'public-layout.my_orcid'/>
+                                    </div>
+                                    <div *ngIf="userInfo['IN_DELEGATION_MODE'] == 'false'">
+                                        <@orcid.msg 'public-layout.my_orcid_record'/>
+                                    </div>
                                 </a>
                             </li>
                             <li>
                                 {{retrieveUnreadCount()}}
                                 <a ${(nav=="notifications")?then('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span *ngIf="getUnreadCount > 0">({{getUnreadCount}})</span></a>
                             </li>
-                            <li><a ${(nav=="settings")?then('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a></li>
+                            <li>
+                                <a ${(nav=="settings")?then('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a>
+                            </li>
                             
                             <!-- Developer tools -->
-                            <li *ngIf="(!userInfo['IN_DELEGATION_MODE'] || userInfo['DELEGATED_BY_ADMIN']) && userInfo['MEMBER_MENU']"><a ${(nav=="developer-tools")?then('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
-                            <li *ngIf="(!userInfo['IN_DELEGATION_MODE'] || userInfo['DELEGATED_BY_ADMIN'])"><a ${(nav=="developer-tools")?then('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                            <li *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']"><a ${(nav=="developer-tools")?then('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                            <li *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true')"><a ${(nav=="developer-tools")?then('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
                             
                             <!-- Admin menu -->
                             <li *ngIf="userInfo['ADMIN_MENU']"><a ${(nav=="members")?then('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
