@@ -141,8 +141,9 @@ public class HomeController extends BaseController {
     }
     
     @RequestMapping(value = "/userInfo.json", method = RequestMethod.GET)
-    public @ResponseBody Map<String, String> getSessionInfo() {
+    public @ResponseBody Map<String, String> getUserInfo(HttpServletRequest request) {
         Map<String, String> info = new HashMap<String, String>();
+        info.put("BASE_URI", orcidUrlManager.getBaseUrl());
         OrcidProfileUserDetails userDetails = getCurrentUser();
         if(userDetails != null) {
             String effectiveOrcid = getEffectiveUserOrcid();

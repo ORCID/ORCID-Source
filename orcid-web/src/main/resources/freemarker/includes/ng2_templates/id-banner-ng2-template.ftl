@@ -1,8 +1,8 @@
 <script type="text/ng-template" id="id-banner-ng2-template">
 
-
-    <div class="id-banner <#if inDelegationMode>delegation-mode</#if>"> 
-        <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
+    <div [ngClass]="(personService.userInfo['IN_DELEGATION_MODE'] == 'true') ? 'id-banner delegation-mode' : 'id-banner'"> 
+        
+        <span *ngIf="personService.userInfo['IN_DELEGATION_MODE'] == 'true'" class="delegation-mode-warning"><@orcid.msg 'delegate.managing_record'/></span>
         <!-- Name -->
 
         <#if springMacroRequestContext.requestUri?contains("/my-orcid")>

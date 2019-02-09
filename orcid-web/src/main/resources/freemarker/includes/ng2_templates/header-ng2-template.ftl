@@ -1,6 +1,6 @@
 <#macro headerng2 nav="" >
 <script type="text/ng-template" id="header-ng2-template">
-<#if !(RequestParameters['oauth'])?? && !(springMacroRequestContext.requestUri?contains("/oauth"))>    
+<div *ngIf="!isOauth"> 
     <div class="row">
         <div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12"
             id="search" *ngIf="searchVisible == true || settingsVisible == true" >
@@ -23,7 +23,6 @@
                             'public-layout.search.choice.website'/></label>
                     </fieldset>
                 </div>
-
 
                 <div class="conditions" *ngIf="conditionsActive == true" >
                     <p>                         
@@ -77,7 +76,6 @@
                 <a href="<@orcid.rootPath " signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
                     <span class="glyphicon glyphicon-user"></span>
                 </a>
-                
                 
                 <!-- Desktop / Tablet View -->
                 <ul class="menu public" *ngIf="menuVisible == true" (window:resize)="onResize($event)">
@@ -462,7 +460,7 @@
             </p>
         </@orcid.checkFeatureStatus>
     </div><!-- .row -->
-</#if>   
+</div>   
 </script>
 </#macro>
 <@headerng2></@headerng2>

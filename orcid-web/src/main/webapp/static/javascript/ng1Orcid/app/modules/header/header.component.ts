@@ -17,7 +17,7 @@ import { Observable, Subject, Subscription }
     
 import { takeUntil, shareReplay } 
     from 'rxjs/operators';
-
+    
 import { NotificationsService } 
     from '../../shared/notifications.service.ts'; 
 
@@ -42,6 +42,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     settingsVisible: boolean;
     tertiaryMenuVisible: any;
     userInfo: any;
+    isOauth: boolean = false;
     
     constructor(
         private notificationsSrvc: NotificationsService,
@@ -66,8 +67,9 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('ngOnInit: unable to fetch userInfo', error);
             } 
         );
+        const urlParams = new URLSearchParams(window.location.search);
+        this.isOauth = (urlParams.has('client_id') && urlParams.has('redirect_uri'));
     }
-
     
     filterChange(): void {
         this.searchFilterChanged = true;
