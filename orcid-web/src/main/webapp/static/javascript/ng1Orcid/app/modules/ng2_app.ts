@@ -24,11 +24,11 @@ import { BrowserModule }
 import { platformBrowserDynamic } 
     from '@angular/platform-browser-dynamic';
 
-import { UpgradeModule } 
-    from '@angular/upgrade/static';
-
 import { RouterModule, UrlHandlingStrategy } 
     from '@angular/router';
+
+import { UpgradeModule } 
+    from '@angular/upgrade/static';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
 
@@ -94,6 +94,9 @@ import { FundingFormNg2Module }
 import { HeaderNg2Module } 
     from './header/header.ts';
 
+import { HomeNg2Module } 
+    from './home/home.ts';
+
 import { LanguageNg2Module }
     from './language/language.ts';
 
@@ -138,6 +141,9 @@ import { OrgIdentifierPopoverNg2Module }
 
 import { ReactivationNg2Module } 
     from './reactivation/reactivation.ts';
+
+import { RegisterDuplicatesNg2Module } 
+    from './registerDuplicates/registerDuplicates.ts';
 
 import { RequestPasswordResetNg2Module } 
     from './requestPasswordReset/requestPasswordReset.ts';
@@ -304,6 +310,7 @@ export class RootCmp {
         EmailVerificationSentMesssageNg2Module,//Aproved
         ExtIdPopoverNg2Module,
         HeaderNg2Module,
+        HomeNg2Module,
         FundingDeleteNg2Module,
         FundingFormNg2Module,
         FundingNg2Module,
@@ -319,8 +326,10 @@ export class RootCmp {
         PersonNg2Module,
         PrintRecordNg2Module,
         PublicRecordNg2Module,
+        OauthAuthorizationNg2Module,
         OrgIdentifierPopoverNg2Module,
         ReactivationNg2Module,
+        RegisterDuplicatesNg2Module,
         RequestPasswordResetNg2Module,
         ResearchResourceNg2Module,
         ResearchResourceDeleteNg2Module,

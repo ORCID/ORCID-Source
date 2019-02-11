@@ -2,12 +2,7 @@ var webpack = require('webpack');
 
 module.exports = {
     context: __dirname + "/",
-    entry: {
-        app: "./require.js",
-        home: "./app/bootstrap_home.ts",
-        signin: "./app/bootstrap_signin.ts",
-        polyfills: "./app/polyfills.ts",
-    },
+    entry: "./require.js",
     mode: 'development',
     module: {
         rules: [
@@ -23,7 +18,7 @@ module.exports = {
     },
     output: {
         path: __dirname + '/',
-        filename: "[name].js"
+        filename: "angular_orcid_generated.js"
     },
     plugins: [
         new webpack.DefinePlugin(
@@ -35,5 +30,10 @@ module.exports = {
             }
         )
     ],
+    resolve: {
+        alias: {
+            "@angular/upgrade/static": "@angular/upgrade/bundles/upgrade-static.umd.js"
+        }
+    },
     watch: true
 };
