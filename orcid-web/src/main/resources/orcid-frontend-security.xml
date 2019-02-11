@@ -273,6 +273,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/orgs/disambiguated/(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/userInfo.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />			
 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks.json(\?.*)?"

@@ -394,6 +394,14 @@ public class PublicProfileController extends BaseWorkspaceController {
         return groups;
     }
     
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/userInfo.json", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> getUserInfo( @PathVariable("orcid") String orcid) {
+        Map<String, String> info = new HashMap<String, String>();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        info.put("IS_LOCKED", String.valueOf(!profile.isAccountNonLocked()));
+        return info;
+    }
+    
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/person.json", method = RequestMethod.GET)
     public @ResponseBody PublicRecordPersonDetails getPersonDetails(@PathVariable("orcid") String orcid) {
         PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();

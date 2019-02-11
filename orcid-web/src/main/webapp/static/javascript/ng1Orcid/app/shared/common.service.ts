@@ -23,7 +23,7 @@ export class CommonService {
 
     public orgDisambiguatedDetails: any;    
     public userInfo$: Observable<any>;
-
+    
     constructor(
         private http: HttpClient
     ) {
@@ -294,7 +294,10 @@ export class CommonService {
     };
     
     getUserInfo(): Observable<any> { 
-        console.log('getUserInfo9')
         return this.http.get(getBaseUri() + '/userInfo.json'); 
-     };
+    };
+    
+    getPublicUserInfo(orcid): Observable<any> {         
+        return this.http.get(getBaseUri() + '/' + orcid + '/userInfo.json'); 
+    };
 }
