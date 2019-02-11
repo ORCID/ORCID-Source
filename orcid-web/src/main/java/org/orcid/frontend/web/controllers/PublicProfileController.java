@@ -399,6 +399,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, String> info = new HashMap<String, String>();
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         info.put("IS_LOCKED", String.valueOf(!profile.isAccountNonLocked()));
+        info.put("IS_DEACTIVATED", String.valueOf(!(profile.getDeactivationDate() == null)));
+        if(profile.getPrimaryRecord() != null) {
+            info.put("PRIMARY_RECORD", profile.getPrimaryRecord().getId()); 
+        }
         return info;
     }
     
