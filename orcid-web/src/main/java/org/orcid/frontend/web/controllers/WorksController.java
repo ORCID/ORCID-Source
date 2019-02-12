@@ -144,7 +144,8 @@ public class WorksController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/groupingSuggestions.json", method = RequestMethod.GET)
     public @ResponseBody WorkGroupingSuggestions getGroupingSuggestions() {
-        return groupingSuggestionManager.getGroupingSuggestions(getCurrentUserOrcid());
+        WorkGroupingSuggestions suggestions = groupingSuggestionManager.getGroupingSuggestions(getCurrentUserOrcid());
+        return suggestions;
     }
     
     @RequestMapping(value = "/groupingSuggestionsCount.json", method = RequestMethod.GET)
@@ -156,6 +157,19 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody Boolean declineGroupingSuggestion(@RequestBody WorkGroupingSuggestion suggestion) {
         groupingSuggestionManager.markGroupingSuggestionAsRejected(suggestion);
         return true;
+    }
+    
+    @RequestMapping(value = "/acceptGroupingSuggestion.json", method = RequestMethod.POST)
+    public @ResponseBody GroupedWorks acceptGroupingSuggestion(@RequestBody WorkGroupingSuggestion suggestion) {
+        GroupedWorks grouped = new GroupedWorks();
+        grouped.setWorkIds(suggestion.getPutCodes());
+        try {
+            groupingSuggestionManager.markGroupingSuggestionAsAccepted(suggestion);
+            return grouped;
+        } catch (MissingGroupableExternalIDException e) {
+            grouped.getErrors().add(getMessage("groups.merge.no_groupable_external_ids"));
+            return grouped;
+        }
     }
 
     private void initializeFields(WorkForm w) {
