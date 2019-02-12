@@ -127,7 +127,15 @@
                                                         </div>         
                                                                                 
                                                         <div class="source" *ngIf="country.sourceName || country.sourceName == null">
-                                                            <@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="country.sourceName">{{country.sourceName}}</span><span *ngIf="country.sourceName == null">{{orcidId}}</span>
+                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="country.sourceName">{{country.sourceName}}
+                                                            
+
+                                                             <#--  OBO  -->
+                                                            <ng-container *ngIf="(country.assertionOriginClientId && country.assertionOriginClientId !== country.source) ||
+                                                            (country.assertionOriginOrcid && country.assertionOriginOrcid !== country.source.source)">
+                                                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{country.assertionOriginName || country.assertionOriginOrcid}}
+                                                            </ng-container>
+                                                            </span><span *ngIf="country.sourceName == null">{{orcidId}}</span>
                                                         </div>
                                                         
                                                     </div> 

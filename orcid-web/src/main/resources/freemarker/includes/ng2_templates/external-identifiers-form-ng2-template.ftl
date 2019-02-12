@@ -116,7 +116,18 @@
                                                                 <span *ngIf="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="externalIdentifier.commonName">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
                                                             </p> 
                                                         </div>
-                                                        <div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="externalIdentifier.sourceName">{{externalIdentifier.sourceName}}</span><span *ngIf="externalIdentifier.sourceName == null">{{orcidId}}</span></div>                                
+                                                        <div class="source">
+                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="externalIdentifier.sourceName">{{externalIdentifier.sourceName}}
+                                                        
+
+                                                             <#--  OBO  -->
+                                                            <ng-container *ngIf="(externalIdentifier.assertionOriginClientId && externalIdentifier.assertionOriginClientId !== externalIdentifier.source) ||
+                                                            (externalIdentifier.assertionOriginOrcid && externalIdentifier.assertionOriginOrcid !== externalIdentifier.source.source)">
+                                                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{externalIdentifier.assertionOriginName || externalIdentifier.assertionOriginOrcid}}
+                                                            </ng-container>
+                                                            </span>
+                                                            
+                                                            <span *ngIf="externalIdentifier.sourceName == null">{{orcidId}}</span></div>                                
                                                     </div>
                                                     
                                                     <div class="col-md-6" style="position: static">
