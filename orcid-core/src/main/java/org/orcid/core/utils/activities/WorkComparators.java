@@ -47,20 +47,10 @@ public class WorkComparators {
     });
     
     private static Comparator<WorkSummary> WORK_SUMMARY_CREATED_DATE = Comparator.nullsLast((w1, w2) -> {
-        if (w1.getCreatedDate() == null && w2.getCreatedDate() == null) {
-            return 0;
-        }
-        if (w1.getCreatedDate() != null && w2.getCreatedDate() == null) {
-            return -1;
-        }
-        if (w1.getCreatedDate() == null && w2.getCreatedDate() != null) {
-            return 1;
-        }
-        
         return w1.getCreatedDate().getValue().toGregorianCalendar().compareTo(w2.getCreatedDate().getValue().toGregorianCalendar());
     });
 
-    public static Comparator<WorkSummary> ALL_EXCEPT_DISPLAY_INDEX = REVERSE_CHRONOLOGICAL.thenComparing(WORK_SUMMARY_WORK_TITLE).thenComparing(WORK_SUMMARY_WORK_TYPE).thenComparing(WORK_SUMMARY_CREATED_DATE);;
+    public static Comparator<WorkSummary> ALL_EXCEPT_DISPLAY_INDEX = REVERSE_CHRONOLOGICAL.thenComparing(WORK_SUMMARY_WORK_TITLE).thenComparing(WORK_SUMMARY_WORK_TYPE);
 
     public static Comparator<WorkSummary> WORKS_WITHIN_GROUP = DISPLAY_INDEX.thenComparing(WORK_SUMMARY_CREATED_DATE);
 

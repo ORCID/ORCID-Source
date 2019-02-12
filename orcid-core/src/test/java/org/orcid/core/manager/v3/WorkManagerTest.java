@@ -14,9 +14,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -37,6 +40,7 @@ import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc2.common.Title;
@@ -807,7 +811,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void testGroupWorks() {
+    public void testGroupWorks() throws DatatypeConfigurationException {
         /**
          * @formatter:off
          * They should be grouped as
@@ -892,7 +896,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void testGroupWorksWithDisplayIndex() {
+    public void testGroupWorksWithDisplayIndex() throws DatatypeConfigurationException {
         /**
          * @formatter:off
          * They should be grouped as
@@ -935,7 +939,7 @@ public class WorkManagerTest extends BaseTest {
         assertEquals(1, works1.getWorkGroup().get(3).getIdentifiers().getExternalIdentifier().size());
         assertEquals("ext-id-4", works1.getWorkGroup().get(3).getIdentifiers().getExternalIdentifier().get(0).getValue());
 
-        WorkSummary s7 = getWorkSummary("Work 7", "ext-id-4", Visibility.PRIVATE, "0");
+        WorkSummary s7 = getWorkSummary("Work 7", "ext-id-4", Visibility.PRIVATE, "1");
         // Add ext-id-3 to work 7, so, it join group 3 and group 4 in a single
         // group
         ExternalID extId = new ExternalID();
@@ -961,25 +965,22 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(works2);
         assertEquals(3, works2.getWorkGroup().size());
 
-        // Group 1 have all with ext-id-3 and ext-id-4
-        assertEquals(3, works2.getWorkGroup().get(0).getWorkSummary().size());
-        assertEquals(2, works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
-        assertThat(works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
-        assertThat(works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(1).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
-
-        // Group 2 have all with ext-id-1
+        assertEquals(2, works2.getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals(1, works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("ext-id-1", works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
         assertEquals(2, works2.getWorkGroup().get(1).getWorkSummary().size());
         assertEquals(1, works2.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().size());
-        assertEquals("ext-id-1", works2.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("ext-id-2", works2.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
 
-        // Group 2 have all with ext-id-2
-        assertEquals(2, works2.getWorkGroup().get(2).getWorkSummary().size());
-        assertEquals(1, works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().size());
-        assertEquals("ext-id-2", works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(3, works2.getWorkGroup().get(2).getWorkSummary().size());
+        assertEquals(2, works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().size());
+        assertThat(works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
+        assertThat(works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().get(1).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
     }
 
     @Test
-    public void testGroupWorks_groupOnlyPublicWorks1() {
+    public void testGroupWorks_groupOnlyPublicWorks1() throws DatatypeConfigurationException {
         WorkSummary s1 = getWorkSummary("Public 1", "ext-id-1", Visibility.PUBLIC);
         WorkSummary s2 = getWorkSummary("Limited 1", "ext-id-2", Visibility.LIMITED);
         WorkSummary s3 = getWorkSummary("Private 1", "ext-id-3", Visibility.PRIVATE);
@@ -1015,7 +1016,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void testGroupWorks_groupOnlyPublicWorks2() {
+    public void testGroupWorks_groupOnlyPublicWorks2() throws DatatypeConfigurationException {
         WorkSummary s1 = getWorkSummary("Public 1", "ext-id-1", Visibility.PUBLIC);
         WorkSummary s2 = getWorkSummary("Limited 1", "ext-id-1", Visibility.LIMITED);
         WorkSummary s3 = getWorkSummary("Private 1", "ext-id-1", Visibility.PRIVATE);
@@ -1162,7 +1163,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void nonGroupableIdsGenerateEmptyIdsListTest() {
+    public void nonGroupableIdsGenerateEmptyIdsListTest() throws DatatypeConfigurationException {
         WorkSummary s1 = getWorkSummary("Element 1", "ext-id-1", Visibility.PUBLIC);
         WorkSummary s2 = getWorkSummary("Element 2", "ext-id-2", Visibility.LIMITED);
         WorkSummary s3 = getWorkSummary("Element 3", "ext-id-3", Visibility.PRIVATE);
@@ -1458,13 +1459,14 @@ public class WorkManagerTest extends BaseTest {
         return workEntity;
     }
 
-    private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) {
+    private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) throws DatatypeConfigurationException {
         return getWorkSummary(titleValue, extIdValue, visibility, "0");
     }
 
-    private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility, String displayIndex) {
+    private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility, String displayIndex) throws DatatypeConfigurationException {
         WorkSummary summary = new WorkSummary();
         summary.setDisplayIndex(displayIndex);
+        summary.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar())));
         Title title = new Title(titleValue);
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(title);
