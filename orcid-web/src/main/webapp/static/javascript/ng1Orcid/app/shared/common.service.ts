@@ -26,8 +26,7 @@ export class CommonService {
     
     constructor(
         private http: HttpClient
-    ) {
-        console.log('common.service constructor')
+    ) {        
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
         this.userInfo$ = this.getUserInfo().pipe(share());  
