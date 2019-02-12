@@ -76,6 +76,9 @@ import { FundingFormModule }
 import { HeaderModule } 
     from './header/header.ts';
 
+import { HomeModule } 
+    from './home/home.ts';
+
 import { LanguageModule } 
     from './language/language.ts';
 
@@ -96,6 +99,9 @@ import { NotificationsModule }
 
 import { NotificationAlertsModule }
     from './notificationAlerts/notificationAlerts.ts';
+
+import { OauthAuthorizationModule } 
+    from './oauthAuthorization/oauthAuthorization.ts';
 
 import { OrgIdentifierPopoverModule } 
     from './orgIdentifierPopover/orgIdentifierPopover.ts';
@@ -122,7 +128,10 @@ import { ReactivationModule }
     from './reactivation/reactivation.ts';
     
 import { RecordCorrectionsModule }
-    from './recordCorrections/recordCorrections.ts'
+    from './recordCorrections/recordCorrections.ts';
+
+import { RegisterDuplicatesModule } 
+    from './registerDuplicates/registerDuplicates.ts';
 
 import { RequestPasswordResetModule } 
     from './requestPasswordReset/requestPasswordReset.ts';
@@ -230,6 +239,7 @@ export const orcidApp = angular.module(
         FundingFormModule.name,
         FundingModule.name,
         HeaderModule.name,
+        HomeModule.name,
         LanguageModule.name,
         LinkAccountModule.name,
         MembersListModule.name,
@@ -237,6 +247,7 @@ export const orcidApp = angular.module(
         MyOrcidAlertsModule.name,
         NotificationsModule.name,
         NotificationAlertsModule.name,
+        OauthAuthorizationModule.name,
         OrgIdentifierPopoverModule.name,
         PeerReviewModule.name,
         PeerReviewDeleteModule.name,
@@ -246,6 +257,7 @@ export const orcidApp = angular.module(
         PublicRecordModule.name,
         ReactivationModule.name,
         RecordCorrectionsModule.name,
+        RegisterDuplicatesModule.name,
         RequestPasswordResetModule.name,
         ResetPasswordModule.name,
         ResearchResourceModule.name,

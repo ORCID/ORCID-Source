@@ -217,6 +217,3 @@
         </#if>
     </div>   
 </div>  
-<modalngcomponent elementHeight="400" elementId="modalRegisterDuplicates" elementWidth="780">
-    <register-duplicates-ng2></register-duplicates-ng2>
-</modalngcomponent> 
