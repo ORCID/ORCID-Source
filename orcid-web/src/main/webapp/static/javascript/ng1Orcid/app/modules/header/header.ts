@@ -20,6 +20,7 @@ export const HeaderModule = angular.module(
     []
 );
 
+
 // This is the Angular 2 part of the module
 @NgModule(
     {
@@ -32,9 +33,7 @@ export const HeaderModule = angular.module(
         entryComponents: [ 
             HeaderComponent 
         ],
-        providers: [
-            
-        ]
+        providers: [],
     }
 )
 export class HeaderNg2Module {}

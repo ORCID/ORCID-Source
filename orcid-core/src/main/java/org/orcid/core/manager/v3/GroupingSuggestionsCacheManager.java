@@ -12,4 +12,6 @@ public interface GroupingSuggestionsCacheManager {
     
     int getGroupingSuggestionCount(String orcid);
 
+    void removeGroupingSuggestion(WorkGroupingSuggestion suggestion);
+
 }

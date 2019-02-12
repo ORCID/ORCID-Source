@@ -2,7 +2,7 @@ package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.manager.v3.impl.GroupingSuggestionManagerImpl;
 import org.orcid.persistence.dao.RejectedGroupingSuggestionDao;
 import org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity;
@@ -27,6 +28,9 @@ public class GroupingSuggestionManagerTest {
     
     @Mock
     private GroupingSuggestionsCacheManager groupingSuggestionsCacheManager;
+    
+    @Mock
+    private WorkManager workManager;
 
     @InjectMocks
     private GroupingSuggestionManagerImpl groupingSuggestionManager;
@@ -82,13 +86,14 @@ public class GroupingSuggestionManagerTest {
         groupingSuggestionManager.cacheGroupingSuggestions("orcid", Arrays.asList(first, second, third));
         
         List<WorkGroupingSuggestion> retrieved = suggestionListCaptor.getValue();
-        assertNull(retrieved);
+        assertTrue(retrieved.isEmpty());
     }
     
     @Test
     public void testMarkGroupingSuggestionAsRejected() {
         WorkGroupingSuggestion suggestion = getWorkGroupingSuggestion(new Long[] {1L, 2L});
         Mockito.when(groupingSuggestionDao.merge(Mockito.any(RejectedGroupingSuggestionEntity.class))).thenReturn(null);
+        Mockito.doNothing().when(groupingSuggestionsCacheManager).removeGroupingSuggestion(Mockito.any(WorkGroupingSuggestion.class));
         groupingSuggestionManager.markGroupingSuggestionAsRejected(suggestion);
         
         ArgumentCaptor<RejectedGroupingSuggestionEntity> captor = ArgumentCaptor.forClass(RejectedGroupingSuggestionEntity.class);
@@ -97,6 +102,19 @@ public class GroupingSuggestionManagerTest {
         assertNotNull(entity);
         assertEquals("1,2", entity.getId());
         assertEquals("orcid", entity.getOrcid());
+        
+        Mockito.verify(groupingSuggestionsCacheManager, Mockito.times(1)).removeGroupingSuggestion(Mockito.eq(suggestion));
+    }
+    
+    @Test
+    public void testMarkGroupingSuggestionAsAccepted() throws MissingGroupableExternalIDException {
+        WorkGroupingSuggestion suggestion = getWorkGroupingSuggestion(new Long[] {1L, 2L});
+        Mockito.doNothing().when(workManager).createNewWorkGroup(Mockito.anyList(), Mockito.eq("orcid"));
+        Mockito.doNothing().when(groupingSuggestionsCacheManager).removeGroupingSuggestion(Mockito.any(WorkGroupingSuggestion.class));
+        groupingSuggestionManager.markGroupingSuggestionAsAccepted(suggestion);
+        
+        Mockito.verify(workManager, Mockito.times(1)).createNewWorkGroup(Mockito.anyList(), Mockito.eq("orcid"));
+        Mockito.verify(groupingSuggestionsCacheManager, Mockito.times(1)).removeGroupingSuggestion(Mockito.eq(suggestion));
     }
     
     @Test

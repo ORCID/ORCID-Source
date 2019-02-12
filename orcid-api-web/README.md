@@ -160,6 +160,6 @@ Request a second - Number of request that can be made a second.
 
 * [Tutorials for reading and writing to ORCID records](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web/tutorial)
 
-* [3.0_rc1 Docs](https://github.com/ORCID/ORCID-Source/edit/master/orcid-model/src/main/resources/record_3.0_rc1/README.md)
+* [3.0_rc1 Docs](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/README.md)
 
 * [2.1 Docs](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1)

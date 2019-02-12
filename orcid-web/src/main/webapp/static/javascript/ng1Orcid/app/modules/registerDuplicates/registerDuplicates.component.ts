@@ -20,7 +20,6 @@ import { OauthService }
     template:  scriptTmpl("register-duplicates-ng2-template")
 })
 export class RegisterDuplicatesComponent {
-    
     private duplicates: any;
     private subscription: Subscription;
     showRegisterProcessing: boolean;
@@ -40,11 +39,11 @@ export class RegisterDuplicatesComponent {
     closeModal(): void {
         this.modalService.notifyOther({action:'close', moduleId: 'modalRegisterDuplicates'});
     };
-    
+
     ngOnInit() {
         this.subscription = this.modalService.notifyObservable$.subscribe(
             (res) => { this.duplicates = res.duplicates; }
-        );
+        ); 
     };
 
 }

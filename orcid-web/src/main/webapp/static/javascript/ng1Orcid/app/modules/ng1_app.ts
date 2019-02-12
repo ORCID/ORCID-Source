@@ -73,11 +73,11 @@ import { FundingModule }
 import { FundingFormModule } 
     from './funding/fundingForm.ts';
 
-import { HomeModule } 
-    from './home/home.ts';
-
 import { HeaderModule } 
     from './header/header.ts';
+
+import { HomeModule } 
+    from './home/home.ts';
 
 import { LanguageModule } 
     from './language/language.ts';
@@ -128,7 +128,7 @@ import { ReactivationModule }
     from './reactivation/reactivation.ts';
     
 import { RecordCorrectionsModule }
-    from './recordCorrections/recordCorrections.ts'
+    from './recordCorrections/recordCorrections.ts';
 
 import { RegisterDuplicatesModule } 
     from './registerDuplicates/registerDuplicates.ts';
@@ -238,8 +238,8 @@ export const orcidApp = angular.module(
         FundingDeleteModule.name,
         FundingFormModule.name,
         FundingModule.name,
-        HomeModule.name,
         HeaderModule.name,
+        HomeModule.name,
         LanguageModule.name,
         LinkAccountModule.name,
         MembersListModule.name,
@@ -286,4 +286,3 @@ export const orcidApp = angular.module(
         printIdBannerModule.name
     ]
 );
-

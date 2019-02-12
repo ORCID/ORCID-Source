@@ -20,10 +20,10 @@ import { ModalService }
     from '../../shared/modal.service.ts'; 
 
 @Component({
-    selector: 'works-merge-ng2',
-    template:  scriptTmpl("works-merge-ng2-template")
+    selector: 'works-merge-warning-ng2',
+    template:  scriptTmpl("works-merge-warning-ng2-template")
 })
-export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
+export class WorksMergeWarningComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
@@ -31,32 +31,18 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     mergeSubmit: boolean;
     showWorksMergeError: boolean;
     worksToMerge: Array<any>;
-    externalIdsPresent: boolean;
-    groupingSuggestion: any;
 
     constructor(
         private worksService: WorksService,
         private modalService: ModalService
     ) {
         this.mergeSubmit = false;
-        this.groupingSuggestion = false;
         this.showWorksMergeError = false;
     }
 
     cancelEdit(): void {
         this.mergeSubmit = false;
-        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-    };
-
-    mergeConfirm(): void {
-        if(this.worksToMerge.length > 20){
-            this.worksService.notifyOther({worksToMerge:this.worksToMerge});       
-            this.worksService.notifyOther({mergeCount:this.mergeCount});
-            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});   
-            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeWarning'});   
-        } else {
-            this.merge();
-        }
+        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeWarning'});
     };
 
     merge(): void {
@@ -75,26 +61,11 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.worksService.notifyOther({action:'merge', successful:true});
-                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
+                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeWarning'});
             },
             error => {
                 this.showWorksMergeError = true;
                 console.log('error calling mergeWorks', error);
-            } 
-        );
-    };
-
-    rejectSuggestion(): void {
-        this.worksService.markSuggestionRejected(this.groupingSuggestion)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        ).subscribe(
-            data => {
-                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-                this.worksService.notifyOther({action:'cancel', successful:true});
-            },
-            error => {
-                console.log('error marking suggestion as rejected', error);
             } 
         );
     };
@@ -109,12 +80,6 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 if( res.worksToMerge ) {
                     this.worksToMerge = res.worksToMerge;
-                }
-                if( res.externalIdsPresent != undefined ) {
-                    this.externalIdsPresent = res.externalIdsPresent;
-                }
-                if( res.groupingSuggestion ) {
-                    this.groupingSuggestion = res.groupingSuggestion;
                 }
             }
         );

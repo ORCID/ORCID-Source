@@ -53,7 +53,7 @@
         </div>
     </#if>
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/login.ftl -->
-    <#if springMacroRequestContext.requestUri?contains("/signin") >
+    <#if springMacroRequestContext.requestUri?contains("/signin") || springMacroRequestContext.requestUri?contains("/login") >
         <div class="col-md-6 col-md-offset-3">
 
             <div *ngIf="!this.isLoggedIn <#if (RequestParameters['oauth'])??>|| true</#if>" class="login">         

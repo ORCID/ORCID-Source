@@ -15,10 +15,10 @@ export const OauthAuthorizationModule = angular.module(
 // This is the Angular 2 part of the module
 
 @NgModule({
-  declarations: [OauthAuthorizationComponent],
-  entryComponents: [OauthAuthorizationComponent],
-  imports: [CommonNg2Module, idBannerNg2Module],
-  providers: []
+    declarations: [OauthAuthorizationComponent],
+    entryComponents: [OauthAuthorizationComponent],
+    imports: [CommonNg2Module, idBannerNg2Module],
+    providers: []
 })
 export class OauthAuthorizationNg2Module {}
 

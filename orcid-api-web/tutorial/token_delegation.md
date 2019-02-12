@@ -19,7 +19,7 @@ Note: this example uses the OAuth 'authorization code' flow. For the implicit/to
 1. The original client (APP-CY6IU882C8WLCEVB) Sends the user to an authorization url with the openid scope and the other scopes they are requesting access to (/activities/update and /read/limited in this example)
 
 ```
-    https://sandbox.orcid.org/oauth/authorize?client_id=[client-id]&response_type=code&scope=openid%20activities/update%20/read-limited&redirect_uri=[redirect]
+    https://sandbox.orcid.org/oauth/authorize?client_id=[client-id]&response_type=code&scope=openid%20/activities/update%20/read-limited&redirect_uri=[redirect]
 ```
 
 An authorization code is returned at the redirect_uri

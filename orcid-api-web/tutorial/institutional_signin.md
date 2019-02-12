@@ -49,6 +49,16 @@ NAME (displayName, givenName): If a name is provided by the institution, ORCID w
 
 EMAIL (mail): If an email address is provided, ORCID will use it to populate the ORCID registration or sign-in form.
 
+## Skip the ORCID sign in page
+
+If a researcher has previously linked their ORCID record to their insitutional account and are currently signed into that institutional account they can go directly to their ORCID record skipping the sign in page. This is done by sending the user to the ORCID Service Provider Login Link, this link can be generated at [Switch Service Provider Login Link Composer](https://www.switch.ch/aai/guides/discovery/login-link-composer/) filling out the fields as directed:
+
+* Service Provider Session Initiator Handler URL: search for 'orcid' and select either the Sandbox or Production environment.
+* Session Initiator : Login
+* Service Provider Target URL : `https://sandbox.orcid.org/shibboleth/signin` or `https://sandbox.orcid.org/shibboleth/signin`
+* Identity Provider entityID : Your entityID, if you do not know it you can look it up at https://met.refeds.org/
+* Initiation Type : Service Provider-initiated
+
 ## Troubleshooting
 
 If the prerequisites of Persistent Identifier, Federation membership have been met then there should be no further problems with IdP.  However problems do arise.
@@ -112,6 +122,6 @@ To enable Institutional Connect you will need to send a request to ORCID support
 
 * Your ORCID Client ID
 * Your identity provider entity ID (e.g. https://idp.example.org/idp/shibboleth)
-* Your redirect URI: The page within your ORCID-integrated system that users will be directed to after they authorize the connection. This can be the same redirect URI as used when researchers start the OAuth process from your site, or a different URI. [More about redirect URIs] (https://support.orcid.org/hc/en-us/articles/360006973913-Register-a-member-API-client-application)
+* Your redirect URI: The page within your ORCID-integrated system that users will be directed to after they authorize the connection. This can be the same redirect URI as used when researchers start the OAuth process from your site, or a different URI. [More about redirect URIs](https://support.orcid.org/hc/en-us/articles/360006973913-Register-a-member-API-client-application)
 * The [scopes](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1/#scopes) you need: These should be the same as requested when a researcher starts the OAuth process from your site.
 

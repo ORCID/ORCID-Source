@@ -23,6 +23,7 @@ export const RequestPasswordResetModule = angular.module(
     []
 );
 
+
 // This is the Angular 2 part of the module
 
 @NgModule(

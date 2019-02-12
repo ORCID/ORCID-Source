@@ -23,7 +23,7 @@
             <#include "/includes/ng2_templates/register-duplicates-ng2-template.ftl">
             <modalngcomponent elementHeight="400" elementId="modalRegisterDuplicates" elementWidth="780">
                 <register-duplicates-ng2></register-duplicates-ng2>
-            </modalngcomponent>
+            </modalngcomponent> 
         <div class="col-md-3"></div>
     </div><!--row-->
 </@public>
