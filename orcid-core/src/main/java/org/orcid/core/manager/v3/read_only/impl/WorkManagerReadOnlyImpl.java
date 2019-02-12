@@ -286,7 +286,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             }
 
             // Sort the works
-            workGroup.getWorkSummary().sort(WorkComparators.ALL);
+            workGroup.getWorkSummary().sort(WorkComparators.WORKS_WITHIN_GROUP);
             result.getWorkGroup().add(workGroup);
         }
         // Sort the groups!
