@@ -115,7 +115,14 @@
                                                             <span *ngIf="otherName.source != orcidId && otherName.source != null">{{otherName.content}}</span>                                       
                                                         </div>                                      
                                                         <div class="source" *ngIf="otherName.sourceName || otherName.sourceName == null">
-                                                            <@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="otherName.sourceName">{{otherName.sourceName}}</span><span *ngIf="otherName.sourceName == null">{{orcidId}}</span>
+                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="otherName.sourceName">{{otherName.sourceName}}
+
+                                                             <#--  OBO  -->
+                                                            <ng-container *ngIf="(otherName.assertionOriginClientId && otherName.assertionOriginClientId !== otherName.source) ||
+                                                            (otherName.assertionOriginOrcid && otherName.assertionOriginOrcid !== otherName.source.source)">
+                                                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{otherName.assertionOriginName || otherName.assertionOriginOrcid}}
+                                                            </ng-container>
+                                                            </span><span *ngIf="otherName.sourceName == null">{{orcidId}}</span>
                                                         </div>
                                                     </div>                          
                                                     <div class="col-md-6 col-sm-6 col-xs-12" style="position: static">                                                                                                                          

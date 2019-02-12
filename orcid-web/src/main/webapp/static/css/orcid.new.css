@@ -5060,17 +5060,17 @@ ul.sources-actions li {
     color: #338caf
 }
 
-.source-line {
+.source-line, .source{
     font-size: 13px;
     word-break: break-all;
     
 }
 
-.source-line b {
+.source-line b, .source > b {
     color: #515154;
 }
 
-.source-line i {
+.source-line i, .source > span > i {
     font-style: italic;
 }
 

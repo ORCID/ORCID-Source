@@ -115,7 +115,19 @@
                                                             <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !keyword.content}" />
                                                             <span *ngIf="keyword.source != orcidId">{{keyword.content}}</span>                                     
                                                         </div>
-                                                        <div class="source" *ngIf="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span *ngIf="keyword.sourceName">{{keyword.sourceName}}</span><span *ngIf="keyword.sourceName == null">{{orcidId}}</span></div>      
+                                                        <div class="source" *ngIf="keyword.sourceName || keyword.sourceName == null">
+                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="keyword.sourceName">{{keyword.sourceName}}
+                                                        
+                                                        
+
+                                                             <#--  OBO  -->
+                                                            <ng-container *ngIf="(keyword.assertionOriginClientId && keyword.assertionOriginClientId !== keyword.source) ||
+                                                            (keyword.assertionOriginOrcid && keyword.assertionOriginOrcid !== okeywordtherName.source.source)">
+                                                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{keyword.assertionOriginName || keyword.assertionOriginOrcid}}
+                                                            </ng-container>
+                                                        
+                                                        
+                                                        </span><span *ngIf="keyword.sourceName == null">{{orcidId}}</span></div>      
                                                     </div>
                                                     
                                                     <div class="col-md-6" style="position: static">
