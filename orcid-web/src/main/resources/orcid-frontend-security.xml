@@ -433,6 +433,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/userInfo.json(\?.*)?"
 			access="ROLE_USER" />
+		<sec:intercept-url pattern="/person.json(\?.*)?"
+            access="ROLE_USER" />
 		
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		

@@ -2,7 +2,6 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, Component, OnDestroy } from "@angular/core";
 import { Observable, BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from 'rxjs/operators';
-import { CommonService } from './common.service.ts';
 
 @Injectable()
 export class PersonService {
@@ -11,29 +10,33 @@ export class PersonService {
   private path = "/person.json";
   private endpointWasCall: boolean = false;
   private personEndpoint;
-  private response: BehaviorSubject<any> = new BehaviorSubject(null);
-  public userInfo: any;
+  private response: BehaviorSubject<any> = new BehaviorSubject(null); 
 
-  constructor(private http: HttpClient, private commonSrvc: CommonService) {
-    this.url = getBaseUri();
-    this.userInfo = {};
+  constructor(private http: HttpClient) {
+    this.url = getBaseUri();    
   }
 
   getPerson() {      
-    if (!this.endpointWasCall) {        
-        this.commonSrvc.userInfo$.subscribe(
-                data => {
-                    this.userInfo = data;
-                    this.personEndpoint = this.http
-                    .get(this.url + '/' + this.userInfo['REAL_USER_ORCID'] + this.path)
-                    .subscribe(person => {
-                        this.response.next(person);
-                    });
-                },
-                error => {
-                    console.log('ngOnInit: unable to fetch userInfo', error);
-                } 
-            );      
+    if (!this.endpointWasCall) {           
+        var orcidRegex = /^(\d{4}-){3}\d{3}[\dX]$/;
+        var path = window.location.pathname;
+        path = path.substring(path.lastIndexOf('/') + 1);
+        var isPublicPage = orcidRegex.test(path);
+        if(isPublicPage) {
+            var orcidId = path.substring(path.lastIndexOf('/') + 1);         
+            this.personEndpoint = this.http
+                .get(this.url + '/' + orcidId + this.path)
+                .subscribe(person => {
+                    this.response.next(person);
+                });  
+        } else {
+            this.personEndpoint = this.http
+            .get(this.url + this.path)
+            .subscribe(person => {
+                this.response.next(person);
+            });  
+        }
+        
         this.endpointWasCall = true;
         return this.response.asObservable();
     } else {

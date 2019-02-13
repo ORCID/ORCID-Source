@@ -12,6 +12,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -19,14 +22,17 @@ import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -195,6 +201,11 @@ public class HomeController extends BaseController {
             
         }
         return info;
+    }
+    
+    @RequestMapping(value = "/person.json", method = RequestMethod.GET)
+    public @ResponseBody PublicRecordPersonDetails getPersonDetails() {
+        return getPersonDetails(getCurrentUserOrcid(), true);        
     }
 
 }

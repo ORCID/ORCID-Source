@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -31,6 +32,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
@@ -42,10 +46,16 @@ import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
@@ -54,10 +64,25 @@ import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.v3.rc2.record.Address;
+import org.orcid.jaxb.model.v3.rc2.record.Addresses;
+import org.orcid.jaxb.model.v3.rc2.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.rc2.record.Keyword;
+import org.orcid.jaxb.model.v3.rc2.record.Keywords;
+import org.orcid.jaxb.model.v3.rc2.record.Name;
+import org.orcid.jaxb.model.v3.rc2.record.OtherName;
+import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -80,8 +105,10 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -165,6 +192,21 @@ public class BaseController {
     
     @Resource(name = "emailManagerReadOnlyV3")
     protected EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Resource(name = "personalDetailsManagerReadOnlyV3")
+    private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
+    
+    @Resource(name = "addressManagerReadOnlyV3")
+    private AddressManagerReadOnly addressManagerReadOnly;
+    
+    @Resource(name = "profileKeywordManagerReadOnlyV3")
+    private ProfileKeywordManagerReadOnly keywordManagerReadOnly;
+
+    @Resource(name = "researcherUrlManagerReadOnlyV3")
+    private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;    
+
+    @Resource(name = "externalIdentifierManagerReadOnlyV3")
+    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
     
     @ModelAttribute("recaptchaWebKey")
     public String getRecaptchaWebKey() {
@@ -967,4 +1009,253 @@ public class BaseController {
         return getEffectiveUserOrcid();
     }
 
+    public @ResponseBody PublicRecordPersonDetails getPersonDetails(String orcid, boolean justPublic) {
+        PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();        
+
+        PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
+        // Fill personal details
+        if (publicPersonalDetails != null) {
+            // Get display name
+            String displayName = "";
+
+            if (publicPersonalDetails.getName() != null) {
+                Name name = publicPersonalDetails.getName();
+                if (!justPublic || name.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
+                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
+                        displayName = name.getCreditName().getContent();
+                    } else {
+                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
+                            displayName = name.getGivenNames().getContent() + " ";
+                        }
+                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
+                            displayName += name.getFamilyName().getContent();
+                        }
+                    }
+                }
+            }
+
+            if (!PojoUtil.isEmpty(displayName)) {
+                // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
+                // and Researchers
+                publicRecordPersonDetails.setTitle(displayName + " (" + orcid + ") - " + getMessage("layout.public-layout.title"));
+                publicRecordPersonDetails.setDisplayName(displayName);
+            }
+
+            // Get biography
+            if (publicPersonalDetails.getBiography() != null) {
+                Biography bio = publicPersonalDetails.getBiography();
+                if (!justPublic || org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
+                    publicRecordPersonDetails.setBiography(bio);
+                }
+            }
+
+            // Fill other names
+            OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
+            if (publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
+                Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
+                while (it.hasNext()) {
+                    OtherName otherName = it.next();
+                    if (justPublic && !org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.equals(otherName.getVisibility())) {
+                        it.remove();
+                    }
+                }
+            }
+            Map<String, List<OtherName>> groupedOtherNames = groupOtherNames(publicOtherNames);
+            publicRecordPersonDetails.setPublicGroupedOtherNames(groupedOtherNames);
+        }
+
+        // Fill biography elements
+
+        // Fill country
+        Addresses publicAddresses;
+        if(justPublic) {
+            publicAddresses = addressManagerReadOnly.getPublicAddresses(orcid);
+        } else {
+            publicAddresses = addressManagerReadOnly.getAddresses(orcid);
+        }
+        Map<String, String> countryNames = new HashMap<String, String>();
+        if (publicAddresses != null && publicAddresses.getAddress() != null) {
+            Address publicAddress = null;
+            // The primary address will be the one with the lowest display index
+            for (Address address : publicAddresses.getAddress()) {
+                countryNames.put(address.getCountry().getValue().name(), getcountryName(address.getCountry().getValue().name()));
+                if (publicAddress == null) {
+                    publicAddress = address;
+                }
+            }
+            if (publicAddress != null) {
+                publicRecordPersonDetails.setPublicAddress(publicAddress);
+                publicRecordPersonDetails.setCountryNames(countryNames);
+                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);
+                publicRecordPersonDetails.setPublicGroupedAddresses(groupedAddresses);
+            }
+        }
+
+        // Fill keywords
+        Keywords publicKeywords;
+        if(justPublic) {
+            publicKeywords = keywordManagerReadOnly.getPublicKeywords(orcid);            
+        } else {
+            publicKeywords = keywordManagerReadOnly.getKeywords(orcid);            
+        }
+        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
+        publicRecordPersonDetails.setPublicGroupedKeywords(groupedKeywords);
+
+        // Fill researcher urls
+        ResearcherUrls publicResearcherUrls;
+        if(justPublic) {
+            publicResearcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid);
+        } else {
+            publicResearcherUrls = researcherUrlManagerReadOnly.getResearcherUrls(orcid);
+        }        
+        Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
+        publicRecordPersonDetails.setPublicGroupedResearcherUrls(groupedResearcherUrls);
+
+        // Fill emails
+        Emails publicEmails;
+        if(justPublic) {
+            publicEmails = emailManagerReadOnly.getPublicEmails(orcid);
+        } else {
+            publicEmails = emailManagerReadOnly.getEmails(orcid);
+        }        
+        Map<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>> groupedEmails = groupEmails(publicEmails);
+        publicRecordPersonDetails.setPublicGroupedEmails(groupedEmails);
+
+        // Fill external identifiers
+        PersonExternalIdentifiers publicPersonExternalIdentifiers;
+        
+        if(justPublic) {
+            publicPersonExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
+        } else {
+            publicPersonExternalIdentifiers = externalIdentifierManagerReadOnly.getExternalIdentifiers(orcid);
+        }
+        
+        Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
+        publicRecordPersonDetails.setPublicGroupedPersonExternalIdentifiers(groupedExternalIdentifiers);
+
+        return publicRecordPersonDetails;
+    }
+    
+    private LinkedHashMap<String, List<Keyword>> groupKeywords(Keywords keywords) {
+        if (keywords == null || keywords.getKeywords() == null) {
+            return null;
+        }
+
+        /* Grouping items */
+        LinkedHashMap<String, List<Keyword>> groups = new LinkedHashMap<String, List<Keyword>>();
+        for (Keyword k : keywords.getKeywords()) {
+            if (groups.containsKey(k.getContent())) {
+                groups.get(k.getContent()).add(k);
+            } else {
+                List<Keyword> list = new ArrayList<Keyword>();
+                list.add(k);
+                groups.put(k.getContent(), list);
+            }
+        }
+
+        return groups;
+    }
+
+    private LinkedHashMap<String, List<Address>> groupAddresses(Addresses addresses) {
+        if (addresses == null || addresses.getAddress() == null) {
+            return null;
+        }
+        LinkedHashMap<String, List<Address>> groups = new LinkedHashMap<String, List<Address>>();
+        for (Address k : addresses.getAddress()) {
+            if (groups.containsKey(k.getCountry().getValue().name())) {
+                groups.get(k.getCountry().getValue().name()).add(k);
+            } else {
+                List<Address> list = new ArrayList<Address>();
+                list.add(k);
+                groups.put(k.getCountry().getValue().name(), list);
+            }
+        }
+
+        return groups;
+    }
+
+    private LinkedHashMap<String, List<OtherName>> groupOtherNames(OtherNames otherNames) {
+
+        if (otherNames == null || otherNames.getOtherNames() == null) {
+            return null;
+        }
+        LinkedHashMap<String, List<OtherName>> groups = new LinkedHashMap<String, List<OtherName>>();
+        for (OtherName o : otherNames.getOtherNames()) {
+            if (groups.containsKey(o.getContent())) {
+                groups.get(o.getContent()).add(o);
+            } else {
+                List<OtherName> list = new ArrayList<OtherName>();
+                list.add(o);
+                groups.put(o.getContent(), list);
+            }
+        }
+        return groups;
+
+    }
+
+    private Map<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>> groupEmails(Emails emails) {
+        if (emails == null || emails.getEmails() == null) {
+            return null;
+        }
+        Map<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>> groups = new TreeMap<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>>();
+        for (org.orcid.jaxb.model.v3.rc2.record.Email e : emails.getEmails()) {
+            if (groups.containsKey(e.getEmail())) {
+                groups.get(e.getEmail()).add(e);
+            } else {
+                List<org.orcid.jaxb.model.v3.rc2.record.Email> list = new ArrayList<org.orcid.jaxb.model.v3.rc2.record.Email>();
+                list.add(e);
+                groups.put(e.getEmail(), list);
+            }
+        }
+
+        return groups;
+    }
+
+    private LinkedHashMap<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls) {
+        if (researcherUrls == null || researcherUrls.getResearcherUrls() == null) {
+            return null;
+        }
+        LinkedHashMap<String, List<ResearcherUrl>> groups = new LinkedHashMap<String, List<ResearcherUrl>>();
+        for (ResearcherUrl r : researcherUrls.getResearcherUrls()) {
+            String urlValue = r.getUrl() == null ? "" : r.getUrl().getValue();
+            if (groups.containsKey(urlValue)) {
+                groups.get(urlValue).add(r);
+            } else {
+                List<ResearcherUrl> list = new ArrayList<ResearcherUrl>();
+                list.add(r);
+                groups.put(urlValue, list);
+            }
+        }
+        return groups;
+    }
+
+    private LinkedHashMap<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
+        if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifiers() == null) {
+            return null;
+        }
+        LinkedHashMap<String, List<PersonExternalIdentifier>> groups = new LinkedHashMap<String, List<PersonExternalIdentifier>>();
+        for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifiers()) {
+            String pairKey = ei.getType() + ":" + ei.getValue();
+            if (groups.containsKey(pairKey)) {
+                groups.get(pairKey).add(ei);
+            } else {
+                List<PersonExternalIdentifier> list = new ArrayList<PersonExternalIdentifier>();
+                list.add(ei);
+                groups.put(pairKey, list);
+            }
+        }
+
+        return groups;
+    }
+    
+    public String getcountryName(String Iso3166Country) {
+        Map<String, String> countries = retrieveIsoCountries();
+        return countries.get(Iso3166Country);
+    }
+    
+    @ModelAttribute("isoCountries")
+    public Map<String, String> retrieveIsoCountries() {
+        Locale locale = localeManager.getLocale();
+        return localeManager.getCountries(locale);
+    }
 }
