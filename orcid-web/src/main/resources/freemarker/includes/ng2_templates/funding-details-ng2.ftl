@@ -212,14 +212,19 @@
                 <div class="row source-line" *ngIf="group.activePutCode == funding.putCode.value">
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
                         {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
+                             <#--  OBO  -->
+                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.sourceClientId) ||
+                            (funding.source.assertionOriginOrcid && funding.source.assertionOriginOrcid !== funding.source.sourceOrcid)">
+                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{funding.assertionOriginName || funding.assertionOriginOrcid}}
+                            </ng-container>
                     </div>                          
                     <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="editSources[group.groupId]">
 
-                        <span class="glyphicon glyphicon-check" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                        <span class="glyphicon glyphicon-star" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                         <#if !(isPublicProfile??)>
                             <div *ngIf="editSources[group.groupId]">
                                 <a (click)="makeDefault(group, funding?.putCode.value);" *ngIf="funding?.putCode.value != group?.defaultPutCode" class="">
-                                    <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
+                                    <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                                 </a>
                             </div>
                         </#if>
@@ -258,13 +263,18 @@
                     <div class="col-md-7 col-sm-7 col-xs-12">
                             <a (click)="swapSources(group, funding.putCode.value)">                                
                             {{(funding?.sourceName == null || funding?.sourceName == '') ? funding?.source : funding?.sourceName}}
+                             <#--  OBO  -->
+                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.sourceClientId) ||
+                            (funding.source.assertionOriginOrcid && funding.source.assertionOriginOrcid !== funding.source.sourceOrcid)">
+                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{funding.assertionOriginName || funding.assertionOriginOrcid}}
+                            </ng-container>
                         </a>
                     </div>                        
                     <div class="col-md-3 col-sm-3 col-xs-6">
                          <#if !(isPublicProfile??)>
-                            <span class="glyphicon glyphicon-check" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                            <span class="glyphicon glyphicon-star" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                             <a (click)="makeDefault(group, funding?.putCode.value);" *ngIf="funding?.putCode.value != group.defaultPutCode">
-                               <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
+                               <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                             </a>
                         </#if>
                     </div>
@@ -300,10 +310,15 @@
                 <!-- Bottom row -->
                 <div class="row source-line" *ngIf="editSources[group.groupId] != true">
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                          <@orcid.msg 'groups.common.source'/>: {{(funding?.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
+                          <b><@orcid.msg 'groups.common.source'/>:</b> {{(funding?.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
+                             <#--  OBO  -->
+                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.sourceClientId) ||
+                            (funding.source.assertionOriginOrcid && funding.source.assertionOriginOrcid !== funding.source.sourceOrcid)">
+                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{funding.assertionOriginName || funding.assertionOriginOrcid}}
+                            </ng-container>
                     </div>                          
                     <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="group?.activePutCode == funding?.putCode.value">
-                        <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span>&nbsp;<span *ngIf="!(group.fundings.length == 1)">(</span><a (click)="showSources(group, $event)" *ngIf="!(group.fundings.length == 1)" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.fundings.length}}</a><span *ngIf="!(group.fundings.length == 1)">)</span>
+                        <span class="glyphicon glyphicon-star"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span>&nbsp;<span *ngIf="!(group.fundings.length == 1)">(</span><a (click)="showSources(group, $event)" *ngIf="!(group.fundings.length == 1)" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.fundings.length}}</a><span *ngIf="!(group.fundings.length == 1)">)</span>
                         
                         <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
                             <div class="arrow"></div>

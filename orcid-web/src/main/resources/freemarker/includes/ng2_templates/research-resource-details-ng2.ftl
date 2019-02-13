@@ -300,11 +300,11 @@
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
                         <div *ngIf="editSources[group.groupId]">
-                            <span class="glyphicon glyphicon-check" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                            <span class="glyphicon glyphicon-star" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                             
                             <#if !(isPublicProfile??)>
                             <a (click)="makeDefault(group, researchResource, researchResource.putCode)" *ngIf="researchResource.putCode != group.defaultResearchResource.putCode">
-                                <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
+                                <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                             </a>
                             </#if>
                         </div>
@@ -339,13 +339,18 @@
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <a (click)="group.activePutCode = researchResource.putCode">                                
                             {{researchResource?.sourceName}}
+                            <#--  OBO  -->
+                            <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.sourceClientId) ||
+                            (researchResource.source.assertionOriginOrcid && researchResource.source.assertionOriginOrcid !== researchResource.source.sourceOrcid)">
+                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}}
+                            </ng-container>
                         </a>
                     </div>                                        
                     <div class="col-md-3 col-sm-3 col-xs-10">
                         <#if !(isPublicProfile??)>
-                        <span class="glyphicon glyphicon-check" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                        <span class="glyphicon glyphicon-star" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
                         <a (click)="makeDefault(group, researchResource, researchResource.putCode); " *ngIf="researchResource.putCode != group.defaultResearchResource.putCode.value">
-                            <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
+                            <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                         </a>
                         </#if>
                     </div>
@@ -371,11 +376,16 @@
                 </div> 
                 <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                        <@orcid.msg 'groups.common.source'/>: {{researchResource?.sourceName }}
+                        <b><@orcid.msg 'groups.common.source'/>:</b> {{researchResource?.sourceName }}
+                        <#--  OBO  -->
+                        <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.sourceClientId) ||
+                        (researchResource.source.assertionOriginOrcid && researchResource.source.assertionOriginOrcid !== researchResource.source.sourceOrcid)">
+                        <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}}
+                        </ng-container>
                     </div>
                     
                     <div class="col-md-3 col-sm-3 col-xs-9">
-                        <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group?.researchResources?.length != 1"> (</span><a (click)="showSources(group, $event)" *ngIf="group?.researchResources?.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.researchResources.length}}</a><span *ngIf="group?.researchResources?.length != 1">)</span>
+                        <span class="glyphicon glyphicon-star"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group?.researchResources?.length != 1"> (</span><a (click)="showSources(group, $event)" *ngIf="group?.researchResources?.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.researchResources.length}}</a><span *ngIf="group?.researchResources?.length != 1">)</span>
 
                         <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[group.groupId+'-sources']">
                             <div class="arrow"></div>

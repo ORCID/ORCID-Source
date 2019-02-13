@@ -10,33 +10,7 @@
 
 <script type="text/javascript" src="${staticCdn}/javascript/script.js"></script>
 
-<script type="text/javascript">
-    var head = document.getElementsByTagName('head')[0];
-    if(window.location.href==orcidVar.baseUri || window.location.href==orcidVar.baseUriHttp || window.location.href==(orcidVar.baseUri + "/") || window.location.href==(orcidVar.baseUriHttp + "/")){
-        var polyfills = document.createElement("script");
-        polyfills.src = "${staticCdn}/javascript/ng1Orcid/polyfills.js";
-        polyfills.type = 'text/javascript';
-        head.appendChild(polyfills);
-        var angular = document.createElement("script");
-        angular.src = "${staticCdn}/javascript/ng1Orcid/home.js";
-        angular.type = 'text/javascript';
-        head.appendChild(angular);
-    } else if(window.location.pathname.indexOf("/signin") > -1 || window.location.pathname.indexOf("/login") > -1 || window.location.pathname.indexOf("/oauth") > -1 || window.location.pathname.indexOf("/register") > -1){
-    var polyfills = document.createElement("script");
-        polyfills.src = "${staticCdn}/javascript/ng1Orcid/polyfills.js";
-        polyfills.type = 'text/javascript';
-        head.appendChild(polyfills);
-        var angular = document.createElement("script");
-        angular.src = "${staticCdn}/javascript/ng1Orcid/signin.js";
-        angular.type = 'text/javascript';
-        head.appendChild(angular);
-    } else {
-        var angular = document.createElement("script");
-        angular.src = "${staticCdn}/javascript/ng1Orcid/app.js";
-        angular.type = 'text/javascript';
-        head.appendChild(angular);
-    }
-</script>
+<script src="${staticCdn}/javascript/ng1Orcid/angular_orcid_generated.js"></script>
 
 <script type="text/javascript">
     var lang = OrcidCookie.getCookie('locale_v3');

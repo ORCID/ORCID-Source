@@ -29,9 +29,6 @@ export const ModalModule = angular.module(
         ],
         entryComponents: [ 
             ModalNgComponent 
-        ],
-        exports: [ 
-            ModalNgComponent
         ]
     }
 )
