@@ -233,11 +233,6 @@ public class PublicProfileController extends BaseWorkspaceController {
                 displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                         + localeManager.resolveMessage("public_profile.deactivated.family_name");
             }
-
-            if (!PojoUtil.isEmpty(displayName)) {
-                mav.addObject("title", getMessage("layout.public-layout.title", displayName, orcid));
-                mav.addObject("displayName", displayName);
-            }
             return mav;
         }
 
