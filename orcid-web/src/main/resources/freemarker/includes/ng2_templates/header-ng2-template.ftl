@@ -108,13 +108,13 @@
                 <!-- FOR RESEARCHERS -->
                 <li class="first expanded active-trail">
                     <a href="${aboutUri}/about/what-is-orcid/mission" (click)="handleMobileMenuOption($event)" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
-                    <ul class="menu lang-fixes" *ngIf="userInfo['SIGN_IN_MENU'] == 'true'">
+                    <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']">
                         <!-- Mobile view Only -->
                         <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@orcid.rootPath "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
                 
                         <!-- Menu -->
-                        <li class="leaf last" *ngIf="userInfo['SIGN_IN_MENU'] == 'true'"><a ${(nav=="signin")?then('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
-                        <li class="leaf last" *ngIf="userInfo['SIGN_IN_MENU'] == 'true'"><a ${(nav=="register")?then('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                                                          
+                        <li class="leaf last"><a ${(nav=="signin")?then('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
+                        <li class="leaf last"><a ${(nav=="register")?then('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                                                          
                         <li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
                     </ul>
                     <ul class="menu lang-fixes" *ngIf="userInfo['REAL_USER_ORCID']">
@@ -426,7 +426,7 @@
                 
                 <!-- SIGN IN/OUT -->
                 <li class="last leaf">                    
-                    <a *ngIf="userInfo['SIGN_IN_MENU']" href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a>                    
+                    <a *ngIf="!userInfo['REAL_USER_ORCID']" href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a>                    
                     <a *ngIf="userInfo['REAL_USER_ORCID']" href="<@orcid.rootPath "/signout" />"><@orcid.msg 'public-layout.sign_out'/></a>
                 </li>                    
 
@@ -444,8 +444,7 @@
              title=""><@orcid.msg 'public-layout.see_more'/></a>
         </p>
         <ng-container *ngIf="showSurvey">        
-            <p class="see-more">
-                XXXXXX
+            <p class="see-more">                
               <b><@orcid.msg 'public-layout.survey_we_want'/></b> <a href="//bit.ly/2rafPcd" target="_blank" rel="noopener noreferrer"><@orcid.msg 'public-layout.survey_please_take'/></a>  
               <@orcid.msg 'public-layout.survey_to_tell_us'/>
             </p>

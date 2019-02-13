@@ -79,7 +79,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.userInfo = data;
                 },
                 error => {
-                    console.log('ngOnInit: unable to fetch publicUserInfo', error);
+                    console.log('header.component.ts: unable to fetch publicUserInfo', error);
                 } 
             );
         } else {
@@ -89,7 +89,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.userInfo = data;                
                 },
                 error => {
-                    console.log('ngOnInit: unable to fetch userInfo', error);
+                    console.log('header.component.ts: unable to fetch userInfo', error);
                     this.userInfo = {};
                 } 
             );
