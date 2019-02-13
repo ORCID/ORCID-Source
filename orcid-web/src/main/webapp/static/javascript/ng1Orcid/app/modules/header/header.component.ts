@@ -90,6 +90,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                 },
                 error => {
                     console.log('ngOnInit: unable to fetch userInfo', error);
+                    this.userInfo = {};
                 } 
             );
         }      

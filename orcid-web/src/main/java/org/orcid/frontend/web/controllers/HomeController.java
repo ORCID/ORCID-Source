@@ -193,8 +193,6 @@ public class HomeController extends BaseController {
                 info.put("MEMBER_TYPE", p.getGroupType());
             }
             
-        } else {
-            info.put("SIGN_IN_MENU", String.valueOf(true));
         }
         return info;
     }
