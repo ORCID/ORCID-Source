@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { Subject } from "rxjs";
 import { PersonService } from "../../shared/person.service.ts";
-import { CommonService } from "../../shared/common.service.ts";
 
 @Component({
   selector: "id-banner-ng2",
@@ -17,20 +16,8 @@ import { CommonService } from "../../shared/common.service.ts";
 export class idBannerComponent implements AfterViewInit, OnDestroy, OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
   private displayName: string;
-  private userInfo: any;
 
-  constructor(private personService: PersonService, private commonSrvc: CommonService) {      
-      this.userInfo = this.commonSrvc.userInfo$
-      .subscribe(
-          data => {
-              this.userInfo = data;                
-          },
-          error => {
-              console.log('idBanner.component.ts: unable to fetch userInfo', error);
-              this.userInfo = {};
-          } 
-      );
-  }
+  constructor(private personService: PersonService) {}
 
   //Default init functions provided by Angular Core
   ngAfterViewInit() {

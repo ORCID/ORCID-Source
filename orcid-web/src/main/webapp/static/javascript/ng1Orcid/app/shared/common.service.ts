@@ -6,30 +6,23 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
      from '@angular/common/http';
 
-import { Observable, Subject, ReplaySubject } 
+import { Observable, Subject } 
     from 'rxjs';
 
-import { share, shareReplay } 
-    from 'rxjs/operators';    
-    
 import { OrgDisambiguated } 
     from '../modules/orgIdentifierPopover/orgDisambiguated.ts';
 
-@Injectable({
- providedIn: 'root',
-})
+@Injectable()
 export class CommonService {
     private shownElement: any;
 
-    public orgDisambiguatedDetails: any;    
-    public userInfo$: Observable<any>;
-    
+    public orgDisambiguatedDetails: any;
+
     constructor(
         private http: HttpClient
-    ) {        
+    ) {
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
-        this.userInfo$ = this.getUserInfo().pipe(share());  
     }
 
     addComma(str): string {
@@ -290,13 +283,5 @@ export class CommonService {
         return this.http.get(
                 getBaseUri() + '/countryNamesToCountryCodes.json', {}
         );
-    };
-    
-    getUserInfo(): Observable<any> { 
-        return this.http.get(getBaseUri() + '/userInfo.json'); 
-    };
-    
-    getPublicUserInfo(orcid): Observable<any> {         
-        return this.http.get(getBaseUri() + '/' + orcid + '/userInfo.json'); 
     };
 }

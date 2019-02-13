@@ -35,7 +35,8 @@ import { WorkspaceService }
 
 @Component({
     selector: 'funding-ng2',
-    template:  scriptTmpl("funding-ng2-template")
+    template:  scriptTmpl("funding-ng2-template"),
+    providers: [CommonService]
 })
 export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() publicView: any;
