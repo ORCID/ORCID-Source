@@ -5,9 +5,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.GregorianCalendar;
 import java.util.Random;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,6 +28,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.rc2.common.Country;
+import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
 import org.orcid.jaxb.model.v3.rc2.common.CreditName;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
 import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
@@ -251,6 +255,14 @@ public abstract class OrcidSecurityManagerTestBase {
     protected WorkSummary createWorkSummary(Visibility v, String sourceId, String extIdValue) {
         WorkSummary work = new WorkSummary();
         work.setVisibility(v);
+        
+        waitAMillisecond(); // for testing purposes, let's avoid equal created dates
+        try {
+            work.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar())));
+        } catch (DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        
         ExternalID extId = new ExternalID();
         extId.setValue(extIdValue);
         ExternalIDs extIds = new ExternalIDs();
@@ -260,6 +272,15 @@ public abstract class OrcidSecurityManagerTestBase {
         setSource(work, sourceId);
         return work;
     }
+    
+    private void waitAMillisecond() {
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Thread shouldn't be interrupted", e);
+        }
+    }
+
 
     protected Works createWorks(WorkSummary... elements) {
         return workManagerReadOnly.groupWorks(new ArrayList<WorkSummary>(Arrays.asList(elements)), false);
