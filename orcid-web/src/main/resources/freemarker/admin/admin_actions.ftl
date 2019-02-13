@@ -2,7 +2,8 @@
 <div class="row">
     <!-- Left menu bar -->  
     <div class="col-md-3 col-sm-12 col-xs-12 lhs padding-fix">
-        <#include "../includes/id_banner.ftl"/>
+        <#include "/includes/ng2_templates/id-banner-ng2-template.ftl"/>
+        <id-banner-ng2> </id-banner-ng2>
     </div>
     <!-- Right menu bar -->
     <div class="col-md-9 col-sm-12 col-xs-12 admin-options">
