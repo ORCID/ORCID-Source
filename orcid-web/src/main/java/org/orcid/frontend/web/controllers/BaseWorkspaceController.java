@@ -120,6 +120,12 @@ public class BaseWorkspaceController extends BaseController {
         return countriesWithId;
     }
 
+    @ModelAttribute("isoCountries")
+    public Map<String, String> retrieveIsoCountries() {
+        Locale locale = localeManager.getLocale();
+        return localeManager.getCountries(locale);
+    }
+
     @ModelAttribute("allDates")
     public Map<String, String> getAllDates() {
         Map<String, String> map = new LinkedHashMap<String, String>();
@@ -143,6 +149,11 @@ public class BaseWorkspaceController extends BaseController {
             request.getSession().setAttribute(ORCID_ID_HASH, hash);
         }
         return hash;
+    }
+
+    public String getcountryName(String Iso3166Country) {
+        Map<String, String> countries = retrieveIsoCountries();
+        return countries.get(Iso3166Country);
     }
     
     protected boolean validDate(Date date) {
