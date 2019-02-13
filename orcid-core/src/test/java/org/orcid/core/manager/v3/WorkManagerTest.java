@@ -1466,6 +1466,7 @@ public class WorkManagerTest extends BaseTest {
     private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility, String displayIndex) throws DatatypeConfigurationException {
         WorkSummary summary = new WorkSummary();
         summary.setDisplayIndex(displayIndex);
+        waitAMillisecond(); // for testing purposes, let's avoid equal created dates
         summary.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar())));
         Title title = new Title(titleValue);
         WorkTitle workTitle = new WorkTitle();
@@ -1482,6 +1483,14 @@ public class WorkManagerTest extends BaseTest {
         extIds.getExternalIdentifier().add(extId);
         summary.setExternalIdentifiers(extIds);
         return summary;
+    }
+    
+    private void waitAMillisecond() {
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Thread shouldn't be interrupted", e);
+        }
     }
 
     private Work getWork(String extIdValue) {
