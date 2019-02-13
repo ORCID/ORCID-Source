@@ -1,8 +1,10 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -12,9 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.exception.DeactivatedException;
-import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.exception.OrcidNotClaimedException;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -22,17 +22,17 @@ import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,12 +41,15 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Controller
 public class HomeController extends BaseController {
     
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
+    private static final Locale DEFAULT_LOCALE = Locale.US;
+    
     @Resource
     private LocaleManager localeManager;
     
@@ -206,6 +209,55 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/person.json", method = RequestMethod.GET)
     public @ResponseBody PublicRecordPersonDetails getPersonDetails() {
         return getPersonDetails(getCurrentUserOrcid(), true);        
+    }
+    
+    @RequestMapping(value = "/config.json", method = RequestMethod.GET)
+    public ConfigDetails getConfigDetails(HttpServletRequest request) {
+        ConfigDetails configDetails = new ConfigDetails();
+        configDetails.setMessages(getJavascriptMessages(request));
+        return configDetails;        
+    }
+    
+    public String getJavascriptMessages(HttpServletRequest request) {
+        Locale locale = RequestContextUtils.getLocale(request);
+        org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
+        lPojo.setLocale(locale.toString());
+        
+        ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
+        Map<String, String> localPropertyMap = OrcidStringUtils.resourceBundleToMap(resources);
+        
+        if (!DEFAULT_LOCALE.equals(locale)) {
+            ResourceBundle definitiveProperties = ResourceBundle.getBundle("i18n/javascript", DEFAULT_LOCALE, new UTF8Control());
+            Map<String, String> definitivePropertyMap = OrcidStringUtils.resourceBundleToMap(definitiveProperties);
+            
+            for (String propertyKey : definitivePropertyMap.keySet()) {
+                String property = localPropertyMap.get(propertyKey);
+                if (StringUtils.isBlank(property)) {
+                    localPropertyMap.put(propertyKey, definitivePropertyMap.get(propertyKey));
+                }
+            }
+        }
+
+        lPojo.setMessages(localPropertyMap);
+        String messages = "";
+        try {
+            messages = StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(lPojo));
+        } catch (IOException e) {
+            LOGGER.error("getJavascriptMessages error:" + e.toString(), e);
+        }
+        return messages;
+    }
+    
+    class ConfigDetails {
+        private String messages;
+        
+        public void setMessages(String messages) {
+            this.messages = messages;
+        }
+        
+        public String getMessages() {
+            return this.messages;
+        }
     }
 
 }

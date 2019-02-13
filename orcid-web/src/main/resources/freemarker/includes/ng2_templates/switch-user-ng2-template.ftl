@@ -50,7 +50,7 @@
             <div class="dropdown id-banner-container" *ngIf="(me || unfilteredLength > 0)">
                 <a (click)="openMenu($event)" class="id-banner-switch">
                     <div class="orcid-id-container">
-                            ${baseUri}/{{requestInfoForm?.userOrcid}}
+                            {{getBaseUri()}}/{{requestInfoForm?.userOrcid}}
                         <span class="glyphicon glyphicon-chevron-down"></span>
                     </div>
                 </a>
@@ -81,7 +81,7 @@
             </div>
             <div *ngIf="!(me || unfilteredLength > 0)">
                 <div class="pull-right">
-                        <a href="${baseUri}/{{requestInfoForm?.userOrcid}}" target="userOrcid">${baseUri}/{{requestInfoForm?.userOrcid}}</a>
+                        <a href="{{getBaseUri()}}/{{requestInfoForm?.userOrcid}}" target="userOrcid">{{getBaseUri()}}/{{requestInfoForm?.userOrcid}}</a>
                 </div>
             </div>
         </div> 

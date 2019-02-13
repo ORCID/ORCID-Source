@@ -57,7 +57,7 @@
                                     </span>
                                     <strong><@orcid.msg 'deprecate_orcid_modal.remove_this' /></strong>
                                     <br />
-                                    <a href="${baseUri}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">${baseUri}/<span [innerHtml]="deprecateProfilePojo.deprecatingOrcid"></span></a>
+                                    <a href="{{getBaseUri()}}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">{{getBaseUri()}}/<span [innerHtml]="deprecateProfilePojo.deprecatingOrcid"></span></a>
                                     <br />
                                     <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.deprecatingAccountName"></span>
                                     <br />
@@ -68,7 +68,7 @@
                                     <br /><br />
                                     <strong><@orcid.msg 'deprecate_orcid_modal.keep_this' /></strong>
                                     <br />
-                                    <a href="${baseUri}/{{deprecateProfilePojo.primaryOrcid}}" target="primaryOrcid">${baseUri}/<span [innerHtml]="deprecateProfilePojo.primaryOrcid"></span></a>
+                                    <a href="{{getBaseUri()}}/{{deprecateProfilePojo.primaryOrcid}}" target="primaryOrcid">{{getBaseUri()}}/<span [innerHtml]="deprecateProfilePojo.primaryOrcid"></span></a>
                                     <br />
                                     <span><@orcid.msg 'deprecate_orcid_modal.name_label' /></span><span [innerHtml]="deprecateProfilePojo.primaryAccountName"></span>
                                     <br />

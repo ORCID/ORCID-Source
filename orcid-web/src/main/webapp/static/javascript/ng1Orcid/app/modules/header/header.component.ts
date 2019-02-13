@@ -122,7 +122,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     isCurrentPage(path): any {
-        return window.location.href.startsWith(orcidVar.baseUri + '/' + path);
+        return window.location.href.startsWith(getBaseUri() + '/' + path);
     };
 
     onResize(event?): void {
@@ -167,10 +167,10 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
 
     searchSubmit(): void {
         if (this.headerSearch.searchOption=='website'){
-            window.location.assign(orcidVar.baseUri + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
+            window.location.assign(getBaseUri() + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
         }
         if(this.headerSearch.searchOption=='registry'){
-            window.location.assign(orcidVar.baseUri
+            window.location.assign(getBaseUri()
                     + "/orcid-search/quick-search/?searchQuery="
                     + encodeURIComponent(this.headerSearch.searchInput));
         }

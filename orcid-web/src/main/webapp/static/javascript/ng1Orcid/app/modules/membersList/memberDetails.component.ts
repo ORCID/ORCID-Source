@@ -93,7 +93,7 @@ export class MemberDetailsComponent {
     }
     
     getMemberPageUrl(slug: string): string {
-        return orcidVar.baseUri + '/members/' + slug;
+        return getBaseUri() + '/members/' + slug;
     }
     
     ngOnInit(): void {

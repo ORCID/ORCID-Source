@@ -60,7 +60,7 @@ export class SelfServiceComponent {
   
   
     buildOrcidUri(orcid: String): string {
-        return orcidVar.baseUri + '/' + orcid;
+        return getBaseUri() + '/' + orcid;
     };
     
     getMemberDetails() {

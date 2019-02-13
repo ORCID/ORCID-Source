@@ -38,7 +38,7 @@ export class AllConsortiumContactsComponent {
   
   
     buildOrcidUri(orcid: String): string {
-        return orcidVar.baseUri + '/' + orcid;
+        return getBaseUri() + '/' + orcid;
     };
     
     getContacts() {

@@ -21,7 +21,7 @@
             <div class="alert alert-banner">
                  ${springMacroRequestContext.getMessage("common.browser-checks.functionalityofthissite")} <a href="http://www.enable-javascript.com/" target="common.browser-checks.instructionhowtoadd">
                  ${springMacroRequestContext.getMessage("common.browser-checks.instructionhowtoadd")}</a>.<br>
-                 ${springMacroRequestContext.getMessage("common.cookies.orcid_uses")} <a href="${baseUri}/privacy-policy#TrackingTechnology" target="common.cookies.learn_more">
+                 ${springMacroRequestContext.getMessage("common.cookies.orcid_uses")} <a href="{{getBaseUri()}}/privacy-policy#TrackingTechnology" target="common.cookies.learn_more">
                  ${springMacroRequestContext.getMessage("common.cookies.learn_more")}</a>.
             </div>
             <style type="text/css">

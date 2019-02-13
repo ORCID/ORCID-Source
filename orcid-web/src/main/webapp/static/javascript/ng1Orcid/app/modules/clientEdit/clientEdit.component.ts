@@ -401,7 +401,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
             }
 
             example = this.authorizeURLTemplate;
-            example = example.replace('[BASE_URI]', orcidVar.baseUri);
+            example = example.replace('[BASE_URI]', getBaseUri());
             example = example.replace('[CLIENT_ID]', clientId);
             example = example.replace('[REDIRECT_URI]', this.selectedRedirectUriValue);
             if(scope != ''){
@@ -415,7 +415,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
             sampleCurl = this.sampleAuthCurlTemplate;
             this.sampleAuthCurl = sampleCurl.replace('[CLIENT_ID]', clientId)
                 .replace('[CLIENT_SECRET]', selectedClientSecret)
-                .replace('[BASE_URI]', orcidVar.baseUri)
+                .replace('[BASE_URI]', getBaseUri())
                 .replace('[REDIRECT_URI]', this.selectedRedirectUriValue);
             
             sampleOIDC = this.sampleOpenIdTemplate;

@@ -89,7 +89,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.verifyEmailObject = {};
         this.showEmailVerifBox = false;
         this.showEmailVerifBoxNewsTips = false;
-        this.baseUri = orcidVar.baseUri;
+        this.baseUri = getBaseUri();
         this.curPrivToggle = null;
         this.isPassConfReq = orcidVar.isPasswordConfirmationRequired;
         this.password = null;

@@ -58,7 +58,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12 right">
                 <ul class="inline-list margin-separator pull-right">
                     <li>
-                        <a class="cancel-option" href="${baseUri}/signin" target="_self"><@orcid.msg 'duplicate_researcher.cancel' /></a>
+                        <a class="cancel-option" href="{{getBaseUri()}}/signin" target="_self"><@orcid.msg 'duplicate_researcher.cancel' /></a>
                     </li>
                     <li>
                         <button class="btn btn-primary" (click)="oauth2ScreensPostRegisterConfirm()">

@@ -33,7 +33,7 @@
                             <#include "/includes/oauth/scopes_ng2.ftl"/>
                         </div>
                         <div>
-                            <p><@orcid.msg 'confirm-oauth-access.thisApplicationWillNot'/>&nbsp;<a href="${baseUri}/account#manage-permissions" target="confirm-oauth-access.accountSettings"><@orcid.msg 'confirm-oauth-access.accountSettings'/></a>.</p>
+                            <p><@orcid.msg 'confirm-oauth-access.thisApplicationWillNot'/>&nbsp;<a href="{{getBaseUri()}}/account#manage-permissions" target="confirm-oauth-access.accountSettings"><@orcid.msg 'confirm-oauth-access.accountSettings'/></a>.</p>
                         </div>          
                         <div id="login-buttons" ng-init="loadAndInitAuthorizationForm()">
                             <div class="row">
@@ -167,8 +167,8 @@
             </div><!--login-->
 
             <div *ngIf="this.isLoggedIn <#if (RequestParameters['oauth'])??>&& false</#if> " class="relogin-container">
-                <div><@orcid.msg 'login.reloginalert.youare'/> <b>{{realLoggedInUserName}} </b> <a target="_blank" href="${baseUri}/${realUserOrcid!}">${baseUri}/${realUserOrcid!}</a>
-                    <ng-container *ngIf=" '${realUserOrcid!}' !== '${effectiveUserOrcid!}'"> <@orcid.msg 'login.reloginalert.managing'/> <b>{{effectiveLoggedInUserName}} </b> <a target="_blank" href="${baseUri}/${effectiveUserOrcid!}">${baseUri}/${effectiveUserOrcid!}</a> </ng-container>
+                <div><@orcid.msg 'login.reloginalert.youare'/> <b>{{realLoggedInUserName}} </b> <a target="_blank" href="{{getBaseUri()}}/${realUserOrcid!}">{{getBaseUri()}}/${realUserOrcid!}</a>
+                    <ng-container *ngIf=" '${realUserOrcid!}' !== '${effectiveUserOrcid!}'"> <@orcid.msg 'login.reloginalert.managing'/> <b>{{effectiveLoggedInUserName}} </b> <a target="_blank" href="{{getBaseUri()}}/${effectiveUserOrcid!}">{{getBaseUri()}}/${effectiveUserOrcid!}</a> </ng-container>
                 </div>
                 <div class="menu-area"> 
                 <a href="<@orcid.rootPath "/my-orcid" />"><div class="btn btn-primary"><@orcid.msg 'login.reloginalert.continue'/></div></a>
