@@ -96,9 +96,6 @@ public enum Features implements Feature {
     @Label("Enable manual work grouping")
     MANUAL_WORK_GROUPING,
 
-    @Label("Verbos work group logging")
-    WORK_GROUP_LOGGING,
-    
     @Label("Grouping suggestions")
     GROUPING_SUGGESTIONS,
     
