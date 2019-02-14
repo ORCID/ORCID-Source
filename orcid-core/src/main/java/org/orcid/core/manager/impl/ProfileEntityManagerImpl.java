@@ -41,10 +41,7 @@ import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
@@ -65,9 +62,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -170,52 +165,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return name.getPath();
     }
 
-    @Override
-    public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid, String deprecatedMethod, String adminUser) {
-        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus status) {
-                boolean wasDeprecated = profileDao.deprecateProfile(deprecatedOrcid, primaryOrcid, deprecatedMethod, adminUser);
-                // If it was successfully deprecated
-                if (wasDeprecated) {
-                    LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
-                    clearRecord(deprecatedOrcid, false);
-                    // Move all email's to the primary record
-                    Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid);
-                    if (deprecatedAccountEmails != null) {
-                        // For each email in the deprecated profile
-                        for (Email email : deprecatedAccountEmails.getEmails()) {
-                            // Delete each email from the deprecated
-                            // profile
-                            LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] { email.getEmail(), deprecatedOrcid, primaryOrcid });
-                            emailManager.moveEmailToOtherAccount(email.getEmail(), deprecatedOrcid, primaryOrcid);
-                        }
-                    }
-
-                    profileDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    @Override
-    public boolean deactivateRecord(String orcid) {
-        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus status) {
-                LOGGER.info("About to deactivate record {}", orcid);
-                if (profileDao.deactivate(orcid)) {
-                    clearRecord(orcid, true);
-                    emailManager.hideAllEmails(orcid);
-                    notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
-                    LOGGER.info("Record {} successfully deactivated", orcid);
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-    
     /**
      * Enable developer tools on the given record
      * 
