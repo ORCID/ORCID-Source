@@ -1220,5 +1220,10 @@ public class NotificationManagerImpl implements NotificationManager {
         } while(!toDelete.isEmpty());
         
         return deleted;
+    }
+
+    @Override
+    public void deleteNotificationsForRecord(String orcid) {
+        notificationDao.deleteNotificationsForRecord(orcid);
     }    
 }
