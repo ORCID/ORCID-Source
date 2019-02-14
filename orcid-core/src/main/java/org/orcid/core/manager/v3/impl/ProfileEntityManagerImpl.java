@@ -16,15 +16,18 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ExternalIdentifierManager;
+import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.PeerReviewManager;
@@ -131,6 +134,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
+   
+    @Resource
+    private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
@@ -158,6 +164,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
+    
+    @Resource
+    private GivenPermissionToManager givenPermissionToManager;
     
     @Override
     public boolean orcidExists(String orcid) {
@@ -693,6 +702,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
         // Remove keywords
         profileKeywordManager.removeAllKeywords(orcid);
+        
+        // disable 2FA
+        twoFactorAuthenticationManager.disable2FA(orcid);
+        
+        // delete notifications
+        notificationManager.deleteNotificationsForRecord(orcid);
+        
+        // remove trusted individuals
+        givenPermissionToManager.removeAllForProfile(orcid);
 
         // Remove biography
         if (biographyManager.exists(orcid)) {
