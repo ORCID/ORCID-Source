@@ -24,11 +24,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
+import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
+import org.orcid.core.profileEvent.ProfileEventManager;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -42,6 +48,7 @@ import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
@@ -52,6 +59,9 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @Resource
     RegistrationManager registrationManager;
+    
+    @Resource(name = "profileEntityManagerV3")
+    private ProfileEntityManager profileEntityManager;
 
     @Resource
     EmailManager emailManager;    
@@ -64,6 +74,12 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @Mock
     EmailFrequencyManager mockEmailFrequencyManager;
+    
+    @Mock
+    private ProfileHistoryEventManager mockProfileHistoryEventManager;
+    
+    @Resource
+    private ProfileHistoryEventManager profileHistoryEventManager;
     
     @Resource
     ProfileDao profileDao;
@@ -78,6 +94,9 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(registrationManager, "emailFrequencyManager", mockEmailFrequencyManager);        
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
+        
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
+        Mockito.doNothing().when(mockProfileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
     }
     
     @AfterClass
@@ -87,7 +106,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @After
     public void after() {
-        MockitoAnnotations.initMocks(this);
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
     }
     
     @Test
