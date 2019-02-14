@@ -102,7 +102,9 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-        this.subscription = this.worksService.notifyObservable$.subscribe(
+        this.subscription = this.worksService.notifyObservable$.pipe(    
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(
             (res) => {
                 if( res.mergeCount ) {
                     this.mergeCount = res.mergeCount;
@@ -114,10 +116,10 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.externalIdsPresent = res.externalIdsPresent;
                 }
                 if( res.groupingSuggestion ) {
-                    this.groupingSuggestion = res.groupingSuggestion;
+                    this.groupingSuggestion = res.groupingSuggestion.suggestions[0];
                 }
             }
-        );
+        )
     };
 
     ngOnDestroy() {
