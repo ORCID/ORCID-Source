@@ -12,11 +12,13 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -24,6 +26,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
+import org.orcid.jaxb.model.common_v2.CreatedDate;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -549,7 +552,7 @@ public class WorkManagerTest extends BaseTest {
     }
     
     @Test
-    public void testGroupWorks() {
+    public void testGroupWorks() throws DatatypeConfigurationException {
         /**
          * @formatter:off
          * They should be grouped as
@@ -633,7 +636,7 @@ public class WorkManagerTest extends BaseTest {
         assertThat(works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().get(1).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
     }
     @Test
-    public void testGroupWorksWithDisplayIndex() {
+    public void testGroupWorksWithDisplayIndex() throws DatatypeConfigurationException {
         /**
          * @formatter:off
          * They should be grouped as
@@ -702,25 +705,23 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(works2);
         assertEquals(3, works2.getWorkGroup().size());
         
-        // Group 1 have all with ext-id-3 and ext-id-4
         assertEquals(3, works2.getWorkGroup().get(0).getWorkSummary().size());
         assertEquals(2, works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertThat(works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
         assertThat(works2.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(1).getValue(), anyOf(is("ext-id-3"), is("ext-id-4")));
-        
-        // Group 2 have all with ext-id-1
+       
         assertEquals(2, works2.getWorkGroup().get(1).getWorkSummary().size());
         assertEquals(1, works2.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().size());
         assertEquals("ext-id-1", works2.getWorkGroup().get(1).getIdentifiers().getExternalIdentifier().get(0).getValue());
 
-        // Group 2 have all with ext-id-2
         assertEquals(2, works2.getWorkGroup().get(2).getWorkSummary().size());
         assertEquals(1, works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().size());
         assertEquals("ext-id-2", works2.getWorkGroup().get(2).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        
     }
     
     @Test
-    public void testGroupWorks_groupOnlyPublicWorks1() {
+    public void testGroupWorks_groupOnlyPublicWorks1() throws DatatypeConfigurationException {
         WorkSummary s1 = getWorkSummary("Public 1", "ext-id-1", Visibility.PUBLIC);
         WorkSummary s2 = getWorkSummary("Limited 1", "ext-id-2", Visibility.LIMITED);
         WorkSummary s3 = getWorkSummary("Private 1", "ext-id-3", Visibility.PRIVATE);
@@ -758,7 +759,7 @@ public class WorkManagerTest extends BaseTest {
     }
     
     @Test
-    public void testGroupWorks_groupOnlyPublicWorks2() {
+    public void testGroupWorks_groupOnlyPublicWorks2() throws DatatypeConfigurationException {
         WorkSummary s1 = getWorkSummary("Public 1", "ext-id-1", Visibility.PUBLIC);
         WorkSummary s2 = getWorkSummary("Limited 1", "ext-id-1", Visibility.LIMITED);
         WorkSummary s3 = getWorkSummary("Private 1", "ext-id-1", Visibility.PRIVATE);
@@ -896,7 +897,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void nonGroupableIdsGenerateEmptyIdsListTest() {
+    public void nonGroupableIdsGenerateEmptyIdsListTest() throws DatatypeConfigurationException {
         WorkSummary s1 = getWorkSummary("Element 1", "ext-id-1", Visibility.PUBLIC);
         WorkSummary s2 = getWorkSummary("Element 2", "ext-id-2", Visibility.LIMITED);
         WorkSummary s3 = getWorkSummary("Element 3", "ext-id-3", Visibility.PRIVATE);
@@ -947,13 +948,15 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(found3);
     }
     
-    private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) {
+    private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) throws DatatypeConfigurationException {
         return getWorkSummary(titleValue, extIdValue, visibility, "0");
     }
 
-    private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility, String displayIndex) {
+    private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility, String displayIndex) throws DatatypeConfigurationException {
         WorkSummary summary = new WorkSummary();
         summary.setDisplayIndex(displayIndex);
+        waitAMillisecond(); // for testing purposes, let's avoid equal created dates
+        summary.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar())));
         Title title = new Title(titleValue);
         WorkTitle workTitle = new WorkTitle();
         workTitle.setTitle(title);
@@ -969,6 +972,14 @@ public class WorkManagerTest extends BaseTest {
         extIds.getExternalIdentifier().add(extId);
         summary.setExternalIdentifiers(extIds);
         return summary;
+    }
+    
+    private void waitAMillisecond() {
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Thread shouldn't be interrupted", e);
+        }
     }
 
     private Work getWork(String extIdValue) {
@@ -998,4 +1009,5 @@ public class WorkManagerTest extends BaseTest {
         work.setVisibility(Visibility.PUBLIC);
         return work;
     }
+    
 }
