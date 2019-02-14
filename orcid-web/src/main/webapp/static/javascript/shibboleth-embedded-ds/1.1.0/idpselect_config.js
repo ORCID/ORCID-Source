@@ -36,10 +36,10 @@ function IdPSelectUIParms(){
 
     this.langBundles = {
         // Override all lang bundles with localized messages from ORCID back end. The user will get the language they have chosen from the drop down in the ORCID UI.
-        en : orcidVar.jsMessages.messages,
-        de : orcidVar.jsMessages.messages,
-        ja : orcidVar.jsMessages.messages,
-        "pt-br" : orcidVar.jsMessages.messages
+        en : messages,
+        de : messages,
+        ja : messages,
+        "pt-br" : messages
     }
     //
     // The following should not be changed without changes to the css.  Consider them as mandatory defaults

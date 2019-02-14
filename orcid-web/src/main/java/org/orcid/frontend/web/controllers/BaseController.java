@@ -406,38 +406,7 @@ public class BaseController {
     @ModelAttribute("loginForm")
     public LoginForm getLoginForm() {
         return new LoginForm();
-    }
-
-    @ModelAttribute("jsMessagesJson")
-    public String getJavascriptMessages(HttpServletRequest request) {
-        Locale locale = RequestContextUtils.getLocale(request);
-        org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
-        lPojo.setLocale(locale.toString());
-        
-        ResourceBundle definitiveProperties = ResourceBundle.getBundle("i18n/javascript", defaultLocale, new UTF8Control());
-        Map<String, String> definitivePropertyMap = OrcidStringUtils.resourceBundleToMap(definitiveProperties);
-        
-        ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
-        Map<String, String> localPropertyMap = OrcidStringUtils.resourceBundleToMap(resources);
-        
-        if (!defaultLocale.equals(locale)) {
-            for (String propertyKey : definitivePropertyMap.keySet()) {
-                String property = localPropertyMap.get(propertyKey);
-                if (StringUtils.isBlank(property)) {
-                    localPropertyMap.put(propertyKey, definitivePropertyMap.get(propertyKey));
-                }
-            }
-        }
-
-        lPojo.setMessages(localPropertyMap);
-        String messages = "";
-        try {
-            messages = StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(lPojo));
-        } catch (IOException e) {
-            LOGGER.error("getJavascriptMessages error:" + e.toString(), e);
-        }
-        return messages;
-    }
+    }    
 
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, false, request, bindingResult);

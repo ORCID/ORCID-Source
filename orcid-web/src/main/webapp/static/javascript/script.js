@@ -312,9 +312,30 @@ var OrcidMessage = function() {
 };
 
 OrcidMessage.prototype.get = function(name) {
-    return orcidVar.jsMessages.messages[name];
+    if(messages == null) {        
+        $.ajax({
+            url : getBaseUri() + '/messages.json',
+            type : 'GET',
+            dataType: 'text',
+            contentType: "application/json",            
+            success : function(data) {                
+                var data = JSON.parse(data);
+                messages = data['messages'];
+                return messages[name];
+            }
+        }).fail(
+        // detects server is down or CSRF mismatches
+        // do to session expiration or server bounces
+        function(e) {
+            console.log("error fetching javascript messages");
+            console.log(e);
+        });
+    } else {
+        return messages[name];
+    }    
 };
 
+var messages = null;
 var om = new OrcidMessage();
 
 /*
@@ -333,8 +354,7 @@ function getBaseUri() {
     var uri = location.protocol + '//' + location.host
     if(window.location.host.startsWith('localhost')) {
         uri = uri + '/orcid-web'
-    }
-    console.log(uri)
+    }    
     return uri;
 }
 

@@ -12,8 +12,7 @@
         orcidVar.pubBaseUri = '${pubBaseUri}';
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
-        orcidVar.realOrcidId = '${realUserOrcid!}';
-        orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
+        orcidVar.realOrcidId = '${realUserOrcid!}';        
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
     </script>    
 </head>

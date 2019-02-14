@@ -31,6 +31,7 @@ export class CommonService {
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
         this.userInfo$ = this.getUserInfo().pipe(share());  
+        this.configInfo$ = this.getConfigInfo().pipe(share());
     }
 
     addComma(str): string {

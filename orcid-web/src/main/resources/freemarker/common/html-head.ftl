@@ -42,8 +42,7 @@
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
         orcidVar.realOrcidId = '${realUserOrcid!}';
         orcidVar.resetParams = '${(resetParams)!}';
-        orcidVar.emailToReactivate = '${(email)!}';
-        orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
+        orcidVar.emailToReactivate = '${(email)!}';        
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};       
         orcidVar.features = JSON.parse("${featuresJson}");

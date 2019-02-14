@@ -212,13 +212,14 @@ public class HomeController extends BaseController {
     }
     
     @RequestMapping(value = "/config.json", method = RequestMethod.GET)
-    public ConfigDetails getConfigDetails(HttpServletRequest request) {
+    public @ResponseBody ConfigDetails getConfigDetails(HttpServletRequest request) {
         ConfigDetails configDetails = new ConfigDetails();
-        configDetails.setMessages(getJavascriptMessages(request));
+        
         return configDetails;        
     }
     
-    public String getJavascriptMessages(HttpServletRequest request) {
+    @RequestMapping(value = "/messages.json", method = RequestMethod.GET)
+    public @ResponseBody org.orcid.pojo.Local getJavascriptMessages(HttpServletRequest request) {
         Locale locale = RequestContextUtils.getLocale(request);
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());
@@ -239,13 +240,7 @@ public class HomeController extends BaseController {
         }
 
         lPojo.setMessages(localPropertyMap);
-        String messages = "";
-        try {
-            messages = StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(lPojo));
-        } catch (IOException e) {
-            LOGGER.error("getJavascriptMessages error:" + e.toString(), e);
-        }
-        return messages;
+        return lPojo;
     }
     
     class ConfigDetails {
