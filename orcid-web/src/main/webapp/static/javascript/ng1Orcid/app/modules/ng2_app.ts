@@ -228,6 +228,9 @@ import { bioNg2Module }
 
 import { printIdBannerNg2Module } 
     from './printIdBanner/printIdBanner.ts';
+
+import { NoscriptNg2Module } 
+    from './noscript/noscript.ts';    
     
 ///////////////////
 import {Injectable} 
@@ -359,7 +362,8 @@ export class RootCmp {
         qrcodeNg2Module,
         lastModifiedNg2Module, 
         bioNg2Module,
-        printIdBannerNg2Module
+        printIdBannerNg2Module,
+        NoscriptNg2Module
     ],
     providers: [
         { 

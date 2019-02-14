@@ -330,8 +330,12 @@ function logAjaxError(e){
 }
 
 function getBaseUri() {
-    return 'https:' == document.location.protocol ? orcidVar.baseUri
-            : orcidVar.baseUriHttp;
+    var uri = location.protocol + '//' + location.host
+    if(window.location.host.startsWith('localhost')) {
+        uri = uri + '/orcid-web'
+    }
+    console.log(uri)
+    return uri;
 }
 
 function getCookieDomain(location){
@@ -358,7 +362,7 @@ function checkOrcidLoggedIn() {
     if (OrcidCookie.checkIfCookiesEnabled()) {    
         if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {
             $.ajax({
-                url : orcidVar.baseUri + '/userStatus.json?callback=?',
+                url : getBaseUri() + '/userStatus.json?callback=?',
                 type : 'POST',
                 dataType : 'json',
                 headers: {

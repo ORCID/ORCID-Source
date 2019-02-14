@@ -95,4 +95,8 @@ export class DelegatesRevokeComponent implements AfterViewInit, OnDestroy, OnIni
 
     ngOnInit() {
     }; 
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

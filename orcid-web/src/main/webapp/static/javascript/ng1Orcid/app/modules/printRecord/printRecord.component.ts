@@ -18,7 +18,6 @@ export class PrintRecordComponent {
 
     printRecord(url): void{
         //open window
-        this.printWindow = window.open(url);  
+        this.printWindow = window.open(getBaseUri() + url);  
     }
-
 }

@@ -49,4 +49,8 @@ export class AlertBannerComponent implements OnInit {
             this.showCookieNotification = true;
         } 
     }; 
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

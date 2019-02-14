@@ -211,6 +211,9 @@ import { bioModule }
 import { printIdBannerModule } 
     from './printIdBanner/printIdBanner.ts';
     
+import { NoscriptModule } 
+    from './noscript/noscript.ts';
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -283,6 +286,7 @@ export const orcidApp = angular.module(
         qrcodeModule.name,
         lastModifiedModule.name,
         bioModule.name,
-        printIdBannerModule.name
+        printIdBannerModule.name,
+        NoscriptModule.name
     ]
 );

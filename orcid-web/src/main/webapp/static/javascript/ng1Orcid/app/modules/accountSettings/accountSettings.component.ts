@@ -425,4 +425,8 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
         this.getSecurityQuestion();
         this.getDeprecateProfile();
     }; 
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

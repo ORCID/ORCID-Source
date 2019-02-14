@@ -30,4 +30,8 @@ export class WidgetComponent {
     toggleCopyWidget(): void{
         this.showCode = !this.showCode;
     };
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

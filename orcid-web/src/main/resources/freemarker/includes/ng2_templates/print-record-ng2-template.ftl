@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="print-record-ng2-template">
     <div class="print-orcid-record">
         <#if ((isPublicProfile)?? && isPublicProfile == true | (locked)?? && locked | (deprecated)?? && deprecated)>
-            <a id="printRecord" (click)="printRecord('{{getBaseUri()}}/${(effectiveUserOrcid)!}/print')">
+            <a id="printRecord" (click)="printRecord('${(effectiveUserOrcid)!}/print')">
             <span class="glyphicon glyphicon-print"></span> ${springMacroRequestContext.getMessage("public_record.printView")}</a>
             <div class="popover-help-container">
                 <i class="glyphicon glyphicon-question-sign"></i>
@@ -13,7 +13,7 @@
                 </div>
             </div>  
         <#else>
-            <a id="printRecord" (click)="printRecord('{{getBaseUri()}}/${(effectiveUserOrcid)!}/print')">
+            <a id="printRecord" (click)="printRecord('${(effectiveUserOrcid)!}/print')">
             <span class="glyphicon glyphicon-print"></span> ${springMacroRequestContext.getMessage("workspace.printView")}</a>
             <div class="popover-help-container">
                 <i class="glyphicon glyphicon-question-sign"></i>

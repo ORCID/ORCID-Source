@@ -779,4 +779,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             } 
         );
     };
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

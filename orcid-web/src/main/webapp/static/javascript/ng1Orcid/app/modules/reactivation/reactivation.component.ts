@@ -225,5 +225,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getReactivation(orcidVar.resetParams, '');
     };
 
-
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }
