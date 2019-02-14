@@ -90,9 +90,6 @@ public enum Features implements Feature {
     @Label("Enable group affiliations")
     GROUP_AFFILIATIONS,
     
-    @Label("Support migration UV to Zendesk")
-    SUPPORT_MIGRATION,
-    
     @Label("Enable manual work grouping")
     MANUAL_WORK_GROUPING,
 
