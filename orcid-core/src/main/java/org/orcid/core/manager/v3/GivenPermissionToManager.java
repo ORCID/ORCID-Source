@@ -6,4 +6,6 @@ public interface GivenPermissionToManager {
 
     void create(String userOrcid, String delegateOrcid);
 
+    void removeAllForProfile(String orcid);
+
 }

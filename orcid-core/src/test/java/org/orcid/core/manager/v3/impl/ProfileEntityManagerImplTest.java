@@ -17,10 +17,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.GivenPermissionToManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.RecordNameManager;
@@ -79,6 +83,9 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Resource
     private UserConnectionDao userConnectionDao;
     
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
@@ -134,6 +141,46 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(ProfileEntity.USER_DRIVEN_DEPRECATION, profileEntityToDeprecate.getDeprecatedMethod());
         assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
         assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
+        assertEquals(0, profileEntityToDeprecate.getGivenPermissionBy().size());
+        assertEquals(0, profileEntityToDeprecate.getGivenPermissionTo().size());
+        assertFalse(profileEntityToDeprecate.getUsing2FA());
+        assertNull(profileEntityToDeprecate.getSecretFor2FA());
+        assertEquals(0, notificationManager.findByOrcid("4444-4444-4444-4441", true, 0, 1000).size());
+    }
+    
+    @Test    
+    public void testDeactivateRecord() throws Exception {
+        ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
+        
+        UserconnectionPK pk = new UserconnectionPK();
+        pk.setProviderid("providerId");
+        pk.setProvideruserid("provideruserid");
+        pk.setUserid("4444-4444-4444-4441");
+        
+        UserconnectionEntity userConnection = new UserconnectionEntity();
+        userConnection.setAccesstoken("blah");
+        userConnection.setConnectionSatus(UserConnectionStatus.STARTED);
+        userConnection.setDisplayname("blah");
+        userConnection.setDateCreated(new Date());
+        userConnection.setLastModified(new Date());
+        userConnection.setEmail("blah@blah.com");
+        userConnection.setOrcid("4444-4444-4444-4441");
+        userConnection.setId(pk);
+        userConnection.setRank(1);
+        userConnectionDao.persist(userConnection);
+        
+        boolean result = profileEntityManager.deactivateRecord("4444-4444-4444-4441");
+        assertTrue(result);
+
+        ProfileEntity deactivated = profileEntityCacheManager.retrieve("4444-4444-4444-4441");     
+        assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
+        assertEquals(0, deactivated.getGivenPermissionBy().size());
+        assertEquals(0, deactivated.getGivenPermissionTo().size());
+        assertFalse(deactivated.getUsing2FA());
+        assertNull(deactivated.getSecretFor2FA());
+        assertEquals(0, notificationManager.findByOrcid("4444-4444-4444-4441", true, 0, 1000).size());
     }
     
     @Test    

@@ -144,6 +144,14 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setParameter("id", notificationId);
         query.executeUpdate();
     }
+    
+    @Override
+    @Transactional
+    public void deleteNotificationsForRecord(String orcid) {
+        Query query = entityManager.createQuery("DELETE from NotificationEntity where profile.id = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
 
     @Override
     public List<NotificationEntity> findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults) {

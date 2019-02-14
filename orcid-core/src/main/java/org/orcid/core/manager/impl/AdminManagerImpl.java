@@ -13,14 +13,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.ProfileDeprecationRequest;
@@ -29,16 +29,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminManagerImpl implements AdminManager {
     public static final String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
     
-    @Resource
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;        
     
-    @Resource
+    @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
     
     @Resource
     private LocaleManager localeManager;
     
-    @Resource
+    @Resource(name = "notificationManagerV3")
     NotificationManager notificationManager;
     
     @Resource

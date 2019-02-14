@@ -16,10 +16,16 @@ import javax.annotation.Resource;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.persistence.dao.GivenPermissionToDao;
+import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.pojo.DelegateForm;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class GivenPermissionToManagerTest extends BaseTest {
 
@@ -82,6 +88,62 @@ public class GivenPermissionToManagerTest extends BaseTest {
 
         assertTrue(rLastModifiedAfter.after(rLastModifiedBefore));
         assertTrue(gLastModifiedAfter.after(gLastModifiedBefore));
+    }
+    
+    @Test
+    public void testRemoveForProfile() {
+        GivenPermissionToDao dao = (GivenPermissionToDao) ReflectionTestUtils.getField(givenPermissionToManager, "givenPermissionToDao");
+        GivenPermissionToDao mockDao = Mockito.mock(GivenPermissionToDao.class);
+        ReflectionTestUtils.setField(givenPermissionToManager, "givenPermissionToDao", mockDao);
+        Mockito.when(mockDao.findByGiver(Mockito.eq("orcid"))).thenReturn(getPermissionsGiven());
+        Mockito.when(mockDao.findByReceiver(Mockito.eq("orcid"))).thenReturn(getPermissionsReceived());
+        
+        try {
+            givenPermissionToManager.removeAllForProfile("orcid");
+            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid"), Mockito.eq("orcid0"));
+            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid"), Mockito.eq("orcid1"));
+            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid"), Mockito.eq("orcid2"));
+            
+            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid0"), Mockito.eq("orcid"));
+            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid1"), Mockito.eq("orcid"));
+            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid2"), Mockito.eq("orcid"));
+        } finally {
+            ReflectionTestUtils.setField(givenPermissionToManager, "givenPermissionToDao", dao);
+        }
+    }
+
+    private List<GivenPermissionByEntity> getPermissionsReceived() {
+        List<GivenPermissionByEntity> permissions = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            GivenPermissionByEntity e = new GivenPermissionByEntity();
+            e.setApprovalDate(new Date());
+            e.setDateCreated(new Date());
+            e.setGiver(getProfileSummaryEntity("orcid" + i));
+            e.setReceiver("orcid");
+            e.setLastModified(new Date());
+            permissions.add(e);
+        }
+        return permissions;
+    }
+
+    private ProfileSummaryEntity getProfileSummaryEntity(String orcid) {
+        ProfileSummaryEntity e = new ProfileSummaryEntity();
+        e.setId(orcid);
+        return e;
+    }
+
+    private List<GivenPermissionToEntity> getPermissionsGiven() {
+        List<GivenPermissionToEntity> permissions = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            GivenPermissionToEntity e = new GivenPermissionToEntity();
+            e.setApprovalDate(new Date());
+            e.setDateCreated(new Date());
+            e.setReceiver(getProfileSummaryEntity("orcid" + i));
+            e.setGiver("orcid");
+            e.setLastModified(new Date());
+            permissions.add(e);
+        }
+        return permissions;
     }
 
     @Test
