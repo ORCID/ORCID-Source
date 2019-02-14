@@ -3,7 +3,6 @@ package org.orcid.core.manager.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -23,8 +22,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.Locale;
+import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -34,9 +33,6 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.UserConnectionStatus;
-import org.orcid.persistence.jpa.entities.UserconnectionEntity;
-import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -98,37 +94,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(harrysOrcid, profileEntity.getId());
     }
 
-    @Test    
-    public void testDeprecateProfile() throws Exception {
-        UserconnectionPK pk = new UserconnectionPK();
-        pk.setProviderid("providerId");
-        pk.setProvideruserid("provideruserid");
-        pk.setUserid("4444-4444-4444-4441");
-        
-        UserconnectionEntity userConnection = new UserconnectionEntity();
-        userConnection.setAccesstoken("blah");
-        userConnection.setConnectionSatus(UserConnectionStatus.STARTED);
-        userConnection.setDisplayname("blah");
-        userConnection.setDateCreated(new Date());
-        userConnection.setLastModified(new Date());
-        userConnection.setEmail("blah@blah.com");
-        userConnection.setOrcid("4444-4444-4444-4441");
-        userConnection.setId(pk);
-        userConnection.setRank(1);
-        userConnectionDao.persist(userConnection);
-        
-        ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");     
-        assertNull(profileEntityToDeprecate.getPrimaryRecord());
-        boolean result = profileEntityManager.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442", ProfileEntity.USER_DRIVEN_DEPRECATION, null);
-        assertTrue(result);
-        profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");
-        assertNotNull(profileEntityToDeprecate.getPrimaryRecord());
-        assertNotNull(profileEntityToDeprecate.getDeprecatedMethod());
-        assertEquals(ProfileEntity.USER_DRIVEN_DEPRECATION, profileEntityToDeprecate.getDeprecatedMethod());
-        assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
-        assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
-    }
-    
     @Test    
     public void testReviewProfile() throws Exception {
     	boolean result = profileEntityManager.reviewProfile("4444-4444-4444-4441");
