@@ -319,7 +319,7 @@
                             <label class="relative"><@orcid.msg 'manual_work_form_contents.labelformlanguage'/></label>
                             <div class="relative">  
                                 <select id="language" class="form-control" name="language" [(ngModel)]="editWork.languageCode.value">
-                                    <option value="$"></option>
+                                    <option value=""></option>
                                     <#list languages?keys as key>
                                         <option value="${languages[key]}">${key}</option>
                                     </#list>
