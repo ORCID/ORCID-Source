@@ -119,6 +119,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
     
+    public static final int DELETE_BATCH_SIZE = 500;
+    
     @Value("${org.orcid.core.email.verify.tooOld:15}")
     private int emailTooOld;
     
@@ -1224,6 +1226,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public void deleteNotificationsForRecord(String orcid) {
-        notificationDao.deleteNotificationsForRecord(orcid);
+        boolean notDoneYet = notificationDao.deleteNotificationsForRecord(orcid, DELETE_BATCH_SIZE);
+        while (notDoneYet) {
+            notDoneYet = notificationDao.deleteNotificationsForRecord(orcid, DELETE_BATCH_SIZE);
+        }
     }    
 }

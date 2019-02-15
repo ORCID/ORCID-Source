@@ -67,7 +67,7 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     
     void updateRetryCount(String orcid, Long id, Long retryCount);
 
-    void deleteNotificationsForRecord(String orcid);
+    boolean deleteNotificationsForRecord(String orcid, int batchSize);
 
 
 }

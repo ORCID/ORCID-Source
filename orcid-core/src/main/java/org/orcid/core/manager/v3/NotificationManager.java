@@ -110,4 +110,5 @@ public interface NotificationManager {
     void deleteNotificationsForRecord(String orcid);
 
     NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);
+
 }
