@@ -402,6 +402,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     } else {
                         this.worksService.notifyOther({worksToMerge:dataGroup});       
                         this.worksService.notifyOther({mergeCount:mergeCount});
+                        this.worksService.notifyOther({groupingSuggestion: false})
                         this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
 
                     }   
@@ -1254,14 +1255,19 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
-                        this.loadMore();
                         this.allSelected = false;
                         this.bulkEditMap = {};
                         this.bulkEditSelect();
                         this.groupingSuggestion.suggestions = this.groupingSuggestion.suggestions.slice(1)
-                        if (this.groupingSuggestion.suggestions.length) {
+                        if (this.groupingSuggestion.suggestions.length && res.groupingSuggestion) {
                             this.mergeSuggestionConfirm()
                         }
+                        else {
+                            this.loadMore();
+                        }
+                    }
+                    else {
+                        this.loadMore();
                     }
                 } 
                 if(res.action == 'deleteBulk') {

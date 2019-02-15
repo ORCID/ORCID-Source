@@ -33,6 +33,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     worksToMerge: Array<any>;
     externalIdsPresent: boolean;
     groupingSuggestion: any;
+    checkboxFlag = {}
 
     constructor(
         private worksService: WorksService,
@@ -44,8 +45,8 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     cancelEdit(): void {
-        this.mergeSubmit = false;
-        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
+            this.mergeSubmit = false;
+            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
     };
 
     mergeConfirm(): void {
@@ -61,20 +62,22 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
 
     merge(): void {
         var putCodesAsString = '';      
-        for (var i in this.worksToMerge) {
-            var workToMerge = this.worksToMerge[i];
-            putCodesAsString += workToMerge.putCode.value;
-            if(Number(i) < (this.worksToMerge.length-1)){
-                putCodesAsString += ',';
+        for (let putcode of Object.keys(this.checkboxFlag)) {
+            if (this.checkboxFlag[putcode] || !this.groupingSuggestion) {
+                if (putCodesAsString != '') {
+                    putCodesAsString += ',';
+                }
+                putCodesAsString += putcode;
             }
         }
+        console.log ("MERGE ", putCodesAsString)
         this.worksService.mergeWorks(putCodesAsString)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.worksService.notifyOther({action:'merge', successful:true});
+                this.worksService.notifyOther({action:'merge', successful:true,groupingSuggestion:this.groupingSuggestion});
                 this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
             },
             error => {
@@ -111,12 +114,16 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 if( res.worksToMerge ) {
                     this.worksToMerge = res.worksToMerge;
+                    this.checkboxFlag = {}
+                    this.worksToMerge.forEach(work => {
+                        this.checkboxFlag[work.putCode.value] = false
+                    })
                 }
                 if( res.externalIdsPresent != undefined ) {
                     this.externalIdsPresent = res.externalIdsPresent;
                 }
-                if( res.groupingSuggestion ) {
-                    this.groupingSuggestion = res.groupingSuggestion.suggestions[0];
+                if( res.groupingSuggestion  != null) {
+                    this.groupingSuggestion = res.groupingSuggestion
                 }
             }
         )

@@ -431,13 +431,11 @@
                             <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
                                 <@orcid.checkFeatureStatus featureName='GROUPING_SUGGESTIONS'>
                                     <div class="pull-right" *ngIf="groupingSuggestionPresent">
-                                        <div class="orcid-error font-size-small">
-                                            <span class="edit-option-toolbar glyphicon glyphicon-exclamation-sign"></span>
-                                            {{groupingSuggestion.suggestions.length}} <@orcid.msg 'groups.merge.suggestion.alert'/>
+                                        
                                             <button class="btn btn-primary leftBuffer" (click)="mergeSuggestionConfirm()">
                                                 <@orcid.msg 'groups.merge.suggestion.manage_duplicates'/>
                                             </button>
-                                        </div>
+                                
                                     </div>
                                 </@orcid.checkFeatureStatus>
                             <ul class="sources-actions">
