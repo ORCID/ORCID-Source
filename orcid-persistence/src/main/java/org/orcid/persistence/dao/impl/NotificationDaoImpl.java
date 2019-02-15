@@ -9,6 +9,7 @@ import java.util.Properties;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -147,10 +148,29 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     
     @Override
     @Transactional
-    public void deleteNotificationsForRecord(String orcid) {
-        Query query = entityManager.createQuery("DELETE from NotificationEntity where profile.id = :orcid");
-        query.setParameter("orcid", orcid);
-        query.executeUpdate();
+    public boolean deleteNotificationsForRecord(String orcid, int batchSize) {
+        TypedQuery<Long> idsQuery = entityManager.createQuery("SELECT id from NotificationEntity where profile.id = :orcid", Long.class);
+        idsQuery.setParameter("orcid", orcid);
+        idsQuery.setMaxResults(batchSize);
+        List<Long> ids = idsQuery.getResultList();
+        
+        if (ids == null || ids.isEmpty()) {
+            return false;
+        }
+        
+        Query deleteQuery = entityManager.createNativeQuery("delete from notification_item where notification_id in (:ids)");
+        deleteQuery.setParameter("ids", ids);
+        int affected = deleteQuery.executeUpdate();
+        
+        deleteQuery = entityManager.createNativeQuery("delete from notification_work where notification_id in (:ids)");
+        deleteQuery.setParameter("ids", ids);
+        affected += deleteQuery.executeUpdate();
+        
+        deleteQuery = entityManager.createNativeQuery("delete from notification where id in (:ids)");
+        deleteQuery.setParameter("ids", ids);
+        affected += deleteQuery.executeUpdate();
+        
+        return affected > 0;
     }
 
     @Override
