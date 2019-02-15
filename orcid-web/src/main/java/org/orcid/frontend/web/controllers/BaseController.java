@@ -179,10 +179,7 @@ public class BaseController {
     @Resource
     private SecurityQuestionManager securityQuestionManager;
     
-    protected static final String EMPTY = "empty";
-
-    @Value("${org.orcid.recaptcha.web_site_key:}")
-    private String recaptchaWebKey;
+    protected static final String EMPTY = "empty";    
     
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean shibbolethEnabled;
@@ -206,16 +203,7 @@ public class BaseController {
     private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;    
 
     @Resource(name = "externalIdentifierManagerReadOnlyV3")
-    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
-    
-    @ModelAttribute("recaptchaWebKey")
-    public String getRecaptchaWebKey() {
-        return recaptchaWebKey;
-    }
-
-    public void setRecaptchaWebKey(String recaptchaWebKey) {
-        this.recaptchaWebKey = recaptchaWebKey;
-    }
+    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;    
     
     @ModelAttribute("shibbolethEnabled")
     public boolean isShibbolethEnabled() {

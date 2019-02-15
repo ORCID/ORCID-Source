@@ -31,6 +31,7 @@ import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,9 +47,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 public class HomeController extends BaseController {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
-
     private static final Locale DEFAULT_LOCALE = Locale.US;
+    
+    @Value("${org.orcid.recaptcha.web_site_key:}")
+    private String recaptchaWebKey;
     
     @Resource
     private LocaleManager localeManager;
@@ -214,7 +216,7 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/config.json", method = RequestMethod.GET)
     public @ResponseBody ConfigDetails getConfigDetails(HttpServletRequest request) {
         ConfigDetails configDetails = new ConfigDetails();
-        
+        configDetails.setMessage("RECAPTCHA_WEB_KEY", recaptchaWebKey);
         return configDetails;        
     }
     
@@ -244,14 +246,14 @@ public class HomeController extends BaseController {
     }
     
     class ConfigDetails {
-        private String messages;
+        private Map<String, String> messages = new HashMap<String, String>();
         
-        public void setMessages(String messages) {
-            this.messages = messages;
+        public Map<String, String> getMessages() {
+            return messages;
         }
-        
-        public String getMessages() {
-            return this.messages;
+
+        public void setMessage(String key, String value) {
+            this.messages.put(key, value);
         }
     }
 

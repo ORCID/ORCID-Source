@@ -16,7 +16,6 @@
     
     <script type="text/javascript">
         var orcidVar = {};
-        orcidVar.recaptchaKey = '${recaptchaWebKey}';
         orcidVar.baseDomainRmProtocall = '${baseDomainRmProtocall}';              
         orcidVar.pubBaseUri = '${pubBaseUri}';
 		orcidVar.staticCdn = '${staticCdn}'

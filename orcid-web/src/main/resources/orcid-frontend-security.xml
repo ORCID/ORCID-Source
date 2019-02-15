@@ -304,7 +304,9 @@
 		
 		<sec:intercept-url pattern="/messages.json(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		 	      	  	 	      	 	      	
+		 <sec:intercept-url pattern="/config.json(\?.*)?"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
+ 	      		      	  	 	      	 	      	
  	    <sec:intercept-url pattern="/public/group/[0-9]+(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	
 		<sec:intercept-url pattern="/lang.json(.*)?"

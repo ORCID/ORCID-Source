@@ -134,7 +134,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.errorEmailsAdditional = [];
         this.focusIndex = null;
         this.isOrcidPresent = false;
-        this.site_key = orcidVar.recaptchaKey;
         this.oauthSignin = false;
         this.personalLogin = true;
         this.recaptchaWidgetId = null;
@@ -164,6 +163,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.initReactivationRequest = { "email": null, "error": null, "success": false };
         this.nameFormUrl = '/account/names/public';
         this.isLoggedIn = false
+        
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.site_key = data.messages['RECAPTCHA_WEB_KEY'];    
+            },
+            error => {
+                console.log('oauthAuthorization.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
     }
 
     addScript(url, onLoadFunction): void {      

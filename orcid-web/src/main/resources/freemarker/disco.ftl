@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="${staticCdn}/css/fonts.css"/>
     <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
     <script type="text/javascript">
-        var orcidVar = {};
-        orcidVar.recaptchaKey = '${recaptchaWebKey}';             
+        var orcidVar = {};                   
         orcidVar.pubBaseUri = '${pubBaseUri}';
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
