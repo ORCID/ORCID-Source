@@ -12,21 +12,24 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { Observable, Subject } 
     from 'rxjs';
 
-
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
-//import { Preferences } from './preferences';
-
+import { CommonService } 
+    from './common.service.ts';
+    
 @Injectable()
 export class SearchService {
     private publicApiHeaders: HttpHeaders;
     private notify = new Subject<any>();
     
     notifyObservable$ = this.notify.asObservable();
+    
+    private pubBaseUri: string;
 
     constructor(
         private http: HttpClient,
+        private commonSrvc: CommonService,
         private jsonp: Jsonp) {
         this.publicApiHeaders = new HttpHeaders(
             {
@@ -34,7 +37,16 @@ export class SearchService {
                 'Accept': 'application/json'
             }
         );
-
+        
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.pubBaseUri = data.messages['PUB_BASE_URI'];    
+            },
+            error => {
+                console.log('search.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
      }
 
     private handleError (error: Response | any) {
@@ -51,8 +63,7 @@ export class SearchService {
     }
 
     getAffiliations(orcid): Observable<any> {
-        var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/activities';
-
+        var url = this.pubBaseUri + '/v2.1/' + orcid + '/activities';
 
         return this.http.get(url, {headers: this.publicApiHeaders})
         .pipe(
@@ -61,8 +72,7 @@ export class SearchService {
     }
 
     getNames(orcid): Observable<any> {
-        var url = orcidVar.pubBaseUri + '/v2.1/' + orcid + '/personal-details';
-
+        var url = this.pubBaseUri + '/v2.1/' + orcid + '/personal-details';
 
         return this.http.get(url, {headers: this.publicApiHeaders})
         .pipe(
@@ -74,7 +84,6 @@ export class SearchService {
     getResults(url): Observable<any> {
         return this.http.get(url, {headers: this.publicApiHeaders})
     }
-
 
     notifyOther(): void {
         this.notify.next();

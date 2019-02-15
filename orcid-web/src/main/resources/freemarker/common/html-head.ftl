@@ -16,9 +16,7 @@
     
     <script type="text/javascript">
         var orcidVar = {};
-        orcidVar.baseDomainRmProtocall = '${baseDomainRmProtocall}';              
-        orcidVar.pubBaseUri = '${pubBaseUri}';
-		orcidVar.staticCdn = '${staticCdn}'
+        orcidVar.staticCdn = '${staticCdn}'
 	        
         <#if (workIdsJson)??>
         orcidVar.workIds = JSON.parse("${workIdsJson}");

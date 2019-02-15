@@ -18,7 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
@@ -32,13 +31,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.exception.DeactivatedException;
-import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
@@ -54,8 +49,6 @@ import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
-import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.LoginForm;
@@ -81,7 +74,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.constants.SiteConstants;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
@@ -91,9 +83,7 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
-import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.ReleaseNameUtils;
-import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,11 +95,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -523,12 +509,7 @@ public class BaseController {
     public String getBaseUri() {
         return orcidUrlManager.getBaseUrl();
     }
-
-    @ModelAttribute("pubBaseUri")
-    public String getPubBaseUri() {
-        return orcidUrlManager.getPubBaseUrl();
-    }
-
+    
     /**
      * 
      * CDN Configuration
@@ -595,12 +576,7 @@ public class BaseController {
         if (StringUtils.isBlank(this.staticCdnPath))
             return getStaticContentPath(request);
         return staticCdnPath;
-    }
-
-    @ModelAttribute("baseDomainRmProtocall")
-    public String getBaseDomainRmProtocall() {
-        return orcidUrlManager.getBaseDomainRmProtocall();
-    }    
+    }   
 
     @ModelAttribute("basePath")
     public String getBasePath() {
@@ -745,12 +721,12 @@ public class BaseController {
 
     @ModelAttribute("searchBaseUrl")
     protected String createSearchBaseUrl() {
+        String pubBaseUri = orcidUrlManager.getPubBaseUrl();
         if(Features.HTTPS_IDS.isActive()) {
-            return getPubBaseUri() + "/v2.1/search/";
+            return pubBaseUri + "/v2.1/search/";
         } else {
-            return getPubBaseUri() + "/v1.2/search/orcid-bio/";
-        }  
-        
+            return pubBaseUri + "/v1.2/search/orcid-bio/";
+        }          
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {

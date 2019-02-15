@@ -94,11 +94,21 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.selectedScope = "";
         this.selectedScopes = [];
         this.showResetClientSecret = false;
-        this.swaggerUri = orcidVar.pubBaseUri+ '/v2.0/';
-        this.swaggerMemberUri = this.swaggerUri.replace("pub","api");
         this.tokenURL = getBaseUri() + '/oauth/token';
         this.viewing = false;
         this.selectedRedirectUriValue = null;
+                
+        this.commonService.configInfo$
+        .subscribe(
+            data => {
+                var pubBaseUri = data.messages['PUB_BASE_URI'];
+                this.swaggerUri = pubBaseUri + '/v2.0/';
+                this.swaggerMemberUri = this.swaggerUri.replace("pub","api");
+            },
+            error => {
+                console.log('clientEdit.component.ts: unable to fetch configInfo', error);                
+            } 
+        );                
     }
 
     addClient(): any {

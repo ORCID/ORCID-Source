@@ -18,8 +18,8 @@
             <p class="bold"><@orcid.msg 'orcid_widget.widget_preview'/></p>
             <div class="orcid-summary-widget">
                 <a id="widget-sample" href="{{getBaseUri()}}/${(effectiveUserOrcid)!}" target="effectiveUserOrcid" rel="noopener noreferrer" style="vertical-align:top;">
-                <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</a>
-            </div>
+                <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">{{domain}}/${(effectiveUserOrcid)!}</a>
+            </div> 
             <p><small class="italic"><@orcid.msg 'orcid_widget.widget_preview_text'/></small></p>
             <a (click)="hideWidgetCode()"><@orcid.msg 'orcid_widget.hide_code'/></a>
         </div>

@@ -217,6 +217,8 @@ public class HomeController extends BaseController {
     public @ResponseBody ConfigDetails getConfigDetails(HttpServletRequest request) {
         ConfigDetails configDetails = new ConfigDetails();
         configDetails.setMessage("RECAPTCHA_WEB_KEY", recaptchaWebKey);
+        configDetails.setMessage("BASE_DOMAIN_RM_PROTOCALL", orcidUrlManager.getBaseDomainRmProtocall());
+        configDetails.setMessage("PUB_BASE_URI", orcidUrlManager.getPubBaseUrl());
         return configDetails;        
     }
     

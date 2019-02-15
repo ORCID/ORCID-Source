@@ -41,7 +41,6 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     hideSwaggerUri: boolean;
     expandDetails: boolean;
     googleUri: string = 'https://developers.google.com/oauthplayground';
-    swaggerUri: string = orcidVar.pubBaseUri +"/v2.0/";
     authorizeUrlBase:string = getBaseUri() + '/oauth/authorize';
     tokenURL:string = getBaseUri() + '/oauth/token';    
     selectedRedirectUri: string;
@@ -49,6 +48,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     authorizeURL: String;
     sampleAuthCurl: String;
     sampleOpenId: String;
+    swaggerUri: String;
     
     constructor(
             private commonSrvc: CommonService,
@@ -67,6 +67,17 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.selectedRedirectUri = '';
         this.showResetClientSecret = false;
         this.expandDetails = false;
+        
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                var pubBaseUri = data.messages['PUB_BASE_URI'];
+                this.swaggerUri = pubBaseUri + '/v2.0/';                
+            },
+            error => {
+                console.log('developerTools.component.ts: unable to fetch configInfo', error);                
+            } 
+        );  
     }
     
     ngOnDestroy() {
