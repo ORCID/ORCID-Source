@@ -7,7 +7,7 @@
                 <div class="row top-header">
                     <div class="col-md-4 col-sm-12 col-xs-12">
                         <div class="logo">
-                            <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
+                            <h1><a href="${aboutUri}"><img src="{{assetsPath}}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
                         </div>      
                     </div>
                     <div class="col-md-8 col-sm-12 col-xs-12">

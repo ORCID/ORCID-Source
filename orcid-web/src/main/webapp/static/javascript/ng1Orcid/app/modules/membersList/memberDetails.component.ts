@@ -29,12 +29,23 @@ export class MemberDetailsComponent {
     currentMemberDetails: any = null;
     newBadgesEnabled : boolean;
     badgesAwarded: any = {}
-    
+    assetsPath: String;    
+
     constructor(
         protected commonSrvc: CommonService,
         protected membersListService: MembersListService,
         protected featuresService: FeaturesService,
-    ) {}
+    ) {
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('memberDetails.component.ts: unable to fetch userInfo', error);                
+            } 
+        );
+    }
     
     getCommunityTypes(): void {
         this.membersListService.getCommunityTypes()

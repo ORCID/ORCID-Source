@@ -102,6 +102,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     realLoggedInUserName: string;
     effectiveLoggedInUserName: string;
     isLoggedIn: boolean;    
+    assetsPath: String;
     
     constructor(
         private zone:NgZone,
@@ -171,6 +172,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             },
             error => {
                 console.log('oauthAuthorization.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
+        
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('oauthAuthorization.component.ts: unable to fetch userInfo', error);                
             } 
         );
     }

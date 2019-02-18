@@ -24,7 +24,6 @@ export class DiscoService {
     private widgetService: WidgetService;
     
     notifyObservable$ = this.notify.asObservable();
-
     
     constructor(private http: HttpClient){
         this.headers = new HttpHeaders(
