@@ -210,9 +210,15 @@ import { bioModule }
 
 import { printIdBannerModule } 
     from './printIdBanner/printIdBanner.ts';
-    
-import { NoscriptModule } 
-    from './noscript/noscript.ts';
+
+import { HtmlHeadModule } 
+    from './htmlHead/HtmlHead.ts';    
+
+import { ScriptsModule } 
+    from './scripts/scripts.ts';
+
+import { OauthHeaderModule } 
+    from './oauthHeader/oauthHeader.ts';
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -287,6 +293,8 @@ export const orcidApp = angular.module(
         lastModifiedModule.name,
         bioModule.name,
         printIdBannerModule.name,
-        NoscriptModule.name
+        HtmlHeadModule.name,
+        ScriptsModule.name,
+        OauthHeaderModule.name
     ]
 );

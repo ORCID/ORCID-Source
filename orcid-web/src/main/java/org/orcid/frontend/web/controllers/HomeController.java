@@ -1,6 +1,5 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -14,7 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -29,8 +27,6 @@ import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.UTF8Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -42,12 +38,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Controller
 public class HomeController extends BaseController {
     
     private static final Locale DEFAULT_LOCALE = Locale.US;
+    
+    private String staticContentPath;
     
     @Value("${org.orcid.recaptcha.web_site_key:}")
     private String recaptchaWebKey;
@@ -219,6 +215,7 @@ public class HomeController extends BaseController {
         configDetails.setMessage("RECAPTCHA_WEB_KEY", recaptchaWebKey);
         configDetails.setMessage("BASE_DOMAIN_RM_PROTOCALL", orcidUrlManager.getBaseDomainRmProtocall());
         configDetails.setMessage("PUB_BASE_URI", orcidUrlManager.getPubBaseUrl());
+        configDetails.setMessage("STATIC_PATH", getStaticContentPath(request));
         return configDetails;        
     }
     
@@ -245,6 +242,19 @@ public class HomeController extends BaseController {
 
         lPojo.setMessages(localPropertyMap);
         return lPojo;
+    }
+    
+    public String getStaticContentPath(HttpServletRequest request) {
+        if (StringUtils.isBlank(this.staticContentPath)) {
+            String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
+            generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
+            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
+            if (!request.isSecure()) {
+                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
+            }
+            this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
+        }
+        return this.staticContentPath;
     }
     
     class ConfigDetails {

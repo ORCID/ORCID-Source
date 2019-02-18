@@ -10,11 +10,11 @@ import { NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-import { NoscriptComponent } from './noscript.component.ts';
+import { ScriptsComponent } from './scripts.component.ts';
 
 // This is the Angular 1 part of the module
-export const NoscriptModule = angular.module(
-    'NoscriptModule', 
+export const ScriptsModule = angular.module(
+    'ScriptsModule', 
     []
 );
 
@@ -22,26 +22,26 @@ export const NoscriptModule = angular.module(
 @NgModule(
     {
         declarations: [ 
-            NoscriptComponent 
+            ScriptsComponent 
         ],
         entryComponents: [ 
-            NoscriptComponent 
+            ScriptsComponent 
         ],
         imports: [
             CommonModule
         ]
     }
 )
-export class NoscriptNg2Module {}
+export class ScriptsNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 
-NoscriptModule.directive(
-    'noscriptNg2', 
+ScriptsModule.directive(
+    'scriptsNg2', 
     <any>downgradeComponent(
         {
-            component: NoscriptComponent
+            component: ScriptsComponent
         }
     )
 );

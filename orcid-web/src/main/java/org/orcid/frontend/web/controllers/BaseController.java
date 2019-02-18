@@ -131,10 +131,6 @@ public class BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);    
 
-    private String staticContentPath;
-
-    private String staticCdnPath;
-
     @Resource
     private String cdnConfigFile;
 
@@ -523,60 +519,7 @@ public class BaseController {
         this.cdnConfigFile = cdnConfigFile;
     }
 
-    /**
-     * @return the path to the static content on local project
-     */
-    @ModelAttribute("staticLoc")
-    public String getStaticContentPath(HttpServletRequest request) {
-        if (StringUtils.isBlank(this.staticContentPath)) {
-            String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
-            generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
-            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
-            if (!request.isSecure()) {
-                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
-            }
-            this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
-        }
-        return this.staticContentPath;
-    }
-
-    /**
-     * Return the path where the static content will be. If there is a cdn path
-     * configured, it will return the cdn path; if it is not a cdn path it will
-     * return a reference to the static folder "/static"
-     * 
-     * @return the path to the CDN or the path to the local static content
-     */
-    @ModelAttribute("staticCdn")
-    @Cacheable("staticContent")
-    public String getStaticCdnPath(HttpServletRequest request) {
-        if (StringUtils.isEmpty(this.cdnConfigFile)) {
-            return getStaticContentPath(request);
-        }
-
-        ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
-        if (configFile.exists()) {
-            try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-                String uri = br.readLine();
-                if (uri != null) {
-                    String releaseVersion = ReleaseNameUtils.getReleaseName();
-                    if(!uri.contains(releaseVersion)) {
-                        if(!uri.endsWith("/")) {
-                            uri += '/';
-                        }
-                        uri += releaseVersion;
-                    }
-                    this.staticCdnPath = uri;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (StringUtils.isBlank(this.staticCdnPath))
-            return getStaticContentPath(request);
-        return staticCdnPath;
-    }   
+    
 
     @ModelAttribute("basePath")
     public String getBasePath() {

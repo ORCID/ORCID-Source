@@ -16,23 +16,20 @@
                 justify-content: center;
                 height: 100%;
             }
-        </style>
-        <script type="text/ng-template" id="noscript-ng2-template">
-            <noscript>
-                <div class="alert alert-banner">
-                     ${springMacroRequestContext.getMessage("common.browser-checks.functionalityofthissite")} <a href="http://www.enable-javascript.com/" target="common.browser-checks.instructionhowtoadd">
-                     ${springMacroRequestContext.getMessage("common.browser-checks.instructionhowtoadd")}</a>.<br>
-                     ${springMacroRequestContext.getMessage("common.cookies.orcid_uses")} <a href="{{getBaseUri()}}/privacy-policy#TrackingTechnology" target="common.cookies.learn_more">
-                     ${springMacroRequestContext.getMessage("common.cookies.learn_more")}</a>.
-                </div>
-                <style type="text/css"> 
-                .app-loading {
-                    display: none;
-                }
-                </style>
-            </noscript>
-        </script>
-        <noscript-ng2></noscript-ng2>
+        </style>        
+        <noscript>
+            <div class="alert alert-banner">
+                 ${springMacroRequestContext.getMessage("common.browser-checks.functionalityofthissite")} <a href="http://www.enable-javascript.com/" target="common.browser-checks.instructionhowtoadd">
+                 ${springMacroRequestContext.getMessage("common.browser-checks.instructionhowtoadd")}</a>.<br>
+                 ${springMacroRequestContext.getMessage("common.cookies.orcid_uses")} <a href="${baseUri}/privacy-policy#TrackingTechnology" target="common.cookies.learn_more">
+                 ${springMacroRequestContext.getMessage("common.cookies.learn_more")}</a>.
+            </div>
+            <style type="text/css"> 
+            .app-loading {
+                display: none;
+            }
+            </style>
+        </noscript>            
         <div class="app-loading">
             <i class="glyphicon glyphicon-refresh spin green x8" id="spinner"></i>
             <!--[if lt IE 8]>    
@@ -72,7 +69,10 @@
                     <div class="row top-header">
                         <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
                             <a href="https://orcid.org" alt="ORCID logo">
-                                <img src="${staticCdn}/img/orcid-logo-208-64.png" width="208px" height="64px" alt="ORCID logo">
+                                <script type="text/ng-template" id="oauth-header-ng2-template">
+                                    <img src="{{assetsPath}}/img/orcid-logo-208-64.png" width="208px" height="64px" alt="ORCID logo">
+                                </script>
+                                <oauth-header-ng2></oauth-header-ng2>
                             </a>
                         </div>       
                     </div> 
