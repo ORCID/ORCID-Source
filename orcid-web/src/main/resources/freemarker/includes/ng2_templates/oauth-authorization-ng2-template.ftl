@@ -61,12 +61,10 @@
                 <p class="title" *ngIf="showRegisterForm" >${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account")} <a id = "switch-to-login-form" (click)="switchForm()">${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account.link.text")}</a></p>
                 <div *ngIf="!showRegisterForm">
                     <div class="personal-login" >
-                        <#if shibbolethEnabled>
-                            <div class="btn-group btn-group-justified" role="group">
-                                <a (click)="showPersonalLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-                                <a (click)="showInstitutionLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
-                            </div>
-                        </#if>  
+                        <div *ngIf="shibbolethEnabled" class="btn-group btn-group-justified" role="group">
+                            <a (click)="showPersonalLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+                            <a (click)="showInstitutionLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+                        </div>
                         <div *ngIf="personalLogin == true">
                             <div class="login-box">
                                 <!-- ORCID ACCOUNT LOGIN -->

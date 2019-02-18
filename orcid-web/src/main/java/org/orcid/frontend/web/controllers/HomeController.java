@@ -30,6 +30,7 @@ import org.orcid.utils.UTF8Control;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -216,6 +217,7 @@ public class HomeController extends BaseController {
         configDetails.setMessage("BASE_DOMAIN_RM_PROTOCALL", orcidUrlManager.getBaseDomainRmProtocall());
         configDetails.setMessage("PUB_BASE_URI", orcidUrlManager.getPubBaseUrl());
         configDetails.setMessage("STATIC_PATH", getStaticContentPath(request));
+        configDetails.setMessage("SHIBBOLETH_ENABLED", String.valueOf(isShibbolethEnabled()));
         return configDetails;        
     }
     
@@ -244,6 +246,7 @@ public class HomeController extends BaseController {
         return lPojo;
     }
     
+    @ModelAttribute("staticCdn")
     public String getStaticContentPath(HttpServletRequest request) {
         if (StringUtils.isBlank(this.staticContentPath)) {
             String generatedStaticContentPath = orcidUrlManager.getBaseUrl();

@@ -103,6 +103,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     effectiveLoggedInUserName: string;
     isLoggedIn: boolean;    
     assetsPath: String;
+    shibbolethEnabled: boolean = false;
     
     constructor(
         private zone:NgZone,
@@ -179,6 +180,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         .subscribe(
             data => {
                 this.assetsPath = data.messages['STATIC_PATH'];
+                this.shibbolethEnabled = data.messages['SHIBBOLETH_ENABLED']
             },
             error => {
                 console.log('oauthAuthorization.component.ts: unable to fetch userInfo', error);                

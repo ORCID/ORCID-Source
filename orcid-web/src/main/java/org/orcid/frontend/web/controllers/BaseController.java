@@ -186,8 +186,7 @@ public class BaseController {
 
     @Resource(name = "externalIdentifierManagerReadOnlyV3")
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;    
-    
-    @ModelAttribute("shibbolethEnabled")
+        
     public boolean isShibbolethEnabled() {
         return shibbolethEnabled;
     }
