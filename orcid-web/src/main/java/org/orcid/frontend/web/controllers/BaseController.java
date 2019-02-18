@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -54,7 +52,6 @@ import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
@@ -230,15 +227,6 @@ public class BaseController {
             }
         }
         return maintenanceMessage;
-    }
-
-    @ModelAttribute("sendEmailFrequencies")
-    public Map<String, String> retrieveEmailFrequenciesAsMap() {
-        Map<String, String> map = new LinkedHashMap<>();
-        for (SendEmailFrequency freq : SendEmailFrequency.values()) {
-            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
-        }
-        return map;
     }
 
     /**
