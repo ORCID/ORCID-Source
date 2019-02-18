@@ -4,7 +4,7 @@
             <div *ngIf="!loadedFeed" class="text-center">
                 <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                 <!--[if lt IE 8]>
-                    <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                    <img src="{{assetsPath}}/img/spin-big.gif" width="85" height ="85"/>
                 <![endif]-->
             </div>
             <div *ngIf="loadedFeed">
@@ -44,7 +44,7 @@
                  <div *ngIf="!loadedFeed" class="text-center">
                     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                     <!--[if lt IE 8]>
-                        <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                        <img src="{{assetsPath}}/img/spin-big.gif" width="85" height ="85"/>
                     <![endif]-->
                 </div>
                 <form class="form-social-sign-in shibboleth" id="loginForm" *ngIf="loadedFeed" action="<@orcid.rootPath '/shibboleth/signin/auth'/>" method="post">

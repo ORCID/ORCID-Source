@@ -435,7 +435,7 @@
         <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
             <h1>
                 <a href="${aboutUri}"><img
-                    src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a>
+                    src="{{assetsPath}}/img/orcid-logo.png" alt="ORCID logo" /></a>
             </h1>
             <p><@orcid.msg 'public-layout.logo.tagline'/></p>
         </div>

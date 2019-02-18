@@ -24,7 +24,7 @@ import { MembersListComponent }
     template:  scriptTmpl("consortia-list-ng2-template")
 })
 export class ConsortiaListComponent extends MembersListComponent {
-    
+
     getMembersList() {
         this.membersListService.getConsortiaList()
             .subscribe(data => {

@@ -29,12 +29,23 @@ export class AllConsortiumContactsComponent {
     effectiveUserOrcid = orcidVar.orcidId;
     realUserOrcid = orcidVar.realOrcidId;
     showInitLoader : boolean = true;
+    assetsPath: String;
     
     constructor(
         private commonSrvc: CommonService,
         private consortiaService: ConsortiaService,
         private featuresService: FeaturesService
-    ) {}
+    ) {
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('allConsortiumContacts.component.ts: unable to fetch configInfo', error);                
+            } 
+        );        
+    }
   
   
     buildOrcidUri(orcid: String): string {

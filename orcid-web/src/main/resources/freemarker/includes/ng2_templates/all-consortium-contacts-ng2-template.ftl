@@ -45,7 +45,7 @@
                         <td>{{contact.member.publicDisplayName}}</td>
                         <td><b>{{contact.name}}</b><br>
                             {{contact.email}}<br>
-                            <a *ngIf="contact.orcid" href="{{buildOrcidUri(contact.orcid)}}"><img src="${staticCdn}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
+                            <a *ngIf="contact.orcid" href="{{buildOrcidUri(contact.orcid)}}"><img src="{{assetsPath}}/img/id-icon.svg" width="12" alt="ORCID iD icon"/> {{buildOrcidUri(contact.orcid)}}</a>
                             <div *ngIf="!contact.orcid">
                                 <span><@spring.message "manage_consortium.no_orcid_id"/></span> 
                                 <div class="popover-help-container">

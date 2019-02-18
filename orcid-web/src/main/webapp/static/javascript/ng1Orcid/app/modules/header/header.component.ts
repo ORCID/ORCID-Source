@@ -49,6 +49,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     isPublicPage: boolean = false;
     profileOrcid: string = null;
     showSurvey = this.featuresService.isFeatureEnabled('SURVEY');
+    assetsPath: String;
     
     constructor(
         private notificationsSrvc: NotificationsService,
@@ -93,7 +94,16 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.userInfo = {};
                 } 
             );
-        }      
+        }  
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('header.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
     }
     
     filterChange(): void {

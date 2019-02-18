@@ -30,12 +30,24 @@ export class MembersListComponent {
     membersList: Array<object> = [];
     unfilteredMembersList: Array<object> = [];
     alphabet: Array<string> = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    protected assetsPath: String;
     
     constructor(
         protected commonSrvc: CommonService,
         protected membersListService: MembersListService,
         protected featuresService: FeaturesService,
-    ) {}
+    ) {
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('consortiaList.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
+        
+    }
     
     getCommunityTypes() {
         this.membersListService.getCommunityTypes()

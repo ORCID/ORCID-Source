@@ -24,15 +24,15 @@ import { OauthService }
 import { WidgetService } 
     from '../../shared/widget.service.ts'; 
 
-
+import { CommonService } 
+    from '../../shared/common.service.ts';  
+    
 @Component({
     selector: 'link-account-ng2',
     template:  scriptTmpl("link-account-ng2-template")
 })
 export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-
-    //@Input() entityId: any;
 
     authorizationForm: any;
     entityId: any;
@@ -44,12 +44,14 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     showDeactivatedError: any;
     showReactivationSent: any;
     initReactivationRequest: any;
-   
+    assetsPath: String;
+    
     constructor(
         private zone:NgZone,
         private discoService: DiscoService,
         private oauthService: OauthService,
-        private widgetService: WidgetService
+        private widgetService: WidgetService,
+        private commonSrvc: CommonService
     ) {
         window['angularComponentReference'] = {
                 zone: this.zone,
@@ -65,6 +67,15 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showDeactivatedError = false;
         this.showReactivationSent = false;
         this.initReactivationRequest = { "email":null, "error":null, "success":false };
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('linkAccount.component.ts: unable to fetch userInfo', error);                
+            } 
+        );
     }
 
     loadDiscoFeed = function() {
