@@ -115,29 +115,8 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     rejectSuggestion() {
-        const listToReject = {putCodes: []}
-
-        for (let putcode of Object.keys(this.checkboxFlag)) {
-            if (!this.checkboxFlag[putcode]) {
-                listToReject.putCodes.push (putcode)
-            }
-        }
-
-        if (listToReject.length) {
-            return this.worksService.markSuggestionRejected(this.groupingSuggestion.suggestions[0]).subscribe(
-                data => {
-                    this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-                    this.worksService.notifyOther({action:'cancel', successful:true});
-                },
-                error => {
-                    console.log('error marking suggestion as rejected', error);
-                } 
-            );
-        }
-        else {
-            of (null)
-        }
-    };
+            return this.worksService.markSuggestionRejected(this.groupingSuggestion.suggestions[0])
+    }
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
