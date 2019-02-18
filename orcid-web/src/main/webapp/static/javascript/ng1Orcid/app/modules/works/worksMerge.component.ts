@@ -34,8 +34,8 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     externalIdsPresent: boolean;
     groupingSuggestion: any;
     checkboxFlag = {}
-    selectAll = false
-    readyToMerge = false
+    selectAll = true
+    readyToMerge = true
 
     constructor(
         private worksService: WorksService,
@@ -63,11 +63,13 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     fieldsChange(event) {
+        let allSelected = true 
         for (let putcode of Object.keys(this.checkboxFlag)) {
             if (!this.checkboxFlag[putcode]) {
-                this.selectAll = false
+                allSelected = false
             }
         }
+        this.selectAll = allSelected
     }
 
     fieldChangeSelectAll (event) {
@@ -96,7 +98,6 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 putCodesAsString += putcode;
             }
         }
-        console.log ("MERGE ", putCodesAsString)
         this.worksService.mergeWorks(putCodesAsString)
         .pipe(    
             takeUntil(this.ngUnsubscribe),
@@ -132,7 +133,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.worksToMerge = res.worksToMerge;
                     this.checkboxFlag = {}
                     this.worksToMerge.forEach(work => {
-                        this.checkboxFlag[work.putCode.value] = false
+                        this.checkboxFlag[work.putCode.value] = true
                     })
                 }
                 if( res.externalIdsPresent != undefined ) {

@@ -423,7 +423,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         forkJoin(this.groupingSuggestionWorksToMerge).subscribe(
             dataGroup => {
-                console.log (this.groupingSuggestion.suggestions)
                 this.worksService.notifyOther({worksToMerge:dataGroup});
                 this.worksService.notifyOther({groupingSuggestion:this.groupingSuggestion});    
                 this.worksService.notifyOther({mergeCount:this.groupingSuggestion.suggestions[0].putCodes.length});
