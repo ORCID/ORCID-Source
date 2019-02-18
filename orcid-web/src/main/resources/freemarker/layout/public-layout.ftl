@@ -58,6 +58,7 @@
 
 <#macro public css=[] js=[] classes=[] other=[] nav="" >
     <@base>
+    
         <@orcid.checkFeatureStatus 'COOKIE_BANNER'>
             <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">  
             <alert-banner-ng2></alert-banner-ng2>
@@ -98,63 +99,65 @@
         <!--FOOTER-->
         <!--hide footer if oauth login-->
         <#if !(RequestParameters['oauth'])??>
-            <@orcid.checkFeatureStatus 'NEW_FOOTER'>
-                <footer class="footer-main">
-                    <div class="container">
-        	            <span id="noop"><!-- For automated tests --> </span>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <p>
-                                    <a href="${aboutUri}" alt="ORCID logo">
-                                        <img src="${staticCdn}/img/orcid-logo.svg" width="108px" alt="ORCID logo">
-                                    </a>
-                                </p>
-                                <nav>
-                                    <ul class="inline-list">
-                                        <li><a class="social-button" href="https://www.facebook.com/orcid.org" target="social-facebook"><span class="social social-facebook"></span></a></li>
-                                        <li><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter"><span class="social social-twitter"></span></a></li>
-                                        <li><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss"><span class="social social-rss"></span></a></li>
-                                        <li><a class="social-button" href="https://github.com/ORCID" target="social-github"><span class="social social-github"></span></a></li>
-                                    </ul>
-                                </nav>
+            <script type="text/ng-template" id="footer-ng2-template">
+                <@orcid.checkFeatureStatus 'NEW_FOOTER'>
+                    <footer class="footer-main">
+                        <div class="container">
+            	            <span id="noop"><!-- For automated tests --> </span>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <p>
+                                        <a href="{{aboutUri}}" alt="ORCID logo">
+                                            <img src="{{assetsPath}}/img/orcid-logo.svg" width="108px" alt="ORCID logo">
+                                        </a>
+                                    </p>
+                                    <nav>
+                                        <ul class="inline-list">
+                                            <li><a class="social-button" href="https://www.facebook.com/orcid.org" target="social-facebook"><span class="social social-facebook"></span></a></li>
+                                            <li><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter"><span class="social social-twitter"></span></a></li>
+                                            <li><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss"><span class="social social-rss"></span></a></li>
+                                            <li><a class="social-button" href="https://github.com/ORCID" target="social-github"><span class="social social-github"></span></a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                                <div class="col-md-10">
+                                    <p>
+                                        <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="{{assetsPath}}/img/cc0_80x15.png" style="border-style: none;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a></p>
+                                    <nav>
+                                        <ul class="inline-list">
+                                            <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
+                                            <li><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
+                                            <li><a href="https://orcid.org/orcid-dispute-procedures">Dispute procedures</a></li>
+                                            <li><a href="{{aboutUri}}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
+                                            <li><a href="https://orcid.org/trademark-and-id-display-guidelines">Trademark &amp; iD display guidelines</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
                             </div>
-                            <div class="col-md-10">
-                                <p>
-                                    <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="${staticCdn}/img/cc0_80x15.png" style="border-style: none;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a></p>
-                                <nav>
-                                    <ul class="inline-list">
-                                        <li><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
-                                        <li><a href="${aboutUri}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
-                                        <li><a href="https://orcid.org/orcid-dispute-procedures">Dispute procedures</a></li>
-                                        <li><a href="${aboutUri}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
-                                        <li><a href="https://orcid.org/trademark-and-id-display-guidelines">Trademark &amp; iD display guidelines</a></li>
+                        </div>
+                    </footer>
+                </@orcid.checkFeatureStatus>
+                <@orcid.checkFeatureStatus featureName='NEW_FOOTER' enabled=false>
+                    <div id="footer" class="footer clear-fix">
+                        <span id="noop"><!-- For automated tests --> </span>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-11 col-md-offset-1">
+                                    <ul class="col-md-11 col-md-offset-1">
+                                        <li class=""><a href="{{aboutUri}}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
+                                        <li class=""><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
+                                        <li class=""><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
+                                        <li class=""><a href="{{aboutUri}}/open-source-license"><@orcid.msg 'footer.openSource'/></a></li>
                                     </ul>
-                                </nav>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </footer>
-            </@orcid.checkFeatureStatus>
-            <@orcid.checkFeatureStatus featureName='NEW_FOOTER' enabled=false>
-                <div id="footer" class="footer clear-fix">
-                    <span id="noop"><!-- For automated tests --> </span>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-11 col-md-offset-1">
-                                <ul class="col-md-11 col-md-offset-1">
-                                    <li class=""><a href="${aboutUri}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
-                                    <li class=""><a href="${aboutUri}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
-                                    <li class=""><a href="${aboutUri}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
-                                    <li class=""><a href="${aboutUri}/open-source-license"><@orcid.msg 'footer.openSource'/></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </@orcid.checkFeatureStatus>
-            <form action="<@orcid.rootPath '/'/>">
-                <input id="imageUrl" type="hidden" value="${staticCdn}/images">
-            </form>
+                </@orcid.checkFeatureStatus>
+                <form action="<@orcid.rootPath '/'/>">
+                    <input id="imageUrl" type="hidden" value="{{assetsPath}}/images">                
+                </form>
+            </script>
         </#if>
     </@base>
 </#macro>

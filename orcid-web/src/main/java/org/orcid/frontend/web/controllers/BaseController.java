@@ -115,8 +115,6 @@ public class BaseController {
 
     private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
-    private String aboutUri;    
-
     private boolean reducedFunctionalityMode;
 
     private String maintenanceMessage;
@@ -203,16 +201,6 @@ public class BaseController {
     @Value("${org.orcid.frontend.web.devSandboxUrl:}")
     public void setDevSandboxUrl(String devSandboxUrl) {
         this.devSandboxUrl = devSandboxUrl;
-    }
-
-    @ModelAttribute("aboutUri")
-    public String getAboutUri() {
-        return aboutUri;
-    }
-
-    @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
-    public void setAboutUri(String aboutUri) {
-        this.aboutUri = aboutUri;
     }
 
     @ModelAttribute("reducedFunctionalityMode")

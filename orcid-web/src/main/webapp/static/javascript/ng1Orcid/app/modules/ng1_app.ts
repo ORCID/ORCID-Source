@@ -219,7 +219,10 @@ import { ScriptsModule }
 
 import { OauthHeaderModule } 
     from './oauthHeader/oauthHeader.ts';
-    
+
+import { FooterModule } 
+    from './footer/footer.ts';    
+
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -295,6 +298,7 @@ export const orcidApp = angular.module(
         printIdBannerModule.name,
         HtmlHeadModule.name,
         ScriptsModule.name,
-        OauthHeaderModule.name
+        OauthHeaderModule.name,
+        FooterModule.name
     ]
 );

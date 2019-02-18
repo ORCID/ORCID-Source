@@ -46,6 +46,9 @@ public class HomeController extends BaseController {
     
     private String staticContentPath;
     
+    @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
+    private String aboutUri;
+    
     @Value("${org.orcid.recaptcha.web_site_key:}")
     private String recaptchaWebKey;
     
@@ -218,6 +221,7 @@ public class HomeController extends BaseController {
         configDetails.setMessage("PUB_BASE_URI", orcidUrlManager.getPubBaseUrl());
         configDetails.setMessage("STATIC_PATH", getStaticContentPath(request));
         configDetails.setMessage("SHIBBOLETH_ENABLED", String.valueOf(isShibbolethEnabled()));
+        configDetails.setMessage("ABOUT_URI", aboutUri);
         return configDetails;        
     }
     
