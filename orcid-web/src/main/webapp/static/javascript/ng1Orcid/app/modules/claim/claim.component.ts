@@ -46,7 +46,7 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
                 'sendOrcidNews': { 'value': false }, 
                 'termsOfUse': { 'value': false, 'errors':[] } 
                 };      
-        this.commonSrvc.configInfo$
+        this.commonService.configInfo$
         .subscribe(
             data => {
                 this.aboutUri = data.messages['ABOUT_URI'];
