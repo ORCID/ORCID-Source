@@ -44,6 +44,9 @@ export class WorksMergeWarningComponent implements AfterViewInit, OnDestroy, OnI
     cancelEdit(): void {
         this.mergeSubmit = false;
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeWarning'});
+        if (this.groupingSuggestion){
+            this.worksService.notifyOther({action:'cancel', successful:true});
+        }
     };
 
     merge(): void {
