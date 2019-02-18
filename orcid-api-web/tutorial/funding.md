@@ -13,9 +13,9 @@ These calls can be used with Member API credentials on sandbox or the production
 **Endpoints:** ```/funding``` and ```/fundings```
 
 **Sample XML files:**
-  * [reading the fundings section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/fundings-3.0_dev1.xml)
-  * [reading a funding item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/funding-3.0_dev1.xml)
-  * [writing a funding item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_samples/funding-3.0_dev1.xml)
+  * [reading the fundings section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/fundings-3.0_rc1.xml)
+  * [reading a funding item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/funding-3.0_rc11.xml)
+  * [writing a funding item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/funding-3.0_rc1.xml)
   
 ## Permission to edit the record
 Editing the funding section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading funding items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
