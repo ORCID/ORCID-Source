@@ -53,11 +53,11 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
 
     mergeConfirm(): void {
         if(this.worksToMerge.length > 20){
-            this.worksService.notifyOther({worksToMerge:this.worksToMerge});       
-            this.worksService.notifyOther({mergeCount:this.mergeCount});
+            this.worksService.notifyOther ({checkboxFlag: this.checkboxFlag}) 
             this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});   
+            this.modalService.notifyOther({groupingSuggestion:this.groupingSuggestion});   
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeWarning'});   
-        } else {
+        }   else {
             this.merge();
         }
     };
@@ -135,6 +135,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.worksToMerge.forEach(work => {
                         this.checkboxFlag[work.putCode.value] = true
                     })
+                    this.fieldsChange(null)
                 }
                 if( res.externalIdsPresent != undefined ) {
                     this.externalIdsPresent = res.externalIdsPresent;
