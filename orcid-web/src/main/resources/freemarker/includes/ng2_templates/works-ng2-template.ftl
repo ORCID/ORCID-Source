@@ -377,7 +377,7 @@
                                 <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate?.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate?.day">-</span><span *ngIf="work.publicationDate?.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span>
                       
                                 <span class="capitalize" *ngIf="work.workType?.value?.length > 0">{{work.workType.value}}</span>
-                                <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
+                                <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value?.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 
                             </div>
                             <div class="row" *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value">

@@ -753,7 +753,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.worksService.handleWorkGroupData( this.formData );
                     this.worksService.loading = false;
                     if(this.groupingSuggestionFeatureEnabled){
-                        this.loadGroupingSuggestions();
+                        this.loadGroupingSuggestions(false);
                     }
                 },
                 error => {
@@ -764,7 +764,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
     
-    loadGroupingSuggestions(): void {
+    loadGroupingSuggestions(openSuggestionsMenuAfterLoad: boolean): void {
         this.groupingSuggestionPresent = false;
         if(this.publicView != "true") {
             this.worksService.getWorksGroupingSuggestions(
@@ -777,6 +777,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if (data && data.suggestions &&  data.suggestions.length) {
                         this.groupingSuggestionPresent = true;
                         this.groupingSuggestion = data;
+                        if (openSuggestionsMenuAfterLoad) {
+                            this.mergeSuggestionConfirm()
+                        }
                     }
                 },
                 error => {
@@ -1261,6 +1264,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.groupingSuggestion.suggestions = this.groupingSuggestion.suggestions.slice(1)
                         if (this.groupingSuggestion.suggestions.length && res.groupingSuggestion) {
                             this.mergeSuggestionConfirm()
+                        }
+                        else if (res.groupingSuggestion && this.groupingSuggestion.moreAvailable ) {
+                            this.loadGroupingSuggestions(true)
                         }
                         else {
                             this.loadMore();

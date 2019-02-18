@@ -7,10 +7,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { Observable, Subject, Subscription, of } 
     from 'rxjs';
 
-import { takeUntil } 
+import { takeUntil, switchMap } 
     from 'rxjs/operators';
 
 import { WorksService } 
@@ -34,6 +34,8 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     externalIdsPresent: boolean;
     groupingSuggestion: any;
     checkboxFlag = {}
+    selectAll = false
+    readyToMerge = false
 
     constructor(
         private worksService: WorksService,
@@ -60,6 +62,30 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    fieldsChange(event) {
+        for (let putcode of Object.keys(this.checkboxFlag)) {
+            if (!this.checkboxFlag[putcode]) {
+                this.selectAll = false
+            }
+        }
+    }
+
+    fieldChangeSelectAll (event) {
+        for (let putcode of Object.keys(this.checkboxFlag)) {
+            this.checkboxFlag[putcode] = this.selectAll
+        }
+    }
+
+    atLeastTwoWorksSelectForMerge() {
+        let  count = 0
+        for (let putcode of Object.keys(this.checkboxFlag)) {
+            if (this.checkboxFlag[putcode]) {
+                count ++
+            }
+        }
+        return count > 1 
+    }
+
     merge(): void {
         var putCodesAsString = '';      
         for (let putcode of Object.keys(this.checkboxFlag)) {
@@ -73,10 +99,11 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
         console.log ("MERGE ", putCodesAsString)
         this.worksService.mergeWorks(putCodesAsString)
         .pipe(    
-            takeUntil(this.ngUnsubscribe)
+            takeUntil(this.ngUnsubscribe),
+            switchMap (() => this.rejectSuggestion()) 
         )
         .subscribe(
-            data => {
+            () => {
                 this.worksService.notifyOther({action:'merge', successful:true,groupingSuggestion:this.groupingSuggestion});
                 this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
             },
@@ -87,19 +114,29 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    rejectSuggestion(): void {
-        this.worksService.markSuggestionRejected(this.groupingSuggestion)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        ).subscribe(
-            data => {
-                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-                this.worksService.notifyOther({action:'cancel', successful:true});
-            },
-            error => {
-                console.log('error marking suggestion as rejected', error);
-            } 
-        );
+    rejectSuggestion() {
+        const listToReject = {putCodes: []}
+
+        for (let putcode of Object.keys(this.checkboxFlag)) {
+            if (!this.checkboxFlag[putcode]) {
+                listToReject.putCodes.push (putcode)
+            }
+        }
+
+        if (listToReject.length) {
+            return this.worksService.markSuggestionRejected(this.groupingSuggestion.suggestions[0]).subscribe(
+                data => {
+                    this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
+                    this.worksService.notifyOther({action:'cancel', successful:true});
+                },
+                error => {
+                    console.log('error marking suggestion as rejected', error);
+                } 
+            );
+        }
+        else {
+            of (null)
+        }
     };
 
     //Default init functions provided by Angular Core
