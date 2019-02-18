@@ -132,7 +132,7 @@
                                     </div>              
                                     <p>
                                         <small class="italic">
-                                        ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="manage.verificationEmail.2">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
+                                        ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="{{aboutUri}}/content/orcid-terms-use" target="manage.verificationEmail.2">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
                                         </small>
                                     </p>             
                                 </div>

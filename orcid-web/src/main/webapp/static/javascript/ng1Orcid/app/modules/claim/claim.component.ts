@@ -31,6 +31,7 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
 
     postingClaim: boolean;
     claim: any;
+    aboutUri: String;
     
     constructor(
         private claimService: ClaimService,
@@ -44,7 +45,16 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
                 'activitiesVisibilityDefault': {'visibility':'', 'errors':[]}, 
                 'sendOrcidNews': { 'value': false }, 
                 'termsOfUse': { 'value': false, 'errors':[] } 
-                };        
+                };      
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.aboutUri = data.messages['ABOUT_URI'];
+            },
+            error => {
+                console.log('header.component.ts: unable to fetch userInfo', error);
+            } 
+        );
     }
 
     getClaim(): void{

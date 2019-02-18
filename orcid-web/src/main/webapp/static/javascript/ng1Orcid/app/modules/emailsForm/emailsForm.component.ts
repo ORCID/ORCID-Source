@@ -74,6 +74,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     sendAdministrativeChangeNotifications: string;
     sendMemberUpdateRequestsNotifications: string;
     sendQuarterlyTips: boolean;
+    aboutUri: String;
     
     constructor( 
         private elementRef: ElementRef, 
@@ -143,6 +144,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.prefs = {};
         this.popUp = elementRef.nativeElement.getAttribute('popUp');
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {                
+                this.aboutUri = data.messages['ABOUT_URI'];
+            },
+            error => {
+                console.log('emailsForm.component.ts: unable to fetch userInfo', error);
+            } 
+        );
     }
 
     addNew(): void {
