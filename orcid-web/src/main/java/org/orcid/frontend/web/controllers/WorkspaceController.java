@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Currency;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -258,7 +257,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("workspace_v3");
         mav.addObject("showPrivacy", true);
         mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
-        mav.addObject("sendEmailFrequencies", retrieveEmailFrequenciesAsMap());
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         mav.addObject("justRegistered", justRegistered);
         Cookie justRegisteredCookie = new Cookie("justRegistered", null);
