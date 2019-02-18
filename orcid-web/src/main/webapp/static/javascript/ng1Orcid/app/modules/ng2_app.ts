@@ -230,7 +230,7 @@ import { printIdBannerNg2Module }
     from './printIdBanner/printIdBanner.ts';
 
 import { HtmlHeadModule } 
-    from './htmlHead/HtmlHead.ts';
+    from './htmlHead/htmlHead.ts';
 
 import { ScriptsModule } 
     from './scripts/scripts.ts';
