@@ -14,7 +14,7 @@ These calls can be used with Member API credentials on sandbox or the production
 
 **Sample XML files:**
   * [reading the fundings section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/fundings-3.0_rc1.xml)
-  * [reading a funding item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/funding-3.0_rc11.xml)
+  * [reading a funding item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/funding-3.0_rc1.xml)
   * [writing a funding item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/funding-3.0_rc1.xml)
   
 ## Permission to edit the record
