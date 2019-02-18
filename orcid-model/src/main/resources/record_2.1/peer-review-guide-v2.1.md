@@ -1,3 +1,5 @@
+### This guide is deprecated please refer to latest guide at [Here](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md).
+
 
 #ORCID API v2.1 Peer Review Guide
 Starting in v2.1, the ORCID API now supports a new activity type: ```peer-review```. 
