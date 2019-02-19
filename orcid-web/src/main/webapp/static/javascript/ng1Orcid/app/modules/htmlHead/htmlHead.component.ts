@@ -17,9 +17,10 @@ export class HtmlHeadComponent {
         .subscribe(
             data => {
                 this.assetsPath = data.messages['STATIC_PATH'];
+                console.log('Assets path from htmlHead: ' + this.assetsPath);
             },
             error => {
-                console.log('header.component.ts: unable to fetch userInfo', error);
+                console.log('htmlHead.component.ts: unable to fetch configInfo', error);
             } 
         );
     }

@@ -307,32 +307,28 @@ var OrcidCookie = new function() {
     };
 };
 
-var OrcidMessage = function() {
-    // nothing to init now
+var OrcidMessage = function() {    
+    $.ajax({
+        url : getBaseUri() + '/messages.json',
+        type : 'GET',
+        dataType: 'text',
+        contentType: "application/json",
+        async: false,
+        success : function(data) {                
+            var data = JSON.parse(data);
+            messages = data['messages'];            
+        }
+    }).fail(
+    // detects server is down or CSRF mismatches
+    // do to session expiration or server bounces
+    function(e) {
+        console.log("error fetching javascript messages");
+        console.log(e);
+    });    
 };
 
 OrcidMessage.prototype.get = function(name) {
-    if(messages == null) {        
-        $.ajax({
-            url : getBaseUri() + '/messages.json',
-            type : 'GET',
-            dataType: 'text',
-            contentType: "application/json",            
-            success : function(data) {                
-                var data = JSON.parse(data);
-                messages = data['messages'];
-                return messages[name];
-            }
-        }).fail(
-        // detects server is down or CSRF mismatches
-        // do to session expiration or server bounces
-        function(e) {
-            console.log("error fetching javascript messages");
-            console.log(e);
-        });
-    } else {
-        return messages[name];
-    }    
+    return messages[name];    
 };
 
 var messages = null;

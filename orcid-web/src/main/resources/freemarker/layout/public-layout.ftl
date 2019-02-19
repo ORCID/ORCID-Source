@@ -164,6 +164,7 @@
                     <input id="imageUrl" type="hidden" value="{{assetsPath}}/images">                
                 </form>
             </script>
+            <footer-ng2></footer-ng2>
         </#if>
     </@base>
 </#macro>

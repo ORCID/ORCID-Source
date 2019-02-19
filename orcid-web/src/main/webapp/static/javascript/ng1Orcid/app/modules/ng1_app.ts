@@ -214,9 +214,6 @@ import { printIdBannerModule }
 import { HtmlHeadModule } 
     from './htmlHead/htmlHead.ts';    
 
-import { ScriptsModule } 
-    from './scripts/scripts.ts';
-
 import { OauthHeaderModule } 
     from './oauthHeader/oauthHeader.ts';
 
@@ -300,7 +297,6 @@ export const orcidApp = angular.module(
         bioModule.name,
         printIdBannerModule.name,
         HtmlHeadModule.name,
-        ScriptsModule.name,
         OauthHeaderModule.name,
         FooterModule.name,
         MaintenanceMessageModule.name

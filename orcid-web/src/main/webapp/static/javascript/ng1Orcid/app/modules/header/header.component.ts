@@ -100,7 +100,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.assetsPath = data.messages['STATIC_PATH'];
-                this.aboutUri = data.messages['ABOUT_URI'];
+                this.aboutUri = data.messages['ABOUT_URI'];                
             },
             error => {
                 console.log('header.component.ts: unable to fetch configInfo', error);                

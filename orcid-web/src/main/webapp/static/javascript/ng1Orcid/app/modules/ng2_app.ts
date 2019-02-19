@@ -232,9 +232,6 @@ import { printIdBannerNg2Module }
 import { HtmlHeadNg2Module } 
     from './htmlHead/htmlHead.ts';
 
-import { ScriptsNg2Module } 
-    from './scripts/scripts.ts';
-
 import { OauthHeaderNg2Module } 
     from './oauthHeader/oauthHeader.ts';    
 
@@ -376,7 +373,6 @@ export class RootCmp {
         bioNg2Module,
         printIdBannerNg2Module,
         HtmlHeadNg2Module,
-        ScriptsNg2Module,
         OauthHeaderNg2Module,
         FooterNg2Module,
         MaintenanceMessageNg2Module

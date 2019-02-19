@@ -5,8 +5,8 @@ import { CommonService }
     from '../../shared/common.service.ts';    
     
 @Component({
-    selector: 'html-head-ng2',
-    template:  scriptTmpl("html-head-ng2-template")
+    selector: 'footer-ng2',
+    template:  scriptTmpl("footer-ng2-template")
 })
 export class FooterComponent {
     
