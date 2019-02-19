@@ -1265,7 +1265,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.allSelected = false;
                         this.bulkEditMap = {};
                         this.bulkEditSelect();
-                        if (true) {
+                        if (res.groupingSuggestion && res.groupingSuggestion.moreAvailable) {
                             setTimeout(()=>{this.loadGroupingSuggestions(true)}, 500)
                         }
                         else {

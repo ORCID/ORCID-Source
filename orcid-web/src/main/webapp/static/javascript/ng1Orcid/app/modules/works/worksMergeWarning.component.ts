@@ -27,11 +27,10 @@ export class WorksMergeWarningComponent implements AfterViewInit, OnDestroy, OnI
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
- 
+    mergeCount: any;
     mergeSubmit: boolean;
     showWorksMergeError: boolean;
-    checkboxFlag
-    groupingSuggestion
+    worksToMerge: Array<any>;
 
     constructor(
         private worksService: WorksService,
@@ -44,19 +43,15 @@ export class WorksMergeWarningComponent implements AfterViewInit, OnDestroy, OnI
     cancelEdit(): void {
         this.mergeSubmit = false;
         this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeWarning'});
-        if (this.groupingSuggestion){
-            this.worksService.notifyOther({action:'cancel', successful:true});
-        }
     };
 
     merge(): void {
         var putCodesAsString = '';      
-        for (let putcode of Object.keys(this.checkboxFlag)) {
-            if (this.checkboxFlag[putcode] || !this.groupingSuggestion) {
-                if (putCodesAsString != '') {
-                    putCodesAsString += ',';
-                }
-                putCodesAsString += putcode;
+        for (var i in this.worksToMerge) {
+            var workToMerge = this.worksToMerge[i];
+            putCodesAsString += workToMerge.putCode.value;
+            if(Number(i) < (this.worksToMerge.length-1)){
+                putCodesAsString += ',';
             }
         }
         this.worksService.mergeWorks(putCodesAsString)
@@ -65,7 +60,7 @@ export class WorksMergeWarningComponent implements AfterViewInit, OnDestroy, OnI
         )
         .subscribe(
             data => {
-                this.worksService.notifyOther({action:'merge', successful:true, groupingSuggestion: this.groupingSuggestion });
+                this.worksService.notifyOther({action:'merge', successful:true});
                 this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMergeWarning'});
             },
             error => {
@@ -80,11 +75,11 @@ export class WorksMergeWarningComponent implements AfterViewInit, OnDestroy, OnI
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.worksService.notifyObservable$.subscribe(
             (res) => {
-                if ( res.checkboxFlag) {
-                    this.checkboxFlag = res.checkboxFlag
+                if( res.mergeCount ) {
+                    this.mergeCount = res.mergeCount;
                 }
-                if (res.groupingSuggestion) {
-                    this.groupingSuggestion = res.groupingSuggestion
+                if( res.worksToMerge ) {
+                    this.worksToMerge = res.worksToMerge;
                 }
             }
         );

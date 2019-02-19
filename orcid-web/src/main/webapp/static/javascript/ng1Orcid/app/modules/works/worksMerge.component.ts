@@ -57,9 +57,9 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
 
     mergeConfirm(): void {
         if(this.worksToMerge.length > 20){
-            this.worksService.notifyOther ({checkboxFlag: this.checkboxFlag}) 
-            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});   
-            this.modalService.notifyOther({groupingSuggestion:this.groupingSuggestion});   
+            this.worksService.notifyOther({worksToMerge:this.worksToMerge});       
+            this.worksService.notifyOther({mergeCount:this.mergeCount});
+            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});  
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeWarning'});   
         }   else {
             this.merge();
