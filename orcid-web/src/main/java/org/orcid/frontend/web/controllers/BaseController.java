@@ -1,9 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -25,7 +22,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -87,8 +83,6 @@ import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -116,10 +110,6 @@ public class BaseController {
     private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
     private boolean reducedFunctionalityMode;
-
-    private String maintenanceMessage;
-
-    private URL maintenanceHeaderUrl;
 
     private String googleAnalyticsTrackingId;
 
@@ -223,21 +213,6 @@ public class BaseController {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
     }
 
-    @ModelAttribute("maintenanceMessage")
-    public String getMaintenanceMessage() {
-        if (maintenanceHeaderUrl != null) {
-            try {
-                String maintenanceHeader = IOUtils.toString(maintenanceHeaderUrl);
-                if (StringUtils.isNotBlank(maintenanceHeader)) {
-                    return maintenanceHeader;
-                }
-            } catch (IOException e) {
-                LOGGER.debug("Error reading maintenance header", e);
-            }
-        }
-        return maintenanceMessage;
-    }
-
     @ModelAttribute("sendEmailFrequencies")
     public Map<String, String> retrieveEmailFrequenciesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
@@ -245,24 +220,6 @@ public class BaseController {
             map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
         }
         return map;
-    }
-
-    /**
-     * Use maintenanceHeaderUrl instead
-     */
-    @Deprecated
-    @Value("${org.orcid.frontend.web.maintenanceMessage:}")
-    public void setMaintenanceMessage(String maintenanceMessage) {
-        this.maintenanceMessage = maintenanceMessage;
-    }
-
-    public URL getMaintenanceHeaderUrl() {
-        return maintenanceHeaderUrl;
-    }
-
-    @Value("${org.orcid.frontend.web.maintenanceHeaderUrl:}")
-    public void setMaintenanceHeaderUrl(URL maintenanceHeaderUrl) {
-        this.maintenanceHeaderUrl = maintenanceHeaderUrl;
     }
 
     @Value("${org.orcid.frontend.web.domainsAllowingRobotsAsWhiteSpaceSeparatedList:orcid.org}")
@@ -1115,5 +1072,22 @@ public class BaseController {
     public Map<String, String> retrieveIsoCountries() {
         Locale locale = localeManager.getLocale();
         return localeManager.getCountries(locale);
+    }
+    
+    //TODO: remove @ModelAttribute and move to HomeController
+    private String staticContentPath;
+    
+    @ModelAttribute("staticCdn")
+    public String getStaticContentPath(HttpServletRequest request) {
+        if (StringUtils.isBlank(this.staticContentPath)) {
+            String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
+            generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
+            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
+            if (!request.isSecure()) {
+                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
+            }
+            this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
+        }
+        return this.staticContentPath;
     }
 }

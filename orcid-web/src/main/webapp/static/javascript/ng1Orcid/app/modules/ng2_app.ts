@@ -239,7 +239,10 @@ import { OauthHeaderNg2Module }
     from './oauthHeader/oauthHeader.ts';    
 
 import { FooterNg2Module } 
-    from './footer/footer.ts';    
+    from './footer/footer.ts';   
+    
+import { MaintenanceMessageNg2Module } 
+    from './maintenanceMessage/maintenanceMessage.ts';    
     
 ///////////////////
 import {Injectable} 
@@ -375,7 +378,8 @@ export class RootCmp {
         HtmlHeadNg2Module,
         ScriptsNg2Module,
         OauthHeaderNg2Module,
-        FooterNg2Module
+        FooterNg2Module,
+        MaintenanceMessageNg2Module
     ],
     providers: [
         { 

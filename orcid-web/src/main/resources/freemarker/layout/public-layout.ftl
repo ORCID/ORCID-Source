@@ -89,11 +89,17 @@
                 </div><!-- .header -->
                 <div id="main" role="main" class="main">
         </#if>
-                <#if !(springMacroRequestContext.requestUri?contains("/print"))>
-                    <#include '../common/maintenance_header.ftl'/>
-                </#if> 
-                    <#nested>
-                    <!--Content from other templates inside public macro tags appears here-->
+                <script type="text/ng-template" id="maintenance-message-ng2-template">
+                    <div *ngIf="visible" class="row">
+                        <div class="maintenance-header">              
+                           <p>{{maintenanceMessage}}</p>
+                        </div>
+                    </div>    
+                </script>
+                <maintenance-ng2></maintenance-ng2>
+                    
+                <#nested>
+                <!--Content from other templates inside public macro tags appears here-->
                 </div>
             </div><!-- .container -->
         <!--FOOTER-->

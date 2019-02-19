@@ -1,5 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
@@ -27,10 +30,11 @@ import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.UTF8Control;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,15 +46,24 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 @Controller
 public class HomeController extends BaseController {
     
-    private static final Locale DEFAULT_LOCALE = Locale.US;
+    private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
     
-    private String staticContentPath;
+    private static final Locale DEFAULT_LOCALE = Locale.US;
     
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
     private String aboutUri;
     
     @Value("${org.orcid.recaptcha.web_site_key:}")
     private String recaptchaWebKey;
+    
+    @Value("${org.orcid.frontend.web.googleAnalyticsTrackingId:}")
+    private String googleAnalyticsTrackingId;
+    
+    @Value("${org.orcid.frontend.web.maintenanceMessage:}")
+    private String maintenanceMessage;
+    
+    @Value("${org.orcid.frontend.web.maintenanceHeaderUrl:}")
+    private URL maintenanceHeaderUrl;
     
     @Resource
     private LocaleManager localeManager;
@@ -222,6 +235,8 @@ public class HomeController extends BaseController {
         configDetails.setMessage("STATIC_PATH", getStaticContentPath(request));
         configDetails.setMessage("SHIBBOLETH_ENABLED", String.valueOf(isShibbolethEnabled()));
         configDetails.setMessage("ABOUT_URI", aboutUri);
+        configDetails.setMessage("GA_TRACKING_ID", googleAnalyticsTrackingId);
+        configDetails.setMessage("MAINTENANCE_MESSAGE", getMaintenanceMessage());
         return configDetails;        
     }
     
@@ -250,18 +265,18 @@ public class HomeController extends BaseController {
         return lPojo;
     }
     
-    @ModelAttribute("staticCdn")
-    public String getStaticContentPath(HttpServletRequest request) {
-        if (StringUtils.isBlank(this.staticContentPath)) {
-            String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
-            generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
-            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
-            if (!request.isSecure()) {
-                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
+    public String getMaintenanceMessage() {
+        if (maintenanceHeaderUrl != null) {
+            try {
+                String maintenanceHeader = IOUtils.toString(maintenanceHeaderUrl);
+                if (StringUtils.isNotBlank(maintenanceHeader)) {
+                    return maintenanceHeader;
+                }
+            } catch (IOException e) {
+                LOGGER.debug("Error reading maintenance header", e);
             }
-            this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
-        return this.staticContentPath;
+        return maintenanceMessage;
     }
     
     class ConfigDetails {

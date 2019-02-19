@@ -223,6 +223,9 @@ import { OauthHeaderModule }
 import { FooterModule } 
     from './footer/footer.ts';    
 
+import { MaintenanceMessageModule } 
+    from './maintenanceMessage/maintenanceMessage.ts';
+    
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -299,6 +302,7 @@ export const orcidApp = angular.module(
         HtmlHeadModule.name,
         ScriptsModule.name,
         OauthHeaderModule.name,
-        FooterModule.name
+        FooterModule.name,
+        MaintenanceMessageModule.name
     ]
 );
