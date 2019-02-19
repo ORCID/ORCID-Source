@@ -416,15 +416,20 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     mergeSuggestionConfirm(): void {
-        this.groupingSuggestionWorksToMerge = new Array();
-        for (var i in this.groupingSuggestion.suggestions[0].putCodes) {
-            var putCode = this.groupingSuggestion.suggestions[0].putCodes[i];
-            this.groupingSuggestionWorksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
-        }
+        this.groupingSuggestionWorksToMerge = []
+        this.groupingSuggestion.suggestions.forEach(suggestionGroup => {
+            const subList = []
+            suggestionGroup.putCodes.forEach(putCode => {
+                subList.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)))
+            });
+            this.groupingSuggestionWorksToMerge.push (forkJoin(subList))
+        });
+
         forkJoin(this.groupingSuggestionWorksToMerge).subscribe(
             dataGroup => {
-                this.worksService.notifyOther({worksToMerge:dataGroup});
-                this.worksService.notifyOther({groupingSuggestion:this.groupingSuggestion});    
+                this.worksService.notifyOther({worksToMerge:false});
+                this.worksService.notifyOther({orcid:this.groupingSuggestion.suggestions[0].orcid});
+                this.worksService.notifyOther({groupingSuggestion:dataGroup});    
                 this.worksService.notifyOther({mergeCount:this.groupingSuggestion.suggestions[0].putCodes.length});
                 this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
             },
@@ -1260,12 +1265,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.allSelected = false;
                         this.bulkEditMap = {};
                         this.bulkEditSelect();
-                        this.groupingSuggestion.suggestions = this.groupingSuggestion.suggestions.slice(1)
-                        if (this.groupingSuggestion.suggestions.length && res.groupingSuggestion) {
-                            this.mergeSuggestionConfirm()
-                        }
-                        else if (res.groupingSuggestion && this.groupingSuggestion.moreAvailable ) {
-                            this.loadGroupingSuggestions(true)
+                        if (true) {
+                            setTimeout(()=>{this.loadGroupingSuggestions(true)}, 500)
                         }
                         else {
                             this.loadMore();

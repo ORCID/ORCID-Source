@@ -7,7 +7,7 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription, of } 
+import { Observable, Subject, Subscription, of, forkJoin } 
     from 'rxjs';
 
 import { takeUntil, switchMap } 
@@ -33,9 +33,10 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     worksToMerge: Array<any>;
     externalIdsPresent: boolean;
     groupingSuggestion: any;
-    checkboxFlag = {}
+    checkboxFlag = []
     selectAll = true
     readyToMerge = true
+    orcid
 
     constructor(
         private worksService: WorksService,
@@ -67,48 +68,79 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
 
     fieldsChange(event) {
         let allSelected = true 
-        for (let putcode of Object.keys(this.checkboxFlag)) {
-            if (!this.checkboxFlag[putcode]) {
+        this.checkboxFlag.forEach(element => {
+            if (!element.state) {
                 allSelected = false
             }
-        }
+        }); 
         this.selectAll = allSelected
     }
 
     fieldChangeSelectAll (event) {
-        for (let putcode of Object.keys(this.checkboxFlag)) {
-            this.checkboxFlag[putcode] = this.selectAll
-        }
+        this.checkboxFlag.forEach(element => {
+            element.state = this.selectAll
+        }); 
     }
 
-    atLeastTwoWorksSelectForMerge() {
+    atLeastOneWorksSelectForMerge() {
         let  count = 0
-        for (let putcode of Object.keys(this.checkboxFlag)) {
-            if (this.checkboxFlag[putcode]) {
+        this.checkboxFlag.forEach(element => {
+            if (element.state) {
                 count ++
             }
-        }
-        return count > 1 
+        }); 
+        return count > 0 
     }
 
-    merge(): void {
+    workListToPutCodeString(element) {
         var putCodesAsString = '';      
-        for (let putcode of Object.keys(this.checkboxFlag)) {
-            if (this.checkboxFlag[putcode] || !this.groupingSuggestion) {
-                if (putCodesAsString != '') {
-                    putCodesAsString += ',';
-                }
-                putCodesAsString += putcode;
+        element.forEach(element => {
+            if ( putCodesAsString != ''){
+                putCodesAsString += ',';
             }
+            putCodesAsString += element.putCode.value;
+        });
+        return putCodesAsString
+    }
+
+    workListToPutCodeList(element) {
+        var putCodesAsString = []      
+        element.forEach(element => {
+            putCodesAsString.push(element.putCode.value);
+        });
+        return putCodesAsString
+    }
+
+
+
+    merge(): void {
+        const mergeCall = []
+
+        if (this.worksToMerge) {
+            const list = this.workListToPutCodeString(this.worksToMerge)
+            mergeCall.push (this.worksService.mergeWorks(list))
         }
-        this.worksService.mergeWorks(putCodesAsString)
+        else if (this.groupingSuggestion) {
+
+            this.checkboxFlag.forEach(element => { 
+                if (element.state) {
+                    const list = this.workListToPutCodeString(element.groupingSuggestion)
+                    mergeCall.push (this.worksService.mergeWorks(list))       
+                }
+                else {
+                    const list = this.workListToPutCodeString(element.groupingSuggestion)
+                    mergeCall.push (this.worksService.markSuggestionRejected({putCodes: this.workListToPutCodeList(element.groupingSuggestion), orcid: this.orcid, putCodesAsString: list.toString()}))    
+                }
+            }); 
+
+        }
+        forkJoin (mergeCall)
         .pipe(    
-            takeUntil(this.ngUnsubscribe),
-            switchMap (() => this.rejectSuggestion()) 
+            takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             () => {
-                this.worksService.notifyOther({action:'merge', successful:true,groupingSuggestion:this.groupingSuggestion});
+                this.worksService.notifyOther({action:'merge', successful:true, groupingSuggestion:this.groupingSuggestion});
                 this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
             },
             error => {
@@ -117,10 +149,6 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
-
-    rejectSuggestion() {
-            return this.worksService.markSuggestionRejected(this.groupingSuggestion.suggestions[0])
-    }
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
@@ -132,19 +160,25 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 if( res.mergeCount ) {
                     this.mergeCount = res.mergeCount;
                 }
-                if( res.worksToMerge ) {
+                if( res.worksToMerge != null ) {
                     this.worksToMerge = res.worksToMerge;
-                    this.checkboxFlag = {}
-                    this.worksToMerge.forEach(work => {
-                        this.checkboxFlag[work.putCode.value] = true
-                    })
-                    this.fieldsChange(null)
                 }
                 if( res.externalIdsPresent != undefined ) {
                     this.externalIdsPresent = res.externalIdsPresent;
                 }
                 if( res.groupingSuggestion  != null) {
                     this.groupingSuggestion = res.groupingSuggestion
+                    this.checkboxFlag = []
+                    if (res.groupingSuggestion) {
+                        
+                        this.groupingSuggestion.forEach((groupingSuggestion, i)=> {
+                            this.checkboxFlag.push ( {id: [i], groupingSuggestion: groupingSuggestion, state: true})
+                        })
+                        this.fieldsChange(null)
+                    } 
+                }
+                if( res.orcid != undefined ) {
+                    this.orcid = res.orcid;
                 }
             }
         )
