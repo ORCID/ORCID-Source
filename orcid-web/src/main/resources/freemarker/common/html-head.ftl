@@ -39,7 +39,6 @@
         orcidVar.realOrcidId = '${realUserOrcid!}';
         orcidVar.resetParams = '${(resetParams)!}';
         orcidVar.emailToReactivate = '${(email)!}';        
-        orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};       
         orcidVar.features = JSON.parse("${featuresJson}");
         orcidVar.providerId = '${(providerId)!}';

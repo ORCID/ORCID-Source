@@ -20,9 +20,11 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.StatusManager;
+import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
@@ -35,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,6 +82,9 @@ public class HomeController extends BaseController {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private StatisticsCacheManager statisticsCacheManager;
     
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
@@ -237,6 +243,8 @@ public class HomeController extends BaseController {
         configDetails.setMessage("ABOUT_URI", aboutUri);
         configDetails.setMessage("GA_TRACKING_ID", googleAnalyticsTrackingId);
         configDetails.setMessage("MAINTENANCE_MESSAGE", getMaintenanceMessage());
+        configDetails.setMessage("LIVE_IDS", statisticsCacheManager.retrieveLiveIds(localeManager.getLocale()));   
+        configDetails.setMessage("SEARCH_BASE", getSearchBaseUrl());
         return configDetails;        
     }
     
@@ -277,6 +285,15 @@ public class HomeController extends BaseController {
             }
         }
         return maintenanceMessage;
+    }
+    
+    protected String getSearchBaseUrl() {
+        String pubBaseUri = orcidUrlManager.getPubBaseUrl();
+        if(Features.HTTPS_IDS.isActive()) {
+            return pubBaseUri + "/v2.1/search/";
+        } else {
+            return pubBaseUri + "/v1.2/search/orcid-bio/";
+        }          
     }
     
     class ConfigDetails {

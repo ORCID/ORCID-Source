@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="delegates-ng2-template">
-    <div class="clearfix" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}"> 
+    <div class="clearfix" id="DelegatesCtrl"> 
         <div *ngIf="delegation?.length > 0" >
             <table class="table table-bordered settings-table normal-width" *ngIf="delegation">
                 <thead>

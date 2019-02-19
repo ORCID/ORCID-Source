@@ -51,6 +51,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     showSurvey = this.featuresService.isFeatureEnabled('SURVEY');
     assetsPath: String;
     aboutUri: String;
+    liveIds: String;
     
     constructor(
         private notificationsSrvc: NotificationsService,
@@ -100,7 +101,8 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.assetsPath = data.messages['STATIC_PATH'];
-                this.aboutUri = data.messages['ABOUT_URI'];                
+                this.aboutUri = data.messages['ABOUT_URI'];
+                this.liveIds = data.messages['LIVE_IDS'];
             },
             error => {
                 console.log('header.component.ts: unable to fetch configInfo', error);                

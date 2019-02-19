@@ -10,8 +10,7 @@
         var orcidVar = {};        
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
-        orcidVar.realOrcidId = '${realUserOrcid!}';        
-        orcidVar.searchBaseUrl = "${searchBaseUrl}";
+        orcidVar.realOrcidId = '${realUserOrcid!}';
     </script>    
 </head>
 

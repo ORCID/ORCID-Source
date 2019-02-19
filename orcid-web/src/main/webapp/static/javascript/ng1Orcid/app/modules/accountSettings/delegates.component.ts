@@ -1,7 +1,6 @@
 declare var $: any;
 declare var isEmail: any;
 declare var orcidVar: any;
-declare var orcidSearchUrlJs: any;
 
 //Import all the angular components
 
@@ -24,6 +23,9 @@ import { ModalService }
 
 import { SearchService } 
     from '../../shared/search.service.ts';
+    
+import { CommonService } 
+    from '../../shared/common.service.ts';
 
 @Component({
     selector: 'delegates-ng2',
@@ -53,12 +55,14 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
     showLoader: any;
     sort: any;
     start: any;
+    searchBaseUri: string;
 
     constructor(
         private cdr: ChangeDetectorRef,
         private accountService: AccountService,
         private modalService: ModalService,
-        private searchService: SearchService
+        private searchService: SearchService,
+        private commonSrvc: CommonService
     ) {
         this.allResults = new Array();
         this.areMoreResults = false;
@@ -84,6 +88,15 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
             descending: false
         };
         this.start = null;
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.searchBaseUri = data.messages['SEARCH_BASE'];
+            },
+            error => {
+                console.log('delegates.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
     }
 
     areResults(): boolean{
@@ -175,7 +188,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     getResults(): void {
-        this.searchService.getResults( orcidSearchUrlJs.buildUrl(this.input) )
+        this.searchService.getResults(this.input)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )

@@ -1,4 +1,5 @@
 declare var orcidVar: any;
+declare var orcidSearchUrlJs: any;
 
 import { Injectable } 
     from '@angular/core';
@@ -9,14 +10,14 @@ import { CookieXSRFStrategy, HttpModule, XSRFStrategy, JsonpModule, Headers, Htt
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
-import { Observable, Subject } 
+import { Observable, Subject, ReplaySubject } 
     from 'rxjs';
 
-import { catchError, map, tap } 
+import { catchError, map, tap, switchMap } 
     from 'rxjs/operators';
 
 import { CommonService } 
-    from './common.service.ts';
+    from './common.service.ts';       
     
 @Injectable()
 export class SearchService {
@@ -26,7 +27,8 @@ export class SearchService {
     notifyObservable$ = this.notify.asObservable();
     
     private pubBaseUri: string;
-
+    private searchBaseUri = new ReplaySubject<string>(1);
+    
     constructor(
         private http: HttpClient,
         private commonSrvc: CommonService,
@@ -41,7 +43,8 @@ export class SearchService {
         this.commonSrvc.configInfo$
         .subscribe(
             data => {
-                this.pubBaseUri = data.messages['PUB_BASE_URI'];    
+                this.pubBaseUri = data.messages['PUB_BASE_URI'];  
+                this.searchBaseUri.next(data.messages['SEARCH_BASE']);
             },
             error => {
                 console.log('search.component.ts: unable to fetch configInfo', error);                
@@ -80,9 +83,16 @@ export class SearchService {
         );
     }
 
-
     getResults(url): Observable<any> {
-        return this.http.get(url, {headers: this.publicApiHeaders})
+        return this.searchBaseUri.pipe(
+                switchMap((baseUrlString) => {
+                    console.log('SEARCH BASE URI: ' + baseUrlString);
+                    orcidSearchUrlJs.setBaseUrl(baseUrlString);
+                    var theUrl = orcidSearchUrlJs.buildUrl(url);
+                    console.log('The URL: ' + theUrl)
+                    return this.http.get(theUrl, {headers: this.publicApiHeaders})                   
+                })
+              )                
     }
 
     notifyOther(): void {
@@ -90,4 +100,11 @@ export class SearchService {
         console.log('notify');
     }
 
+    isValid(input): boolean {
+        return orcidSearchUrlJs.isValidInput(input)
+    }
+    
+    isValidOrcidId(input): boolean {
+        return orcidSearchUrlJs.isValidOrcidId(input)
+    }
 }

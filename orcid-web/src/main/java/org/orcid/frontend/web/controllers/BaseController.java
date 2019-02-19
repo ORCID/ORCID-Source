@@ -32,7 +32,6 @@ import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -131,9 +130,6 @@ public class BaseController {
     @Resource(name = "emailManagerV3")
     protected EmailManager emailManager;
     
-    @Resource
-    private StatisticsCacheManager statisticsCacheManager;
-
     @Resource
     protected OrcidUrlManager orcidUrlManager;
 
@@ -440,11 +436,6 @@ public class BaseController {
         return localeManager.getLocale();
     }
 
-    @ModelAttribute("liveIds")
-    public String getLiveIds() {
-        return statisticsCacheManager.retrieveLiveIds(localeManager.getLocale());
-    }
-
     @ModelAttribute("baseUri")
     public String getBaseUri() {
         return orcidUrlManager.getBaseUrl();
@@ -604,16 +595,6 @@ public class BaseController {
         if (givenName.getValue() == null || givenName.getValue().trim().isEmpty()) {
             setError(givenName, "NotBlank.registrationForm.givenNames");
         }
-    }
-
-    @ModelAttribute("searchBaseUrl")
-    protected String createSearchBaseUrl() {
-        String pubBaseUri = orcidUrlManager.getPubBaseUrl();
-        if(Features.HTTPS_IDS.isActive()) {
-            return pubBaseUri + "/v2.1/search/";
-        } else {
-            return pubBaseUri + "/v1.2/search/orcid-bio/";
-        }          
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {

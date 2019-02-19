@@ -4274,6 +4274,7 @@ this.w3cLatexCharMap = {
     }
 
     exports.setBaseUrl = function(url) {
+        console.log('setting base url: ' + url);
         baseUrl = url;
     };
 
@@ -4323,8 +4324,6 @@ this.w3cLatexCharMap = {
 })(typeof exports === 'undefined' ? this.orcidSearchUrlJs = {} : exports);
 
 /* END: orcidSearchUrlJs */
-orcidSearchUrlJs.setBaseUrl(orcidVar.searchBaseUrl);
-
 
 /* Mobile detection, useful for colorbox lightboxes resizing */
 function isMobile() {
