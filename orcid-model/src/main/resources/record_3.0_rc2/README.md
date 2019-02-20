@@ -85,6 +85,10 @@ v3.0_rc2 is the currently under development and it is not recommended for use.
 
 ## Changes from Version 3.0 RC1:
 
+### Token Delegation
+- Member clients can now generating tokens that allow another client to update an ORCID record on behalf of the original client. This process is described in the [Token Delegation tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/token_delegation.md).
+- Items added using token delegation have additional source fields *common:assertion-origin-client-id* and *common:assertion-origin-name*.
+
 ### Identifiers
 - Addition of new identifier relationship *version-of*, which is intended to map works to identifiers of different versions and instances of the same work. Works with the same *version-of* identifier are grouped together.
 

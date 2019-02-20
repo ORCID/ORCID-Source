@@ -29,8 +29,6 @@ import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
@@ -168,7 +166,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             }
 
             // Sort the works
-            workGroup.getWorkSummary().sort(WorkComparators.ALL);
+            workGroup.getWorkSummary().sort(WorkComparators.WORKS_WITHIN_GROUP);
             result.getWorkGroup().add(workGroup);
         }
         // Sort the groups!
