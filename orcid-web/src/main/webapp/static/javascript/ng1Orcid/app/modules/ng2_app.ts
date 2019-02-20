@@ -183,6 +183,9 @@ import { Social2FANg2Module }
 
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
+    
+import { StatisticsNg2Module }
+    from './statistics/statistics.ts';
 
 import { UnsubscribeNg2Module }
     from './unsubscribe/unsubscribe.ts';  
@@ -355,6 +358,7 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
         TwoFaSetupNg2Module,
+        StatisticsNg2Module,
         UnsubscribeNg2Module,
         WidgetNg2Module, //Approved
         WorksBulkDeleteNg2Module,

@@ -20,34 +20,30 @@ import { GenericService }
 
 
 @Component({
-    selector: 'statics-ng2',
-    template:  scriptTmpl("statics-ng2-template")
+    selector: 'statistics-ng2',
+    template:  scriptTmpl("statistics-ng2-template")
 })
-export class StaticsComponent implements AfterViewInit, OnDestroy, OnInit {
+export class StatisticsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    liveIds: any;
-    url_path: string;
+    stats: any;
 
     constructor(
-        private staticsService: GenericService
+        private statisticsService: GenericService
     ) {
-        this.liveIds = 0;
-        this.url_path = '/statistics/liveids.json';
     }
 
-    getLiveIds(): void {
-
-        this.staticsService.getData( this.url_path )
+    getStats(): void {
+        this.statisticsService.getData( '/statistics/statistics.json' )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                this.liveIds = data;
+                this.stats = data;
             },
             error => {
-                //console.log('getWebsitesFormError', error);
+                //console.log('error fetching stats', error);
             } 
         );
     };
@@ -63,6 +59,6 @@ export class StaticsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getLiveIds();
+        this.getStats();
     }; 
 }

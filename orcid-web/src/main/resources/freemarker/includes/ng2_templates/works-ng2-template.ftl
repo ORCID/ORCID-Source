@@ -365,7 +365,7 @@
                                 <span *ngIf="work.publicationDate.year">{{work.publicationDate.year}}</span><span *ngIf="work.publicationDate?.month">-{{work.publicationDate.month}}</span><span *ngIf="work.publicationDate?.day">-</span><span *ngIf="work.publicationDate?.day">{{work.publicationDate.day}}</span><span *ngIf="work.publicationDate.year"> | </span>
                       
                                 <span class="capitalize" *ngIf="work.workType?.value?.length > 0">{{work.workType.value}}</span>
-                                <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
+                                <span class="bibtex-content-missing small-missing-info" *ngIf="work.workType?.value?.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 
                             </div>
                             <div class="row" *ngIf="work?.workExternalIdentifiers[0]?.externalIdentifierId?.value">
@@ -419,13 +419,11 @@
                             <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
                                 <@orcid.checkFeatureStatus featureName='GROUPING_SUGGESTIONS'>
                                     <div class="pull-right" *ngIf="groupingSuggestionPresent">
-                                        <div class="orcid-error font-size-small">
-                                            <span class="edit-option-toolbar glyphicon glyphicon-exclamation-sign"></span>
-                                            {{groupingSuggestion.putCodes.length}} <@orcid.msg 'groups.merge.suggestion.alert'/>
+                                        
                                             <button class="btn btn-primary leftBuffer" (click)="mergeSuggestionConfirm()">
                                                 <@orcid.msg 'groups.merge.suggestion.manage_duplicates'/>
                                             </button>
-                                        </div>
+                                
                                     </div>
                                 </@orcid.checkFeatureStatus>
                             <ul class="sources-actions">

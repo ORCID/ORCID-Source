@@ -101,7 +101,7 @@ public class NotificationManagerTest extends DBUnitTest {
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
             "/data/BiographyEntityData.xml");
 
-        @Mock
+    @Mock
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
     @Mock
@@ -115,31 +115,31 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Mock
     private MailGunManager mockMailGunManager;
-    
+
     @Mock
     private OrcidOauth2TokenDetailService mockOrcidOauth2TokenDetailService;
 
     @Mock
     private ProfileEntityCacheManager mockProfileEntityCacheManager;
-    
+
     @Mock
     private EmailManager mockEmailManager;
-    
+
     @Mock
     private ProfileDao mockProfileDao;
-    
+
     @Mock
     private ProfileDao mockProfileDaoReadOnly;
-    
+
     @Mock
     private JpaJaxbNotificationAdapter mockNotificationAdapter;
-    
+
     @Mock
     public GenericDao<EmailEventEntity, Long> mockEmailEventDao;
-    
+
     @Mock
     public EmailFrequencyManager mockEmailFrequencyManager;
-    
+
     @Resource(name = "profileDao")
     private ProfileDao profileDao;
 
@@ -160,25 +160,25 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Resource
     private ClientDetailsDao clientDetailsDao;
-    
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
-    
+
     @Resource
     public GenericDao<EmailEventEntity, Long> emailEventDao;
 
     @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
-    
+
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -192,7 +192,7 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Before
     public void initMocks() throws Exception {
-        MockitoAnnotations.initMocks(this);        
+        MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(notificationManager, "encryptionManager", encryptionManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEventDao", profileEventDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", sourceManager);
@@ -201,37 +201,37 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailEventDao", mockEmailEventDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", mockProfileDao);        
-        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", mockProfileDao);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", mockNotificationAdapter);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "mailGunManager", mockMailGunManager);
-        when(mockOrcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true); 
-        
+        when(mockOrcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true);
+
         Map<String, String> map = new HashMap<>();
         map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, "0.0");
         map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, "0.0");
         map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, "0.0");
         map.put(EmailFrequencyManager.QUARTERLY_TIPS, "true");
-        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);        
+        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
     }
-    
+
     @After
     public void resetMocks() {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", emailManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", profileDao);        
-        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", profileDao);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", notificationAdapter);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDaoReadOnly", profileDaoReadOnly);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailEventDao", emailEventDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", emailManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", profileDao);        
-        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", profileDao);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", notificationAdapter);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "mailGunManager", mailGunManager);
     }
 
@@ -244,11 +244,11 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity p = new ProfileEntity();
         p.setLocale("EN");
         when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(p);
-        
+
         Email email = new Email();
         email.setEmail("josiah_carberry@brown.edu");
-        when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);       
-        
+        when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
+
         notificationManager.sendWelcomeEmail("4444-4444-4444-4446", "josiah_carberry@brown.edu");
     }
 
@@ -257,11 +257,11 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity p = new ProfileEntity();
         p.setLocale("EN");
         when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(p);
-        
+
         Email email = new Email();
         email.setEmail("josiah_carberry@brown.edu");
         when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
-        
+
         notificationManager.sendVerificationEmail("4444-4444-4444-4446", "josiah_carberry@brown.edu");
     }
 
@@ -279,12 +279,12 @@ public class NotificationManagerTest extends DBUnitTest {
             notificationManager.sendPasswordResetEmail(primaryEmail, userOrcid);
         }
     }
-    
+
     @Test
     public void testResetNotFoundEmail() throws Exception {
         resetMocks();
         String submittedEmail = "email_not_in_orcid@test.orcid.org";
-        for (AvailableLocales curLocale : AvailableLocales.values()) {            
+        for (AvailableLocales curLocale : AvailableLocales.values()) {
             notificationManager.sendPasswordResetNotFoundEmail(submittedEmail, LocaleUtils.toLocale(curLocale.value()));
         }
     }
@@ -292,7 +292,7 @@ public class NotificationManagerTest extends DBUnitTest {
     @Test
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
         resetMocks();
-        
+
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
         when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
         when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
@@ -305,7 +305,7 @@ public class NotificationManagerTest extends DBUnitTest {
             Notification n = notificationManager.sendAmendEmail(testOrcid, AmendedSection.UNKNOWN, Collections.emptyList());
             assertNotNull(n);
             assertTrue(n.getPutCode() > minNotificationId);
-            
+
             // New notification entity should have been created
             NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
             assertNotNull(latestNotification);
@@ -318,7 +318,7 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
         final String orcid = "0000-0000-0000-0003";
         String delegateOrcid = "1234-5678-1234-5678";
-        
+
         ProfileEntity profile = new ProfileEntity();
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
@@ -331,40 +331,40 @@ public class NotificationManagerTest extends DBUnitTest {
         Set<EmailEntity> emails = new HashSet<EmailEntity>();
         emails.add(emailEntity);
         profile.setEmails(emails);
-        
+
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
         when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
         when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
         when(mockNotificationAdapter.toNotificationEntity(Mockito.any(Notification.class))).thenReturn(new NotificationCustomEntity());
-        
+
         Email email = new Email();
         email.setEmail("test@email.com");
-        
+
         Email delegateEmail = new Email();
         delegateEmail.setEmail("delegate@email.com");
-        
-        when(mockProfileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>(){
+
+        when(mockProfileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
             @Override
             public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
                 profile.setId(invocation.getArgument(0));
                 return profile;
             }
-            
+
         });
-        
-        when(mockProfileDao.find(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>(){
+
+        when(mockProfileDao.find(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
             @Override
             public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
                 profile.setId(invocation.getArgument(0));
                 return profile;
             }
-            
+
         });
-        
-        when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);        
+
+        when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
         when(mockEmailManager.findPrimaryEmail(delegateOrcid)).thenReturn(delegateEmail);
-        
-        for(org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
+
+        for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
             profile.setLocale(locale.name());
             notificationManager.sendNotificationToAddedDelegate("0000-0000-0000-0003", delegateOrcid);
         }
@@ -375,23 +375,23 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManager);
         final String orcid = "0000-0000-0000-0003";
-        
+
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
         recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
-        
+
         Email email = new Email();
         email.setEmail("test@email.com");
-        
+
         when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
-        
+
         for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
             profile.setLocale(locale.name());
             notificationManager.sendOrcidDeactivateEmail(orcid);
-        }        
+        }
     }
 
     @Test
@@ -404,7 +404,7 @@ public class NotificationManagerTest extends DBUnitTest {
             notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
         }
     }
-    
+
     @Test
     public void testApiCreatedRecordEmailNullEmailSupplied() throws JAXBException, IOException, URISyntaxException {
         resetMocks();
@@ -443,7 +443,7 @@ public class NotificationManagerTest extends DBUnitTest {
         name.setGivenNames("Given Name");
         ProfileEntity profile = new ProfileEntity(userOrcid);
         profile.setRecordNameEntity(name);
-        for(AvailableLocales locale : AvailableLocales.values()) {
+        for (AvailableLocales locale : AvailableLocales.values()) {
             profile.setLocale(locale.name());
             when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
             notificationManager.sendClaimReminderEmail(userOrcid, 2, "test@test.com");
@@ -455,20 +455,20 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManager);
         final String orcid = "0000-0000-0000-0003";
-        
+
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
         recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         profile.setRecordNameEntity(recordName);
-        
+
         Email email = new Email();
         email.setEmail("test@email.com");
-        
+
         when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
         when(mockEmailManager.findPrimaryEmail(orcid)).thenReturn(email);
-        
-        for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {            
+
+        for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
             profile.setLocale(locale.name());
             notificationManager.sendEmailAddressChangedNotification(orcid, "new@email.com", "original@email.com");
         }
@@ -479,7 +479,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity p = new ProfileEntity();
         p.setLocale("EN");
         when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(p);
-        
+
         String userOrcid = "0000-0000-0000-0003";
         String email = "original@email.com";
         for (AvailableLocales locale : AvailableLocales.values()) {
@@ -495,8 +495,8 @@ public class NotificationManagerTest extends DBUnitTest {
         when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
         when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
 
-        notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");        
-    }    
+        notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");
+    }
 
     @Test
     public void deriveEmailFriendlyNameTest() {
@@ -518,7 +518,7 @@ public class NotificationManagerTest extends DBUnitTest {
     @Test
     public void sendAcknowledgeMessageToAccountWithNotificationsEnabledTest() throws Exception {
         when(mockNotificationAdapter.toNotificationEntity(Mockito.any(Notification.class))).thenReturn(new NotificationInstitutionalConnectionEntity());
-        
+
         String clientId = "APP-5555555555555555";
         String orcid = "0000-0000-0000-0003";
         // Mock the notification DAO
@@ -567,16 +567,16 @@ public class NotificationManagerTest extends DBUnitTest {
                 OrcidApiConstants.MAX_NOTIFICATIONS_AVAILABLE);
 
         assertEquals(notificationPermissions.size(), notifications.getNotifications().size());
-    }    
-    
+    }
+
     @Test
     public void filterActionedNotificationAlertsTest() {
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
         when(mockNotificationDao.findByOricdAndId(Matchers.anyString(), Matchers.anyLong())).thenReturn(null);
-        List<Notification> notifications = IntStream.range(0, 10).mapToObj(new IntFunction<Notification> () {
+        List<Notification> notifications = IntStream.range(0, 10).mapToObj(new IntFunction<Notification>() {
             @Override
             public Notification apply(int value) {
-                if(value % 3 == 0) {
+                if (value % 3 == 0) {
                     NotificationInstitutionalConnection n = new NotificationInstitutionalConnection();
                     n.setSource(new Source("0000-0000-0000-0000"));
                     n.setPutCode(Long.valueOf(value));
@@ -586,19 +586,19 @@ public class NotificationManagerTest extends DBUnitTest {
                     n.setPutCode(Long.valueOf(value));
                     return n;
                 }
-            }            
-        }).collect(Collectors.toList());                
-        
+            }
+        }).collect(Collectors.toList());
+
         assertEquals(10, notifications.size());
         notifications = notificationManager.filterActionedNotificationAlerts(notifications, "some-orcid");
         assertEquals(6, notifications.size());
-        for(Notification n : notifications) {
+        for (Notification n : notifications) {
             assertEquals(NotificationType.PERMISSION, n.getNotificationType());
             assertNotNull(n.getPutCode());
             assertThat(n.getPutCode(), not(anyOf(is(Long.valueOf(0)), is(Long.valueOf(3)), is(Long.valueOf(6)), is(Long.valueOf(9)))));
-        }                
+        }
     }
-    
+
     @Test
     public void processUnverifiedEmails7DaysTest() {
         List<Pair<String, Date>> emails = new ArrayList<Pair<String, Date>>();
@@ -612,28 +612,28 @@ public class NotificationManagerTest extends DBUnitTest {
         emails.add(tooOld2);
         when(mockProfileDaoReadOnly.findEmailsUnverfiedDays(Matchers.anyInt(), Matchers.anyInt(), Matchers.any())).thenReturn(emails)
                 .thenReturn(new ArrayList<Pair<String, Date>>());
-                        
+
         when(mockEmailManager.findOrcidIdByEmail("tooOld1@test.orcid.org")).thenReturn("0000-0000-0000-0001");
         when(mockEmailManager.findOrcidIdByEmail("tooOld2@test.orcid.org")).thenReturn("0000-0000-0000-0002");
         when(mockEmailManager.findOrcidIdByEmail("michael@bentine.com")).thenReturn("4444-4444-4444-4442");
         when(mockEmailManager.findOrcidIdByEmail("spike@milligan.com")).thenReturn("4444-4444-4444-4441");
-        
+
         ProfileEntity p = new ProfileEntity();
         p.setLocale("EN");
         when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(p);
-        
+
         Email email = new Email();
         email.setEmail("email@email.fom");
-        when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);       
-        
+        when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
+
         notificationManager.processUnverifiedEmails7Days();
-        
+
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("michael@bentine.com", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("spike@milligan.com", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("tooOld1@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("tooOld2@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
-    }     
-    
+    }
+
     @Test
     public void createPermissionNotificationTest() {
         resetMocks();
@@ -643,31 +643,41 @@ public class NotificationManagerTest extends DBUnitTest {
         Notification result = notificationManager.createPermissionNotification(orcid, notification);
         assertNotNull(result.getPutCode());
     }
-    
+
     @Test
     public void sendAcknowledgeMessageTest() throws Exception {
         String clientId = "APP-5555555555555555";
         String orcidNever = "0000-0000-0000-0002";
         String orcidDaily = "0000-0000-0000-0003";
-        
+
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
-        
+
         when(mockNotificationAdapter.toNotificationEntity(Mockito.any(Notification.class))).thenReturn(new NotificationInstitutionalConnectionEntity());
-        
+
         Map<String, String> map = new HashMap<>();
         map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
         when(mockEmailFrequencyManager.getEmailFrequency(orcidNever)).thenReturn(map);
-        
+
         // Should not generate the notification
         notificationManager.sendAcknowledgeMessage(orcidNever, clientId);
         verify(mockNotificationDao, never()).persist(Matchers.any());
-        
+
         // Should generate the notification
         notificationManager.sendAcknowledgeMessage(orcidDaily, clientId);
         verify(mockNotificationDao, times(1)).persist(Matchers.any());
-        
+
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
-    }  
-    
-    
+    }
+
+    @Test
+    public void testDeleteNotificationsForRecord() {
+        ReflectionTestUtils.setField(notificationManager, "notificationDao", mockNotificationDao);
+        Mockito.when(mockNotificationDao.deleteNotificationsForRecord(Mockito.eq("orcid"), Mockito.eq(NotificationManagerImpl.DELETE_BATCH_SIZE))).thenReturn(true)
+                .thenReturn(true).thenReturn(true).thenReturn(false);
+        
+        notificationManager.deleteNotificationsForRecord("orcid");
+        Mockito.verify(mockNotificationDao, Mockito.times(4)).deleteNotificationsForRecord(Mockito.eq("orcid"), Mockito.eq(NotificationManagerImpl.DELETE_BATCH_SIZE));
+        ReflectionTestUtils.setField(notificationManager, "notificationDao", notificationDao);
+    }
+
 }

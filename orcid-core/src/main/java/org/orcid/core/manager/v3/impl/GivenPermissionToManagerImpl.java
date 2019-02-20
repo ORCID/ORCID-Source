@@ -1,13 +1,15 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.persistence.dao.GivenPermissionToDao;
+import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.springframework.transaction.TransactionStatus;
@@ -65,6 +67,19 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
                 }
             });
         }
+    }
+    
+    /**
+     * Removes all trusted individuals from this record and this record from all others.
+     * @param orcid
+     */
+    @Override
+    public void removeAllForProfile(String orcid) {
+        List<GivenPermissionToEntity> permissionsGiven = givenPermissionToDao.findByGiver(orcid);
+        permissionsGiven.stream().forEach(e -> remove(e.getGiver(), e.getReceiver().getId()));
+        
+        List<GivenPermissionByEntity> permissionsReceived = givenPermissionToDao.findByReceiver(orcid);
+        permissionsReceived.stream().forEach(e -> remove(e.getGiver().getId(), e.getReceiver()));
     }
 
 }

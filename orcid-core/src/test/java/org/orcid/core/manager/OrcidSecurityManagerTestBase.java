@@ -5,9 +5,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.GregorianCalendar;
 import java.util.Random;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +24,7 @@ import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_v2.Country;
+import org.orcid.jaxb.model.common_v2.CreatedDate;
 import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Source;
@@ -238,6 +242,12 @@ public abstract class OrcidSecurityManagerTestBase {
     protected WorkSummary createWorkSummary(Visibility v, String sourceId, String extIdValue) {
         WorkSummary work = new WorkSummary();
         work.setVisibility(v);
+        waitAMillisecond(); // for testing purposes, let's avoid equal created dates
+        try {
+            work.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar())));
+        } catch (DatatypeConfigurationException e) {
+            throw new RuntimeException(e);
+        }
         ExternalID extId = new ExternalID();
         extId.setValue(extIdValue);
         ExternalIDs extIds = new ExternalIDs();
@@ -246,6 +256,14 @@ public abstract class OrcidSecurityManagerTestBase {
         addSharedExtId(extIds);
         setSource(work, sourceId);
         return work;
+    }
+
+    private void waitAMillisecond() {
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Thread shouldn't be interrupted", e);
+        }
     }
 
     protected Works createWorks(WorkSummary... elements) {

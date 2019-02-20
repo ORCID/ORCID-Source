@@ -7,7 +7,6 @@ import java.util.List;
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Locale;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 
@@ -24,8 +23,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);    
 
-    boolean deprecateProfile(String deprecated, String primary, String deprecatedMethod, String adminUser);
-    
     boolean isProfileDeprecated(String orcid);
 
     boolean enableDeveloperTools(String orcid);
@@ -53,8 +50,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     String retrivePublicDisplayName(String orcid);
     
     boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim);
-    
-    boolean deactivateRecord(String orcid);
     
     void updateLastModifed(String orcid);
 

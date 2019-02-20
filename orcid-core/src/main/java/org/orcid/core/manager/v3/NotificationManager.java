@@ -106,6 +106,9 @@ public interface NotificationManager {
     Integer archiveOffsetNotifications();
     
     Integer deleteOffsetNotifications();
+    
+    void deleteNotificationsForRecord(String orcid);
 
     NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);
+
 }
