@@ -1,8 +1,7 @@
 # API Errors and their meanings
 
-This guide is to help diagnose any trouble you may be having with API calls below you will find a list we have compiled of common error codes, their possible meanings, how to troubleshoot them and examples where useful.
+This guide is to help diagnose any trouble you may be having with API calls. Below you will find a list of common error codes, their possible meanings, how to troubleshoot them and examples where useful.
 
-Errors encountered when calling the API often have common problems and there for common solutions. The table below attempts to have specific solutions to problems. Commonly
 
 ## Tips for debugging your cURL
 
