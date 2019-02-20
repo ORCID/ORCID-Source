@@ -68,12 +68,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     editSources: any;
     editWork: any;
     emails: any;
-    exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
     fixedTitle: any;
     formData: any;
     geoArea: any;
     groupingSuggestionExtIdsPresent: boolean;
-    groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');
     groupingSuggestionPresent: boolean;
     groupingSuggestion: any;
     groupingSuggestionWorksToMerge: any;
@@ -100,9 +98,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
-    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean
-    bibTexIntervals: object
-
+    bibTexIntervals: object;
+    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean;
+    manualWorkGroupingEnabled: boolean;
+    exIdResolverFeatureEnabled: boolean;
+    groupingSuggestionFeatureEnabled: boolean;    
+    
     constructor( 
         private commonSrvc: CommonService,
         private cdr: ChangeDetectorRef,
@@ -113,8 +114,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private workspaceSrvc: WorkspaceService,
         private worksService: WorksService
     ) {
-
-        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
         this.addingWork = false;
         this.bibtexExportError = false;
         this.bibtexExportLoading = false;
@@ -162,6 +161,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.workImportWizardsOriginal = null;
         this.workType = ['All'];
         this.worksFromBibtex = null;
+        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
+        this.manualWorkGroupingEnabled = this.featuresService.isFeatureEnabled('MANUAL_WORK_GROUPING');
+        this.exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
+        this.groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');        
     }
 
     addExternalIdentifier(): void {

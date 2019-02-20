@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.jpa.criteria.expression.function.AggregationFunction.MAX;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -90,17 +91,7 @@ public class LoginController extends OauthControllerBase {
                 return handleOauthSignIn(request, response);
             }
         }
-        // in case have come via a link that requires them to be signed out        
-        ModelAndView mav = new ModelAndView("login");
-        boolean showLogin = true;
-        String queryString = request.getQueryString();
-        // Check show_login params to decide if the login form should be
-        // displayed by default
-        if (!PojoUtil.isEmpty(queryString) && queryString.toLowerCase().contains("show_login=false")) {
-            showLogin = false;
-        }   
-        mav.addObject("showLogin", String.valueOf(showLogin));
-        return mav;
+        return new ModelAndView("login");
     }
 
     // We should go back to regular spring sign out with CSRF protection
@@ -223,27 +214,20 @@ public class LoginController extends OauthControllerBase {
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
 
         ModelAndView mav = new ModelAndView("login");
-        boolean showLogin = false;
         // Check orcid, email and show_login params to decide if the login form should be
         // displayed by default
         // orcid and email take precedence over show_login param
-        if (PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && PojoUtil.isEmpty(requestInfoForm.getUserEmail()) && queryString.toLowerCase().contains("show_login=false")) {
-            showLogin = false;
-        } else if (PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
-            showLogin = true;
-        } else if (!PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && profileEntityManager.orcidExists(requestInfoForm.getUserOrcid())) {
+        if (!PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && profileEntityManager.orcidExists(requestInfoForm.getUserOrcid())) {
             mav.addObject("oauth_userId", requestInfoForm.getUserOrcid());
-            showLogin = true;
+            mav.addObject("user_exists", true);
         } else if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
             mav.addObject("oauth_userId", requestInfoForm.getUserEmail());
             if(emailManagerReadOnly.emailExists(requestInfoForm.getUserEmail())) {
-                showLogin = true;
+                mav.addObject("user_exists", true);
             }            
         }
         
-        mav.addObject("showLogin", String.valueOf(showLogin));
-        mav.addObject("hideSupportWidget", true);
-        mav.addObject("oauth2Screens", true);
+        mav.addObject("hideSupportWidget", true);        
         mav.addObject("oauthRequest", true);
         return mav;
     }

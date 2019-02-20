@@ -720,34 +720,26 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }
 
         //if oauth request load request info form
-        if(orcidVar.oauth2Screens || orcidVar.originalOauth2Process){
+        const urlParams = new URLSearchParams(window.location.search);
+        var isOauth = (urlParams.has('client_id') && urlParams.has('redirect_uri'));
+        var showLogin = (urlParams.has('show_login') && urlParams.get('show_login') === 'true');
+        if(isOauth){
             this.loadRequestInfoForm();
-        }
-        
-        if(orcidVar.oauth2Screens) {
-            if(orcidVar.oauthUserId && orcidVar.showLogin){
+            if(orcidVar.oauthUserId && showLogin){
                 this.showRegisterForm = false;
                 this.authorizationForm = {
                     userName:  {value: orcidVar.oauthUserId}
                 } 
             } else{
-                this.showRegisterForm = !orcidVar.showLogin;  
+                this.showRegisterForm = !showLogin;  
             }
         } else {
-            if(orcidVar.showLogin){
+            if(showLogin){
                 this.showRegisterForm = false;
             } else{
-                this.showRegisterForm = !orcidVar.showLogin;  
+                this.showRegisterForm = true;  
             }
-        } 
-
-        window.onkeydown = function(e) {
-            if (e.keyCode == 13) {     
-                if(orcidVar.originalOauth2Process) { 
-                    //this.authorize();
-                }
-            }
-        };
+        }        
 
         $('#enterRecoveryCode').click(function() {
             $('#recoveryCodeSignin').show(); 
@@ -770,7 +762,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.commonSrvc.getUserStatus().subscribe( 
             data => {
                 if(data.loggedIn == true) {
-                    if (this.togglzReLoginAlert && !orcidVar.oauth2Screens && !orcidVar.originalOauth2Process) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    var isOauth = (urlParams.has('client_id') && urlParams.has('redirect_uri'));
+                    if (this.togglzReLoginAlert && !isOauth) {
                         this.nameService.getData(this.nameFormUrl).subscribe(response => {
                             if (response.real && (response.real.givenNames.value || response.real.familyName.value)) {
                                 var giveNamesDefined = (response.real.givenNames && response.real.givenNames.value);

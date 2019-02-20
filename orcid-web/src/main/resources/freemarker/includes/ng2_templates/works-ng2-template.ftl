@@ -4,12 +4,7 @@
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
-            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
-                <div class="col-md-4 col-sm-4 col-xs-12">
-            </@orcid.checkFeatureStatus>
-            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
-                <div class="col-md-3 col-sm-3 col-xs-12">
-            </@orcid.checkFeatureStatus>
+                <div [ngClass]="(manualWorkGroupingEnabled)? 'col-md-4 col-sm-4 col-xs-12' : 'col-md-3 col-sm-3 col-xs-12' ">                
                     <div>
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
@@ -28,12 +23,7 @@
                         </#if>
                     </div>
                 </div>
-                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
-                    <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
-                </@orcid.checkFeatureStatus> 
-                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
-                    <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
-                </@orcid.checkFeatureStatus> 
+                <div *ngIf="workspaceSrvc.displayWorks" [ngClass]="(manualWorkGroupingEnabled)? 'col-md-8 col-sm-8 col-xs-12 action-button-bar' : 'col-md-9 col-sm-9 col-xs-12 action-button-bar' ">
                     <!--Sort menu-->
                     <div class="menu-container">                                     
                         <ul class="toggle-menu">
@@ -77,13 +67,11 @@
                     <#if !(isPublicProfile??)>
                     <ul class="workspace-bar-menu">
                         <!--Bulk edit-->
-                        <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
-                            <li *ngIf="worksService?.groups?.length > 1" >
-                                <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()">
-                                    <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
-                                </a>
-                            </li>
-                        </@orcid.checkFeatureStatus>
+                        <li *ngIf="!manualWorkGroupingEnabled && worksService?.groups?.length > 1" >
+                            <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()">
+                                <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
+                            </a>
+                        </li>
                         <!--Export bibtex-->
                         <li *ngIf="worksService?.groups?.length > 0" >
                             <a class="action-option works manage-button" [ngClass]="{'green-bg' : showBibtexExport}" (click)="toggleBibtexExport()">

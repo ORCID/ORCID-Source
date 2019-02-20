@@ -28,10 +28,6 @@
         <#if (fundingIdsJson)??>
         orcidVar.fundingIdsJson = JSON.parse("${fundingIdsJson}");
         </#if>
-      
-        <#if (showLogin)??>
-            orcidVar.showLogin = ${showLogin};
-        </#if>
 
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
         orcidVar.lastModified = '${(lastModifiedTime?datetime)!}';
@@ -39,23 +35,10 @@
         orcidVar.realOrcidId = '${realUserOrcid!}';
         orcidVar.resetParams = '${(resetParams)!}';
         orcidVar.emailToReactivate = '${(email)!}';        
-        orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};       
+        orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};        
+        orcidVar.providerId = '${(providerId)!}';           
         orcidVar.features = JSON.parse("${featuresJson}");
-        orcidVar.providerId = '${(providerId)!}';
         
-        <#if (oauth2Screens)??>
-        orcidVar.oauth2Screens = true;
-        <#else>
-        
-        orcidVar.oauth2Screens = false;
-        </#if>
-      
-        <#if (originalOauth2Process)??>
-        orcidVar.originalOauth2Process = true;
-        <#else>
-        orcidVar.originalOauth2Process = false;
-        </#if>     
-      
         orcidVar.oauthUserId = "${(oauth_userId?js_string)!}";
         orcidVar.firstName = "${(RequestParameters.firstName?js_string)!}";
         orcidVar.lastName = "${(RequestParameters.lastName?js_string)!}"; 
