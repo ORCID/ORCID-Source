@@ -14,12 +14,18 @@ import { FormsModule }
 
 import { Observable, Subject, Subscription } 
     from 'rxjs';
-import { takeUntil } 
+    
+import { takeUntil, shareReplay } 
     from 'rxjs/operators';
-
+    
 import { NotificationsService } 
     from '../../shared/notifications.service.ts'; 
 
+import { CommonService } 
+    from '../../shared/common.service.ts';
+    
+import { FeaturesService }
+    from '../../shared/features.service.ts';
 
 @Component({
     selector: 'header-ng2',
@@ -38,9 +44,16 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     secondaryMenuVisible: any;
     settingsVisible: boolean;
     tertiaryMenuVisible: any;
-
+    userInfo: any;
+    isOauth: boolean = false;
+    isPublicPage: boolean = false;
+    profileOrcid: string = null;
+    showSurvey = this.featuresService.isFeatureEnabled('SURVEY');
+    
     constructor(
-        private notificationsSrvc: NotificationsService
+        private notificationsSrvc: NotificationsService,
+        private featuresService: FeaturesService,
+        private commonSrvc: CommonService
     ) {
         this.conditionsActive = false;
         this.filterActive = false;
@@ -52,8 +65,36 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         this.secondaryMenuVisible = {};
         this.settingsVisible = false;
         this.tertiaryMenuVisible = {};
+        const urlParams = new URLSearchParams(window.location.search);
+        this.isOauth = (urlParams.has('client_id') && urlParams.has('redirect_uri'));
+        var orcidRegex = /^(\d{4}-){3}\d{3}[\dX]$/;
+        var path = window.location.pathname;
+        path = path.substring(path.lastIndexOf('/') + 1);
+        this.isPublicPage = orcidRegex.test(path);
+        if(this.isPublicPage) {            
+            this.profileOrcid = path;
+            this.userInfo = this.commonSrvc.getPublicUserInfo(this.profileOrcid)
+            .subscribe(
+                data => {
+                    this.userInfo = data;
+                },
+                error => {
+                    console.log('header.component.ts: unable to fetch publicUserInfo', error);
+                } 
+            );
+        } else {
+            this.userInfo = this.commonSrvc.userInfo$
+            .subscribe(
+                data => {
+                    this.userInfo = data;                
+                },
+                error => {
+                    console.log('header.component.ts: unable to fetch userInfo', error);
+                    this.userInfo = {};
+                } 
+            );
+        }      
     }
-
     
     filterChange(): void {
         this.searchFilterChanged = true;
@@ -173,6 +214,6 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit() {
         this.onResize(); 
-        this.headerSearch.searchOption = 'registry'; 
+        this.headerSearch.searchOption = 'registry';         
     }; 
 }
