@@ -172,6 +172,9 @@ import { Social2FAModule }
 import { TwoFaSetupModule } 
     from './2FASetup/twoFASetup.ts';
 
+import { StatisticsModule } 
+    from './statistics/statistics.ts';
+
 import { UnsubscribeModule }
     from './unsubscribe/unsubscribe.ts';
 
@@ -271,6 +274,7 @@ export const orcidApp = angular.module(
         SelfServiceRemoveSubMemberModule.name,
         Social2FAModule.name,
         TwoFaSetupModule.name,
+        StatisticsModule.name,
         UnsubscribeModule.name,
         WidgetModule.name,
         WorksBulkDeleteModule.name,

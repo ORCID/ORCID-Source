@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Currency;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -257,7 +256,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             @CookieValue(value = "justRegistered", defaultValue = "false") boolean justRegistered) {
         ModelAndView mav = new ModelAndView("workspace_v3");
         mav.addObject("showPrivacy", true);
-        mav.addObject("sendEmailFrequencies", retrieveEmailFrequenciesAsMap());
         mav.addObject("justRegistered", justRegistered);
         Cookie justRegisteredCookie = new Cookie("justRegistered", null);
         justRegisteredCookie.setMaxAge(0);

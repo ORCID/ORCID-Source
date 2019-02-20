@@ -1,8 +1,8 @@
 <script type="text/ng-template" id="id-banner-ng2-template">
 
-
-    <div class="id-banner <#if inDelegationMode>delegation-mode</#if>"> 
-        <#if inDelegationMode><span class="delegation-mode-warning">${springMacroRequestContext.getMessage("delegate.managing_record")}</span></#if>
+    <div [ngClass]="(userInfo['IN_DELEGATION_MODE'] == 'true') ? 'id-banner delegation-mode' : 'id-banner'"> 
+        
+        <span *ngIf="userInfo['IN_DELEGATION_MODE'] == 'true'" class="delegation-mode-warning"><@orcid.msg 'delegate.managing_record'/></span>
         <!-- Name -->
 
         <#if springMacroRequestContext.requestUri?contains("/my-orcid")>
@@ -23,10 +23,10 @@
                 <div class="orcid-id-options">
                     <div class="orcid-id-info">
                         <span class="mini-orcid-icon-16"></span>
-                        <span id="orcid-id" class="orcid-id-https">${baseUri}/${(effectiveUserOrcid)!}</span>
+                        <span id="orcid-id" class="orcid-id-https">${baseUri}/{{userInfo['EFFECTIVE_USER_ORCID']}}</span>
                     </div>
                     <#if springMacroRequestContext.requestUri?contains("/my-orcid")>
-                    <a href="${baseUri}/${(effectiveUserOrcid)!}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
+                    <a href="${baseUri}/{{userInfo['EFFECTIVE_USER_ORCID']}}" class="gray-button" target="id_banner.viewpublicprofile"><@orcid.msg 'id_banner.viewpublicprofile'/></a>
                     </#if> 
                 </div>
             </div>

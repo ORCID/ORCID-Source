@@ -8,15 +8,15 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated
-import { StaticsComponent } 
-    from './statics.component.ts';
+import { StatisticsComponent } 
+    from './statistics.component.ts';
 
 import { CommonNg2Module }
     from './../common/common.ts';
 
 // This is the Angular 1 part of the module
-export const StaticsModule = angular.module(
-    'StaticsModule', 
+export const StatisticsModule = angular.module(
+    'StatisticsModule', 
     []
 );
 
@@ -27,25 +27,25 @@ export const StaticsModule = angular.module(
             CommonNg2Module
         ],
         declarations: [ 
-            StaticsComponent
+            StatisticsComponent
         ],
         entryComponents: [ 
-            StaticsComponent 
+            StatisticsComponent 
         ],
         providers: [
             
         ]
     }
 )
-export class StaticsNg2Module {}
+export class StatisticsNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-StaticsModule.directive(
-    'staticsNg2', 
+StatisticsModule.directive(
+    'statisticsNg2', 
     <any>downgradeComponent(
         {
-            component: StaticsComponent,
+            component: StatisticsComponent,
         }
     )
 );

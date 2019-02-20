@@ -5,12 +5,9 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
@@ -24,17 +21,12 @@ import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
-import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
@@ -47,25 +39,12 @@ import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.Addresses;
 import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
 import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc2.record.Biography;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
-import org.orcid.jaxb.model.v3.rc2.record.Keyword;
-import org.orcid.jaxb.model.v3.rc2.record.Keywords;
 import org.orcid.jaxb.model.v3.rc2.record.Name;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
 import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
@@ -129,9 +108,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource(name = "groupIdRecordManagerReadOnlyV3")
     private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
 
-    @Resource(name = "addressManagerReadOnlyV3")
-    private AddressManagerReadOnly addressManagerReadOnly;
-
     @Resource(name = "personalDetailsManagerReadOnlyV3")
     private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
 
@@ -140,18 +116,6 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
-    @Resource(name = "profileKeywordManagerReadOnlyV3")
-    private ProfileKeywordManagerReadOnly keywordManagerReadOnly;
-
-    @Resource(name = "researcherUrlManagerReadOnlyV3")
-    private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;
-
-    @Resource(name = "emailManagerReadOnlyV3")
-    private EmailManagerReadOnly emailManagerReadOnly;
-
-    @Resource(name = "externalIdentifierManagerReadOnlyV3")
-    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
 
     @Resource(name = "sourceUtilsV3")
     private SourceUtils sourceUtils;
@@ -254,116 +218,16 @@ public class PublicProfileController extends BaseWorkspaceController {
         return mav;
     }
 
-    private LinkedHashMap<String, List<Keyword>> groupKeywords(Keywords keywords) {
-        if (keywords == null || keywords.getKeywords() == null) {
-            return null;
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/userInfo.json", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> getUserInfo( @PathVariable("orcid") String orcid) {
+        Map<String, String> info = new HashMap<String, String>();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        info.put("IS_LOCKED", String.valueOf(!profile.isAccountNonLocked()));
+        info.put("IS_DEACTIVATED", String.valueOf(!(profile.getDeactivationDate() == null)));
+        if(profile.getPrimaryRecord() != null) {
+            info.put("PRIMARY_RECORD", profile.getPrimaryRecord().getId()); 
         }
-
-        /* Grouping items */
-        LinkedHashMap<String, List<Keyword>> groups = new LinkedHashMap<String, List<Keyword>>();
-        for (Keyword k : keywords.getKeywords()) {
-            if (groups.containsKey(k.getContent())) {
-                groups.get(k.getContent()).add(k);
-            } else {
-                List<Keyword> list = new ArrayList<Keyword>();
-                list.add(k);
-                groups.put(k.getContent(), list);
-            }
-        }
-
-        return groups;
-    }
-
-    private LinkedHashMap<String, List<Address>> groupAddresses(Addresses addresses) {
-        if (addresses == null || addresses.getAddress() == null) {
-            return null;
-        }
-        LinkedHashMap<String, List<Address>> groups = new LinkedHashMap<String, List<Address>>();
-        for (Address k : addresses.getAddress()) {
-            if (groups.containsKey(k.getCountry().getValue().name())) {
-                groups.get(k.getCountry().getValue().name()).add(k);
-            } else {
-                List<Address> list = new ArrayList<Address>();
-                list.add(k);
-                groups.put(k.getCountry().getValue().name(), list);
-            }
-        }
-
-        return groups;
-    }
-
-    private LinkedHashMap<String, List<OtherName>> groupOtherNames(OtherNames otherNames) {
-
-        if (otherNames == null || otherNames.getOtherNames() == null) {
-            return null;
-        }
-        LinkedHashMap<String, List<OtherName>> groups = new LinkedHashMap<String, List<OtherName>>();
-        for (OtherName o : otherNames.getOtherNames()) {
-            if (groups.containsKey(o.getContent())) {
-                groups.get(o.getContent()).add(o);
-            } else {
-                List<OtherName> list = new ArrayList<OtherName>();
-                list.add(o);
-                groups.put(o.getContent(), list);
-            }
-        }
-        return groups;
-
-    }
-
-    private Map<String, List<Email>> groupEmails(Emails emails) {
-        if (emails == null || emails.getEmails() == null) {
-            return null;
-        }
-        Map<String, List<Email>> groups = new TreeMap<String, List<Email>>();
-        for (Email e : emails.getEmails()) {
-            if (groups.containsKey(e.getEmail())) {
-                groups.get(e.getEmail()).add(e);
-            } else {
-                List<Email> list = new ArrayList<Email>();
-                list.add(e);
-                groups.put(e.getEmail(), list);
-            }
-        }
-
-        return groups;
-    }
-
-    private LinkedHashMap<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls) {
-        if (researcherUrls == null || researcherUrls.getResearcherUrls() == null) {
-            return null;
-        }
-        LinkedHashMap<String, List<ResearcherUrl>> groups = new LinkedHashMap<String, List<ResearcherUrl>>();
-        for (ResearcherUrl r : researcherUrls.getResearcherUrls()) {
-            String urlValue = r.getUrl() == null ? "" : r.getUrl().getValue();
-            if (groups.containsKey(urlValue)) {
-                groups.get(urlValue).add(r);
-            } else {
-                List<ResearcherUrl> list = new ArrayList<ResearcherUrl>();
-                list.add(r);
-                groups.put(urlValue, list);
-            }
-        }
-        return groups;
-    }
-
-    private LinkedHashMap<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
-        if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifiers() == null) {
-            return null;
-        }
-        LinkedHashMap<String, List<PersonExternalIdentifier>> groups = new LinkedHashMap<String, List<PersonExternalIdentifier>>();
-        for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifiers()) {
-            String pairKey = ei.getType() + ":" + ei.getValue();
-            if (groups.containsKey(pairKey)) {
-                groups.get(pairKey).add(ei);
-            } else {
-                List<PersonExternalIdentifier> list = new ArrayList<PersonExternalIdentifier>();
-                list.add(ei);
-                groups.put(pairKey, list);
-            }
-        }
-
-        return groups;
+        return info;
     }
     
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/person.json", method = RequestMethod.GET)
@@ -387,104 +251,17 @@ public class PublicProfileController extends BaseWorkspaceController {
         	
         }
 	
-        PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
-        // Fill personal details
-        if (publicPersonalDetails != null) {
-            // Get display name
-            String displayName = "";
-
-            if (publicPersonalDetails.getName() != null) {
-                Name name = publicPersonalDetails.getName();
-                if (name.getVisibility().equals(Visibility.PUBLIC)) {
-                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
-                        displayName = name.getCreditName().getContent();
-                    } else {
-                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
-                            displayName = name.getGivenNames().getContent() + " ";
-                        }
-                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
-                            displayName += name.getFamilyName().getContent();
-                        }
-                    }
-                }
-            }
-
-            if (!PojoUtil.isEmpty(displayName)) {
-                // <Published Name> (<ORCID iD>) - ORCID | Connecting Research
-                // and Researchers
-                publicRecordPersonDetails.setTitle(displayName + " (" + orcid + ") - " + getMessage("layout.public-layout.title"));
-                publicRecordPersonDetails.setDisplayName(displayName);
-            }
-            
-            if (isDeprecated) {
-            	return publicRecordPersonDetails;
-            }
-
-            // Get biography
-            if (publicPersonalDetails.getBiography() != null) {
-                Biography bio = publicPersonalDetails.getBiography();
-                if (Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
-                    publicRecordPersonDetails.setBiography(bio);
-                }
-            }
-
-            // Fill other names
-            OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
-            if (publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
-                Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
-                while (it.hasNext()) {
-                    OtherName otherName = it.next();
-                    if (!Visibility.PUBLIC.equals(otherName.getVisibility())) {
-                        it.remove();
-                    }
-                }
-            }
-            Map<String, List<OtherName>> groupedOtherNames = groupOtherNames(publicOtherNames);
-            publicRecordPersonDetails.setPublicGroupedOtherNames(groupedOtherNames);
+        publicRecordPersonDetails = getPersonDetails(orcid, true);
+        if(isDeprecated) {
+            // If deprecated be sure to remove all fields
+            publicRecordPersonDetails.setBiography(null);
+            publicRecordPersonDetails.setPublicGroupedOtherNames(null);
+            publicRecordPersonDetails.setCountryNames(null);
+            publicRecordPersonDetails.setPublicGroupedKeywords(null);
+            publicRecordPersonDetails.setPublicGroupedEmails(null);
+            publicRecordPersonDetails.setPublicGroupedResearcherUrls(null);
+            publicRecordPersonDetails.setPublicGroupedPersonExternalIdentifiers(null);
         }
-
-        // Fill biography elements
-
-        // Fill country
-        Addresses publicAddresses = addressManagerReadOnly.getPublicAddresses(orcid);
-        Map<String, String> countryNames = new HashMap<String, String>();
-        if (publicAddresses != null && publicAddresses.getAddress() != null) {
-            Address publicAddress = null;
-            // The primary address will be the one with the lowest display index
-            for (Address address : publicAddresses.getAddress()) {
-                countryNames.put(address.getCountry().getValue().name(), getcountryName(address.getCountry().getValue().name()));
-                if (publicAddress == null) {
-                    publicAddress = address;
-                }
-            }
-            if (publicAddress != null) {
-                publicRecordPersonDetails.setPublicAddress(publicAddress);
-                publicRecordPersonDetails.setCountryNames(countryNames);
-                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);
-                publicRecordPersonDetails.setPublicGroupedAddresses(groupedAddresses);
-            }
-        }
-
-        // Fill keywords
-        Keywords publicKeywords = keywordManagerReadOnly.getPublicKeywords(orcid);
-        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
-        publicRecordPersonDetails.setPublicGroupedKeywords(groupedKeywords);
-
-        // Fill researcher urls
-        ResearcherUrls publicResearcherUrls = researcherUrlManagerReadOnly.getPublicResearcherUrls(orcid);
-        Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
-        publicRecordPersonDetails.setPublicGroupedResearcherUrls(groupedResearcherUrls);
-
-        // Fill emails
-        Emails publicEmails = emailManagerReadOnly.getPublicEmails(orcid);
-        Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
-        publicRecordPersonDetails.setPublicGroupedEmails(groupedEmails);
-
-        // Fill external identifiers
-        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
-        Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
-        publicRecordPersonDetails.setPublicGroupedPersonExternalIdentifiers(groupedExternalIdentifiers);
-        
         return publicRecordPersonDetails;
     }
 
