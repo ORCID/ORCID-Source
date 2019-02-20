@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
@@ -92,10 +91,8 @@ public class PasswordResetController extends BaseController {
     private static final List<String> RESET_PASSWORD_PARAMS_WHITELIST = Arrays.asList("_");
 
     @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
-    public ModelAndView resetPassword(@RequestParam(value = "expired", required = false) boolean expired) {
-        ModelAndView mav = new ModelAndView("reset_password");
-        mav.addObject("tokenExpired", expired);
-        return mav;
+    public ModelAndView resetPassword() {
+        return new ModelAndView("reset_password");
     }
 
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.GET)
