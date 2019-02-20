@@ -27,6 +27,7 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
     displayError: boolean;
     notificationSettingsForm: any;
     sendQuarterlyTips: boolean;
+    unsubscribeData: any;
 
     constructor(
         private commonSrvc: CommonService,
@@ -48,6 +49,22 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
             },
             error => {
                 console.log('error fetching notification settings');
+            } 
+        );
+ 
+    };
+    
+    getUnsubscribeData(): void {
+        this.unsubscribeService.getUnsubscribeData()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.unsubscribeData = data;
+            },
+            error => {
+                console.log('error fetching unsubscribe data');
             } 
         );
  
@@ -87,6 +104,7 @@ export class UnsubscribeComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {        
+        this.getUnsubscribeData();
         this.getNotificationSettingsForm();
     };
 }

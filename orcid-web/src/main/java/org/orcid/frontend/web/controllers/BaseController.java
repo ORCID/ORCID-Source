@@ -79,7 +79,6 @@ import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
@@ -279,15 +278,6 @@ public class BaseController {
             }
         }
         return maintenanceMessage;
-    }
-
-    @ModelAttribute("sendEmailFrequencies")
-    public Map<String, String> retrieveEmailFrequenciesAsMap() {
-        Map<String, String> map = new LinkedHashMap<>();
-        for (SendEmailFrequency freq : SendEmailFrequency.values()) {
-            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
-        }
-        return map;
     }
 
     /**
