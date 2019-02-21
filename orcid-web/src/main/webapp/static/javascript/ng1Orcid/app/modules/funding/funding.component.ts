@@ -50,6 +50,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     fundingImportWizard: boolean;
     fundingImportWizardList: any;
     groups: any;
+    isPublicPage: boolean;
     moreInfo: any;
     noLinkFlag: boolean;
     privacyHelp: any;
@@ -75,6 +76,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emails = {};
         this.fundingImportWizard = false;
         this.groups = new Array();
+        this.isPublicPage = this.commonSrvc.isPublicPage;
         this.moreInfo = {};
         this.noLinkFlag = true;
         this.privacyHelp = {};
