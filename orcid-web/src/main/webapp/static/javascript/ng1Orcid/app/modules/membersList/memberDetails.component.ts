@@ -71,7 +71,10 @@ export class MemberDetailsComponent {
     }
     
     getCurrentMemberDetails(): void {
-        this.membersListService.getMemberDetailsBySlug(orcidVar.memberSlug)
+        var pathArray = window.location.pathname.split('/');
+        var memberSlug = pathArray[0]
+        var memberSlugStripped = memberSlug.replace(/<[^>]+>/g, '').trim();
+        this.membersListService.getMemberDetailsBySlug(memberSlugStripped)
             .subscribe(data => {
                 this.showMemberDetailsLoader = false;
                 this.currentMemberDetails = data;
@@ -99,7 +102,6 @@ export class MemberDetailsComponent {
                     integrationBadges[badgeName] = true;
                 }
             }
-            console.log(this.badgesAwarded);
         }
     }
     

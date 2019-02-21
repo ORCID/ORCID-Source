@@ -335,12 +335,12 @@ var messagesPromise = new Promise(function(resolve, reject) {
 
 OrcidMessage.prototype.get = function(name) {
     console.log('Getting message: ' + name);
-    messagesPromise.then(function(response) {
-        console.log('result: ' + messages[name]);
-        return messages[name];  
-    }, function(error) {
-      return '';
-    })    
+    return messages[name];
+};
+
+OrcidMessage.prototype.process = function(name, callbackFunction) {
+    console.log('process message: ' + name);
+    messagesPromise.then(callbackFunction(messages[name]));
 };
 
 var messages = null;
@@ -658,11 +658,13 @@ $(function() {
                                                         message = message + om.get('orcid.frontend.security.invalid_user_type_2');
                                                         message = message + '</a>';
                                                     } else {
-                                                        message = om
-                                                               .get('orcid.frontend.security.bad_credentials');
+                                                        var showLoginErrorFunction = function(message_key) {
+                                                            showLoginError(message_key);
+                                                        };
+                                                        om.process('orcid.frontend.security.bad_credentials', showLoginErrorFunction);
                                                     }
 
-                                                    showLoginError(message);
+                                                    //showLoginError(message);
                                                 }; 
                                             }
                                         }).fail(function(e) {

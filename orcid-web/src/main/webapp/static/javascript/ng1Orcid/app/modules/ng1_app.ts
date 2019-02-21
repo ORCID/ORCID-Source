@@ -33,6 +33,9 @@ import { AlertBannerModule }
 
 import { AllConsortiumContactsModule } 
     from './allConsortiumContacts/allConsortiumContacts.ts';
+    
+import { AuthorizeDelegateResultModule } 
+    from './delegators/authorizeDelegateResult.ts';
 
 import { BiographyModule } 
     from './biography/biography.ts';
@@ -240,6 +243,7 @@ export const orcidApp = angular.module(
         AffiliationFormModule.name,
         AlertBannerModule.name,
         AllConsortiumContactsModule.name,
+        AuthorizeDelegateResultModule.name,
         BiographyModule.name,
         ClaimModule.name, 
         ClientEditModule.name,

@@ -161,28 +161,22 @@
                                         <p><@orcid.msg 'manage.email.email_frequency.notifications.1' /></p>
                                         <p><@orcid.msg 'manage.email.email_frequency.notifications.2' /></p>
                                         <p><@orcid.msg 'manage.email.email_frequency.notifications.selectors.header' /></p>                                            
-                                        <div class="control-group">
+                                        <div *ngIf="emailFrequencyOptions" class="control-group">
                                             <label for="amend-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.amend' /></label><br>
                                             <select id="amend-frequency" name="amend-frequency" [(ngModel)]="sendChangeNotifications" (ngModelChange)="updateChangeNotificationsFrequency()">   
-                                                <#list sendEmailFrequencies?keys as key>
-                                                    <option value="${key}">${sendEmailFrequencies[key]}</option>
-                                                </#list>
+                                                <option *ngFor="let key of emailFrequencyOptions.emailFrequencyKeys" [value]="key">{{emailFrequencyOptions.emailFrequencies[key]}}</option>
                                             </select>
                                         </div>
-                                        <div class="control-group">
+                                        <div *ngIf="emailFrequencyOptions" class="control-group">
                                             <label for="administrative-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.administrative' /></label><br>
                                             <select id="administrative-frequency" name="administrative-frequency" [(ngModel)]="sendAdministrativeChangeNotifications" (ngModelChange)="updateAdministrativeChangeNotificationsFrequency()">   
-                                                <#list sendEmailFrequencies?keys as key>
-                                                    <option value="${key}">${sendEmailFrequencies[key]}</option>
-                                                </#list>
+                                                <option *ngFor="let key of emailFrequencyOptions.emailFrequencyKeys" [value]="key">{{emailFrequencyOptions.emailFrequencies[key]}}</option>
                                             </select>
                                         </div>
-                                        <div class="control-group">
+                                        <div *ngIf="emailFrequencyOptions" class="control-group">
                                             <label for="permission-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.permission' /></label><br>                  
                                             <select id="permission-frequency" name="permission-frequency" [(ngModel)]="sendMemberUpdateRequestsNotifications" (ngModelChange)="updateMemberUpdateRequestsFrequency()">   
-                                                <#list sendEmailFrequencies?keys as key>
-                                                    <option value="${key}">${sendEmailFrequencies[key]}</option>
-                                                </#list>
+                                                <option *ngFor="let key of emailFrequencyOptions.emailFrequencyKeys" [value]="key">{{emailFrequencyOptions.emailFrequencies[key]}}</option>
                                             </select>
                                         </div>
                                     </div> 

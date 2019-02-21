@@ -10,19 +10,19 @@
             <div *ngIf="unsubscribeData" class="control-group">
                 <label for="amend-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.amend' /></label><br />
                 <select id="amend-frequency" name="amend-frequency" [(ngModel)]="notificationSettingsForm['send_change_notifications']">   
-                    <option *ngFor="let key of unsubscribeData.emailFrequencyKeys" [value]="key">{{unsubscribeData.emailFrequencies[key]}}</option>
+                    <option *ngFor="let key of unsubscribeData.emailFrequencyOptions.emailFrequencyKeys" [value]="key">{{unsubscribeData.emailFrequencyOptions.emailFrequencies[key]}}</option>
                 </select>
             </div>
             <div *ngIf="unsubscribeData" class="control-group">
                 <label for="administrative-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.administrative' /></label><br />
                 <select id="administrative-frequency" name="administrative-frequency" [(ngModel)]="notificationSettingsForm['send_administrative_change_notifications']">   
-                    <option *ngFor="let key of unsubscribeData.emailFrequencyKeys" [value]="key">{{unsubscribeData.emailFrequencies[key]}}</option>
+                    <option *ngFor="let key of unsubscribeData.emailFrequencyOptions.emailFrequencyKeys" [value]="key">{{unsubscribeData.emailFrequencyOptions.emailFrequencies[key]}}</option>
                 </select>
             </div>
             <div *ngIf="unsubscribeData" class="control-group">
                 <label for="permission-frequency"><@orcid.msg 'manage.email.email_frequency.notifications.selectors.permission' /></label><br />                  
                 <select id="permission-frequency" name="permission-frequency" [(ngModel)]="notificationSettingsForm['send_member_update_requests']">   
-                   <option *ngFor="let key of unsubscribeData.emailFrequencyKeys" [value]="key">{{unsubscribeData.emailFrequencies[key]}}</option>
+                   <option *ngFor="let key of unsubscribeData.emailFrequencyOptions.emailFrequencyKeys" [value]="key">{{unsubscribeData.emailFrequencyOptions.emailFrequencies[key]}}</option>
                 </select>
             </div>
             <h2><@orcid.msg 'manage.email.email_frequency.news.header' /></h2>

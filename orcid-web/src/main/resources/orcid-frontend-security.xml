@@ -405,6 +405,8 @@
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/reactivationConfirm.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/reactivationData.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/sendReactivation.json"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/developer-tools" 

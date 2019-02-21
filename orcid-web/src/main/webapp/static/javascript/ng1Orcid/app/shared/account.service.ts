@@ -83,6 +83,12 @@ export class AccountService {
         )
         
     }
+    
+    getAuthorizeDelegateResult(key): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/account/authorizeDelegatesResult.json?key=' + key
+        )
+    }
 
     getSecurityQuestion(): Observable<any> {
         return this.http.get(

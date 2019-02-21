@@ -6,6 +6,7 @@ import java.util.Map;
 import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.jaxb.model.v3.rc2.record.Emails;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.pojo.EmailFrequencyOptions;
 
 /**
  * 
@@ -37,4 +38,6 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     Email findPrimaryEmail(String orcid);
 
     boolean isPrimaryEmail(String email); 
+    
+    EmailFrequencyOptions getEmailFrequencyOptions();
 }

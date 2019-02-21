@@ -43,6 +43,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     showEmailsAdditionalReactivationSent: any;
     showEmailsAdditionalDuplicateEmailError: any;
     aboutUri: String;
+    reactivationData: any;
     
     constructor(
         private oauthService: OauthService,
@@ -118,12 +119,28 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.registrationForm = data;
                 this.registrationForm.resetParams = resetParams;
                 this.registrationForm.activitiesVisibilityDefault.visibility = null;
-                this.registrationForm.email.value = orcidVar.emailToReactivate;
                 this.cdr.detectChanges();              
             },
             error => {
                 // something bad is happening!
                 console.log("error fetching register.json");
+            } 
+        );
+    };
+    
+     getReactivationData(resetParams): void {
+        this.reactivationService.getReactivationData(resetParams)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.reactivationData = data;
+                this.registrationForm.email.value = this.reactivationData.email;
+            },
+            error => {
+                // something bad is happening!
+                console.log("error fetching reactivation data");
             } 
         );
     };
@@ -232,7 +249,10 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getReactivation(orcidVar.resetParams, '');
+        var segments = window.location.href.split('/');
+        var resetParams = segments[segments.length - 1];
+        this.getReactivation(resetParams, '');
+        this.getReactivationData(resetParams);
     };
 
     getBaseUri() : String {

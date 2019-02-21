@@ -1,16 +1,10 @@
 package org.orcid.pojo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 public class UnsubscribeData {
    
     private String emailAddress;
     
-    private Map<String, String> emailFrequencies;
-    
-    private List<String> emailFrequencyKeys;
+    private EmailFrequencyOptions emailFrequencyOptions;
 
     public String getEmailAddress() {
         return emailAddress;
@@ -20,21 +14,12 @@ public class UnsubscribeData {
         this.emailAddress = emailAddress;
     }
 
-    public Map<String, String> getEmailFrequencies() {
-        return emailFrequencies;
-    }
-    
-    public List<String> getEmailFrequencyKeys() {
-        return emailFrequencyKeys;
+    public EmailFrequencyOptions getEmailFrequencyOptions() {
+        return emailFrequencyOptions;
     }
 
-    public void setEmailFrequencyKeys(List<String> emailFrequencyKeys) {
-        this.emailFrequencyKeys = emailFrequencyKeys;
-    }
-
-    public void setEmailFrequencies(Map<String, String> emailFrequencies) {
-        this.emailFrequencies = emailFrequencies;
-        setEmailFrequencyKeys(new ArrayList<>(emailFrequencies.keySet()));
+    public void setEmailFrequencyOptions(EmailFrequencyOptions emailFrequencyOptions) {
+        this.emailFrequencyOptions = emailFrequencyOptions;
     }
     
 }

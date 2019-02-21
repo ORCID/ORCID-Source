@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, Component, OnDestroy } from "@angular/core";
 import { Observable, BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from 'rxjs/operators';
+import { CommonService } from './common.service.ts';
 
 @Injectable()
 export class PersonService {
@@ -12,18 +13,17 @@ export class PersonService {
   private personEndpoint;
   private response: BehaviorSubject<any> = new BehaviorSubject(null); 
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private commonSrvc: CommonService) {
     this.url = getBaseUri();    
   }
 
   getPerson() {      
     if (!this.endpointWasCall) {           
-        var orcidRegex = /^(\d{4}-){3}\d{3}[\dX]$/;
-        var path = window.location.pathname;
-        path = path.substring(path.lastIndexOf('/') + 1);
-        var isPublicPage = orcidRegex.test(path);
+        var isPublicPage = this.commonSrvc.isPublicPage
         if(isPublicPage) {
-            var orcidId = path.substring(path.lastIndexOf('/') + 1);         
+            var orcidRegex = this.commonSrvc.orcidRegex;
+            var path = window.location.pathname;
+            var orcidId = path.match(orcidRegex)[0];  
             this.personEndpoint = this.http
                 .get(this.url + '/' + orcidId + this.path)
                 .subscribe(person => {

@@ -256,8 +256,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             @CookieValue(value = "justRegistered", defaultValue = "false") boolean justRegistered) {
         ModelAndView mav = new ModelAndView("workspace_v3");
         mav.addObject("showPrivacy", true);
-        mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
-        mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         mav.addObject("justRegistered", justRegistered);
         Cookie justRegisteredCookie = new Cookie("justRegistered", null);
         justRegisteredCookie.setMaxAge(0);

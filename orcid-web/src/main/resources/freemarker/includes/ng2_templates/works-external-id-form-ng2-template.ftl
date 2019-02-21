@@ -35,17 +35,17 @@
                         <strong><@orcid.msg 'externalwork.addworkfrom' /> {{externalIdType}}</strong>
                         <div> <@orcid.msg 'externalwork.typeorpaste'/> {{externalIdType}} <@orcid.msg 'externalwork.typeorpaste2'/></div>
 
-                        <input #search (keydown)="onKeydown($event)" id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="externalId[externalIdType].value" placeholder="{{externalId[externalIdType].placeHolder}}"/>
+                        <input tabindex="1" #search (keydown)="onKeydown($event, 'work')" id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="externalId[externalIdType].value" placeholder="{{externalId[externalIdType].placeHolder}}"/>
                         <div class="orcid-error" *ngIf="metadataNotFound">
                         
                             <@orcid.msg 'externalwork.error'/> {{externalIdType}}.
                         </div>
                         <div class="buttons-container">
-                            <button class="btn btn-primary" (click)="addWork()" [disabled]="addingWork" [ngClass]="{disabled:addingWork}">
+                            <button tabindex="2" class="btn btn-primary" (click)="addWork()" [disabled]="addingWork" [ngClass]="{disabled:addingWork}">
                                <@orcid.msg 'externalwork.retrieve'/>
                                 <!--  <@orcid.msg 'freemarker.btnsave'/>  -->
                             </button>
-                            <a class="cancel-option" (click)="cancelEdit()"><@orcid.msg 'freemarker.btncancel' /></a>
+                            <a tabindex="3" class="cancel-option" (click)="cancelEdit()" (keydown)="onKeydown($event, 'cancel')"><@orcid.msg 'freemarker.btncancel' /></a>
                         </div>
                     </div>          
                 </div>

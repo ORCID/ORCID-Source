@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -10,12 +11,15 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.v3.JpaJaxbEmailAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.pojo.EmailFrequencyOptions;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
@@ -29,6 +33,9 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     
     @Resource
     private EncryptionManager encryptionManager;
+    
+    @Resource
+    private LocaleManager localeManager;
     
     protected EmailDao emailDao;
     
@@ -139,5 +146,17 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             return null;
         }
         return jpaJaxbEmailAdapter.toEmail(emailDao.findPrimaryEmail(orcid));
+    }
+
+    @Override
+    public EmailFrequencyOptions getEmailFrequencyOptions() {
+        Map<String, String> frequencies = new LinkedHashMap<>();
+        for (SendEmailFrequency freq : SendEmailFrequency.values()) {
+            frequencies.put(String.valueOf(freq.value()), localeManager.resolveMessage(SendEmailFrequency.class.getName() + "." + freq.name()));                
+        }
+        EmailFrequencyOptions options = new EmailFrequencyOptions();
+        options.setEmailFrequencies(frequencies);
+        options.setEmailFrequencyKeys(new ArrayList<>(frequencies.keySet()));
+        return options;
     }      
 }

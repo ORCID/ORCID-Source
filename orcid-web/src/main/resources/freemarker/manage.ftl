@@ -4,21 +4,10 @@
          <strong><@spring.message "orcid_social.twitter.enabled"/></strong>
      </div>
 </#if>
-<#if admin_delegate_approved??>
-    <div class="alert alert-success">
-        <strong>${admin_delegate_approved}</strong>
-    </div>
-</#if>
- <#if admin_delegate_failed??>
-    <div class="alert alert-success">
-        <strong>${admin_delegate_failed}</strong>
-    </div>
-</#if>
-<#if admin_delegate_not_you??>
-    <div class="alert alert-success">
-        <strong><@orcid.msg 'wrong_user.Wronguser' /></strong> <a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out' /></a> <@orcid.msg 'wrong_user.andtryagain' />
-    </div>
-</#if>
+
+<#include "/includes/ng2_templates/authorize-delegate-result-ng2-template.ftl">
+<authorize-delegate-result-ng2></authorize-delegate-result-ng2>
+
 <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12 padding-fix lhs">
         <div class="lhs">

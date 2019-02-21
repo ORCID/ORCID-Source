@@ -66,12 +66,7 @@ public class UnsubscribeController extends BaseController {
 
         UnsubscribeData unsubscribeData = new UnsubscribeData();
         unsubscribeData.setEmailAddress(email.getEmail());
-        
-        Map<String, String> frequencies = new LinkedHashMap<>();
-        for (SendEmailFrequency freq : SendEmailFrequency.values()) {
-            frequencies.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
-        }
-        unsubscribeData.setEmailFrequencies(frequencies);
+        unsubscribeData.setEmailFrequencyOptions(emailManagerReadOnly.getEmailFrequencyOptions());
         return unsubscribeData;
     }
     

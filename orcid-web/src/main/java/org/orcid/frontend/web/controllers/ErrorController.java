@@ -14,9 +14,8 @@ public class ErrorController extends BaseController {
 
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/error")
-    public ModelAndView error500Page(ModelAndView mav, Exception e) {
+    public ModelAndView error500Page(ModelAndView mav) {
         mav.setViewName("error-500");
-        mav.addObject("exception", e);
         return mav;
     }
 
@@ -27,16 +26,14 @@ public class ErrorController extends BaseController {
     }
 
     @RequestMapping(value = "/oauth/error/redirect-uri-mismatch")
-    public ModelAndView oauthErrorInvalidRedirectUri(ModelAndView mav, Exception e) {
-        mav.setViewName("oauth-error");
-        mav.addObject("error", getMessage("oauth.errors.redirect_mismatch_exception"));        
+    public ModelAndView oauthErrorInvalidRedirectUri(ModelAndView mav) {
+        mav.setViewName("oauth-error-mismatch");      
         return mav;
     }
     
     @RequestMapping(value = "/oauth/error")
-    public ModelAndView oauthError(ModelAndView mav, Exception e) {
-        mav.setViewName("oauth-error");
-        mav.addObject("error", getMessage("oauth.errors.other"));        
+    public ModelAndView oauthError(ModelAndView mav) {
+        mav.setViewName("oauth-error");      
         return mav;
     }
     
