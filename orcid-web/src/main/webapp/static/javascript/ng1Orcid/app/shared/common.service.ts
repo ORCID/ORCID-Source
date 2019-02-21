@@ -299,4 +299,8 @@ export class CommonService {
     getPublicUserInfo(orcid): Observable<any> {         
         return this.http.get(getBaseUri() + '/' + orcid + '/userInfo.json'); 
     };
+    
+    getEmailFrequencyOptions(): Observable<any> {
+        return this.http.get(getBaseUri() + '/manage/emailFrequencyOptions.json');
+    }
 }

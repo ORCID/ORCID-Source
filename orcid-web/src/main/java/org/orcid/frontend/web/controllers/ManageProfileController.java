@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.v3.rc2.record.Biography;
 import org.orcid.jaxb.model.v3.rc2.record.Emails;
 import org.orcid.jaxb.model.v3.rc2.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -48,6 +49,7 @@ import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
+import org.orcid.pojo.EmailFrequencyOptions;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.SecurityQuestion;
@@ -862,5 +864,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {       
         emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
         return emails;
+    }
+    
+    @RequestMapping(value = "/emailFrequencyOptions.json", method = RequestMethod.GET)
+    public @ResponseBody EmailFrequencyOptions getEmailFrequencyOptions() {
+        return emailManagerReadOnly.getEmailFrequencyOptions();
     }
 }
