@@ -38,6 +38,9 @@ export class SearchComponent implements OnDestroy, OnInit {
     numFound: any;
     searchResults: any;
     searchResultsAffiliationsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SEARCH_RESULTS_AFFILIATIONS');
+    searchResultsLoading: boolean;
+    showMoreLoading: boolean;
+    showNoResultsAlert: boolean;
     results: any;
     resultsWithNames: any;
     resultsObservable: any;
@@ -55,8 +58,10 @@ export class SearchComponent implements OnDestroy, OnInit {
         this.input = {};
         this.input.rows = 10;
         this.input.start = 0;
-        this.input.text = $('#SearchCtrl').data('search-query');
         this.numFound = 0;
+        this.searchResultsLoading = false;
+        this.showMoreLoading = false;
+        this.showNoResultsAlert = false;
         this.results = new Array();
         this.resultsShowing = 0;
     }
@@ -71,7 +76,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     getFirstResults(input: any){
-        $('#no-results-alert').hide();
+        this.showNoResultsAlert = false;
         this.allResults = new Array();
         this.numFound = 0;
         this.input.start = 0;
@@ -79,7 +84,7 @@ export class SearchComponent implements OnDestroy, OnInit {
         this.areMoreResults = false;
         if(this.isValid()){
             this.hasErrors = false;
-            $('#ajax-loader-search').show();
+            this.searchResultsLoading = true;
             this.search(this.input);
         }
         else{
@@ -88,7 +93,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     getMoreResults(): any {
-        $('#ajax-loader-show-more').show();
+        this.showMoreLoading = true;
         this.input.start += 10;
         this.search(this.input);
     };
@@ -100,8 +105,8 @@ export class SearchComponent implements OnDestroy, OnInit {
             searchResults => {
                 this.newResults = searchResults['result'];
                 this.numFound = searchResults['num-found'];
-                $('#ajax-loader-search').hide();
-                $('#ajax-loader-show-more').hide();
+                this.searchResultsLoading = false;
+                this.showMoreLoading = false;
 
                 this.getDetails(this.newResults);
 
@@ -110,7 +115,7 @@ export class SearchComponent implements OnDestroy, OnInit {
                 this.cdr.detectChanges();
                 
                 if(!this.numFound){
-                    $('#no-results-alert').fadeIn(1200);
+                    this.showNoResultsAlert = true;
                 }
 
                 this.areMoreResults = this.numFound > (this.input.start + this.input.rows);
@@ -234,9 +239,10 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.input.text = $('#SearchCtrl').data('search-query');
+        var urlParams = new URLSearchParams(location.search);
+        this.input.text = urlParams.get('searchQuery');
         if(typeof this.input.text !== 'undefined'){
-            $('#ajax-loader-search').show();
+            this.searchResultsLoading = true;
             this.search(this.input);
         }
     }

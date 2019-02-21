@@ -17,6 +17,7 @@ export class PublicRecordComponent {
   personEndPoint = "/" + orcidVar.orcidId + "/person.json";
   personData;
   objectKeys = Object.keys;
+  userInfo: any;
 
   constructor(
     private commonService: CommonService,
@@ -24,6 +25,16 @@ export class PublicRecordComponent {
   ) {
     this.popoverShowing = new Array();
     this.showSources = new Array();
+    this.userInfo = this.commonService.publicUserInfo$
+    .subscribe(
+        data => {
+            this.userInfo = data;                
+        },
+        error => {
+            console.log('publicRecord.component.ts: unable to fetch publicUserInfo', error);
+            this.userInfo = {};
+        } 
+    );
   }
 
   ngOnInit() {

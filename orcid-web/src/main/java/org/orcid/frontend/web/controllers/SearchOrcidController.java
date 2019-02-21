@@ -35,14 +35,8 @@ public class SearchOrcidController extends BaseController {
     }
 
     @RequestMapping(value = "/quick-search")
-    public ModelAndView quickSearch(@ModelAttribute("searchQuery") String queryFromUser, @ModelAttribute("solrQuery") String solrQuery) {
-        ModelAndView mav = new ModelAndView("quick_search");
-        if (StringUtils.isBlank(queryFromUser) && StringUtils.isBlank(solrQuery)) {
-            incrementSearchMetrics(null);
-            mav.addObject("noResultsFound", true);
-            return mav;
-        }
-        return mav;
+    public ModelAndView quickSearch() {
+        return new ModelAndView("quick_search");
     }
 
     private void incrementSearchMetrics(List<OrcidSearchResult> searchResults) {

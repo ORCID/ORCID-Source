@@ -40,14 +40,6 @@
     <#nested />
     <!--Content from this template (below) or other templates inside base macro tags appears here-->
     <#include "/common/scripts.ftl" />
-    <#if !hideSupportWidget??>  
-        <@orcid.checkFeatureStatus 'SUPPORT_MIGRATION'>
-            <#include "/common/zendesk_script.ftl" />
-        </@orcid.checkFeatureStatus>  
-        <@orcid.checkFeatureStatus featureName='SUPPORT_MIGRATION' enabled=false>
-            <#include "/common/user_voice_script.ftl" />
-        </@orcid.checkFeatureStatus>  
-    </#if>
     </body>
     </html>
 </#macro>

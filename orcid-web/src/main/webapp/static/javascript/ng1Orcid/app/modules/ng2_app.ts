@@ -54,6 +54,9 @@ import { AlertBannerNg2Module }
 
 import { AllConsortiumContactsNg2Module } 
     from './allConsortiumContacts/allConsortiumContacts.ts';
+    
+import { AuthorizeDelegateResultNg2Module } 
+    from './delegators/authorizeDelegateResult.ts';
 
 import { BiographyNg2Module } 
     from './biography/biography.ts';
@@ -303,6 +306,7 @@ export class RootCmp {
         AffiliationFormNg2Module,//Aproved
         AlertBannerNg2Module,
         AllConsortiumContactsNg2Module,
+        AuthorizeDelegateResultNg2Module,
         BiographyNg2Module, //Approved
         ClaimNg2Module,
         ClientEditNg2Module,

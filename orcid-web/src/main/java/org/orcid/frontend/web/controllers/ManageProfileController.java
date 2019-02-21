@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -46,6 +47,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
+import org.orcid.pojo.AuthorizeDelegatesResult;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
@@ -62,6 +64,8 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.OrcidStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -85,6 +89,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     private static final String IS_SELF = "isSelf";
 
     private static final String FOUND = "found";   
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ManageProfileController.class);
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -816,20 +822,37 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // verify it
                     verifyPrimaryEmailIfNeeded(managedOrcid);                    
                     givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);                    
-                    mav.addObject("admin_delegate_approved", getMessage("admin.delegate.success", trustedOrcid));
-                } else {
-                    // Exception, the email was not for you
-                    mav.addObject("admin_delegate_not_you", getMessage("wrong_user.Wronguser"));
                 }
-            } else {
-                // Error
-                mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
             }
-        } catch (UnsupportedEncodingException uee) {
-            mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
+        } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
+            LOG.warn("Failed to decrypt delegation key", e);
         }
 
         return mav;
+    }
+    
+    @RequestMapping(value = { "/authorizeDelegatesResult.json" }, method = RequestMethod.GET)
+    public @ResponseBody AuthorizeDelegatesResult getAuthorizeDelegatesResult(@RequestParam("key") String key) {
+        AuthorizeDelegatesResult result = new AuthorizeDelegatesResult();
+        try {
+            Map<String, String> params = decryptDelegationKey(key);
+            if (params.containsKey(AdminManager.MANAGED_USER_PARAM) && params.containsKey(AdminManager.TRUSTED_USER_PARAM)) {
+                String managedOrcid = params.get(AdminManager.MANAGED_USER_PARAM);
+                String trustedOrcid = params.get(AdminManager.TRUSTED_USER_PARAM);
+                
+                if (managedOrcid.equals(getEffectiveUserOrcid())) {
+                    result.setApproved(true);
+                    result.setApprovalMessage(getMessage("admin.delegate.success", trustedOrcid));
+                } else {
+                    result.setNotYou(true);
+                }
+            } else {
+                result.setFailed(true);
+            }
+        } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
+            result.setFailed(true);
+        }
+        return result;
     }
 
     @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)

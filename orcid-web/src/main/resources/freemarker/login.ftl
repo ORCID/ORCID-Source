@@ -14,8 +14,6 @@
         </div>
     </#if>
     <div class="row">
-        <@spring.bind "loginForm" />
-        <@spring.showErrors "<br/>" "error" /> 
             <#include "/includes/ng2_templates/request-password-reset-ng2-template.ftl">
             <#include "/includes/ng2_templates/oauth-authorization-ng2-template.ftl">
             <oauth-authorization-ng2></oauth-authorization-ng2>

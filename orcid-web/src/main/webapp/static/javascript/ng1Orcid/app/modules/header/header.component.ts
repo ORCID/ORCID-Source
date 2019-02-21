@@ -67,19 +67,16 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         this.tertiaryMenuVisible = {};
         const urlParams = new URLSearchParams(window.location.search);
         this.isOauth = (urlParams.has('client_id') && urlParams.has('redirect_uri'));
-        var orcidRegex = /^(\d{4}-){3}\d{3}[\dX]$/;
-        var path = window.location.pathname;
-        path = path.substring(path.lastIndexOf('/') + 1);
-        this.isPublicPage = orcidRegex.test(path);
-        if(this.isPublicPage) {            
-            this.profileOrcid = path;
-            this.userInfo = this.commonSrvc.getPublicUserInfo(this.profileOrcid)
+        this.isPublicPage = this.commonSrvc.isPublicPage;
+        if(this.isPublicPage) {                        
+            this.userInfo = this.commonSrvc.publicUserInfo$
             .subscribe(
                 data => {
-                    this.userInfo = data;
+                    this.userInfo = data;                
                 },
                 error => {
                     console.log('header.component.ts: unable to fetch publicUserInfo', error);
+                    this.userInfo = {};
                 } 
             );
         } else {
