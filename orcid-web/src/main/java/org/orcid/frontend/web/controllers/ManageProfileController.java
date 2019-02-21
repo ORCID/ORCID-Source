@@ -835,8 +835,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             Map<String, String> params = decryptDelegationKey(key);
             if (params.containsKey(AdminManager.MANAGED_USER_PARAM) && params.containsKey(AdminManager.TRUSTED_USER_PARAM)) {
                 String managedOrcid = params.get(AdminManager.MANAGED_USER_PARAM);
+                String trustedOrcid = params.get(AdminManager.TRUSTED_USER_PARAM);
+                
                 if (managedOrcid.equals(getEffectiveUserOrcid())) {
                     result.setApproved(true);
+                    result.setApprovalMessage(getMessage("admin.delegate.success", trustedOrcid));
                 } else {
                     result.setNotYou(true);
                 }

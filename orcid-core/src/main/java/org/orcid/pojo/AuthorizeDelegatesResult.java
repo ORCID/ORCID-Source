@@ -7,7 +7,9 @@ public class AuthorizeDelegatesResult {
     private boolean failed;
     
     private boolean notYou;
-
+    
+    private String approvalMessage;
+   
     public boolean isApproved() {
         return approved;
     }
@@ -31,5 +33,13 @@ public class AuthorizeDelegatesResult {
     public void setNotYou(boolean notYou) {
         this.notYou = notYou;
     }
-    
+
+    public String getApprovalMessage() {
+        return approvalMessage;
+    }
+
+    public void setApprovalMessage(String approvalMessage) {
+        this.approvalMessage = approvalMessage;
+    }
+
 }
