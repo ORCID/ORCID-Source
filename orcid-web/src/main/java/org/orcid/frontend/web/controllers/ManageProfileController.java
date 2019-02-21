@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -821,7 +822,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);                    
                 }
             }
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
             LOG.warn("Failed to decrypt delegation key", e);
         }
 
@@ -846,7 +847,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             } else {
                 result.setFailed(true);
             }
-        } catch (UnsupportedEncodingException uee) {
+        } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
             result.setFailed(true);
         }
         return result;
