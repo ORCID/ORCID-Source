@@ -29,6 +29,8 @@
         orcidVar.fundingIdsJson = JSON.parse("${fundingIdsJson}");
         </#if>
 
+        orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
+        
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
         orcidVar.lastModified = '${(lastModifiedTime?datetime)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';

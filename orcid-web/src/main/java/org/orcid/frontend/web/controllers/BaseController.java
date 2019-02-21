@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
@@ -78,7 +79,9 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,6 +92,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -1070,5 +1074,36 @@ public class BaseController {
             this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
         return this.staticContentPath;
+    }
+    
+    @ModelAttribute("jsMessagesJson")
+    public String getJavascriptMessages(HttpServletRequest request) {
+        Locale locale = RequestContextUtils.getLocale(request);
+        org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
+        lPojo.setLocale(locale.toString());
+
+        ResourceBundle definitiveProperties = ResourceBundle.getBundle("i18n/javascript", defaultLocale, new UTF8Control());
+        Map<String, String> definitivePropertyMap = OrcidStringUtils.resourceBundleToMap(definitiveProperties);
+
+        ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
+        Map<String, String> localPropertyMap = OrcidStringUtils.resourceBundleToMap(resources);
+
+        if (!defaultLocale.equals(locale)) {
+            for (String propertyKey : definitivePropertyMap.keySet()) {
+                String property = localPropertyMap.get(propertyKey);
+                if (StringUtils.isBlank(property)) {
+                    localPropertyMap.put(propertyKey, definitivePropertyMap.get(propertyKey));
+                }
+            }
+        }
+
+        lPojo.setMessages(localPropertyMap);
+        String messages = "";
+        try {
+            messages = StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(lPojo));
+        } catch (IOException e) {
+            LOGGER.error("getJavascriptMessages error:" + e.toString(), e);
+        }
+        return messages;
     }
 }

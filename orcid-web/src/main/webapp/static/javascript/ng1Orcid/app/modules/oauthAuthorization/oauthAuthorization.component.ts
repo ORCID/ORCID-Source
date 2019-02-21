@@ -722,7 +722,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         //if oauth request load request info form
         const urlParams = new URLSearchParams(window.location.search);
         var isOauth = (urlParams.has('client_id') && urlParams.has('redirect_uri'));
-        var showLogin = (urlParams.has('show_login') && urlParams.get('show_login') === 'true');
+        var showLogin = (!urlParams.has('show_login') || urlParams.get('show_login') === 'true');
         if(isOauth){
             this.loadRequestInfoForm();
             if(orcidVar.oauthUserId && showLogin){

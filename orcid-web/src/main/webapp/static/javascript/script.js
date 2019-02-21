@@ -307,28 +307,40 @@ var OrcidCookie = new function() {
     };
 };
 
-var OrcidMessage = function() {    
-    $.ajax({
-        url : getBaseUri() + '/messages.json',
-        type : 'GET',
-        dataType: 'text',
-        contentType: "application/json",
-        async: false,
-        success : function(data) {                
-            var data = JSON.parse(data);
-            messages = data['messages'];            
-        }
-    }).fail(
-    // detects server is down or CSRF mismatches
-    // do to session expiration or server bounces
-    function(e) {
-        console.log("error fetching javascript messages");
-        console.log(e);
-    });    
+var OrcidMessage = function() {
+    
 };
 
+var messagesPromise = new Promise(function(resolve, reject) {
+        $.ajax({
+            url : getBaseUri() + '/messages.json',
+            type : 'GET',
+            dataType: 'text',
+            contentType: "application/json",            
+            success : function(data) {     
+                console.log('All messages are done!')
+                var data = JSON.parse(data);
+                messages = data['messages'];  
+                resolve();
+            }
+        }).fail(
+        // detects server is down or CSRF mismatches
+        // do to session expiration or server bounces
+        function(e) {
+            console.log("error fetching javascript messages");
+            console.log(e);
+            reject();
+        });
+    });    
+
 OrcidMessage.prototype.get = function(name) {
-    return messages[name];    
+    console.log('Getting message: ' + name);
+    messagesPromise.then(function(response) {
+        console.log('result: ' + messages[name]);
+        return messages[name];  
+    }, function(error) {
+      return '';
+    })    
 };
 
 var messages = null;

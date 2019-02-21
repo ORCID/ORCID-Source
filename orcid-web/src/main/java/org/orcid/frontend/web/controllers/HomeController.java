@@ -256,7 +256,7 @@ public class HomeController extends BaseController {
     }
     
     @RequestMapping(value = "/messages.json", method = RequestMethod.GET)
-    public @ResponseBody org.orcid.pojo.Local getJavascriptMessages(HttpServletRequest request) {
+    public @ResponseBody org.orcid.pojo.Local getJavascriptMessagesEndpoint(HttpServletRequest request) {
         Locale locale = RequestContextUtils.getLocale(request);
         org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
         lPojo.setLocale(locale.toString());
