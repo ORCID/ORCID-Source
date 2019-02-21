@@ -36,6 +36,10 @@ export class ReactivationService {
         )
         
     }
+    
+    getReactivationData( resetParams ): Observable<any> {
+        return this.http.get(getBaseUri() + '/reactivationData.json?params=' + resetParams)
+    }
 
     serverValidate( obj, field ): Observable<any> {
         let encoded_data = JSON.stringify(obj);
