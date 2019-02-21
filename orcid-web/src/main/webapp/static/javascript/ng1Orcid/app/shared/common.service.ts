@@ -21,15 +21,26 @@ import { OrgDisambiguated }
 export class CommonService {
     private shownElement: any;
 
+    public publicPageRegex = /.*\/(\d{4}-){3}\d{3}[\dX](\/?|\/print)$/;
+    public orcidRegex = /(\d{4}-){3}\d{3}[\dX]/;
     public orgDisambiguatedDetails: any;    
     public userInfo$: Observable<any>;
+    public publicUserInfo$: Observable<any>;
+    public isPublicPage: boolean;
     
     constructor(
         private http: HttpClient
     ) {        
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
-        this.userInfo$ = this.getUserInfo().pipe(share());  
+        var path = window.location.pathname;        
+        this.isPublicPage = this.publicPageRegex.test(path);
+        if(this.isPublicPage) {
+            var orcidId = path.match(this.orcidRegex)[0];
+            this.publicUserInfo$ = this.getPublicUserInfo(orcidId).pipe(share()); 
+        } else {
+            this.userInfo$ = this.getUserInfo().pipe(share());  
+        }        
     }
 
     addComma(str): string {

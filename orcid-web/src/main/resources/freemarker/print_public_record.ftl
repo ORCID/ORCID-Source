@@ -4,10 +4,8 @@
 <div class="row workspace-top public-profile print">
     <div class="col-md-12">
         <div class="workspace-left workspace-profile">
-
 			<#include "/includes/ng2_templates/print-id-banner-ng2-template.ftl">
 			<print-id-banner-ng2></print-id-banner-ng2>
-
 
 	        <!--Person sections-->
             <#include "/includes/ng2_templates/public-record-ng2-template.ftl">

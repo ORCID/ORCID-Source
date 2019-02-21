@@ -250,6 +250,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody Map<String, String> getUserInfo( @PathVariable("orcid") String orcid) {
         Map<String, String> info = new HashMap<String, String>();
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        info.put("EFFECTIVE_USER_ORCID", orcid);
         info.put("IS_LOCKED", String.valueOf(!profile.isAccountNonLocked()));
         info.put("IS_DEACTIVATED", String.valueOf(!(profile.getDeactivationDate() == null)));
         if(profile.getPrimaryRecord() != null) {
