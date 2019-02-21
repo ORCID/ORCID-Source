@@ -19,17 +19,31 @@ export class idBannerComponent implements AfterViewInit, OnDestroy, OnInit {
   private displayName: string;
   private userInfo: any;
 
-  constructor(private personService: PersonService, private commonSrvc: CommonService) {      
-      this.userInfo = this.commonSrvc.userInfo$
-      .subscribe(
-          data => {
-              this.userInfo = data;                
-          },
-          error => {
-              console.log('idBanner.component.ts: unable to fetch userInfo', error);
-              this.userInfo = {};
-          } 
-      );
+  constructor(private personService: PersonService, private commonSrvc: CommonService) {   
+      var isPublicPage = this.commonSrvc.isPublicPage;
+      if(isPublicPage) {
+          this.userInfo = this.commonSrvc.publicUserInfo$
+          .subscribe(
+              data => {
+                  this.userInfo = data;                
+              },
+              error => {
+                  console.log('idBanner.component.ts: unable to fetch publicUserInfo', error);
+                  this.userInfo = {};
+              } 
+          );
+      } else {
+          this.userInfo = this.commonSrvc.userInfo$
+          .subscribe(
+              data => {
+                  this.userInfo = data;                
+              },
+              error => {
+                  console.log('idBanner.component.ts: unable to fetch userInfo', error);
+                  this.userInfo = {};
+              } 
+          );
+      }      
   }
 
   //Default init functions provided by Angular Core
