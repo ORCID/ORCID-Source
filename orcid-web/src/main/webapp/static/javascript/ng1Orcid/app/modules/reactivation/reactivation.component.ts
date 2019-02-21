@@ -239,8 +239,10 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getReactivation(orcidVar.resetParams, '');
-        this.getReactivationData(orcidVar.resetParams);
+        var segments = window.location.href.split('/');
+        var resetParams = segments[segments.length - 1];
+        this.getReactivation(resetParams, '');
+        this.getReactivationData(resetParams);
     };
 
 
