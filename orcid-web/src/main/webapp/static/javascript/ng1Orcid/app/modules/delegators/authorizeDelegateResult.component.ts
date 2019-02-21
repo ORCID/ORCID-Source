@@ -16,9 +16,6 @@ import { takeUntil }
 import { AccountService } 
     from '../../shared/account.service.ts'; 
     
-import { Router, ActivatedRoute, Params }
-    from '@angular/router';
-
 @Component({
     selector: 'authorize-delegate-result-ng2',
     template:  scriptTmpl("authorize-delegate-result-ng2-template"),
@@ -30,15 +27,13 @@ export class AuthorizeDelegateResultComponent implements OnDestroy, OnInit {
     authorizeDelegateResult: any;
 
     constructor(
-         private accountService: AccountService,
-         private activatedRoute: ActivatedRoute
+         private accountService: AccountService
     ) {
 
     }
 
     getAuthorizeDelegateResult(): void {
-    console.log(this.activatedRoute.snapshot);
-        var key = this.activatedRoute.snapshot.queryParamMap.get('key');
+        var key = window.location.href.split('key=')[1];
         this.accountService.getAuthorizeDelegateResult(key)
         .pipe(    
             takeUntil(this.ngUnsubscribe)

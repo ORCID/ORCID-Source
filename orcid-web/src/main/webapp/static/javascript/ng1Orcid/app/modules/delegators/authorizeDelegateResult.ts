@@ -14,12 +14,6 @@ import { AuthorizeDelegateResultComponent }
 import { CommonNg2Module }
     from './../common/common.ts';
     
-import { APP_BASE_HREF } 
-    from '@angular/common'; 
-    
-import { Routes, RouterModule }  
-    from '@angular/router';
-
 // This is the Angular 1 part of the module
 export const AuthorizeDelegateResultModule = angular.module(
     'AuthorizeDelegateResultModule', 
@@ -36,12 +30,9 @@ export const AuthorizeDelegateResultModule = angular.module(
             AuthorizeDelegateResultComponent 
         ],
         imports: [
-            CommonNg2Module,
-            RouterModule, 
-            RouterModule.forRoot([{ path: "reset-password", component: AuthorizeDelegateResultComponent }]),
+            CommonNg2Module
         ],
         providers: [
-            { provide: APP_BASE_HREF, useValue : '/orcid-web/' }
         ]
     }
 )
