@@ -11,12 +11,9 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated components
-import { CommonModule, APP_BASE_HREF } 
+import { CommonModule } 
     from '@angular/common'; 
     
-import { Routes, RouterModule }  
-    from '@angular/router';
-
 import { RequestPasswordResetComponent } 
     from './requestPasswordReset.component.ts';
 
@@ -42,12 +39,9 @@ export const RequestPasswordResetModule = angular.module(
         ],
         imports: [
             CommonModule,
-            FormsModule,
-            RouterModule, 
-            RouterModule.forRoot([{ path: "reset-password", component: RequestPasswordResetComponent }]),
+            FormsModule
         ],
         providers: [
-            { provide: APP_BASE_HREF, useValue : '/orcid-web/' }
         ]
     }
 )

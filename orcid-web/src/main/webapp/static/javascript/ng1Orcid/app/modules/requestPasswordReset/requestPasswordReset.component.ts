@@ -1,5 +1,4 @@
 declare var $: any; //delete
-declare var orcidVar: any;
 declare var logAjaxError: any;
 declare var getBaseUri: any;
 declare var om: any;
@@ -9,9 +8,6 @@ declare var om: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
     
-import { Router, ActivatedRoute, Params }
-    from '@angular/router';
-
 import { AfterViewInit, Component, ChangeDetectorRef, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
@@ -60,8 +56,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         private elementRef: ElementRef, 
         private featuresService: FeaturesService,
         private oauthService: OauthService,
-        private requestPasswordResetService: GenericService,
-        private activatedRoute: ActivatedRoute
+        private requestPasswordResetService: GenericService
     ) {
         this.authorizationForm = elementRef.nativeElement.getAttribute('authorizationForm');
         this.showDeactivatedError = elementRef.nativeElement.getAttribute('showDeactivatedError');
@@ -171,7 +166,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     };
 
     ngOnInit() {
-        this.tokenExpired = this.activatedRoute.snapshot.queryParamMap.get('expired') == "true";
+        this.tokenExpired = window.location.href.split('expired=')[1] == "true";
         this.getRequestResetPassword();
         // init reset password toggle text
         this.showSendResetLinkError = false;

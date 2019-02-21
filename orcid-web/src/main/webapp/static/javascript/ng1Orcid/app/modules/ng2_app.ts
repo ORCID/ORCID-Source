@@ -24,7 +24,7 @@ import { BrowserModule }
 import { platformBrowserDynamic } 
     from '@angular/platform-browser-dynamic';
 
-import { Routes, RouterModule, UrlHandlingStrategy } 
+import { RouterModule, UrlHandlingStrategy } 
     from '@angular/router';
 
 import { UpgradeModule } 
