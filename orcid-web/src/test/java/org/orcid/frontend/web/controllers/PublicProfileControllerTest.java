@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -308,14 +309,14 @@ public class PublicProfileControllerTest extends DBUnitTest {
     
     private void assertUnavailableProfileBasicData(ModelAndView mav, String orcid, String displayName) {
         assertEquals("public_profile_unavailable", mav.getViewName());
+        PublicRecordPersonDetails personDetails = publicProfileController.getPersonDetails(orcid);
         Map<String, Object> model = mav.getModel();
         assertTrue(model.containsKey("effectiveUserOrcid"));
         assertEquals(orcid, model.get("effectiveUserOrcid"));  
         if(displayName != null) {
-            assertTrue(model.containsKey("displayName"));
-            assertEquals(displayName, model.get("displayName"));
-            assertTrue(model.containsKey("title"));
-            assertEquals(localeManager.resolveMessage("layout.public-layout.title", displayName, orcid), model.get("title"));
+            assertNotNull(personDetails.getDisplayName());
+            assertEquals(displayName, personDetails.getDisplayName());
+            assertNull(personDetails.getTitle());
         }
     }
 }

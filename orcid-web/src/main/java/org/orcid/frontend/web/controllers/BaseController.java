@@ -388,16 +388,6 @@ public class BaseController {
         return orcidSecurityManager.isPasswordConfirmationRequired();
     } 
 
-    @ModelAttribute("request")
-    public HttpServletRequest getRequest(HttpServletRequest request) {
-        return request;
-    }
-
-    @ModelAttribute("loginForm")
-    public LoginForm getLoginForm() {
-        return new LoginForm();
-    }
-
     @ModelAttribute("jsMessagesJson")
     public String getJavascriptMessages(HttpServletRequest request) {
         Locale locale = RequestContextUtils.getLocale(request);

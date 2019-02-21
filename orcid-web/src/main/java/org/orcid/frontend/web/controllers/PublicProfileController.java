@@ -164,43 +164,15 @@ public class PublicProfileController extends BaseWorkspaceController {
         } catch (OrcidDeprecatedException | OrcidNotClaimedException | LockedException | DeactivatedException e) {
             ModelAndView mav = new ModelAndView("public_profile_unavailable");
             mav.addObject("effectiveUserOrcid", orcid);
-            String displayName = "";
             if (e instanceof OrcidDeprecatedException) {
-                PersonalDetails publicPersonalDetails = personalDetailsManagerReadOnly.getPublicPersonalDetails(orcid);
-                if (publicPersonalDetails.getName() != null) {
-                    Name name = publicPersonalDetails.getName();
-                    if (name.getVisibility().equals(Visibility.PUBLIC)) {
-                        if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
-                            displayName = name.getCreditName().getContent();
-                        } else {
-                            if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
-                                displayName = name.getGivenNames().getContent() + " ";
-                            }
-                            if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
-                                displayName += name.getFamilyName().getContent();
-                            }
-                        }
-                    }
-                }
                 mav.addObject("deprecated", true);
                 mav.addObject("primaryRecord", profile.getPrimaryRecord().getId());
-            } else if (e instanceof OrcidNotClaimedException) {
-                displayName = localeManager.resolveMessage("orcid.reserved_for_claim");
             } else if (e instanceof LockedException) {
                 mav.addObject("locked", true);
                 mav.addObject("isPublicProfile", true);
-                displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
-                        + localeManager.resolveMessage("public_profile.deactivated.family_name");
                 mav.addObject("noIndex", true);
             } else {
                 mav.addObject("deactivated", true);
-                displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
-                        + localeManager.resolveMessage("public_profile.deactivated.family_name");
-            }
-
-            if (!PojoUtil.isEmpty(displayName)) {
-                mav.addObject("title", getMessage("layout.public-layout.title", displayName, orcid));
-                mav.addObject("displayName", displayName);
             }
             return mav;
         }

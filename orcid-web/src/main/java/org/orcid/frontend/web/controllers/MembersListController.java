@@ -39,9 +39,7 @@ public class MembersListController extends BaseController {
 
     @RequestMapping("/members/{memberSlug}")
     public ModelAndView memberPage(@PathVariable("memberSlug") String memberSlug) {
-        ModelAndView mav = new ModelAndView("member-page");
-        mav.addObject("memberSlug", OrcidStringUtils.stripHtml(memberSlug.trim()));
-        return mav;
+        return new ModelAndView("member-page");
     }
 
     @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
