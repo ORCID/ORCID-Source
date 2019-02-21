@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -13,6 +14,7 @@ import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.persistence.constants.SendEmailFrequency;
+import org.orcid.pojo.UnsubscribeData;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,11 +55,19 @@ public class UnsubscribeController extends BaseController {
         if(!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
-        
-        Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
-        
-        result.addObject("email_address", email.getEmail());
         return result;
+    }
+    
+    @RequestMapping(value = "/unsubscribeData.json", method = RequestMethod.GET)
+    public @ResponseBody UnsubscribeData getUnsubscribeData(@RequestParam(value = "id") String encryptedId) throws UnsupportedEncodingException {
+        String decryptedId = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedId), "UTF-8"));
+        String orcid = emailFrequencyManager.findOrcidId(decryptedId);
+        Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
+
+        UnsubscribeData unsubscribeData = new UnsubscribeData();
+        unsubscribeData.setEmailAddress(email.getEmail());
+        unsubscribeData.setEmailFrequencyOptions(emailManagerReadOnly.getEmailFrequencyOptions());
+        return unsubscribeData;
     }
     
     @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)

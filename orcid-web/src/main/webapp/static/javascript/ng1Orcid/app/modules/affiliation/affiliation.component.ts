@@ -34,8 +34,7 @@ import { CommonService }
     
 @Component({
     selector: 'affiliation-ng2',
-    template:  scriptTmpl("affiliation-ng2-template"),
-    providers: [CommonService]
+    template:  scriptTmpl("affiliation-ng2-template")
 })
 export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() publicView: any;

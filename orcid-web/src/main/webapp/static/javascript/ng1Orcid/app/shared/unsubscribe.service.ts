@@ -14,7 +14,6 @@ import { catchError, map, tap }
 @Injectable()
 export class UnsubscribeService {
     private headers: HttpHeaders;    
-    private url: string;
     private notify = new Subject<any>();
     notifyObservable$ = this.notify.asObservable();
 
@@ -25,14 +24,22 @@ export class UnsubscribeService {
                 'Content-Type': 'application/json'
             }
         );
-        this.url = getBaseUri() + '/unsubscribe/preferences.json';
     }
 
     getNotificationSettingsForm(): Observable<any> {
         var urlParts = window.location.href.split('/');
         var encryptedId = urlParts[urlParts.length -1];        
         return this.http.get(
-            this.url + '?id=' + encryptedId
+            getBaseUri() + '/unsubscribe/preferences.json' + '?id=' + encryptedId
+        )
+        
+    }
+    
+    getUnsubscribeData(): Observable<any> {
+        var urlParts = window.location.href.split('/');
+        var encryptedId = urlParts[urlParts.length -1];        
+        return this.http.get(
+            getBaseUri() + '/unsubscribe/unsubscribeData.json' + '?id=' + encryptedId
         )
         
     }
@@ -43,7 +50,7 @@ export class UnsubscribeService {
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 
-            this.url + '?id=' + encryptedId, 
+            getBaseUri() + '/unsubscribe/preferences.json' + '?id=' + encryptedId, 
             encoded_data, 
             { headers: this.headers }
         )

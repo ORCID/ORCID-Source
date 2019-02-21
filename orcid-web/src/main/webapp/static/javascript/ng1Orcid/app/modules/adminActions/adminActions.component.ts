@@ -20,8 +20,7 @@ import { CommonService }
     
 @Component({
     selector: 'admin-actions-ng2',
-    template:  scriptTmpl("admin-actions-ng2-template"),
-    providers: [CommonService]
+    template:  scriptTmpl("admin-actions-ng2-template")
 })
 export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();    
