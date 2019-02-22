@@ -42,12 +42,10 @@ import org.orcid.jaxb.model.v3.rc2.record.Biography;
 import org.orcid.jaxb.model.v3.rc2.record.Emails;
 import org.orcid.jaxb.model.v3.rc2.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.ApplicationSummary;
-import org.orcid.pojo.AuthorizeDelegatesResult;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
@@ -809,8 +807,6 @@ public class ManageProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = { "/authorize-delegates" }, method = RequestMethod.GET)
     public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
-        ModelAndView mav = new ModelAndView("manage");
-
         try {
             Map<String, String> params = decryptDelegationKey(key);
             if (params.containsKey(AdminManager.MANAGED_USER_PARAM) && params.containsKey(AdminManager.TRUSTED_USER_PARAM)) {
@@ -821,40 +817,19 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // Check if the managed user email is verified, if not,
                     // verify it
                     verifyPrimaryEmailIfNeeded(managedOrcid);                    
-                    givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);                    
-                }
-            }
-        } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
-            LOG.warn("Failed to decrypt delegation key", e);
-        }
-
-        return mav;
-    }
-    
-    @RequestMapping(value = { "/authorizeDelegatesResult.json" }, method = RequestMethod.GET)
-    public @ResponseBody AuthorizeDelegatesResult getAuthorizeDelegatesResult(@RequestParam("key") String key) {
-        AuthorizeDelegatesResult result = new AuthorizeDelegatesResult();
-        try {
-            Map<String, String> params = decryptDelegationKey(key);
-            if (params.containsKey(AdminManager.MANAGED_USER_PARAM) && params.containsKey(AdminManager.TRUSTED_USER_PARAM)) {
-                String managedOrcid = params.get(AdminManager.MANAGED_USER_PARAM);
-                String trustedOrcid = params.get(AdminManager.TRUSTED_USER_PARAM);
-                
-                if (managedOrcid.equals(getEffectiveUserOrcid())) {
-                    result.setApproved(true);
-                    result.setApprovalMessage(getMessage("admin.delegate.success", trustedOrcid));
+                    givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);
+                    return new ModelAndView("redirect:/manage?delegate=" + trustedOrcid);
                 } else {
-                    result.setNotYou(true);
+                    return new ModelAndView("redirect:/manage?wrongToken=true");
                 }
             } else {
-                result.setFailed(true);
+                return new ModelAndView("redirect:/manage?invalidToken=true");
             }
         } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
-            result.setFailed(true);
+            return new ModelAndView("redirect:/manage?invalidToken=true");
         }
-        return result;
     }
-
+    
     @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)
     public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
         return profileEntityManager.getApplications(getCurrentUserOrcid());
