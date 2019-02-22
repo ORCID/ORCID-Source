@@ -117,8 +117,9 @@
                                 </div>
                                 <div id="addEmailNotAllowed" *ngIf="isPassConfReq" >
                                     ${springMacroRequestContext.getMessage("manage.add_another_email.not_allowed")}
-                                </div>          
-                                <div *ngIf="!isPassConfReq">
+                                </div>  
+                                <!--Add email-->        
+                                <div *ngIf="formData?.emails?.length < MAX_EMAIL_COUNT && !isPassConfReq">
                                     <div class="add-email">
                                         <label hidden for="addEmail">${springMacroRequestContext.getMessage("manage.add_another_email")}</label>
                                         <input type="email" name="addEmail" id="addEmail" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"

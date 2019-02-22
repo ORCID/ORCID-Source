@@ -40,6 +40,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     */
     ///account/email/visibility and /account/email/setPrimary
     @Input() popUp: any;
+    MAX_EMAIL_COUNT: number = 30;
 
     defaultVisibility: any;
     emails: any;

@@ -9,4 +9,6 @@ public class EmailConstants {
      * user if their primary email ins't verified.
      */
     public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";    
+    
+    public static final int MAX_EMAIL_COUNT = 30;
 }
