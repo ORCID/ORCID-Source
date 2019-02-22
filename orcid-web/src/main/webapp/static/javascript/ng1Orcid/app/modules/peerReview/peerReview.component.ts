@@ -49,6 +49,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
 
     editSources: any;
     emails: any;
+    isPublicPage: boolean;
     moreInfo: any;
     moreInfoOpen: boolean;
     noLinkFlag: boolean;
@@ -74,6 +75,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
         this.editSources = {};
         this.emails = {};
+        this.isPublicPage = this.commonSrvc.isPublicPage;
         this.moreInfo = {};
         this.moreInfoOpen = false;
         this.noLinkFlag = true;

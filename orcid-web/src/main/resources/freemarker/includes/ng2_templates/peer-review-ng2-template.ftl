@@ -9,17 +9,15 @@
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i>
                             <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span>{{peerReviewService.groups.length}}</span>)
                         </a>
-                        <#if !(isPublicProfile??)> 
-                            <div class="popover-help-container">
-                                <i class="glyphicon glyphicon-question-sign"></i>
-                                <div id="peer-review-help" class="popover bottom">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006971333" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
-                                    </div>
+                        <div *ngIf="!isPublicPage" class="popover-help-container">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                            <div id="peer-review-help" class="popover bottom">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006971333" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
-                        </#if>                     
+                        </div>                    
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayPeerReview">
                         <#escape x as x?html>
@@ -63,9 +61,7 @@
                             </ul>                                   
                         </div>
                         <!--End sort menu-->
-
-                        <#if !(isPublicProfile??)> 
-                        <ul class="workspace-bar-menu" *ngIf="noLinkFlag">
+                        <ul class="workspace-bar-menu" *ngIf="noLinkFlag && !isPublicPage">
                         <!--Add works-->    
                             <li class="hidden-xs">
                                 <div class="menu-container" id="add-peer-review-container">
@@ -86,9 +82,7 @@
                                     </ul>
                                 </div>  
                             </li>  
-                        </ul> 
-                        </#if>        
-                            
+                        </ul>         
                         </#escape>                                
                     </div>
                 </div>
@@ -128,8 +122,7 @@
                         </div>
                     </div>
                 </div>            
-            </div>
-                                
+            </div>                   
             <div class="workspace-accordion-content">
                 <ng-container  *ngIf="workspaceSrvc.displayPeerReview">
                     <ul *ngIf="peerReviewService?.groups?.length > 0" class="workspace-peer-review workspace-body-list bottom-margin-medium" id="peer-review-header">
@@ -139,14 +132,11 @@
                     </ul>
                     <div *ngIf="peerReviewService.loading == false && peerReviewService.groups.length == 0 && !peerReviewImportWizard">
                         <strong>
-                        <#if (publicProfile)?? && publicProfile == true>
-                            ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.Nopublicationsaddedyet")}
-                        <#else>
                             ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.havenotaddedanypeerreviews")} 
                             <a *ngIf="noLinkFlag" (click)="showPeerReviewImportWizard()" class="no-wrap">
                             ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addsomenow")}
                             </a>
-                        </#if></strong> 
+                        </strong> 
                     </div>
                 </ng-container>
             </div>                                                   
