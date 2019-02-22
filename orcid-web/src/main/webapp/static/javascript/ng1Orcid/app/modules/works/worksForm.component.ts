@@ -53,18 +53,15 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     togglzDialogPrivacyOption: boolean;
     sortedCountryNames: any;
     countryNamesToCountryCodes: any;
-
+    idUnresolvableError: string;
+    
     constructor( 
         private cdr: ChangeDetectorRef,
         private commonService: CommonService,
         private featuresService: FeaturesService,
         private modalService: ModalService,
         private worksService: WorksService
-    ) {
-        this.contentCopy = {
-            titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
-            titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
-        };
+    ) {        
         this.addingWork = false;
         this.bibtexWork = false;
         this.bibtexWorkIndex = null;
@@ -75,6 +72,13 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.externalIDTypeCache = [];//cache responses
         this.types = null;
         this.initCountries();
+        om.process().then(() => { 
+            this.contentCopy = {
+                    titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+                    titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
+                };
+            this.idUnresolvableError = om.get('orcid.frontend.manual_work_form_errors.id_unresolvable')
+        });        
     }
     
     initCountries(): void {
@@ -212,7 +216,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                             }else{
                                 this.editWork.workExternalIdentifiers[i].url.value="";                        
                             }
-                            this.editWork.workExternalIdentifiers[i].externalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
+                            this.editWork.workExternalIdentifiers[i].externalIdentifierId.errors.push(this.idUnresolvableError);
                         }
                         this.editWork.workExternalIdentifiers[i].resolvingId = false;
                     },

@@ -9,7 +9,7 @@ import { Injectable, Pipe, PipeTransform }
 
 @Injectable()
 export class WorkExternalIdentifierHtmlPipe implements PipeTransform {
-    transform(workExternalIdentifier: any, first: any, last: any, length: any, moreInfo: any): any {
+    transform(workExternalIdentifier: any, first: any, last: any, length: any, moreInfo: any): any {        
         var id = null;
         var isPartOf = false;
         var link = null;

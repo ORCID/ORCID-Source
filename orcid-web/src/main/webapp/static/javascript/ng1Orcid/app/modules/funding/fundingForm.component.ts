@@ -450,44 +450,46 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     typeChanged(): void {
-        var selectedType = this.editFunding.fundingType.value;
-        switch (selectedType){
-        case 'award':
-            $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.award"));
-            $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.award"));
-            $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.award"));
-            $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.award"));
-            $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.award"));
-            break;
-        case 'contract':
-            $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.contract"));
-            $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.contract"));
-            $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.contract"));
-            $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.contract"));
-            $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.contract"));
-            break;
-        case 'grant':
-            $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.grant"));
-            $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.grant"));
-            $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.grant"));
-            $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.grant"));
-            $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.grant"));
-            break;
-        case 'salary-award':
-            $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.award"));
-            $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.award"));
-            $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.award"));
-            $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.award"));
-            $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.award"));
-            break;
-        default:
-            $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.grant"));
-            $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.grant"));
-            $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.grant"));
-            $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.grant"));
-            $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.grant"));
-            break;
-        }
+        om.process().then(() => {
+            var selectedType = this.editFunding.fundingType.value;
+            switch (selectedType){
+            case 'award':
+                $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.award"));
+                $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.award"));
+                $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.award"));
+                $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.award"));
+                $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.award"));
+                break;
+            case 'contract':
+                $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.contract"));
+                $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.contract"));
+                $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.contract"));
+                $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.contract"));
+                $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.contract"));
+                break;
+            case 'grant':
+                $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.grant"));
+                $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.grant"));
+                $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.grant"));
+                $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.grant"));
+                $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.grant"));
+                break;
+            case 'salary-award':
+                $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.award"));
+                $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.award"));
+                $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.award"));
+                $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.award"));
+                $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.award"));
+                break;
+            default:
+                $("#funding-ext-ids-title").text(om.get("funding.add.external_id.title.grant"));
+                $("#funding-ext-ids-value-label").text(om.get("funding.add.external_id.value.label.grant"));
+                $("#funding-ext-ids-value-input").attr("placeholder", om.get("funding.add.external_id.value.placeholder.grant"));
+                $("#funding-ext-ids-url-label").text(om.get("funding.add.external_id.url.label.grant"));
+                $("#funding-ext-ids-url-input").attr("placeholder", om.get("funding.add.external_id.url.placeholder.grant"));
+                break;
+            }
+        });        
     };
 
     toggleTranslatedTitle(): void{

@@ -146,8 +146,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.printView = elementRef.nativeElement.getAttribute('printView');
         this.savingBibtex = false;
         this.scriptsLoaded = false;
-        this.selectedGeoArea = null;
-        this.selectedWorkType = null;
         this.showBibtex = {};
         this.showBibtexExport = false;
         this.showBibtexImportWizard = false;
@@ -165,6 +163,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.manualWorkGroupingEnabled = this.featuresService.isFeatureEnabled('MANUAL_WORK_GROUPING');
         this.exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
         this.groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');        
+        om.process().then(() => { 
+            this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
+            this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
+        });        
     }
 
     addExternalIdentifier(): void {
@@ -807,8 +809,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(data == null || data.length == 0) {
                         this.noLinkFlag = false;
                     }
-                    this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
-                    this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
                     this.workImportWizardsOriginal = data;
                     this.bulkEditShow = false;
                     this.showBibtexImportWizard = false;
