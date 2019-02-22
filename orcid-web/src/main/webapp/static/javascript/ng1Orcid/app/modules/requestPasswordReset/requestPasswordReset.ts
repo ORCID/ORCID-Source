@@ -13,7 +13,7 @@ import { downgradeComponent, UpgradeModule }
 //User generated components
 import { CommonModule } 
     from '@angular/common'; 
-
+    
 import { RequestPasswordResetComponent } 
     from './requestPasswordReset.component.ts';
 
