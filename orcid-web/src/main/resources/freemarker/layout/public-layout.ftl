@@ -55,7 +55,7 @@
             <alert-banner-ng2></alert-banner-ng2>
         </@orcid.checkFeatureStatus>
         <!--OAUTH SCREEN HEADER-->
-        <#if (RequestParameters['oauth'])??>
+        <#if (RequestParameters['oauth'])??>            
             <div class="container">
                 <div id="main" role="main">
                     <div class="row top-header">
@@ -68,7 +68,7 @@
         </#if>
         <!--NON-OAUTH HEADER-->
         <!--hide header if oauth login-->
-        <#if !(RequestParameters['oauth'])??>
+        <#if !(RequestParameters['oauth'])??>            
             <div class="container">
                 <#include "/includes/ng2_templates/header-ng2-template.ftl">
                 <#include "/includes/ng2_templates/language-ng2-template.ftl">

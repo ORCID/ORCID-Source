@@ -135,6 +135,7 @@ public class LoginController extends OauthControllerBase {
             //convert to a 400
             ModelAndView mav = new ModelAndView("oauth-error");
             mav.setStatus(HttpStatus.BAD_REQUEST);
+            mav.addObject("oauthError", getMessage("oauth.errors.other"));
             return mav;
         }
         
