@@ -334,8 +334,8 @@
                         </a>
                     </div>                                        
                     <div class="col-md-3 col-sm-3 col-xs-10">
-                        <span class="glyphicon glyphicon-star" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                        <a (click)="makeDefault(group, researchResource, researchResource.putCode); " *ngIf="researchResource.putCode != group.defaultResearchResource.putCode.value && !isPublicPage">
+                        <span class="glyphicon glyphicon-star" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                        <a (click)="makeDefault(group, researchResource, researchResource.putCode); " *ngIf="researchResource.putCode != group.defaultResearchResource.putCode && !isPublicPage">
                             <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                         </a>
                     </div>
