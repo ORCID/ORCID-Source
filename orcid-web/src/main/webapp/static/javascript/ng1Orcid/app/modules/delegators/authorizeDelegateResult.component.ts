@@ -55,4 +55,8 @@ export class AuthorizeDelegateResultComponent implements OnDestroy, OnInit {
     ngOnInit() {
         this.getAuthorizeDelegateResult();
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

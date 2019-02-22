@@ -240,7 +240,7 @@ public class HomeController extends BaseController {
         ConfigDetails configDetails = new ConfigDetails();
         configDetails.setMessage("RECAPTCHA_WEB_KEY", recaptchaWebKey);
         configDetails.setMessage("BASE_DOMAIN_RM_PROTOCALL", orcidUrlManager.getBaseDomainRmProtocall());
-        configDetails.setMessage("PUB_BASE_URI", orcidUrlManager.getPubBaseUrl());
+        configDetails.setMessage("PUB_BASE_URI", orcidUrlManager.getPubBaseUrl());             
         configDetails.setMessage("STATIC_PATH", getStaticContentPath(request));
         configDetails.setMessage("SHIBBOLETH_ENABLED", String.valueOf(isShibbolethEnabled()));
         configDetails.setMessage("ABOUT_URI", aboutUri);

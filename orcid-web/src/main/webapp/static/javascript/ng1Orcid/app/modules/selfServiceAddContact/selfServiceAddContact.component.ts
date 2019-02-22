@@ -58,4 +58,7 @@ export class SelfServiceAddContactComponent {
         );
     };
 
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

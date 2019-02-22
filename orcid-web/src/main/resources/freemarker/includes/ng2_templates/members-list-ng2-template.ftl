@@ -11,7 +11,7 @@
         	<div class="col-md-12 col-sm-12 col-xs-12">
             	<p><@orcid.msg 'member_list.there_are_currently'/> {{membersList.length}} <@orcid.msg 'member_list.orcid_member_organizations'/></p>
             	<p>
-    				<a class="selected" href="<@orcid.rootPath '/members'/>"><@orcid.msg 'member_details.all_members'/></a> | <a href="<@orcid.rootPath '/consortia'/>"><@orcid.msg 'member_list.consortia_members'/></a>
+    				<a class="selected" href="{{getBaseUri()}}/members"><@orcid.msg 'member_details.all_members'/></a> | <a href="{{getBaseUri()}}/consortia"><@orcid.msg 'member_list.consortia_members'/></a>
     			</p>
     			
     			<p>

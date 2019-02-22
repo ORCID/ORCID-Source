@@ -176,4 +176,8 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
             this.loadDiscoFeed();
         }       
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

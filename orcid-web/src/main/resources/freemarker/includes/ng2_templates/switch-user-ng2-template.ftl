@@ -22,7 +22,7 @@
                         </ul>
                     </a>
                 </li>
-                <li *ngIf="delegators.length > 10"><a href="<@orcid.rootPath '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
+                <li *ngIf="delegators.length > 10"><a href="{{getBaseUri()}}/delegators?delegates"><@orcid.msg 'id_banner.more'/></a></li>
             </ul>
         </div> 
     </#if>

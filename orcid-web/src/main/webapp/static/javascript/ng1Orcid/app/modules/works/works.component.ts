@@ -1320,4 +1320,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.loadMore();
         this.loadWorkImportWizardList();
     };
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

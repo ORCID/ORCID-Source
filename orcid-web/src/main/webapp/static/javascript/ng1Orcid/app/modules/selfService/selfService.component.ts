@@ -433,4 +433,7 @@ export class SelfServiceComponent {
         );
     }
 
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

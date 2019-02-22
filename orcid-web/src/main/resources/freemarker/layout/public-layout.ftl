@@ -2,7 +2,7 @@
     <!DOCTYPE html>
     <html class="no-js oldie" lang="en">
     <#include "/common/html-head.ftl" />
-    <body data-baseurl="<@orcid.rootPath '/'/>">
+    <body>
     <root-cmp>
         <style type="text/css">
             body, html {
@@ -151,7 +151,7 @@
                         </div>
                     </div>
                 </@orcid.checkFeatureStatus>
-                <form action="<@orcid.rootPath '/'/>">
+                <form action="{{getBaseUri()}}">
                     <input id="imageUrl" type="hidden" value="{{assetsPath}}/images">                
                 </form>
             </script>

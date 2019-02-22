@@ -9,7 +9,7 @@
             <div class="topBuffer">
                 <h3 class="topBuffer" *ngIf="memberDetails?.consortiumLead"><@spring.message "manage_consortium.public_display"/></h3>
                 <h3 class="topBuffer" *ngIf="!memberDetails?.consortiumLead"><@spring.message "self_serve.public_display_heading"/></h3>
-                <p><@spring.message "self_serve.public_display_text"/> <a href="<@orcid.rootPath '/members'/>" target="manage_consortium.member_list_link"><@spring.message "manage_consortium.member_list_link"/></a></p>
+                <p><@spring.message "self_serve.public_display_text"/> <a href="{{getBaseUri()}}/members" target="manage_consortium.member_list_link"><@spring.message "manage_consortium.member_list_link"/></a></p>
                 <!-- Name -->
                 <div class="row">
                     <div class="col-md-9 col-sm-12 col-xs-12">
@@ -181,7 +181,7 @@
                                             <div class="arrow"></div>
                                             <div class="popover-content">
                                                 <p><@spring.message "manage_consortium.this_contact_does_not_1"/></p>
-                                                <p><@spring.message "manage_consortium.this_contact_does_not_2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897554" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
+                                                <p><@spring.message "manage_consortium.this_contact_does_not_2"/> <a href="{{getBaseUri()}}/register" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897554" target="manage_consortium.this_contact_does_not_5.link"> <@spring.message "manage_consortium.this_contact_does_not_5"/></a></p>
                                             </div>
                                         </div>
                                     </div>

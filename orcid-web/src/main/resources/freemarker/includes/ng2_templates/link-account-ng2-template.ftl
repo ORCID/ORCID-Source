@@ -18,7 +18,7 @@
                 </p>
             </div>
             <div>                                                   
-                <#if "shibboleth" == (RequestParameters['linkRequest']!)><a class="reg" href="<@orcid.rootPath '/shibboleth/signin'/>"><#else><a class="reg" href="<@orcid.rootPath '/social/access'/>"></#if>${springMacroRequestContext.getMessage("social.link.link_this_account")}</a> &nbsp;&#124;&nbsp; ${springMacroRequestContext.getMessage("login.registerOrcidId")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
+                <#if "shibboleth" == (RequestParameters['linkRequest']!)><a class="reg" href="{{getBaseUri()}}/shibboleth/signin"><#else><a class="reg" href="{{getBaseUri()}}/social/access"></#if>${springMacroRequestContext.getMessage("social.link.link_this_account")}</a> &nbsp;&#124;&nbsp; ${springMacroRequestContext.getMessage("login.registerOrcidId")} &nbsp;&#124;&nbsp; <a class="reg" href="{{getBaseUri()}}/signin">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
                 <hr />
             </div> 
         </div> 
@@ -28,7 +28,7 @@
             <#if unsupportedInstitution??>
                 <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3">
                     <p class="alert">${springMacroRequestContext.getMessage("social.link.unsupported.unsuccessful.1")}<#if accountId??>${springMacroRequestContext.getMessage("social.link.unsupported.unsuccessful.2")}${accountId}${springMacroRequestContext.getMessage("social.link.unsupported.unsuccessful.3")}</#if>${springMacroRequestContext.getMessage("social.link.unsupported.unsuccessful.4")}</p>
-                    <p>${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.1")}<a href="mailto:${institutionContactEmail!}?cc=support@orcid.org&amp;subject=${springMacroRequestContext.getMessage("social.link.unsupported.email.subject")?url}&amp;body=${springMacroRequestContext.getMessage("social.link.unsupported.email.body")?url}">${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.3")}<a href="<@orcid.rootPath "/signin" />">${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.4")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.5")}</p>
+                    <p>${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.1")}<a href="mailto:${institutionContactEmail!}?cc=support@orcid.org&amp;subject=${springMacroRequestContext.getMessage("social.link.unsupported.email.subject")?url}&amp;body=${springMacroRequestContext.getMessage("social.link.unsupported.email.body")?url}">${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.3")}<a href="{{getBaseUri()}}/signin">${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.4")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.5")}</p>
                     <p class="see-more">
                         ${springMacroRequestContext.getMessage("social.link.unsupported.why_cant_i")}
                     </p>
@@ -47,7 +47,7 @@
                         <img src="{{assetsPath}}/img/spin-big.gif" width="85" height ="85"/>
                     <![endif]-->
                 </div>
-                <form class="form-social-sign-in shibboleth" id="loginForm" *ngIf="loadedFeed" action="<@orcid.rootPath '/shibboleth/signin/auth'/>" method="post">
+                <form class="form-social-sign-in shibboleth" id="loginForm" *ngIf="loadedFeed" action="{{getBaseUri()}}/shibboleth/signin/auth" method="post">
                     <div class="row">
                         <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-12 bottomBuffer">
                             <div>
@@ -64,7 +64,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">                       
-                            ${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${(linkType)!}&emailId=${(emailId!)?url}&firstName=${(firstName!)?url}&lastName=${(lastName!)?url}&providerId=${(providerId!)?url}&accountId=${(accountId!)?url}">${springMacroRequestContext.getMessage("login.registerOrcidId")}</a> &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
+                            ${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="{{getBaseUri()}}/register?linkRequest=${(linkType)!}&emailId=${(emailId!)?url}&firstName=${(firstName!)?url}&lastName=${(lastName!)?url}&providerId=${(providerId!)?url}&accountId=${(accountId!)?url}">${springMacroRequestContext.getMessage("login.registerOrcidId")}</a> &nbsp;&#124;&nbsp; <a class="reg" href="{{getBaseUri()}}/signin">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
                             <hr />
                         </div>                                         
                         <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">

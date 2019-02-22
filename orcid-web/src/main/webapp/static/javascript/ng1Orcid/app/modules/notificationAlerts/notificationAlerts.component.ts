@@ -116,4 +116,8 @@ export class NotificationAlertsComponent implements AfterViewInit, OnDestroy, On
     ngOnInit() {
         this.getNotificationAlerts();
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

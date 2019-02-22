@@ -68,5 +68,9 @@ export class AllConsortiumContactsComponent {
         console.log("initing all consortium contacts");
         this.getContacts();
     }
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    }
 
 }

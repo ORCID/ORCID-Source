@@ -116,4 +116,7 @@ export class MemberDetailsComponent {
         this.getCurrentMemberDetails();   
     }
 
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

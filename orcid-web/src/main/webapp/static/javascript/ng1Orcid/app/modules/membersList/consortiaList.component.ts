@@ -41,4 +41,8 @@ export class ConsortiaListComponent extends MembersListComponent {
         this.getMembersList();
     }
     
+    getBaseUri(): String {
+        return getBaseUri();
+    };
+    
 }

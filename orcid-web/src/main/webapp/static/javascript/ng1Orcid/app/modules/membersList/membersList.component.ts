@@ -119,5 +119,9 @@ export class MembersListComponent {
         this.getCommunityTypes();
         this.getMembersList();
     }
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 
 }

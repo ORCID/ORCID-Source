@@ -36,7 +36,7 @@
                     <button type="submit" class="search-button">
                         <i class="icon-orcid-search"></i>
                     </button>
-                    <a href="<@orcid.rootPath "/orcid-search/search" />"
+                    <a href="{{getBaseUri()}}/orcid-search/search"
                     class="settings-button" title="<@orcid.msg
                     'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
                 </div>
@@ -48,7 +48,7 @@
                 
                 <div class="account-settings-mobile-menu">
                     <span class="account-settings-mobile"> 
-                        <a ${(nav=="settings")?then('class="active"', '')} href="<@orcid.rootPath '/account'/>">
+                        <a ${(nav=="settings")?then('class="active"', '')} href="{{getBaseUri()}}/account">
                             <@orcid.msg 'public-layout.account_setting'/>
                         </a>
                     </span>
@@ -70,19 +70,19 @@
             <a id="mobile-search" class="mobile-button mobile-search" (click)="toggleSearch()" [ngClass]="{'mobile-menu-active': searchVisible == true}">
                 <span class="glyphicon glyphicon-search"></span>
             </a>
-            <a href="<@orcid.rootPath " signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
+            <a href="{{getBaseUri()}}/signin" id="mobile-sign-in" class="mobile-button mobile-sign-in">
                 <span class="glyphicon glyphicon-user"></span>
             </a>
             
             <!-- Desktop / Tablet View -->
             <ul class="menu public" *ngIf="menuVisible == true" (window:resize)="onResize($event)">
-                <li class="active-trail"><a href="<@orcid.rootPath "/my-orcid" />"><@orcid.msg
+                <li class="active-trail"><a href="{{getBaseUri()}}/my-orcid"><@orcid.msg
                     'public-layout.edit_your_record'/></a></li>
-                <li><a href="<@orcid.rootPath "/about" />"><@orcid.msg
+                <li><a href="{{getBaseUri()}}/about"><@orcid.msg
                     'public-layout.about_orcid'/></a></li>
-                <li><a href="<@orcid.rootPath "/help/contact-us" />"><@orcid.msg
+                <li><a href="{{getBaseUri()}}/help/contact-us"><@orcid.msg
                     'public-layout.contact_us'/></a></li>
-                <li><a href="<@orcid.rootPath "/help" />"><@orcid.msg
+                <li><a href="{{getBaseUri()}}/help"><@orcid.msg
                     'public-layout.help'/></a></li>
             </ul> 
         </div>
@@ -99,7 +99,7 @@
             <a id="mobile-search" class="mobile-button mobile-search" (click)="toggleSearch()" [ngClass]="{'mobile-menu-active': searchVisible == true}">
                 <span class="glyphicon glyphicon-search"></span>
             </a>
-            <a href="<@orcid.rootPath " signin" />" id="mobile-sign-in" class="mobile-button mobile-sign-in">
+            <a href="{{getBaseUri()}}/signin" id="mobile-sign-in" class="mobile-button mobile-sign-in">
                 <span class="glyphicon glyphicon-user"></span>
             </a>                
             
@@ -110,16 +110,16 @@
                     <a href="{{aboutUri}}/about/what-is-orcid/mission" (click)="handleMobileMenuOption($event)" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
                     <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']">
                         <!-- Mobile view Only -->
-                        <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="<@orcid.rootPath "/" />" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
+                        <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="{{getBaseUri()}}" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
                 
                         <!-- Menu -->
-                        <li class="leaf last"><a ${(nav=="signin")?then('class="active" ', '')} href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
-                        <li class="leaf last"><a ${(nav=="register")?then('class="active" ', '')} href="<@orcid.rootPath "/register" />"><@orcid.msg 'public-layout.register'/></a></li>                                                                                                                          
-                        <li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
+                        <li class="leaf last"><a ${(nav=="signin")?then('class="active" ', '')} href="{{getBaseUri()}}/signin"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
+                        <li class="leaf last"><a ${(nav=="register")?then('class="active" ', '')} href="{{getBaseUri()}}/register"><@orcid.msg 'public-layout.register'/></a></li>                                                                                                                          
+                        <li class="leaf last"><a href="{{getBaseUri()}}/content/initiative"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
                     </ul>
                     <ul class="menu lang-fixes" *ngIf="userInfo['REAL_USER_ORCID']">
                         <li>
-                            <a ${(nav=="record")?then('class="active" ', '')}href="<@orcid.rootPath '/my-orcid'/>">
+                            <a ${(nav=="record")?then('class="active" ', '')}href="{{getBaseUri()}}/my-orcid">
                                 <div *ngIf="userInfo['IN_DELEGATION_MODE'] == 'true'">
                                     <@orcid.msg 'public-layout.my_orcid'/>
                                 </div>
@@ -130,24 +130,24 @@
                         </li>
                         <li>
                             {{retrieveUnreadCount()}}
-                            <a ${(nav=="notifications")?then('class="active" ', '')}href="<@orcid.rootPath "/inbox" />">${springMacroRequestContext.getMessage("workspace.notifications")} <span *ngIf="getUnreadCount > 0">({{getUnreadCount}})</span></a>
+                            <a ${(nav=="notifications")?then('class="active" ', '')} href="{{getBaseUri()}}/inbox">${springMacroRequestContext.getMessage("workspace.notifications")} <span *ngIf="getUnreadCount > 0">({{getUnreadCount}})</span></a>
                         </li>
                         <li>
-                            <a ${(nav=="settings")?then('class="active" ', '')}href="<@orcid.rootPath '/account'/>" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a>
+                            <a ${(nav=="settings")?then('class="active" ', '')} href="{{getBaseUri()}}/account" id="accountSettingMenuLink"><@orcid.msg 'public-layout.account_setting'/></a>
                         </li>
                         
                         <!-- Developer tools -->
-                        <li *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']"><a ${(nav=="developer-tools")?then('class="active" ', '')}href="<@orcid.rootPath "/group/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
-                        <li *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true')"><a ${(nav=="developer-tools")?then('class="active" ', '')}href="<@orcid.rootPath "/developer-tools" />">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                        <li *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']"><a ${(nav=="developer-tools")?then('class="active" ', '')}href="{{getBaseUri()}}/group/developer-tools">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
+                        <li *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true')"><a ${(nav=="developer-tools")?then('class="active" ', '')}href="{{getBaseUri()}}/developer-tools">${springMacroRequestContext.getMessage("workspace.developer_tools")}</a></li>
                         
                         <!-- Admin menu -->
-                        <li *ngIf="userInfo['ADMIN_MENU']"><a ${(nav=="members")?then('class="active" ', '')}href="<@orcid.rootPath "/manage-members" />"><@orcid.msg 'admin.members.workspace_link' /></a></li>
-                        <li *ngIf="userInfo['ADMIN_MENU']"><a ${(nav=="admin")?then('class="active" ', '')}href="<@orcid.rootPath "/admin-actions" />"><@orcid.msg 'admin.workspace_link' /></a></li>
+                        <li *ngIf="userInfo['ADMIN_MENU']"><a ${(nav=="members")?then('class="active" ', '')}href="{{getBaseUri()}}/manage-members"><@orcid.msg 'admin.members.workspace_link' /></a></li>
+                        <li *ngIf="userInfo['ADMIN_MENU']"><a ${(nav=="admin")?then('class="active" ', '')}href="{{getBaseUri()}}/admin-actions"><@orcid.msg 'admin.workspace_link' /></a></li>
                             
                         <!-- Self service menu -->
-                        <li *ngIf="userInfo['SELF_SERVICE_MENU']"><a ${(nav=="self-service")?then('class="active" ', '')}href="<@orcid.rootPath "/self-service" />"><@orcid.msg 'workspace.self_service' /></a></li>
+                        <li *ngIf="userInfo['SELF_SERVICE_MENU']"><a ${(nav=="self-service")?then('class="active" ', '')}href="{{getBaseUri()}}/self-service"><@orcid.msg 'workspace.self_service' /></a></li>
                                 
-                        <li class="leaf last"><a href="<@orcid.rootPath "/content/initiative" />"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
+                        <li class="leaf last"><a href="{{getBaseUri()}}/content/initiative"><@orcid.msg 'manage_delegators.learn_more.link.text' /></a></li>
                     </ul>
                 </li>
 
@@ -426,8 +426,8 @@
                 
                 <!-- SIGN IN/OUT -->
                 <li class="last leaf">                    
-                    <a *ngIf="!userInfo['REAL_USER_ORCID']" href="<@orcid.rootPath "/signin" />"><@orcid.msg 'public-layout.sign_in'/></a>                    
-                    <a *ngIf="userInfo['REAL_USER_ORCID']" href="<@orcid.rootPath "/signout" />"><@orcid.msg 'public-layout.sign_out'/></a>
+                    <a *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin"><@orcid.msg 'public-layout.sign_in'/></a>                    
+                    <a *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout"><@orcid.msg 'public-layout.sign_out'/></a>
                 </li>                    
 
             </ul>                
@@ -440,7 +440,7 @@
             <p><@orcid.msg 'public-layout.logo.tagline'/></p>
         </div>
         <p class="see-more">{{liveIds}} <@orcid.msg
-             'public-layout.amount_ids'/> <a href="<@orcid.rootPath " statistics" />"
+             'public-layout.amount_ids'/> <a href="{{getBaseUri()}}/statistics"
              title=""><@orcid.msg 'public-layout.see_more'/></a>
         </p>
         <ng-container *ngIf="showSurvey">        

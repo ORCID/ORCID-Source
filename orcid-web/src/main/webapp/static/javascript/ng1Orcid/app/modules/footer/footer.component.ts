@@ -25,4 +25,8 @@ export class FooterComponent {
             } 
         );
     }
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    }
 }

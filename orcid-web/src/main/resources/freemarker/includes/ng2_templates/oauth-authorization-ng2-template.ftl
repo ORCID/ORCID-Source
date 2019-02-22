@@ -70,7 +70,7 @@
                                 <!-- ORCID ACCOUNT LOGIN -->
                                 <div class="personal-account-login">
                                     <p class="title">${springMacroRequestContext.getMessage("login.signinwithyourorcidaccount")}</p>
-                                    <form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
+                                    <form class="form-sign-in" id="loginForm" action="{{getBaseUri()}}/signin/auth" method="post">
                                         <#include "/includes/login_personal_fields_inc_ng2.ftl"/>
                                     </form>
                                 </div>
@@ -94,7 +94,7 @@
                                     <ul class="social-icons">
                                         <!--FACEBOOK-->
                                         <li>
-                                            <form ngNoForm action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+                                            <form ngNoForm action="{{getBaseUri()}}/signin/facebook" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-social-icon btn-facebook"></button>
                                                 <input type="hidden" name="scope" value="email"/>
@@ -102,7 +102,7 @@
                                         </li>
                                         <!--TWITTER (NOT USED)
                                         <li>
-                                            <form ngNoForm action="<@orcid.rootPath '/signin/twitter'/>" method="POST">
+                                            <form ngNoForm action="{{getBaseUri()}}/signin/twitter" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-social-icon btn-twitter"></button>
                                             </form>
@@ -110,7 +110,7 @@
                                         -->
                                         <!--GOOGLE-->
                                         <li>
-                                            <form ngNoForm action="<@orcid.rootPath '/signin/google'/>" method="POST">
+                                            <form ngNoForm action="{{getBaseUri()}}/signin/google" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-social-icon btn-google" ></button>
                                                 <input type="hidden" name="scope" value="email" />
@@ -169,8 +169,8 @@
                     <ng-container *ngIf=" '${realUserOrcid!}' !== '${effectiveUserOrcid!}'"> <@orcid.msg 'login.reloginalert.managing'/> <b>{{effectiveLoggedInUserName}} </b> <a target="_blank" href="{{getBaseUri()}}/${effectiveUserOrcid!}">{{getBaseUri()}}/${effectiveUserOrcid!}</a> </ng-container>
                 </div>
                 <div class="menu-area"> 
-                <a href="<@orcid.rootPath "/my-orcid" />"><div class="btn btn-primary"><@orcid.msg 'login.reloginalert.continue'/></div></a>
-                <a href="<@orcid.rootPath "/signout" />"><div class="btn btn-white-no-border"><@orcid.msg 'login.reloginalert.no'/></div></a>
+                <a href="{{getBaseUri()}}/my-orcid"><div class="btn btn-primary"><@orcid.msg 'login.reloginalert.continue'/></div></a>
+                <a href="{{getBaseUri()}}/signout"><div class="btn btn-white-no-border"><@orcid.msg 'login.reloginalert.no'/></div></a>
                 </div>
             </div>
         </div><!--col-md-offset-3-->

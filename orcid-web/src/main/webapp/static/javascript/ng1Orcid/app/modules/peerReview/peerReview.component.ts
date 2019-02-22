@@ -387,4 +387,8 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getPeerReviewGroups();
         this.loadPeerReviewImportWizards();
     };
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

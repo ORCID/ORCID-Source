@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="member-details-ng2-template">
     <div class="row member-list">
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
-            <p><a href="<@orcid.rootPath '/members'/>"><i class="glyphicon x075 glyphicon-chevron-left"></i> <@orcid.msg 'member_details.all_members'/></a></p>
+            <p><a href="{{getBaseUri()}}/members"><i class="glyphicon x075 glyphicon-chevron-left"></i> <@orcid.msg 'member_details.all_members'/></a></p>
             <div class="text-center">
                 <i *ngIf="showMemberDetailsLoader" class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                 <!--[if lt IE 8]>
