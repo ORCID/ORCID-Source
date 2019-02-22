@@ -343,8 +343,9 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
                 );    
     };
 
-    updateToggleText(sectionName){
-        switch(sectionName) { 
+    updateToggleText(sectionName){        
+        om.process().then(() => { 
+            switch(sectionName) { 
             case 'editSecurityQuestion': {
                 if(this.showSection[sectionName]==true){
                     this.toggleText[sectionName] = om.get("manage.editTable.hide");
@@ -398,7 +399,7 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
                 break; 
             } 
         } 
-
+        });        
     }
    
     getMyData(): void {

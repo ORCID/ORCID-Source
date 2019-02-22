@@ -145,16 +145,12 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     applyLabelWorkType(): void {
-        var obj = null;
-        var that = this;
         setTimeout(
-            function() {
-                obj = that.worksService.getLabelMapping(that.editWork.workCategory.value, that.editWork.workType.value);
-                that.contentCopy = obj;
-            }, 
+            () => {
+                this.contentCopy = this.worksService.getLabelMapping(this.editWork.workCategory.value, this.editWork.workType.value);
+            },
             500
-        );
-
+        );        
     };
 
     clearErrors(): void {

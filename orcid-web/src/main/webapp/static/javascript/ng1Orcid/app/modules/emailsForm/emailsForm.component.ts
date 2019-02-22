@@ -86,8 +86,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         private prefsSrvc: PreferencesService,
         private emailFrequencyService: EmailFrequencyService
     ) {
-        this.emailCurrentLabel = om.get("manage.email.current");
-        this.emailPastLabel = om.get("manage.email.past");
         this.verifyEmailObject = {};
         this.showEmailVerifBox = false;
         this.showEmailVerifBoxNewsTips = false;
@@ -103,7 +101,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showEmailVerifBox = false;
         this.verifyEmailObject = {};
         this.position = 0;
-
         this.isPassConfReq = orcidVar.isPasswordConfirmationRequired;
         this.defaultVisibility = null;
         this.emails = {};
@@ -122,19 +119,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showEdit = false;
         this.showElement = {};
         this.showEditEmail = (window.location.hash === "#editEmail")
-        this.emailsEditText = om.get("manage.edit.emails");
         this.showUnverifiedEmailSetPrimaryBox = false;
         this.primaryEmail = '';
-        this.emailStatusOptions = [
-            {
-                label: this.emailCurrentLabel,
-                val:true
-            },
-            {
-                label: this.emailPastLabel,
-                val:false
-            }
-        ];
         this.inputEmail = {
             "current":true,
             "errors":[],
@@ -154,6 +140,23 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('emailsForm.component.ts: unable to fetch userInfo', error);
             } 
         );
+        
+        om.process().then(() => {
+            console.log('init emailsForm.component.ts');
+            this.emailCurrentLabel = om.get("manage.email.current");
+            this.emailPastLabel = om.get("manage.email.past");
+            this.emailsEditText = om.get("manage.edit.emails");
+            this.emailStatusOptions = [
+                {
+                    label: this.emailCurrentLabel,
+                    val:true
+                },
+                {
+                    label: this.emailPastLabel,
+                    val:false
+                }
+            ];
+        });
     }
 
     addNew(): void {
