@@ -89,6 +89,19 @@ export class OauthService {
         )
         ;
     }
+    
+    loadShibbolethSigninData( ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/shibboleth/signinData.json',
+            { headers: this.headers }
+        );
+    }
+    
+    loadSocialSigninData( ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/social/signinData.json'
+        );
+    }
 
     oauth2ScreensLoadRegistrationForm( ): Observable<any> {
         return this.http.get(
