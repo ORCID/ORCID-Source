@@ -529,6 +529,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(email.getValue())) {
             errors.add(getMessage("Email.personalInfoForm.email"));
         }
+        
+        // if > 30
+        Emails currentEmails = emailManager.getEmails(getCurrentUserOrcid());
+        if(currentEmails.getEmails().size() > (EmailConstants.MAX_EMAIL_COUNT - 1 )) {
+            errors.add(getMessage("Email.personalInfoForm.youCannotAddMore1") + " " + EmailConstants.MAX_EMAIL_COUNT + " "  + getMessage("Email.personalInfoForm.youCannotAddMore2"));
+        }
 
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
         // make sure there are no dups
