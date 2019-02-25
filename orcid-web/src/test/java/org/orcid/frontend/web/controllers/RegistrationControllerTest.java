@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -40,10 +41,14 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.manager.impl.InternalSSOManagerImpl;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
@@ -63,6 +68,7 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
@@ -104,6 +110,15 @@ public class RegistrationControllerTest extends DBUnitTest {
     
     @Mock
     private ProfileEntityManager profileEntityManager;
+    
+    @Mock
+    private ProfileHistoryEventManager profileHistoryEventManager;
+    
+    @Mock
+    private InternalSSOManagerImpl internalSSOManager;
+    
+    @Mock
+    private NotificationManager notificationManager;
     
     @Mock
     private OrcidProfileManager orcidProfileManager;
@@ -148,6 +163,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityCacheManager", profileEntityCacheManagerMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "orcidUserDetailsService", orcidUserDetailsServiceMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "authenticationManager", authenticationManagerMock); 
+        TargetProxyHelper.injectIntoProxy(registrationController, "profileHistoryEventManager", profileHistoryEventManager); 
+        TargetProxyHelper.injectIntoProxy(registrationController, "notificationManager", notificationManager); 
+        TargetProxyHelper.injectIntoProxy(registrationController, "internalSSOManager", internalSSOManager); 
         
         when(servletRequest.getLocale()).thenReturn(Locale.ENGLISH);
         
@@ -179,6 +197,8 @@ public class RegistrationControllerTest extends DBUnitTest {
             }
         });
         
+        doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString());
+        doNothing().when(notificationManager).sendWelcomeEmail(Mockito.anyString(), Mockito.anyString());
         
         // Disable all features by default
         togglzRule.disableAll();
@@ -210,7 +230,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         c.setValue(true);
         reg.setTermsOfUse(c);
         reg.setCreationType(Text.valueOf(CreationMethod.API.value()));
-        registrationController.setRegisterConfirm(servletRequest, servletResponse, reg);
+
+        Redirect redirect = registrationController.setRegisterConfirm(servletRequest, servletResponse, reg);
+        assertTrue(redirect.getUrl().endsWith("?justRegistered"));
         
         ArgumentCaptor<Registration> argument1 = ArgumentCaptor.forClass(Registration.class);
         ArgumentCaptor<Boolean> argument2 = ArgumentCaptor.forClass(Boolean.class);
@@ -220,8 +242,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertNotNull(argument1.getValue());
         Registration form = argument1.getValue();
         assertEquals("Given Names", form.getGivenNames().getValue());
-        assertEquals("Family Name", form.getFamilyNames().getValue());        
+        assertEquals("Family Name", form.getFamilyNames().getValue());      
     }
+    
     @Test
     public void regActivitiesVisibilityDefaultIsNotNull() {
         Registration reg = new Registration();

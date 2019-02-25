@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Controller("oauthAuthorizeController")
 public class OauthAuthorizeController extends OauthControllerBase {
@@ -66,12 +64,6 @@ public class OauthAuthorizeController extends OauthControllerBase {
         RequestInfoForm requestInfoForm = generateRequestInfoForm(request);
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
                 
-        Boolean justRegistered = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.JUST_REGISTERED);
-        if (justRegistered != null) {
-            request.getSession().removeAttribute(OrcidOauth2Constants.JUST_REGISTERED);
-            mav.addObject(OrcidOauth2Constants.JUST_REGISTERED, justRegistered);
-        }
-        
         boolean usePersistentTokens = false;
 
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());        
