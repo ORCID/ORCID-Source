@@ -30,3 +30,4 @@ orcid-message-listener/logs/
 *.md.html
 orcid-web/src/main/resources/cdn_active_url.txt
 
+orcid-web/src/main/webapp/static/javascript/ng1Orcid/dist/

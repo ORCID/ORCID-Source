@@ -1,0 +1,55 @@
+<div id="home" class="content col-md-10">
+    <div class="headline col-md-offset-1">
+        <h1>DISTINGUISH YOURSELF IN<br />
+        <span class="highlight">THREE EASY STEPS</span>
+        </h1>
+        <p class="description">ORCID provides a persistent digital identifier that distinguishes you from every other researcher and, through integration in key research workflows such as manuscript and grant submission, supports automated linkages between you and your professional activities ensuring that your work is recognized.  <a href="https://localhost:8443/orcid-web/about/what-is-orcid">Find out more</a></p>
+        <!-- Step 1 -->
+        <div class="row">
+            <div class="col-md-12 step">
+                <div class="step-headline">1</div> <div class="step-subheadline">REGISTER</div> <div class="step-detail">Get your unique ORCID identifier <a href="/register">Register now!</a><br />
+                Registration takes 30 seconds.</div>
+            </div>
+        </div>
+    </div><!--Closes headline col-md-offset-1-->
+    <!-- Step 2 -->
+    <div class="row">
+        <div class="col-md-12 step">
+            <div class="step-headline">2</div> <div class="step-subheadline">ADD YOUR<br />
+            INFO</div> <div class="step-detail">Enhance your ORCID record with your professional information and link to your other identifiers (such as Scopus or ResearcherID or LinkedIn). </div>
+        </div>
+    </div>
+    <!-- Step 3 -->
+    <div class="row">
+        <div class="col-md-10 col-md-offset-2 step">
+            <div class="step-headline">3</div> <div class="step-subheadline">USE YOUR<br />
+            ORCID ID</div> <div class="step-detail">Include your ORCID identifier on your Webpage, when you submit publications, apply for grants, and in any research workflow to ensure you get credit for your work.</div>
+        </div>
+    </div>
+    <!-- Members Section -->
+    <div class="headline col-md-offset-1">
+        <h2>MEMBERS MAKE ORCID POSSIBLE!</h2>
+        <p class="description">ORCID is a non-profit organization supported by a global community of organizational members, including research organizations, publishers, funders, professional associations, and other stakeholders in the research ecosystem.</p>
+        <p class="description">
+        <strong>Curious about who our members are? </strong><a href="/members">See our complete list of member organizations</a>
+        </p>
+    </div>
+</div>
+
+<!--Latest News Column-->
+<div id="home-blog-list" class="aside col-md-2">
+    <div class="inner-box">
+        <h3>LATEST NEWS</h3>
+        <div class="item-list">
+            <ul *ngIf="blogFeed['rss']" >
+                <li *ngFor="let item of blogFeed['rss']['channel']['item'] | slice:0:5; let i=index">
+                <strong>{{item['pubDate'] | slice:0:16}}</strong><br>
+                <a href="{{item['link']}}">{{item['title']}}</a>
+                </li>
+            </ul>
+        </div>
+        <p>
+            <strong><a href="https://localhost:8443/orcid-web/about/news">More news</a></strong>
+        </p>
+    </div>
+</div>

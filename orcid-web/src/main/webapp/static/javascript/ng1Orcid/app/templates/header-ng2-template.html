@@ -1,0 +1,410 @@
+<div class="row">
+    <div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12"
+        id="search" *ngIf="searchVisible == true || settingsVisible == true" >
+        <!-- Search Form  -->               
+        <form id="form-search" (ngSubmit)="searchSubmit()" *ngIf="searchVisible == true">
+            <div id="search-box">
+                <input type="search" id="searchInput" [(ngModel)]="headerSearch.searchInput" name="searchInput"
+                    (focus)="searchFocus()" (blur)="searchBlur()"
+                    placeholder="Search" />
+            </div>
+
+            <div class="bar">
+                <fieldset class="search_options" *ngIf="filterActive == true"
+                    >
+                    <input type="radio" name="searchOption" id="filter_registry" [(ngModel)]="headerSearch.searchOption" name="searchOption" (click)="filterChange()"
+                        value="registry" checked /> <label
+                        for="filter_registry">The ORCID Registry</label> 
+                    <input type="radio" name="searchOption" (click)="filterChange()"id="filter_website" [(ngModel)]="headerSearch.searchOption" value="website" /> <label for="filter_website">The ORCID Website</label>
+                </fieldset>
+            </div>
+
+
+            <div class="conditions" *ngIf="conditionsActive == true" >
+                <p>                         
+                    Your use of the Registry and the results of your search are subject to ORCID's <a
+                        href="https://localhost/legal">Terms and Conditions of Use</a>                    </p>
+            </div>
+
+            <div class="top-buttons">
+                <button type="submit" class="search-button">
+                    <i class="icon-orcid-search"></i>
+                </button>
+                <a href="/orcid-web/orcid-search/search"
+                class="settings-button" title="Advanced Search"><i class="glyphicon glyphicon-cog"></i></a>
+            </div>
+        </form>
+        <div class="language-selector" *ngIf="settingsVisible == true">
+            <!-- Shared component -->
+        
+            <language-ng2></language-ng2>
+            
+            <div class="account-settings-mobile-menu">
+                <span class="account-settings-mobile"> 
+                    <a  href="/orcid-web/account">
+Account Settings                        </a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row flexbox-container">         
+        <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation">
+            <!--  Mobile menu -->               
+            <a id="mobile-menu-icon" class="mobile-button mobile-menu-icon hidden-md hidden-lg hidden-sm visible-xs"
+               (click)="toggleMenu()" [ngClass]="{'mobile-menu-active': menuVisible == true}">
+                <span class="glyphicon glyphicon-align-justify"></span>
+            </a>                                
+            <a href="https://localhost" id="logo-mini" class="pull-left"></a>
+            <a id="mobile-settings" class="mobile-button mobile-settings" (click)="toggleSettings()" [ngClass]="{'mobile-menu-active': settingsVisible == true}">
+                <span class="glyphicon glyphicon-cog"></span>
+            </a>
+            <a id="mobile-search" class="mobile-button mobile-search" (click)="toggleSearch()" [ngClass]="{'mobile-menu-active': searchVisible == true}">
+                <span class="glyphicon glyphicon-search"></span>
+            </a>
+            <a href="/orcid-web/signin" id="mobile-sign-in" class="mobile-button mobile-sign-in">
+                <span class="glyphicon glyphicon-user"></span>
+            </a>                
+            
+            <!--  Desktop / Tablet menu -->             
+            <ul class="menu" *ngIf="menuVisible == true"  resize>
+                <!-- FOR RESEARCHERS -->
+                <li class="first expanded active-trail">
+                    <a href="https://localhost/about/what-is-orcid/mission" (click)="handleMobileMenuOption($event)" title="">For Researchers</a>
+                    <ul class="menu lang-fixes">
+                        <!-- Mobile view Only -->
+                        <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="/orcid-web/" title="">For Researchers</a></li>
+                    
+                            <li><a href="/orcid-web/my-orcid">
+My ORCID Record                                </a></li>
+                   
+                            <li>
+                                {{retrieveUnreadCount()}}
+                                <a href="/orcid-web/inbox">Inbox <span *ngIf="getUnreadCount > 0">({{getUnreadCount}})</span></a>
+                            </li>
+                         
+                            
+                        
+                            <li><a href="/orcid-web/account" id="accountSettingMenuLink">Account Settings</a></li>
+                        
+                                    <li><a href="/orcid-web/developer-tools">Developer tools</a></li>
+                        
+                                <li><a href="/orcid-web/manage-members">Manage members</a></li>
+                                <li><a href="/orcid-web/admin-actions">Admin page</a></li>
+
+                                <li><a href="/orcid-web/self-service">Member Tools</a></li>
+                                
+                        <li class="leaf last"><a href="/orcid-web/content/initiative">Learn more</a></li>
+                    </ul>
+                </li>
+
+                <!-- DRUPAL WEBSITE MENUS -->
+                <!-- FOR ORGANIZATIONS -->
+                <li class="expanded">
+                    <a href="https://localhost/organizations" (click)="handleMobileMenuOption($event)">For Organizations</a>
+                    <ul class="menu lang-fixes">
+                        <!-- Mobile view Only -->
+                        <li class="first leaf hidden-md hidden-lg hidden-sm visible-xs">
+                            <a href="https://localhost/organizations">For Organizations</a>
+                        </li>
+
+                        <li class="first leaf">
+                            <a href="https://localhost/organizations/funders" class="russian-fix" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('funders')">Funders<span class="more" [ngClass]="{'less':secondaryMenuVisible['funders'] == true}"></span></a> <!-- Updated according Drupal website structure -->
+                            <ul class="menu" *ngIf="secondaryMenuVisible['funders'] == true">
+                                <li class="hidden-sm hidden-md hidden-lg">
+                                    <a href="https://localhost/organizations/funders">Funders</a>
+                                </li>
+                                <li class="first leaf">
+                                    <a href="https://localhost/organizations/funders/learnmore">Learn more</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/organizations/funders/outreachresources">Outreach Resources</a>
+                                </li>
+                                <li class="last leaf">
+                                    <a href="https://localhost/about/membership" title="">Membership</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="leaf">
+                            <a href="https://localhost/organizations/institutions" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('institutions')">Research Organizations<span class="more" [ngClass]="{'less':secondaryMenuVisible['institutions'] == true}"></span></a> <!-- Updated according Drupal website structure -->
+                            <ul class="menu" *ngIf="secondaryMenuVisible['institutions'] == true">
+                                <li class="hidden-sm hidden-md hidden-lg">
+                                    <a href="https://localhost/organizations/institutions">Research Organizations</a>
+                                </li>
+                                <li class="first leaf">
+                                    <a href="https://localhost/organizations/institutions/learnmore">Learn more</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/organizations/institutions/outreachresources">Outreach Resources</a>
+                                </li>
+                                    <li class="leaf"><a href="https://localhost/about/membership" title="">Membership</a>
+                                </li>
+                                <li class="last leaf">
+                                    <a href="https://localhost/organizations/institutions/usecases">Use cases</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="leaf">
+                            <a href="https://localhost/organizations/publishers" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('publishers')"> Publishers<span class="more" [ngClass]="{'less':secondaryMenuVisible['publishers'] == true}"></span></a> <!-- Updated according Drupal website structure -->
+                            <ul class="menu" *ngIf="secondaryMenuVisible['publishers'] == true">
+                                <li class="hidden-sm hidden-md hidden-lg">
+                                    <a href="https://localhost/organizations/publishers"> Publishers</a>
+                                </li>
+                                <li class="first leaf">
+                                    <a href="https://localhost/organizations/publishers/learnmore">Learn more</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/organizations/publishers/outreachresources">Outreach Resources</a>
+                                </li>
+                                <li class="last leaf">
+                                    <a href="https://localhost/about/membership" title="">Membership</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="leaf">
+                            <a href="https://localhost/organizations/associations" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('associations')">Associations<span class="more" [ngClass]="{'less':secondaryMenuVisible['associations'] == true}"></span></a> <!-- Updated according Drupal website structure -->
+                            <ul class="menu" *ngIf="secondaryMenuVisible['associations'] == true">
+                                <li class="hidden-sm hidden-md hidden-lg">
+                                    <a href="https://localhost/organizations/associations">Associations</a>
+                                </li>
+                                <li class="first leaf">
+                                    <a href="/organizations/associations/learnmore">Learn more</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="/organizations/associations/outreachresources">Outreach resources</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="http://orcid.org/about/membership">Membership</a>
+                                </li>
+                                <li class="last leaf">
+                                    <a href="/organizations/associations/usecases">Use cases</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="last leaf">
+                            <a href="https://localhost/organizations/integrators" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('integrators')">Integrators<span class="more" [ngClass]="{'less':secondaryMenuVisible['integrators‰'] == true}"></span></a> <!-- Updated according Drupal website structure -->
+                            <ul class="menu" *ngIf="secondaryMenuVisible['integrators'] == true">
+                                <li class="first leaf hidden-sm hidden-md hidden-lg">
+                                    <a href="https://localhost/organizations/integrators">Integrators</a>
+                                </li>
+                                <li class="first leaf">
+                                    <a href="https://localhost/organizations/integrators/API">The ORCID API</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/content/register-client-application-0">Register a Client Application</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/organizations/integrators/current">Current Integrations</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/organizations/integrators/integration-chart">Integration Chart</a>
+                                </li>
+                                <li class="last leaf">
+                                    <a href="https://localhost/content/beta-tester-request">Beta Testers</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <!-- ABOUT -->
+                <li class="expanded"><a href="https://localhost/about" (click)="handleMobileMenuOption($event)">About</a>
+
+                    <ul class="menu lang-fixes">
+                        <!-- Mobile view Only -->
+                        <li><a href="https://localhost/about"
+                            class="first leaf hidden-md hidden-lg hidden-sm visible-xs">About</a></li>
+                        <!-- What is ORCID? -->
+                        <li class="first expanded">
+                            <a href="https://localhost/about/what-is-orcid" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('whatIsOrcid')">What is ORCID<span class="more" [ngClass]="{'less':secondaryMenuVisible['whatIsOrcid'] == true}"></span></a>
+                            <ul class="menu" *ngIf="secondaryMenuVisible['whatIsOrcid'] == true">
+                                <li class="hidden-md hidden-lg hidden-sm visible-xs">
+                                    <a href="https://localhost/about/what-is-orcid">What is ORCID</a>
+                                </li>
+                                <li class="first leaf">
+                                    <a href="https://localhost/about/what-is-orcid/mission-statement" title="">Our Mission</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/about/what-is-orcid/our-principles" title="">Our Principles</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/content/our-governance">Our Governance</a>
+                                </li>
+                                <li class="last expanded">
+                                    <a href="https://localhost/about/what-is-orcid/policies" (click)="handleMobileMenuOption($event); toggleTertiaryMenu('policies')">Our Policies</a>
+                                    <ul class="menu" *ngIf="tertiaryMenuVisible['policies'] == true">
+                                        <li class="first leaf"><a
+                                            href="https://localhost/orcid-dispute-procedures">Dispute
+                                                Procedures</a></li>
+                                        <li class="leaf"><a
+                                            href="https://localhost/footer/privacy-policy" title="">Privacy
+                                                Policy</a></li>
+                                        <li class="leaf"><a
+                                            href="https://localhost/content/orcid-public-client-terms-service">Public
+                                                Client Terms of Service</a></li>
+                                        <li class="leaf"><a
+                                            href="https://localhost/content/orcid-public-data-file-use-policy">Public
+                                                Data File Use Policy</a></li>
+                                        <li class="leaf"><a href="https://localhost/legal">Terms
+                                                and Conditions of Use</a></li>
+                                        <li class="last leaf"><a
+                                            href="https://localhost/trademark-and-id-display-guidelines">Trademark
+                                                and iD Display Guidelines</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- The ORCID Team -->
+                        <li class="leaf"><a href="https://localhost/about/team" title="">The ORCID Team</a></li>
+                        <!-- The ORCID Comunity -->
+                        <li class="expanded">
+                            <a href="https://localhost/about/community" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('community')">The ORCID Community<span class="more" [ngClass]="{'less':secondaryMenuVisible['community'] == true}"></span></a>
+                            <ul class="menu" *ngIf="secondaryMenuVisible['community'] == true">
+                                <li class="hidden-md hidden-lg hidden-sm visible-xs">
+                                    <a href="https://localhost/about/community">The ORCID Community</a>
+                                </li>
+                                <li class="first leaf">
+                                    <a href="https://localhost/about/community" title="">Working Groups</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/about/community/sponsors" title="">Sponsors</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/about/community/members" title="">Members</a>
+                                </li>
+                                <li class="last">
+                                    <a href="https://localhost/about/community/launch-partners" title="">Launch Partners</a></li>
+                                <li class="leaf">
+                                    <a href="https://localhost/about/community/launch-partners" title="">Launch Partners</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/about/community/orcid-technical-community">Open Source</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/content/partners">Partners</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/content/adoption-and-integration-program">Adoption &amp; Integration Program</a>
+                                </li>
+                                <li class="expanded">
+                                    <a href="https://localhost/content/orcid-ambassadors">Ambassadors</a>
+                                    <ul class="menu">
+                                        <li class="first last leaf">
+                                            <a href="https://localhost/content/orcid-ambassadors-1/outreachresources">Outreach Resources</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="last leaf">
+                                    <a href="http://www.cafepress.com/orcid" title="">ORCID Gear</a>
+                                </li>
+                            </ul> 
+                        </li>
+                        <!-- Membership -->
+                        <li class="expanded">
+                            <a href="https://localhost/about/membership" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('membership')">Membership<span class="more" [ngClass]="{'less':secondaryMenuVisible['membership'] == true}"></span></a>
+                            <ul class="menu" *ngIf="secondaryMenuVisible['membership'] == true">
+                                <li class="hidden-md hidden-lg hidden-sm visible-xs">
+                                    <a href="https://localhost/about/membership">Membership</a>
+                                </li>
+                                <li class="first expanded">
+                                    <a href="https://localhost/about/membership" title="">Membership &amp; Subscription</a>
+                                    <ul class="menu">
+                                        <li class="first last leaf">
+                                            <a href="https://localhost/content/membership-comparison">Membership Comparison</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/about/membership/standard-member-agreement" title="">Standard Member Agreement</a>
+                                </li>
+                                <li class="leaf">
+                                    <a href="https://localhost/document/standard-creator-membership-agreement">Standard Creator Member Agreement</a>
+                                </li>
+                                <li class="last leaf">
+                                    <a href="https://localhost/about/community/members" title="">Our Members</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- News -->
+                        <li class="leaf">
+                            <a href="https://localhost/about/news/news" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('news')">News<span class="more" [ngClass]="{'less':secondaryMenuVisible['news'] == true}"></span></a>
+                            <ul class="menu" *ngIf="secondaryMenuVisible['news'] == true">
+                                <li class="hidden-md hidden-lg hidden-sm visible-xs">
+                                    <a href="https://localhost/about/news/news">News</a>
+                                </li>
+                                <li class="first leaf">
+                                    <a href="https://localhost/category/newsletter/blog" title="">Blog</a>
+                                </li>
+                                <li class="last leaf">
+                                    <a href="https://localhost/newsletter/subscriptions" title="">Subscribe!</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Events -->
+                        <li class="last expanded">
+                            <a href="https://localhost/about/events" title="">Events</a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- HELP -->
+                <li class="expanded">
+                    <a href="https://localhost/help" (click)="handleMobileMenuOption($event)">Help</a>
+                    <ul class="menu lang-fixes">
+                        <!-- Mobile view Only -->
+                        <li class="first leaf hidden-md hidden-lg hidden-sm visible-xs">
+                            <a href="https://localhost/help">Help</a>
+                        </li>
+                        <li class="first leaf">
+                            <a href="https://localhost/faq-page" title="">FAQ</a>
+                        </li>
+                        <li class="leaf">
+                            <a href="https://localhost/help/contact-us" title="">Contact us</a>
+                        </li>
+                        <li class="leaf">
+                            <a href="https://support.orcid.org/hc/en-us/community/topics" title="">Give Feedback</a>
+                        </li>
+                        <li class="last leaf">
+                            <a href="https://support.orcid.org/hc" title="">Knowledge Base</a>
+                        </li>
+                    </ul>
+                </li>
+                
+                <!-- SIGN IN/OUT -->
+                <li class="last leaf">
+                 
+                        <a href="/orcid-web/signout">Sign out</a>
+                
+                </li>
+
+            </ul>
+        </div>
+    <!--drupal menu-->
+    <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
+        <h1>
+            <a href="https://localhost"><img
+                src="//localhost:8443/orcid-web/static/2019-02-21T13:15:06.485-06:00/img/orcid-logo.png" alt="ORCID logo" /></a>
+        </h1>
+        <p>Connecting Research and Researchers</p>
+    </div>
+    <p class="see-more">4 ORCID iDs and counting. <a href="/orcid-web/statistics"
+         title="">See more...</a>
+    </p>
+</div><!-- .row -->  
+</script>
+<script type="text/ng-template" id="language-ng2-template"> 
+<form id="language-form" action="#">
+    <select
+        *ngIf="languages"
+        name="language-codes" id="language-codes"
+        [(ngModel)]="language" 
+        (ngModelChange)="selectedLanguage()"
+    >
+        <option 
+            *ngFor="let languageOpt of languages"
+            [value]="languageOpt.value"
+            [selected]="languageOpt.value == language.value"
+        >
+            {{languageOpt.label}}   
+        </option>             
+        
+    </select>
+</form>     
