@@ -41,7 +41,6 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 |400|	Exception: unexpected element	|Ensure that your XML is valid|--|
 |400|	User with this email already exists	|One of the email addresses included in your XML is already associated with a user in the Registry|--|
 |400|	There must be a least one email in the new profile|	You must include an email address when creating a new ORCID Record.|--"|
-|400|	Cannot create ORCID org.hibernate.TransientObjectException: object references an unsaved transient instance|Ensure that you have correct and consistent ORCID iDs throughout the XML, including in sub-elements, such as works source|--|
 |400|	Invalid incoming message:	|Check your XML, make sure required fields are completed.|--|
 |400 |Bad Request: There is an issue with your data or the API endpoint. with org.xml.sax.SAXParseException; lineNumber: foo; columnNumber: bar; Content is not allowed in prolog.] (Content is not allowed in prolog| Check your file path. This error message can actually mean that the api can't find your file. Have you missed the '@' or added a rogue space perhaps?|
 |400|The client application sent a bad request to ORCID. Full validation error: argument type mismatch|This can be because of a scope typo. Check whether you are using singular or plural (education or educations for example)|--|
