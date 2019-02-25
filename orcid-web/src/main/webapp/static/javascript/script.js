@@ -360,10 +360,10 @@ function logAjaxError(e){
     console.log("responseText: " + e.responseText);*/
 }
 
-function getBaseUri() {
+function getBaseUri() {    
     var uri = location.protocol + '//' + location.host
-    if(window.location.host.startsWith('localhost')) {
-        uri = uri + '/orcid-web'
+    if(window.location.host.startsWith('localhost:8443') | window.location.host.startsWith('localhost:8080')) {
+        uri = uri + '/orcid-web';        
     }    
     return uri;
 }
@@ -460,7 +460,7 @@ function logOffReload(reload_param) {
 $(function() {
     
     // Common
-    window.baseUrl = $('body').data('baseurl');
+    window.baseUrl = getBaseUri() + '/';
     window.basePath = window.location.pathname;
 
     // fire off  check, if this page wasn't loaded via iframe (or html5

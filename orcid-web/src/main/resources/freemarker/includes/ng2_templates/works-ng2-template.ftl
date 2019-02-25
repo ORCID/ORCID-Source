@@ -207,7 +207,7 @@
                 <div class="row wizards">               
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div *ngFor="let wtw of workImportWizardsOriginal | orderBy: 'name' | filterImportWizards : selectedWorkType : selectedGeoArea; let index = index; let first = first; let last = last;">
-                            <strong><a (click)="openImportWizardUrlFilter('{{getBaseUri()}}/oauth/authorize', wtw)">{{wtw.name}}</a></strong>
+                            <strong><a (click)="openImportWizardUrlFilter(getBaseUri() + '/oauth/authorize', wtw)">{{wtw.name}}</a></strong>
 
                             <br />                                                                                    
                             <div class="justify">                       
