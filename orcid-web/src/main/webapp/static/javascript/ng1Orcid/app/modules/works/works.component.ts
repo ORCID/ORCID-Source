@@ -402,6 +402,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     } else {
                         this.worksService.notifyOther({worksToMerge:dataGroup});       
                         this.worksService.notifyOther({mergeCount:mergeCount});
+                        this.worksService.notifyOther({groupingSuggestion: false})
                         this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
 
                     }   
@@ -415,22 +416,29 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     mergeSuggestionConfirm(): void {
-        this.groupingSuggestionWorksToMerge = new Array();
-        for (var i in this.groupingSuggestion.putCodes) {
-            var putCode = this.groupingSuggestion.putCodes[i];
-            this.groupingSuggestionWorksToMerge.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)));
-        }
+        this.groupingSuggestionWorksToMerge = []
+        this.groupingSuggestion.suggestions.forEach(suggestionGroup => {
+            const subList = []
+            suggestionGroup.putCodes.forEach(putCode => {
+                subList.push(this.worksService.getDetails(putCode, this.worksService.constants.access_type.USER).pipe(takeUntil(this.ngUnsubscribe)))
+            });
+            this.groupingSuggestionWorksToMerge.push (forkJoin(subList))
+        });
+
         forkJoin(this.groupingSuggestionWorksToMerge).subscribe(
             dataGroup => {
-                this.worksService.notifyOther({worksToMerge:dataGroup});
-                this.worksService.notifyOther({groupingSuggestion:this.groupingSuggestion});    
-                this.worksService.notifyOther({mergeCount:this.groupingSuggestion.putCodes.length});
+                this.worksService.notifyOther({worksToMerge:false});
+                this.worksService.notifyOther({orcid:this.groupingSuggestion.suggestions[0].orcid});
+                this.worksService.notifyOther({groupingSuggestion:dataGroup});    
+                this.worksService.notifyOther({mergeCount:this.groupingSuggestion.suggestions[0].putCodes.length});
                 this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
             },
             error => {
                 console.log('mergeSuggestionConfirm', error);
             } 
         );
+        
+        
     };
     
     deleteWorkConfirm(putCode, deleteGroup): void {
@@ -749,7 +757,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.worksService.handleWorkGroupData( this.formData );
                     this.worksService.loading = false;
                     if(this.groupingSuggestionFeatureEnabled){
-                        this.loadGroupingSuggestions();
+                        this.loadGroupingSuggestions(false);
                     }
                 },
                 error => {
@@ -760,7 +768,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
     
-    loadGroupingSuggestions(): void {
+    loadGroupingSuggestions(openSuggestionsMenuAfterLoad: boolean): void {
         this.groupingSuggestionPresent = false;
         if(this.publicView != "true") {
             this.worksService.getWorksGroupingSuggestions(
@@ -770,9 +778,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
-                    if (data) {
+                    if (data && data.suggestions &&  data.suggestions.length) {
                         this.groupingSuggestionPresent = true;
                         this.groupingSuggestion = data;
+                        if (openSuggestionsMenuAfterLoad) {
+                            this.mergeSuggestionConfirm()
+                        }
                     }
                 },
                 error => {
@@ -1248,12 +1259,21 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
                 if(res.action == 'merge') {
                     if(res.successful == true) {
+
                         this.closeAllMoreInfo();
                         this.refreshWorkGroups();
-                        this.loadMore();
                         this.allSelected = false;
                         this.bulkEditMap = {};
                         this.bulkEditSelect();
+                        if (res.groupingSuggestion && res.groupingSuggestion.moreAvailable) {
+                            setTimeout(()=>{this.loadGroupingSuggestions(true)}, 500)
+                        }
+                        else {
+                            this.loadMore();
+                        }
+                    }
+                    else {
+                        this.loadMore();
                     }
                 } 
                 if(res.action == 'deleteBulk') {
@@ -1280,6 +1300,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 }                
             }
         );
+
+
     };
 
     ngOnDestroy() {

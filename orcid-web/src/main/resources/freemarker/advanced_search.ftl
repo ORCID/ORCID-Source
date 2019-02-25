@@ -90,7 +90,7 @@
                         <div class="control-group">
                             <div class="controls">
                                 <button class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")}</button>
-                                <span id="ajax-loader-search" class="orcid-hide"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
+                                <span *ngIf="searchResultsLoading"><i class="glyphicon glyphicon-refresh spin x2 green"></i></span>
                             </div>
                         </div>
                     </div>

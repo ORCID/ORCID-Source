@@ -265,6 +265,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/statistics/statistics.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/statistics(/)?$"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*(\?.*)?"
@@ -273,6 +275,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/orgs/disambiguated/(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/userInfo.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />			
 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks.json(\?.*)?"
@@ -395,6 +399,8 @@
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/reactivationConfirm.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/reactivationData.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/sendReactivation.json"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/developer-tools" 
@@ -429,6 +435,11 @@
             access="ROLE_ADMIN"/>
         <sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/userInfo.json(\?.*)?"
+			access="ROLE_USER" />
+		<sec:intercept-url pattern="/person.json(\?.*)?"
+            access="ROLE_USER" />
+		
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 

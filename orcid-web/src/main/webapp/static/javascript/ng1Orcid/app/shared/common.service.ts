@@ -6,23 +6,41 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
      from '@angular/common/http';
 
-import { Observable, Subject } 
+import { Observable, Subject, ReplaySubject } 
     from 'rxjs';
 
+import { share, shareReplay } 
+    from 'rxjs/operators';    
+    
 import { OrgDisambiguated } 
     from '../modules/orgIdentifierPopover/orgDisambiguated.ts';
 
-@Injectable()
+@Injectable({
+ providedIn: 'root',
+})
 export class CommonService {
     private shownElement: any;
 
-    public orgDisambiguatedDetails: any;
-
+    public publicPageRegex = /.*\/(\d{4}-){3}\d{3}[\dX](\/?|\/print)$/;
+    public orcidRegex = /(\d{4}-){3}\d{3}[\dX]/;
+    public orgDisambiguatedDetails: any;    
+    public userInfo$: Observable<any>;
+    public publicUserInfo$: Observable<any>;
+    public isPublicPage: boolean;
+    
     constructor(
         private http: HttpClient
-    ) {
+    ) {        
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
+        var path = window.location.pathname;        
+        this.isPublicPage = this.publicPageRegex.test(path);
+        if(this.isPublicPage) {
+            var orcidId = path.match(this.orcidRegex)[0];
+            this.publicUserInfo$ = this.getPublicUserInfo(orcidId).pipe(share()); 
+        } else {
+            this.userInfo$ = this.getUserInfo().pipe(share());  
+        }        
     }
 
     addComma(str): string {
@@ -284,4 +302,16 @@ export class CommonService {
                 getBaseUri() + '/countryNamesToCountryCodes.json', {}
         );
     };
+    
+    getUserInfo(): Observable<any> { 
+        return this.http.get(getBaseUri() + '/userInfo.json'); 
+    };
+    
+    getPublicUserInfo(orcid): Observable<any> {         
+        return this.http.get(getBaseUri() + '/' + orcid + '/userInfo.json'); 
+    };
+    
+    getEmailFrequencyOptions(): Observable<any> {
+        return this.http.get(getBaseUri() + '/manage/emailFrequencyOptions.json');
+    }
 }

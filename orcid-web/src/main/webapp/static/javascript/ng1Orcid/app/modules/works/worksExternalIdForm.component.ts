@@ -106,6 +106,9 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
             this.loading = false;
             if (!data) {
                 this.metadataNotFound = true;
+                setTimeout( () => {
+                    this.renderer.selectRootElement( this.searchElement.nativeElement).focus();
+                })
             } else {
                 this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
                 this.worksService.removeBadContributors(data);
@@ -125,9 +128,12 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
         this.modalService.notifyOther({action:'close', moduleId: 'modalExternalIdForm'});
     }
 
-    onKeydown(event) {
-        if (event.key === "Enter") {
+    onKeydown(event, type) {
+        if (event.key === "Enter" &&  type === "work" ) {
           this.addWork()
+        }
+        else if (event.key === "Enter" && type === "cancel") {
+            this.cancelEdit()
         }
       }
 }

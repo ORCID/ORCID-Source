@@ -99,10 +99,6 @@ kind of variable. This temp value is only used in this macro lib -->
     </#list>
 </#macro>
 
-<#macro orcidUrl orcid>
-    ${request.scheme}://${request.serverName}<#if request.serverPort != 80 && request.serverPort != 443>:${request.serverPort?c}</#if>${request.contextPath}/${orcid}
-</#macro>
-
 <#macro absUrl url>
     <#compress>
     <#if (url.value)?? && !url.value?starts_with("http")>
@@ -491,38 +487,6 @@ kind of variable. This temp value is only used in this macro lib -->
         </div>                
     </div>                              
 </div>
-</#macro>
-
-<#macro registrationEmailFrequencySelector angularElementName>
-<div>   
-    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
-    <label class="control-label dark-label">
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="<@orcid.msg 'common.kb_uri_default'/>360006972953" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
-    </label>
-    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-        class="input-xlarge"
-        ng-model="${angularElementName}.sendEmailFrequencyDays.value">
-        <#list sendEmailFrequencies?keys as key>
-            <option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-        </#list>
-    </select>        
-</div>        
-</#macro>
-
-<#macro registrationEmailFrequencySelectorNg2 angularElementName>
-<div>   
-    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
-    <label class="control-label dark-label">
-        ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_1")}<a href="<@orcid.msg 'common.kb_uri_default'/>360006972953" target="learn_more">${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_2")}</a>${springMacroRequestContext.getMessage("claim.notificationsemailfrequency_3")}
-    </label>
-    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-        class="input-xlarge"
-        [(ngModel)]="${angularElementName}.sendEmailFrequencyDays.value">
-        <#list sendEmailFrequencies?keys as key>
-            <option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-        </#list>
-    </select>        
-</div>        
 </#macro>
 
 <#macro tooltip elementId message>

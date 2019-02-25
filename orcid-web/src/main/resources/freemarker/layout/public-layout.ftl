@@ -40,14 +40,6 @@
     <#nested />
     <!--Content from this template (below) or other templates inside base macro tags appears here-->
     <#include "/common/scripts.ftl" />
-    <#if !hideSupportWidget??>  
-        <@orcid.checkFeatureStatus 'SUPPORT_MIGRATION'>
-            <#include "/common/zendesk_script.ftl" />
-        </@orcid.checkFeatureStatus>  
-        <@orcid.checkFeatureStatus featureName='SUPPORT_MIGRATION' enabled=false>
-            <#include "/common/user_voice_script.ftl" />
-        </@orcid.checkFeatureStatus>  
-    </#if>
     </body>
     </html>
 </#macro>
@@ -108,7 +100,6 @@
                                 </p>
                                 <nav>
                                     <ul class="inline-list">
-                                        <li><a class="social-button" href="https://www.facebook.com/orcid.org" target="social-facebook"><span class="social social-facebook"></span></a></li>
                                         <li><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter"><span class="social social-twitter"></span></a></li>
                                         <li><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss"><span class="social social-rss"></span></a></li>
                                         <li><a class="social-button" href="https://github.com/ORCID" target="social-github"><span class="social social-github"></span></a></li>

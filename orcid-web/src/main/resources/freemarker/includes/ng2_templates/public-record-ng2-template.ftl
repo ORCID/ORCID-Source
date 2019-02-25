@@ -1,7 +1,6 @@
 <script type="text/ng-template" id="public-record-ng2-template">    
 <#escape x as x?html>                   
-    <#if (locked)?? && !locked>
-    <ng-container *ngIf="personData">
+    <ng-container *ngIf="userInfo && userInfo['IS_LOCKED'] === 'false' && personData">
         <!-- Other Names -->
             <div *ngIf="personData.publicGroupedOtherNames && objectKeys(personData.publicGroupedOtherNames).length > 0" class="workspace-section">
                 <div class="workspace-section-header">
@@ -290,10 +289,6 @@
                     </div>                              
                 </div>
             </div>
-
-        </ng-container>
-
-    </#if>
-
+        </ng-container>    
 </#escape>
 </script>

@@ -8731,3 +8731,11 @@ span.notYouUrl > a {
 _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     z-index: unset;
 }
+
+.merge-suggestions-list {
+    display: flex;
+}
+
+.merge-suggestions-list > div {
+    margin-left: 20px;
+}

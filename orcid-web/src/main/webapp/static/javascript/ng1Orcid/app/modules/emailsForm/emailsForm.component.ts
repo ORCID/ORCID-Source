@@ -40,6 +40,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     */
     ///account/email/visibility and /account/email/setPrimary
     @Input() popUp: any;
+    MAX_EMAIL_COUNT: number = 30;
 
     defaultVisibility: any;
     emails: any;
@@ -74,6 +75,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     sendAdministrativeChangeNotifications: string;
     sendMemberUpdateRequestsNotifications: string;
     sendQuarterlyTips: boolean;
+    emailFrequencyOptions: any;
     
     constructor( 
         private elementRef: ElementRef, 
@@ -488,6 +490,21 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         
     };
+    
+    getEmailFrequencyOptions(): void {
+        this.commonSrvc.getEmailFrequencyOptions()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.emailFrequencyOptions = data;
+            },
+            error => {
+                console.log('error getting email frequency options');
+            } 
+        );
+    }
 
     updateDisplayIndex(): void{
         let idx: any;
@@ -508,6 +525,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        this.getEmailFrequencyOptions();
         this.getPrivacyPreferences();
         this.getformData();          
         this.getEmailFrequencies(); 

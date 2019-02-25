@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -48,6 +49,7 @@ import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
+import org.orcid.pojo.EmailFrequencyOptions;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.SecurityQuestion;
@@ -60,6 +62,8 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.OrcidStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -83,6 +87,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     private static final String IS_SELF = "isSelf";
 
     private static final String FOUND = "found";   
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ManageProfileController.class);
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -521,6 +527,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(email.getValue())) {
             errors.add(getMessage("Email.personalInfoForm.email"));
         }
+        
+        // if > 30
+        Emails currentEmails = emailManager.getEmails(getCurrentUserOrcid());
+        if(currentEmails.getEmails().size() > (EmailConstants.MAX_EMAIL_COUNT - 1 )) {
+            errors.add(getMessage("Email.personalInfoForm.youCannotAddMore1") + " " + EmailConstants.MAX_EMAIL_COUNT + " "  + getMessage("Email.personalInfoForm.youCannotAddMore2"));
+        }
 
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
         // make sure there are no dups
@@ -801,8 +813,6 @@ public class ManageProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = { "/authorize-delegates" }, method = RequestMethod.GET)
     public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
-        ModelAndView mav = new ModelAndView("manage");
-
         try {
             Map<String, String> params = decryptDelegationKey(key);
             if (params.containsKey(AdminManager.MANAGED_USER_PARAM) && params.containsKey(AdminManager.TRUSTED_USER_PARAM)) {
@@ -813,23 +823,19 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // Check if the managed user email is verified, if not,
                     // verify it
                     verifyPrimaryEmailIfNeeded(managedOrcid);                    
-                    givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);                    
-                    mav.addObject("admin_delegate_approved", getMessage("admin.delegate.success", trustedOrcid));
+                    givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);
+                    return new ModelAndView("redirect:/manage?delegate=" + trustedOrcid);
                 } else {
-                    // Exception, the email was not for you
-                    mav.addObject("admin_delegate_not_you", getMessage("wrong_user.Wronguser"));
+                    return new ModelAndView("redirect:/manage?wrongToken=true");
                 }
             } else {
-                // Error
-                mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
+                return new ModelAndView("redirect:/manage?invalidToken=true");
             }
-        } catch (UnsupportedEncodingException uee) {
-            mav.addObject("admin_delegate_failed", getMessage("admin.delegate.error.invalid_link"));
+        } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
+            return new ModelAndView("redirect:/manage?invalidToken=true");
         }
-
-        return mav;
     }
-
+    
     @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)
     public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
         return profileEntityManager.getApplications(getCurrentUserOrcid());
@@ -862,5 +868,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {       
         emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
         return emails;
+    }
+    
+    @RequestMapping(value = "/emailFrequencyOptions.json", method = RequestMethod.GET)
+    public @ResponseBody EmailFrequencyOptions getEmailFrequencyOptions() {
+        return emailManagerReadOnly.getEmailFrequencyOptions();
     }
 }

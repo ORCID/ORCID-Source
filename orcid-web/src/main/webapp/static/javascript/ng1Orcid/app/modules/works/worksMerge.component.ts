@@ -7,10 +7,10 @@ import { NgForOf, NgIf }
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { Observable, Subject, Subscription, of, forkJoin } 
     from 'rxjs';
 
-import { takeUntil } 
+import { takeUntil, switchMap } 
     from 'rxjs/operators';
 
 import { WorksService } 
@@ -33,6 +33,10 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     worksToMerge: Array<any>;
     externalIdsPresent: boolean;
     groupingSuggestion: any;
+    checkboxFlag = []
+    selectAll = true
+    readyToMerge = true
+    orcid
 
     constructor(
         private worksService: WorksService,
@@ -44,37 +48,99 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     cancelEdit(): void {
-        this.mergeSubmit = false;
-        this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
+            this.mergeSubmit = false;
+            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
+            if (this.groupingSuggestion){
+                this.worksService.notifyOther({action:'cancel', successful:true});
+            }
     };
 
     mergeConfirm(): void {
         if(this.worksToMerge.length > 20){
             this.worksService.notifyOther({worksToMerge:this.worksToMerge});       
             this.worksService.notifyOther({mergeCount:this.mergeCount});
-            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});   
+            this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});  
             this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMergeWarning'});   
-        } else {
+        }   else {
             this.merge();
         }
     };
 
-    merge(): void {
+    fieldsChange(event) {
+        let allSelected = true 
+        this.checkboxFlag.forEach(element => {
+            if (!element.state) {
+                allSelected = false
+            }
+        }); 
+        this.selectAll = allSelected
+    }
+
+    fieldChangeSelectAll (event) {
+        this.checkboxFlag.forEach(element => {
+            element.state = this.selectAll
+        }); 
+    }
+
+    atLeastOneWorksSelectForMerge() {
+        let  count = 0
+        this.checkboxFlag.forEach(element => {
+            if (element.state) {
+                count ++
+            }
+        }); 
+        return count > 0 
+    }
+
+    workListToPutCodeString(element) {
         var putCodesAsString = '';      
-        for (var i in this.worksToMerge) {
-            var workToMerge = this.worksToMerge[i];
-            putCodesAsString += workToMerge.putCode.value;
-            if(Number(i) < (this.worksToMerge.length-1)){
+        element.forEach(element => {
+            if ( putCodesAsString != ''){
                 putCodesAsString += ',';
             }
+            putCodesAsString += element.putCode.value;
+        });
+        return putCodesAsString
+    }
+
+    workListToPutCodeList(element) {
+        var putCodesAsString = []      
+        element.forEach(element => {
+            putCodesAsString.push(element.putCode.value);
+        });
+        return putCodesAsString
+    }
+
+
+
+    merge(): void {
+        const mergeCall = []
+
+        if (this.worksToMerge) {
+            const list = this.workListToPutCodeString(this.worksToMerge)
+            mergeCall.push (this.worksService.mergeWorks(list))
         }
-        this.worksService.mergeWorks(putCodesAsString)
+        else if (this.groupingSuggestion) {
+
+            this.checkboxFlag.forEach(element => { 
+                if (element.state) {
+                    const list = this.workListToPutCodeString(element.groupingSuggestion)
+                    mergeCall.push (this.worksService.mergeWorks(list))       
+                }
+                else {
+                    const list = this.workListToPutCodeString(element.groupingSuggestion)
+                    mergeCall.push (this.worksService.markSuggestionRejected({putCodes: this.workListToPutCodeList(element.groupingSuggestion), orcid: this.orcid, putCodesAsString: list.toString()}))    
+                }
+            }); 
+
+        }
+        forkJoin (mergeCall)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
-            data => {
-                this.worksService.notifyOther({action:'merge', successful:true});
+            () => {
+                this.worksService.notifyOther({action:'merge', successful:true, groupingSuggestion:this.groupingSuggestion});
                 this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
             },
             error => {
@@ -84,40 +150,38 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    rejectSuggestion(): void {
-        this.worksService.markSuggestionRejected(this.groupingSuggestion)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        ).subscribe(
-            data => {
-                this.modalService.notifyOther({action:'close', moduleId: 'modalWorksMerge'});
-                this.worksService.notifyOther({action:'cancel', successful:true});
-            },
-            error => {
-                console.log('error marking suggestion as rejected', error);
-            } 
-        );
-    };
-
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-        this.subscription = this.worksService.notifyObservable$.subscribe(
+        this.subscription = this.worksService.notifyObservable$.pipe(    
+            takeUntil(this.ngUnsubscribe)
+        ).subscribe(
             (res) => {
                 if( res.mergeCount ) {
                     this.mergeCount = res.mergeCount;
                 }
-                if( res.worksToMerge ) {
+                if( res.worksToMerge != null ) {
                     this.worksToMerge = res.worksToMerge;
                 }
                 if( res.externalIdsPresent != undefined ) {
                     this.externalIdsPresent = res.externalIdsPresent;
                 }
-                if( res.groupingSuggestion ) {
-                    this.groupingSuggestion = res.groupingSuggestion;
+                if( res.groupingSuggestion  != null) {
+                    this.groupingSuggestion = res.groupingSuggestion
+                    this.checkboxFlag = []
+                    if (res.groupingSuggestion) {
+                        
+                        this.groupingSuggestion.forEach((groupingSuggestion, i)=> {
+                            this.checkboxFlag.push ( {id: [i], groupingSuggestion: groupingSuggestion, state: true})
+                        })
+                        this.fieldsChange(null)
+                    } 
+                }
+                if( res.orcid != undefined ) {
+                    this.orcid = res.orcid;
                 }
             }
-        );
+        )
     };
 
     ngOnDestroy() {

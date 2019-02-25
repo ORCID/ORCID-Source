@@ -54,6 +54,9 @@ import { AlertBannerNg2Module }
 
 import { AllConsortiumContactsNg2Module } 
     from './allConsortiumContacts/allConsortiumContacts.ts';
+    
+import { AuthorizeDelegateResultNg2Module } 
+    from './delegators/authorizeDelegateResult.ts';
 
 import { BiographyNg2Module } 
     from './biography/biography.ts';
@@ -183,6 +186,9 @@ import { Social2FANg2Module }
 
 import { TwoFaSetupNg2Module }
     from './2FASetup/twoFASetup.ts';
+    
+import { StatisticsNg2Module }
+    from './statistics/statistics.ts';
 
 import { UnsubscribeNg2Module }
     from './unsubscribe/unsubscribe.ts';  
@@ -300,6 +306,7 @@ export class RootCmp {
         AffiliationFormNg2Module,//Aproved
         AlertBannerNg2Module,
         AllConsortiumContactsNg2Module,
+        AuthorizeDelegateResultNg2Module,
         BiographyNg2Module, //Approved
         ClaimNg2Module,
         ClientEditNg2Module,
@@ -343,6 +350,7 @@ export class RootCmp {
         SelfServiceRemoveSubMemberNg2Module, //Approved
         Social2FANg2Module,
         TwoFaSetupNg2Module,
+        StatisticsNg2Module,
         UnsubscribeNg2Module,
         WidgetNg2Module, //Approved
         WorksBulkDeleteNg2Module,

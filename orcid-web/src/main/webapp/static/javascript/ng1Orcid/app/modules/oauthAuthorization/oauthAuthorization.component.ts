@@ -56,6 +56,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     res: any;
 
+    MAX_EMAIL_COUNT: number = 30;
+
     allowEmailAccess: any;
     authorizationForm: any;
     counter: any;
