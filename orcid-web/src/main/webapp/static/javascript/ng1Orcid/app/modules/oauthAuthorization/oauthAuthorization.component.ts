@@ -698,10 +698,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     ngOnInit() {
         var urlParams = new URLSearchParams(window.location.search);
-        var loginId = "";
-        var firstName = "";
-        var lastName = "";
-        var emailId = "";
 
         if(urlParams.has('alreadyClaimed')){
             this.alreadyClaimed = true;
@@ -709,18 +705,28 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         if(urlParams.has('invalidClaimUrl')){
             this.invalidClaimUrl = true;
         }
+
         //email used in ?loginId param included in registration form error
         if(urlParams.has('loginId')){
             loginId = urlParams.get('loginId');
         }
+
         if(urlParams.has('show_login')){
             if(urlParams.get('show_login')=='false'){
                 this.showRegisterForm = true; 
             }
         }
+
         if(urlParams.has('oauth')){
             this.oauthRequest = true;
         }
+
+        //params used for link social or institutional account functionallity
+        var loginId = "";
+        var firstName = "";
+        var lastName = "";
+        var emailId = "";
+
         if(urlParams.has('firstName')){
             firstName = urlParams.get('firstName');
         }
@@ -765,6 +771,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             $('#recoveryCodeSignin').show(); 
         });
 
+        //load registration form with link account params
         this.oauth2ScreensLoadRegistrationForm(firstName, lastName, emailId, this.linkType);
 
         this.subscription = this.oauthService.notifyObservable$.subscribe(
