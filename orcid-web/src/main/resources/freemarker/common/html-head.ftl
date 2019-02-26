@@ -22,23 +22,6 @@
         orcidVar.baseUriHttp = '${baseUriHttp}';
         orcidVar.pubBaseUri = '${pubBaseUri}';
 		orcidVar.staticCdn = '${staticCdn}'
-	        
-        <#if (workIdsJson)??>
-        orcidVar.workIds = JSON.parse("${workIdsJson}");
-        </#if>
-      
-        <#if (affiliationIdsJson)??>
-        orcidVar.affiliationIdsJson = JSON.parse("${affiliationIdsJson}");
-        </#if>
-      
-        <#if (fundingIdsJson)??>
-        orcidVar.fundingIdsJson = JSON.parse("${fundingIdsJson}");
-        </#if>
-      
-        <#if (showLogin)??>
-            orcidVar.showLogin = ${showLogin};
-        </#if>
-
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
         orcidVar.lastModified = '${(lastModifiedTime?datetime)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
@@ -49,29 +32,7 @@
         orcidVar.searchBaseUrl = "${searchBaseUrl}";
         orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};       
         orcidVar.features = JSON.parse("${featuresJson}");
-        orcidVar.providerId = '${(providerId)!}';
-        
-        <#if (oauth2Screens)??>
-        orcidVar.oauth2Screens = true;
-        <#else>
-        
-        orcidVar.oauth2Screens = false;
-        </#if>
-      
-        <#if (originalOauth2Process)??>
-        orcidVar.originalOauth2Process = true;
-        <#else>
-        orcidVar.originalOauth2Process = false;
-        </#if>     
-      
-        orcidVar.oauthUserId = "${(oauth_userId?js_string)!}";
-        orcidVar.firstName = "${(RequestParameters.firstName?js_string)!}";
-        orcidVar.lastName = "${(RequestParameters.lastName?js_string)!}"; 
-        orcidVar.emailId = "${(RequestParameters.emailId?js_string)!}";
-        orcidVar.linkRequest = "${(RequestParameters.linkRequest?js_string)!}";
-        orcidVar.memberSlug = "${(memberSlug?js_string)!}";
-        
-        orcidVar.loginId = "${(request.getParameter('loginId'))!}";
+        orcidVar.providerId = '${(providerId)!}'; 
         
         <#if verifiedEmail??>
             orcidVar.loginId = "${verifiedEmail}";

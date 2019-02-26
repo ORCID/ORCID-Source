@@ -210,10 +210,7 @@
     </div>
     <!-- Buttons  -->
     <div class="bottomBuffer col-xs-12 col-sm-3">
-        <#if (RequestParameters['linkRequest'])??>
-            <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (click)="oauth2ScreensRegister('${RequestParameters.linkRequest}')">${springMacroRequestContext.getMessage("header.register")}</button>
-        <#else>
-            <button id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (click)="oauth2ScreensRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
-        </#if>
+            <button *ngIf="isLinkRequest" id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (click)="oauth2ScreensRegister(linkType)">${springMacroRequestContext.getMessage("header.register")}</button>
+            <button *ngIf="!isLinkRequest" id="register-authorize-button" class="btn btn-primary" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (click)="oauth2ScreensRegister(null)">${springMacroRequestContext.getMessage("header.register")}</button>
     </div>   
 </div>  

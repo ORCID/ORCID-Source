@@ -36,14 +36,15 @@ if (header && token){
 <script type="text/javascript">
     var head = document.getElementsByTagName('head')[0];
     var urlParams = new URLSearchParams(location.search);
-
     <!-- Zendesk Widget script -->
     <!--Documentation https://support.zendesk.com/hc/en-us/articles/115009522787-->
     if(!(window.location.pathname.indexOf("/print") > -1) && !(window.location.pathname.indexOf("/oauth") > -1) && (urlParams.get('oauth')!= null && urlParams.get('oauth')!== 'undefined' && urlParams.get('oauth')!= true && urlParams.get('oauth')!= 'true')){
-    var supportWidget = document.createElement("script");
+        console.log("show support widget");
+        var supportWidget = document.createElement("script");
         supportWidget.src = 'https://static.zdassets.com/ekr/snippet.js?key=b8313acd-6439-4894-b431-8c5a2ae9e7cb';
         supportWidget.type = 'text/javascript';
         supportWidget.id = 'ze-snippet';
+        console.log(supportWidget);
         head.appendChild(supportWidget);
     } 
 </script>
