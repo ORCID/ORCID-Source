@@ -1,5 +1,4 @@
 declare var $: any; //delete
-declare var orcidVar: any;
 declare var logAjaxError: any;
 declare var getBaseUri: any;
 declare var om: any;
@@ -8,7 +7,7 @@ declare var om: any;
 
 import { NgForOf, NgIf } 
     from '@angular/common'; 
-
+    
 import { AfterViewInit, Component, ChangeDetectorRef, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } 
     from '@angular/core';
 
@@ -49,6 +48,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     successEmailSentTo: string;
     url_path: string;
     resetPasswordEmailFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('RESET_PASSWORD_EMAIL'); 
+    tokenExpired: boolean;
 
     constructor(
         private cdr:ChangeDetectorRef,
@@ -56,7 +56,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         private elementRef: ElementRef, 
         private featuresService: FeaturesService,
         private oauthService: OauthService,
-        private requestPasswordResetService: GenericService,
+        private requestPasswordResetService: GenericService
     ) {
         this.authorizationForm = elementRef.nativeElement.getAttribute('authorizationForm');
         this.showDeactivatedError = elementRef.nativeElement.getAttribute('showDeactivatedError');
@@ -166,7 +166,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     };
 
     ngOnInit() {
-        console.log(this.resetPasswordEmailFeatureEnabled);
+        this.tokenExpired = window.location.href.split('expired=')[1] == "true";
         this.getRequestResetPassword();
         // init reset password toggle text
         this.showSendResetLinkError = false;

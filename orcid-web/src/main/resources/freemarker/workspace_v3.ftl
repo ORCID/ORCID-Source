@@ -27,16 +27,7 @@
   </div>
   <!--Right col-->
   <div class="col-md-9 right-aside">
-    <div class="workspace-right">        
-      <!-- Locked error message -->
-      <#if (locked)?? && locked>
-      <div class="workspace-inner workspace-header">
-        <div class="alert alert-error readme" ng-cloak>
-          <strong><@orcid.msg 'workspace.locked.header'/></strong>
-          <p><@orcid.msg 'workspace.locked.message_1'/><a href="http://orcid.org/help/contact-us" target="Orcid_support"><@orcid.msg 'workspace.locked.message_2'/></a><@orcid.msg 'workspace.locked.message_3'/></p>
-        </div>
-      </div>                
-      </#if>
+    <div class="workspace-right">
       <div class="workspace-accordion" id="workspace-accordion">
         <!-- Notification alert -->                       
         <#include "/includes/ng2_templates/notification-alerts-ng2-template.ftl">
