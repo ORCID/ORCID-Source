@@ -17,6 +17,7 @@ import org.apache.solr.common.SolrDocument;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
@@ -28,9 +29,11 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.v3.rc2.search.Result;
 import org.orcid.jaxb.model.v3.rc2.search.Search;
 import org.orcid.persistence.dao.SolrDao;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
+import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Tests for the invocation of Solr retrieval. This class isn't required to have
@@ -45,7 +48,9 @@ import org.orcid.utils.solr.entities.OrcidSolrResults;
  * @author jamesb
  * 
  */
-public class OrcidSearchManagerTest extends BaseTest {
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+public class OrcidSearchManagerTest {
 
     @Resource(name = "orcidSearchManagerV3")
     private OrcidSearchManager orcidSearchManager;
@@ -160,6 +165,20 @@ public class OrcidSearchManagerTest extends BaseTest {
         assertNotNull(search);
         assertEquals(1, search.getResults().size());
         assertEquals("0000", search.getResults().get(0).getOrcidIdentifier().getPath());
+    }
+    
+    @Test
+    public void numFoundTest() {
+        OrcidSolrResults osr = multipleResultsForQuery();
+        osr.setNumFound(500);
+        when(mockSolrDao.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(osr);
+    
+        Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
+        assertNotNull(search);
+        assertEquals(Long.valueOf(500), search.getNumFound());
+        assertEquals(2, search.getResults().size());
+        assertEquals("5678", search.getResults().get(0).getOrcidIdentifier().getPath());
+        assertEquals("6789", search.getResults().get(1).getOrcidIdentifier().getPath());
     }
     
     private OrcidSolrResults invalidRecordSearchResult() {
