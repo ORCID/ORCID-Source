@@ -1,5 +1,16 @@
 <#macro headerng2 nav="" >
 <script type="text/ng-template" id="header-ng2-template">
+<#if oauthError??>            
+<ng-container *ngIf="isOauth"> 
+    <div class="row top-header">
+        <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
+            <a href="https://orcid.org" alt="ORCID logo">
+                <img src="${staticCdn}/img/orcid-logo-208-64.png" width="208px" height="64px" alt="ORCID logo">
+            </a>
+        </div>       
+    </div>
+</ng-container>
+</#if>
 <div *ngIf="!isOauth"> 
     <div class="row">
         <div class="search col-md-11 col-md-offset-1 col-sm-12 col-xs-12"
@@ -57,7 +68,7 @@
         </div>
     </div>
     <div class="row flexbox-container">         
-        <div *ngIf="isPublicPage && (!userInfo['IS_LOCKED'] || userInfo['IS_LOCKED'] == 'false')" class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation public">            
+        <div *ngIf="isPublicPage" class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 navigation public">            
             <!-- Mobile View -->
             <a id="mobile-menu-icon" class="mobile-button mobile-menu-icon hidden-md hidden-lg hidden-sm visible-xs"
                (click)="toggleMenu()" [ngClass]="{'mobile-menu-active': menuVisible == true}">
