@@ -69,7 +69,6 @@
         orcidVar.lastName = "${(RequestParameters.lastName?js_string)!}"; 
         orcidVar.emailId = "${(RequestParameters.emailId?js_string)!}";
         orcidVar.linkRequest = "${(RequestParameters.linkRequest?js_string)!}";
-        orcidVar.memberSlug = "${(memberSlug?js_string)!}";
         
         orcidVar.loginId = "${(request.getParameter('loginId'))!}";
         
