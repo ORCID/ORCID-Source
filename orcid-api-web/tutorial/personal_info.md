@@ -21,10 +21,11 @@ These calls can be used with Member API credentials on sandbox or the production
 * For reading email addresses: ```/email```
 
 **Sample XML files:**
-  * [Examples for reading personal information sections in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples)
-  * [Examples for writing personal information sections in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample)
-  * [Examples for reading personal information in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples)
-  * [Examples writing personal information sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples)
+* [Examples for reading personal information sections in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/personal-details-2.1.xml)
+* [Examples for reading personal information sections in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/personal-details-3.0_rc1.xml)
+* [Examples for writing personal information sections in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample)
+* [Examples for reading personal information in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples)
+* [Examples writing personal information sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples)
 
 ## Permission to edit the record
 
@@ -32,7 +33,7 @@ Only the other names, country, keywords, website and personal identifier section
 
 Editing the person section of a record requires a 3 step OAuth token with the ```/person/update``` scope, the ```/read-limited``` scope should also be requested for reading person items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
 
-## Personal inforamtion fields
+## Personal information fields
 
 - **given-name** _(user edit only)_ The given name of the researcher, or the name they most commonly go by. This is field is required for researchers
 
@@ -85,7 +86,7 @@ HTTP/1.1 200 OK
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[person section] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -108,7 +109,7 @@ HTTP/1.1 200 OK
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[person section]/[put-code] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -154,7 +155,7 @@ Location: http://api.qa.orcid.org/2.1/0000-0002-9227-8514/researcher-urls/41387
 curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name_updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/researcher-urls/41387'
 ```
 
-Example response
+**Example response**
 ```
 HTTP/1.1 200 OK
 <researcher-url:researcher-url put-code="8802" ...</researcher-url:researcher-url>
@@ -166,7 +167,7 @@ HTTP/1.1 200 OK
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[affiliation section]/[put-code] |
 | Method    | DELETE |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 
 **Example request in curl**
@@ -174,5 +175,5 @@ HTTP/1.1 200 OK
 curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/researcher-urls/41387'
 ```
 
-Example response
+**Example response**
 ```HTTP/1.1 204 No Content```

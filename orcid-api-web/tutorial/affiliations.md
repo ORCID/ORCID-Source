@@ -32,7 +32,7 @@ These calls can be used with Member API credentials on sandbox or the production
 * For distinction items (3.0+ only): ```/distinction``` and ```/distinctions```
 * For invited position items (3.0+ only): ```/invited-position``` and ```/invited-positions```
 * For membership items (3.0+ only): ```/membership``` and ```/membership```
-* For qualification items (3.0+ only): ```/qualification``` and ```/qualification```
+* For qualification items (3.0+ only): ```/qualification``` and ```/qualifications```
 * For service items (3.0+ only): ```/service``` and ```/service```
 
 **Sample XML files:**

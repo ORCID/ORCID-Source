@@ -26,7 +26,7 @@ https://sandbox.orcid.org/oauth/authorize?client_id=APP-RU42Z8TDSYBG7T2S&respons
 
 Go to the authorization URL in your browser. If you have a sandbox ORCID account log into it then grant access. If you do not have and account, register for a new sandbox ORCID account and grant access.
 
-Users must grant authorization for you to get their authenticated ORCID iD and it must be completed in a browser window- this step can not be automated.
+*Users must grant authorization for you to get their authenticated ORCID iD and it must be completed in a browser window- this step can not be automated.*
 
 ## Get the authorization code
 

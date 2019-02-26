@@ -1,7 +1,10 @@
 # GROUP-ID-RECORD API
 
+
+## Deprecated guide, please see [Write, update and delete peer-review and group-id items](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md) instead.
+
 The group-id-record API allows a client to view, add, update, delete the group-id records.
-A client can access the records with the following 2 scopes : 
+A client can access the records with the following 2 scopes :
 
 /group-id-record/read : GET
 
@@ -75,4 +78,3 @@ Returns a list of group-id-records with name "my-name".
 Returns the group-id-record the specified group ID with the identifier "group:identifier".
 
 ``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -X GET 'https://api.sandbox.orcid.org/v2.1/group-id-record/?group-id=group:identifier'``
-
