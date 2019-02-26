@@ -699,6 +699,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     ngOnInit() {
         var urlParams = new URLSearchParams(window.location.search);
 
+        //params sent if user clicked link in claim email
         if(urlParams.has('alreadyClaimed')){
             this.alreadyClaimed = true;
         }
@@ -706,22 +707,24 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             this.invalidClaimUrl = true;
         }
 
-        //email used in ?loginId param included in registration form error
+        //param sent if user clicked link in error msg on register or reactivate
         if(urlParams.has('loginId')){
             loginId = urlParams.get('loginId');
         }
 
+        //param sent to force register form display
         if(urlParams.has('show_login')){
             if(urlParams.get('show_login')=='false'){
                 this.showRegisterForm = true; 
             }
         }
 
+        //param sent if user came via oauth
         if(urlParams.has('oauth')){
             this.oauthRequest = true;
         }
 
-        //params used for link social or institutional account functionallity
+        //params sent if user came from link social or link insitutional
         var loginId = "";
         var firstName = "";
         var lastName = "";
