@@ -240,7 +240,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.personalLogin = true;
     };
 
-    switchForm(): void {
+    switchForm(email): void {
         this.showDeactivatedError = false;
         this.showReactivationSent = false; 
         var re = new RegExp("(/register)(.*)?$");
@@ -249,7 +249,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         } else if (this.registrationForm.linkType=="shibboleth") {
             window.location.href = getBaseUri() + "/shibboleth/signin";
         } else if(re.test(window.location.pathname)){
-            window.location.href = getBaseUri() + "/signin";
+            window.location.href = getBaseUri() + "/signin?loginId=" + email;
         } else {
             this.showRegisterForm = !this.showRegisterForm;
             if (!this.personalLogin) {
@@ -398,9 +398,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 if(!this.registrationForm.email.value){
                     this.registrationForm.email.value=email;
                 }
-                /*if(!this.registrationForm.linkType.value){
+                if(!this.registrationForm.linkType){
                     this.registrationForm.linkType=linkType; 
-                }*/
+                }
 
                 this.registrationForm.activitiesVisibilityDefault.visibility = null;
                 this.registrationForm.emailsAdditional=[{errors: [], getRequiredMessage: null, required: false, value: '',  }];                          
@@ -705,43 +705,35 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
         if(urlParams.has('alreadyClaimed')){
             this.alreadyClaimed = true;
-            console.log(this.alreadyClaimed);
         }
         if(urlParams.has('invalidClaimUrl')){
             this.invalidClaimUrl = true;
-            console.log(this.invalidClaimUrl);
         }
         //email used in ?loginId param included in registration form error
         if(urlParams.has('loginId')){
             loginId = urlParams.get('loginId');
-            console.log(loginId);
         }
         if(urlParams.has('show_login')){
-            this.showRegisterForm = !(urlParams.get('show_login'));
-            console.log(this.showRegisterForm);
+            if(urlParams.get('show_login')=='false'){
+                this.showRegisterForm = true; 
+            }
         }
         if(urlParams.has('oauth')){
             this.oauthRequest = true;
-            console.log(this.oauthRequest);
         }
         if(urlParams.has('firstName')){
             firstName = urlParams.get('firstName');
-            console.log(firstName);
         }
         if(urlParams.has('lastName')){
             lastName = urlParams.get('lastName');
-            console.log(lastName);
         }
         if(urlParams.has('emailId')){
             emailId = urlParams.get('emailId');
-            console.log(emailId);
         }
         if(urlParams.has('linkRequest')){
             this.isLinkRequest = true;
             this.linkType = urlParams.get('linkRequest');
-            console.log(this.linkType);
-        }
-        
+        }        
 
         this.authorizationForm = {
             userName:  {value: loginId},

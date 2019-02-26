@@ -43,7 +43,6 @@ if (header && token){
         supportWidget.src = 'https://static.zdassets.com/ekr/snippet.js?key=b8313acd-6439-4894-b431-8c5a2ae9e7cb';
         supportWidget.type = 'text/javascript';
         supportWidget.id = 'ze-snippet';
-        console.log(supportWidget);
         head.appendChild(supportWidget);
     } 
 </script>
