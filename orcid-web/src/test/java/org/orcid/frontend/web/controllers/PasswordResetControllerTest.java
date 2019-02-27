@@ -232,7 +232,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
     }
 
     @Test
-    public void testPasswordResetLinkValidLinkDirectsToConsolidatedScreenDirectlyWhenNoSecurityQuestion() throws Exception {
+    public void testPasswordResetLinkValidLinkDirectsToConsolidatedScreenDirectly() throws Exception {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
@@ -240,21 +240,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(new OrcidProfile());
         ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
 
-        assertEquals("password_one_time_reset_optional_security_questions", modelAndView.getViewName());
-        verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
-
-    }
-
-    @Test
-    public void testPasswordResetLinkValidLinkDirectsToSecurityQuestionScreenWhenSecurityQuestionPresent() throws Exception {
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
-
-        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
-        ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
-
-        assertEquals("password_one_time_reset_optional_security_questions", modelAndView.getViewName());
+        assertEquals("password_one_time_reset", modelAndView.getViewName());
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
 
     }
@@ -277,7 +263,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         oneTimeResetPasswordForm.setPassword(Text.valueOf("Password#123"));
         oneTimeResetPasswordForm.setRetypedPassword(Text.valueOf("Password#123"));
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(new OrcidProfile());
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
         assertTrue(oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://testserver.orcid.org/my-orcid")
                 || oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://localhost:8443/orcid-web/my-orcid"));
@@ -301,11 +287,4 @@ public class PasswordResetControllerTest extends DBUnitTest {
         passwordResetController.resetPasswordConfirmValidate(form);
     }
 
-    private OrcidProfile orcidWithSecurityQuestion() {
-        OrcidProfile orcidProfile = new OrcidProfile();
-        OrcidInternal orcidInternal = new OrcidInternal();
-        orcidInternal.setSecurityDetails(new SecurityDetails());
-        orcidProfile.setOrcidInternal(orcidInternal);
-        return orcidProfile;
-    }
 }

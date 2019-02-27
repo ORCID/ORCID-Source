@@ -7556,10 +7556,6 @@ ul.comma li:last-child:after {
         width: 85%
     }
 
-    #reg-form-password #securityQuestionAnswer {
-        width: 100%
-    }
-
     #reg-form-password select {
         -webkit-appearance: listbox
     }
