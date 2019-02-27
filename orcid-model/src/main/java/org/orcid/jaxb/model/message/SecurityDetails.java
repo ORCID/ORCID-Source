@@ -37,7 +37,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "encryptedPassword", "securityQuestionId", "encryptedSecurityAnswer", "encryptedVerificationCode" })
+@XmlType( propOrder = { "encryptedPassword" })
 @XmlRootElement(name = "security-details")
 public class SecurityDetails implements Serializable {
 

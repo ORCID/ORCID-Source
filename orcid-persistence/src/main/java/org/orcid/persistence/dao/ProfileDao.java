@@ -96,8 +96,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateEncryptedPassword(String orcid, String encryptedPassword);
 
-    void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
-
     void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
             boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
 
