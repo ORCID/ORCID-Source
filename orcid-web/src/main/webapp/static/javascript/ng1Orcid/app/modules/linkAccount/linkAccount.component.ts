@@ -40,6 +40,7 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     gaString: string;
     loadedFeed: boolean;
     idpName: string;
+    oauthRequest: boolean;
     requestInfoForm: any;
     showDeactivatedError: any;
     showReactivationSent: any;
@@ -61,6 +62,7 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         this.gaString = "";
         this.loadedFeed = false;
         this.idpName = "";
+        this.oauthRequest = false;
         this.requestInfoForm = {};
         this.showDeactivatedError = false;
         this.showReactivationSent = false;
@@ -98,9 +100,12 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                if(data){                     
+                if(data){
+                    this.oauthRequest = true;                     
                     this.requestInfoForm = data;              
                     this.gaString = orcidGA.buildClientString(this.requestInfoForm.memberName, this.requestInfoForm.clientName);
+                } else {
+                    this.oauthRequest = false;
                 }
             },
             error => {

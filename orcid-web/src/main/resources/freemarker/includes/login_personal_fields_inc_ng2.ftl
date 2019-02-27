@@ -16,6 +16,8 @@
     =============================================================================
 
 -->
+<input *ngIf="oauthRequest" type="hidden" name="oauthRequest" value="true"/>
+<input *ngIf="!oauthRequest" type="hidden" name="oauthRequest" value="false"/>
 <div class="form-group">
     <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
     <input type="text" id="userId" name="userId" [(ngModel)]="authorizationForm.userName.value"  class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}" />
