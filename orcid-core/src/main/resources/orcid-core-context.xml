@@ -724,8 +724,6 @@
 
 	<bean id="countryManager" class="org.orcid.core.manager.impl.CountryManagerImpl" />	
 
-	<bean id="securityQuestionManager" class="org.orcid.core.manager.impl.SecurityQuestionManagerImpl" />
-
 	<bean id="orcidProfileManager" class="org.orcid.core.manager.impl.OrcidProfileManagerImpl">		
 		<property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
 		<property name="claimReminderAfterDays" value="${org.orcid.core.claimReminderAfterDays:8}" />
