@@ -3,8 +3,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from "@angular/core";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { GenericService } from "../../shared/generic.service.ts";
-import { EmailService } from "../../shared/email.service.ts";
+import { GenericService } from "../../shared/generic.service";
+import { EmailService } from "../../shared/email.service";
 
 @Component({
   selector: "name-ng2",

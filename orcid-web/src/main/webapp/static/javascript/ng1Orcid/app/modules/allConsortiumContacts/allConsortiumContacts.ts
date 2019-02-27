@@ -14,10 +14,10 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 //In the end only allConsortiumContactsNg2 should remain
-import { AllConsortiumContactsComponent } from './allConsortiumContacts.component.ts';
+import { AllConsortiumContactsComponent } from './allConsortiumContacts.component';
 
 // This is the Angular 1 part of the module
 export const AllConsortiumContactsModule = angular.module(

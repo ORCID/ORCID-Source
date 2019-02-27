@@ -13,16 +13,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service'; 
 
 import { DiscoService } 
-    from '../../shared/disco.service.ts'; 
+    from '../../shared/disco.service'; 
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';
+    from '../../shared/modal.service';
 
 import { WidgetService } 
-    from '../../shared/widget.service.ts'; 
+    from '../../shared/widget.service'; 
 
 @Component({
     selector: 'alt-signin-accounts-ng2',

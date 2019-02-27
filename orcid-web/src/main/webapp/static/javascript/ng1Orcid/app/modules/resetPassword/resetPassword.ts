@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { ResetPasswordComponent } 
-    from './resetPassword.component.ts';
+    from './resetPassword.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const ResetPasswordModule = angular.module(

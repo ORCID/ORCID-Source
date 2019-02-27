@@ -10,22 +10,22 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { PreferencesService }
-    from '../../shared/preferences.service.ts';
+    from '../../shared/preferences.service';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 import { EmailFrequencyService }
-    from '../../shared/emailFrequency.service.ts';    
+    from '../../shared/emailFrequency.service';    
     
 @Component({
     selector: 'emails-form-ng2',

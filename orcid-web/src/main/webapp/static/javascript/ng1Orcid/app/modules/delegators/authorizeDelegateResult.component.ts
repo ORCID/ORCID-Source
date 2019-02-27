@@ -14,7 +14,7 @@ import { takeUntil }
     from 'rxjs/operators';
    
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service'; 
     
 @Component({
     selector: 'authorize-delegate-result-ng2',

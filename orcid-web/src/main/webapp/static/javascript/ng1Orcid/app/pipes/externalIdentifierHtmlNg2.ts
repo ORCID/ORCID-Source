@@ -3,7 +3,7 @@ import { Injectable, Pipe, PipeTransform }
 
 /*
 import { UrlProtocolPipe }
-    from './../urlProtocolNg2.ts';
+    from './../urlProtocolNg2';
 */
 @Pipe({
     name: "externalIdentifierHtml"

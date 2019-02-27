@@ -1,8 +1,8 @@
 import * as angular from "angular";
 import { NgModule } from "@angular/core";
 import { downgradeComponent, UpgradeModule } from "@angular/upgrade/static";
-import { CommonNg2Module } from "./../common/common.ts";
-import { printIdBannerComponent } from "./printIdBanner.component.ts";
+import { CommonNg2Module } from "./../common/common";
+import { printIdBannerComponent } from "./printIdBanner.component";
 
 // This is the Angular 1 part of the module
 export const printIdBannerModule = angular.module("printIdBannerModule", []);

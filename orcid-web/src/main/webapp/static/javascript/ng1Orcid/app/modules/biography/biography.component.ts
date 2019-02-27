@@ -12,13 +12,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { GenericService } 
-    from '../../shared/generic.service.ts'; 
+    from '../../shared/generic.service'; 
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 @Component({
     selector: 'biography-ng2',

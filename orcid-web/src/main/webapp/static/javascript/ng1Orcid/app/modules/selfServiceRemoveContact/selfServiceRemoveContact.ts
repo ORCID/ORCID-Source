@@ -15,7 +15,7 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { SelfServiceRemoveContactComponent } 
-    from './selfServiceRemoveContact.component.ts';
+    from './selfServiceRemoveContact.component';
 
 // This is the Angular 1 part of the module
 export const SelfServiceRemoveContactModule = angular.module(

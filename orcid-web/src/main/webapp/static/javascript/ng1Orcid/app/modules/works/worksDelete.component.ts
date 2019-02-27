@@ -15,10 +15,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { WorksService } 
-    from '../../shared/works.service.ts';
+    from '../../shared/works.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 @Component({
     selector: 'works-delete-ng2',
