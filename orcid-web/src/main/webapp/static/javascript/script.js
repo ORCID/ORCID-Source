@@ -4290,8 +4290,7 @@ this.w3cLatexCharMap = {
                 + offset(input) : baseUrl + '?q=';
     }
 
-    exports.setBaseUrl = function(url) {
-        console.log('setting base url: ' + url);
+    exports.setBaseUrl = function(url) {        
         baseUrl = url;
     };
 
