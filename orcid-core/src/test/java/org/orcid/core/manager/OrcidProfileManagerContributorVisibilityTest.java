@@ -60,7 +60,7 @@ public class OrcidProfileManagerContributorVisibilityTest extends BaseTest {
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+        initDBUnitData(Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
                 "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml"));
     }
 

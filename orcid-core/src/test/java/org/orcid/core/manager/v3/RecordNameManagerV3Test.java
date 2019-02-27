@@ -28,14 +28,13 @@ public class RecordNameManagerV3Test extends BaseTest {
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml",
                 "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", 
-                "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
     }
     
     @Test

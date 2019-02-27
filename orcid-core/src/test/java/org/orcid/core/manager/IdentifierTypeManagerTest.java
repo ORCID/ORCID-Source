@@ -38,7 +38,7 @@ public class IdentifierTypeManagerTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-6666666666666666";
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
 
     @BeforeClass

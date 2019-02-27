@@ -42,7 +42,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
 public class ClientsControllerTest extends BaseControllerTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml");
 
     @Resource
     private ClientsController controller;

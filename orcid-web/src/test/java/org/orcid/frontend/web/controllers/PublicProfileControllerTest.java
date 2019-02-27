@@ -57,7 +57,7 @@ import org.springframework.web.servlet.ModelAndView;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
 public class PublicProfileControllerTest extends DBUnitTest {
     
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/BiographyEntityData.xml", "/data/OrgsEntityData.xml", 
             "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/RecordNameEntityData.xml", 
             "/data/WorksEntityData.xml");

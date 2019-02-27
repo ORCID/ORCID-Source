@@ -101,7 +101,7 @@ public class SourceInActivitiesTest extends BaseTest {
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
+        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml"));
     }
 
     @Before

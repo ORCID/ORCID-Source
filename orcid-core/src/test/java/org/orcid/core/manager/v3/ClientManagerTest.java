@@ -48,7 +48,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.TargetProxyHelper;
 
 public class ClientManagerTest extends BaseTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml");
     
     private static final String MEMBER_ID="5555-5555-5555-5558";
     

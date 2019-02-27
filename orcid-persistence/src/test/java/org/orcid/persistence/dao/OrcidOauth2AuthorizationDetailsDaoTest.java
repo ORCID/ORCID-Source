@@ -34,7 +34,7 @@ public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+        initDBUnitData(Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
                 "/data/ClientDetailsEntityData.xml", "/data/OrcidOauth2AuthorisationDetailsData.xml"));
     }
 
