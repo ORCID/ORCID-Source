@@ -23,7 +23,6 @@ public class SecurityQuestionManagerImpl implements SecurityQuestionManager {
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
     @Override
-    @Cacheable("security-questions")
     public Map<String, String> retrieveSecurityQuestionsAsMap() {
         List<SecurityQuestionEntity> questions = securityQuestionDao.getAll();
         Map<String, String> map = new TreeMap<String, String>();
@@ -34,7 +33,6 @@ public class SecurityQuestionManagerImpl implements SecurityQuestionManager {
     }
 
     @Override
-    @Cacheable("security-questions")
     public Map<String, String> retrieveSecurityQuestionsAsInternationalizedMap() {
         List<SecurityQuestionEntity> questions = securityQuestionDao.getAll();
         Map<String, String> map = new LinkedHashMap<String, String>();
