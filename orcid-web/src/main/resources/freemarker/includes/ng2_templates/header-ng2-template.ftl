@@ -1,4 +1,3 @@
-<#macro headerng2 nav="" >
 <script type="text/ng-template" id="header-ng2-template">
 <div *ngIf="!isOauth"> 
     <div class="row">
@@ -452,5 +451,3 @@
     </div><!-- .row -->
 </div>   
 </script>
-</#macro>
-<@headerng2></@headerng2>

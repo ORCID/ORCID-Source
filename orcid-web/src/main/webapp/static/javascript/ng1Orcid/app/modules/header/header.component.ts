@@ -230,5 +230,5 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     
     getBaseUri(): String {
         return getBaseUri();
-    }
+    };
 }

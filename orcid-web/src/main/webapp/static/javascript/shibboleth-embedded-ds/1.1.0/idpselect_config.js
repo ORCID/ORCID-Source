@@ -13,7 +13,7 @@ function IdPSelectUIParms(){
     
     this.currentLocation = window.location.href;
     
-  	this.defaultReturn = orcidVar.baseUri + '/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/shibboleth/signin';       // If non null, then the default place to send users who are not 
+  	this.defaultReturn = getBaseUri() + '/Shibboleth.sso/Login?SAMLDS=1&target=' + getBaseUri() + '/shibboleth/signin';       // If non null, then the default place to send users who are not 
     
     // Approaching via the Discovery Protocol for example
     //this.defaultReturn = "https://example.org/Shibboleth.sso/DS?SAMLDS=1&target=https://example.org/secure";

@@ -86,7 +86,7 @@
                 </span>
             </div>
         </div>
-        <button (click)="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>  
+        <button *ngIf="registrationForm?.emailsAdditional?.length < (MAX_EMAIL_COUNT -1)" (click)="addEmailField()" class="left btn-white-no-border"><i class="glyphicon glyphicon-plus-sign"></i> ${springMacroRequestContext.getMessage("oauth_sign_up.buttonaddemail")}</button>  
     </div>
     <!--Password-->
     <div class="form-group clear-fix">

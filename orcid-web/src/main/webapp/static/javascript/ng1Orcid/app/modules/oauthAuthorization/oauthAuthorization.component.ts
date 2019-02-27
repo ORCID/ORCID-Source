@@ -3,7 +3,6 @@ declare var OrcidCookie: any;
 declare var orcidVar: any;
 declare var orcidGA: any;
 declare var getBaseUri: any;
-declare var getStaticCdnPath: any;
 declare var orcidGA: any;
 declare var orcidVar: any;
 
@@ -55,6 +54,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     public newInput = new EventEmitter<boolean>();
 
     res: any;
+
+    MAX_EMAIL_COUNT: number = 30;
 
     allowEmailAccess: any;
     authorizationForm: any;
@@ -193,7 +194,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     addScript(url, onLoadFunction): void {      
         let head = document.getElementsByTagName('head')[0];
         let script = document.createElement('script');
-        script.src = getStaticCdnPath() + url;
+        script.src = this.assetsPath + url;
         script.onload = onLoadFunction;
         head.appendChild(script); // Inject the script
     }; 

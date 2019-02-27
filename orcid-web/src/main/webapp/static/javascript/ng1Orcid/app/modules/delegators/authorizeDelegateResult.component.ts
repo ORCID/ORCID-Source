@@ -24,28 +24,14 @@ export class AuthorizeDelegateResultComponent implements OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
 
-    authorizeDelegateResult: any;
+    delegate: string;
+    invalidLink: boolean;
+    wrongLink: boolean;
 
     constructor(
-         private accountService: AccountService
     ) {
 
     }
-
-    getAuthorizeDelegateResult(): void {
-        var key = window.location.href.split('key=')[1];
-        this.accountService.getAuthorizeDelegateResult(key)
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        ).subscribe(
-            data => {
-                this.authorizeDelegateResult = data;
-            },
-            error => {
-                console.log('error fetching authorize delegate result', error);
-            } 
-        );
-    };
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();
@@ -53,7 +39,14 @@ export class AuthorizeDelegateResultComponent implements OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getAuthorizeDelegateResult();
+        var delegateParam = window.location.href.split('delegate=')[1];
+        if (delegateParam) {
+            this.delegate = delegateParam;
+        } else if (window.location.href.split('invalidToken=')[1]) {
+            this.invalidLink = true;
+        } else if (window.location.href.split('wrongToken=')[1]) {
+            this.wrongLink = true;
+        }        
     }; 
     
     getBaseUri(): String {

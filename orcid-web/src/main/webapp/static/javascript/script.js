@@ -380,14 +380,6 @@ function getCookieDomain(location){
         return cookieDomain;
 }
 
-function getStaticCdnPath() {
-    return orcidVar.staticCdn;
-}
-
-function myTest() {
-    return 'a success';
-}
-
 function checkOrcidLoggedIn() {	    
     if (OrcidCookie.checkIfCookiesEnabled()) {    
         if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {
