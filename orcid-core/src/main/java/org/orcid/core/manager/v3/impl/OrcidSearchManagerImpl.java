@@ -47,7 +47,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     private void setSearchResults(OrcidSolrResults solrResults, Search searchResults) {
         if(solrResults != null && solrResults.getResults() != null) {
-            searchResults.setNumFound(Long.valueOf(solrResults.getResults().size()));
+            searchResults.setNumFound(solrResults.getNumFound());
             solrResults.getResults().stream().forEach(r -> {
                 try {
                     orcidSecurityManager.checkProfile(r.getOrcid());

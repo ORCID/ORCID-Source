@@ -31,6 +31,7 @@
     "rxjs": "6.2.0",
     "systemjs": "0.21.4",
     "whatwg-fetch": "^2.0.4",
+    "url-search-params-polyfill": "^5.0.0",
     "xml2js": "0.4.19",
     "zone.js": "0.8.26"
   },

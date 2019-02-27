@@ -54,9 +54,9 @@
         <@orcid.checkFeatureStatus 'COOKIE_BANNER'>
             <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">  
             <alert-banner-ng2></alert-banner-ng2>
-        </@orcid.checkFeatureStatus>
+        </@orcid.checkFeatureStatus>        
         <!--OAUTH SCREEN HEADER-->
-        <#if (RequestParameters['oauth'])??>
+        <#if (RequestParameters['oauth'])?? || nav == "oauth-error" || nav == "oauth-error-mismatch">            
             <div class="container">
                 <div id="main" role="main">
                     <div class="row top-header">
@@ -72,7 +72,7 @@
         </#if>
         <!--NON-OAUTH HEADER-->
         <!--hide header if oauth login-->
-        <#if !(RequestParameters['oauth'])??>
+        <#if !(RequestParameters['oauth'])??>            
             <div class="container">
                 <#include "/includes/ng2_templates/header-ng2-template.ftl">
                 <#include "/includes/ng2_templates/language-ng2-template.ftl">
@@ -96,7 +96,7 @@
             </div><!-- .container -->
         <!--FOOTER-->
         <!--hide footer if oauth login-->
-        <#if !(RequestParameters['oauth'])??>
+        <#if !(RequestParameters['oauth'])?? && nav != "oauth-error" && nav != "oauth-error-mismatch">
             <script type="text/ng-template" id="footer-ng2-template">
                 <@orcid.checkFeatureStatus 'NEW_FOOTER'>
                     <footer class="footer-main">
