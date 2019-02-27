@@ -261,9 +261,6 @@
 	<internal:internal visibility="private">
 		<internal:security-details>
 			<internal:encrypted-password />
-			<internal:security-question-id>0</internal:security-question-id>
-			<internal:encrypted-security-answer />
-			<internal:encrypted-verification-code />
 		</internal:security-details>
 		<internal:preferences>
 			<internal:send-email-frequency-days>internal:send-email-frequency-days</internal:send-email-frequency-days>
