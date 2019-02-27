@@ -225,33 +225,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return true;
     }
 
-    @ModelAttribute("securityQuestions")
-    public Map<String, String> getSecurityQuestions() {
-        Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
-        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>();
-        for (String key : securityQuestions.keySet()) {
-            securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
-        }
-        return securityQuestionsWithMessages;
-    }        
-
-    @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
-    public @ResponseBody SecurityQuestion getSecurityQuestion() {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        SecurityQuestion securityQuestion = new SecurityQuestion();
-        
-        if(profile.getSecurityQuestion() != null) {
-            Long id = Long.valueOf(profile.getSecurityQuestion().getId());
-            String encryptedAnswer = profile.getEncryptedSecurityAnswer();
-            if(!PojoUtil.isEmpty(encryptedAnswer)) {
-                securityQuestion.setSecurityAnswer(encryptionManager.decryptForInternalUse(encryptedAnswer));
-            }
-            securityQuestion.setSecurityQuestionId(id);
-        }                
-
-        return securityQuestion;
-    }
-
     @RequestMapping(value = "/security-question.json", method = RequestMethod.POST)
     public @ResponseBody SecurityQuestion setSecurityQuestion(@RequestBody SecurityQuestion securityQuestion) {
         List<String> errors = new ArrayList<String>();
@@ -795,7 +768,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("manage");
         mav.addObject("showPrivacy", true);        
         mav.addObject("activeTab", "profile-tab");
-        mav.addObject("securityQuestions", getSecurityQuestions());
         return mav;
     }
 

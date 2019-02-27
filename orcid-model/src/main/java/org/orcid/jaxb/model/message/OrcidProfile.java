@@ -343,22 +343,6 @@ public class OrcidProfile implements Serializable {
         this.password = password;
     }
 
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
-    public String getSecurityQuestionAnswer() {
-        return securityQuestionAnswer;
-    }
-
-    public void setSecurityQuestionAnswer(String securityQuestionAnswer) {
-        this.securityQuestionAnswer = securityQuestionAnswer;
-    }
-
     /**
      * Sets the value of the orcidInternal property.
      * 

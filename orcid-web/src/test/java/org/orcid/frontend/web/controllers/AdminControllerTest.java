@@ -321,24 +321,6 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void removeSecurityQuestionTest() throws Exception {
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
-        assertNotNull(orcidProfile.getSecurityQuestionAnswer());
-        adminController.removeSecurityQuestion(mockRequest, mockResponse, "4444-4444-4444-4440");
-        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
-        assertNull(orcidProfile.getSecurityQuestionAnswer());
-    }
-
-    @Test
-    public void removeSecurityQuestionUsingEmailTest() throws Exception {
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
-        assertNotNull(orcidProfile.getSecurityQuestionAnswer());
-        adminController.removeSecurityQuestion(mockRequest, mockResponse, "michael@bentine.com");
-        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
-        assertNull(orcidProfile.getSecurityQuestionAnswer());
-    }
-
-    @Test
     public void resetPasswordTest() throws IllegalAccessException {
         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
         assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", orcidProfile.getPassword());

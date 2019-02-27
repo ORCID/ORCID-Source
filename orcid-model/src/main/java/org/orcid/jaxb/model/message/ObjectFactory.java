@@ -100,14 +100,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link EncryptedVerificationCode }
-     * 
-     */
-    public EncryptedVerificationCode createEncryptedVerificationCode() {
-        return new EncryptedVerificationCode();
-    }
-
-    /**
      * Create an instance of {@link GivenPermissionTo }
      * 
      */
@@ -650,22 +642,6 @@ public class ObjectFactory {
      */
     public EncryptedPassword createEncryptedPassword() {
         return new EncryptedPassword();
-    }
-
-    /**
-     * Create an instance of {@link SecurityQuestionId }
-     * 
-     */
-    public SecurityQuestionId createSecurityQuestionId() {
-        return new SecurityQuestionId();
-    }
-
-    /**
-     * Create an instance of {@link EncryptedSecurityAnswer }
-     * 
-     */
-    public EncryptedSecurityAnswer createEncryptedSecurityAnswer() {
-        return new EncryptedSecurityAnswer();
     }
 
     /**

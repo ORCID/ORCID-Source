@@ -282,12 +282,7 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     protected OrcidProfile convertToOrcidProfile(ProfileEntity profileEntity, LoadOptions loadOptions) {
         LOG.debug("About to convert profile entity to orcid profile: " + profileEntity.getId());
         profileDao.refresh(profileEntity);
-        OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, loadOptions);
-        String verificationCode = profileEntity.getEncryptedVerificationCode();
-        String securityAnswer = profileEntity.getEncryptedSecurityAnswer();
-        orcidProfile.setVerificationCode(decrypt(verificationCode));
-        orcidProfile.setSecurityQuestionAnswer(decrypt(securityAnswer));
-        return orcidProfile;
+        return adapter.toOrcidProfile(profileEntity, loadOptions);
     }
 
     protected String decrypt(String encrypted) {

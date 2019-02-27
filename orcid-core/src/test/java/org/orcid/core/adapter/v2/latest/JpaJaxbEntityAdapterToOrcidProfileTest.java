@@ -129,9 +129,6 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(securityDetails);
         assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", securityDetails
                 .getEncryptedPassword().getContent());
-        assertEquals(1, securityDetails.getSecurityQuestionId().getValue());
-        assertEquals("iTlIoR2JsFl5guE56cazmg==", securityDetails.getEncryptedSecurityAnswer().getContent());
-        assertEquals("1vLkD2Lm8c24TyALcW0Brg==", securityDetails.getEncryptedVerificationCode().getContent());
         Preferences preferences = orcidProfile.getOrcidInternal().getPreferences();
         assertNotNull(preferences);
         assertTrue(preferences.getSendChangeNotifications().isValue());

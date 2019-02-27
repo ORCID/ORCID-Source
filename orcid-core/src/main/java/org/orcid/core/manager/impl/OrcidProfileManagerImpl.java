@@ -581,12 +581,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         EmailEntity emailEntity = emailDao.findByEmail(email);
         if (emailEntity != null) {
             ProfileEntity profileEntity = emailEntity.getProfile();
-            OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity, loadOptions);
-            String verificationCode = profileEntity.getEncryptedVerificationCode();
-            String securityAnswer = profileEntity.getEncryptedSecurityAnswer();
-            orcidProfile.setVerificationCode(decrypt(verificationCode));
-            orcidProfile.setSecurityQuestionAnswer(decrypt(securityAnswer));
-            return orcidProfile;
+            return adapter.toOrcidProfile(profileEntity, loadOptions);
         } else {
             return null;
         }
@@ -1623,10 +1618,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private void encryptAndMapFieldsForProfileEntityPersistence(OrcidProfile orcidProfile, ProfileEntity profileEntity) {
         String password = orcidProfile.getPassword();
         profileEntity.setEncryptedPassword(password == null ? null : encryptionManager.hashForInternalUse(password));
-        String verificationCode = orcidProfile.getVerificationCode();
-        profileEntity.setEncryptedVerificationCode(verificationCode == null ? null : encryptionManager.encryptForInternalUse(verificationCode));
-        String securityAnswer = orcidProfile.getSecurityQuestionAnswer();
-        profileEntity.setEncryptedSecurityAnswer(securityAnswer == null ? null : encryptionManager.encryptForInternalUse(securityAnswer));
     }
 
     @Override

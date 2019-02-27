@@ -517,8 +517,6 @@ public class RegistrationControllerTest extends DBUnitTest {
     protected OrcidProfile createBasicProfile() {
         OrcidProfile profile = new OrcidProfile();
         profile.setPassword("password");
-        profile.setVerificationCode("1234");
-        profile.setSecurityQuestionAnswer("random answer");
 
         OrcidBio bio = new OrcidBio();
         ContactDetails contactDetails = new ContactDetails();
