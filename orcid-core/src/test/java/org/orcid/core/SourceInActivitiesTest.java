@@ -127,7 +127,7 @@ public class SourceInActivitiesTest extends BaseTest {
     
     @AfterClass
     public static void afterClass() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml"));
     }
 
     @Test

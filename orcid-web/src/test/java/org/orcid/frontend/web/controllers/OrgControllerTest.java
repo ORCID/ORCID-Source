@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class OrgControllerTest extends BaseControllerTest {
     
-        private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+        private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
                 "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml",
                 "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/OrgAffiliationEntityData.xml", "/data/RecordNameEntityData.xml");
 

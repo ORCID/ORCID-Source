@@ -46,7 +46,7 @@ public class AuthenticationManagerTest extends DBUnitTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml"));
     }
 
     @Before

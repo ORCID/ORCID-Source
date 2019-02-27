@@ -101,7 +101,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml"));
     }
     
     @After

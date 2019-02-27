@@ -49,7 +49,7 @@ public class BaseControllerTest extends DBUnitTest {
 
     @AfterClass
     public static void afterClass() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml"));
     }
 
     protected Authentication getAuthentication() {

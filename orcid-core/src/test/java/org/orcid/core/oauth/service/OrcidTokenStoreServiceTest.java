@@ -69,7 +69,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/OrcidOauth2AuthorisationDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
-                "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+                "/data/SubjectEntityData.xml"));
     }
 
     @Test 

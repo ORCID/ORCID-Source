@@ -159,7 +159,7 @@ public class AdminControllerTest extends BaseControllerTest {
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml",
-                "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+                "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
     }
 
     @Override
