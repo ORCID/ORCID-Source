@@ -143,7 +143,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
         
         om.process().then(() => {
-            console.log('init emailsForm.component.ts');
             this.emailCurrentLabel = om.get("manage.email.current");
             this.emailPastLabel = om.get("manage.email.past");
             this.emailsEditText = om.get("manage.edit.emails");

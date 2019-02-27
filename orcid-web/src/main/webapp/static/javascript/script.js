@@ -319,7 +319,6 @@ var messagesPromise = new Promise(function(resolve, reject) {
             dataType: 'text',
             contentType: "application/json",            
             success : function(data) {     
-                console.log('All messages are done!')
                 var data = JSON.parse(data);
                 messages = data['messages'];  
                 resolve();
