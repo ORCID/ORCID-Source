@@ -91,6 +91,7 @@ public class LoginController extends OauthControllerBase {
                 return handleOauthSignIn(request, response);
             }
         }
+
         return new ModelAndView("login");
     }
 
@@ -212,23 +213,7 @@ public class LoginController extends OauthControllerBase {
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
         // Save a flag to indicate this is a request from the new
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
-
-        ModelAndView mav = new ModelAndView("login");
-        // Check orcid, email and show_login params to decide if the login form should be
-        // displayed by default
-        // orcid and email take precedence over show_login param
-        if (!PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && profileEntityManager.orcidExists(requestInfoForm.getUserOrcid())) {
-            mav.addObject("oauth_userId", requestInfoForm.getUserOrcid());
-            mav.addObject("user_exists", true);
-        } else if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
-            mav.addObject("oauth_userId", requestInfoForm.getUserEmail());
-            if(emailManagerReadOnly.emailExists(requestInfoForm.getUserEmail())) {
-                mav.addObject("user_exists", true);
-            }            
-        }
         
-        mav.addObject("hideSupportWidget", true);        
-        mav.addObject("oauthRequest", true);
-        return mav;
+        return new ModelAndView("login");
     }
 }

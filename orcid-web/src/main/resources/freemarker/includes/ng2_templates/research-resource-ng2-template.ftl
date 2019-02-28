@@ -9,8 +9,7 @@
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayResearchResource==false}"></i>
                             <@orcid.msg 'manage.research_resources'/> (<span>{{researchResourceService.groups.length}}</span>)
                         </a>
-                        <#if !(isPublicProfile??)> 
-                        <div class="popover-help-container">
+                        <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="research-resource-help" class="popover bottom">
                                 <div class="arrow"></div>
@@ -18,8 +17,7 @@
                                     <p><strong><@orcid.msg 'manage.research_resources'/></strong> <@orcid.msg 'manage.research_resources.helpPopover'/> <a href="<@orcid.msg 'common.kb_uri_default'/>" target="manage.research_resources.helpPopover"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
-                        </div>
-                        </#if>                     
+                        </div>                  
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayResearchResource">
                         <#escape x as x?html>                        

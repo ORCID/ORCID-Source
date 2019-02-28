@@ -98,11 +98,7 @@ public class OrcidBatchLoad {
     }
 
     private void assignPersistenceFields(OrcidProfile profile) {
-        // set the transient fields that the encrypters need
         profile.setPassword("password");
-        // profile.setOrcidIdentifier();
-        profile.setSecurityQuestionAnswer("securityQuestionAnswer");
-        profile.setVerificationCode("1111");
 
         // randomise any fields that are uniquely constrained so that we can
         // re-use the test data

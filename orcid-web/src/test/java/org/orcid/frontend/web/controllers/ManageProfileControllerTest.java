@@ -60,7 +60,6 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
 import org.orcid.pojo.ManageDelegate;
-import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
@@ -848,52 +847,6 @@ public class ManageProfileControllerTest {
         assertEquals("check_password_modal.incorrect_password", manageDelegate.getErrors().get(0));
         
         verify(mockGivenPermissionToManager, times(0)).remove(Mockito.anyString(), Mockito.anyString());      
-    }
-    
-    @Test
-    public void testSetSecurityQuestion() {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));        
-        SecurityQuestion s = new SecurityQuestion();
-        s.setPassword("password");
-        s.setSecurityAnswer("answer");
-        s.setSecurityQuestionId(1L);
-        
-        controller.setSecurityQuestion(s);
-        
-        assertEquals(1, s.getErrors().size());
-        assertEquals("manage.securityQuestionUpdated", s.getErrors().get(0));
-        
-        verify(mockProfileEntityManager, times(1)).updateSecurityQuestion(Mockito.eq(USER_ORCID), Mockito.eq(Integer.valueOf(1)), Mockito.eq("answer"));
-    }
-    
-    @Test
-    public void testSetSecurityQuestionWithIvalidPassword() {
-        SecurityQuestion s = new SecurityQuestion();
-        s.setPassword("invalid password");
-        s.setSecurityAnswer("answer");
-        s.setSecurityQuestionId(1L);
-        
-        controller.setSecurityQuestion(s);
-        
-        assertEquals(1, s.getErrors().size());
-        assertEquals("check_password_modal.incorrect_password", s.getErrors().get(0));
-        
-        verify(mockProfileEntityManager, times(0)).updateSecurityQuestion(Mockito.anyString(), Mockito.any(), Mockito.any());       
-    }
-    
-    @Test
-    public void testSetSecurityQuestionWithEmptyAnswer() {
-        SecurityQuestion s = new SecurityQuestion();
-        s.setPassword("password");
-        s.setSecurityAnswer("");
-        s.setSecurityQuestionId(1L);
-        
-        controller.setSecurityQuestion(s);
-        
-        assertEquals(1, s.getErrors().size());
-        assertEquals("manage.pleaseProvideAnAnswer", s.getErrors().get(0));
-        
-        verify(mockProfileEntityManager, times(0)).updateSecurityQuestion(Mockito.anyString(), Mockito.any(), Mockito.any());       
     }
     
     @Test

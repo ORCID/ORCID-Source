@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
@@ -31,7 +30,6 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -78,9 +76,7 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
-import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.ReleaseNameUtils;
-import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -91,7 +87,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -145,10 +140,7 @@ public class BaseController {
     @Resource
     private InternalSSOManager internalSSOManager;
     
-    @Resource
-    private SecurityQuestionManager securityQuestionManager;
-    
-    protected static final String EMPTY = "empty";    
+    protected static final String EMPTY = "empty";
     
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean shibbolethEnabled;
@@ -645,18 +637,6 @@ public class BaseController {
         }
     }
     
-    @ModelAttribute("securityQuestions")
-    public Map<String, String> retrieveSecurityQuestionsAsMap() {
-        Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
-        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>();
-
-        for (String key : securityQuestions.keySet()) {
-            securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
-        }
-
-        return securityQuestionsWithMessages;
-    }
-
     protected Map<String, String> generateSalesForceRoleMap() {
         Map<String, String> roleMap = new HashMap<>();
         for(ContactRoleType roleType : ContactRoleType.values()){

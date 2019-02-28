@@ -3,7 +3,6 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,7 +16,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +24,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.apache.commons.lang3.LocaleUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -42,10 +39,10 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.jaxb.model.message.DeactivationDate;
@@ -53,15 +50,12 @@ import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SecurityDetails;
-import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
@@ -77,7 +71,7 @@ import com.google.common.collect.Lists;
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "classpath:orcid-core-context.xml", "classpath:statistics-core-context.xml" })
 public class PasswordResetControllerTest extends DBUnitTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
             "/data/BiographyEntityData.xml");
 
@@ -238,7 +232,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
     }
 
     @Test
-    public void testPasswordResetLinkValidLinkDirectsToConsolidatedScreenDirectlyWhenNoSecurityQuestion() throws Exception {
+    public void testPasswordResetLinkValidLinkDirectsToConsolidatedScreenDirectly() throws Exception {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
@@ -246,21 +240,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(new OrcidProfile());
         ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
 
-        assertEquals("password_one_time_reset_optional_security_questions", modelAndView.getViewName());
-        verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
-
-    }
-
-    @Test
-    public void testPasswordResetLinkValidLinkDirectsToSecurityQuestionScreenWhenSecurityQuestionPresent() throws Exception {
-        HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
-
-        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
-        ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
-
-        assertEquals("password_one_time_reset_optional_security_questions", modelAndView.getViewName());
+        assertEquals("password_one_time_reset", modelAndView.getViewName());
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
 
     }
@@ -283,7 +263,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         oneTimeResetPasswordForm.setPassword(Text.valueOf("Password#123"));
         oneTimeResetPasswordForm.setRetypedPassword(Text.valueOf("Password#123"));
         when(bindingResult.hasErrors()).thenReturn(false);
-        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(new OrcidProfile());
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
         assertTrue(oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://testserver.orcid.org/my-orcid")
                 || oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://localhost:8443/orcid-web/my-orcid"));
@@ -307,14 +287,4 @@ public class PasswordResetControllerTest extends DBUnitTest {
         passwordResetController.resetPasswordConfirmValidate(form);
     }
 
-    private OrcidProfile orcidWithSecurityQuestion() {
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setSecurityQuestionAnswer("Answer");
-        OrcidInternal orcidInternal = new OrcidInternal();
-        SecurityDetails securityDetails = new SecurityDetails();
-        securityDetails.setSecurityQuestionId(new SecurityQuestionId(3));
-        orcidInternal.setSecurityDetails(securityDetails);
-        orcidProfile.setOrcidInternal(orcidInternal);
-        return orcidProfile;
-    }
 }

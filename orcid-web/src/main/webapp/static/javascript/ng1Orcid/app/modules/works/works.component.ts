@@ -75,6 +75,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     groupingSuggestionPresent: boolean;
     groupingSuggestion: any;
     groupingSuggestionWorksToMerge: any;
+    isPublicPage: boolean;
     loadingScripts: any;
     moreInfo: any;
     moreInfoOpen: boolean;
@@ -138,6 +139,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.geoArea = ['All'];
         this.groupingSuggestionExtIdsPresent = false;
         this.groupingSuggestionPresent = false;
+        this.isPublicPage = this.commonSrvc.isPublicPage;
         this.loadingScripts = false;
         this.moreInfo = {};
         this.moreInfoOpen = false;

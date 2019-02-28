@@ -917,9 +917,6 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="orcid:encrypted-password"/>
-                <xs:element ref="orcid:security-question-id"/>
-                <xs:element ref="orcid:encrypted-security-answer"/>
-                <xs:element ref="orcid:encrypted-verification-code"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -935,25 +932,12 @@
     <xs:element name="encrypted-password">
         <xs:complexType mixed="true"/>
     </xs:element>
-    <xs:element name="security-question-id">
-        <xs:complexType>
-            <xs:simpleContent>
-                <xs:extension base="xs:integer"/>
-            </xs:simpleContent>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="encrypted-security-answer">
-        <xs:complexType mixed="true"/>
-    </xs:element>
     <xs:element name="send-features-news">
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="xs:boolean"/>
             </xs:simpleContent>
         </xs:complexType>
-    </xs:element>
-    <xs:element name="encrypted-verification-code">
-        <xs:complexType mixed="true"/>
     </xs:element>
     <xs:element name="send-other-news">
         <xs:complexType>

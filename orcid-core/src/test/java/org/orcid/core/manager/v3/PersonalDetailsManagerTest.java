@@ -27,7 +27,7 @@ import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
 */
 public class PersonalDetailsManagerTest extends BaseTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", 
+    private static final List<String> DATA_FILES = Arrays.asList(
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
     
     private static final String ORCID1 = "0000-0000-0000-0001";

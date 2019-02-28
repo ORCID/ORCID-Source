@@ -7,7 +7,6 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -18,7 +17,6 @@ import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -42,9 +40,6 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource
     protected CrossRefManager crossRefManager;
-
-    @Resource
-    protected SecurityQuestionManager securityQuestionManager;
 
     @Resource(name = "profileEntityManagerV3")
     protected ProfileEntityManager profileEntityManager;

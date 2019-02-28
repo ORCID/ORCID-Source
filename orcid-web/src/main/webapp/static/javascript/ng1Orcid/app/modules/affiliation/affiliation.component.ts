@@ -49,6 +49,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     educationsAndQualifications: any;
     emails: any;
     employments: any;
+    isPublicPage: boolean;
     membershipsAndServices: any;
     moreInfo: any;
     moreInfoCurKey: any;
@@ -85,6 +86,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.educations = [];
         this.emails = {};
         this.employments = [];
+        this.isPublicPage = this.commonSrvc.isPublicPage;
         this.moreInfo = {};
         this.moreInfoCurKey = null;
         this.privacyHelp = {};

@@ -550,17 +550,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer) {
-        Query updateQuery = entityManager.createQuery(
-                "update ProfileEntity set lastModified = now(), securityQuestion.id = :securityQuestionId, encryptedSecurityAnswer = :encryptedSecurityAnswer where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("securityQuestionId", securityQuestionId);
-        updateQuery.setParameter("encryptedSecurityAnswer", encryptedSecurityAnswer);
-        updateQuery.executeUpdate();
-    }
-
-    @Override
-    @Transactional
     public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
             boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
         Query updateQuery = entityManager.createQuery(

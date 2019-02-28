@@ -174,11 +174,6 @@
         <orcid-internal>
             <security-details>
                 <encrypted-password>abc123</encrypted-password>
-                <security-question-id>1</security-question-id>
-                <encrypted-security-answer>dMDyJ1Z7Qn6xWClFzA63fQ==
-                </encrypted-security-answer>
-                <encrypted-verification-code>ghi789
-                </encrypted-verification-code>
             </security-details>
             <preferences>
                 <send-change-notifications>true</send-change-notifications>

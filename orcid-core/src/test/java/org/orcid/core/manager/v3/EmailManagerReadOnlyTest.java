@@ -24,7 +24,7 @@ import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.jaxb.model.v3.rc2.record.Emails;
 
 public class EmailManagerReadOnlyTest extends BaseTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
     @Resource(name = "emailManagerReadOnlyV3")

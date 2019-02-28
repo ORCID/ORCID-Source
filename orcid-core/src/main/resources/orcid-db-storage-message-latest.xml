@@ -281,9 +281,6 @@
         <orcid-internal>
             <security-details>
                 <encrypted-password>abc123</encrypted-password>
-                <security-question-id>1</security-question-id>
-                <encrypted-security-answer>jmCmuBmPuE8=</encrypted-security-answer>
-                <encrypted-verification-code>ghi789</encrypted-verification-code>
             </security-details>
             <preferences>
                 <send-change-notifications>true</send-change-notifications>

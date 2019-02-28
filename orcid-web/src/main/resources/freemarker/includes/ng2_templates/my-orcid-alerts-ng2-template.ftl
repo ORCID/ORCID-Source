@@ -1,19 +1,18 @@
 <script type="text/ng-template" id="my-orcid-alerts-ng2-template">
     <!--If user just registered-->
-    <#if justRegistered?? && justRegistered>
-      <div class="alert alert-success">
-          <strong>
-            <div class="row">
-                <div class="col-md-12 col-xs-12 col-sm-12">
-                    <@spring.message "orcid.frontend.web.thanks_for_registering"/>
-                    <div class="topBuffer">
-                        <button class="btn btn-primary" id="modal-close" (click)="verifyEmail()"><@orcid.msg 'orcid.frontend.workspace.send_verification'/></button>
-                    </div>
+    
+  <div *ngIf="justRegistered" class="alert alert-success">
+      <strong>
+        <div class="row">
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <@spring.message "orcid.frontend.web.thanks_for_registering"/>
+                <div class="topBuffer">
+                    <button class="btn btn-primary" id="modal-close" (click)="verifyEmail()"><@orcid.msg 'orcid.frontend.workspace.send_verification'/></button>
                 </div>
             </div>
-          </strong>
-      </div>
-    </#if>
+        </div>
+      </strong>
+  </div>
     <!--If user verified an email-->
     <#if emailVerified?? && emailVerified>
       <div class="alert alert-success">

@@ -462,41 +462,6 @@ public class AdminController extends BaseController {
     }
         
     /**
-     * Remove security question
-     * 
-     * @throws IllegalAccessException
-     * @throws UnsupportedEncodingException 
-     */
-    @RequestMapping(value = "/remove-security-question.json", method = RequestMethod.POST)
-    public @ResponseBody String removeSecurityQuestion(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String orcidOrEmail)
-            throws IllegalAccessException, UnsupportedEncodingException {
-        isAdmin(serverRequest, response);
-        orcidOrEmail = URLDecoder.decode(orcidOrEmail, "UTF-8");
-        if (StringUtils.isNotBlank(orcidOrEmail))
-            orcidOrEmail = orcidOrEmail.trim();
-        boolean isOrcid = OrcidStringUtils.isValidOrcid(orcidOrEmail);
-        String orcid = null;
-        // If it is not an orcid, check the value from the emails table
-        if (!isOrcid) {
-            Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
-            orcid = email.get(orcidOrEmail);
-        } else {
-            orcid = orcidOrEmail;
-        }
-
-        if (StringUtils.isNotEmpty(orcid)) {            
-            String result = adminManager.removeSecurityQuestion(orcid);
-            // If the resulting string is not null, it means there was an
-            // error
-            if (result != null)
-                return result;            
-        } else {
-            return getMessage("admin.errors.unable_to_fetch_info");
-        }
-        return getMessage("admin.remove_security_question.success");
-    }
-
-    /**
      * Admin switch user
      * 
      * @throws IllegalAccessException

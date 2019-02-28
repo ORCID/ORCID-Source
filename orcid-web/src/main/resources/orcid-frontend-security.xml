@@ -209,6 +209,8 @@
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/shibboleth/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/shibboleth/signinData.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />	
 		<sec:intercept-url pattern="/shibboleth/registerConfirm.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/shibboleth/2FA/authenticationCode.json(\?.*)?"
@@ -236,6 +238,8 @@
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/social/access(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/social/signinData.json(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/social/2FA/authenticationCode.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/social/2FA/submitCode.json(\?.*)?"
@@ -437,8 +441,6 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/togglz/*" 
 			access="ROLE_ADMIN"/>
-		<sec:intercept-url pattern="/profile-history/.*" 
-            access="ROLE_ADMIN"/>
         <sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/userInfo.json(\?.*)?"

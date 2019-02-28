@@ -38,7 +38,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
 public class ExternalIdentifierManagerTest extends BaseTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml");
 
     private static final String CLIENT_1_ID = "APP-5555555555555555";

@@ -21,6 +21,7 @@ import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
+import org.orcid.pojo.OAuthSigninData;
 import org.orcid.pojo.TwoFactorAuthenticationCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -73,6 +74,23 @@ public class SocialController extends BaseController {
     public @ResponseBody TwoFactorAuthenticationCodes getTwoFactorCodeWrapper() {
         return new TwoFactorAuthenticationCodes();
     }
+    
+    
+    @RequestMapping(value = { "/signinData.json" }, method = RequestMethod.GET)
+    public @ResponseBody OAuthSigninData getSigninData(HttpServletRequest request, HttpServletResponse response) {
+        SocialType connectionType = socialContext.isSignedIn(request, response);
+        OAuthSigninData data = new OAuthSigninData();
+        if (connectionType != null) {
+            Map<String, String> userMap = retrieveUserDetails(connectionType);
+            data.setProviderId(connectionType.value());
+            data.setAccountId(getAccountIdForDisplay(userMap));
+            data.setLinkType("social");
+            data.setEmail(userMap.get("email") == null ? "" : userMap.get("email"));
+            data.setFirstName(userMap.get("firstName") == null ? "" : userMap.get("firstName"));
+            data.setLastName(userMap.get("lastName") == null ? "" : userMap.get("lastName"));
+        }
+        return data;
+    }
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
@@ -100,15 +118,7 @@ public class SocialController extends BaseController {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
                 } else {
-                    ModelAndView mav = new ModelAndView();
-                    mav.setViewName("social_link_signin");
-                    mav.addObject("providerId", providerId);
-                    mav.addObject("accountId", getAccountIdForDisplay(userMap));
-                    mav.addObject("linkType", "social");
-                    mav.addObject("emailId", (userMap.get("email") == null) ? "" : userMap.get("email"));
-                    mav.addObject("firstName", (userMap.get("firstName") == null) ? "" : userMap.get("firstName"));
-                    mav.addObject("lastName", (userMap.get("lastName") == null) ? "" : userMap.get("lastName"));
-                    return mav;
+                    return new ModelAndView("social_link_signin");
                 }
             } else {
                 throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");

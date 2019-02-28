@@ -19,7 +19,6 @@ public class OrcidOauth2Constants {
     public static final String STATE_PARAM = "state";
     public static final String RESPONSE_TYPE_PARAM = "response_type";
     public static final String REDIRECT_URI_PARAM = "redirect_uri";
-    public static final String JUST_REGISTERED = "justRegistered";
     public static final String REFRESH_TOKEN = "refresh_token";
     public static final String AUTHORIZATION = "authorization";
     public static final String REVOKE_OLD = "revoke_old";

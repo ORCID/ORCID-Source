@@ -44,6 +44,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
 
     editSources: any;
     emails: any;
+    isPublicPage: boolean;
     moreInfo: any;
     moreInfoOpen: boolean;
     orgDisambiguatedDetails: any;
@@ -64,6 +65,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     ) {
         this.editSources = {};
         this.emails = {};
+        this.isPublicPage = this.commonSrvc.isPublicPage;
         this.moreInfo = {};
         this.moreInfoOpen = false;
         this.orgDisambiguatedDetails = new Array();

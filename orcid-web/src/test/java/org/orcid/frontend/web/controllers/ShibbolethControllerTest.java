@@ -20,10 +20,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.InstitutionalSignInManager;
+import org.orcid.pojo.OAuthSigninData;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.servlet.ModelAndView;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -58,10 +58,10 @@ public class ShibbolethControllerTest {
         headers.put(InstitutionalSignInManager.GIVEN_NAME_HEADER, "first-name-1");
         headers.put(InstitutionalSignInManager.SN_HEADER, "last-name-1");
         shibbolethController.setShibbolethEnabled(true);
-        ModelAndView mav = shibbolethController.signinHandler(servletRequest, servletResponse, headers, new ModelAndView());
-        assertEquals("idp-entity-id", mav.getModel().get("providerId"));
-        assertEquals("first-name-1", mav.getModel().get("firstName"));
-        assertEquals("last-name-1", mav.getModel().get("lastName"));
+        OAuthSigninData data = shibbolethController.getSigninData(headers);
+        assertEquals("idp-entity-id", data.getProviderId());
+        assertEquals("first-name-1", data.getFirstName());
+        assertEquals("last-name-1", data.getLastName());
     }
 
     @Test
@@ -72,10 +72,10 @@ public class ShibbolethControllerTest {
         headers.put(InstitutionalSignInManager.GIVEN_NAME_HEADER, "first-name-1; first-name-2");
         headers.put(InstitutionalSignInManager.SN_HEADER, "last-name-1; last-name-2");
         shibbolethController.setShibbolethEnabled(true);
-        ModelAndView mav = shibbolethController.signinHandler(servletRequest, servletResponse, headers, new ModelAndView());
-        assertEquals("idp-entity-id", mav.getModel().get("providerId"));
-        assertEquals("first-name-1", mav.getModel().get("firstName"));
-        assertEquals("last-name-1", mav.getModel().get("lastName"));
+        OAuthSigninData data = shibbolethController.getSigninData(headers);
+        assertEquals("idp-entity-id", data.getProviderId());
+        assertEquals("first-name-1", data.getFirstName());
+        assertEquals("last-name-1", data.getLastName());
     }
 
 }

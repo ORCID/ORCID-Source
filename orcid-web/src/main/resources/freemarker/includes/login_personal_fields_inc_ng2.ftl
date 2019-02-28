@@ -16,6 +16,8 @@
     =============================================================================
 
 -->
+<input *ngIf="oauthRequest" type="hidden" name="oauthRequest" value="true"/>
+<input *ngIf="!oauthRequest" type="hidden" name="oauthRequest" value="false"/>
 <div class="form-group">
     <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>
     <input type="text" id="userId" name="userId" [(ngModel)]="authorizationForm.userName.value"  class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}" />
@@ -41,12 +43,9 @@
 <div class="form-group">
     <button id="form-sign-in-button" class="btn btn-primary" type="submit">${springMacroRequestContext.getMessage("login.signin")}</button>                                     
     <span id="ajax-loader" class="no-visible"><i id="ajax-loader-icon" class="glyphicon glyphicon-refresh spin x2 green"></i></span>                                        
-    <#if (RequestParameters['alreadyClaimed'])??>
-    <div class="alert"><@spring.message "orcid.frontend.security.already_claimed"/></div>
-    </#if>   
-    <#if (RequestParameters['invalidClaimUrl'])??>
-    <div class="alert"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
-    </#if>
+    <div *ngIf="alreadyClaimed" class="alert"><@spring.message "orcid.frontend.security.already_claimed"/></div>
+      
+    <div *ngIf="invalidClaimUrl" class="alert"><@spring.message "orcid.frontend.security.invalid_claim_url"/></div>
 </div>
 <div id="login-deactivated-error" class="orcid-error" style="display:none">
     <span *ngIf="showDeactivatedError">

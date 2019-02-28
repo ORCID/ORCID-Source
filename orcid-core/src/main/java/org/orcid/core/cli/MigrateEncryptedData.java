@@ -49,30 +49,10 @@ public class MigrateEncryptedData {
             profiles = profileDao.findLastModifiedBefore(start, CHUNK_SIZE);
             for (ProfileEntity profileEntity : profiles) {
                 LOG.info("Migrating encrypted data for profile: {}", profileEntity.getId());
-                fixSecurityAnswer(profileEntity);
-                fixVerificationCode(profileEntity);
                 profileEntity.setLastModified(new Date());
                 profileDao.merge(profileEntity);
             }
         } while (!profiles.isEmpty());
-    }
-
-    private void fixVerificationCode(ProfileEntity profileEntity) {
-        String encryptedVerificationCode = profileEntity.getEncryptedVerificationCode();
-        if (encryptedVerificationCode != null) {
-            String decryptedVerificationCode = encryptionManager.legacyDecryptForInternalUse(encryptedVerificationCode);
-            String reEncryptedVerificationCode = encryptionManager.encryptForInternalUse(decryptedVerificationCode);
-            profileEntity.setEncryptedVerificationCode(reEncryptedVerificationCode);
-        }
-    }
-
-    private void fixSecurityAnswer(ProfileEntity profileEntity) {
-        String encryptedSecurityAnswer = profileEntity.getEncryptedSecurityAnswer();
-        if (encryptedSecurityAnswer != null) {
-            String decryptedSecurityAnswer = encryptionManager.legacyDecryptForInternalUse(encryptedSecurityAnswer);
-            String reEncryptedSecurityAnswer = encryptionManager.encryptForInternalUse(decryptedSecurityAnswer);
-            profileEntity.setEncryptedSecurityAnswer(reEncryptedSecurityAnswer);
-        }
     }
 
     private void migrateClientDetails() {
