@@ -26,6 +26,7 @@ import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.pojo.HeaderCheckResult;
 import org.orcid.pojo.RemoteUser;
+import org.orcid.pojo.OAuthSigninData;
 import org.orcid.pojo.TwoFactorAuthenticationCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,44 @@ public class ShibbolethController extends BaseController {
     public @ResponseBody TwoFactorAuthenticationCodes getTwoFactorCodeWrapper() {
         return new TwoFactorAuthenticationCodes();
     }
+    
+    @RequestMapping(value = { "/signinData.json" }, method = RequestMethod.GET)
+    public @ResponseBody OAuthSigninData getSigninData(@RequestHeader Map<String, String> headers) {
+        checkEnabled();
+        
+        OAuthSigninData signinData = new OAuthSigninData();
+        
+        String shibIdentityProvider = headers.get(InstitutionalSignInManager.SHIB_IDENTITY_PROVIDER_HEADER);
+        signinData.setProviderId(shibIdentityProvider);
+        
+        String displayName = institutionalSignInManager.retrieveDisplayName(headers);
+        signinData.setAccountId(displayName);
+        
+        RemoteUser remoteUser = institutionalSignInManager.retrieveRemoteUser(headers);
+        if (remoteUser == null) {
+            signinData.setUnsupportedInstitution(true);
+            signinData.setInstitutionContactEmail(identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
+            return signinData;
+        }
+        
+        UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
+                remoteUser.getIdType());
+        if (userConnectionEntity != null) {
+            LOGGER.info("Found existing user connection: {}", userConnectionEntity);
+            HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(parseOriginalHeaders(userConnectionEntity.getHeadersJson()), headers);
+            if (!checkHeadersResult.isSuccess()) {
+                signinData.setHeaderCheckFailed(true);
+                return signinData;
+            }
+        } else {
+            // To avoid confusion, force the user to login to ORCID again
+            signinData.setLinkType("shibboleth");
+            signinData.setFirstName(institutionalSignInManager.retrieveFirstName(headers));
+            signinData.setLastName(institutionalSignInManager.retrieveLastName(headers));
+        }
+        
+        return signinData;
+    }
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
@@ -91,15 +130,10 @@ public class ShibbolethController extends BaseController {
         checkEnabled();
         mav.setViewName("social_link_signin");
         String shibIdentityProvider = headers.get(InstitutionalSignInManager.SHIB_IDENTITY_PROVIDER_HEADER);
-        mav.addObject("providerId", shibIdentityProvider);
-        String displayName = institutionalSignInManager.retrieveDisplayName(headers);
-        mav.addObject("accountId", displayName);
         RemoteUser remoteUser = institutionalSignInManager.retrieveRemoteUser(headers);
         if (remoteUser == null) {
             LOGGER.info("Failed federated log in for {}", shibIdentityProvider);
             identityProviderManager.incrementFailedCount(shibIdentityProvider);
-            mav.addObject("unsupportedInstitution", true);
-            mav.addObject("institutionContactEmail", identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
             return mav;
         }
 
@@ -111,7 +145,6 @@ public class ShibbolethController extends BaseController {
             LOGGER.info("Found existing user connection: {}", userConnectionEntity);
             HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(parseOriginalHeaders(userConnectionEntity.getHeadersJson()), headers);
             if (!checkHeadersResult.isSuccess()) {
-                mav.addObject("headerCheckFailed", true);
                 return mav;
             }
             
@@ -129,12 +162,7 @@ public class ShibbolethController extends BaseController {
                 LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
             return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
-        } else {
-            // To avoid confusion, force the user to login to ORCID again
-            mav.addObject("linkType", "shibboleth");
-            mav.addObject("firstName", institutionalSignInManager.retrieveFirstName(headers));
-            mav.addObject("lastName", institutionalSignInManager.retrieveLastName(headers));
-        }
+        } 
         return mav;
     }
 
