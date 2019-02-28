@@ -49,6 +49,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     authorizeURL: String;
     sampleAuthCurl: String;
     sampleOpenId: String;
+    userInfo: any;
     
     constructor(
             private commonSrvc: CommonService,
@@ -59,14 +60,27 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.client = {clientId: {errors: [], value: ''}, clientSecret: {errors: [], value: ''}, displayName : {errors: [], value: ''}, website: {errors: [], value: ''}, shortDescription: {errors: [], value: ''}};
         this.showTerms = false;
         this.acceptedTerms = false;
+        this.developerToolsEnabled = false;
         this.verifyEmailSent = false;
-        this.developerToolsEnabled = orcidVar.developerToolsEnabled;
         this.showForm = false;
         this.hideGoogleUri = false;
         this.hideSwaggerUri = false;
         this.selectedRedirectUri = '';
         this.showResetClientSecret = false;
         this.expandDetails = false;
+        this.userInfo = this.commonSrvc.userInfo$
+          .subscribe(
+              data => {
+                  this.userInfo = data; 
+                  if(data.DEVELOPER_TOOLS_ENABLED=='true'){
+                    this.developerToolsEnabled = true;
+                  } 
+              },
+              error => {
+                  console.log('developerTools.component.ts: unable to fetch userInfo', error);
+                  this.userInfo = {};
+              } 
+          );
     }
     
     ngOnDestroy() {
