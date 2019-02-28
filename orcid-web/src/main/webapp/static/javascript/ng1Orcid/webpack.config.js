@@ -32,17 +32,20 @@ module.exports = {
         // inject: 'head'
     }),
     new CopyPlugin([
-        { from: '../../css/**/*.css', to: 'javascript/ng1Orcid' },
-        { from: '../../fonts/**/*', to: 'javascript/ng1Orcid' },
-        { from: '../../img/**/*', to: 'javascript/ng1Orcid' },
-        { from: '../../twitter-bootstrap/**/*', to: 'javascript/ng1Orcid' },
-        {from: '../jquery/**/*', to: 'javascript/javascript' },
-        {from: '../jquery-migrate/**/*', to: 'javascript/javascript' },
-        {from: '../jqueryui/**/*', to: 'javascript/javascript' },
-        {from: '../typeahead/**/*', to: 'javascript/javascript' },
-        {from: '../plugins.js', to: 'javascript' },
-        {from: '../orcid.js', to: 'javascript' },
-        {from: '../script.js', to: 'javascript' },
+        { from: '../../css/**/*.css', to: './ng1Orcid//dist' },
+        { from: '../../fonts/**/*', to: './ng1Orcid//dist' },
+        { from: '../../img/**/*', to: './ng1Orcid//dist' },
+        { from: '../../twitter-bootstrap/**/*', to: './ng1Orcid/dist' },
+        {from: '../jquery/**/*', to: './javascript/' },
+        {from: '../jquery-migrate/**/*', to: './javascript/' },
+        {from: '../jqueryui/**/*', to: './javascript/' },
+        {from: '../typeahead/**/*', to: './javascript/' },
+        {from: '../plugins.js', to: './javascript/' },
+        {from: '../orcid.js', to: './javascript/' },
+        {from: '../script.js', to: './javascript/' },
+
+
+
       ]),
      ],
     resolve: {
