@@ -32,7 +32,7 @@ These calls can be used with Member API credentials on sandbox or the production
 * For distinction items (3.0+ only): ```/distinction``` and ```/distinctions```
 * For invited position items (3.0+ only): ```/invited-position``` and ```/invited-positions```
 * For membership items (3.0+ only): ```/membership``` and ```/membership```
-* For qualification items (3.0+ only): ```/qualification``` and ```/qualification```
+* For qualification items (3.0+ only): ```/qualification``` and ```/qualifications```
 * For service items (3.0+ only): ```/service``` and ```/service```
 
 **Sample XML files:**
@@ -58,7 +58,7 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 - **end-date** _(optional)_ The date the affiliation ended or will end
 
-- **organization** _(required)_ Information about the organization the affiliation was with, a Ringgold, Grid or Fundref organization identifier is requires in 3.0+
+- **organization** _(required)_ Information about the organization the affiliation was with, a Ringgold, Grid or Fundref organization identifier is required in 3.0+
 
 - **url** _(optional in 3.0+ only)_ A URL to a resource about the affiliation
 

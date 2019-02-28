@@ -7,15 +7,15 @@ Institutional sign enables researchers to sign in using an existing account prov
 
 ## Requirements for Institutional sign in
 
-Institutional sign-in does not require ORCID membership, however some prerequisites are necessary. Institutional Connect requires both the prerequisites listed below and ORCID membership. 
+Institutional sign-in does not require ORCID membership, however some prerequisites are necessary. Institutional Connect requires both the prerequisites listed below and ORCID membership.
 
 ### Membership of a supported access federation
 
 ORCID is a member of eduGAIN. Members wishing to use institutional sign in must be a member of SURFconext or eduGAIN interfederation service.
 
-ORCID is a registered as a Service Provider in the eduGAIN infederation service and as such is not an identity provider.
+ORCID is a registered as a Service Provider in the eduGAIN interfederation service and as such is not an identity provider.
 
-ORCID gets Institutional sign in information directly from the eduGAIN this information is collected from federatrions that are a member of EduGAIN. IF the IDP is not in eduGAIN then ORCID cannot use it. ORCID shows any IdP that is listed in eduGAIN on the drop down when using Institution account login.
+ORCID gets Institutional sign in information directly from the eduGAIN, this information is collected from federations that are a member of EduGAIN. IF the IDP is not in eduGAIN then ORCID cannot use it. ORCID shows any IdP that is listed in eduGAIN on the drop down when using Institution account login.
 
 ### A Persistent Identifier
 
@@ -112,16 +112,15 @@ Old display name:
 New display name:
 
 		<mdui:DisplayName xml:lang="en">Example University</mdui:DisplayName>
-		
+
 
 ## Institutional Connect
 
-If Institutional Connect is enabled, when a researcher first connects their institutional account to ORCID via Institutional sign in they will recieve a notification asking that they grant the institution access to their ORCID record via the standard 3 step OAuth process. To enabled Institutional Connect an organization must have a working Institutional Sign in process and a working integration using 3 step OAuth.
+If Institutional Connect is enabled, when a researcher first connects their institutional account to ORCID via Institutional sign in they will receive a notification asking that they grant the institution access to their ORCID record via the standard 3 step OAuth process. To enabled Institutional Connect an organization must have a working Institutional Sign in process and a working integration using 3 step OAuth.
 
-To enable Institutional Connect you will need to send a request to ORCID support. We suggest first testing Institutional Connect using the ORCID Sandbox, if institutional sign-in is working for your organization on the sandbox. In your request including the following information:
+To enable Institutional Connect you will need to send a request to [ORCID support](https://support.orcid.org/hc/en-us/requests/new). We suggest first testing Institutional Connect using the ORCID Sandbox, if institutional sign-in is working for your organization on the sandbox. In your request including the following information:
 
 * Your ORCID Client ID
 * Your identity provider entity ID (e.g. https://idp.example.org/idp/shibboleth)
-* Your redirect URI: The page within your ORCID-integrated system that users will be directed to after they authorize the connection. This can be the same redirect URI as used when researchers start the OAuth process from your site, or a different URI. [More about redirect URIs](https://support.orcid.org/hc/en-us/articles/360006973913-Register-a-member-API-client-application)
+* Your redirect URI: The page within your ORCID-integrated system that users will be directed to after they authorise the connection. This can be the same redirect URI as used when researchers start the OAuth process from your site, or a different URI. [More about redirect URIs](https://support.orcid.org/hc/en-us/articles/360006973913-Register-a-member-API-client-application)
 * The [scopes](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1/#scopes) you need: These should be the same as requested when a researcher starts the OAuth process from your site.
-
