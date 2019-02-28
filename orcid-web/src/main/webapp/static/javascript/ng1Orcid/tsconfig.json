@@ -1,4 +1,7 @@
 {
+  "angularCompilerOptions": {
+    "entryModule": "app/modules/ng2_app#Ng2AppModule"
+  },
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,

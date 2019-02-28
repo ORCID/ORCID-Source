@@ -1,4 +1,3 @@
-var AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin
 var webpack = require('webpack');
 
 module.exports = {
@@ -11,7 +10,7 @@ module.exports = {
                 test: /\.ts$/, 
                 use: [
                     {
-                        loader: '@ngtools/webpack'
+                        loader: 'ts-loader'
                     }
                 ]
             }
@@ -29,12 +28,7 @@ module.exports = {
                     'NODE_ENV': "'development'"
                 }
             }
-        ),
-        new AngularCompilerPlugin({
-            tsConfigPath: 'tsconfig.json',
-            entryModule: 'app/modules/ng2_app#Ng2AppModule',
-            sourceMap: true
-          })
+        )
     ],
     resolve: {
         alias: {
