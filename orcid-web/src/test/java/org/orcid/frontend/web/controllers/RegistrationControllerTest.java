@@ -90,7 +90,7 @@ import com.google.common.collect.Lists;
 @ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "classpath:orcid-core-context.xml", "classpath:statistics-core-context.xml" })
 public class RegistrationControllerTest extends DBUnitTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
     
     @Resource(name = "registrationController")
@@ -540,8 +540,6 @@ public class RegistrationControllerTest extends DBUnitTest {
     protected OrcidProfile createBasicProfile() {
         OrcidProfile profile = new OrcidProfile();
         profile.setPassword("password");
-        profile.setVerificationCode("1234");
-        profile.setSecurityQuestionAnswer("random answer");
 
         OrcidBio bio = new OrcidBio();
         ContactDetails contactDetails = new ContactDetails();

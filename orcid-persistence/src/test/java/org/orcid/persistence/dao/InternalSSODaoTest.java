@@ -33,7 +33,7 @@ public class InternalSSODaoTest extends DBUnitTest {
     @Resource
     private InternalSSODao internalSSODao;
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml");
 
     private final String ORCID = "4444-4444-4444-4441";

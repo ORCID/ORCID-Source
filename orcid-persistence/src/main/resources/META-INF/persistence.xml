@@ -43,7 +43,6 @@
         <class>org.orcid.persistence.jpa.entities.RefDataEntity</class>
         <class>org.orcid.persistence.jpa.entities.ResearcherUrlEntity</class>
         <class>org.orcid.persistence.jpa.entities.SalesForceConnectionEntity</class>
-        <class>org.orcid.persistence.jpa.entities.SecurityQuestionEntity</class>
         <class>org.orcid.persistence.jpa.entities.ShibbolethAccountEntity</class>
         <class>org.orcid.persistence.jpa.entities.SubjectEntity</class>
         <class>org.orcid.persistence.jpa.entities.WebhookEntity</class>

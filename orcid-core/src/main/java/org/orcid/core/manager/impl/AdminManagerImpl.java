@@ -165,16 +165,6 @@ public class AdminManagerImpl implements AdminManager {
     }
     
     @Override
-    public String removeSecurityQuestion(String orcid) {
-        if(profileEntityManager.orcidExists(orcid)) {                    
-            profileEntityManager.updateSecurityQuestion(orcid, null, null);
-        } else {
-            return localeManager.resolveMessage("admin.errors.unable_to_fetch_info");
-        }        
-        return null;
-    }
-
-    @Override
     public List<String> getLockReasons() {
         return Arrays.asList(LockReason.values()).stream().map(lr -> lr.getLabel()).collect(Collectors.toList());
     }

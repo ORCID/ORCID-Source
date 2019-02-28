@@ -1240,9 +1240,6 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="orcid:encrypted-password"/>
-                <xs:element ref="orcid:security-question-id" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="orcid:encrypted-security-answer" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="orcid:encrypted-verification-code" minOccurs="1" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -1257,16 +1254,6 @@
         </xs:complexType>
     </xs:element>
     <xs:element name="encrypted-password">
-        <xs:complexType mixed="true"/>
-    </xs:element>
-    <xs:element name="security-question-id">
-        <xs:complexType>
-            <xs:simpleContent>
-                <xs:extension base="xs:integer"/>
-            </xs:simpleContent>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="encrypted-security-answer">
         <xs:complexType mixed="true"/>
     </xs:element>
     <xs:element name="send-change-notifications">
@@ -1289,9 +1276,6 @@
                 <xs:extension base="orcid:visibility"/>
             </xs:simpleContent>
         </xs:complexType>
-    </xs:element>
-    <xs:element name="encrypted-verification-code">
-        <xs:complexType mixed="true"/>
     </xs:element>
     <xs:simpleType name="orcid">
         <xs:restriction base="xs:string">

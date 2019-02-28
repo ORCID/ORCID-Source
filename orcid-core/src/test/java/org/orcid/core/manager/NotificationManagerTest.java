@@ -50,7 +50,6 @@ import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
@@ -69,7 +68,6 @@ import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -83,16 +81,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class NotificationManagerTest extends DBUnitTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
             "/data/BiographyEntityData.xml");
 
     public static final String ORCID_INTERNAL_FULL_XML = "/orcid-internal-full-message-latest.xml";
 
     private Unmarshaller unmarshaller;
-
-    @Mock
-    private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
     @Mock
     private GenericDao<ProfileEventEntity, Long> profileEventDao;

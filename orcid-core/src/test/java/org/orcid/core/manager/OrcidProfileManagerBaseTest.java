@@ -38,7 +38,6 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.SecurityDetails;
-import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
@@ -108,7 +107,6 @@ public abstract class OrcidProfileManagerBaseTest extends BaseTest {
     protected OrcidProfile createFullOrcidProfile() {
         OrcidProfile profile2 = new OrcidProfile();
         profile2.setPassword("password");
-        profile2.setVerificationCode("1234");
         profile2.setOrcidIdentifier(TEST_ORCID);
         OrcidBio bio = new OrcidBio();
         ContactDetails contactDetails = new ContactDetails();
@@ -135,8 +133,6 @@ public abstract class OrcidProfileManagerBaseTest extends BaseTest {
     protected OrcidProfile createBasicProfile() {
         OrcidProfile profile = new OrcidProfile();
         profile.setPassword("password");
-        profile.setVerificationCode("1234");
-        profile.setSecurityQuestionAnswer("random answer");
 
         profile.setOrcidIdentifier(TEST_ORCID);
         OrcidBio bio = new OrcidBio();
@@ -168,7 +164,6 @@ public abstract class OrcidProfileManagerBaseTest extends BaseTest {
         profile.setOrcidInternal(orcidInternal);
 
         SecurityDetails securityDetails = new SecurityDetails();
-        securityDetails.setSecurityQuestionId(new SecurityQuestionId(3));
         orcidInternal.setSecurityDetails(securityDetails);
 
         Preferences preferences = new Preferences();

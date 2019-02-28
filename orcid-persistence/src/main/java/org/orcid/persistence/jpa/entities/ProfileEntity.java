@@ -80,8 +80,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     // Security fields
     private String encryptedPassword;
-    private SecurityQuestionEntity securityQuestion;
-    private String encryptedSecurityAnswer;
     private String encryptedVerificationCode;
     private Date accountExpiry;
     private Boolean recordLocked = Boolean.FALSE;
@@ -548,34 +546,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setEncryptedPassword(String encryptedPassword) {
         this.encryptedPassword = encryptedPassword;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "security_question_id")
-    public SecurityQuestionEntity getSecurityQuestion() {
-        return securityQuestion;
-    }
-
-    public void setSecurityQuestion(SecurityQuestionEntity securityQuestion) {
-        this.securityQuestion = securityQuestion;
-    }
-
-    @Column(name = "encrypted_security_answer")
-    public String getEncryptedSecurityAnswer() {
-        return encryptedSecurityAnswer;
-    }
-
-    public void setEncryptedSecurityAnswer(String encryptedSecurityAnswer) {
-        this.encryptedSecurityAnswer = encryptedSecurityAnswer;
-    }
-
-    @Column(name = "encrypted_verification_code")
-    public String getEncryptedVerificationCode() {
-        return encryptedVerificationCode;
-    }
-
-    public void setEncryptedVerificationCode(String encryptedVerificationCode) {
-        this.encryptedVerificationCode = encryptedVerificationCode;
     }
 
     @Column(name = "account_expiry")

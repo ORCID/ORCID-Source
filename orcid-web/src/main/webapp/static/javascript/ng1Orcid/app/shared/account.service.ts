@@ -86,13 +86,6 @@ export class AccountService {
         
     }
     
-    getSecurityQuestion(): Observable<any> {
-        return this.http.get(
-            getBaseUri() + '/account/security-question.json'
-        )
-        
-    }
-
     getSocialAccounts(): Observable<any> {
         return this.http.get(
             getBaseUri()+'/account/socialAccounts.json'

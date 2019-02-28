@@ -69,7 +69,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class Jpa2JaxbAdapterTest extends DBUnitTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml", "/data/WorksEntityData.xml", "/data/OrgsEntityData.xml",
             "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/ProfileFundingEntityData.xml");
     private final String userOrcid = "0000-0000-0000-0003";

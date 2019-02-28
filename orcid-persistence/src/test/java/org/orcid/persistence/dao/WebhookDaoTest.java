@@ -43,7 +43,7 @@ public class WebhookDaoTest extends DBUnitTest {
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
             "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
 

@@ -457,12 +457,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void updateSecurityQuestion(String orcid, Integer questionId, String answer) {
-        String encryptedAnswer = encryptionManager.encryptForInternalUse(answer);
-        profileDao.updateSecurityQuestion(orcid, questionId, questionId != null ? encryptedAnswer : null);
-    }
-
-    @Override
     public boolean isProfileDeprecated(String orcid) {
         return profileDao.isProfileDeprecated(orcid);
     }

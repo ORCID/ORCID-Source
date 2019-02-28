@@ -88,12 +88,6 @@
 
 		<xs:sequence>
 			<xs:element name="encrypted-password" type="internal:encrypted-password" />
-			<xs:element name="security-question-id" type="internal:security-question-id"
-				minOccurs="0" maxOccurs="1" />
-			<xs:element name="encrypted-security-answer" type="internal:encrypted-security-answer"
-				minOccurs="0" maxOccurs="1" />
-			<xs:element name="encrypted-verification-code" type="internal:encrypted-verification-code"
-				minOccurs="1" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
 	
@@ -151,24 +145,6 @@
 		</xs:annotation>
 	</xs:complexType>
 	
-	<xs:complexType name="security-question-id">
-		<xs:annotation>
-			<xs:documentation>(FOR INTERNAL USE ONLY)
-			</xs:documentation>
-		</xs:annotation>
-
-		<xs:simpleContent>
-			<xs:extension base="xs:integer" />
-		</xs:simpleContent>
-	</xs:complexType>
-	
-	<xs:complexType mixed="true" name="encrypted-security-answer">
-		<xs:annotation>
-			<xs:documentation>(FOR INTERNAL USE ONLY)
-			</xs:documentation>
-		</xs:annotation>
-	</xs:complexType>
-	
 	<xs:complexType mixed="true" name="activities-visibility-default">
 		<xs:annotation>
 			<xs:documentation>(FOR INTERNAL USE ONLY)
@@ -188,12 +164,4 @@
 			<xs:extension base="xs:boolean" />
 		</xs:simpleContent>
 	</xs:complexType>
-	
-	<xs:complexType mixed="true" name="encrypted-verification-code">
-		<xs:annotation>
-			<xs:documentation>(FOR INTERNAL USE ONLY)
-			</xs:documentation>
-		</xs:annotation>
-	</xs:complexType>
-
 </xs:schema>
