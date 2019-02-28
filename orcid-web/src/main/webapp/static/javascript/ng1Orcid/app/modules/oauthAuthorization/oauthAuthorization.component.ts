@@ -59,6 +59,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     MAX_EMAIL_COUNT: number = 30;
 
     allowEmailAccess: any;
+    alreadyClaimed: boolean;
     authorizationForm: any;
     counter: any;
     currentLanguage: any;
@@ -68,8 +69,11 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     enablePersistentToken: any;
     errorEmail: any;
     errorEmailsAdditional: any;
+    isLinkRequest: boolean;
     isOrcidPresent: any;
-    oauthSignin: any;
+    invalidClaimUrl: boolean;
+    linkType: any;
+    oauthRequest: any;
     personalLogin: any;
     recaptchaWidgetId: any;
     recatchaResponse: any;
@@ -127,6 +131,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 value: ""
             }
         };
+        this.alreadyClaimed = false;
         this.counter = 0;
         this.currentLanguage = OrcidCookie.getCookie('locale_v3');
         this.duplicates = {};
@@ -135,9 +140,12 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.errorEmail = null;
         this.errorEmailsAdditional = [];
         this.focusIndex = null;
+        this.invalidClaimUrl = false;
+        this.isLinkRequest = false;
         this.isOrcidPresent = false;
+        this.linkType = "";
         this.site_key = orcidVar.recaptchaKey;
-        this.oauthSignin = false;
+        this.oauthRequest = false;
         this.personalLogin = true;
         this.recaptchaWidgetId = null;
         this.recatchaResponse = null;
@@ -232,7 +240,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.personalLogin = true;
     };
 
-    switchForm(): void {
+    switchForm(email): void {
         this.showDeactivatedError = false;
         this.showReactivationSent = false; 
         var re = new RegExp("(/register)(.*)?$");
@@ -241,7 +249,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         } else if (this.registrationForm.linkType=="shibboleth") {
             window.location.href = getBaseUri() + "/shibboleth/signin";
         } else if(re.test(window.location.pathname)){
-            window.location.href = getBaseUri() + "/signin";
+            window.location.href = getBaseUri() + "/signin?loginId=" + email;
         } else {
             this.showRegisterForm = !this.showRegisterForm;
             if (!this.personalLogin) {
@@ -338,6 +346,20 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             data => {
                 if(data){
                     this.requestInfoForm = data;
+                    
+                    //check if email, orcid, given_names or family_names
+                    //were included in oauth request and show signin or register
+                    //http://members.orcid.org/api/resources/customize#pre-fill-form 
+                    if(this.requestInfoForm.userId){
+                        this.showRegisterForm = false;
+                        this.authorizationForm = {
+                            userName:  {value: this.requestInfoForm.userId}
+                        } 
+                    } else {
+                        if(this.requestInfoForm.userEmail || this.requestInfoForm.userFamilyNames || this.requestInfoForm.userGivenNames){
+                            this.showRegisterForm = true;
+                        }
+                    }    
                     this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {
                             this.showUpdateIcon = true;
@@ -347,7 +369,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                             this.showBulletIcon = true;
                         }
                     });
-          
                     this.gaString = orcidGA.buildClientString(this.requestInfoForm.memberName, this.requestInfoForm.clientName);
                 }
 
@@ -359,7 +380,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     };
 
-    oauth2ScreensLoadRegistrationForm(givenName, familyName, email, linkFlag): void{
+    oauth2ScreensLoadRegistrationForm(givenName, familyName, email, linkType): void{
         this.oauthService.oauth2ScreensLoadRegistrationForm( )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -377,8 +398,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 if(!this.registrationForm.email.value){
                     this.registrationForm.email.value=email;
                 }
-                if(!this.registrationForm.email.value){
-                    this.registrationForm.linkType=linkFlag; 
+                if(!this.registrationForm.linkType){
+                    this.registrationForm.linkType=linkType; 
                 }
 
                 this.registrationForm.activitiesVisibilityDefault.visibility = null;
@@ -676,8 +697,55 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     ngOnInit() {
+        var urlParams = new URLSearchParams(window.location.search);
+
+        //params sent if user clicked link in claim email
+        if(urlParams.has('alreadyClaimed')){
+            this.alreadyClaimed = true;
+        }
+        if(urlParams.has('invalidClaimUrl')){
+            this.invalidClaimUrl = true;
+        }
+
+        //param sent if user clicked link in error msg on register or reactivate
+        if(urlParams.has('loginId')){
+            loginId = urlParams.get('loginId');
+        }
+
+        //param sent to force register form display
+        if(urlParams.has('show_login')){
+            if(urlParams.get('show_login')=='false'){
+                this.showRegisterForm = true; 
+            }
+        }
+
+        //param sent if user came via oauth
+        if(urlParams.has('oauth')){
+            this.oauthRequest = true;
+        }
+
+        //params sent if user came from link social or link insitutional
+        var loginId = "";
+        var firstName = "";
+        var lastName = "";
+        var emailId = "";
+
+        if(urlParams.has('firstName')){
+            firstName = urlParams.get('firstName');
+        }
+        if(urlParams.has('lastName')){
+            lastName = urlParams.get('lastName');
+        }
+        if(urlParams.has('emailId')){
+            emailId = urlParams.get('emailId');
+        }
+        if(urlParams.has('linkRequest')){
+            this.isLinkRequest = true;
+            this.linkType = urlParams.get('linkRequest');
+        }        
+
         this.authorizationForm = {
-            userName:  {value: orcidVar.loginId},
+            userName:  {value: loginId},
             givenNames:  {value: ""},
             familyNames:  {value: ""},
             email:  {value: ""},
@@ -698,44 +766,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }
 
         //if oauth request load request info form
-        if(orcidVar.oauth2Screens || orcidVar.originalOauth2Process){
+        if(this.oauthRequest){
             this.loadRequestInfoForm();
-        }
-        
-        if(orcidVar.oauth2Screens) {
-            if(orcidVar.oauthUserId && orcidVar.showLogin){
-                this.showRegisterForm = false;
-                this.authorizationForm = {
-                    userName:  {value: orcidVar.oauthUserId}
-                } 
-            } else{
-                this.showRegisterForm = !orcidVar.showLogin;  
-            }
-        } else {
-            if(orcidVar.showLogin){
-                this.showRegisterForm = false;
-            } else{
-                this.showRegisterForm = !orcidVar.showLogin;  
-            }
         } 
-
-        window.onkeydown = function(e) {
-            if (e.keyCode == 13) {     
-                if(orcidVar.originalOauth2Process) { 
-                    //this.authorize();
-                }
-            }
-        };
 
         $('#enterRecoveryCode').click(function() {
             $('#recoveryCodeSignin').show(); 
         });
 
-        if (orcidVar.firstName || orcidVar.lastName || orcidVar.emailId || orcidVar.linkRequest) {
-            this.oauth2ScreensLoadRegistrationForm(orcidVar.firstName, orcidVar.lastName, orcidVar.emailId, orcidVar.linkRequest);
-        } else {
-            this.oauth2ScreensLoadRegistrationForm('', '', '', '');
-        }
+        //load registration form with link account params
+        this.oauth2ScreensLoadRegistrationForm(firstName, lastName, emailId, this.linkType);
 
         this.subscription = this.oauthService.notifyObservable$.subscribe(
             (res) => {
@@ -748,7 +788,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.commonSrvc.getUserStatus().subscribe( 
             data => {
                 if(data.loggedIn == true) {
-                    if (this.togglzReLoginAlert && !orcidVar.oauth2Screens && !orcidVar.originalOauth2Process) {
+                    if (this.togglzReLoginAlert && !this.oauthRequest) {
                         this.nameService.getData(this.nameFormUrl).subscribe(response => {
                             if (response.real && (response.real.givenNames.value || response.real.familyName.value)) {
                                 var giveNamesDefined = (response.real.givenNames && response.real.givenNames.value);
