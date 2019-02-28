@@ -71,9 +71,9 @@ Editing the work section of a record requires a 3 step OAuth token with the ```/
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/works |
+| URL 				| https://api.[host]/[version]/[ORCID iD]/works |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authoriczation: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -90,7 +90,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/work/[put-code] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -119,9 +119,9 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/work |
+| URL 				| https://api.[host]/[version]/[ORCID iD]/work |
 | Method    | POST |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the work you are posting in json or xml format |
 
@@ -136,7 +136,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/works |
 | Method    | POST |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the work you are posting in json or xml format |
 
@@ -152,7 +152,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/work/[put-code] |
 | Method    | PUT |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the updated work in json or xml format |
 
@@ -166,9 +166,9 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/work/[put-code] |
+| URL 				| https://api.[host]/[version]/[ORCID iD]/work/[put-code] |
 | Method    | DELETE |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 
 **Example request in curl**

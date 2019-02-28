@@ -17,7 +17,7 @@ These calls can be used with Member API credentials on sandbox or the production
 * For country: ```/address```
 * For keywords: ```/keywords```
 * For websites: ```/research-urls```
-* For [personal identifiers](personal_identifiers.md): ```/external-identifiers```
+* For [personal identifiers](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/personal_identifiers.md): ```/external-identifiers```
 * For reading email addresses: ```/email```
 
 **Sample XML files:**
@@ -31,7 +31,7 @@ These calls can be used with Member API credentials on sandbox or the production
 
 Only the other names, country, keywords, website and personal identifier sections of the record can be written to. The name, credit name, biography, and email fields can be read using the API but can only be edited by the researcher.
 
-Editing the person section of a record requires a 3 step OAuth token with the ```/person/update``` scope, the ```/read-limited``` scope should also be requested for reading person items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
+Editing the person section of a record requires a 3 step OAuth token with the ```/person/update``` scope, the ```/read-limited``` scope should also be requested for reading person items. See [Authenticating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
 
 ## Personal information fields
 
@@ -53,7 +53,7 @@ Editing the person section of a record requires a 3 step OAuth token with the ``
 
 - **researcher-url:url** _(optional)_ The URL to a website about the researcher
 
-- **external-identifiers** _(optional)_ Identifiers with links to a reference to the researcher in another sytem. See the [Personal identifiers tutorial](personal_identifiers.md).
+- **external-identifiers** _(optional)_ Identifiers with links to a reference to the researcher in another sytem. See the [Personal identifiers tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/personal_identifiers.md)
 
 - **emails** _(user edit only)_ Email addresses of the researcher. _Note that most researchers choose to have their email addresses set to private, which means that they cannot be read via the API_
 
@@ -63,7 +63,7 @@ Editing the person section of a record requires a 3 step OAuth token with the ``
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/person |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -125,7 +125,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[person section] |
 | Method    | POST |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the work you are posting in json or xml format |
 
@@ -146,7 +146,7 @@ Location: http://api.qa.orcid.org/2.1/0000-0002-9227-8514/researcher-urls/41387
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/[person section]/[put-code] |
 | Method    | PUT |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the updated work in json or xml format |
 

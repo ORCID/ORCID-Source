@@ -2,7 +2,7 @@
 
 This tutorial shows how to collect a user's authenticated ORCID iD using OAuth, the OAuth token can then be used to read the public record. Organizations who only need to collect authenticated iDs may want to consider the [implicit workflow](https://github.com/ORCID/ORCID-Source/blob/master/orcid-web/ORCID_AUTH_WITH_OPENID_CONNECT.md#implicit-flow).
 
-This example worflow uses the `/authenticate` scope, it can also be completed use `openid` scope for organizations that want to use [OpenID Connect workflow](https://github.com/ORCID/ORCID-Source/blob/master/orcid-web/ORCID_AUTH_WITH_OPENID_CONNECT.md).
+This example workflow uses the `/authenticate` scope, it can also be completed use `openid` scope for organizations that want to use [OpenID Connect workflow](https://github.com/ORCID/ORCID-Source/blob/master/orcid-web/ORCID_AUTH_WITH_OPENID_CONNECT.md).
 
 This workflow can be used with Public or Member API credentials on sandbox or the production servers.
 
@@ -24,7 +24,7 @@ https://sandbox.orcid.org/oauth/authorize?client_id=APP-RU42Z8TDSYBG7T2S&respons
 
 ## Grant authorization
 
-Go to the authorization URL in your browser. If you have a sandbox ORCID account log into it then grant access. If you do not have and account, register for a new sandbox ORCID account and grant access.
+Go to the authorization URL in your browser. If you have a sandbox ORCID account log into it and then grant access. If you do not have an account, register for a new sandbox ORCID account and grant access.
 
 *Users must grant authorization for you to get their authenticated ORCID iD and it must be completed in a browser window- this step can not be automated.*
 
@@ -44,10 +44,10 @@ The authorization code can be exchanged for an access token and the user's ORCID
 
 | Option| Value        |
 |--------------------|--------------------------|
-| Base URL 				| https:<span>//sandbox.orcid.org/oauth/token|
+| Base URL 				| https://sandbox.orcid.org/oauth/token|
 | Method    | POST |
 | Header    | accept:application/json |
-| Data      | client\_id=[Your client ID]<br>client\_secret=[Your client secret]<br>grant_type=authorization_code<br>code=[Your authorization code] |
+| Data      | client_id=[Your client ID] client_secret=[Your client secret] grant_type=authorization_code code=[Your authorization code] |
 
 **Curl example:**
 

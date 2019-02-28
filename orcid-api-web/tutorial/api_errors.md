@@ -39,8 +39,6 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 |400|	Content is not allowed in prolog	|Ensure that you are pointing to the correct file|**Example missing '@' at the start of the file path** curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer  ********************' -d 'Users/rob/code/XML/address-2.1.xml' -X POST 'https://api.qa.orcid.org/v2.1/0000-0002-3631-3071/address'|
 |400|	Premature end of file	|Check the URL to which you are posting, the formatting of your XML and your file path to the XML as you can get this error for all of these issues|--|
 |400|	Exception: unexpected element	|Ensure that your XML is valid|--|
-|400|	User with this email already exists	|One of the email addresses included in your XML is already associated with a user in the Registry|--|
-|400|	There must be a least one email in the new profile|	You must include an email address when creating a new ORCID Record.|--"|
 |400|	Invalid incoming message:	|Check your XML, make sure required fields are completed.|--|
 |400 |Bad Request: There is an issue with your data or the API endpoint. with org.xml.sax.SAXParseException; lineNumber: foo; columnNumber: bar; Content is not allowed in prolog.] (Content is not allowed in prolog| Check your file path. This error message can actually mean that the api can't find your file. Have you missed the '@' or added a rogue space perhaps?|
 |400|The client application sent a bad request to ORCID. Full validation error: argument type mismatch|This can be because of a scope typo. Check whether you are using singular or plural (education or educations for example)|--|

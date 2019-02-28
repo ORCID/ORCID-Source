@@ -13,9 +13,9 @@ Send a request to the ORCID API for a two step token
 | Item              |Parameter               |
 |-------------------|--------------------------|
 | URL 				| https://sandbox.orcid.org/oauth/token|
-| client\_id 		| *Your client ID*|
-| client\_secret	| *Your client secret*|
-| grant\_type		| client\_credentials|
+| client_id 		| *Your client ID*|
+| client_secret	| *Your client secret*|
+| grant_type		| client_credentials|
 | scope				| /read-public|
 
 **Curl Example**

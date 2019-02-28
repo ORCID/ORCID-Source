@@ -20,17 +20,17 @@ This tutorial also includes information on adding, searching for and updating gr
 
 **Sample XML:**
 
-* [reading the peer-review section summary in 2.1 ](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-reviews-2.1.xml)  
-* [reading the peer-review section summary in 3.0  ](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/peer-reviews-3.0_rc1.xml)  
+* [reading the peer-review section summary in 2.1 ](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-reviews-2.1.xml)
 * [reading a basic peer-review item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-review-2.1.xml)
-* [reading a basic peer-review item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/peer-review-3.0_rc1.xml)
-* [reading a detailed peer-review item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-review-full-2.1.xml)
-* [reading a detailed peer-review item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/peer-review-full-3.0_rc1.xml)
 * [writing a peer-review item with the minimal information in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-simple-2.1.xml)
-* [writing a peer-review item with the minimal information in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/peer-review-simple-3.0_rc1.xml)
+* [reading a detailed peer-review item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-review-full-2.1.xml)
 * [writing a peer-review item with the detailed information in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-full-2.1.xml)
+* [reading a basic peer-review item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/peer-review-3.0_rc1.xml)
+* [reading the peer-review section summary in 3.0  ](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/peer-reviews-3.0_rc1.xml)  
+* [reading a detailed peer-review item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/peer-review-full-3.0_rc1.xml)
+* [writing a peer-review item with the minimal information in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/peer-review-simple-3.0_rc1.xml)
 * [writing a peer-reivew item with the detailed information in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/peer-review-full-3.0_rc1.xml)
-* [peer-review group id in 2.](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
+* [peer-review group id in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
 * [peer-review group id in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-3.0_rc1/samples/group-id-3.0_rc1.xml)
 
 
@@ -125,7 +125,7 @@ Example response:
 
 ### Peer-review group fields
 
-See sample [peer-review-group](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
+See sample 2.1 [peer-review-group](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
 
 - **group-id:name** _(required)_ The name of the group. This will display on the user's ORCID record.
 - **group-id:group-id** _(required)_ An identifier for the group formated as identifier type:identifier. Identifier type options are fundref, issn, orcid-generated, publons, ringgold.
