@@ -7,7 +7,7 @@ import {
   Input
 } from "@angular/core";
 import { Subject } from "rxjs";
-import { PersonService } from "../../shared/person.service";
+import { PersonService } from "../../shared/person.service.ts";
 
 @Component({
   selector: "print-id-banner-ng2",

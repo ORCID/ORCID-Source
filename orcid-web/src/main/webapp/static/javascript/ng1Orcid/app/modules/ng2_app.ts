@@ -35,205 +35,205 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
 //User generated modules imports
 
 import { AccountSettingsNg2Module } 
-    from './accountSettings/accountSettings';
+    from './accountSettings/accountSettings.ts';
 
 import { AdminActionsNg2Module } 
-    from './adminActions/adminActions';    
+    from './adminActions/adminActions.ts';    
 
 import { AffiliationNg2Module } 
-    from './affiliation/affiliation';
+    from './affiliation/affiliation.ts';
 
 import { AffiliationDeleteNg2Module } 
-    from './affiliation/affiliationDelete';
+    from './affiliation/affiliationDelete.ts';
 
 import { AffiliationFormNg2Module } 
-    from './affiliation/affiliationForm';
+    from './affiliation/affiliationForm.ts';
 
 import { AlertBannerNg2Module } 
-    from './alertBanner/alertBanner';
+    from './alertBanner/alertBanner.ts';
 
 import { AllConsortiumContactsNg2Module } 
-    from './allConsortiumContacts/allConsortiumContacts';
+    from './allConsortiumContacts/allConsortiumContacts.ts';
     
 import { AuthorizeDelegateResultNg2Module } 
-    from './delegators/authorizeDelegateResult';
+    from './delegators/authorizeDelegateResult.ts';
 
 import { BiographyNg2Module } 
-    from './biography/biography';
+    from './biography/biography.ts';
 
 import { ClaimNg2Module }
-    from './claim/claim';
+    from './claim/claim.ts';
 
 import { ClientEditNg2Module } 
-    from './clientEdit/clientEdit'; 
+    from './clientEdit/clientEdit.ts'; 
 
 import { DelegatorsNg2Module } 
-    from './delegators/delegators';  
+    from './delegators/delegators.ts';  
 
 import { EmailsNg2Module } 
-    from './emails/emails';
+    from './emails/emails.ts';
 
 import { EmailsFormNg2Module } 
-    from './emailsForm/emailsForm';
+    from './emailsForm/emailsForm.ts';
 
 import { EmailUnverifiedWarningNg2Module } 
-    from './emailUnverifiedWarning/emailUnverifiedWarning';
+    from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
 
 import { EmailVerificationSentMesssageNg2Module } 
-    from './emailVerificationSentMessage/emailVerificationSentMessage';
+    from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
 
 import { ExtIdPopoverNg2Module } 
-    from './extIdPopover/extIdPopover';
+    from './extIdPopover/extIdPopover.ts';
 
 import { FundingDeleteNg2Module } 
-    from './funding/fundingDelete';
+    from './funding/fundingDelete.ts';
 
 import { FundingNg2Module } 
-    from './funding/funding';
+    from './funding/funding.ts';
 
 import { FundingFormNg2Module } 
-    from './funding/fundingForm';
+    from './funding/fundingForm.ts';
 
 import { HeaderNg2Module } 
-    from './header/header';
+    from './header/header.ts';
 
 import { HomeNg2Module } 
-    from './home/home';
+    from './home/home.ts';
 
 import { LanguageNg2Module }
-    from './language/language';
+    from './language/language.ts';
 
 import { LinkAccountNg2Module } 
-    from './linkAccount/linkAccount';
+    from './linkAccount/linkAccount.ts';
 
 import { MembersListNg2Module } 
-    from './membersList/membersList';
+    from './membersList/membersList.ts';
 
 import { ModalNg2Module }
-    from './modalNg2/modal-ng';
+    from './modalNg2/modal-ng.ts';
 
 import { MyOrcidAlertsNg2Module } 
-    from './myOrcidAlerts/myOrcidAlerts';
+    from './myOrcidAlerts/myOrcidAlerts.ts';
 
 import { NotificationsNg2Module }
-    from './notifications/notifications';
+    from './notifications/notifications.ts';
 
 import { NotificationAlertsNg2Module }
-    from './notificationAlerts/notificationAlerts';
+    from './notificationAlerts/notificationAlerts.ts';
 
 import { PeerReviewNg2Module } 
-    from './peerReview/peerReview';
+    from './peerReview/peerReview.ts';
 
 import { PeerReviewDeleteNg2Module } 
-    from './peerReview/peerReviewDelete';
+    from './peerReview/peerReviewDelete.ts';
 
 import { PersonNg2Module } 
-    from './person/person';
+    from './person/person.ts';
 
 import { PrintRecordNg2Module } 
-    from './printRecord/printRecord';
+    from './printRecord/printRecord.ts';
 
 import { PublicRecordNg2Module } 
-    from './publicRecord/publicRecord';
+    from './publicRecord/publicRecord.ts';
 
 import { OauthAuthorizationNg2Module } 
-    from './oauthAuthorization/oauthAuthorization';
+    from './oauthAuthorization/oauthAuthorization.ts';
 
 import { OrgIdentifierPopoverNg2Module } 
-    from './orgIdentifierPopover/orgIdentifierPopover';
+    from './orgIdentifierPopover/orgIdentifierPopover.ts';
 
 import { ReactivationNg2Module } 
-    from './reactivation/reactivation';
+    from './reactivation/reactivation.ts';
 
 import { RegisterDuplicatesNg2Module } 
-    from './registerDuplicates/registerDuplicates';
+    from './registerDuplicates/registerDuplicates.ts';
 
 import { RequestPasswordResetNg2Module } 
-    from './requestPasswordReset/requestPasswordReset';
+    from './requestPasswordReset/requestPasswordReset.ts';
 
 import { ResearchResourceNg2Module } 
-    from './researchResource/researchResource';
+    from './researchResource/researchResource.ts';
 
 import { ResearchResourceDeleteNg2Module } 
-    from './researchResource/researchResourceDelete';
+    from './researchResource/researchResourceDelete.ts';
 
 import { ResendClaimNg2Module }
-    from './resendClaim/resendClaim';    
+    from './resendClaim/resendClaim.ts';    
 
 import { ResetPasswordNg2Module }
-    from './resetPassword/resetPassword';
+    from './resetPassword/resetPassword.ts';
 
 import { SearchNg2Module } 
-    from './search/search';
+    from './search/search.ts';
 
 import { SelfServiceNg2Module } 
-    from './selfService/selfService';
+    from './selfService/selfService.ts';
 
 import { SelfServiceAddContactNg2Module } 
-    from './selfServiceAddContact/selfServiceAddContact';
+    from './selfServiceAddContact/selfServiceAddContact.ts';
 
 import { SelfServiceExistingSubMemberNg2Module } 
-    from './selfServiceExistingSubMember/selfServiceExistingSubMember';
+    from './selfServiceExistingSubMember/selfServiceExistingSubMember.ts';
 
 import { SelfServiceRemoveContactNg2Module } 
-    from './selfServiceRemoveContact/selfServiceRemoveContact';
+    from './selfServiceRemoveContact/selfServiceRemoveContact.ts';
 
 import { SelfServiceRemoveSubMemberNg2Module } 
-    from './selfServiceRemoveSubMember/selfServiceRemoveSubMember';
+    from './selfServiceRemoveSubMember/selfServiceRemoveSubMember.ts';
 
 import { Social2FANg2Module }
-    from './social2FA/social2FA';
+    from './social2FA/social2FA.ts';
 
 import { TwoFaSetupNg2Module }
-    from './2FASetup/twoFASetup';
+    from './2FASetup/twoFASetup.ts';
     
 import { StatisticsNg2Module }
-    from './statistics/statistics';
+    from './statistics/statistics.ts';
 
 import { UnsubscribeNg2Module }
-    from './unsubscribe/unsubscribe';  
+    from './unsubscribe/unsubscribe.ts';  
 
 import { WidgetNg2Module } 
-    from './widget/widget';
+    from './widget/widget.ts';
 
 import { WorksBulkDeleteNg2Module } 
-    from './works/worksBulkDelete';
+    from './works/worksBulkDelete.ts';
 
 import { WorksDeleteNg2Module } 
-    from './works/worksDelete';
+    from './works/worksDelete.ts';
 
 import { WorksFormNg2Module } 
-    from './works/worksForm';
+    from './works/worksForm.ts';
 
 import { WorksNg2Module } 
-    from './works/works';
+    from './works/works.ts';
     
 import { WorksMergeSuggestionsNg2Module } 
-    from './works/worksMergeSuggestions';
+    from './works/worksMergeSuggestions.ts';
 
 import { ManageMembersNg2Module } 
-    from './manageMembers/manageMembers';
+    from './manageMembers/manageMembers.ts';
     
 import { RecordCorrectionsNg2Module }
-    from './recordCorrections/recordCorrections'
+    from './recordCorrections/recordCorrections.ts'
     
 import { DeveloperToolsNg2Module } 
-    from './developerTools/developerTools';    
+    from './developerTools/developerTools.ts';    
 
 import { idBannerNg2Module }  
-    from './idBanner/idBanner'
+    from './idBanner/idBanner.ts'
 
 import { qrcodeNg2Module } 
-    from './qrcode/qrcode'
+    from './qrcode/qrcode.ts'
 
 import { lastModifiedNg2Module } 
-    from './lastModified/lastModified';
+    from './lastModified/lastModified.ts';
 
 import { bioNg2Module }
-    from './bio/bio';
+    from './bio/bio.ts';
 
 import { printIdBannerNg2Module } 
-    from './printIdBanner/printIdBanner';
+    from './printIdBanner/printIdBanner.ts';
     
 ///////////////////
 import {Injectable} 

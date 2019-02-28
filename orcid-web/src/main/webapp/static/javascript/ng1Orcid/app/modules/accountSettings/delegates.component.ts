@@ -17,13 +17,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service';
+    from '../../shared/account.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service';  
+    from '../../shared/modal.service.ts';  
 
 import { SearchService } 
-    from '../../shared/search.service';
+    from '../../shared/search.service.ts';
 
 @Component({
     selector: 'delegates-ng2',

@@ -8,13 +8,13 @@ import { Observable, Subject, Subscription }
     from 'rxjs';
 
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { ConsortiaService }
-    from '../../shared/consortia.service'
+    from '../../shared/consortia.service.ts'
 
 import { FeaturesService }
-    from '../../shared/features.service'
+    from '../../shared/features.service.ts'
 
 @Component({
     selector: 'all-consortium-contacts-ng2',

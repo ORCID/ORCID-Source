@@ -15,10 +15,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service';
+    from '../../shared/account.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service';  
+    from '../../shared/modal.service.ts';  
 
 @Component({
     selector: 'delegates-add-ng2',

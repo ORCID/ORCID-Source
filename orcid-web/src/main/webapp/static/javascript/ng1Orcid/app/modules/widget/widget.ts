@@ -11,7 +11,7 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //In the end only widgetNg2 should remain
-import { WidgetComponent } from './widget.component';
+import { WidgetComponent } from './widget.component.ts';
 
 // This is the Angular 1 part of the module
 export const WidgetModule = angular.module(

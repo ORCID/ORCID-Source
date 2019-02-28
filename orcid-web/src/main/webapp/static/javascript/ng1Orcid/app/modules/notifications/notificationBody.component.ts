@@ -16,10 +16,10 @@ import { catchError, map, tap }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { NotificationsService } 
-    from '../../shared/notifications.service';
+    from '../../shared/notifications.service.ts';
 
 @Component({
     selector: 'notification-body-ng2',

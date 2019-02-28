@@ -14,14 +14,14 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 import { CommonNg2Module }
-    from './../common/common';
+    from './../common/common.ts';
 
 import { UniquePipe }
-    from '../../pipes/uniqueNg2';
+    from '../../pipes/uniqueNg2.ts';
 
-import { MemberDetailsComponent } from './memberDetails.component';
-import { MembersListComponent } from './membersList.component';
-import { ConsortiaListComponent } from './consortiaList.component';
+import { MemberDetailsComponent } from './memberDetails.component.ts';
+import { MembersListComponent } from './membersList.component.ts';
+import { ConsortiaListComponent } from './consortiaList.component.ts';
 
 // This is the Angular 1 part of the module
 export const MembersListModule = angular.module(

@@ -16,13 +16,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { DiscoService } 
-    from '../../shared/disco.service'; 
+    from '../../shared/disco.service.ts'; 
 
 import { OauthService } 
-    from '../../shared/oauth.service'; 
+    from '../../shared/oauth.service.ts'; 
 
 import { WidgetService } 
-    from '../../shared/widget.service'; 
+    from '../../shared/widget.service.ts'; 
 
 
 @Component({

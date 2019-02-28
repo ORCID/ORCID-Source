@@ -14,7 +14,7 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 import { SearchComponent } 
-    from './search.component';
+    from './search.component.ts';
 
 // This is the Angular 1 part of the module
 export const SearchModule = angular.module(

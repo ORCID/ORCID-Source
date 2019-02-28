@@ -1,8 +1,8 @@
 import * as angular from "angular";
 import { NgModule } from "@angular/core";
 import { downgradeComponent, UpgradeModule } from "@angular/upgrade/static";
-import { qrcodeComponent } from './qrcode.components'
-import { CommonNg2Module } from "../common/common";
+import { qrcodeComponent } from './qrcode.components.ts'
+import { CommonNg2Module } from "../common/common.ts";
 
 // This is the Angular 1 part of the module
 export const qrcodeModule = angular.module("qrcodeModule", []);

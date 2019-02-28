@@ -17,10 +17,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { ManageMembersService } 
-    from '../../shared/manageMembers.service'; 
+    from '../../shared/manageMembers.service.ts'; 
 
 import { PreferencesService } 
-    from '../../shared/preferences.service'; 
+    from '../../shared/preferences.service.ts'; 
 
 
 @Component({

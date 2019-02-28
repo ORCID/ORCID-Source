@@ -1,11 +1,11 @@
 import * as angular from "angular";
 import { NgModule } from "@angular/core";
 import { downgradeComponent, UpgradeModule } from "@angular/upgrade/static";
-import { CommonNg2Module } from "./../common/common";
-import { idBannerComponent } from "./idBanner.component";
-import { NameComponent } from "./name.component";
-import { SwitchUserComponent } from "./switchUser.component";
-import { OrderByPipe } from "../../pipes/orderByNg2Child";
+import { CommonNg2Module } from "./../common/common.ts";
+import { idBannerComponent } from "./idBanner.component.ts";
+import { NameComponent } from "./name.component.ts";
+import { SwitchUserComponent } from "./switchUser.component.ts";
+import { OrderByPipe } from "../../pipes/orderByNg2Child.ts";
 
 // This is the Angular 1 part of the module
 export const idBannerModule = angular.module("idBannerModule", []);

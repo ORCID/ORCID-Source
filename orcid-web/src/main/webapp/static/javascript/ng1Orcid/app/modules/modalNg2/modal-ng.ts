@@ -10,7 +10,7 @@ import { NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-import { ModalNgComponent } from './modal-ng.component';
+import { ModalNgComponent } from './modal-ng.component.ts';
 
 // This is the Angular 1 part of the module
 export const ModalModule = angular.module(

@@ -14,16 +14,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { FundingService } 
-    from '../../shared/funding.service';
+    from '../../shared/funding.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 import { FeaturesService } 
-    from '../../shared/features.service';
+    from '../../shared/features.service.ts';
 
 @Component({
     selector: 'funding-form-ng2',

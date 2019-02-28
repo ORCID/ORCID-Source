@@ -12,7 +12,7 @@ import { downgradeComponent, UpgradeModule }
 
 //In the end only emailVerificationSentMesssageNg2 should remain
 import { EmailVerificationSentMesssageComponent } 
-    from './emailVerificationSentMessage.component';
+    from './emailVerificationSentMessage.component.ts';
 
 // This is the Angular 1 part of the module
 export const EmailVerificationSentMesssageModule = angular.module(

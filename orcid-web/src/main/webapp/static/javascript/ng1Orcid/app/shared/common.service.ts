@@ -13,7 +13,7 @@ import { share, shareReplay }
     from 'rxjs/operators';    
     
 import { OrgDisambiguated } 
-    from '../modules/orgIdentifierPopover/orgDisambiguated';
+    from '../modules/orgIdentifierPopover/orgDisambiguated.ts';
 
 @Injectable({
  providedIn: 'root',

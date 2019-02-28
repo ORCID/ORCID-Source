@@ -11,10 +11,10 @@ import { catchError, map, tap }
     from 'rxjs/operators';
 
 import { CommonNg2Module }
-    from './../modules/common/common';
+    from './../modules/common/common.ts';
 
 import { WidgetService } 
-    from './widget.service';
+    from './widget.service.ts';
 
 @Injectable()
 export class DiscoService {

@@ -5,23 +5,23 @@ import { Directive, NgModule } from "@angular/core";
 import { downgradeComponent } from "@angular/upgrade/static";
 
 //User generated
-import { ManageMembersComponent } from "./manageMembers.component";
+import { ManageMembersComponent } from "./manageMembers.component.ts";
 
-import { CommonNg2Module } from "./../common/common";
+import { CommonNg2Module } from "./../common/common.ts";
 
-import { ManageMemberAddFormComponent } from "./manageMembersAddForm.component"
+import { ManageMemberAddFormComponent } from "./manageMembersAddForm.component.ts"
 
-import { ManageMembersConsortiumComponent } from "./manageMembersConsortium.component"
+import { ManageMembersConsortiumComponent } from "./manageMembersConsortium.component.ts"
 
-import { ManageMembersFindComponent } from "./manageMembersFind.component"
+import { ManageMembersFindComponent } from "./manageMembersFind.component.ts"
 
-import { ManageMemberAddFormSuccessComponent } from "./manageMembersAddFormSuccess.component"
+import { ManageMemberAddFormSuccessComponent } from "./manageMembersAddFormSuccess.component.ts"
 
-import { ManageMembersFindMemberComponent } from "./manageMembersFindMember.component"
+import { ManageMembersFindMemberComponent } from "./manageMembersFindMember.component.ts"
 
-import { ManageMembersFindMemberConfirmComponent } from "./manageMembersFindMemberConfirm.component"
+import { ManageMembersFindMemberConfirmComponent } from "./manageMembersFindMemberConfirm.component.ts"
 
-import { ManageMembersFindClientComponent } from "./manageMembersFindClient.component"
+import { ManageMembersFindClientComponent } from "./manageMembersFindClient.component.ts"
 
 // This is the Angular 1 part of the module
 export const ManageMembersModule = angular.module("ManageMembersModule", []);

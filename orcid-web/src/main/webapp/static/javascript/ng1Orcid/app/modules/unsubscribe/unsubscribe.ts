@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { UnsubscribeComponent } 
-    from './unsubscribe.component';
+    from './unsubscribe.component.ts';
 
 import { CommonNg2Module }
-    from './../common/common';
+    from './../common/common.ts';
 
 // This is the Angular 1 part of the module
 export const UnsubscribeModule = angular.module(

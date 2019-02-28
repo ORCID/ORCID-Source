@@ -16,10 +16,10 @@ import { UpgradeModule }
     from '@angular/upgrade/static';
 
 import { orcidApp } 
-    from './modules/ng1_app';
+    from './modules/ng1_app.ts';
 
 import { Ng2AppModule } 
-    from './modules/ng2_app';
+    from './modules/ng2_app.ts';
 
 import { enableProdMode } 
     from '@angular/core';

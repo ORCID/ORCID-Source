@@ -15,13 +15,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AffiliationService } 
-    from '../../shared/affiliation.service';
+    from '../../shared/affiliation.service.ts';
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service';
+    from '../../shared/workspace.service.ts';
 
 import { CommonService } 
-    from '../../shared/common.service'; 
+    from '../../shared/common.service.ts'; 
 
 @Component({
     selector: 'public-edu-affiliation-ng2',

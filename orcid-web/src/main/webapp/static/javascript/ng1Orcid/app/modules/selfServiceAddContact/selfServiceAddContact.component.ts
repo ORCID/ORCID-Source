@@ -10,10 +10,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { ConsortiaService }
-    from '../../shared/consortia.service';
+    from '../../shared/consortia.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'self-service-add-contact-ng2',

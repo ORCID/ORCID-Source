@@ -11,13 +11,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service';
+    from '../../shared/account.service.ts';
 
 import { EmailService } 
-    from '../../shared/email.service';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'email-unverified-warning-ng2',

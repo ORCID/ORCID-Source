@@ -16,7 +16,7 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { GenericService } 
-    from '../../shared/generic.service';
+    from '../../shared/generic.service.ts';
 
 
 @Component({

@@ -12,10 +12,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService }
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { PasswordService } 
-    from '../../shared/password.service'; 
+    from '../../shared/password.service.ts'; 
 
 
 @Component({

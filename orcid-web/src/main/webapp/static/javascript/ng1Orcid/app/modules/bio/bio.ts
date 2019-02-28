@@ -1,8 +1,8 @@
 import * as angular from "angular";
 import { NgModule } from "@angular/core";
 import { downgradeComponent, UpgradeModule } from "@angular/upgrade/static";
-import { CommonNg2Module } from "./../common/common";
-import { bioComponent } from "./bio.component";
+import { CommonNg2Module } from "./../common/common.ts";
+import { bioComponent } from "./bio.component.ts";
 
 
 // This is the Angular 1 part of the module

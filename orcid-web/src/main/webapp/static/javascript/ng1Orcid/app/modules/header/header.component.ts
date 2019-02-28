@@ -19,17 +19,17 @@ import { takeUntil, shareReplay }
     from 'rxjs/operators';
     
 import { NotificationsService } 
-    from '../../shared/notifications.service'; 
+    from '../../shared/notifications.service.ts'; 
 
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
     
 import { FeaturesService }
-    from '../../shared/features.service';
+    from '../../shared/features.service.ts';
 
 @Component({
     selector: 'header-ng2',
-    templateUrl: '../templates/header-ng2-template'
+    template:  scriptTmpl("header-ng2-template")
 })
 export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();

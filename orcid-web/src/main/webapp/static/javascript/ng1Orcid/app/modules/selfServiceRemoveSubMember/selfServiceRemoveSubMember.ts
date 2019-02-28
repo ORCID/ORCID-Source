@@ -15,7 +15,7 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { SelfServiceRemoveSubMemberComponent } 
-    from './selfServiceRemoveSubMember.component';
+    from './selfServiceRemoveSubMember.component.ts';
 
 // This is the Angular 1 part of the module
 export const SelfServiceRemoveSubMemberModule = angular.module(

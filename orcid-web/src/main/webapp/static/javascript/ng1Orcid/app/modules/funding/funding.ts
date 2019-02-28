@@ -15,17 +15,17 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { CommonNg2Module }
-    from './../common/common';
+    from './../common/common.ts';
 
 import { FundingComponent } 
-    from './funding.component';
+    from './funding.component.ts';
 
 import { PrivacytoggleNg2Module }
-    from './../privacytoggle/privacyToggle';
+    from './../privacytoggle/privacyToggle.ts';
 
 //User generated filters
 import { OrderByPipe }
-    from '../../pipes/orderByNg2'; 
+    from '../../pipes/orderByNg2.ts'; 
 
 
 // This is the Angular 1 part of the module

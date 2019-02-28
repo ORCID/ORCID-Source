@@ -20,8 +20,8 @@ import {
 
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { CommonService } from "../../shared/common.service";
-import { SwitchUserService } from "../../shared/switchUser.service";
+import { CommonService } from "../../shared/common.service.ts";
+import { SwitchUserService } from "../../shared/switchUser.service.ts";
 
 @Component({
   selector: "switch-user-ng2",

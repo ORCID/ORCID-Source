@@ -10,10 +10,10 @@ import { Observable, Subject, Subscription }
     from 'rxjs';
 
 import { EmailService } 
-    from '../../shared/email.service';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component(
     {

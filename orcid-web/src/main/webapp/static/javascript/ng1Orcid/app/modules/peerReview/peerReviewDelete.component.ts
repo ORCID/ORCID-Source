@@ -13,10 +13,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { PeerReviewService } 
-    from '../../shared/peerReview.service';
+    from '../../shared/peerReview.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'peer-review-delete-ng2',

@@ -19,19 +19,19 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { EmailService } 
-    from '../../shared/email.service';
+    from '../../shared/email.service.ts';
 
 import { FundingService } 
-    from '../../shared/funding.service';
+    from '../../shared/funding.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service'; 
+    from '../../shared/workspace.service.ts'; 
 
 @Component({
     selector: 'funding-ng2',

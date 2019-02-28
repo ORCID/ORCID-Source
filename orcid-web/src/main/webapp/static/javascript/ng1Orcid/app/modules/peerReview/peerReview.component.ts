@@ -20,22 +20,22 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { PeerReviewService } 
-    from '../../shared/peerReview.service';
+    from '../../shared/peerReview.service.ts';
 
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { EmailService } 
-    from '../../shared/email.service';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service'; 
+    from '../../shared/workspace.service.ts'; 
 
 import { OrgDisambiguated } 
-    from '../orgIdentifierPopover/orgDisambiguated';
+    from '../orgIdentifierPopover/orgDisambiguated.ts';
     
 @Component({
     selector: 'peer-review-ng2',

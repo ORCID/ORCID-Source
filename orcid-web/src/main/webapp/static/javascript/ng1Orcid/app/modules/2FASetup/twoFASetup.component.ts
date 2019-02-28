@@ -13,7 +13,7 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { TwoFAStateService } 
-    from '../../shared/twoFAState.service';
+    from '../../shared/twoFAState.service.ts';
 
 
 

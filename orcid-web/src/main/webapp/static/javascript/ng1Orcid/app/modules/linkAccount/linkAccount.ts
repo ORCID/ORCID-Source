@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { LinkAccountComponent } 
-    from './linkAccount.component';
+    from './linkAccount.component.ts';
 
 import { CommonNg2Module }
-    from './../common/common';
+    from './../common/common.ts';
 
 // This is the Angular 1 part of the module
 export const LinkAccountModule = angular.module(

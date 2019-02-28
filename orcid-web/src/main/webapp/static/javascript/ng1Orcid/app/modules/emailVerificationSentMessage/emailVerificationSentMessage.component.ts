@@ -10,10 +10,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { EmailService } 
-    from '../../shared/email.service';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'email-verification-sent-messsage-ng2',

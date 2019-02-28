@@ -13,7 +13,7 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { NotificationsService } 
-    from '../../shared/notifications.service'; 
+    from '../../shared/notifications.service.ts'; 
 
 
 @Component({

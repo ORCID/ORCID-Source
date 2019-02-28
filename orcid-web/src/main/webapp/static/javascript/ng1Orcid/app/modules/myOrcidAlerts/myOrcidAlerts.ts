@@ -11,7 +11,7 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //In the end only myOrcidAlertsNg2 should remain
-import { MyOrcidAlertsComponent } from './myOrcidAlerts.component';
+import { MyOrcidAlertsComponent } from './myOrcidAlerts.component.ts';
 
 // This is the Angular 1 part of the module
 export const MyOrcidAlertsModule = angular.module(

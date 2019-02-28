@@ -9,34 +9,34 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { AccountSettingsComponent } 
-    from './accountSettings.component';
+    from './accountSettings.component.ts';
 
 import { AltSigninAccountsComponent } 
-    from './altSigninAccounts.component';
+    from './altSigninAccounts.component.ts';
 
 import { AltSigninAccountsRevokeComponent } 
-    from './altSigninAccountsRevoke.component';
+    from './altSigninAccountsRevoke.component.ts';
 
 import { DelegatesComponent } 
-    from './delegates.component';
+    from './delegates.component.ts';
 
 import { DelegatesAddComponent } 
-    from './delegatesAdd.component';
+    from './delegatesAdd.component.ts';
 
 import { DelegatesRevokeComponent } 
-    from './delegatesRevoke.component';
+    from './delegatesRevoke.component.ts';
 
 import { TrustedOrganizationsComponent } 
-    from './trustedOrganizations.component';
+    from './trustedOrganizations.component.ts';
 
 import { TrustedOrganizationsRevokeComponent } 
-    from './trustedOrganizationsRevoke.component';
+    from './trustedOrganizationsRevoke.component.ts';
 
 import { CommonNg2Module }
-    from './../common/common';
+    from './../common/common.ts';
 
 import { EmailsFormNg2Module }
-    from './../emailsForm/emailsForm';
+    from './../emailsForm/emailsForm.ts';
 
 // This is the Angular 1 part of the module
 export const AccountSettingsModule = angular.module(

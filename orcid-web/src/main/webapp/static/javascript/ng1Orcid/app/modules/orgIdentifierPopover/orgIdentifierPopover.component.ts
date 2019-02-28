@@ -15,10 +15,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { OrgDisambiguated } 
-    from '../orgIdentifierPopover/orgDisambiguated';
+    from '../orgIdentifierPopover/orgDisambiguated.ts';
 
 @Component({
     selector: 'org-identifier-popover-ng2',

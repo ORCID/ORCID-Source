@@ -8,16 +8,16 @@ import { Observable, Subject, Subscription }
     from 'rxjs';
 
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { MembersListService }
-    from '../../shared/membersList.service';
+    from '../../shared/membersList.service.ts';
 
 import { FeaturesService }
-    from '../../shared/features.service';
+    from '../../shared/features.service.ts';
 
 import { MembersListComponent }
-    from './membersList.component';
+    from './membersList.component.ts';
 
 @Component({
     selector: 'consortia-list-ng2',

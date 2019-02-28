@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { CommonNg2Module }
-    from './../common/common';
+    from './../common/common.ts';
 
 import { TwoFaSetupComponent } 
-    from './twoFASetup.component';
+    from './twoFASetup.component.ts';
 
 // This is the Angular 1 part of the module
 export const TwoFaSetupModule = angular.module(

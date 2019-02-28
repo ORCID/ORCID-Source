@@ -11,16 +11,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service'; 
+    from '../../shared/common.service.ts'; 
 
 import { GenericService } 
-    from '../../shared/generic.service';
+    from '../../shared/generic.service.ts';
 
 import { EmailService } 
-    from '../../shared/email.service';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'person-ng2',

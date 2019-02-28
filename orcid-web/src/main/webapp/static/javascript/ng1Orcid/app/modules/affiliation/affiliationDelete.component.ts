@@ -18,22 +18,22 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AffiliationService } 
-    from '../../shared/affiliation.service';
+    from '../../shared/affiliation.service.ts';
 
 import { EmailService } 
-    from '../../shared/email.service';
+    from '../../shared/email.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service'; 
+    from '../../shared/workspace.service.ts'; 
 
 import { FeaturesService }
-    from '../../shared/features.service' 
+    from '../../shared/features.service.ts' 
     
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 @Component({
     selector: 'affiliation-delete-ng2',

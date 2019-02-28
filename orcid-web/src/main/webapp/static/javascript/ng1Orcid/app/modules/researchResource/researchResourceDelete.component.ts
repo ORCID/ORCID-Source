@@ -13,10 +13,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { ResearchResourceService } 
-    from '../../shared/researchResource.service';
+    from '../../shared/researchResource.service.ts';
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 @Component({
     selector: 'research-resource-delete-ng2',

@@ -12,7 +12,7 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { BlogService } 
-    from '../../shared/blog.service';
+    from '../../shared/blog.service.ts';
 
 import * as xml2js from 'xml2js';
 

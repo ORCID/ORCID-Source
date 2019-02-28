@@ -12,10 +12,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService }
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { UnsubscribeService } 
-    from '../../shared/unsubscribe.service'; 
+    from '../../shared/unsubscribe.service.ts'; 
 
 @Component({
     selector: 'unsubscribe-ng2',

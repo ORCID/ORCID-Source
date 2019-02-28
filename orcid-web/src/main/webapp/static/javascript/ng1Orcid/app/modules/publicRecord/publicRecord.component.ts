@@ -3,8 +3,8 @@ declare var orcidVar: any;
 import { Observable, Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { Component } from "@angular/core";
-import { CommonService } from "../../shared/common.service";
-import { PersonService } from "../../shared/person.service";
+import { CommonService } from "../../shared/common.service.ts";
+import { PersonService } from "../../shared/person.service.ts";
 
 @Component({
   selector: "public-record-ng2",

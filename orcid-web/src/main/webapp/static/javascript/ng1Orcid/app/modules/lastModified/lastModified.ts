@@ -1,8 +1,8 @@
 import * as angular from "angular";
 import { NgModule } from "@angular/core";
 import { downgradeComponent, UpgradeModule } from "@angular/upgrade/static";
-import { CommonNg2Module } from "../common/common";
-import { lastModifiedComponent } from './lastModified.components'
+import { CommonNg2Module } from "../common/common.ts";
+import { lastModifiedComponent } from './lastModified.components.ts'
 
 // This is the Angular 1 part of the module
 export const lastModifiedModule = angular.module("lastModifiedModule", []);

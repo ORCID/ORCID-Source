@@ -22,25 +22,25 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonNg2Module }
-    from './../common/common';
+    from './../common/common.ts';
 
 import { CommonService } 
-    from '../../shared/common.service';
+    from '../../shared/common.service.ts';
 
 import { FeaturesService }
-    from '../../shared/features.service'
+    from '../../shared/features.service.ts'
 
 import { ModalService } 
-    from '../../shared/modal.service'; 
+    from '../../shared/modal.service.ts'; 
 
 import { OauthService } 
-    from '../../shared/oauth.service';
+    from '../../shared/oauth.service.ts';
 
 import { SearchService } 
-    from '../../shared/search.service';
+    from '../../shared/search.service.ts';
     
 import { GenericService }
-    from '../../shared/generic.service';
+    from '../../shared/generic.service.ts';
 
 @Component({
     selector: 'oauth-authorization-ng2',

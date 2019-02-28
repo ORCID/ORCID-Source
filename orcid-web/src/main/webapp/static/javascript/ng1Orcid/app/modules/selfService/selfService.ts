@@ -14,10 +14,10 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 import { CommonNg2Module }
-    from './../common/common';
+    from './../common/common.ts';
 
 //In the end only selfServiceNg2 should remain
-import { SelfServiceComponent } from './selfService.component';
+import { SelfServiceComponent } from './selfService.component.ts';
 
 // This is the Angular 1 part of the module
 export const SelfServiceModule = angular.module(

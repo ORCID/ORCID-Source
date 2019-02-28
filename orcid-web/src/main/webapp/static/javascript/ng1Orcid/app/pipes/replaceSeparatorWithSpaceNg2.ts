@@ -2,7 +2,7 @@ import { Injectable, Pipe, PipeTransform }
     from '@angular/core';
 
 import { CommonService }
-    from './../shared/common.service';
+    from './../shared/common.service.ts';
 
 @Pipe({
     name: "replaceSeparatorWithSpace"

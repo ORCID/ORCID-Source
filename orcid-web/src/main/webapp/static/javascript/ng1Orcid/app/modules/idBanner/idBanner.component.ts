@@ -7,8 +7,8 @@ import {
   Input
 } from "@angular/core";
 import { Subject } from "rxjs";
-import { PersonService } from "../../shared/person.service";
-import { CommonService } from "../../shared/common.service";
+import { PersonService } from "../../shared/person.service.ts";
+import { CommonService } from "../../shared/common.service.ts";
 
 @Component({
   selector: "id-banner-ng2",
