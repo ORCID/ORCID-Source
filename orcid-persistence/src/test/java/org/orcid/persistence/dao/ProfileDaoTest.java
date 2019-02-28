@@ -551,7 +551,7 @@ public class ProfileDaoTest extends DBUnitTest {
         emailDao.persist(verified_1);
         emailDao.persist(verified_2);
         
-        List<Pair<String, Date>> results = profileDao.findEmailsUnverfiedDays(7, 100, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+        List<Pair<String, Date>> results = profileDao.findEmailsUnverfiedDays(7, 100);
         assertNotNull(results);
         assertEquals(2, results.size());
         
@@ -574,14 +574,14 @@ public class ProfileDaoTest extends DBUnitTest {
         // Put an email event on 'unverified_2@test.orcid.org' and verify there is only one result
         emailEventDao.persist(new EmailEventEntity("unverified_2@test.orcid.org", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
         
-        results = profileDao.findEmailsUnverfiedDays(7, 100, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+        results = profileDao.findEmailsUnverfiedDays(7, 100);
         assertNotNull(results);
         assertEquals(1, results.size());
         assertEquals("unverified_3@test.orcid.org", results.get(0).getLeft());
         
         // Put an email event on 'unverified_3@test.orcid.org' and verify there is no result anymore
         emailEventDao.persist(new EmailEventEntity("unverified_3@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
-        results = profileDao.findEmailsUnverfiedDays(7, 100, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+        results = profileDao.findEmailsUnverfiedDays(7, 100);
         assertNotNull(results);
         assertTrue(results.isEmpty());        
     }
