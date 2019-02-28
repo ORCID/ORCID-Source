@@ -252,14 +252,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @RequestMapping(value = { "/my-orcid3", "/my-orcid", "/workspace" }, method = RequestMethod.GET)
     public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults,
-            @CookieValue(value = "justRegistered", defaultValue = "false") boolean justRegistered) {
+            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
         ModelAndView mav = new ModelAndView("workspace_v3");
         mav.addObject("showPrivacy", true);
-        mav.addObject("justRegistered", justRegistered);
-        Cookie justRegisteredCookie = new Cookie("justRegistered", null);
-        justRegisteredCookie.setMaxAge(0);
-        response.addCookie(justRegisteredCookie);
         return mav;
     }
 

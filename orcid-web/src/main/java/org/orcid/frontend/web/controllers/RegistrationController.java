@@ -289,10 +289,8 @@ public class RegistrationController extends BaseController {
         } else if ("shibboleth".equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
-        Cookie justRegisteredCookie = new Cookie("justRegistered", "true");
-        justRegisteredCookie.setMaxAge(30000);
-        response.addCookie(justRegisteredCookie);
         String redirectUrl = calculateRedirectUrl(request, response);
+        redirectUrl += "?justRegistered";
         r.setUrl(redirectUrl);
         return r;
     }
