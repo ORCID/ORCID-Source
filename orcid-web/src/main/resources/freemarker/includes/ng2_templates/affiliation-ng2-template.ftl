@@ -9,8 +9,7 @@
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
                             <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span>{{employments.length}}</span>)
                         </a>
-                        <#if !(isPublicProfile??)> 
-                        <div class="popover-help-container">
+                        <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="employment-help" class="popover bottom">
                                 <div class="arrow"></div>
@@ -19,8 +18,7 @@
                                     <a href="<@orcid.msg 'common.kb_uri_default'/>360006897694" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
-                        </div>
-                        </#if>                     
+                        </div>                   
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayEmployment">
                         <#escape x as x?html>                        
@@ -56,8 +54,7 @@
                             </ul>                                   
                         </div>
                         </#escape>
-                        <#if !(isPublicProfile??)>
-                        <ul class="workspace-bar-menu">                            
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
                             <li class="hidden-xs">                  
                                 <div class="menu-container" id="add-employment-container">
                                     <ul class="toggle-menu">
@@ -82,23 +79,16 @@
                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />  
                                 </a>                
                             </li>
-                        </ul>
-                        </#if>                                   
+                        </ul>                                  
                     </div>
                 </div>
             </div>                        
             <div *ngIf="workspaceSrvc.displayEmployment" class="workspace-accordion-content">
                 <div id="employments-empty" *ngIf="!employments?.length">
-                    <strong>
-                        <#if (publicProfile)?? && publicProfile == true>
-                            <strong><@orcid.msg 'workspace_affiliations_body_list.Noemploymentddedyet' /></strong>
-                        <#else>
-                            <strong>                                
-                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                            <a (click)="addAffiliationModal('employment')"><@orcid.msg 'workspace_affiliations_body_list.addemploymentnow' /></a>
-                            <@orcid.msg 'common.now' />                                
-                            </strong>
-                        </#if>
+                    <strong>                               
+                        <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
+                        <a (click)="addAffiliationModal('employment')"><@orcid.msg 'workspace_affiliations_body_list.addemploymentnow' /></a>
+                        <@orcid.msg 'common.now' />
                     </strong>
                 </div>
                 <ul id="employments-list" *ngIf="employments?.length > 0" class="workspace-affiliations bottom-margin-medium" id="body-employment-list">
@@ -118,19 +108,17 @@
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{ 'glyphicon-chevron-right': displayEducationAndQualification()==false }"></i>                               
                             <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education_qualification'/> (<span>{{educationsAndQualifications.length}}</span>)
                         </a>    
-                        <#if !(isPublicProfile??)> 
-                            <div class="popover-help-container">
-                                <i class="glyphicon glyphicon-question-sign"></i>
-                                <div id="education-qualification-help" class="popover bottom">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_2'/><br>
-                                        <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_4'/><br>
-                                        <a href="<@orcid.msg 'common.kb_uri_default'/>360006973933" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
-                                    </div>
+                        <div *ngIf="!isPublicPage" class="popover-help-container">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                            <div id="education-qualification-help" class="popover bottom">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_2'/><br>
+                                    <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_4'/><br>
+                                    <a href="<@orcid.msg 'common.kb_uri_default'/>360006973933" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
-                            </div>  
-                        </#if>
+                            </div>
+                        </div>  
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="displayEducationAndQualification()">
                         <#escape x as x?html>
@@ -166,77 +154,69 @@
                                 </ul>                                   
                             </div>
                         </#escape>               
-                        <#if !(isPublicProfile??)>
-                            <ul class="workspace-bar-menu">      
-                                <li class="hidden-xs">                  
-                                    <div class="menu-container" id="add-education-container">
-                                        <ul class="toggle-menu">
-                                            <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                                <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
-                                                <ul class="menu-options education">
-                                                    <li>          
-                                                        <a id="add-education" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
-                                                            <span class="glyphicon glyphicon-plus"></span>
-                                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>         
-                                </li>
-                                <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
-                                    <a class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education' />  
-                                    </a>
-                                </li>
-                            </ul>
-                            <ul class="workspace-bar-menu">      
-                                <li class="hidden-xs">                  
-                                    <div class="menu-container" id="add-qualification-container">
-                                        <ul class="toggle-menu">
-                                            <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                                <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_qualification'/>    
-                                                <ul class="menu-options qualification">
-                                                    <li>          
-                                                        <a id="add-qualification" class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
-                                                            <span class="glyphicon glyphicon-plus"></span>
-                                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>         
-                                </li>
-                                <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
-                                    <a class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_qualification' />  
-                                    </a>
-                                </li>
-                            </ul>
-                        </#if>
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">      
+                            <li class="hidden-xs">                  
+                                <div class="menu-container" id="add-education-container">
+                                    <ul class="toggle-menu">
+                                        <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education'/>    
+                                            <ul class="menu-options education">
+                                                <li>          
+                                                    <a id="add-education" class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                        <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>         
+                            </li>
+                            <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
+                                <a class="action-option manage-button two-options" (click)="addAffiliationModal('education')">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_education' />  
+                                </a>
+                            </li>
+                        </ul>
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">      
+                            <li class="hidden-xs">                  
+                                <div class="menu-container" id="add-qualification-container">
+                                    <ul class="toggle-menu">
+                                        <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_qualification'/>    
+                                            <ul class="menu-options qualification">
+                                                <li>          
+                                                    <a id="add-qualification" class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
+                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                        <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>         
+                            </li>
+                            <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">          
+                                <a class="action-option manage-button two-options" (click)="addAffiliationModal('qualification')">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_qualification' />  
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>            
             <div *ngIf="workspaceSrvc.displayEducation || workspaceSrvc.displayEducationAndQualification" class="workspace-accordion-content"> 
                 <div id="educations-distinctions-empty" *ngIf="!educationsAndQualifications?.length && workspaceSrvc?.displayEducationAndQualification">
-                    <strong>
-                        <#if (publicProfile)?? && publicProfile == true>
-                            <strong><@orcid.msg 'workspace_affiliations_body_list.Noeducationnorqualificationaddedyet' /></strong>
-                        <#else>
-                            <strong>                                
-                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                            <a (click)="addAffiliationModal('education')"><@orcid.msg 'workspace_affiliations_body_list.addeducationnow' /></a>
-                            <@orcid.msg 'common.or' />
-                            <a (click)="addAffiliationModal('qualification')"><@orcid.msg 'workspace_affiliations_body_list.addqualificationnow' /></a>
-                            <@orcid.msg 'common.now' />                                
-                            </strong>
-                        </#if>
+                    <strong>                              
+                        <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
+                        <a (click)="addAffiliationModal('education')"><@orcid.msg 'workspace_affiliations_body_list.addeducationnow' /></a>
+                        <@orcid.msg 'common.or' />
+                        <a (click)="addAffiliationModal('qualification')"><@orcid.msg 'workspace_affiliations_body_list.addqualificationnow' /></a>
+                        <@orcid.msg 'common.now' />
                     </strong>
                 </div>
                 <ul id="educations-distinctions-list" *ngIf="educationsAndQualifications?.length" class="workspace-affiliations bottom-margin-medium" id="body-education-list">
@@ -256,8 +236,7 @@
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayDistinctionAndInvitedPosition==false}"></i>
                             <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.distinction_invited_position'/> (<span>{{distinctionsAndInvitedPositions.length}}</span>)
                         </a>
-                        <#if !(isPublicProfile??)> 
-                        <div class="popover-help-container">
+                        <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="distinction-invited-position-help" class="popover bottom">
                                 <div class="arrow"></div>
@@ -267,8 +246,7 @@
                                     <a href="<@orcid.msg 'common.kb_uri_default'/>360008897654" target="manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
-                        </div>
-                        </#if>                     
+                        </div>                   
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayDistinctionAndInvitedPosition">
                         <#escape x as x?html>                            
@@ -304,77 +282,69 @@
                             </ul>                                   
                         </div>
                         </#escape>                                           
-                        <#if !(isPublicProfile??)>
-                            <ul class="workspace-bar-menu">                                
-                                <li class="hidden-xs">                  
-                                    <div class="menu-container" id="add-distinction-container">
-                                        <ul class="toggle-menu">
-                                            <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                                <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_distinction' />
-                                                <ul class="menu-options distinction">                                                    
-                                                    <li>                            
-                                                        <a id="add-distinction" class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
-                                                            <span class="glyphicon glyphicon-plus"></span>
-                                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                                                        </a>            
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>                                    
-                                <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                    <a class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_distinction' />  
-                                    </a>                
-                                </li>
-                            </ul>
-                            <ul class="workspace-bar-menu">                                
-                                <li class="hidden-xs">                  
-                                    <div class="menu-container" id="add-invited-position-container">
-                                        <ul class="toggle-menu">
-                                            <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                                <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_invited_position' />
-                                                <ul class="menu-options invited-position">                                                    
-                                                    <li>                            
-                                                        <a id="add-distinction" class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
-                                                            <span class="glyphicon glyphicon-plus"></span>
-                                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                                                        </a>            
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>         
-                                </li>                                   
-                                <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                    <a class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_invited_position' />  
-                                    </a>                
-                                </li>
-                            </ul>
-                        </#if>                                        
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
+                            <li class="hidden-xs">                  
+                                <div class="menu-container" id="add-distinction-container">
+                                    <ul class="toggle-menu">
+                                        <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_distinction' />
+                                            <ul class="menu-options distinction">                                                    
+                                                <li>                            
+                                                    <a id="add-distinction" class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
+                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                        <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                    </a>            
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>                                    
+                            <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
+                                <a class="action-option manage-button two-options" (click)="addAffiliationModal('distinction')">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_distinction' />  
+                                </a>                
+                            </li>
+                        </ul>
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
+                            <li class="hidden-xs">                  
+                                <div class="menu-container" id="add-invited-position-container">
+                                    <ul class="toggle-menu">
+                                        <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_invited_position' />
+                                            <ul class="menu-options invited-position">                                                    
+                                                <li>                            
+                                                    <a id="add-distinction" class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
+                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                        <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                    </a>            
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>         
+                            </li>                                   
+                            <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
+                                <a class="action-option manage-button two-options" (click)="addAffiliationModal('invited-position')">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_invited_position' />  
+                                </a>                
+                            </li>
+                        </ul>                                       
                     </div>
                 </div>
             </div>                        
             <div *ngIf="workspaceSrvc.displayDistinctionAndInvitedPosition" class="workspace-accordion-content">
                 <div id="distinction-invited-position-empty" *ngIf="!distinctionsAndInvitedPositions?.length">
-                    <strong>
-                        <#if (publicProfile)?? && publicProfile == true>
-                            <strong><@orcid.msg 'workspace_affiliations_body_list.Nodistinctionorinvitedpositionaddedyet' /></strong>
-                        <#else>
-                            <strong>                                
-                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                            <a (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
-                            <@orcid.msg 'common.or' />
-                            <a (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
-                            <@orcid.msg 'common.now' /> 
-                            </strong>
-                        </#if>
+                    <strong>                              
+                        <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
+                        <a (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
+                        <@orcid.msg 'common.or' />
+                        <a (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
+                        <@orcid.msg 'common.now' /> 
                     </strong>
                 </div>
                 <ul id="distinction-invited-position-list" *ngIf="distinctionsAndInvitedPositions?.length > 0" class="workspace-affiliations bottom-margin-medium" id="body-distinction-list">
@@ -394,8 +364,7 @@
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayMembershipAndService==false}"></i>
                             <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.membership_service'/> (<span>{{membershipsAndServices.length}}</span>)
                         </a>
-                        <#if !(isPublicProfile??)> 
-                        <div class="popover-help-container">
+                        <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="membership-service-help" class="popover bottom">
                                 <div class="arrow"></div>
@@ -405,8 +374,7 @@
                                     <a href="<@orcid.msg 'common.kb_uri_default'/>360008897694" target="manage_affiliations_settings.helpPopoverMembershipAndService"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
-                        </div>
-                        </#if>                     
+                        </div>                    
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayMembershipAndService">
                         <#escape x as x?html>                            
@@ -442,77 +410,69 @@
                             </ul>                                   
                         </div>
                         </#escape>                                           
-                        <#if !(isPublicProfile??)>
-                            <ul class="workspace-bar-menu">                                
-                                <li class="hidden-xs">                  
-                                    <div class="menu-container" id="add-membership-container">
-                                        <ul class="toggle-menu">
-                                            <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                                <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_membership' />
-                                                <ul class="menu-options distinction">                                                    
-                                                    <li>                            
-                                                        <a id="add-membership" class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
-                                                            <span class="glyphicon glyphicon-plus"></span>
-                                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                                                        </a>            
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>                                    
-                                <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                    <a class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_membership' />  
-                                    </a>                
-                                </li>
-                            </ul>
-                            <ul class="workspace-bar-menu">                                
-                                <li class="hidden-xs">                  
-                                    <div class="menu-container" id="add-service-container">
-                                        <ul class="toggle-menu">
-                                            <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                                <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_service' />
-                                                <ul class="menu-options invited-position">                                                    
-                                                    <li>                            
-                                                        <a id="add-service" class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
-                                                            <span class="glyphicon glyphicon-plus"></span>
-                                                            <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
-                                                        </a>            
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>         
-                                </li>                                   
-                                <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                    <a class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_service' />  
-                                    </a>                
-                                </li>
-                            </ul>
-                        </#if>                                        
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
+                            <li class="hidden-xs">                  
+                                <div class="menu-container" id="add-membership-container">
+                                    <ul class="toggle-menu">
+                                        <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_membership' />
+                                            <ul class="menu-options distinction">                                                    
+                                                <li>                            
+                                                    <a id="add-membership" class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
+                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                        <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                    </a>            
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>                                    
+                            <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
+                                <a class="action-option manage-button two-options" (click)="addAffiliationModal('membership')">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_membership' />  
+                                </a>                
+                            </li>
+                        </ul>
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
+                            <li class="hidden-xs">                  
+                                <div class="menu-container" id="add-service-container">
+                                    <ul class="toggle-menu">
+                                        <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}">       
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_service' />
+                                            <ul class="menu-options invited-position">                                                    
+                                                <li>                            
+                                                    <a id="add-service" class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
+                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                        <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
+                                                    </a>            
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>         
+                            </li>                                   
+                            <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
+                                <a class="action-option manage-button two-options" (click)="addAffiliationModal('service')">
+                                    <span class="glyphicon glyphicon-plus"></span>
+                                    <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_service' />  
+                                </a>                
+                            </li>
+                        </ul>                                      
                     </div>
                 </div>
             </div>                        
             <div *ngIf="workspaceSrvc.displayMembershipAndService" class="workspace-accordion-content">
                 <div id="membership-service-empty" *ngIf="!membershipsAndServices?.length">
-                    <strong>
-                        <#if (publicProfile)?? && publicProfile == true>
-                            <strong><@orcid.msg 'workspace_affiliations_body_list.Nomembershiporserviceaddedyet' /></strong>
-                        <#else>
-                            <strong>                                
-                            <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
-                            <a (click)="addAffiliationModal('membership')"><@orcid.msg 'workspace_affiliations_body_list.addmembershipnow' /></a>
-                            <@orcid.msg 'common.or' />
-                            <a (click)="addAffiliationModal('service')"><@orcid.msg 'workspace_affiliations_body_list.addservicenow' /></a>
-                            <@orcid.msg 'common.now' />                                
-                            </strong>
-                        </#if>
+                    <strong>                              
+                        <@orcid.msg 'workspace_affiliations_body_list.havenotaddedany' />
+                        <a (click)="addAffiliationModal('membership')"><@orcid.msg 'workspace_affiliations_body_list.addmembershipnow' /></a>
+                        <@orcid.msg 'common.or' />
+                        <a (click)="addAffiliationModal('service')"><@orcid.msg 'workspace_affiliations_body_list.addservicenow' /></a>
+                        <@orcid.msg 'common.now' />
                     </strong>
                 </div>
                 <ul id="membership-service-list" *ngIf="membershipsAndServices?.length > 0" class="workspace-affiliations bottom-margin-medium" id="body-membership-list">

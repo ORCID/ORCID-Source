@@ -29,8 +29,7 @@
                                         </div>
                                     </div>
                                 </li>
-                                <#if !(isPublicProfile??)>
-                                <li>
+                                <li *ngIf="!isPublicPage">
                                     <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
                                     elementId="group.activePutCode" 
                                         questionClick="toggleClickPrivacyHelp(group.activePutCode)"
@@ -39,7 +38,6 @@
                                         limitedClick="setGroupPrivacy(group, 'LIMITED', $event)"
                                         privateClick="setGroupPrivacy(group, 'PRIVATE', $event)"/>
                                 </li>
-                                </#if>
                             </ul>
                         </div>
                     </div>
@@ -95,16 +93,13 @@
                                 </div>
                             </li>
                             <!--Visibility selector-->
-                            <#if !(isPublicProfile??)>
-                            <li>
+                            <li *ngIf="!isPublicPage">
                                 <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
                                 elementId="group.activePutCode" questionClick="toggleClickPrivacyHelp(group.activePutCode)" clickedClassCheck="{'popover-help-container-show':privacyHelp[affiliation.putCode.value]==true}" publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
                             </li>
-                            </#if>
                         </ul>
                         <!--Inconsistent visibility warning-->  
-                        <#if !(isPublicProfile??)>
-                        <div *ngIf="!affiliationService.consistentVis(group) && !editSources[group.activePutCode]" class="vis-issue">
+                        <div *ngIf="!isPublicPage && !affiliationService.consistentVis(group) && !editSources[group.activePutCode]" class="vis-issue">
                             <div class="popover-help-container">
                                 <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
                                 <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue']">
@@ -115,7 +110,6 @@
                                 </div>
                             </div>                                    
                         </div>
-                        </#if>
                     </div>
                 </div><!--row-->
                 <!--Identifiers-->
@@ -189,19 +183,16 @@
                     <!--Preferred source-->
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.activePutCode]">
                         <div *ngIf="editSources[group.activePutCode]">
-                            <span class="row source-line" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>                            
-                            <#if !(isPublicProfile??)>
-                            <a (click)="makeDefault(group, affiliation, affiliation.putCode.value)" *ngIf="affiliation.putCode.value != group.defaultAffiliation.putCode.value">
+                            <span class="glyphicon glyphicon-star" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                            <a (click)="makeDefault(group, affiliation, affiliation.putCode.value)" *ngIf="affiliation.putCode.value != group.defaultAffiliation.putCode.value && !isPublicPage">
                                 <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                             </a>
-                            </#if>
                         </div>
                     </div>
                     <!--Edit/delete sources-->
                     <div class="col-md-2 col-sm-2 trash-source" *ngIf="editSources[group.activePutCode]">
                         <div>
-                            <#if !(isPublicProfile??)>
-                            <ul class="sources-actions">
+                            <ul *ngIf="!isPublicPage" class="sources-actions">
                                 <li> 
                                     <@orcid.editWorkIconNg2
                                         activity="affiliation"
@@ -228,7 +219,6 @@
                                     </div>
                                 </li>
                             </ul>
-                            </#if>
                         </div>
                     </div>
                     <!--Edit sources-->
@@ -245,17 +235,14 @@
                         </a>
                     </div>                                       
                     <div class="col-md-3 col-sm-3 col-xs-10">
-                        <#if !(isPublicProfile??)>
                         <span class="glyphicon glyphicon-star" *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"></span><span *ngIf="affiliation.putCode.value == group.defaultAffiliation.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>                        
-                        <a (click)="makeDefault(group, affiliation, affiliation.putCode.value); " *ngIf="affiliation.putCode.value != group.defaultAffiliation.putCode.value">
+                        <a (click)="makeDefault(group, affiliation, affiliation.putCode.value); " *ngIf="affiliation.putCode.value != group.defaultAffiliation.putCode.value && !isPublicPage">
                             <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                         </a>
-                        </#if>
                     </div>
                     <!--Action buttons-->
                     <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
-                        <#if !(isPublicProfile??)>
-                        <ul class="sources-actions">
+                        <ul *ngIf="!isPublicPage" class="sources-actions">
                             <li> 
                                 <@orcid.editWorkIconNg2
                                     activity="affiliation"
@@ -277,7 +264,6 @@
                                 </div>
                             </li>
                         </ul>
-                        </#if>
                     </div>
                 </div>
                 <div class="row source-line" *ngIf="!editSources[group.activePutCode]">                        
@@ -302,8 +288,7 @@
                     </div>
 
                     <div class="col-md-2 col-sm-2 col-xs-3" *ngIf="group.activePutCode == affiliation.putCode.value">
-                        <ul class="sources-options" >
-                            <#if !(isPublicProfile??)>
+                        <ul *ngIf="!isPublicPage" class="sources-options" >
                             <li>
                                 <@orcid.editWorkIconNg2
                                     activity="affiliation"
@@ -336,7 +321,6 @@
                                     </div>
                                 </div>
                             </li>
-                            </#if>
                         </ul>
                     </div>
                 </div> 

@@ -16,11 +16,9 @@
                         <div class="workspace-toolbar">
                             <ul class="workspace-private-toolbar">
                                 <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
-                                    <#if !(isPublicProfile??)>
-                                        <li *ngIf="bulkEditShow">
-                                            <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[group.activePutCode]" class="bulk-edit-input-header">
-                                        </li>
-                                    </#if>           
+                                    <li *ngIf="bulkEditShow && !isPublicPage">
+                                        <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[group.activePutCode]" class="bulk-edit-input-header">
+                                    </li>         
                                 </@orcid.checkFeatureStatus>     
                                 <li class="works-details">
                                     <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
@@ -35,8 +33,7 @@
                                         </div>
                                     </div>
                                 </li>
-                                <#if !(isPublicProfile??)>
-                                <li>
+                                <li *ngIf="!isPublicPage">
                                     <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
                                     elementId="group.activePutCode" 
                                         questionClick="toggleClickPrivacyHelp(group.activePutCode)"
@@ -45,7 +42,6 @@
                                         limitedClick="worksService.setGroupPrivacy(group.activePutCode, 'LIMITED', $event)"
                                         privateClick="worksService.setGroupPrivacy(group.activePutCode, 'PRIVATE', $event)"/>
                                 </li>
-                                </#if>
                             </ul>
                         </div>
                     </div>
@@ -59,9 +55,7 @@
                 <div class="row" *ngIf="group.activePutCode == work.putCode?.value">
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
-                            <#if !(isPublicProfile??)>
-                                <div class="left rightBuffer"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" (change)="bulkEditSelect()" class="bulk-edit-input ng-pristine ng-valid"></div> 
-                            </#if>
+                            <div *ngIf="!isPublicPage" class="left rightBuffer"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" (change)="bulkEditSelect()" class="bulk-edit-input ng-pristine ng-valid"></div> 
                         </@orcid.checkFeatureStatus>
                         <h3 class="workspace-title leftBuffer">
                             <span>{{work.title.value}}</span>
@@ -77,12 +71,10 @@
                         <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
 
                             <!--Bulk edit checkbox-->             
-                            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>                  
-                                <#if !(isPublicProfile??)>
-                                    <li *ngIf="bulkEditShow" class="bulk-checkbox-item">
-                                        <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
-                                    </li>
-                                </#if> 
+                            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
+                                <li *ngIf="bulkEditShow && !isPublicPage" class="bulk-checkbox-item">
+                                    <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
+                                </li>
                             </@orcid.checkFeatureStatus>
                             <!--Show details toggle-->
                             <li class="works-details" *ngIf="!editSources[group.groupId]">
@@ -99,16 +91,13 @@
                                 </div>
                             </li>
                             <!--Visibility selector-->
-                            <#if !(isPublicProfile??)>
-                            <li>
+                            <li *ngIf="!isPublicPage">
                                 <@orcid.privacyToggle2Ng2 angularModel="work.visibility.visibility"
                                 elementId="group.activePutCode" questionClick="toggleClickPrivacyHelp(group.highestVis())" clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}" publicClick="setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(work.putCode.value, 'LIMITED', $event)" privateClick="setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)" />
                             </li>
-                            </#if>
                         </ul>
                         <!--Inconsistent visibility warning-->  
-                        <#if !(isPublicProfile??)>
-                        <div *ngIf="!worksService.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
+                        <div *ngIf="!isPublicPage && !worksService.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
                             <div class="popover-help-container">
                                 <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
                                 <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue']">
@@ -119,7 +108,6 @@
                                 </div>
                             </div>                                    
                         </div>
-                        </#if>
                     </div>
                 </div>
                 <!--Identifiers-->
@@ -301,18 +289,14 @@
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
                         <div *ngIf="editSources[group.groupId]">
                             <span class="glyphicon glyphicon-star" *ngIf="work.putCode.value == group.defaultPutCode"></span><span *ngIf="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                            
-                            <#if !(isPublicProfile??)>
-                            <a (click)="makeDefault(group, work.putCode.value)" *ngIf="work.putCode.value != group.defaultPutCode">
+                            <a (click)="makeDefault(group, work.putCode.value)" *ngIf="work.putCode.value != group.defaultPutCode && !isPublicPage">
                                 <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                             </a>
-                            </#if>
                         </div>
                     </div>
                     <div class="col-md-2 col-sm-2 trash-source" *ngIf="editSources[group.groupId]">
                         <div *ngIf="editSources[group.groupId]">
-                            <#if !(isPublicProfile??)>
-                            <ul class="sources-actions">
+                            <ul *ngIf="!isPublicPage" class="sources-actions">
                                 <li> 
                                     <@orcid.editWorkIconNg2
                                         activity="work"
@@ -339,7 +323,6 @@
                                     </div>
                                 </li>
                             </ul>
-                            </#if>
                         </div>
                     </div>
                     <!--Edit sources-->
@@ -356,17 +339,14 @@
                         </a>
                     </div>                                        
                     <div class="col-md-3 col-sm-3 col-xs-10">
-                        <#if !(isPublicProfile??)>
                         <span class="glyphicon glyphicon-star" *ngIf="work.putCode.value == group.defaultPutCode"></span><span *ngIf="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                        <a (click)="makeDefault(group, work.putCode.value); " *ngIf="work.putCode.value != group.defaultPutCode">
+                        <a (click)="makeDefault(group, work.putCode.value); " *ngIf="work.putCode.value != group.defaultPutCode && !isPublicPage">
                             <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                         </a>
-                        </#if>
                     </div>
                     <!--Action buttons-->
                     <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
-                        <#if !(isPublicProfile??)>
-                        <ul class="sources-actions">
+                        <ul *ngIf="!isPublicPage" class="sources-actions">
                             <li> 
                                 <@orcid.editWorkIconNg2
                                     activity="work"
@@ -388,7 +368,6 @@
                                 </div>
                             </li>
                         </ul>
-                        </#if>
                     </div>
                 </div> 
                 <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
@@ -413,8 +392,7 @@
                     </div>
 
                     <div class="col-md-2 col-sm-2 col-xs-3" *ngIf="group.activePutCode == work.putCode.value">
-                        <ul class="sources-options" >
-                            <#if !(isPublicProfile??)>
+                        <ul *ngIf="!isPublicPage" class="sources-options" >
                             <li>
                                 <@orcid.editWorkIconNg2
                                     activity="work"
@@ -447,7 +425,6 @@
                                     </div>
                                 </div>
                             </li>
-                            </#if>
                         </ul>
                     </div>
                 </div>

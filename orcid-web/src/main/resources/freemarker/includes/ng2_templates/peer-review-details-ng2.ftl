@@ -9,8 +9,7 @@
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
-                    <ul class="workspace-private-toolbar">
-                        <#if !(isPublicProfile??)>
+                    <ul *ngIf="!isPublicPage" class="workspace-private-toolbar">
                         <!-- Privacy -->
                         <li>
                             <@orcid.privacyToggle2Ng2 angularModel="group.peerReviewDuplicateGroups[0].peerReviews[0].visibility.visibility"
@@ -21,11 +20,8 @@
                             limitedClick="setGroupPrivacy(group, 'LIMITED', $event)"
                             privateClick="setGroupPrivacy(group, 'PRIVATE', $event)"/>
                         </li>
-                        </#if>
                     </ul>
-
-                    <#if !(isPublicProfile??)>
-                    <div *ngIf="!peerReviewService.consistentVis(group)" class="vis-issue">
+                    <div *ngIf="!isPublicPage && !peerReviewService.consistentVis(group)" class="vis-issue">
                         <div class="popover-help-container">
                             <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
                             <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue'] == true">
@@ -36,8 +32,6 @@
                             </div>
                         </div>                                    
                     </div>
-                    </#if> 
-
                 </div>
             </div>
             <!--More info-->
@@ -105,17 +99,15 @@
                                                                     <span class="glyphicons collapse_top"></span>       <span class="hidden-xs"><@orcid.msg 'common.details.hide_details_lc' /></span>
                                                                 </a> | 
                                                                 <a href="{{peerReview.url?.value}}" *ngIf="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span *ngIf="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
-                                                                 <#if !(isPublicProfile??)>
-                                                                    <div (click)="deletePeerReviewConfirm(peerReview)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
-                                                                        <div class="popover popover-tooltip top">
-                                                                            <div class="arrow"></div>
-                                                                            <div class="popover-content">
-                                                                                <span><@orcid.msg 'groups.common.delete_this_source'/></span>
-                                                                            </div>               
-                                                                        </div>
-                                                                                                                
+                                                                <div *ngIf="!isPublicPage" (click)="deletePeerReviewConfirm(peerReview)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
+                                                                    <div class="popover popover-tooltip top">
+                                                                        <div class="arrow"></div>
+                                                                        <div class="popover-content">
+                                                                            <span><@orcid.msg 'groups.common.delete_this_source'/></span>
+                                                                        </div>               
                                                                     </div>
-                                                                 </#if>
+                                                                                                            
+                                                                </div>
                                                             </span>
                                                         </div>
                                                     </div>                                                                           
@@ -190,11 +182,9 @@
                                                                 </div>              
                                                                 <div class="col-md-3 col-sm-3 col-xs-9" *ngIf="editSources[peerReviewDuplicateGroup.id]">
                                                                     <span class="glyphicon glyphicon-star" *ngIf="peerReview.putCode.value == peerReviewDuplicateGroup.activePutCode"></span><span *ngIf="peerReview.putCode.value == peerReviewDuplicateGroup.activePutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                                                    <#if !(isPublicProfile??)>
-                                                                        <a (click)="makeDefault(peerReviewDuplicateGroup, peerReview, peerReview.putCode.value); " *ngIf="peerReview.putCode.value != peerReviewDuplicateGroup.activePutCode">
-                                                                             <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
-                                                                        </a>
-                                                                    </#if>
+                                                                    <a (click)="makeDefault(peerReviewDuplicateGroup, peerReview, peerReview.putCode.value); " *ngIf="peerReview.putCode.value != peerReviewDuplicateGroup.activePutCode && !isPublicPage">
+                                                                         <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
+                                                                    </a>
                                                                 </div>   
                                                             </div>
                                                         </div>
