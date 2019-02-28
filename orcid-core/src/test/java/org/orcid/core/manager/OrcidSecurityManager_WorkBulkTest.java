@@ -25,9 +25,19 @@ public class OrcidSecurityManager_WorkBulkTest extends OrcidSecurityManagerTestB
         orcidSecurityManager.checkAndFilter(ORCID_2, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
         fail();
     }
-
+    
     @Test
     public void testPublicWorkBulkReadPublicToken() {
+        WorkBulk workBulk = new WorkBulk();
+        workBulk.setBulk(Arrays.asList(createWork(Visibility.PRIVATE, CLIENT_2)));
+        SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_2, ScopePathType.READ_PUBLIC);
+        orcidSecurityManager.checkAndFilter(ORCID_1, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        assertNotNull(workBulk);
+        assertEquals(1, workBulk.getBulk().size());
+    }
+
+    @Test
+    public void testReadPrivateWorkWhereClientIsSource() {
         WorkBulk workBulk = new WorkBulk();
         workBulk.setBulk(Arrays.asList(createWork(Visibility.PUBLIC, CLIENT_2)));
         SecurityContextTestUtils.setUpSecurityContext(ORCID_1, CLIENT_1, ScopePathType.READ_PUBLIC);
