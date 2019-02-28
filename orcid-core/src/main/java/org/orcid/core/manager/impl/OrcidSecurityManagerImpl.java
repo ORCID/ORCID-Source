@@ -480,23 +480,19 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             Work work = (Work) element;
             
             try {
-                // Check if the element is public
                 if (Visibility.PUBLIC.equals(work.getVisibility())) {                    
                     filteredElements.add(element);                    
+                    continue;
+                }
+                
+                if (work.retrieveSourcePath().equals(clientId)) {
+                    filteredElements.add(element);
                     continue;
                 }
                 
                 if(publicElementsOnly) {
                     throw new OrcidVisibilityException();
                 } else {
-                    // Check if the client is the source of the element
-                    if (work.retrieveSourcePath().equals(clientId)) {
-                        // The client doing the request is the source of the element
-                        filteredElements.add(element);
-                        continue;
-                    }                    
-                    
-                    // Filter
                     checkVisibility(work, scopePathType);
                     filteredElements.add(element);
                 }                
