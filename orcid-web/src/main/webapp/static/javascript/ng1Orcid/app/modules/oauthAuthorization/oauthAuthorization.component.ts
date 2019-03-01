@@ -359,7 +359,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                         if(this.requestInfoForm.userEmail || this.requestInfoForm.userFamilyNames || this.requestInfoForm.userGivenNames){
                             this.showRegisterForm = true;
                         }
-                    }    
+                    } 
+
                     this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {
                             this.showUpdateIcon = true;
@@ -720,7 +721,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }
 
         //param sent if user came via oauth
-        if(urlParams.has('oauth')){
+        if(urlParams.has('oauth') || window.location.pathname.indexOf("/oauth")){
             this.oauthRequest = true;
         }
 
