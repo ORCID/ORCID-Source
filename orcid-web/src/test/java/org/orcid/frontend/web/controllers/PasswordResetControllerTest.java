@@ -161,6 +161,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
     public void testPasswordResetUserNotFound() {
         when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(null);
         EmailRequest resetRequest = new EmailRequest();
+        resetRequest.setEmail("email1@test.orcid.org");
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
         assertFalse(resetRequest.getErrors().isEmpty());
@@ -193,7 +194,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
         when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(deactivatedProfile);
         EmailRequest resetRequest = new EmailRequest();
-        
+        resetRequest.setEmail("email1@test.orcid.org");
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
         assertFalse(resetRequest.getErrors().isEmpty());
