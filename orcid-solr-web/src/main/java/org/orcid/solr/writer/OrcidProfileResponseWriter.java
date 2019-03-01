@@ -24,7 +24,7 @@ public class OrcidProfileResponseWriter implements QueryResponseWriter {
     @Override
     public void write(Writer writer, SolrQueryRequest request, SolrQueryResponse response) throws IOException {
         ResultContext resultContext = (ResultContext) response.getValues().get("response");
-        DocIterator iterator = resultContext.docs.iterator();
+        DocIterator iterator = resultContext.getDocList().iterator();
         if (iterator.hasNext()) {
             int docId = iterator.nextDoc();
             Document doc = request.getSearcher().doc(docId);

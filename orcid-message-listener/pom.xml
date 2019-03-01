@@ -62,19 +62,7 @@
 	  	  <version>5.13.3</version>
 	  </dependency>
 	  
-	     <!-- Solr -->
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-solrj</artifactId>
-            <version>7.7.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-core</artifactId>
-            <version>7.7.1</version>
-        </dependency>
-        
-        <dependency>
+	     <dependency>
             <groupId>com.sun.jersey</groupId>              
             <artifactId>jersey-client</artifactId>
         </dependency> 
@@ -132,6 +120,13 @@
 		    <scope>test</scope>
 		</dependency>
 
+		<!-- Solr -->
+		<dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>7.7.1</version>        	
+        </dependency>        
+
   </dependencies>
   <parent>
   	<groupId>org.orcid</groupId>
@@ -153,6 +148,14 @@
 		   		   <update>true</update>
                 </configuration>
             </plugin>
+            <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-enforcer-plugin</artifactId>
+		        <version>1.4.1</version>
+		        <configuration>
+		            <rules><dependencyConvergence/></rules>
+		        </configuration>
+		    </plugin>
         </plugins>        
     </build>
     

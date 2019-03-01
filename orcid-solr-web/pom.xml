@@ -17,37 +17,21 @@
     </parent>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.orcid</groupId>
-            <artifactId>orcid-test</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        	<dependency>
-			<groupId>com.yammer.metrics</groupId>
-			<artifactId>metrics-servlet</artifactId>
-			<version>2.1.2</version>
-		</dependency>
-		<dependency>
+    	<dependency>	
 		    <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>7.7.1</version>
+        </dependency>        
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>7.7.1</version>
         </dependency>
-        
-        <!-- Internal test only -->
-
     </dependencies>
 
     <build>
@@ -62,40 +46,7 @@
                    <path>${artifactID}</path>
                    <update>true</update>
                </configuration>
-            </plugin>
-            <!-- plugin>
-                <inherited>true</inherited>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <header>${main.basedir}/SHORT_LICENSE.txt</header>
-                    <failIfMissing>true</failIfMissing>
-                    <aggregate>false</aggregate>
-                    <strictCheck>true</strictCheck>
-                    <mapping>
-                        <xjb>XML_STYLE</xjb>
-                    </mapping>
-                    <excludes>
-                        <exclude>**/src/main/webapp/**</exclude>
-                        <exclude>**/rebel.xml</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>check-headers</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin -->
+            </plugin>            
         </plugins>
     </build>
     <profiles>
