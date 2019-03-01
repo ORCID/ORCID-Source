@@ -23,19 +23,6 @@
 	<context:component-scan base-package="org.orcid" />
 	<context:annotation-config />
 
-	<!--SOLR -->
-	<!-- Confusingly, the client is actually called a server -->
-	<bean id="solrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
-		<constructor-arg value="${org.orcid.persistence.solr.url}" />
-		<property name="soTimeout" value="${org.orcid.listener.persistence.solr.socketTimeout}" />
-		<property name="connectionTimeout" value="${org.orcid.persistence.solr.connectionTimeout}" />
-		<property name="allowCompression" value="${org.orcid.persistence.solr.allowCompression}" />
-		<property name="maxRetries" value="${org.orcid.persistence.solr.maxRetries}" />
-		<property name="defaultMaxConnectionsPerHost" value="${org.orcid.persistence.solr.maxTotalConnections}" />
-		<property name="maxTotalConnections" value="${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
-		<property name="parser" ref="responseParser" />
-	</bean>
-
 	<bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser"></bean>
 
 	<!-- JMS Messaging -->
