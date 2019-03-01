@@ -19,32 +19,44 @@ public class OAuthSigninData {
 
     private String firstName;
 
-    private String lastName;
+    private String lastName;    
 
     private String email;
+    
+    private String providerIdEncoded;
+    
+    private String accountIdEncoded;
+    
+    private String firstNameEncoded;
+    
+    private String lastNameEncoded; 
+    
+    private String emailEncoded;
 
     public String getProviderId() {
         return providerId;
     }
     
-    public String getProviderIdEncoded() throws UnsupportedEncodingException {
-        return providerId != null ? URLEncoder.encode(providerId, "UTF-8") : "";
-    }
-
     public void setProviderId(String providerId) {
         this.providerId = providerId;
+        try {
+            setProviderIdEncoded(providerId != null ? URLEncoder.encode(providerId, "UTF-8") : "");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getAccountId() {
         return accountId;
     }
 
-    public String getAccountIdEncoded() throws UnsupportedEncodingException {
-        return accountId != null ? URLEncoder.encode(accountId, "UTF-8") : "";
-    }
-
     public void setAccountId(String accountId) {
         this.accountId = accountId;
+        try {
+            setAccountIdEncoded(accountId != null ? URLEncoder.encode(accountId, "UTF-8") : "");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean isUnsupportedInstitution() {
@@ -83,36 +95,79 @@ public class OAuthSigninData {
         return firstName;
     }
     
-    public String getFirstEncoded() throws UnsupportedEncodingException {
-        return firstName != null ? URLEncoder.encode(firstName, "UTF-8") : "";
-    }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+        try {
+            setFirstNameEncoded(firstName != null ? URLEncoder.encode(firstName, "UTF-8") : "");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getLastName() {
         return lastName;
     }
     
-    public String getLastNameEncoded() throws UnsupportedEncodingException {
-        return lastName != null ? URLEncoder.encode(lastName, "UTF-8") : "";
-    }
-
     public void setLastName(String lastName) {
         this.lastName = lastName;
+        try {
+            setLastNameEncoded(lastName != null ? URLEncoder.encode(lastName, "UTF-8") : "");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getEmailEncoded() throws UnsupportedEncodingException {
-        return URLEncoder.encode(email, "UTF-8");
-    }
-    
     public void setEmail(String email) {
         this.email = email;
+        try {
+            setEmailEncoded(email != null ? URLEncoder.encode(email, "UTF-8") : "");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getProviderIdEncoded() {
+        return providerIdEncoded;
+    }
+
+    public void setProviderIdEncoded(String providerIdEncoded) {
+        this.providerIdEncoded = providerIdEncoded;
+    }
+
+    public String getAccountIdEncoded() {
+        return accountIdEncoded;
+    }
+
+    public void setAccountIdEncoded(String accountIdEncoded) {
+        this.accountIdEncoded = accountIdEncoded;
+    }
+
+    public String getFirstNameEncoded() {
+        return firstNameEncoded;
+    }
+
+    public void setFirstNameEncoded(String firstNameEncoded) {
+        this.firstNameEncoded = firstNameEncoded;
+    }
+
+    public String getLastNameEncoded() {
+        return lastNameEncoded;
+    }
+
+    public void setLastNameEncoded(String lastNameEncoded) {
+        this.lastNameEncoded = lastNameEncoded;
+    }
+
+    public String getEmailEncoded() {
+        return emailEncoded;
+    }
+
+    public void setEmailEncoded(String emailEncoded) {
+        this.emailEncoded = emailEncoded;
     }
 
 }
