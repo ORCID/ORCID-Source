@@ -6,14 +6,8 @@
                 <h2><@orcid.msg 'manage.developer_tools.group.title'/></h2>
             </div>
             
-            <div class="col-md-3 col-sm-2 col-xs-2">                
-                <#if allow_more_clients?? && allow_more_clients>
-                    <#if is_premium?? && is_premium>
-                        <a class="pull-right"><span id="label btn-primary cboxElement" (click)="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
-                    <#else>
-                        <a class="pull-right" *ngIf="!clients.length > 0"><span id="label btn-primary cboxElement" (click)="showAddClient()" class="btn btn-primary"><@orcid.msg 'manage.developer_tools.group.add'/></span></a>
-                    </#if>                      
-                </#if>
+            <div *ngIf="clients.length < maxClients" class="col-md-3 col-sm-2 col-xs-2">                
+                <button class="pull-right btn btn-primary" (click)="showAddClient()"><@orcid.msg 'manage.developer_tools.group.add'/></button>
             </div>              
         </div>
         <div class="row">
@@ -35,7 +29,7 @@
                             <tbody>
                                 <tr>
                                     <td colspan="12" class="table-header-dt">
-                                        <@orcid.msg 'manage.developer_tools.group.group.id'/> ${(member_id)!} (${(member_type)!})
+                                        <@orcid.msg 'manage.developer_tools.group.group.id'/> {{userInfo.EFFECTIVE_USER_ORCID}} ({{userInfo.MEMBER_TYPE}})
                                     </td>                       
                                 </tr>   
                                 <tr *ngFor="let client of clients">
@@ -130,7 +124,9 @@
                         </div>  
                     </div>                      
                 </div>
-            </div>      
+            </div>   
+            <div *ngIf="addClientError" class="row">
+            </div>   
             <div class="row">
                 <!-- Add redirect uris -->
                 <div class="col-md-9 col-sm-9 col-xs-9 add-options">

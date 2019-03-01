@@ -27,7 +27,12 @@ import { CommonService }
 })
 export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private userInfo: any;
     
+    MAX_CLIENT_COUNT_BASIC: number = 1;
+    MAX_CLIENT_COUNT_PREMIUM: number = 5;
+
+
     authorizeURL: any;
     authorizeUrlBase: any;
     authorizeURLTemplate: any;
@@ -43,7 +48,9 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     hideGoogleUri: any;
     hideSwaggerMemberUri: any;
     hideSwaggerUri: any;
+    isPremium: boolean;
     listing: any;
+    maxClients: number;
     newClient: any;
     playgroundExample: any;
     sampleAuthCurl: any;
@@ -81,7 +88,9 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.hideGoogleUri = true;
         this.hideSwaggerMemberUri = true;
         this.hideSwaggerUri = true;
+        this.isPremium = false;
         this.listing = true;
+        this.maxClients = this.MAX_CLIENT_COUNT_BASIC;
         this.newClient = null;
         this.playgroundExample = '';
         this.sampleAuthCurl = '';
@@ -99,6 +108,20 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.tokenURL = getBaseUri() + '/oauth/token';
         this.viewing = false;
         this.selectedRedirectUriValue = null;
+        this.userInfo = this.commonService.userInfo$
+            .subscribe(
+                data => {
+                    this.userInfo = data; 
+                    if(this.userInfo.MEMBER_TYPE=='PREMIUM' || this.userInfo.MEMBER_TYPE=='PREMIUM_INSTITUTION'){
+                        this.isPremium = true;
+                        this.maxClients = this.MAX_CLIENT_COUNT_PREMIUM;
+                    }
+                },
+                error => {
+                  console.log('developerTools.component.ts: unable to fetch userInfo', error);
+                  this.userInfo = {};
+                } 
+            );
     }
 
     addClient(): any {
@@ -254,6 +277,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.clients = data;
+                console.log("client count: " + this.clients.length);
                 this.creating = false;
                 this.editing = false;
                 this.viewing = false;
@@ -308,25 +332,27 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     showAddClient(): void {
-        this.clientService.showAddClient()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.newClient = data;
-                this.creating = true;
-                this.listing = false;
-                this.editing = false;
-                this.viewing = false;
-                this.hideGoogleUri = false;
-                this.hideSwaggerUri = false;
-                this.hideSwaggerMemberUri = false;
-            },
-            error => {
-                //console.log('getregisterDataError', error);
-            } 
-        );
+        if(this.clients.length < this.maxClients){
+            this.clientService.showAddClient()
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.newClient = data;
+                    this.creating = true;
+                    this.listing = false;
+                    this.editing = false;
+                    this.viewing = false;
+                    this.hideGoogleUri = false;
+                    this.hideSwaggerUri = false;
+                    this.hideSwaggerMemberUri = false;
+                },
+                error => {
+                    //console.log('getregisterDataError', error);
+                } 
+            );
+        }
     };
 
     showEditClient(client): void {

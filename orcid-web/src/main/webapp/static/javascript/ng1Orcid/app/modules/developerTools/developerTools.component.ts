@@ -30,6 +30,7 @@ import { EmailService }
 })
 export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit {    
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private userInfo: any;
 
     developerToolsEnabled: boolean;
     client: any;
@@ -49,7 +50,6 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     authorizeURL: String;
     sampleAuthCurl: String;
     sampleOpenId: String;
-    userInfo: any;
     
     constructor(
             private commonSrvc: CommonService,
