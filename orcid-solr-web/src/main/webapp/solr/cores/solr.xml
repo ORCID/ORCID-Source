@@ -24,19 +24,4 @@
 -->
 <solr>
 
-  <!--
-  adminPath: RequestHandler path to manage cores.  
-    If 'null' (or absent), cores will not be manageable via request handler
-  -->
-  <cores adminPath="/admin/cores" defaultCoreName="profile">
-    <core name="profile" instanceDir="profile">
-      <property name="dataDir" value="${solr.data.dir:data}/profile" />
-    </core>
-    <core name="org" instanceDir="org">
-      <property name="dataDir" value="${solr.data.dir:data}/org" />
-    </core>
-    <core name="fundingSubType" instanceDir="fundingSubType">
-      <property name="dataDir" value="${solr.data.dir:data}/fundingSubType" />
-    </core>
-  </cores>
 </solr>

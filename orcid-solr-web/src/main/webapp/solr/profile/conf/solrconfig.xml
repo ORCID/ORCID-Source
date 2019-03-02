@@ -75,55 +75,16 @@
 		with replication. -->
 	<directoryFactory name="DirectoryFactory"
 		class="${solr.directoryFactory:solr.StandardDirectoryFactory}" />
-
+xxxxxx
 
 	<!-- Index Defaults Values here affect all index writers and act as a default 
 		unless overridden. WARNING: See also the <mainIndex> section below for parameters 
 		that overfor Solr's main Lucene index. -->
 	<indexDefaults>
 
-		<useCompoundFile>false</useCompoundFile>
-
 		<mergeFactor>10</mergeFactor>
-		<!-- Sets the amount of RAM that may be used by Lucene indexing for buffering 
-			added documents and deletions before they are flushed to the Directory. -->
-		<ramBufferSizeMB>32</ramBufferSizeMB>
-		<!-- If both ramBufferSizeMB and maxBufferedDocs is set, then Lucene will 
-			flush based on whichever limit is hit first. -->
-		<!-- <maxBufferedDocs>1000</maxBufferedDocs> -->
-
-		<maxFieldLength>10000</maxFieldLength>
-		<writeLockTimeout>1000</writeLockTimeout>
-
-		<!-- Expert: Merge Policy The Merge Policy in Lucene controls how merging 
-			is handled by Lucene. The default in Solr 3.3 is TieredMergePolicy. The default 
-			in 2.3 was the LogByteSizeMergePolicy, previous versions used LogDocMergePolicy. 
-			LogByteSizeMergePolicy chooses segments to merge based on their size. The 
-			Lucene 2.2 default, LogDocMergePolicy chose when to merge based on number 
-			of documents Other implementations of MergePolicy must have a no-argument 
-			constructor -->
-		<!-- <mergePolicy class="org.apache.lucene.index.TieredMergePolicy"/> -->
-
-		<!-- Expert: Merge Scheduler The Merge Scheduler in Lucene controls how 
-			merges are performed. The ConcurrentMergeScheduler (Lucene 2.3 default) can 
-			perform merges in the background using separate threads. The SerialMergeScheduler 
-			(Lucene 2.2 default) does not. -->
-		<!-- <mergeScheduler class="org.apache.lucene.index.ConcurrentMergeScheduler"/> -->
-
-		<!-- LockFactory This option specifies which Lucene LockFactory implementation 
-			to use. single = SingleInstanceLockFactory - suggested for a read-only index 
-			or when there is no possibility of another process trying to modify the index. 
-			native = NativeFSLockFactory - uses OS native file locking. Do not use when 
-			multiple solr webapps in the same JVM are attempting to share a single index. 
-			simple = SimpleFSLockFactory - uses a plain file for locking (For backwards 
-			compatibility with Solr 1.2, 'simple' is the default if not specified.) More 
-			details on the nuances of each LockFactory... http://wiki.apache.org/lucene-java/AvailableLockFactories -->
-		<lockType>native</lockType>
-
-		<!-- Expert: Controls how often Lucene loads terms into memory Default 
-			is 128 and is likely good for most everyone. -->
-		<!-- <termIndexInterval>256</termIndexInterval> -->
-	</indexDefaults>
+				
+		</indexDefaults>
 
 	<!-- Main Index Values here override the values in the <indexDefaults> section 
 		for the main on disk index. -->
@@ -252,12 +213,15 @@
 			ids (DocList) based on a query, a sort, and the range of documents requested. -->
 		<queryResultCache class="solr.LRUCache" size="512"
 			initialSize="512" autowarmCount="0" />
-
+-------------
 		<!-- Document Cache Caches Lucene Document objects (the stored fields for 
 			each document). Since Lucene internal document ids are transient, this cache 
 			will not be autowarmed. -->
 		<documentCache class="solr.LRUCache" size="${solr.cache.documentCacheSize:512}"
 			initialSize="${solr.cache.documentCacheSize:512}" autowarmCount="0" />
+--------------------
+
+
 
 		<!-- Field Value Cache Cache used to hold field values that are quickly 
 			accessible by document id. The fieldValueCache is created by default even 
@@ -360,6 +324,19 @@
 			and clients). The options below instruct Solr not to output any HTTP Caching 
 			related headers -->
 		<httpCaching never304="true" />
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		<!-- If you include a <cacheControl> directive, it will be used to generate 
 			a Cache-Control header (as well as an Expires header if the value contains 
 			"max-age=") By default, no Cache-Control header is generated. You can use 
