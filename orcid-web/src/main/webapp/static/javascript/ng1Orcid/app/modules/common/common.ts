@@ -23,190 +23,190 @@ import {MultiSelectModule}
 
 //User generated attribute directives
 import { FocusMe }
-    from '../../directives/focusMe.directive.ts'; 
+    from '../../directives/focusMe.directive'; 
 
 //User generated filters
 
 import { AjaxTickDateToISO8601Pipe }
-    from '../../pipes/ajaxTickDateToISO8601Ng2.ts'; 
+    from '../../pipes/ajaxTickDateToISO8601Ng2'; 
 
 import { AjaxFormDateToISO8601Pipe }
-    from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
+    from '../../pipes/ajaxFormDateToISO8601Ng2'; 
 
 import { ContributorFilterPipe }
-    from '../../pipes/contributorFilterNg2.ts';
+    from '../../pipes/contributorFilterNg2';
 
 import { DashToSpacePipe }
-    from '../../pipes/dashToSpaceNg2.ts';
+    from '../../pipes/dashToSpaceNg2';
 
 import { ExternalIdentifierHtmlPipe }
-    from '../../pipes/externalIdentifierHtmlNg2.ts';
+    from '../../pipes/externalIdentifierHtmlNg2';
 
 import { ExtractContentFromBodyPipe }
-    from '../../pipes/extractContentFromBodyNg2.ts';
+    from '../../pipes/extractContentFromBodyNg2';
 
 import { FilterImportWizardsPipe }
-    from '../../pipes/filterImportWizardsNg2.ts'
+    from '../../pipes/filterImportWizardsNg2'
 
 import { KeysPipe }
-    from '../../pipes/keysNg2.ts'; 
+    from '../../pipes/keysNg2'; 
 
 import { LatexPipe }
-    from '../../pipes/latexNg2.ts'; 
+    from '../../pipes/latexNg2'; 
 
 import { OrderByAffiliationsPipe }
-    from '../../pipes/orderByAffiliationsNg2.ts'; 
+    from '../../pipes/orderByAffiliationsNg2'; 
     
 import { OrderByPipe }
-    from '../../pipes/orderByNg2.ts';
+    from '../../pipes/orderByNg2';
 
 import { OrderObjectByPipe }
-    from '../../pipes/orderObjectByNg2.ts'
+    from '../../pipes/orderObjectByNg2'
 
 import { ReplaceSeparatorWithSpacePipe }
-    from '../../pipes/replaceSeparatorWithSpaceNg2.ts'
+    from '../../pipes/replaceSeparatorWithSpaceNg2'
 
 import { SafeUrlPipe }
-    from '../../pipes/safeUrlNg2.ts';
+    from '../../pipes/safeUrlNg2';
 
 import { UriPipe }
-    from '../../pipes/uriNg2.ts';
+    from '../../pipes/uriNg2';
 
 import { UrlProtocolPipe }
-    from '../../pipes/urlProtocolNg2.ts';
+    from '../../pipes/urlProtocolNg2';
 
 import { WorkExternalIdentifierHtmlPipe }
-    from '../../pipes/workExternalIdentifierHtmlNg2.ts';
+    from '../../pipes/workExternalIdentifierHtmlNg2';
 
 //User generated modules
 
 import { ExtIdPopoverNg2Module }
-    from './../extIdPopover/extIdPopover.ts';
+    from './../extIdPopover/extIdPopover';
 
 import { HeaderNg2Module }
-    from './../header/header.ts';
+    from './../header/header';
 
 import { LanguageNg2Module }
-    from './../language/language.ts';
+    from './../language/language';
 
 import { OrgIdentifierPopoverNg2Module } 
-    from './../orgIdentifierPopover/orgIdentifierPopover.ts';
+    from './../orgIdentifierPopover/orgIdentifierPopover';
 
 import { PrivacytoggleNg2Module }
-    from './../privacytoggle/privacyToggle.ts';
+    from './../privacytoggle/privacyToggle';
 
 import { RequestPasswordResetNg2Module }
-    from './../requestPasswordReset/requestPasswordReset.ts';
+    from './../requestPasswordReset/requestPasswordReset';
 
 //User generated services
 
 import { AffiliationService } 
-    from '../../shared/affiliation.service.ts';
+    from '../../shared/affiliation.service';
 
 import { AccountService }
-    from '../../shared/account.service.ts';
+    from '../../shared/account.service';
 
 import { AdminActionsService }
-    from '../../shared/adminActions.service.ts';
+    from '../../shared/adminActions.service';
     
 import { BlogService }
-    from '../../shared/blog.service.ts';
+    from '../../shared/blog.service';
 
 import { ClaimService }
-    from '../../shared/claim.service.ts';
+    from '../../shared/claim.service';
 
 import { ClientService }
-    from '../../shared/client.service.ts';
+    from '../../shared/client.service';
 
 import { CommonService }
-    from '../../shared/common.service.ts'
+    from '../../shared/common.service'
 
 import { ConsortiaService }
-    from '../../shared/consortia.service.ts'
+    from '../../shared/consortia.service'
 
 import { DiscoService }
-    from '../../shared/disco.service.ts';
+    from '../../shared/disco.service';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 import { FundingService } 
-    from '../../shared/funding.service.ts';
+    from '../../shared/funding.service';
 
 import { GenericService } 
-    from '../../shared/generic.service.ts';
+    from '../../shared/generic.service';
 
 import { LanguageService }
-    from '../../shared/language.service.ts';
+    from '../../shared/language.service';
 
 import { ManageMembersService } 
-    from '../../shared/manageMembers.service.ts';
+    from '../../shared/manageMembers.service';
 
 import { MembersListService }
-    from '../../shared/membersList.service.ts'
+    from '../../shared/membersList.service'
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';
+    from '../../shared/modal.service';
 
 import { NotificationsService } 
-    from '../../shared/notifications.service.ts';
+    from '../../shared/notifications.service';
 
 import { OauthService }
-    from '../../shared/oauth.service.ts';
+    from '../../shared/oauth.service';
 
 import { PasswordService }
-    from '../../shared/password.service.ts';
+    from '../../shared/password.service';
 
 import { PeerReviewService }
-    from '../../shared/peerReview.service.ts';
+    from '../../shared/peerReview.service';
 
 import { PreferencesService }
-    from '../../shared/preferences.service.ts';
+    from '../../shared/preferences.service';
 
 import { ReactivationService }
-    from '../../shared/reactivation.service.ts';
+    from '../../shared/reactivation.service';
 
 import { ResearchResourceService }
-    from '../../shared/researchResource.service.ts';
+    from '../../shared/researchResource.service';
 
 import { SearchService } 
-    from '../../shared/search.service.ts';
+    from '../../shared/search.service';
 
 import { SwitchUserService } 
-    from '../../shared/switchUser.service.ts';
+    from '../../shared/switchUser.service';
 
 import { TwoFAStateService } 
-    from '../../shared/twoFAState.service.ts';
+    from '../../shared/twoFAState.service';
     
 import { ShibbolethService } 
-    from '../../shared/shibboleth.service.ts'; 
+    from '../../shared/shibboleth.service'; 
 
 import { WidgetService }
-    from '../../shared/widget.service.ts'
+    from '../../shared/widget.service'
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
+    from '../../shared/workspace.service'; 
 
 import { WorksService } 
-    from '../../shared/works.service.ts';
+    from '../../shared/works.service';
     
 import { EmailFrequencyService }
-    from '../../shared/emailFrequency.service.ts';
+    from '../../shared/emailFrequency.service';
 
 import { UnsubscribeService }
-    from '../../shared/unsubscribe.service.ts';
+    from '../../shared/unsubscribe.service';
 
 import { ResendClaimService }
-    from '../../shared/resendClaim.service.ts';    
+    from '../../shared/resendClaim.service';    
 
 import { DeveloperToolsService }
-    from '../../shared/developerTools.service.ts';
+    from '../../shared/developerTools.service';
 
 import { PersonService } 
-    from '../../shared/person.service.ts';
+    from '../../shared/person.service';
     
 // This is the Angular 2 part of the module
 @NgModule(

@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 import { EmailsComponent } 
-    from './emails.component.ts';
+    from './emails.component';
 
 // This is the Angular 1 part of the module
 export const EmailsModule = angular.module(

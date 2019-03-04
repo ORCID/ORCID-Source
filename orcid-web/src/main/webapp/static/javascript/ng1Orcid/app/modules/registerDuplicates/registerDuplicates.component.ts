@@ -10,10 +10,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 import { OauthService } 
-    from '../../shared/oauth.service.ts';
+    from '../../shared/oauth.service';
 
 @Component({
     selector: 'register-duplicates-ng2',

@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { WorksMergeSuggestionsComponent } 
-    from './worksMergeSuggestions.component.ts';
+    from './worksMergeSuggestions.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const WorksMergeSuggestionsModule = angular.module(

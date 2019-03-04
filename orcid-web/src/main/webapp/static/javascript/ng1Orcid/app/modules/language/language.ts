@@ -15,7 +15,7 @@ import { CommonModule }
     from '@angular/common'; 
 
 import { LanguageComponent } 
-    from './language.component.ts';
+    from './language.component';
 
 // This is the Angular 1 part of the module
 export const LanguageModule = angular.module(

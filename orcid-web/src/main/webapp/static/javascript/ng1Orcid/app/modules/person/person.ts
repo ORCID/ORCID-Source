@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 import { PersonComponent } 
-    from './person.component.ts';
+    from './person.component';
 
 // This is the Angular 1 part of the module
 export const PersonModule = angular.module(

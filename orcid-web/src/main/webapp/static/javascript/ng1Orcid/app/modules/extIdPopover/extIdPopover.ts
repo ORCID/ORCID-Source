@@ -15,7 +15,7 @@ import { CommonModule }
     from '@angular/common'; 
 
 import { ExtIdPopoverComponent } 
-    from './extIdPopover.component.ts';
+    from './extIdPopover.component';
 
 // This is the Angular 1 part of the module
 export const ExtIdPopoverModule = angular.module(

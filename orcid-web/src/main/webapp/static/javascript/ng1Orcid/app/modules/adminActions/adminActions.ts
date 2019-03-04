@@ -8,10 +8,10 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 import { AdminActionsComponent } 
-    from './adminActions.component.ts';
+    from './adminActions.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
     
 // This is the Angular 1 part of the module
 export const AdminActionsModule = angular.module(

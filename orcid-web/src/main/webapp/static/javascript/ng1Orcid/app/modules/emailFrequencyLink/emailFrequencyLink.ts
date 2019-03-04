@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { EmailFrecuencyLinkComponent } 
-    from './emailFrequencyLink.component.ts';
+    from './emailFrequencyLink.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const EmailFrecuencyLinkModule = angular.module(

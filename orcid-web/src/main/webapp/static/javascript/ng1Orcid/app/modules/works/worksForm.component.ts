@@ -18,16 +18,16 @@ import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap,
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { WorksService } 
-    from '../../shared/works.service.ts';
+    from '../../shared/works.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';
+    from '../../shared/modal.service';
 
 @Component({
     selector: 'works-form-ng2',

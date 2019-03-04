@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { ResendClaimComponent } 
-    from './resendClaim.component.ts';
+    from './resendClaim.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const ResendClaimModule = angular.module(
