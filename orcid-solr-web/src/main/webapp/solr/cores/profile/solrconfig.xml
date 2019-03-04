@@ -617,15 +617,6 @@
       -->
     <httpCaching never304="true" />
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <!-- If you include a <cacheControl> directive, it will be used to
          generate a Cache-Control header (as well as an Expires header
          if the value contains "max-age=")
@@ -673,6 +664,22 @@
       -->
   </requestDispatcher>
 
+	<requestHandler name="/replication" class="solr.ReplicationHandler" >
+		<lst name="master">
+			<str name="enable">${solr.enable.master:true}</str>
+			<str name="replicateAfter">startup</str>
+			<str name="replicateAfter">commit</str>
+			<str name="confFiles">schema.xml,stopwords.txt</str>
+		</lst>
+		<lst name="slave">
+			<str name="enable">${solr.enable.slave:false}</str>
+			<str name="masterUrl">${solr.master.url:http://localhost:8080/orcid-solr-web}/${solr.core.name}</str>
+			<str name="pollInterval">${solr.poll.interval:00:00:60}</str>
+		</lst>
+	</requestHandler>
+
+	<!-- Default samples configuration starts here -->
+
   <!-- Request Handlers
 
        http://wiki.apache.org/solr/SolrRequestHandler
@@ -700,6 +707,7 @@
     <lst name="defaults">
       <str name="echoParams">explicit</str>
       <int name="rows">10</int>
+      <str name="q.op">OR</str>
       <!-- Default search field
          <str name="df">text</str> 
         -->
@@ -769,7 +777,6 @@
       <str name="indent">true</str>
     </lst>
   </requestHandler>
-
 
   <!-- A Robust Example
 
@@ -1367,5 +1374,7 @@
       If you are using the QueryElevationComponent, you may wish to mark documents that get boosted.  The
       EditorialMarkerFactory will do exactly that:
      <transformer name="qecBooster" class="org.apache.solr.response.transform.EditorialMarkerFactory" />
-    -->
+    -->      
+    
+    <!-- Default samples configuration ends here -->  
 </config>

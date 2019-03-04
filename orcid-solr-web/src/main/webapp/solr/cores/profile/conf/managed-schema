@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Solr managed schema - automatically generated - DO NOT EDIT -->
+<schema name="profile" version="1.6">
+  <uniqueKey>orcid</uniqueKey>
+  <fieldType name="alphaOnlySort" class="solr.TextField" omitNorms="true" sortMissingLast="true">
+    <analyzer>
+      <tokenizer class="solr.KeywordTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.TrimFilterFactory"/>
+      <filter class="solr.PatternReplaceFilterFactory" pattern="([^a-z])" replace="all" replacement=""/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="binary" class="solr.BinaryField"/>
+  <fieldType name="boolean" class="solr.BoolField" omitNorms="true" sortMissingLast="true"/>
+  <fieldType name="date" class="solr.DatePointField"/>
+  <fieldType name="double" class="solr.DoublePointField"/>
+  <fieldType name="float" class="solr.FloatPointField"/>
+  <fieldType name="geohash" class="solr.GeoHashField"/>
+  <fieldType name="ignored" class="solr.StrField" indexed="false" stored="false" multiValued="true"/>
+  <fieldType name="int" class="solr.IntPointField"/>
+  <fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate"/>
+  <fieldType name="long" class="solr.LongPointField"/>
+  <fieldType name="lowercase" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.KeywordTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="orcid_text_name" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="payloads" class="solr.TextField" indexed="true" stored="false">
+    <analyzer>
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.DelimitedPayloadTokenFilterFactory" encoder="float"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="phonetic" class="solr.TextField" indexed="true" stored="false">
+    <analyzer>
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.DoubleMetaphoneFilterFactory" inject="false"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="point" class="solr.PointType" subFieldSuffix="_d" dimension="2"/>
+  <fieldType name="random" class="solr.RandomSortField" indexed="true"/>
+  <fieldType name="string" class="solr.StrField" omitNorms="true" sortMissingLast="true"/>
+  <fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="stopwords_en.txt" ignoreCase="true"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.EnglishPossessiveFilterFactory"/>
+      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+      <filter class="solr.PorterStemFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter class="solr.StopFilterFactory" words="stopwords_en.txt" ignoreCase="true"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.EnglishPossessiveFilterFactory"/>
+      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+      <filter class="solr.PorterStemFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="text_en_splitting" class="solr.TextField" autoGeneratePhraseQueries="true" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="stopwords_en.txt" ignoreCase="true"/>
+      <filter class="solr.WordDelimiterFilterFactory" catenateNumbers="1" generateNumberParts="1" splitOnCaseChange="1" generateWordParts="1" catenateAll="0" catenateWords="1"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+      <filter class="solr.PorterStemFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter class="solr.StopFilterFactory" words="stopwords_en.txt" ignoreCase="true"/>
+      <filter class="solr.WordDelimiterFilterFactory" catenateNumbers="0" generateNumberParts="1" splitOnCaseChange="1" generateWordParts="1" catenateAll="0" catenateWords="0"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+      <filter class="solr.PorterStemFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="text_en_splitting_tight" class="solr.TextField" autoGeneratePhraseQueries="true" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.SynonymFilterFactory" expand="false" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter class="solr.StopFilterFactory" words="stopwords_en.txt" ignoreCase="true"/>
+      <filter class="solr.WordDelimiterFilterFactory" catenateNumbers="1" generateNumberParts="0" generateWordParts="0" catenateAll="0" catenateWords="1"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+      <filter class="solr.EnglishMinimalStemFilterFactory"/>
+      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
+      <filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="text_general_rev" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.ReversedWildcardFilterFactory" maxPosQuestion="2" maxFractionAsterisk="0.33" maxPosAsterisk="3" withOriginal="true"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="text_path" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.PathHierarchyTokenizerFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+    </analyzer>
+  </fieldType>
+  <field name="agr" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="arxiv" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="asin" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="asin-tld" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="bibcode" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="cba" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="cit" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="credit-name" type="text_general" multiValued="false" indexed="true" stored="true"/>
+  <field name="ctx" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="current-institution-affiliation-name" type="text_general" multiValued="true" indexed="true" stored="true"/>
+  <field name="current-primary-institution-affiliation-name" type="text_general" multiValued="true" indexed="true" stored="true"/>
+  <field name="digital-object-ids" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="eid" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="email" type="string" multiValued="true" indexed="true" stored="true"/>
+  <field name="ethos" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="external-id-orcid" type="string" multiValued="true" indexed="true" stored="false"/>
+  <field name="external-id-orcid-and-reference" type="string" multiValued="true" indexed="true" stored="false"/>
+  <field name="external-id-reference" type="string" multiValued="true" indexed="true" stored="false"/>
+  <field name="external-id-source" type="string" multiValued="true" indexed="true" stored="false"/>
+  <field name="external-id-source-and-reference" type="string" multiValued="true" indexed="true" stored="false"/>
+  <field name="family-name" type="text_general" multiValued="false" indexed="true" stored="true"/>
+  <field name="funding-titles" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="given-and-family-names" type="orcid_text_name" multiValued="false" indexed="true" stored="false"/>
+  <field name="given-names" type="text_general" multiValued="false" indexed="true" stored="true"/>
+  <field name="grant-numbers" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="handle" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="hir" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="isbn" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="issn" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="jfm" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="jstor" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="keyword" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="lccn" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="manu_exact" type="string" indexed="true" stored="false"/>
+  <field name="mr" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="oclc" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="ol" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="orcid" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="osti" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="other-identifier-type" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="other-names" type="text_general" multiValued="true" indexed="true" stored="true"/>
+  <field name="past-institution-affiliation-name" type="text_general" multiValued="true" indexed="true" stored="true"/>
+  <field name="pat" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="patent-numbers" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="payloads" type="payloads" indexed="true" stored="true"/>
+  <field name="pmc" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="pmid" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="primary-record" type="string" multiValued="false" indexed="true" stored="true"/>
+  <field name="profile-last-modified-date" type="date" multiValued="false" indexed="true" stored="true"/>
+  <field name="profile-submission-date" type="date" multiValued="false" indexed="true" stored="true"/>
+  <field name="public-profile-message" type="string" multiValued="false" indexed="false" stored="false"/>
+  <field name="research-resource-item-name" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="research-resource-proposal-title" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="rfc" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="source-work-id" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="ssrn" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="store" type="location" indexed="true" stored="true"/>
+  <field name="text" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="text_rev" type="text_general_rev" multiValued="true" indexed="true" stored="false"/>
+  <field name="uri" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="urn" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="work-titles" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="wosuid" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="zbl" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <dynamicField name="*_coordinate" type="double" indexed="true" stored="false"/>
+  <dynamicField name="*-org-name" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <dynamicField name="*-part-of" type="string" multiValued="true" indexed="true" stored="false"/>
+  <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
+  <dynamicField name="*-org-id" type="string" multiValued="true" indexed="true" stored="false"/>
+  <dynamicField name="random_*" type="random"/>
+  <dynamicField name="*-self" type="string" multiValued="true" indexed="true" stored="false"/>
+  <dynamicField name="attr_*" type="text_general" multiValued="true" indexed="true" stored="true"/>
+  <dynamicField name="*_txt" type="text_general" multiValued="true" indexed="true" stored="true"/>
+  <dynamicField name="*_tdt" type="date" indexed="true" stored="true"/>
+  <dynamicField name="*_dt" type="date" indexed="true" stored="true"/>
+  <dynamicField name="*_ti" type="int" indexed="true" stored="true"/>
+  <dynamicField name="*_tl" type="long" indexed="true" stored="true"/>
+  <dynamicField name="*_tf" type="float" indexed="true" stored="true"/>
+  <dynamicField name="*_td" type="double" indexed="true" stored="true"/>
+  <dynamicField name="*_pi" type="int" indexed="true" stored="true"/>
+  <dynamicField name="*_i" type="int" indexed="true" stored="true"/>
+  <dynamicField name="*_s" type="string" indexed="true" stored="true"/>
+  <dynamicField name="*_l" type="long" indexed="true" stored="true"/>
+  <dynamicField name="*_t" type="text_general" indexed="true" stored="true"/>
+  <dynamicField name="*_b" type="boolean" indexed="true" stored="true"/>
+  <dynamicField name="*_f" type="float" indexed="true" stored="true"/>
+  <dynamicField name="*_d" type="double" indexed="true" stored="true"/>
+  <dynamicField name="*_p" type="location" indexed="true" stored="true"/>
+  <copyField source="external-id-source" dest="external-id-orcid"/>
+  <copyField source="external-id-source-and-reference" dest="external-id-orcid-and-reference"/>
+  <copyField source="*" dest="text"/>
+</schema>

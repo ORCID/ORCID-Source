@@ -29,17 +29,8 @@
 	in server mode, and use a higher logging level that avoids logging every 
 	request -->
 
-<schema name="example" version="1.4">
-	<!-- attribute "name" is the name of this schema and is only used for display 
-		purposes. Applications should change this to reflect the nature of the search 
-		collection. version="1.4" is Solr's version number for the schema syntax 
-		and semantics. It should not normally be changed by applications. 1.0: multiValued 
-		attribute did not exist, all fields are multiValued by nature 1.1: multiValued 
-		attribute introduced, false by default 1.2: omitTermFreqAndPositions attribute 
-		introduced, true by default except for text fields. 1.3: removed optional 
-		field compress feature 1.4: default auto-phrase (QueryParser feature) to 
-		off -->
-
+<schema name="profile" version="1.6">
+	
 	<types>
 		<!-- field type definitions. The "name" attribute is just a label to be 
 			used by field definitions. The "class" attribute and any other attributes 
@@ -57,95 +48,28 @@
 			Strings -->
 		<fieldtype name="binary" class="solr.BinaryField" />
 
-		<!-- The optional sortMissingLast and sortMissingFirst attributes are currently 
-			supported on types that are sorted internally as strings and on numeric types. 
-			This includes "string","boolean", and, as of 3.5 (and 4.x), int, float, long, 
-			date, double, including the "Trie" variants. - If sortMissingLast="true", 
-			then a sort on this field will cause documents without the field to come 
-			after documents with the field, regardless of the requested sort order (asc 
-			or desc). - If sortMissingFirst="true", then a sort on this field will cause 
-			documents without the field to come before documents with the field, regardless 
-			of the requested sort order. - If sortMissingLast="false" and sortMissingFirst="false" 
-			(the default), then default lucene sorting will be used which places docs 
-			without the field first in an ascending sort and last in a descending sort. -->
+		<fieldtype name="date" class="solr.DatePointField" />
 
-		<!-- Default numeric field types. For faster range queries, consider the 
-			tint/tfloat/tlong/tdouble types. -->
-		<fieldType name="int" class="solr.TrieIntField"
-			precisionStep="0" omitNorms="true" positionIncrementGap="0" />
-		<fieldType name="float" class="solr.TrieFloatField"
-			precisionStep="0" omitNorms="true" positionIncrementGap="0" />
-		<fieldType name="long" class="solr.TrieLongField"
-			precisionStep="0" omitNorms="true" positionIncrementGap="0" />
-		<fieldType name="double" class="solr.TrieDoubleField"
-			precisionStep="0" omitNorms="true" positionIncrementGap="0" />
+		<fieldtype name="int" class="solr.IntPointField" />
+		
+		<fieldtype name="long" class="solr.LongPointField" />		
+		
+		<fieldtype name="float" class="solr.FloatPointField" />
+		
+		<fieldtype name="double" class="solr.DoublePointField" />
+		
+		
+		<!-- 
+		
+		<fieldtype name="" class="solr." />
+		<fieldtype name="" class="solr." />
+		<fieldtype name="" class="solr." />
+		<fieldtype name="" class="solr." />
+		
+		 -->
+		
 
-		<!-- Numeric field types that index each value at various levels of precision 
-			to accelerate range queries when the number of values between the range endpoints 
-			is large. See the javadoc for NumericRangeQuery for internal implementation 
-			details. Smaller precisionStep values (specified in bits) will lead to more 
-			tokens indexed per value, slightly larger index size, and faster range queries. 
-			A precisionStep of 0 disables indexing at different precision levels. -->
-		<fieldType name="tint" class="solr.TrieIntField"
-			precisionStep="8" omitNorms="true" positionIncrementGap="0" />
-		<fieldType name="tfloat" class="solr.TrieFloatField"
-			precisionStep="8" omitNorms="true" positionIncrementGap="0" />
-		<fieldType name="tlong" class="solr.TrieLongField"
-			precisionStep="8" omitNorms="true" positionIncrementGap="0" />
-		<fieldType name="tdouble" class="solr.TrieDoubleField"
-			precisionStep="8" omitNorms="true" positionIncrementGap="0" />
-
-		<!-- The format for this date field is of the form 1995-12-31T23:59:59Z, 
-			and is a more restricted form of the canonical representation of dateTime 
-			http://www.w3.org/TR/xmlschema-2/#dateTime The trailing "Z" designates UTC 
-			time and is mandatory. Optional fractional seconds are allowed: 1995-12-31T23:59:59.999Z 
-			All other components are mandatory. Expressions can also be used to denote 
-			calculations that should be performed relative to "NOW" to determine the 
-			value, ie... NOW/HOUR ... Round to the start of the current hour NOW-1DAY 
-			... Exactly 1 day prior to now NOW/DAY+6MONTHS+3DAYS ... 6 months and 3 days 
-			in the future from the start of the current day Consult the DateField javadocs 
-			for more information. Note: For faster range queries, consider the tdate 
-			type -->
-		<fieldType name="date" class="solr.TrieDateField" omitNorms="true"
-			precisionStep="0" positionIncrementGap="0" />
-
-		<!-- A Trie based date field for faster date range queries and date faceting. -->
-		<fieldType name="tdate" class="solr.TrieDateField"
-			omitNorms="true" precisionStep="6" positionIncrementGap="0" />
-
-
-		<!-- Note: These should only be used for compatibility with existing indexes 
-			(created with older Solr versions) or if "sortMissingFirst" or "sortMissingLast" 
-			functionality is needed. Use Trie based fields instead. Plain numeric field 
-			types that store and index the text value verbatim (and hence don't support 
-			range queries, since the lexicographic ordering isn't equal to the numeric 
-			ordering) -->
-		<fieldType name="pint" class="solr.IntField" omitNorms="true" />
-		<fieldType name="plong" class="solr.LongField" omitNorms="true" />
-		<fieldType name="pfloat" class="solr.FloatField" omitNorms="true" />
-		<fieldType name="pdouble" class="solr.DoubleField"
-			omitNorms="true" />
-		<fieldType name="pdate" class="solr.DateField"
-			sortMissingLast="true" omitNorms="true" />
-
-
-		<!-- Note: These should only be used for compatibility with existing indexes 
-			(created with older Solr versions). Use Trie based fields instead. As of 
-			Solr 3.5 and 4.x, Trie based fields support sortMissingFirst/Last Numeric 
-			field types that manipulate the value into a string value that isn't human-readable 
-			in its internal form, but with a lexicographic ordering the same as the numeric 
-			ordering, so that range queries work correctly. -->
-		<fieldType name="sint" class="solr.SortableIntField"
-			sortMissingLast="true" omitNorms="true" />
-		<fieldType name="slong" class="solr.SortableLongField"
-			sortMissingLast="true" omitNorms="true" />
-		<fieldType name="sfloat" class="solr.SortableFloatField"
-			sortMissingLast="true" omitNorms="true" />
-		<fieldType name="sdouble" class="solr.SortableDoubleField"
-			sortMissingLast="true" omitNorms="true" />
-
-
-		<!-- The "RandomSortField" is not used to store or search any data. You 
+			<!-- The "RandomSortField" is not used to store or search any data. You 
 			can declare fields of this type it in your schema to generate pseudo-random 
 			orderings of your docs for sorting purposes. The ordering is generated based 
 			on the field name and the version of the index, As long as the index version 
@@ -186,7 +110,7 @@
 			<analyzer type="index">
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
-					words="stopwords.txt" enablePositionIncrements="true" />
+					words="stopwords.txt" />
 				<!-- in this example, we will only use synonyms at query time <filter 
 					class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" 
 					expand="false"/> -->
@@ -195,7 +119,7 @@
 			<analyzer type="query">
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
-					words="stopwords.txt" enablePositionIncrements="true" />
+					words="stopwords.txt" />
 				<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt"
 					ignoreCase="true" expand="true" />
 				<filter class="solr.LowerCaseFilterFactory" />
@@ -217,7 +141,7 @@
 					in both the index and query analyzers to leave a 'gap' for more accurate 
 					phrase queries. -->
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
-					words="stopwords_en.txt" enablePositionIncrements="true" />
+					words="stopwords_en.txt" />
 				<filter class="solr.LowerCaseFilterFactory" />
 				<filter class="solr.EnglishPossessiveFilterFactory" />
 				<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
@@ -230,7 +154,7 @@
 				<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt"
 					ignoreCase="true" expand="true" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
-					words="stopwords_en.txt" enablePositionIncrements="true" />
+					words="stopwords_en.txt" />
 				<filter class="solr.LowerCaseFilterFactory" />
 				<filter class="solr.EnglishPossessiveFilterFactory" />
 				<filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt" />
@@ -255,11 +179,8 @@
 				<!-- in this example, we will only use synonyms at query time <filter 
 					class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" 
 					expand="false"/> -->
-				<!-- Case insensitive stop word removal. add enablePositionIncrements=true 
-					in both the index and query analyzers to leave a 'gap' for more accurate 
-					phrase queries. -->
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
-					words="stopwords_en.txt" enablePositionIncrements="true" />
+					words="stopwords_en.txt" />
 				<filter class="solr.WordDelimiterFilterFactory"
 					generateWordParts="1" generateNumberParts="1" catenateWords="1"
 					catenateNumbers="1" catenateAll="0" splitOnCaseChange="1" />
@@ -272,7 +193,7 @@
 				<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt"
 					ignoreCase="true" expand="true" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
-					words="stopwords_en.txt" enablePositionIncrements="true" />
+					words="stopwords_en.txt" />
 				<filter class="solr.WordDelimiterFilterFactory"
 					generateWordParts="1" generateNumberParts="1" catenateWords="0"
 					catenateNumbers="0" catenateAll="0" splitOnCaseChange="1" />
@@ -313,7 +234,7 @@
 			<analyzer type="index">
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
-					words="stopwords.txt" enablePositionIncrements="true" />
+					words="stopwords.txt" />
 				<filter class="solr.LowerCaseFilterFactory" />
 				<filter class="solr.ReversedWildcardFilterFactory"
 					withOriginal="true" maxPosAsterisk="3" maxPosQuestion="2"
@@ -324,7 +245,7 @@
 				<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt"
 					ignoreCase="true" expand="true" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
-					words="stopwords.txt" enablePositionIncrements="true" />
+					words="stopwords.txt" />
 				<filter class="solr.LowerCaseFilterFactory" />
 			</analyzer>
 		</fieldType>
@@ -441,6 +362,11 @@
 
 
 	<fields>
+		<!-- If you remove this field, you must _also_ disable the update log in solrconfig.xml
+	      or Solr won't start. _version_ and update log are required for SolrCloud
+	   	--> 
+	   <field name="_version_" type="long" indexed="true" stored="false" />
+	
 		<!-- Valid attributes for fields: name: mandatory - the name for the field 
 			type: mandatory - the name of a previously defined type from the <types> 
 			section indexed: true if this field should be indexed (searchable or sortable) 
@@ -637,9 +563,9 @@
 		<dynamicField name="*-org-name" type="text_general" indexed="true" stored="false" multiValued="true"/>
 			
 		<!-- research resources -->
-		<field name="researh-resource-proposal-title" type="string" indexed="true"
+		<field name="research-resource-proposal-title" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
-		<field name="researh-resource-item-name" type="string" indexed="true"
+		<field name="research-resource-item-name" type="text_general" indexed="true"
 			stored="false" multiValued="true" />
 			
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
@@ -666,7 +592,7 @@
 			stored="true" />
 
 		<!-- Type used to index the lat and lon components for the "location" FieldType -->
-		<dynamicField name="*_coordinate" type="tdouble" indexed="true"
+		<dynamicField name="*_coordinate" type="double" indexed="true"
 			stored="false" />
 
 		<dynamicField name="*_dt" type="date" indexed="true"
@@ -675,18 +601,18 @@
 			stored="true" />
 
 		<!-- some trie-coded dynamic fields for faster range queries -->
-		<dynamicField name="*_ti" type="tint" indexed="true"
+		<dynamicField name="*_ti" type="int" indexed="true"
 			stored="true" />
-		<dynamicField name="*_tl" type="tlong" indexed="true"
+		<dynamicField name="*_tl" type="long" indexed="true"
 			stored="true" />
-		<dynamicField name="*_tf" type="tfloat" indexed="true"
+		<dynamicField name="*_tf" type="float" indexed="true"
 			stored="true" />
-		<dynamicField name="*_td" type="tdouble" indexed="true"
+		<dynamicField name="*_td" type="double" indexed="true"
 			stored="true" />
-		<dynamicField name="*_tdt" type="tdate" indexed="true"
+		<dynamicField name="*_tdt" type="date" indexed="true"
 			stored="true" />
 
-		<dynamicField name="*_pi" type="pint" indexed="true"
+		<dynamicField name="*_pi" type="int" indexed="true"
 			stored="true" />
 
 		<dynamicField name="ignored_*" type="ignored"
@@ -707,12 +633,6 @@
 	<!-- Field to use to determine and enforce document uniqueness. Unless this 
 		field is marked with required="false", it will be a required field -->
 	<uniqueKey>orcid</uniqueKey>
-
-	<!-- field for the QueryParser to use when an explicit fieldname is absent -->
-	<defaultSearchField>text</defaultSearchField>
-
-	<!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
-	<solrQueryParser defaultOperator="OR" />
 
 	<!-- copyField commands copy one field to another at the time a document 
 		is added to the index. It's used either to index the same field differently, 
