@@ -33,8 +33,7 @@ export const ReactivationModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-        ]
+        
     }
 )
 export class ReactivationNg2Module {}

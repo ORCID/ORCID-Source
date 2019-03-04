@@ -31,9 +31,6 @@ export const PeerReviewModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-            
         ]
     }
 )

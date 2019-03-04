@@ -32,9 +32,7 @@ export const ResetPasswordModule = angular.module(
         entryComponents: [ 
             ResetPasswordComponent 
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class ResetPasswordNg2Module {}
