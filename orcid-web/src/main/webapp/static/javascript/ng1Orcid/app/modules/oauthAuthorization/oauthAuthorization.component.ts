@@ -730,9 +730,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 this.showRegisterForm = true; 
             }
         }
-
+        
         //param sent if user came via oauth
-        if(urlParams.has('oauth') || window.location.pathname.indexOf("/oauth")){
+        if(urlParams.has('oauth') || (window.location.pathname.indexOf("/oauth") > 0)){
             this.oauthRequest = true;
         }
 
