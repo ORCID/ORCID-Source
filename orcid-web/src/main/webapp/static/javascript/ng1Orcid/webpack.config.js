@@ -3,7 +3,7 @@ var webpack = require('webpack');
 module.exports = {
     context: __dirname + "/",
     entry: "./require.js",
-    mode: 'development',
+    mode: 'production',
     module: {
         rules: [{
             test: /\.ts$/, 
@@ -13,14 +13,14 @@ module.exports = {
         }]
     },
     output: {
-        path: __dirname + '/dist',
+        path: __dirname + '/',
         filename: "angular_orcid_generated.js"
     },
     plugins: [
     new webpack.DefinePlugin({
-        'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
         'process.env':{
-            'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+            'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
         }
     }),
     ],
