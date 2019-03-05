@@ -32,9 +32,7 @@ export const ResendClaimModule = angular.module(
         entryComponents: [ 
             ResendClaimComponent 
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class ResendClaimNg2Module {}

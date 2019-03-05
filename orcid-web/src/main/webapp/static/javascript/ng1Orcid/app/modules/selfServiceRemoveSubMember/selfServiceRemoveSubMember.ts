@@ -37,8 +37,7 @@ export const SelfServiceRemoveSubMemberModule = angular.module(
             CommonModule,
             FormsModule,
         ],
-        providers: [
-        ]
+        
     }
 )
 export class SelfServiceRemoveSubMemberNg2Module {}

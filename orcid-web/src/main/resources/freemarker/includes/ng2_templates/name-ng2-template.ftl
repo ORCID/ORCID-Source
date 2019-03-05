@@ -16,16 +16,13 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <#if !(isPublicProfile??)>
-                    <h2 class="full-name" *ngIf="nameForm">
+                    <h2 class="full-name" *ngIf="nameForm && !(isPublicPage)">
                         <span *ngIf="displayFullName()">{{nameForm?.creditName?.value}}
                         </span>
                         <span *ngIf="displayPublishedName()">
                             {{nameForm?.givenNames?.value}} <span *ngIf="nameForm?.familyName?.value != null" >{{nameForm?.familyName?.value}}</span>
                         </span>
                     </h2>
-                    </#if>
                 </div>
             </div>
         </div>

@@ -10,7 +10,9 @@ import { Observable, Subject }
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class AdminActionsService {
     private headers: HttpHeaders;
     private notify = new Subject<any>();    
@@ -76,14 +78,6 @@ export class AdminActionsService {
         )  
     }
      
-    removeSecurityQuestion( obj ): Observable<any> {
-        return this.http.post( 
-                getBaseUri() + '/admin-actions/remove-security-question.json', 
-                encodeURIComponent(obj), 
-                { headers: this.headers, responseType: 'text' }
-        )
-    }
-    
     validateDeprecateRequest( obj ): Observable<any> {
         return this.http.post( 
                 getBaseUri() + '/admin-actions/deprecate-profile/check-orcid.json',                 

@@ -148,31 +148,6 @@
     </div>
 </div>
 
-<!-- Remove security question -->
-<div class="workspace-accordion-item" id="remove-security-question">
-    <p>
-        <a *ngIf="showRemoveSecurityQuestion" (click)="showRemoveSecurityQuestion = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.remove_security_question' /></a>
-        <a *ngIf="!showRemoveSecurityQuestion" (click)="showRemoveSecurityQuestion = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.remove_security_question' /></a>
-    </p>
-    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showRemoveSecurityQuestion">
-        <div class="form-group">
-            <label for="orcid"><@orcid.msg 'admin.remove_security_question.orcid.label' /></label>
-            <input type="text" id="orcid" (keyup.enter)="confirmRemoveSecurityQuestion()" [(ngModel)]="orcidOrEmail" placeholder="<@orcid.msg 'admin.remove_security_question.orcid.placeholder' />" class="input-xlarge" />
-            <div *ngIf="removeSecurityQuestionResult">
-                <span class="orcid-error" [innerHTML]="removeSecurityQuestionResult"></span>
-            </div>
-        </div>
-        <div class="controls save-btns pull-left" *ngIf="!showRemoveSecurityQuestionConfirm">
-            <span (click)="confirmRemoveSecurityQuestion()" class="btn btn-primary"><@orcid.msg 'admin.remove_security_question.button'/></span>                     
-        </div>
-        <div class="controls save-btns pull-left" *ngIf="showRemoveSecurityQuestionConfirm">
-            <label class="orcid-error"><@orcid.msg 'admin.remove_security_question.confirm.message'/> {{orcidOrEmail}}?</label><br>           
-            <span (click)="removeSecurityQuestion()" class="btn btn-primary"><@orcid.msg 'admin.remove_security_question.confirm.button'/></span>&nbsp;                    
-            <a href="" class="cancel-action" (click)="showRemoveSecurityQuestionConfirm = false" (click)="orcidOrEmail = ''" (click)="showRemoveSecurityQuestion = false"><@orcid.msg 'freemarker.btncancel'/></a>
-        </div>
-    </div>
-</div>
-
 <!-- Deprecate record -->
 <div class="workspace-accordion-item" id="deprecate-record">
     <p>

@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,7 +51,6 @@ import org.orcid.pojo.DeprecateProfile;
 import org.orcid.pojo.EmailFrequencyOptions;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ManageSocialAccount;
-import org.orcid.pojo.SecurityQuestion;
 import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.AddressesForm;
 import org.orcid.pojo.ajaxForm.BiographyForm;
@@ -67,7 +65,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -223,59 +220,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         String userOrcid = getCurrentUserOrcid();
         profileEntityManager.disableApplication(Long.valueOf(tokenId), userOrcid);
         return true;
-    }
-
-    @ModelAttribute("securityQuestions")
-    public Map<String, String> getSecurityQuestions() {
-        Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
-        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>();
-        for (String key : securityQuestions.keySet()) {
-            securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
-        }
-        return securityQuestionsWithMessages;
-    }        
-
-    @RequestMapping(value = "/security-question.json", method = RequestMethod.GET)
-    public @ResponseBody SecurityQuestion getSecurityQuestion() {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        SecurityQuestion securityQuestion = new SecurityQuestion();
-        
-        if(profile.getSecurityQuestion() != null) {
-            Long id = Long.valueOf(profile.getSecurityQuestion().getId());
-            String encryptedAnswer = profile.getEncryptedSecurityAnswer();
-            if(!PojoUtil.isEmpty(encryptedAnswer)) {
-                securityQuestion.setSecurityAnswer(encryptionManager.decryptForInternalUse(encryptedAnswer));
-            }
-            securityQuestion.setSecurityQuestionId(id);
-        }                
-
-        return securityQuestion;
-    }
-
-    @RequestMapping(value = "/security-question.json", method = RequestMethod.POST)
-    public @ResponseBody SecurityQuestion setSecurityQuestion(@RequestBody SecurityQuestion securityQuestion) {
-        List<String> errors = new ArrayList<String>();
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        if (securityQuestion.getSecurityQuestionId() != 0 && (securityQuestion.getSecurityAnswer() == null || securityQuestion.getSecurityAnswer().trim() == ""))
-            errors.add(getMessage("manage.pleaseProvideAnAnswer"));
-
-        if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (securityQuestion.getPassword() == null || !encryptionManager.hashMatches(securityQuestion.getPassword(), profile.getEncryptedPassword()))) {
-            errors.add(getMessage("check_password_modal.incorrect_password"));
-        }
-
-        // If the security question is empty, clean the security answer field
-        if (securityQuestion.getSecurityQuestionId() == 0)
-            securityQuestion.setSecurityAnswer(new String());
-
-        if (errors.size() == 0) {
-            Integer id = Long.valueOf(securityQuestion.getSecurityQuestionId()).intValue();
-            profileEntityManager.updateSecurityQuestion(getCurrentUserOrcid(), id, securityQuestion.getSecurityAnswer());
-            errors.add(getMessage("manage.securityQuestionUpdated"));
-        }
-
-        securityQuestion.setErrors(errors);
-        return securityQuestion;
     }
 
     @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)
@@ -792,11 +736,7 @@ public class ManageProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.GET)
     public ModelAndView setTwitterKeyToProfileGET(@RequestParam("oauth_token") String token, @RequestParam("oauth_verifier") String verifier) throws Exception {      
-        ModelAndView mav = new ModelAndView("manage");
-        mav.addObject("showPrivacy", true);        
-        mav.addObject("activeTab", "profile-tab");
-        mav.addObject("securityQuestions", getSecurityQuestions());
-        return mav;
+        return new ModelAndView("manage");
     }
 
     /**

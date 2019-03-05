@@ -37,7 +37,7 @@ public class BaseControllerTest extends DBUnitTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
                 "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml"));
     }
 
@@ -49,7 +49,7 @@ public class BaseControllerTest extends DBUnitTest {
 
     @AfterClass
     public static void afterClass() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml"));
     }
 
     protected Authentication getAuthentication() {

@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<dataset>
-	<security_question id="0" question="Select a question:" key="manage.security_question.id.0"/>
-	<security_question id="1" question="What was the name of your first school?" key="manage.security_question.id.1"/>
-</dataset>

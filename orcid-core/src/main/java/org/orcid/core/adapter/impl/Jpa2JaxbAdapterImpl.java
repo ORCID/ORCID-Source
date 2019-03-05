@@ -144,10 +144,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         profile.setOrcidPreferences(getOrcidPreferences(profileEntity));
         profile.setPassword(profileEntity.getEncryptedPassword());
-        profile.setSecurityQuestionAnswer(profileEntity.getEncryptedSecurityAnswer());
         profile.setType(type == null ? OrcidType.USER : type);
         profile.setGroupType(profileEntity.getGroupType() != null ? MemberType.valueOf(profileEntity.getGroupType()) : null);
-        profile.setVerificationCode(profileEntity.getEncryptedVerificationCode());
         profile.setLocked(profileEntity.getRecordLocked());
         profile.setReviewed(profileEntity.isReviewed());
 
@@ -1018,11 +1016,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         SecurityDetails securityDetails = new SecurityDetails();
         orcidInternal.setSecurityDetails(securityDetails);
         securityDetails.setEncryptedPassword(profileEntity.getEncryptedPassword() != null ? new EncryptedPassword(profileEntity.getEncryptedPassword()) : null);
-        securityDetails.setSecurityQuestionId(profileEntity.getSecurityQuestion() == null ? null : new SecurityQuestionId(profileEntity.getSecurityQuestion().getId()));
-        securityDetails.setEncryptedSecurityAnswer(profileEntity.getEncryptedSecurityAnswer() != null ? new EncryptedSecurityAnswer(profileEntity
-                .getEncryptedSecurityAnswer()) : null);
-        securityDetails.setEncryptedVerificationCode(profileEntity.getEncryptedVerificationCode() != null ? new EncryptedVerificationCode(profileEntity
-                .getEncryptedVerificationCode()) : null);
 
         Preferences preferences = new Preferences();
         orcidInternal.setPreferences(preferences);

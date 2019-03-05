@@ -32,9 +32,7 @@ export const UnsubscribeModule = angular.module(
         entryComponents: [ 
             UnsubscribeComponent 
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class UnsubscribeNg2Module {}

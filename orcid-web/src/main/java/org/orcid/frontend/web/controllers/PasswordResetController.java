@@ -106,6 +106,7 @@ public class PasswordResetController extends BaseController {
     public @ResponseBody EmailRequest validateResetPasswordRequest(@RequestBody EmailRequest passwordResetRequest) {
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
+        passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
         }
@@ -122,6 +123,7 @@ public class PasswordResetController extends BaseController {
         }
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
+        passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
@@ -186,7 +188,7 @@ public class PasswordResetController extends BaseController {
             redirectAttributes.addFlashAttribute("passwordResetLinkExpired", true);
             return new ModelAndView("redirect:/reset-password?expired=true");
         }
-        ModelAndView result = new ModelAndView("password_one_time_reset_optional_security_questions");
+        ModelAndView result = new ModelAndView("password_one_time_reset");
         result.addObject("noIndex", true);
         return result;
     }
@@ -210,9 +212,7 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/password-reset.json", method = RequestMethod.GET)
     public @ResponseBody OneTimeResetPasswordForm getResetPassword() {
-        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
-        form.setSecurityQuestionId(0);
-        return form;
+        return new OneTimeResetPasswordForm();
     }
 
     @RequestMapping(value = "/reset-password-email.json", method = RequestMethod.POST)

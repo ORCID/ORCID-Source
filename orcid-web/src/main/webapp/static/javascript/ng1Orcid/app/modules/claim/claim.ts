@@ -32,8 +32,6 @@ export const ClaimModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
         ]
     }
 )

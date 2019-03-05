@@ -32,8 +32,6 @@ export const PersonModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
         ]
     }
 )

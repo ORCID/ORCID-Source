@@ -37,6 +37,7 @@ export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit 
     primaryEmail: string;
     sourceGrantReadWizard: any;
     manualEditVerificationFeatureEnabled = this.featuresService.isFeatureEnabled('EMAIL_VERIFICATION_MANUAL_EDIT');
+    justRegistered: boolean;
 
     constructor(
         private elementRef: ElementRef,
@@ -134,6 +135,9 @@ export class MyOrcidAlertsComponent implements AfterViewInit, OnDestroy, OnInit 
 
     ngOnInit() {
         var urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has('justRegistered')){
+            this.justRegistered = true;
+        }
         if(urlParams.has('recordClaimed')){
             this.getSourceGrantReadWizard()
         } else if ((!this.checkEmailValidated || this.checkEmailValidated=="false") && (!this.inDelegationMode || this.inDelegationMode=="false")){

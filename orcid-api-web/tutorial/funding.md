@@ -13,10 +13,14 @@ These calls can be used with Member API credentials on sandbox or the production
 **Endpoints:** ```/funding``` and ```/fundings```
 
 **Sample XML files:**
-  * [reading the fundings section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/fundings-3.0_rc1.xml)
-  * [reading a funding item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/funding-3.0_rc1.xml)
-  * [writing a funding item](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/funding-3.0_rc1.xml)
-  
+* [reading the fundings section summary in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/fundings-2.1.xml)
+* [reading a funding item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/funding-2.1.xml)
+* [reading a full funding item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/funding-full-2.1.xml)
+* [writing a funding item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/funding-2.1.xml)
+* [reading the fundings section summary in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/fundings-3.0_rc1.xml)
+* [reading a funding item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/funding-3.0_rc1.xml)
+* [writing a funding item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/funding-3.0_rc1.xml)
+
 ## Permission to edit the record
 Editing the funding section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading funding items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
 
@@ -33,7 +37,7 @@ Editing the funding section of a record requires a 3 step OAuth token with the `
     - Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
 
 
-- **organization-defined-type** _(optional)_ The subtype or locally defined type for the award 
+- **organization-defined-type** _(optional)_ The subtype or locally defined type for the award
 
 - **title** _(required)_ The title of the funding award
 
@@ -49,13 +53,13 @@ Editing the funding section of a record requires a 3 step OAuth token with the `
 
 - **end-date** _(optional)_ The date the funding ended or will end
 
-- **exteral-id-type** _(optional)_ The type of identifier. This field must be set to ```grant_number```
+- **external-id-type** _(optional)_ The type of identifier. This field must be set to ```grant_number```
 
-- **exteral-id-value** _(optional)_ The identifier itself
+- **external-id-value** _(optional)_ The identifier itself
 
-- **exteral-id-url** _(optional)_ A url the identifier resolves to
+- **external-id-url** _(optional)_ A url the identifier resolves to
 
-- **exteral-id-relationship** _(optional)_ Select self for identifiers that apply to the funding itself or part-of for identifiers that apply to a collection the funding is part of.
+- **external-id-relationship** _(optional)_ Select self for identifiers that apply to the funding itself or part-of for identifiers that apply to a collection the funding is part of.
 
 - **contributors** _(optional)_ Information about the individuals who received the funding
 
@@ -73,16 +77,14 @@ Editing the funding section of a record requires a 3 step OAuth token with the `
 
 **Example request in curl**
 
-```
-curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/fundings'
-```
-Example response
-```
-HTTP/1.1 200 OK
+```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/fundings'```
 
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<activities:fundings ... </activities:fundings>
+**Example response**
+
+```HTTP/1.1 200 OK```
 ```
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<activities:fundings ... </activities:fundings>```
 
 ## Read a single funding item
 
@@ -90,22 +92,20 @@ HTTP/1.1 200 OK
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/funding/[put-code] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
 **Example request in curl**
 
-```
-curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding/4413'
+```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/4413'
 ```
 
 Example response
 ```HTTP/1.1 200 OK
 
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<funding:funding put-code="2205" path="/0000-0002-9227-8514/funding/4413" ... </funding:funding> 
-```
+<funding:funding put-code="2205" path="/0000-0002-9227-8514/funding/4413" ... </funding:funding>```
 
 ## Post a new funding item
 
@@ -113,20 +113,19 @@ Example response
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/funding |
 | Method    | POST |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the work you are posting in json or xml format | 
+| data        | the work you are posting in json or xml format |
 
 **Example request in curl**
 ```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding'
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding'
 ```
 
-Example response
-```
-HTTP/1.1 201 Created
-Location: http://api.qa.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding/4458
-```
+**Example response**
+
+```HTTP/1.1 201 Created
+Location: http://api.qa.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/4458```
 
 ## Update a funding item
 
@@ -134,24 +133,25 @@ Location: http://api.qa.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding/4458
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/funding/[put-code] |
 | Method    | PUT |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
-| data        | the updated work in json or xml format | 
+| data        | the updated work in json or xml format |
 
 **Example request in curl**
-```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding/[PUT-CODE]'
-```
 
-Example response
-```
-HTTP/1.1 200 OK
+```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/[PUT-CODE]'```
 
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<funding:funding put-code="4458" ... </funding:funding>
-```
+**Example response**
+
+```HTTP/1.1 200 OK ```
+```<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<funding:funding put-code="4458" ... </funding:funding>```
+
 
 ## Delete a funding item
+
+
+
 
 | Parameter | Value        |
 |--------------------|--------------------------|
@@ -160,10 +160,12 @@ HTTP/1.1 200 OK
 | header      | Authorication: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 
-**Example request in curl**
-```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_dev1/0000-0002-9227-8514/funding/[PUT-CODE]'
-```
 
-Example response
+**Example request in curl**
+
+
+```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/[PUT-CODE]'```
+
+**Example response**
+
 ```HTTP/1.1 204 No Content```

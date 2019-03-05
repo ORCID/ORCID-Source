@@ -7,7 +7,7 @@ declare var orcidVar: any
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, NgZone } 
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, NgZone } 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -40,16 +40,22 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     gaString: string;
     loadedFeed: boolean;
     idpName: string;
+    oauthRequest: boolean;
     requestInfoForm: any;
     showDeactivatedError: any;
     showReactivationSent: any;
     initReactivationRequest: any;
+    registration: boolean;
+    socialSignin: boolean;
+    shibbolethSignin: boolean;    
+    signinData: any;
    
     constructor(
         private zone:NgZone,
         private discoService: DiscoService,
         private oauthService: OauthService,
-        private widgetService: WidgetService
+        private widgetService: WidgetService,
+        private cdr:ChangeDetectorRef
     ) {
         window['angularComponentReference'] = {
                 zone: this.zone,
@@ -57,10 +63,10 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
                 component: this,
             };
         this.authorizationForm = {};
-        this.entityId = orcidVar.providerId;
         this.gaString = "";
         this.loadedFeed = false;
         this.idpName = "";
+        this.oauthRequest = false;
         this.requestInfoForm = {};
         this.showDeactivatedError = false;
         this.showReactivationSent = false;
@@ -87,10 +93,6 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    setEntityId(entityId): void {
-        this.entityId = entityId;
-    };
-
     loadRequestInfoForm = function() {
         this.oauthService.loadRequestInfoForm()
         .pipe(    
@@ -98,13 +100,58 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                if(data){                     
+                if(data){
+                    this.oauthRequest = true;                     
                     this.requestInfoForm = data;              
                     this.gaString = orcidGA.buildClientString(this.requestInfoForm.memberName, this.requestInfoForm.clientName);
+                } else {
+                    this.oauthRequest = false;
                 }
             },
             error => {
                 console.log('Error loading request info form');
+            } 
+        );
+    };
+    
+    loadSocialSigninData = function() {
+        this.oauthService.loadSocialSigninData()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if(data){                     
+                    this.signinData = data;     
+                    this.entityId = data.providerId;  
+                    if(this.entityId === "facebook" || this.entityId === "google"){
+                        this.idpName = this.entityId.charAt(0).toUpperCase() + this.entityId.slice(1);
+                        this.loadedFeed = true;
+                        this.cdr.detectChanges();
+                    }
+                }
+            },
+            error => {
+                console.log('Error loading social signin data ' + JSON.stringify(error));
+            } 
+        );
+    };
+    
+    loadShibbolethSigninData = function() {
+        this.oauthService.loadShibbolethSigninData()
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if(data){                     
+                    this.signinData = data;    
+                    this.entityId = data.providerId;          
+                    this.loadDiscoFeed();  
+                }
+            },
+            error => {
+                console.log('Error loading shibboleth signin data');
             } 
         );
     };
@@ -152,17 +199,20 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
+        var urlParts = window.location.href.split('/');
+        if (urlParts.indexOf("register") >= 0) {
+            this.registration = true;
+        } else if (urlParts.indexOf("social") >= 0) {
+            this.socialSignin = true;
+            this.loadSocialSigninData();
+        } else if (urlParts.indexOf("shibboleth") >= 0) {
+            this.shibbolethSignin = true;
+            this.loadShibbolethSigninData();
+        }
+        
         this.loadRequestInfoForm();
         this.authorizationForm = {
             userName:  {value: ""}
         } 
-        this.setEntityId(this.entityId);
-
-        if(this.entityId === "facebook" || this.entityId === "google"){
-            this.idpName = this.entityId.charAt(0).toUpperCase() + this.entityId.slice(1);
-            this.loadedFeed = true;
-        } else {
-            this.loadDiscoFeed();
-        }       
     }; 
 }

@@ -2,7 +2,6 @@ package org.orcid.frontend.web.forms;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 import org.orcid.pojo.ajaxForm.Text;
 
@@ -12,10 +11,6 @@ public class OneTimeResetPasswordForm implements ErrorsInterface {
 
     private Text retypedPassword;
 
-    private Integer securityQuestionId;
-
-    private String securityQuestionAnswer;
-    
     private String encryptedEmail;
     
     private String successRedirectLocation;
@@ -44,22 +39,6 @@ public class OneTimeResetPasswordForm implements ErrorsInterface {
         this.retypedPassword = retypedPassword;
     }
 
-    public Integer getSecurityQuestionId() {
-        return securityQuestionId;
-    }
-
-    public void setSecurityQuestionId(Integer securityQuestionId) {
-        this.securityQuestionId = securityQuestionId;
-    }
-
-    public String getSecurityQuestionAnswer() {
-        return securityQuestionAnswer;
-    }
-
-    public void setSecurityQuestionAnswer(String securityQuestionAnswer) {
-        this.securityQuestionAnswer = securityQuestionAnswer;
-    }
-    
     public List<String> getErrors() {
         return errors;
     }
@@ -82,10 +61,6 @@ public class OneTimeResetPasswordForm implements ErrorsInterface {
 
     public void setSuccessRedirectLocation(String successRedirectLocation) {
         this.successRedirectLocation = successRedirectLocation;
-    }
-
-    public boolean isSecurityDetailsPopulated() {
-        return securityQuestionId != null && securityQuestionId != 0 && StringUtils.isNotBlank(securityQuestionAnswer);
     }
 
 }

@@ -32,14 +32,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.exception.DeactivatedException;
-import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
@@ -54,11 +49,8 @@ import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
-import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.frontend.web.forms.LoginForm;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
@@ -80,7 +72,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.constants.SiteConstants;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
@@ -104,9 +95,6 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -124,13 +112,9 @@ public class BaseController {
     String[] redirectUriSchemes = { "http", "https" };
     UrlValidator redirectUriValidator = new RedirectUriValidator(redirectUriSchemes);
 
-    private String devSandboxUrl;
-
     private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
     private String aboutUri;    
-
-    private boolean reducedFunctionalityMode;
 
     private String maintenanceMessage;
 
@@ -174,9 +158,6 @@ public class BaseController {
 
     @Resource
     private InternalSSOManager internalSSOManager;
-    
-    @Resource
-    private SecurityQuestionManager securityQuestionManager;
     
     protected static final String EMPTY = "empty";
 
@@ -225,16 +206,6 @@ public class BaseController {
         this.shibbolethEnabled = shibbolethEnabled;
     }
 
-    @ModelAttribute("devSandboxUrl")
-    public String getDevSandboxUrl() {
-        return devSandboxUrl;
-    }
-
-    @Value("${org.orcid.frontend.web.devSandboxUrl:}")
-    public void setDevSandboxUrl(String devSandboxUrl) {
-        this.devSandboxUrl = devSandboxUrl;
-    }
-
     @ModelAttribute("aboutUri")
     public String getAboutUri() {
         return aboutUri;
@@ -243,16 +214,6 @@ public class BaseController {
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
     public void setAboutUri(String aboutUri) {
         this.aboutUri = aboutUri;
-    }
-
-    @ModelAttribute("reducedFunctionalityMode")
-    public boolean isReducedFunctionalityMode() {
-        return reducedFunctionalityMode;
-    }
-
-    @Value("${org.orcid.frontend.web.reducedFunctionalityMode:false}")
-    public void setReducedFunctionalityMode(boolean reducedFunctionalityMode) {
-        this.reducedFunctionalityMode = reducedFunctionalityMode;
     }
 
     @ModelAttribute("googleAnalyticsTrackingId")
@@ -526,11 +487,6 @@ public class BaseController {
 
     public String getMessage(String messageCode, Object... messageParams) {
         return localeManager.resolveMessage(messageCode, messageParams);
-    }
-
-    @ModelAttribute("locale")
-    public String getLocaleAsString() {
-        return localeManager.getLocale().toString();
     }
 
     public Locale getLocale() {
@@ -836,18 +792,6 @@ public class BaseController {
         }
     }
     
-    @ModelAttribute("securityQuestions")
-    public Map<String, String> retrieveSecurityQuestionsAsMap() {
-        Map<String, String> securityQuestions = securityQuestionManager.retrieveSecurityQuestionsAsInternationalizedMap();
-        Map<String, String> securityQuestionsWithMessages = new LinkedHashMap<String, String>();
-
-        for (String key : securityQuestions.keySet()) {
-            securityQuestionsWithMessages.put(key, getMessage(securityQuestions.get(key)));
-        }
-
-        return securityQuestionsWithMessages;
-    }
-
     protected Map<String, String> generateSalesForceRoleMap() {
         Map<String, String> roleMap = new HashMap<>();
         for(ContactRoleType roleType : ContactRoleType.values()){

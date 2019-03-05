@@ -16,15 +16,13 @@
     =============================================================================
 
 -->
-<div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
+<div class="id-banner" [ngClass]="{'delegation-mode': userInfo.IN_DELEGATION_MODE=='true'}">
 	<div class="full-name pull-right" *ngIf="requestInfoForm?.userName != null">
 		{{requestInfoForm?.userName}}		
 	</div>
-	<div class="oid">
-		<#if (locked)?? && !locked>
-			<!-- SWITCH USER -->
-            <switch-user-ng2 [requestInfoForm]="requestInfoForm"></switch-user-ng2>
-		</#if>
+	<div *ngIf="userInfo.LOCKED=='false'" class="oid">
+		<!-- SWITCH USER -->
+        <switch-user-ng2 [requestInfoForm]="requestInfoForm"></switch-user-ng2>
 	</div>
 	<div class="clearfix pull-right">
 		<span class="notYouUrl"><a href="" onclick="logOffReload('show_login'); return false;">(<@orcid.msg'confirm-oauth-access.notYou'/>)</a>
@@ -33,6 +31,5 @@
             </h3>
         </span>
         <div *ngIf="showNotYouDescription"><@orcid.msg'confirm-oauth-access.notYou.longDesc'/></div>
-        
 	</div>
 </div>

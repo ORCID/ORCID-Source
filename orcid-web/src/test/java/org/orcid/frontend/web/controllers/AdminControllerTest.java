@@ -127,7 +127,7 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
                 "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
     }
 
@@ -159,7 +159,7 @@ public class AdminControllerTest extends BaseControllerTest {
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml",
-                "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+                "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
     }
 
     @Override
@@ -318,24 +318,6 @@ public class AdminControllerTest extends BaseControllerTest {
         assertTrue(ids.containsKey("mixed@case.com"));
         assertEquals("4444-4444-4444-4442", ids.get("mixed@case.com"));
         assertFalse(ids.containsKey("invalid@email.com"));
-    }
-
-    @Test
-    public void removeSecurityQuestionTest() throws Exception {
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
-        assertNotNull(orcidProfile.getSecurityQuestionAnswer());
-        adminController.removeSecurityQuestion(mockRequest, mockResponse, "4444-4444-4444-4440");
-        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
-        assertNull(orcidProfile.getSecurityQuestionAnswer());
-    }
-
-    @Test
-    public void removeSecurityQuestionUsingEmailTest() throws Exception {
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
-        assertNotNull(orcidProfile.getSecurityQuestionAnswer());
-        adminController.removeSecurityQuestion(mockRequest, mockResponse, "michael@bentine.com");
-        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
-        assertNull(orcidProfile.getSecurityQuestionAnswer());
     }
 
     @Test

@@ -37,8 +37,7 @@ export const RegisterDuplicatesModule = angular.module(
             CommonModule,
             FormsModule,
         ],
-        providers: [
-        ]
+        
     }
 )
 export class RegisterDuplicatesNg2Module {}

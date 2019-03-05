@@ -42,12 +42,9 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
     elementHeight: any;
     elementWidth: any;
     errorUpdatingVisibility: any;
-    initSecurityQuestionFlag: boolean;
     password: any;
     prefs: any;
     primaryEmail: string;
-    securityQuestions: any;
-    securityQuestionPojo: any;
     showConfirmationWindow: any;
     showDisabled2FA: boolean;
     showEnabled2FA: boolean;
@@ -66,13 +63,8 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
         this.changePasswordPojo = {};
         this.deprecateProfilePojo = {};
         this.errorUpdatingVisibility = false;
-        this.initSecurityQuestionFlag = false;
         this.prefs = {};
         this.primaryEmail="";
-        this.securityQuestions = [];
-        this.securityQuestionPojo = {
-            securityQuestionId: null
-        };
         this.showConfirmationWindow = false;
         this.showDisabled2FA = false;
         this.showEnabled2FA = false;
@@ -83,7 +75,6 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
             'editLanguage': false,
             'editPassword': (window.location.hash === "#editPassword"),
             'editPrivacy': (window.location.hash === "#editPrivacyPreferences"),
-            'editSecurityQuestion': (window.location.hash === "#editSecurityQuestion"),
             'twoFA': (window.location.hash === "#edit2FA"),
             'getMyData': false
         };
@@ -228,33 +219,6 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
         );
     };
 
-    getSecurityQuestion(): void {
-        this.accountService.getSecurityQuestion()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.securityQuestionPojo = data;
-            },
-            error => {
-                //console.log('error with security question.json', error);
-            } 
-        );
-    };
-
-    initSecurityQuestion( obj ): void{
-        if( this.initSecurityQuestionFlag == false ){
-            this.initSecurityQuestionFlag = true;
-            let objLastIndex = obj.length - 1;
-
-            if(obj[objLastIndex] == ""){
-                obj = obj.slice(0, -1);
-            }
-            this.securityQuestions = obj;
-        }
-    }
-
     saveChangePassword(): void {
         this.accountService.saveChangePassword( this.changePasswordPojo )
         .pipe(    
@@ -271,30 +235,7 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
         );
     }
 
-    saveChangeSecurityQuestion(): void {
-        this.accountService.submitModal( this.securityQuestionPojo )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.securityQuestionPojo = data;
-            },
-            error => {
-                //console.log('error with security question', error);
-            } 
-        );
-        this.securityQuestionPojo.password=null;
-    };
-
-    securityQuestionCheckCredentials(): void {
-        if( orcidVar.isPasswordConfirmationRequired ){
-            this.showConfirmationWindow = true;
-        } else {
-            this.saveChangeSecurityQuestion();
-        }
-    };
-
+    
     sendDeactivateEmail(): void {
         this.accountService.sendDeactivateEmail()
         .pipe(    
@@ -345,15 +286,6 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
 
     updateToggleText(sectionName){
         switch(sectionName) { 
-            case 'editSecurityQuestion': {
-                if(this.showSection[sectionName]==true){
-                    this.toggleText[sectionName] = om.get("manage.editTable.hide");
-                } else {
-                    this.toggleText[sectionName] = om.get("manage.editTable.edit");
-                    this.securityQuestionPojo.errors = [];
-                }
-                break; 
-            }
             case 'deactivate': { 
                 if(this.showSection[sectionName]==true){
                     this.toggleText[sectionName] = om.get("manage.editTable.hide");
@@ -422,7 +354,6 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
         this.check2FAState();
         this.getChangePassword();
         this.getPreferences();
-        this.getSecurityQuestion();
         this.getDeprecateProfile();
     }; 
 }

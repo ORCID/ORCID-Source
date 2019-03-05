@@ -7,10 +7,9 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.VisibilityMismatchException;
-import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.common.VisibilityType;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.jaxb.model.v3.rc2.record.Keyword;
@@ -18,7 +17,6 @@ import org.orcid.jaxb.model.v3.rc2.record.OtherName;
 import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.persistence.constants.SiteConstants;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +41,7 @@ public class PersonValidator {
             }
         }        
         
-        if(PojoUtil.isEmpty(researcherUrl.getUrlName())) {
-            String message = "Url name must not be empty";
-            LOGGER.error(message);
-            throw new OrcidValidationException(message);
-        } else {
+        if(!PojoUtil.isEmpty(researcherUrl.getUrlName())) {
             if(SiteConstants.URL_MAX_LENGTH < researcherUrl.getUrlName().length()) {
                 String message = "Url name must not be longer than " + SiteConstants.URL_MAX_LENGTH + " characters";
                 LOGGER.error(message);

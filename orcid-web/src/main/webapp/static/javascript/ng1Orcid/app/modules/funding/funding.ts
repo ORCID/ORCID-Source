@@ -45,9 +45,6 @@ export const FundingModule = angular.module(
         ],
         entryComponents: [ 
             FundingComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

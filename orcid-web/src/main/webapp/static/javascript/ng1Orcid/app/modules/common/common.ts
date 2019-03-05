@@ -4,7 +4,7 @@ import * as angular
 import { CommonModule } 
     from '@angular/common'; 
 
-import { Directive, NgModule } 
+import {  NgModule } 
     from '@angular/core';
 
 import { FormsModule }
@@ -83,9 +83,6 @@ import { WorkExternalIdentifierHtmlPipe }
 import { ExtIdPopoverNg2Module }
     from './../extIdPopover/extIdPopover';
 
-import { HeaderNg2Module }
-    from './../header/header';
-
 import { LanguageNg2Module }
     from './../language/language';
 
@@ -98,115 +95,6 @@ import { PrivacytoggleNg2Module }
 import { RequestPasswordResetNg2Module }
     from './../requestPasswordReset/requestPasswordReset';
 
-//User generated services
-
-import { AffiliationService } 
-    from '../../shared/affiliation.service';
-
-import { AccountService }
-    from '../../shared/account.service';
-
-import { AdminActionsService }
-    from '../../shared/adminActions.service';
-    
-import { BlogService }
-    from '../../shared/blog.service';
-
-import { ClaimService }
-    from '../../shared/claim.service';
-
-import { ClientService }
-    from '../../shared/client.service';
-
-import { CommonService }
-    from '../../shared/common.service'
-
-import { ConsortiaService }
-    from '../../shared/consortia.service'
-
-import { DiscoService }
-    from '../../shared/disco.service';
-
-import { EmailService } 
-    from '../../shared/email.service';
-
-import { FeaturesService }
-    from '../../shared/features.service';
-
-import { FundingService } 
-    from '../../shared/funding.service';
-
-import { GenericService } 
-    from '../../shared/generic.service';
-
-import { LanguageService }
-    from '../../shared/language.service';
-
-import { ManageMembersService } 
-    from '../../shared/manageMembers.service';
-
-import { MembersListService }
-    from '../../shared/membersList.service'
-
-import { ModalService } 
-    from '../../shared/modal.service';
-
-import { NotificationsService } 
-    from '../../shared/notifications.service';
-
-import { OauthService }
-    from '../../shared/oauth.service';
-
-import { PasswordService }
-    from '../../shared/password.service';
-
-import { PeerReviewService }
-    from '../../shared/peerReview.service';
-
-import { PreferencesService }
-    from '../../shared/preferences.service';
-
-import { ReactivationService }
-    from '../../shared/reactivation.service';
-
-import { ResearchResourceService }
-    from '../../shared/researchResource.service';
-
-import { SearchService } 
-    from '../../shared/search.service';
-
-import { SwitchUserService } 
-    from '../../shared/switchUser.service';
-
-import { TwoFAStateService } 
-    from '../../shared/twoFAState.service';
-    
-import { ShibbolethService } 
-    from '../../shared/shibboleth.service'; 
-
-import { WidgetService }
-    from '../../shared/widget.service'
-
-import { WorkspaceService } 
-    from '../../shared/workspace.service'; 
-
-import { WorksService } 
-    from '../../shared/works.service';
-    
-import { EmailFrequencyService }
-    from '../../shared/emailFrequency.service';
-
-import { UnsubscribeService }
-    from '../../shared/unsubscribe.service';
-
-import { ResendClaimService }
-    from '../../shared/resendClaim.service';    
-
-import { DeveloperToolsService }
-    from '../../shared/developerTools.service';
-
-import { PersonService } 
-    from '../../shared/person.service';
     
 // This is the Angular 2 part of the module
 @NgModule(
@@ -280,43 +168,6 @@ import { PersonService }
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
-        ],
-        providers: [
-            AccountService,
-            AdminActionsService,
-            AffiliationService,
-            BlogService,
-            ClaimService,
-            ClientService,
-            ConsortiaService,
-            DiscoService,
-            EmailFrequencyService,
-            EmailService,
-            FeaturesService,
-            FundingService,
-            GenericService,
-            LanguageService,
-            ManageMembersService,
-            MembersListService,
-            ModalService,
-            NotificationsService,
-            OauthService,
-            PasswordService,
-            PeerReviewService,
-            PreferencesService,
-            ReactivationService,
-            ResearchResourceService,
-            SearchService,
-            TwoFAStateService,
-            ShibbolethService,
-            SwitchUserService,
-            WidgetService,
-            WorksService,
-            WorkspaceService,
-            UnsubscribeService,
-            ResendClaimService,
-            DeveloperToolsService,
-            PersonService
         ]
     }
 )

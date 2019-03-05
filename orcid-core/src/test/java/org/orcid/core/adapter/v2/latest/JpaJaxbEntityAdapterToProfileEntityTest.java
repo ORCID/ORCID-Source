@@ -67,7 +67,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
+        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml"));
     }
     
     @Before
@@ -85,7 +85,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml"));
     }
 
     @Before
@@ -167,9 +167,6 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertNotNull(retrievedProfileEntity);
         assertEquals("Josiah", retrievedProfileEntity.getRecordNameEntity().getGivenNames());
         assertEquals("abc123", retrievedProfileEntity.getEncryptedPassword());
-        assertEquals(1, retrievedProfileEntity.getSecurityQuestion().getId().intValue());
-        assertEquals("dMDyJ1Z7Qn6xWClFzA63fQ==", retrievedProfileEntity.getEncryptedSecurityAnswer());
-        assertEquals("ghi789", retrievedProfileEntity.getEncryptedVerificationCode());
     }
 
     @Test

@@ -60,8 +60,7 @@ export class MemberDetailsComponent {
     }
     
     getCurrentMemberDetails(): void {
-        var pathArray = window.location.pathname.split('/');
-        var memberSlug = pathArray[0]
+        var memberSlug = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
         var memberSlugStripped = memberSlug.replace(/<[^>]+>/g, '').trim();
         this.membersListService.getMemberDetailsBySlug(memberSlugStripped)
             .subscribe(data => {

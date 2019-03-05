@@ -28,8 +28,7 @@
                                         </div>
                                     </div>
                                 </li>
-                                <#if !(isPublicProfile??)>
-                                <li>
+                                <li *ngIf="!isPublicPage">
                                     <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
                                     elementId="group.activePutCode" 
                                         questionClick="toggleClickPrivacyHelp(group.activePutCode)"
@@ -38,7 +37,6 @@
                                         limitedClick="researchResourceService.setGroupPrivacy(group, 'LIMITED', $event)"
                                         privateClick="researchResourceService.setGroupPrivacy(group, 'PRIVATE', $event)"/>
                                 </li>
-                                </#if>
                             </ul>
                         </div>
                     </div>
@@ -105,16 +103,13 @@
                                 </div>
                             </li>
                             <!--Visibility selector-->
-                            <#if !(isPublicProfile??)>
-                            <li>
+                            <li *ngIf="!isPublicPage">
                                 <@orcid.privacyToggle2Ng2 angularModel="researchResource.visibility.visibility"
                                 elementId="group.activePutCode" questionClick="toggleClickPrivacyHelp(group.highestVis())" clickedClassCheck="{'popover-help-container-show':privacyHelp[researchResource.putCode.value]==true}" publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
                             </li>
-                            </#if>
                         </ul>
                         <!--Inconsistent visibility warning-->  
-                        <#if !(isPublicProfile??)>
-                        <div *ngIf="!researchResourceService.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
+                        <div *ngIf="!isPublicPage && !researchResourceService.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
                             <div class="popover-help-container">
                                 <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
                                 <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue']">
@@ -125,7 +120,6 @@
                                 </div>
                             </div>                                    
                         </div>
-                        </#if>
                     </div>
                 </div>
                 <!--Identifiers-->
@@ -299,20 +293,14 @@
                         {{researchResource?.sourceName}}
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
-                        <div *ngIf="editSources[group.groupId]">
-                            <span class="glyphicon glyphicon-star" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                            
-                            <#if !(isPublicProfile??)>
-                            <a (click)="makeDefault(group, researchResource, researchResource.putCode)" *ngIf="researchResource.putCode != group.defaultResearchResource.putCode">
-                                <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
-                            </a>
-                            </#if>
-                        </div>
+                        <span class="glyphicon glyphicon-star" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                        <a (click)="makeDefault(group, researchResource, researchResource.putCode)" *ngIf="researchResource.putCode != group.defaultResearchResource.putCode && !isPublicPage">
+                            <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
+                        </a>
                     </div>
                     <div class="col-md-2 col-sm-2 trash-source" *ngIf="editSources[group.groupId]">
                         <div *ngIf="editSources[group.groupId]">
-                            <#if !(isPublicProfile??)>
-                            <ul class="sources-actions">
+                            <ul *ngIf="!isPublicPage" class="sources-actions">
                                 <li>
                                     <a 
                                         (click)="deleteResearchResourceConfirm(researchResource)"  
@@ -330,7 +318,6 @@
                                     </div>
                                 </li>
                             </ul>
-                            </#if>
                         </div>
                     </div>
                     <!--Edit sources-->
@@ -347,17 +334,14 @@
                         </a>
                     </div>                                        
                     <div class="col-md-3 col-sm-3 col-xs-10">
-                        <#if !(isPublicProfile??)>
-                        <span class="glyphicon glyphicon-star" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode.value"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                        <a (click)="makeDefault(group, researchResource, researchResource.putCode); " *ngIf="researchResource.putCode != group.defaultResearchResource.putCode.value">
+                        <span class="glyphicon glyphicon-star" *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"></span><span *ngIf="researchResource.putCode == group.defaultResearchResource.putCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                        <a (click)="makeDefault(group, researchResource, researchResource.putCode); " *ngIf="researchResource.putCode != group.defaultResearchResource.putCode && !isPublicPage">
                             <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
                         </a>
-                        </#if>
                     </div>
                     <!--Action buttons-->
                     <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
-                        <#if !(isPublicProfile??)>
-                        <ul class="sources-actions">
+                        <ul *ngIf="!isPublicPage" class="sources-actions">
                             <li>
                                 <a (click)="deleteResearchResourceConfirm(researchResource)" (mouseenter)="showTooltip(researchResource.putCode+'-deleteInactiveSource')" (mouseleave)="hideTooltip(researchResource.putCode+'-deleteInactiveSource')">
                                     <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{researchResource?.title?.title?.content}}"></span>
@@ -371,7 +355,6 @@
                                 </div>
                             </li>
                         </ul>
-                        </#if>
                     </div>
                 </div> 
                 <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
@@ -382,8 +365,7 @@
                         (researchResource.source.assertionOriginOrcid && researchResource.source.assertionOriginOrcid !== researchResource.source.sourceOrcid)">
                         <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}}
                         </ng-container>
-                    </div>
-                    
+                    </div>                   
                     <div class="col-md-3 col-sm-3 col-xs-9">
                         <span class="glyphicon glyphicon-star"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group?.researchResources?.length != 1"> (</span><a (click)="showSources(group, $event)" *ngIf="group?.researchResources?.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.researchResources.length}}</a><span *ngIf="group?.researchResources?.length != 1">)</span>
 
@@ -397,8 +379,7 @@
 
                     <div class="col-md-2 col-sm-2 col-xs-3" *ngIf="group.activePutCode == researchResource.putCode">
                         <ul class="sources-options" >
-                            <#if !(isPublicProfile??)>
-                            <li *ngIf="!(editSources[group.groupId] || group?.researchResources?.length == 1)">
+                            <li *ngIf="!isPublicPage && !(editSources[group.groupId] || group?.researchResources?.length == 1)">
                                 <a (click)="showSources(group, $event)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>
@@ -421,7 +402,6 @@
                                     </div>
                                 </div>
                             </li>
-                            </#if>
                         </ul>
                     </div>
                 </div>

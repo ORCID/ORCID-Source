@@ -31,9 +31,6 @@ export const EmailFrecuencyLinkModule = angular.module(
         ],
         entryComponents: [ 
             EmailFrecuencyLinkComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

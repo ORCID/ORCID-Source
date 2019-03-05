@@ -66,13 +66,6 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         if(entity.getEnableDeveloperTools() != null) {
             mav.addObject("developerToolsEnabled", entity.getEnableDeveloperTools());
         }
-        if (!entity.getEnableDeveloperTools()) {            
-            if (OrcidType.USER.equals(entity.getOrcidType())) {
-                mav.addObject("error", getMessage("manage.developer_tools.user.error.enable_developer_tools"));
-            } else {
-                mav.addObject("error", getMessage("manage.developer_tools.user.error.invalid_user_type"));
-            }
-        }
 
         mav.addObject("hideRegistration", (sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin()));
         boolean hasVerifiedEmail = emailManagerReadOnly.haveAnyEmailVerified(userOrcid);

@@ -31,9 +31,6 @@ export const AffiliationFormModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-            
         ]
     }
 )

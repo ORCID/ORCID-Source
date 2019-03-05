@@ -35,9 +35,7 @@ export const EmailsFormModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-        ],
+        ]
     }
 )
 export class EmailsFormNg2Module {}

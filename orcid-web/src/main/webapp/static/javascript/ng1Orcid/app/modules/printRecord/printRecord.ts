@@ -31,9 +31,6 @@ export const PrintRecordModule = angular.module(
         ],
         entryComponents: [ 
             PrintRecordComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

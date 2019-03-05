@@ -31,9 +31,6 @@ export const DelegatorsModule = angular.module(
         ],
         entryComponents: [ 
             DelegatorsComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

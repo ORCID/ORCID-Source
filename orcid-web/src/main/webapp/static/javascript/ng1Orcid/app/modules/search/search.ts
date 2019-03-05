@@ -36,8 +36,7 @@ export const SearchModule = angular.module(
             CommonModule,
             FormsModule
         ],
-        providers: [
-        ]
+        
     }
 )
 export class SearchNg2Module {}

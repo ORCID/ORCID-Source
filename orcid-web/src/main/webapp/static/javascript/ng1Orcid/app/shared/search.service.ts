@@ -18,7 +18,9 @@ import { catchError, map, tap }
 
 //import { Preferences } from './preferences';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class SearchService {
     private publicApiHeaders: HttpHeaders;
     private notify = new Subject<any>();

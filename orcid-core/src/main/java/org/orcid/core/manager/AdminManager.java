@@ -20,7 +20,5 @@ public interface AdminManager {
 
     AdminDelegatesRequest startDelegationProcess(AdminDelegatesRequest request, String trusted, String managed);
 
-    String removeSecurityQuestion(String orcid);
-
     List<String> getLockReasons();
 }

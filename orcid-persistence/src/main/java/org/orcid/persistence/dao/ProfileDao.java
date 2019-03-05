@@ -78,7 +78,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateLastModifiedDateAndIndexingStatus(String orcid, IndexingStatus indexingStatus);
 
-    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev);
+    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults);
 
     String retrieveOrcidType(String orcid);
 
@@ -95,8 +95,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean isProfileDeprecated(String orcid);
 
     void updateEncryptedPassword(String orcid, String encryptedPassword);
-
-    void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer);
 
     void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
             boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);

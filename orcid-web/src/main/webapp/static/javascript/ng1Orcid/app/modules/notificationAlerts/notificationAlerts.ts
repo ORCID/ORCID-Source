@@ -31,9 +31,6 @@ export const NotificationAlertsModule = angular.module(
         ],
         entryComponents: [ 
             NotificationAlertsComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

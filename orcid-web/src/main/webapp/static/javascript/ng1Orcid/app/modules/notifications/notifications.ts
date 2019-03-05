@@ -36,9 +36,6 @@ export const NotificationsModule = angular.module(
         entryComponents: [ 
             NotificationsComponent,
             NotificationBodyComponent
-        ],
-        providers: [
-            
         ]
     }
 )

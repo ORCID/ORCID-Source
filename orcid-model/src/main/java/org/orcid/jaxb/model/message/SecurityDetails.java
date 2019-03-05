@@ -37,7 +37,7 @@ import java.io.Serializable;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "encryptedPassword", "securityQuestionId", "encryptedSecurityAnswer", "encryptedVerificationCode" })
+@XmlType( propOrder = { "encryptedPassword" })
 @XmlRootElement(name = "security-details")
 public class SecurityDetails implements Serializable {
 
@@ -47,12 +47,6 @@ public class SecurityDetails implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "encrypted-password", required = true)
     protected EncryptedPassword encryptedPassword;
-    @XmlElement(name = "security-question-id", required = true)
-    protected SecurityQuestionId securityQuestionId;
-    @XmlElement(name = "encrypted-security-answer", required = true)
-    protected EncryptedSecurityAnswer encryptedSecurityAnswer;
-    @XmlElement(name = "encrypted-verification-code", required = true)
-    protected EncryptedVerificationCode encryptedVerificationCode;
 
     /**
      * Gets the value of the encryptedPassword property.
@@ -78,78 +72,6 @@ public class SecurityDetails implements Serializable {
         this.encryptedPassword = value;
     }
 
-    /**
-     * Gets the value of the securityQuestionId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SecurityQuestionId }
-     *     
-     */
-    public SecurityQuestionId getSecurityQuestionId() {
-        return securityQuestionId;
-    }
-
-    /**
-     * Sets the value of the securityQuestionId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SecurityQuestionId }
-     *     
-     */
-    public void setSecurityQuestionId(SecurityQuestionId value) {
-        this.securityQuestionId = value;
-    }
-
-    /**
-     * Gets the value of the encryptedSecurityAnswer property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EncryptedSecurityAnswer }
-     *     
-     */
-    public EncryptedSecurityAnswer getEncryptedSecurityAnswer() {
-        return encryptedSecurityAnswer;
-    }
-
-    /**
-     * Sets the value of the encryptedSecurityAnswer property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EncryptedSecurityAnswer }
-     *     
-     */
-    public void setEncryptedSecurityAnswer(EncryptedSecurityAnswer value) {
-        this.encryptedSecurityAnswer = value;
-    }
-
-    /**
-     * Gets the value of the encryptedVerificationCode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EncryptedVerificationCode }
-     *     
-     */
-    public EncryptedVerificationCode getEncryptedVerificationCode() {
-        return encryptedVerificationCode;
-    }
-
-    /**
-     * Sets the value of the encryptedVerificationCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EncryptedVerificationCode }
-     *     
-     */
-    public void setEncryptedVerificationCode(EncryptedVerificationCode value) {
-        this.encryptedVerificationCode = value;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -164,25 +86,12 @@ public class SecurityDetails implements Serializable {
         if (encryptedPassword != null ? !encryptedPassword.equals(that.encryptedPassword) : that.encryptedPassword != null) {
             return false;
         }
-        if (encryptedSecurityAnswer != null ? !encryptedSecurityAnswer.equals(that.encryptedSecurityAnswer) : that.encryptedSecurityAnswer != null) {
-            return false;
-        }
-        if (encryptedVerificationCode != null ? !encryptedVerificationCode.equals(that.encryptedVerificationCode) : that.encryptedVerificationCode != null) {
-            return false;
-        }
-        if (securityQuestionId != null ? !securityQuestionId.equals(that.securityQuestionId) : that.securityQuestionId != null) {
-            return false;
-        }
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = encryptedPassword != null ? encryptedPassword.hashCode() : 0;
-        result = 31 * result + (securityQuestionId != null ? securityQuestionId.hashCode() : 0);
-        result = 31 * result + (encryptedSecurityAnswer != null ? encryptedSecurityAnswer.hashCode() : 0);
-        result = 31 * result + (encryptedVerificationCode != null ? encryptedVerificationCode.hashCode() : 0);
-        return result;
+        return encryptedPassword != null ? encryptedPassword.hashCode() : 0;
     }
 }

@@ -1,8 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -11,14 +9,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Name;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.Names;
@@ -29,7 +27,6 @@ import org.springframework.security.oauth2.common.exceptions.InvalidClientExcept
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,14 +56,6 @@ public class LoginController extends OauthControllerBase {
     private RecordNameManagerReadOnly recordNameManager;
     
     
-    @ModelAttribute("yesNo")
-    public Map<String, String> retrieveYesNoMap() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        map.put("true", "Yes");
-        map.put("false", "No");
-        return map;
-    }
-    
     @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
     public @ResponseBody Names getAccountNames(@PathVariable String type) {
         String currentOrcid = getCurrentUserOrcid();
@@ -92,14 +81,6 @@ public class LoginController extends OauthControllerBase {
         }
         // in case have come via a link that requires them to be signed out        
         ModelAndView mav = new ModelAndView("login");
-        boolean showLogin = true;
-        String queryString = request.getQueryString();
-        // Check show_login params to decide if the login form should be
-        // displayed by default
-        if (!PojoUtil.isEmpty(queryString) && queryString.toLowerCase().contains("show_login=false")) {
-            showLogin = false;
-        }   
-        mav.addObject("showLogin", String.valueOf(showLogin));
         return mav;
     }
 
@@ -223,27 +204,6 @@ public class LoginController extends OauthControllerBase {
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
 
         ModelAndView mav = new ModelAndView("login");
-        boolean showLogin = false;
-        // Check orcid, email and show_login params to decide if the login form should be
-        // displayed by default
-        // orcid and email take precedence over show_login param
-        if (PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && PojoUtil.isEmpty(requestInfoForm.getUserEmail()) && queryString.toLowerCase().contains("show_login=false")) {
-            showLogin = false;
-        } else if (PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
-            showLogin = true;
-        } else if (!PojoUtil.isEmpty(requestInfoForm.getUserOrcid()) && profileEntityManager.orcidExists(requestInfoForm.getUserOrcid())) {
-            mav.addObject("oauth_userId", requestInfoForm.getUserOrcid());
-            showLogin = true;
-        } else if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
-            mav.addObject("oauth_userId", requestInfoForm.getUserEmail());
-            if(emailManagerReadOnly.emailExists(requestInfoForm.getUserEmail())) {
-                showLogin = true;
-            }            
-        }
-        
-        mav.addObject("showLogin", String.valueOf(showLogin));
-        mav.addObject("hideSupportWidget", true);
-        mav.addObject("oauth2Screens", true);
         return mav;
     }
 }

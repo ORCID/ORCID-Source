@@ -31,9 +31,6 @@ export const BiographyModule = angular.module(
         ],
         entryComponents: [ 
             BiographyComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

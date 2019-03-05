@@ -82,7 +82,7 @@ import org.xml.sax.SAXException;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml",
             "/data/OrgAffiliationEntityData.xml");
@@ -129,9 +129,6 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         assertNotNull(securityDetails);
         assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", securityDetails
                 .getEncryptedPassword().getContent());
-        assertEquals(1, securityDetails.getSecurityQuestionId().getValue());
-        assertEquals("iTlIoR2JsFl5guE56cazmg==", securityDetails.getEncryptedSecurityAnswer().getContent());
-        assertEquals("1vLkD2Lm8c24TyALcW0Brg==", securityDetails.getEncryptedVerificationCode().getContent());
         Preferences preferences = orcidProfile.getOrcidInternal().getPreferences();
         assertNotNull(preferences);
         assertTrue(preferences.getSendChangeNotifications().isValue());

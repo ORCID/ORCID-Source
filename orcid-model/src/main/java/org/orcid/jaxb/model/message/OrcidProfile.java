@@ -101,9 +101,6 @@ public class OrcidProfile implements Serializable {
     private String verificationCode;
 
     @XmlTransient
-    private String securityQuestionAnswer;
-
-    @XmlTransient
     String releaseName = ReleaseNameUtils.getReleaseName();
     
     @XmlTransient
@@ -343,22 +340,6 @@ public class OrcidProfile implements Serializable {
         this.password = password;
     }
 
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
-    public String getSecurityQuestionAnswer() {
-        return securityQuestionAnswer;
-    }
-
-    public void setSecurityQuestionAnswer(String securityQuestionAnswer) {
-        this.securityQuestionAnswer = securityQuestionAnswer;
-    }
-
     /**
      * Sets the value of the orcidInternal property.
      * 
@@ -540,7 +521,6 @@ public class OrcidProfile implements Serializable {
         result = prime * result + ((orcidInternal == null) ? 0 : orcidInternal.hashCode());
         result = prime * result + ((orcidActivities == null) ? 0 : orcidActivities.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
-        result = prime * result + ((securityQuestionAnswer == null) ? 0 : securityQuestionAnswer.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((groupType == null) ? 0 : groupType.hashCode());
         result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
@@ -587,11 +567,6 @@ public class OrcidProfile implements Serializable {
             if (other.password != null)
                 return false;
         } else if (!password.equals(other.password))
-            return false;
-        if (securityQuestionAnswer == null) {
-            if (other.securityQuestionAnswer != null)
-                return false;
-        } else if (!securityQuestionAnswer.equals(other.securityQuestionAnswer))
             return false;
         if (type != other.type)
             return false;

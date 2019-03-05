@@ -31,9 +31,6 @@ export const LinkAccountModule = angular.module(
         ],
         entryComponents: [ 
             LinkAccountComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

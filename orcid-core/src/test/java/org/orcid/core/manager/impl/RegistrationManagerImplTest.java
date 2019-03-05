@@ -86,7 +86,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
+        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml"));
     }       
     
     @Before
@@ -101,7 +101,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml"));
     }
     
     @After

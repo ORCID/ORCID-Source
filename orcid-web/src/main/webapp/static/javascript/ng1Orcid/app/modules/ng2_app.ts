@@ -369,8 +369,7 @@ export class RootCmp {
         bioNg2Module,
         printIdBannerNg2Module
     ],
-    providers: [
-        { 
+    providers: [{ 
             provide: HTTP_INTERCEPTORS,
             useClass: TokenInterceptor,
             multi: true

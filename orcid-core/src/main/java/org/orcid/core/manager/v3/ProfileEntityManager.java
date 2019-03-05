@@ -63,8 +63,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
 
     public void updatePassword(String orcid, String password);
     
-    public void updateSecurityQuestion(String orcid, Integer questionId, String answer);
-    
     public void updateLastLoginDetails(String orcid, String ipAddress);
     
     public AvailableLocales retrieveLocale(String orcid);      

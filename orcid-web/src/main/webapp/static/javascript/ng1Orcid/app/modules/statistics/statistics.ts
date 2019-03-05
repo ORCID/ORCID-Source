@@ -32,9 +32,7 @@ export const StatisticsModule = angular.module(
         entryComponents: [ 
             StatisticsComponent 
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class StatisticsNg2Module {}

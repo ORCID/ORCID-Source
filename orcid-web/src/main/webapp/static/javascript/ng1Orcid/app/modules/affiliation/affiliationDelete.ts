@@ -31,9 +31,6 @@ export const AffiliationDeleteModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-            
         ]
     }
 )

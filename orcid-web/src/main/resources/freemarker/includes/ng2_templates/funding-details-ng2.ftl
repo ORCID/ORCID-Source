@@ -26,17 +26,15 @@
                                         </div>
                                     </div>                                        
                                 </li>
-                                <#if !(isPublicProfile??)>
-                                    <li>
-                                        <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
-                                        elementId="group.activePutCode"
-                                        questionClick="toggleClickPrivacyHelp(group.activePutCode)"
-                                        clickedClassCheck="{'popover-help-container-show':privacyHelp[group.fundings[0].putCode.value]==true}" 
-                                        publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" 
-                                        limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" 
-                                        privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
-                                    </li>
-                                </#if>
+                                <li *ngIf="!isPublicPage">
+                                    <@orcid.privacyToggle2Ng2 angularModel="group.activeVisibility"
+                                    elementId="group.activePutCode"
+                                    questionClick="toggleClickPrivacyHelp(group.activePutCode)"
+                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.fundings[0].putCode.value]==true}" 
+                                    publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" 
+                                    limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" 
+                                    privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
+                                </li>
                             </ul>
                         </div>
                      </div>
@@ -88,32 +86,28 @@
                                 </div>                                        
                             </li>
                             <!--Visibility selector-->
-                            <#if !(isPublicProfile??)>
-                                <li>
-                                    <@orcid.privacyToggle2Ng2  angularModel="group.activeVisibility"
-                                    elementId="group.activePutCode"
-                                    questionClick="toggleClickPrivacyHelp(group.activePutCode)"
-                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[funding.putCode.value]==true}" 
-                                    publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" 
-                                    limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" 
-                                    privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
-                                </li>
-                            </#if>  
+                            <li *ngIf="!isPublicPage">
+                                <@orcid.privacyToggle2Ng2  angularModel="group.activeVisibility"
+                                elementId="group.activePutCode"
+                                questionClick="toggleClickPrivacyHelp(group.activePutCode)"
+                                clickedClassCheck="{'popover-help-container-show':privacyHelp[funding.putCode.value]==true}" 
+                                publicClick="setGroupPrivacy(group, 'PUBLIC', $event)" 
+                                limitedClick="setGroupPrivacy(group, 'LIMITED', $event)" 
+                                privateClick="setGroupPrivacy(group, 'PRIVATE', $event)" />
+                            </li> 
                         </ul>
                         <!--Inconsistent visibility warning--> 
-                        <#if !(isPublicProfile??)>
-                            <div *ngIf="!fundingService.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
-                                 <div class="popover-help-container">
-                                    <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
-                                    <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue']">
-                                        <div class="arrow"></div>
-                                        <div class="popover-content">
-                                            <@orcid.msg 'groups.common.data_inconsistency' />
-                                        </div>
+                        <div *ngIf="!isPublicPage && !fundingService.consistentVis(group) && !editSources[group.groupId]" class="vis-issue">
+                             <div class="popover-help-container">
+                                <span class="glyphicons circle_exclamation_mark" (mouseleave)="hideTooltip('vis-issue')" (mouseenter)="showTooltip('vis-issue')"></span>
+                                <div class="popover vis-popover bottom" *ngIf="showElement['vis-issue']">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <@orcid.msg 'groups.common.data_inconsistency' />
                                     </div>
                                 </div>
                             </div>
-                        </#if>
+                        </div>
                     </div>
                 </div>
                 
@@ -219,42 +213,37 @@
                             </ng-container>
                     </div>                          
                     <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="editSources[group.groupId]">
-
                         <span class="glyphicon glyphicon-star" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                        <#if !(isPublicProfile??)>
-                            <div *ngIf="editSources[group.groupId]">
-                                <a (click)="makeDefault(group, funding?.putCode.value);" *ngIf="funding?.putCode.value != group?.defaultPutCode" class="">
-                                    <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
-                                </a>
-                            </div>
-                        </#if>
+                        <div *ngIf="editSources[group.groupId] && !isPublicPage">
+                            <a (click)="makeDefault(group, funding?.putCode.value);" *ngIf="funding?.putCode.value != group?.defaultPutCode" class="">
+                                <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
+                            </a>
+                        </div>
                     </div>
                     <div class="col-md-2 col-sm-2  col-xs-6 trash-source" *ngIf="editSources[group.groupId]">
-                        <#if !(isPublicProfile??)>
-                            <ul class="sources-actions">
-                                <li>
-                                    <@orcid.editWorkIconNg2
-                                        activity="funding"
-                                        click="openEditFunding(funding, group)"
-                                        toolTipSuffix="editToolTipSource"
-                                        toolTipClass="popover popover-tooltip top edit-activeSource-popover"
-                                     />
-                                </li>
-                                <li>
-                                    <a (click)="deleteFunding(funding)"  (mouseenter)="showTooltip(group.groupId+'-deleteActiveSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteActiveSource')">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
+                        <ul *ngIf="!isPublicPage" class="sources-actions">
+                            <li>
+                                <@orcid.editWorkIconNg2
+                                    activity="funding"
+                                    click="openEditFunding(funding, group)"
+                                    toolTipSuffix="editToolTipSource"
+                                    toolTipClass="popover popover-tooltip top edit-activeSource-popover"
+                                 />
+                            </li>
+                            <li>
+                                <a (click)="deleteFunding(funding)"  (mouseenter)="showTooltip(group.groupId+'-deleteActiveSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteActiveSource')">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
 
-                                    <div class="popover popover-tooltip top delete-activeSource-popover" *ngIf="showElement[group.groupId+'-deleteActiveSource']">
-                                        <div class="arrow"></div>
-                                        <div class="popover-content">
-                                            <@orcid.msg 'groups.common.delete_this_source' />
-                                        </div>
+                                <div class="popover popover-tooltip top delete-activeSource-popover" *ngIf="showElement[group.groupId+'-deleteActiveSource']">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <@orcid.msg 'groups.common.delete_this_source' />
                                     </div>
+                                </div>
 
-                                </li>
-                            </ul>
-                        </#if>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
@@ -271,39 +260,33 @@
                         </a>
                     </div>                        
                     <div class="col-md-3 col-sm-3 col-xs-6">
-                         <#if !(isPublicProfile??)>
-                            <span class="glyphicon glyphicon-star" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                            <a (click)="makeDefault(group, funding?.putCode.value);" *ngIf="funding?.putCode.value != group.defaultPutCode">
-                               <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
-                            </a>
-                        </#if>
+                        <span class="glyphicon glyphicon-star" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                        <a (click)="makeDefault(group, funding?.putCode.value);" *ngIf="funding?.putCode.value != group.defaultPutCode && !isPublicPage">
+                           <span class="glyphicon glyphicon-star-empty"></span> <@orcid.msg 'groups.common.make_preferred' />
+                        </a>
                     </div>
-
-
                     <div class="col-md-2 col-sm-2 col-xs-6 trash-source">
-                        <#if !(isPublicProfile??)>
-                            <ul class="sources-actions">
-                                <li> 
-                                    <@orcid.editWorkIconNg2
-                                        activity="funding"
-                                        click="openEditFunding(funding, group)"
-                                        toolTipSuffix="editToolTipSourceActions"
-                                        toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
-                                     />
-                                </li>
-                                <li>
-                                    <a (click)="deleteFunding(funding)" (mouseenter)="showTooltip(funding?.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(funding?.putCode.value+'-deleteInactiveSource')">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
-                                    <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[funding.putCode.value+'-deleteInactiveSource']">
-                                        <div class="arrow"></div>
-                                        <div class="popover-content">
-                                             <@orcid.msg 'groups.common.delete_this_source' />
-                                        </div>
+                        <ul *ngIf="!isPublicPage" class="sources-actions">
+                            <li> 
+                                <@orcid.editWorkIconNg2
+                                    activity="funding"
+                                    click="openEditFunding(funding, group)"
+                                    toolTipSuffix="editToolTipSourceActions"
+                                    toolTipClass="popover popover-tooltip top edit-inactiveSource-popover"
+                                 />
+                            </li>
+                            <li>
+                                <a (click)="deleteFunding(funding)" (mouseenter)="showTooltip(funding?.putCode.value+'-deleteInactiveSource')" (mouseleave)="hideTooltip(funding?.putCode.value+'-deleteInactiveSource')">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                                <div class="popover popover-tooltip top delete-inactiveSource-popover" *ngIf="showElement[funding.putCode.value+'-deleteInactiveSource']">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                         <@orcid.msg 'groups.common.delete_this_source' />
                                     </div>
-                                </li>
-                            </ul>
-                        </#if>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
@@ -328,40 +311,38 @@
                         </div>
                     </div>
                     <div class="col-md-2 col-sm-2 col-xs-6">
-                        <ul class="sources-options" >
-                            <#if !(isPublicProfile??)>
-                                <li>
-                                    <@orcid.editWorkIconNg2
-                                        activity="funding"
-                                        click="openEditFunding(funding, group)"
-                                        toolTipSuffix="editToolTip"
-                                        toolTipClass="popover popover-tooltip top edit-source-popover"
-                                     />
-                                </li>
-                                <li *ngIf="!(group.fundings.length == 1 || editSources[group.groupId] == true)">
+                        <ul *ngIf="!isPublicPage" class="sources-options">
+                            <li>
+                                <@orcid.editWorkIconNg2
+                                    activity="funding"
+                                    click="openEditFunding(funding, group)"
+                                    toolTipSuffix="editToolTip"
+                                    toolTipClass="popover popover-tooltip top edit-source-popover"
+                                 />
+                            </li>
+                            <li *ngIf="!(group.fundings.length == 1 || editSources[group.groupId] == true)">
 
-                                    <a (click)="showSources(group, $event)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
-                                         <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
-                                    <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteGroup']">
-                                         <div class="arrow"></div>
-                                        <div class="popover-content">
-                                             <@orcid.msg 'groups.common.delete_this_source' />                                
-                                        </div>
-                                    </div>  
-                                </li>
-                                <li *ngIf="group.fundings.length == 1">
-                                   <a id="delete-funding_{{funding.putCode.value}}" (click)="deleteFunding(funding)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
-                                      <span class="glyphicon glyphicon-trash"></span>
-                                   </a>                                 
-                                  <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteSource']">
-                                    <div class="arrow"></div>
-                                       <div class="popover-content">
-                                           <@orcid.msg 'groups.common.delete_this_source' />                                
-                                       </div>
+                                <a (click)="showSources(group, $event)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
+                                     <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                                <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteGroup']">
+                                     <div class="arrow"></div>
+                                    <div class="popover-content">
+                                         <@orcid.msg 'groups.common.delete_this_source' />                                
                                     </div>
-                                </li>
-                            </#if>
+                                </div>  
+                            </li>
+                            <li *ngIf="group.fundings.length == 1">
+                               <a id="delete-funding_{{funding.putCode.value}}" (click)="deleteFunding(funding)" (mouseenter)="showTooltip(group.groupId+'-deleteSource')" (mouseleave)="hideTooltip(group.groupId+'-deleteSource')">
+                                  <span class="glyphicon glyphicon-trash"></span>
+                               </a>                                 
+                              <div class="popover popover-tooltip top delete-source-popover" *ngIf="showElement[group.groupId+'-deleteSource']">
+                                <div class="arrow"></div>
+                                   <div class="popover-content">
+                                       <@orcid.msg 'groups.common.delete_this_source' />                                
+                                   </div>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div><!--Bottom row-->

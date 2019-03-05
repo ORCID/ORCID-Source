@@ -115,7 +115,6 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
@@ -160,9 +159,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     @Resource
     private WorkDao workDao;
-
-    @Resource(name = "securityQuestionDao")
-    private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
     @Mock
     private NotificationManager notificationManager;
@@ -258,14 +254,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         delegateProfileEntity.setTokenDetails(tokens);
         profileDao.merge(delegateProfileEntity);
 
-        SecurityQuestionEntity existingSecurityQuestionEntity = securityQuestionDao.find(3);
-        if (existingSecurityQuestionEntity == null) {
-            SecurityQuestionEntity securityQuestionEntity = new SecurityQuestionEntity();
-            securityQuestionEntity.setId(3);
-            securityQuestionEntity.setQuestion("What?");
-            securityQuestionDao.persist(securityQuestionEntity);
-        }
-        
         orcidProfileManager.setCompareWorksUsingScopusWay(true);
     
         MockitoAnnotations.initMocks(this);
@@ -594,13 +582,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidProfile basicProfile = createBasicProfile();
         OrcidProfile derivedProfile = orcidProfileManager.createOrcidProfile(basicProfile, false, false);
         assertTrue(encryptionManager.hashMatches("password", derivedProfile.getPassword()));
-        assertEquals("random answer", encryptionManager.decryptForInternalUse(derivedProfile.getSecurityQuestionAnswer()));
-        assertEquals("1234", encryptionManager.decryptForInternalUse(derivedProfile.getVerificationCode()));
 
         OrcidProfile retrievedProfile = orcidProfileManager.retrieveOrcidProfile(derivedProfile.getOrcidIdentifier().getPath());
         assertTrue(encryptionManager.hashMatches("password", derivedProfile.getPassword()));
-        assertEquals("random answer", retrievedProfile.getSecurityQuestionAnswer());
-        assertEquals("1234", retrievedProfile.getVerificationCode());
     }
 
     @Test

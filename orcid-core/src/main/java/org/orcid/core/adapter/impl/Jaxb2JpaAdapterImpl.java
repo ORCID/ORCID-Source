@@ -86,7 +86,6 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.ClientDetailsDao;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.WorkDao;
@@ -104,7 +103,6 @@ import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -119,9 +117,6 @@ import org.springframework.util.Assert;
  */
 
 public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
-
-    @Resource(name = "securityQuestionDao")
-    private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
 
     @Resource
     private LocaleManager localeManager;
@@ -1074,15 +1069,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (securityDetails != null) {
                 String encryptedPassword = securityDetails.getEncryptedPassword() != null ? securityDetails.getEncryptedPassword().getContent() : null;
                 profileEntity.setEncryptedPassword(encryptedPassword);
-                profileEntity.setSecurityQuestion(securityDetails.getSecurityQuestionId() == null ? null : securityQuestionDao.find((int) securityDetails
-                        .getSecurityQuestionId().getValue()));
-
-                String encryptedAnswer = securityDetails.getEncryptedSecurityAnswer() != null ? securityDetails.getEncryptedSecurityAnswer().getContent() : null;
-                profileEntity.setEncryptedSecurityAnswer(encryptedAnswer);
-
-                String verificationCode = securityDetails.getEncryptedVerificationCode() != null ? securityDetails.getEncryptedVerificationCode().getContent() : null;
-                profileEntity.setEncryptedVerificationCode(verificationCode);
-
             }
 
             if (orcidInternal.getReferredBy() != null) {
@@ -1091,7 +1077,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
             Preferences preferences = orcidInternal.getPreferences();
             if (preferences != null) {
-                String sendEmailFrequencyDays = preferences.getSendEmailFrequencyDays();
                 // ActivitiesVisibilityDefault default is WorkVisibilityDefault
                 if (preferences.getActivitiesVisibilityDefault() != null && preferences.getActivitiesVisibilityDefault().getValue() != null) {
                     profileEntity.setActivitiesVisibilityDefault(preferences.getActivitiesVisibilityDefault().getValue().name());

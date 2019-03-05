@@ -54,11 +54,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     managedVerified: boolean;
     addDelegateParams: any;
     
-    // Remove security question
-    showRemoveSecurityQuestion: boolean;
     orcidOrEmail: string;
-    removeSecurityQuestionResult: string;
-    showRemoveSecurityQuestionConfirm: boolean;
     
     // Deprecate record
     showDeprecateRecord: boolean;
@@ -128,9 +124,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.trustedVerified = false;
         this.managedVerified = false;
         this.addDelegateParams = {trusted : {errors: [], value: ''}, managed : {errors: [], value: ''}};
-        
-        this.showRemoveSecurityQuestion = false;
-        this.showRemoveSecurityQuestionConfirm = false;
         
         this.showDeprecateRecord = false;
         this.showDeprecateRecordConfirm = false;
@@ -334,28 +327,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('admin: verifyEmail error', error);
             } 
         );   
-    };
-    
-    confirmRemoveSecurityQuestion(): void {
-        if(this.orcidOrEmail != null) {
-            this.showRemoveSecurityQuestionConfirm = true;
-        }
-    };
-    
-    removeSecurityQuestion(): void {
-        this.adminActionsService.removeSecurityQuestion( this.orcidOrEmail )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {                
-                this.removeSecurityQuestionResult = data;
-                this.showRemoveSecurityQuestionConfirm = false;
-            },
-            error => {
-                console.log('admin: verifyEmail error', error);
-            } 
-        );          
     };
     
     confirmDeprecate(): void {        

@@ -31,9 +31,6 @@ export const PeerReviewDeleteModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-            
         ]
     }
 )

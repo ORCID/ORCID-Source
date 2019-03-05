@@ -12,7 +12,9 @@ import { Observable, Subject }
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class AccountService {
     private headers: HttpHeaders;
     private notify = new Subject<any>();
@@ -86,13 +88,6 @@ export class AccountService {
         
     }
     
-    getSecurityQuestion(): Observable<any> {
-        return this.http.get(
-            getBaseUri() + '/account/security-question.json'
-        )
-        
-    }
-
     getSocialAccounts(): Observable<any> {
         return this.http.get(
             getBaseUri()+'/account/socialAccounts.json'

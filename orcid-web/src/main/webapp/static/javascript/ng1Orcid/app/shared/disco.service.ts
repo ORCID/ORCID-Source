@@ -15,8 +15,10 @@ import { CommonNg2Module }
 
 import { WidgetService } 
     from './widget.service';
-
-@Injectable()
+    
+@Injectable({
+    providedIn: 'root',
+})
 export class DiscoService {
     
     private headers: HttpHeaders;

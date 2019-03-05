@@ -37,8 +37,7 @@ export const SelfServiceAddContactModule = angular.module(
             CommonModule,
             FormsModule,
         ],
-        providers: [
-        ]
+        
     }
 )
 export class SelfServiceAddContactNg2Module {}

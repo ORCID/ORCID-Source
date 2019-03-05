@@ -20,6 +20,9 @@ import { EmailService }
 import { ModalService } 
     from '../../shared/modal.service'; 
 
+import { CommonService } 
+    from '../../shared/common.service';
+
 @Component({
     selector: 'biography-ng2',
     template:  scriptTmpl("biography-ng2-template")
@@ -33,11 +36,13 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     lengthError: any;
     showEdit: any;
     url_path: any;
-
+    userInfo: any;
+    
     constructor(
         private biographyService: GenericService,
         private emailService: EmailService,
-        private modalService: ModalService
+        private modalService: ModalService,
+        private commonSrvc: CommonService
     ) {
         this.formData = {
             biography: {
@@ -49,6 +54,19 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
         this.lengthError = false;
         this.showEdit = false;
         this.url_path = '/account/biographyForm.json';
+                
+        if(!this.commonSrvc.isPublicPage) {                        
+            this.userInfo = this.commonSrvc.userInfo$
+            .subscribe(
+                data => {
+                    this.userInfo = data;                
+                },
+                error => {
+                    console.log('header.component.ts: unable to fetch userInfo', error);
+                    this.userInfo = {};
+                } 
+            );
+        }      
     }
 
     cancel(): void {

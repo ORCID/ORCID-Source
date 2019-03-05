@@ -46,7 +46,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class EmailManagerTest extends BaseTest {
     private static final String ORCID = "0000-0000-0000-0003";
     
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
     @Resource(name = "emailManagerV3")

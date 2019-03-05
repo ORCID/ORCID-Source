@@ -39,8 +39,6 @@ export const LanguageModule = angular.module(
         imports: [
             CommonModule,
             FormsModule
-        ],
-        providers: [
         ]
     }
 )

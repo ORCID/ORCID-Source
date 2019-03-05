@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,9 +28,6 @@ import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.common.CitationType;
-import org.orcid.jaxb.model.common.PeerReviewType;
-import org.orcid.jaxb.model.common.Role;
-import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
@@ -43,7 +39,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.rc2.record.WorkCategory;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.ExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
@@ -57,9 +52,7 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WebsiteForm;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
 import org.orcid.utils.FunctionsOverCollections;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -162,27 +155,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         return FunctionsOverCollections.sortMapsByValues(citationTypes);
     }
 
-    /**
-     * Generate a map with ID types. The map is different from the rest, because
-     * it will be ordered in the form: value -> key, to keep the map alpha
-     * ordered in UI.
-     * */
-    @ModelAttribute("idTypes")
-    public Map<String, String> retrieveIdTypesAsMap() {
-        
-        Map<String,String> map = new TreeMap<String,String>();
-            Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName(getLocale());
-            for (String type : types.keySet()) {
-                try{
-                    map.put(types.get(type).getDescription(), type);
-                }catch (NoSuchMessageException e){
-                    //we will skip these from UI for now.
-                    //map.put(type, type);                    
-                }
-            }
-            return FunctionsOverCollections.sortMapsByValues(map);
-    }
-
     @ModelAttribute("roles")
     public Map<String, String> retrieveRolesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
@@ -223,44 +195,10 @@ public class WorkspaceController extends BaseWorkspaceController {
         return lm.getLanguagesMap(localeManager.getLocale());
     }
 
-    @ModelAttribute("peerReviewRoles")
-    public Map<String, String> retrievePeerReviewRolesAsMap() {
-        Map<String, String> peerReviewRoles = new LinkedHashMap<String, String>();
-        for (Role role : Role.values()) {
-            peerReviewRoles.put(role.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.Role.").append(role.name()).toString()));
-        }
-        return FunctionsOverCollections.sortMapsByValues(peerReviewRoles);
-    }
-    
-    @ModelAttribute("peerReviewTypes")
-    public Map<String, String> retrievePeerReviewTypesAsMap() {
-        Map<String, String> peerReviewTypes = new LinkedHashMap<String, String>();
-        for (PeerReviewType type : PeerReviewType.values()) {
-            peerReviewTypes.put(type.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.PeerReviewType.").append(type.name()).toString()));
-        }
-        return FunctionsOverCollections.sortMapsByValues(peerReviewTypes);
-    }
-    
-    @ModelAttribute("workTypes")
-    public Map<String, String> retrieveWorkTypesAsMap() {
-        Map<String, String> types = new LinkedHashMap<String, String>();
-        for (WorkType type : WorkType.values()) {
-            types.put(type.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(type.value()).toString()));
-        }
-        return FunctionsOverCollections.sortMapsByValues(types);
-    }
-    
     @RequestMapping(value = { "/my-orcid3", "/my-orcid", "/workspace" }, method = RequestMethod.GET)
     public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults,
-            @CookieValue(value = "justRegistered", defaultValue = "false") boolean justRegistered) {
-        ModelAndView mav = new ModelAndView("workspace_v3");
-        mav.addObject("showPrivacy", true);
-        mav.addObject("justRegistered", justRegistered);
-        Cookie justRegisteredCookie = new Cookie("justRegistered", null);
-        justRegisteredCookie.setMaxAge(0);
-        response.addCookie(justRegisteredCookie);
-        return mav;
+            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
+        return new ModelAndView("workspace_v3");
     }
 
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)

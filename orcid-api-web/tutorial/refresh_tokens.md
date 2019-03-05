@@ -20,9 +20,9 @@ Example access token request response with access and refresh token:
 | Parameter | Value        |
 |--------------------|--------------------------|
 | URL 				| https://sandbox.orcid.org/oauth/token|
-| client\_id 		| *Your client ID* |
-| client\_secret 		| *Your client secret* |
-| refresh_token       | *Your refresh token* |
+| client_id 		| Your client ID |
+| client_secret 		| Your client secret |
+| refresh_token       | Your refresh token |
 | grant_type       | refresh_token |
 | revoke_old				| optional, set to "true" to revoke existing access token |
 | scope       | optional, specify a subset of scopes |

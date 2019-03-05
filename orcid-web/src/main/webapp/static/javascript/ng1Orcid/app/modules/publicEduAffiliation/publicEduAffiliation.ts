@@ -31,9 +31,6 @@ export const PublicEduAffiliationModule = angular.module(
         ],
         entryComponents: [ 
             PublicEduAffiliationComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

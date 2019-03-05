@@ -17,7 +17,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
-import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
@@ -156,21 +155,17 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev) {
-        // @formatter:off
-		String queryStr = "SELECT e.email, e.date_created FROM email e "
-				+ "LEFT JOIN email_event ev ON e.email = ev.email "
-				+ "AND (ev.email_event_type = :evt or ev.email_event_type='VERIFY_EMAIL_7_DAYS_SENT_SKIPPED' or ev.email_event_type = 'VERIFY_EMAIL_TOO_OLD') "
-				+ "JOIN profile p on p.orcid = e.orcid and p.claimed = true "
-				+ "AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null "
-				+ "where ev.email IS NULL " + "and e.is_verified = false "
-				+ "and e.date_created < (now() - CAST('" + daysUnverified
-				+ "' AS INTERVAL DAY)) "
-				+ "and (e.source_id = e.orcid OR e.source_id is null)"
-				+ " ORDER BY e.last_modified";
-		// @formatter:on
-        Query query = entityManager.createNativeQuery(queryStr);
-        query.setParameter("evt", ev.name());
+    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults) {
+        StringBuilder queryString = new StringBuilder("SELECT e.email, e.date_created FROM email e ");
+        queryString.append("LEFT JOIN email_event ev ON e.email = ev.email ");
+        queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
+        queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
+        queryString.append("where ev.email IS NULL " + "and e.is_verified = false ");
+        queryString.append("and e.date_created < (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
+        queryString.append("and (e.source_id = e.orcid OR e.source_id is null)");
+        queryString.append(" ORDER BY e.last_modified");
+        
+        Query query = entityManager.createNativeQuery(queryString.toString());
         query.setMaxResults(maxResults);
         List<Object[]> dbInfo = query.getResultList();
         List<Pair<String, Date>> results = new ArrayList<Pair<String, Date>>();
@@ -545,17 +540,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), encryptedPassword = :encryptedPassword where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("encryptedPassword", encryptedPassword);
-        updateQuery.executeUpdate();
-    }
-
-    @Override
-    @Transactional
-    public void updateSecurityQuestion(String orcid, Integer securityQuestionId, String encryptedSecurityAnswer) {
-        Query updateQuery = entityManager.createQuery(
-                "update ProfileEntity set lastModified = now(), securityQuestion.id = :securityQuestionId, encryptedSecurityAnswer = :encryptedSecurityAnswer where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("securityQuestionId", securityQuestionId);
-        updateQuery.setParameter("encryptedSecurityAnswer", encryptedSecurityAnswer);
         updateQuery.executeUpdate();
     }
 

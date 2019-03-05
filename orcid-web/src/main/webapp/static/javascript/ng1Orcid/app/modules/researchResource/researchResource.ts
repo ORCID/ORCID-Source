@@ -32,9 +32,7 @@ export const ResearchResourceModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class ResearchResourceNg2Module {}

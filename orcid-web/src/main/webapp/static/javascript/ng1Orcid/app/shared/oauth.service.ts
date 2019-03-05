@@ -11,7 +11,9 @@ import { Observable, Subject }
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class OauthService {
     private formHeaders: HttpHeaders;
     private headers: HttpHeaders;
@@ -88,6 +90,19 @@ export class OauthService {
             getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json'
         )
         ;
+    }
+    
+    loadShibbolethSigninData( ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/shibboleth/signinData.json',
+            { headers: this.headers }
+        );
+    }
+    
+    loadSocialSigninData( ): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/social/signinData.json'
+        );
     }
 
     oauth2ScreensLoadRegistrationForm( ): Observable<any> {
