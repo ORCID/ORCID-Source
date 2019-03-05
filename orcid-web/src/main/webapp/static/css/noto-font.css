@@ -153,3 +153,7 @@ small.italic {
 ul.toggle-menu > li {
     padding: 4px 10px;
 }
+
+.text-14 {
+    font-size: 14px;
+}
