@@ -15,22 +15,22 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AffiliationService } 
-    from '../../shared/affiliation.service.ts';
+    from '../../shared/affiliation.service';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
+    from '../../shared/workspace.service'; 
 
 import { FeaturesService }
-    from '../../shared/features.service.ts' 
+    from '../../shared/features.service' 
     
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
     
 @Component({
     selector: 'affiliation-ng2',

@@ -14,10 +14,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { TwoFAStateService } 
-    from '../../shared/twoFAState.service.ts';
+    from '../../shared/twoFAState.service';
     
 import { ShibbolethService } 
-    from '../../shared/shibboleth.service.ts'; 
+    from '../../shared/shibboleth.service'; 
 
 
 @Component({

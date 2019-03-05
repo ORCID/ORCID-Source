@@ -16,19 +16,19 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service'; 
 
 import { EmailService } 
-    from '../../shared/email.service.ts'; 
+    from '../../shared/email.service'; 
 
 import { GenericService } 
-    from '../../shared/generic.service.ts'; 
+    from '../../shared/generic.service'; 
 
 import { PreferencesService } 
-    from '../../shared/preferences.service.ts';
+    from '../../shared/preferences.service';
 
 import { TwoFAStateService } 
-    from '../../shared/twoFAState.service.ts';
+    from '../../shared/twoFAState.service';
 
 @Component({
     selector: 'account-settings-ng2',

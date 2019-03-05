@@ -13,13 +13,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts'
+    from '../../shared/features.service'
 
 import { SearchService } 
-    from '../../shared/search.service.ts';
+    from '../../shared/search.service';
 
 @Component({
     selector: 'search-ng2',

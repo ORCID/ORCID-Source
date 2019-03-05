@@ -14,13 +14,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { ClaimService } 
-    from '../../shared/claim.service.ts'; 
+    from '../../shared/claim.service'; 
 
 import { CommonService } 
-    from '../../shared/common.service.ts'; 
+    from '../../shared/common.service'; 
     
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 @Component({
     selector: 'claim-ng2',

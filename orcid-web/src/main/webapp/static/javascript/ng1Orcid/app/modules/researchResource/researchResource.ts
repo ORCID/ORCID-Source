@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { ResearchResourceComponent } 
-    from './researchResource.component.ts';
+    from './researchResource.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const ResearchResourceModule = angular.module(

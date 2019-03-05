@@ -19,10 +19,10 @@ import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap,
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service'; 
 
 import { GenericService } 
-    from '../../shared/generic.service.ts'; 
+    from '../../shared/generic.service'; 
 
 
 @Component({

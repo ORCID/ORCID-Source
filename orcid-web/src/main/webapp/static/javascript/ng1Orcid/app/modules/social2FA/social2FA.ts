@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { Social2FAComponent } 
-    from './social2FA.component.ts';
+    from './social2FA.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
     
 // This is the Angular 1 part of the module
 export const Social2FAModule = angular.module(

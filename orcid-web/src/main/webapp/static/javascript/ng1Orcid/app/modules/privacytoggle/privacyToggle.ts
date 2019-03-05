@@ -11,7 +11,7 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 import { PrivacytoggleComponent } 
-    from './privacyToggle.component.ts';
+    from './privacyToggle.component';
 
 // This is the Angular 1 part of the module
 export const PrivacytoggleModule = angular.module(

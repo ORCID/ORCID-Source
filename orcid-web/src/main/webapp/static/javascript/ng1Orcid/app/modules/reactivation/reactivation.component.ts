@@ -15,16 +15,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { OauthService } 
-    from '../../shared/oauth.service.ts'; 
+    from '../../shared/oauth.service'; 
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { FeaturesService } 
-    from '../../shared/features.service.ts'; 
+    from '../../shared/features.service'; 
 
 import { ReactivationService } 
-    from '../../shared/reactivation.service.ts'; 
+    from '../../shared/reactivation.service'; 
 
 @Component({
     selector: 'reactivation-ng2',

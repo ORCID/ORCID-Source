@@ -16,13 +16,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { DiscoService } 
-    from '../../shared/disco.service.ts'; 
+    from '../../shared/disco.service'; 
 
 import { OauthService } 
-    from '../../shared/oauth.service.ts'; 
+    from '../../shared/oauth.service'; 
 
 import { WidgetService } 
-    from '../../shared/widget.service.ts'; 
+    from '../../shared/widget.service'; 
 
 import { CommonService } 
     from '../../shared/common.service.ts';  

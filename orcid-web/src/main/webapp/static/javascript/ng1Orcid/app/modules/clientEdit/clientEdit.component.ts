@@ -16,10 +16,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { ClientService } 
-    from '../../shared/client.service.ts'; 
+    from '../../shared/client.service'; 
 
 import { CommonService } 
-    from '../../shared/common.service.ts'; 
+    from '../../shared/common.service'; 
 
 @Component({
     selector: 'client-edit-ng2',

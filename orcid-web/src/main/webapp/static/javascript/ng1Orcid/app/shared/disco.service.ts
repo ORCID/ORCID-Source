@@ -11,10 +11,10 @@ import { catchError, map, tap }
     from 'rxjs/operators';
 
 import { CommonNg2Module }
-    from './../modules/common/common.ts';
+    from './../modules/common/common';
 
 import { WidgetService } 
-    from './widget.service.ts';
+    from './widget.service';
     
 @Injectable({
     providedIn: 'root',

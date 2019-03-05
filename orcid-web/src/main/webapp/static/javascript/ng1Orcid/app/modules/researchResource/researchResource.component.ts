@@ -15,22 +15,22 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { ResearchResourceService } 
-    from '../../shared/researchResource.service.ts';
+    from '../../shared/researchResource.service';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
+    from '../../shared/workspace.service'; 
 
 import { OrgDisambiguated } 
-    from '../orgIdentifierPopover/orgDisambiguated.ts';
+    from '../orgIdentifierPopover/orgDisambiguated';
     
 @Component({
     selector: 'research-resource-ng2',

@@ -2,7 +2,7 @@ import { Injectable, Pipe, PipeTransform }
     from '@angular/core';
 
 import { CommonService }
-    from './../shared/common.service.ts';
+    from './../shared/common.service';
 
 @Pipe({
     name: "extractContentFromBody"

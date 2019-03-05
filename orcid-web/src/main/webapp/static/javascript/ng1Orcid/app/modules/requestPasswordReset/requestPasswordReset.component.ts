@@ -17,16 +17,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts'
+    from '../../shared/features.service'
 
 import { GenericService } 
-    from '../../shared/generic.service.ts';
+    from '../../shared/generic.service';
 
 import { OauthService } 
-    from '../../shared/oauth.service.ts';
+    from '../../shared/oauth.service';
 
 
 @Component({

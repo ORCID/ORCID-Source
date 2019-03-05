@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, Component, OnDestroy } from "@angular/core";
 import { Observable, BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from 'rxjs/operators';
-import { CommonService } from './common.service.ts';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root',
