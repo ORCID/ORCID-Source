@@ -29,7 +29,7 @@ import { FeaturesService }
 
 @Component({
     selector: 'header-ng2',
-    templateUrl: '../templates/header-ng2-template'
+    template: scriptTmpl("header-ng2-template")
 })
 export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
