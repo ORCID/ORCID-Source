@@ -32,9 +32,7 @@ export const WorksDeleteModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class WorksDeleteNg2Module {}

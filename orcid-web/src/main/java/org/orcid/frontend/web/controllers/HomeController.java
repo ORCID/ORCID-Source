@@ -91,9 +91,7 @@ public class HomeController extends BaseController {
     
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
-        ModelAndView mav = new ModelAndView("home");
-        mav.addObject("showSecondaryMenu", true);
-        return mav; 
+        return new ModelAndView("home");
     }
     
     @RequestMapping(value = "/home")

@@ -736,10 +736,7 @@ public class ManageProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = { "/twitter" }, method = RequestMethod.GET)
     public ModelAndView setTwitterKeyToProfileGET(@RequestParam("oauth_token") String token, @RequestParam("oauth_verifier") String verifier) throws Exception {      
-        ModelAndView mav = new ModelAndView("manage");
-        mav.addObject("showPrivacy", true);        
-        mav.addObject("activeTab", "profile-tab");
-        return mav;
+        return new ModelAndView("manage");
     }
 
     /**

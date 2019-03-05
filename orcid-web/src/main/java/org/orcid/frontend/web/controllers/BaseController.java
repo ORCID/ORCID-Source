@@ -102,11 +102,15 @@ public class BaseController {
     String[] redirectUriSchemes = { "http", "https" };
     UrlValidator redirectUriValidator = new RedirectUriValidator(redirectUriSchemes);
 
-    private String devSandboxUrl;
-
     private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
     private boolean reducedFunctionalityMode;
+
+    private String aboutUri;    
+
+    private String maintenanceMessage;
+
+    private URL maintenanceHeaderUrl;
 
     private String googleAnalyticsTrackingId;
 
@@ -174,24 +178,14 @@ public class BaseController {
         this.shibbolethEnabled = shibbolethEnabled;
     }
 
-    @ModelAttribute("devSandboxUrl")
-    public String getDevSandboxUrl() {
-        return devSandboxUrl;
+    @ModelAttribute("aboutUri")
+    public String getAboutUri() {
+        return aboutUri;
     }
 
-    @Value("${org.orcid.frontend.web.devSandboxUrl:}")
-    public void setDevSandboxUrl(String devSandboxUrl) {
-        this.devSandboxUrl = devSandboxUrl;
-    }
-
-    @ModelAttribute("reducedFunctionalityMode")
-    public boolean isReducedFunctionalityMode() {
-        return reducedFunctionalityMode;
-    }
-
-    @Value("${org.orcid.frontend.web.reducedFunctionalityMode:false}")
-    public void setReducedFunctionalityMode(boolean reducedFunctionalityMode) {
-        this.reducedFunctionalityMode = reducedFunctionalityMode;
+    @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
+    public void setAboutUri(String aboutUri) {
+        this.aboutUri = aboutUri;
     }
 
     @ModelAttribute("googleAnalyticsTrackingId")
@@ -410,11 +404,6 @@ public class BaseController {
 
     public String getMessage(String messageCode, Object... messageParams) {
         return localeManager.resolveMessage(messageCode, messageParams);
-    }
-
-    @ModelAttribute("locale")
-    public String getLocaleAsString() {
-        return localeManager.getLocale().toString();
     }
 
     public Locale getLocale() {

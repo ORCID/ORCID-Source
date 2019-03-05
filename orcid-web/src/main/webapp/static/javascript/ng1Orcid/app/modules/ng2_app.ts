@@ -385,8 +385,7 @@ export class RootCmp {
         FooterNg2Module,
         MaintenanceMessageNg2Module
     ],
-    providers: [
-        { 
+    providers: [{ 
             provide: HTTP_INTERCEPTORS,
             useClass: TokenInterceptor,
             multi: true

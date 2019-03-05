@@ -32,9 +32,7 @@ export const WorksMergeSuggestionsModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class WorksMergeSuggestionsNg2Module {}

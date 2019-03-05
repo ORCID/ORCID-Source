@@ -19,7 +19,9 @@ import { catchError, map, tap, switchMap }
 import { CommonService } 
     from './common.service.ts';       
     
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class SearchService {
     private publicApiHeaders: HttpHeaders;
     private notify = new Subject<any>();

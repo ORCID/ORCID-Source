@@ -7,7 +7,9 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 import { CommonService } 
      from './common.service.ts'; 
 
-@Injectable()
+@Injectable({
+ providedIn: 'root',
+})
 export class FeaturesService {
     
     private features = orcidVar.features;

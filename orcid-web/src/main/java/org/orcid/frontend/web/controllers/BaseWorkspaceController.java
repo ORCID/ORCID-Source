@@ -99,33 +99,6 @@ public class BaseWorkspaceController extends BaseController {
         return map;
     }
     
-    /**
-     * Use {@link #retrieveIsoCountries()} instead.
-     */
-
-    @ModelAttribute("countries")
-    @Deprecated
-    public Map<String, String> retrieveCountries() {
-        Map<String, String> countriesWithId = new LinkedHashMap<String, String>();
-        List<String> countries = countryManager.retrieveCountries();
-        countriesWithId.put("", "Select a country");
-        for (String countryName : countries) {
-            countriesWithId.put(countryName, countryName);
-        }
-        return countriesWithId;
-    }
-
-    @ModelAttribute("allDates")
-    public Map<String, String> getAllDates() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = YearsList.createList();
-        map.put("", "Select date");
-        for (String year : list) {
-            map.put(year, year);
-        }
-        return map;
-    }
-
     @ModelAttribute("orcidIdHash")
     String getOrcidHash(HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession(false);

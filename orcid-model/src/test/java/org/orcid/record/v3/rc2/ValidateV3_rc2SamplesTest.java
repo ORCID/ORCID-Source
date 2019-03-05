@@ -4,6 +4,7 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -149,6 +150,12 @@ public class ValidateV3_rc2SamplesTest {
         assertNotNull(rUrl.getLastModifiedDate());
         assertNotNull(rUrl.getSource());
         assertEquals("8888-8888-8888-8880", rUrl.getSource().retrieveSourcePath());
+        
+        rUrl = (ResearcherUrl) unmarshallFromPath("/record_3.0_rc2/samples/write_samples/researcher-url-3.0_rc2-no-name.xml", ResearcherUrl.class);
+        assertNotNull(rUrl);
+        assertNull(rUrl.getUrlName());
+        assertNotNull(rUrl.getUrl());
+        assertEquals("https://site1.com/", rUrl.getUrl().getValue());
     }
 
     @Test

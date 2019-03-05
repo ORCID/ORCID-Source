@@ -99,7 +99,7 @@ public interface NotificationManager {
 
     ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
     
-    void processUnverifiedEmails7Days();
+    void processUnverifiedEmails2Days();
     
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
 

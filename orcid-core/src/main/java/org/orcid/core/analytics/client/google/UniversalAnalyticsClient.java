@@ -12,7 +12,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.analytics.AnalyticsData;
 import org.orcid.core.analytics.client.AnalyticsClient;
-import org.orcid.core.togglz.Features;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,11 +70,6 @@ public class UniversalAnalyticsClient implements AnalyticsClient {
 
     private void recordEvent(AnalyticsData data) {
         String payload = getEventPayload(data);
-
-        if (Features.API_ANALYTICS_DEBUG.isActive()) {
-            LOGGER.info("Posting API analytics data: {}\npayload: {}", new Object[] { data.toString(), payload });
-        }
-
         postData(payload);
     }
 

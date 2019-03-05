@@ -124,7 +124,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Value("${org.orcid.core.email.verify.tooOld:15}")
     private int emailTooOld;
     
-    private int verifyReminderAfterDays = 7;
+    private int verifyReminderAfterDays = 2;
 
     @Resource(name = "messageSource")
     private MessageSource messages;
@@ -1138,17 +1138,17 @@ public class NotificationManagerImpl implements NotificationManager {
     }
     
     @Override
-    synchronized public void processUnverifiedEmails7Days() {
+    synchronized public void processUnverifiedEmails2Days() {
         LOGGER.info("About to process unverIfied emails for reminder");
         List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
         do {
-            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, 100, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, 100);
             LOGGER.info("Got batch of {} profiles with unverified emails for reminder", elements.size());
             LocalDateTime now = LocalDateTime.now();
             Date tooOld = now.minusDays(emailTooOld).toDate();
             for (Pair<String, Date> element : elements) {
                 if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmails7DaysInTransaction(element.getLeft());
+                    processUnverifiedEmails2DaysInTransaction(element.getLeft());
                 } else {
                     // Mark is as too old to send the verification email
                     markUnverifiedEmailAsTooOld(element.getLeft());
@@ -1157,7 +1157,7 @@ public class NotificationManagerImpl implements NotificationManager {
         } while (!elements.isEmpty());
     }
 
-    private void processUnverifiedEmails7DaysInTransaction(final String email) {
+    private void processUnverifiedEmails2DaysInTransaction(final String email) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             @Transactional
@@ -1165,11 +1165,11 @@ public class NotificationManagerImpl implements NotificationManager {
                 try {
                     String userOrcid = emailManager.findOrcidIdByEmail(email);
                     sendVerificationReminderEmail(userOrcid, email);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT));
                     emailEventDao.flush();
                 } catch (Exception e) {
                     LOGGER.error("Unable to send unverified email reminder to email: " + email, e);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED));
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED));
                     emailEventDao.flush();
                 }
             }

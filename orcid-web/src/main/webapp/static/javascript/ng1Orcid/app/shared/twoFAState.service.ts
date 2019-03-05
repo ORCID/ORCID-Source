@@ -15,7 +15,9 @@ import { Observable, Subject }
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class TwoFAStateService {
     private headers: HttpHeaders;
     private url: string;

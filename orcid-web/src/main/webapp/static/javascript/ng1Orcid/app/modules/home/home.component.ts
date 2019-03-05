@@ -19,7 +19,6 @@ import * as xml2js from 'xml2js';
 @Component({
     selector: 'home-ng2',
     template:  scriptTmpl("home-ng2-template"),
-    providers: [BlogService]
 })
 export class HomeComponent implements OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();

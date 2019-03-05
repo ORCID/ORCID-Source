@@ -39,8 +39,6 @@ export const OrgIdentifierPopoverModule = angular.module(
         imports: [
             CommonModule,
             FormsModule
-        ],
-        providers: [
         ]
     }
 )

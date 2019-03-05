@@ -30,9 +30,6 @@ export const AdminActionsModule = angular.module(
         ],
         entryComponents: [ 
             AdminActionsComponent 
-        ],
-        providers: [
-            
         ]
     }
 )
