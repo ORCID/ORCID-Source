@@ -44,7 +44,7 @@
                             <label class="relative"><@orcid.msg 'manual_work_form_contents.labelworkcategory'/></label>
                             <span *ngIf="editWork?.workCategory?.value" class="required" [ngClass]="isValidClass(editWork.workCategory)">*</span>
                             <div class="relative" *ngIf="editWork?.workCategory">
-                                <select id="workCategory" name="workCategory" class="form-control" [(ngModel)]="editWork.workCategory.value" (ngModelChange)="loadWorkTypes(); clearErrors(); applyLabelWorkType();">
+                                <select id="workCategory" name="workCategory" class="form-control" [(ngModel)]="editWork.workCategory.value" (ngModelChange)="loadWorkTypes(); clearErrors(); applyLabelWorkType(); updateRelationships();">
                                     <option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkCategory.empty' /></option>
                                     <#list workCategories?keys as key>
                                         <option value="${key}">${workCategories[key]}</option>
@@ -61,7 +61,7 @@
                             <label class="relative"><@orcid.msg 'manual_work_form_contents.labelworktype'/></label>
                             <span *ngIf="editWork?.workType" class="required" [ngClass]="isValidClass(editWork.workType)">*</span>
 
-                            <select id="workType" name="workType" class="form-control" [(ngModel)]="editWork.workType.value" (ngModelChange)="clearErrors(); applyLabelWorkType();">
+                            <select id="workType" name="workType" class="form-control" [(ngModel)]="editWork.workType.value" (ngModelChange)="clearErrors(); applyLabelWorkType(); updateRelationships();">
                                 <option *ngFor="let type of types" value={{type.key}}>{{type.value}}</option>
                             </select>
 
