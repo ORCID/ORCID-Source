@@ -26,7 +26,7 @@ Editing the research resources section of a record requires a 3 step OAuth token
 
 - **title** _(required)_ The title of the proposal or registration to access the resource
 
-- **translated-title** _(optional)_ The title the propsal appears under in another language, the langauge of the translated title is recorded as an attribute
+- **translated-title** _(optional)_ The title the proposal appears under in another language, the language of the translated title is recorded as an attribute
 
 - **proposal host** _(required)_ The organization that receives and processes resource proposals or requests. Proposal host may or may not be the same as resource host.
 
@@ -47,7 +47,7 @@ Editing the research resources section of a record requires a 3 step OAuth token
 
     - Equipment: Hardware used for research purposes. Examples include microscopes, telescopes, computers, glassware, samples, materials.
 
-    - Infrastructure: A facility, building, or other physical space used to perform research. Examples incldue a neutron spallation source, animal facility, data enclave, archaeological site, telescope array, ship, plane, farm, laboratory.
+    - Infrastructure: A facility, building, or other physical space used to perform research. Examples include a neutron spallation source, animal facility, data enclave, archaeological site, telescope array, ship, plane, farm, laboratory.
 
     - Service: Services used for research purposes. Examples include data analysis, computing services, logistical support, legal services, copyediting, expert or staff advisement.
 
@@ -64,7 +64,7 @@ Editing the research resources section of a record requires a 3 step OAuth token
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/research-resources |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -87,7 +87,7 @@ HTTP/1.1 200 OK
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/research-resource/[put-code] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -133,7 +133,7 @@ Location: http://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-res
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/research-resource/[put-code] |
 | Method    | PUT |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the updated work in json or xml format |
 

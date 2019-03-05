@@ -1,4 +1,4 @@
-# Write, update and personal identifiers
+# Write, update and delete personal identifiers
 
 This tutorial goes over editing information in the other IDs section of the person information on an ORCID record. Personal identifiers are intended to record unique, persistent identifiers that represent the researcher and link to an external system. Examples of personal identifiers include: ISNIs, Scopus Author IDs, Researchers IDs, Loop profiles, and other local identifiers that resolve to a resource about the researcher.
 
@@ -16,9 +16,9 @@ These calls can be used with Member API credentials on sandbox or the production
   * [reading the personal identifiers section in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/external-identifiers-2.1.xml)
   * [reading a personal identifier item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/external-identifier-2.1.xml)
   * [writing a personal identifier item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/external-identifier-2.1.xml)
-  * [reading the personal identifiers section in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/external-identifiers-3.0_dev1.xml)
-  * [reading a personal identifier item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/read_samples/external-identifier-3.0_dev1.xml)
-  * [writing a personal identifier item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_dev1/samples/write_sample/external-identifier-3.0_dev1.xml)
+  * [reading the personal identifiers section in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/external-identifiers-3.0_rc1.xml)
+  * [reading a personal identifier item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/external-identifier-3.0_rc1.xml)
+  * [writing a personal identifier item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/external-identifier-3.0_rc1.xml)
 
 ## Permission to edit the record
 Editing the personal identifiers section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading funding items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.

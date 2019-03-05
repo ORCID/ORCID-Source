@@ -106,6 +106,7 @@ public class PasswordResetController extends BaseController {
     public @ResponseBody EmailRequest validateResetPasswordRequest(@RequestBody EmailRequest passwordResetRequest) {
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
+        passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
         }
@@ -122,6 +123,7 @@ public class PasswordResetController extends BaseController {
         }
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
+        passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);

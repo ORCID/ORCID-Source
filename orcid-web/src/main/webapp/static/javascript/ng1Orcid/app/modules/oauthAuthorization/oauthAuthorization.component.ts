@@ -50,6 +50,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+    private userInfo: any;
 
     public newInput = new EventEmitter<boolean>();
 
@@ -175,17 +176,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.generalRegistrationError = null;
         this.initReactivationRequest = { "email": null, "error": null, "success": false };
         this.nameFormUrl = '/account/names/public';
-        this.isLoggedIn = false
-        
-        this.commonSrvc.configInfo$
-        .subscribe(
-            data => {
-                this.site_key = data.messages['RECAPTCHA_WEB_KEY'];    
-            },
-            error => {
-                console.log('oauthAuthorization.component.ts: unable to fetch configInfo', error);                
-            } 
-        );
+        this.isLoggedIn = false;
         
         this.commonSrvc.configInfo$
         .subscribe(
@@ -193,11 +184,23 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 this.assetsPath = data.messages['STATIC_PATH'];
                 this.shibbolethEnabled = data.messages['SHIBBOLETH_ENABLED'];
                 this.aboutUri = data.messages['ABOUT_URI'];
+                this.site_key = data.messages['RECAPTCHA_WEB_KEY'];
             },
             error => {
-                console.log('oauthAuthorization.component.ts: unable to fetch userInfo', error);                
+                console.log('oauthAuthorization.component.ts: unable to fetch configInfo', error);                
             } 
         );
+
+        this.userInfo = this.commonSrvc.userInfo$
+          .subscribe(
+              data => {
+                  this.userInfo = data;           
+              },
+              error => {
+                  console.log('oauthAuthorization.component.ts: unable to fetch userInfo', error);
+                  this.userInfo = {};
+              } 
+          );
     }
 
     addScript(url, onLoadFunction): void {      
@@ -383,7 +386,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                         if(this.requestInfoForm.userEmail || this.requestInfoForm.userFamilyNames || this.requestInfoForm.userGivenNames){
                             this.showRegisterForm = true;
                         }
-                    }    
+                    } 
+
                     this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {
                             this.showUpdateIcon = true;
@@ -744,7 +748,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }
 
         //param sent if user came via oauth
-        if(urlParams.has('oauth')){
+        if(urlParams.has('oauth') || (window.location.pathname.indexOf("/oauth") > -1)){
             this.oauthRequest = true;
         }
 

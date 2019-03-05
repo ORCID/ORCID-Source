@@ -18,14 +18,14 @@ This workflow can be used with Member API credentials on sandbox or the producti
   * [reading a detailed work item 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/work-full-2.1.xml)
   * [writing a work item with the minimal information 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/work-simple-2.1.xml)
   * [writing a work with the detailed information 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/work-full-2.1.xml)
-  * [writing mulitple works 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/bulk-work-2.1.xml)
+  * [writing multiple works 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/bulk-work-2.1.xml)
   * [writing multiple works in json 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/bulk-work-2.1.json)
   * [reading the works section summary 3.0_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/works-3.0_rc1.xml)
   * [reading a basic work 3.0_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/work-3.0_rc1.xml)
   * [reading a detailed work item 3.0_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/work-full-3.0_rc1.xml)
-  * [writing a work item with the mininal information 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/work-simple-3.0_rc1.xml)
+  * [writing a work item with the minimal information 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/work-simple-3.0_rc1.xml)
   * [writing a work with the detailed information 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/work-full-3.0_rc1.xml)
-  * [writing mulitple works 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/bulk-work-3.0_rc1.xml)
+  * [writing multiple works 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/bulk-work-3.0_rc1.xml)
   * [writing multiple works in json 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/bulk-work-3.0_rc1.json)
 
 ## Permission to edit the record
@@ -71,9 +71,9 @@ Editing the work section of a record requires a 3 step OAuth token with the ```/
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/works |
+| URL 				| https://api.[host]/[version]/[ORCID iD]/works |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authoriczation: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -90,7 +90,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/work/[put-code] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -119,9 +119,9 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/work |
+| URL 				| https://api.[host]/[version]/[ORCID iD]/work |
 | Method    | POST |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the work you are posting in json or xml format |
 
@@ -136,7 +136,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/works |
 | Method    | POST |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the work you are posting in json or xml format |
 
@@ -152,7 +152,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/work/[put-code] |
 | Method    | PUT |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the updated work in json or xml format |
 
@@ -166,9 +166,9 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/work/[put-code] |
+| URL 				| https://api.[host]/[version]/[ORCID iD]/work/[put-code] |
 | Method    | DELETE |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 
 **Example request in curl**
