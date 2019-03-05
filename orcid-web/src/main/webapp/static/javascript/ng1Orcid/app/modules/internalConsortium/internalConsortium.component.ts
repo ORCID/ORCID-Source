@@ -104,7 +104,6 @@ export class InternalConsotiumComponent implements AfterViewInit, OnDestroy, OnI
             },
             error => {
                 this.findConsortiumError = true;
-                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };

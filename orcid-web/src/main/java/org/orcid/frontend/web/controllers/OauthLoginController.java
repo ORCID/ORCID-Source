@@ -46,30 +46,16 @@ import org.springframework.web.servlet.view.RedirectView;
 public class OauthLoginController extends OauthControllerBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthLoginController.class);    
 
-    @Value("${org.orcid.frontend.oauthSignin.showLogin.default:true}")
-    private boolean showLoginDefault;
-    
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         String url = request.getQueryString();
-        boolean showLogin = showLoginDefault; // default to Reg
         // Get and save the request information form
         RequestInfoForm requestInfoForm = generateRequestInfoForm(url);
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
 
-        if (url.toLowerCase().contains("show_login=true"))
-            showLogin = true;
-        else if (url.toLowerCase().contains("show_login=false"))
-            showLogin = false;
-        
-        //Check if userId is set so we should show the login screen
-        if(!PojoUtil.isEmpty(requestInfoForm.getUserId())) {
-            showLogin = true;
-        }
-                                                        
         // Check that the client have the required permissions
         // Get client name
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
@@ -105,8 +91,6 @@ public class OauthLoginController extends OauthControllerBase {
         }
         
         mav.addObject("hideSupportWidget", true);
-        mav.addObject("showLogin", String.valueOf(showLogin));
-        mav.addObject("originalOauth2Process", true);
         mav.setViewName("oauth_login");
         return mav;
     }

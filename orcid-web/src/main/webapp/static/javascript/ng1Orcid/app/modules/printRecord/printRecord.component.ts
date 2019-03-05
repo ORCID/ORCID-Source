@@ -22,9 +22,28 @@ export class PrintRecordComponent {
         this.printWindow = null;
     }
 
-    printRecord(url): void{
+    printRecord(): void{
         //open window
-        this.printWindow = window.open(url);  
+        if(this.isPublicPage) {
+             this.commonSrvc.publicUserInfo$
+            .subscribe(
+                data => {
+                    this.printWindow = window.open(getBaseUri() + '/' + data['EFFECTIVE_USER_ORCID'] + '/print');                      
+                },
+                error => {
+                    console.log('PrintRecordComponent.component.ts: unable to fetch publicUserInfo', error);                    
+                } 
+            );
+        } else {
+            this.commonSrvc.userInfo$
+            .subscribe(
+                data => {
+                    this.printWindow = window.open(getBaseUri()  + '/' + data['EFFECTIVE_USER_ORCID'] + '/print');                
+                },
+                error => {
+                    console.log('PrintRecordComponent.component.ts: unable to fetch userInfo', error);                    
+                } 
+            );
+        }      
     }
-
 }

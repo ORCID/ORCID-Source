@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <script type="text/ng-template" id="register-duplicates-ng2-template">
     <div *ngIf="!showRegisterProcessing"  class="lightbox-container" id="duplicates-records">
         <div class="row margin-top-box">      
@@ -58,7 +40,7 @@
             <div class="col-md-12 col-sm-12 col-xs-12 right">
                 <ul class="inline-list margin-separator pull-right">
                     <li>
-                        <a class="cancel-option" href="${baseUri}/signin" target="_self"><@orcid.msg 'duplicate_researcher.cancel' /></a>
+                        <a class="cancel-option" href="{{getBaseUri()}}/signin" target="_self"><@orcid.msg 'duplicate_researcher.cancel' /></a>
                     </li>
                     <li>
                         <button class="btn btn-primary" (click)="oauth2ScreensPostRegisterConfirm()">

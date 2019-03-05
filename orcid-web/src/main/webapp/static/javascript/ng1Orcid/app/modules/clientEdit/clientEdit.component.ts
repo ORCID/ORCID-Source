@@ -103,11 +103,22 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         this.selectedScope = "";
         this.selectedScopes = [];
         this.showResetClientSecret = false;
-        this.swaggerUri = orcidVar.pubBaseUri+ '/v2.0/';
-        this.swaggerMemberUri = this.swaggerUri.replace("pub","api");
         this.tokenURL = getBaseUri() + '/oauth/token';
         this.viewing = false;
         this.selectedRedirectUriValue = null;
+                
+        this.commonService.configInfo$
+        .subscribe(
+            data => {
+                var pubBaseUri = data.messages['PUB_BASE_URI'];
+                this.swaggerUri = pubBaseUri + '/v2.0/';
+                this.swaggerMemberUri = this.swaggerUri.replace("pub","api");
+            },
+            error => {
+                console.log('clientEdit.component.ts: unable to fetch configInfo', error);                
+            } 
+        );                
+
         this.userInfo = this.commonService.userInfo$
             .subscribe(
                 data => {
@@ -427,7 +438,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
             }
 
             example = this.authorizeURLTemplate;
-            example = example.replace('[BASE_URI]', orcidVar.baseUri);
+            example = example.replace('[BASE_URI]', getBaseUri());
             example = example.replace('[CLIENT_ID]', clientId);
             example = example.replace('[REDIRECT_URI]', this.selectedRedirectUriValue);
             if(scope != ''){
@@ -441,7 +452,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
             sampleCurl = this.sampleAuthCurlTemplate;
             this.sampleAuthCurl = sampleCurl.replace('[CLIENT_ID]', clientId)
                 .replace('[CLIENT_SECRET]', selectedClientSecret)
-                .replace('[BASE_URI]', orcidVar.baseUri)
+                .replace('[BASE_URI]', getBaseUri())
                 .replace('[REDIRECT_URI]', this.selectedRedirectUriValue);
             
             sampleOIDC = this.sampleOpenIdTemplate;

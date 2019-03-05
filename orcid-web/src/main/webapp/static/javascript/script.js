@@ -308,13 +308,43 @@ var OrcidCookie = new function() {
 };
 
 var OrcidMessage = function() {
-    // nothing to init now
+    
 };
+
+var messagesPromise = new Promise(function(resolve, reject) {
+    if(messages == null) {
+        $.ajax({
+            url : getBaseUri() + '/messages.json',
+            type : 'GET',
+            dataType: 'text',
+            contentType: "application/json",            
+            success : function(data) {     
+                var data = JSON.parse(data);
+                messages = data['messages'];  
+                resolve();
+            }
+        }).fail(
+        // detects server is down or CSRF mismatches
+        // do to session expiration or server bounces
+        function(e) {
+            console.log("error fetching javascript messages");
+            console.log(e);
+            reject();
+        });
+    } else {
+        resolve();
+    }
+});    
 
 OrcidMessage.prototype.get = function(name) {
-    return orcidVar.jsMessages.messages[name];
+    return messages[name];
 };
 
+OrcidMessage.prototype.process = function(name) {
+    return messagesPromise;
+};
+
+var messages = null;
 var om = new OrcidMessage();
 
 /*
@@ -329,9 +359,12 @@ function logAjaxError(e){
     console.log("responseText: " + e.responseText);*/
 }
 
-function getBaseUri() {
-    return 'https:' == document.location.protocol ? orcidVar.baseUri
-            : orcidVar.baseUriHttp;
+function getBaseUri() {    
+    var uri = location.protocol + '//' + location.host
+    if(window.location.host.startsWith('localhost:8443') | window.location.host.startsWith('localhost:8080')) {
+        uri = uri + '/orcid-web';        
+    }    
+    return uri;
 }
 
 function getCookieDomain(location){
@@ -346,19 +379,11 @@ function getCookieDomain(location){
         return cookieDomain;
 }
 
-function getStaticCdnPath() {
-    return orcidVar.staticCdn;
-}
-
-function myTest() {
-    return 'a success';
-}
-
 function checkOrcidLoggedIn() {	    
     if (OrcidCookie.checkIfCookiesEnabled()) {    
         if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {
             $.ajax({
-                url : orcidVar.baseUri + '/userStatus.json?callback=?',
+                url : getBaseUri() + '/userStatus.json?callback=?',
                 type : 'POST',
                 dataType : 'json',
                 headers: {
@@ -426,7 +451,7 @@ function logOffReload(reload_param) {
 $(function() {
     
     // Common
-    window.baseUrl = $('body').data('baseurl');
+    window.baseUrl = getBaseUri() + '/';
     window.basePath = window.location.pathname;
 
     // fire off  check, if this page wasn't loaded via iframe (or html5
@@ -438,7 +463,9 @@ $(function() {
 
     // track when deactived people are pushed to signin page
     if (window.location.href.endsWith("signin#deactivated")) {
-        showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
+        messagesPromise.then(function() {
+            showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
+        });        
     }
 
     // jquery browser is deprecated, when you upgrade
@@ -468,23 +495,25 @@ $(function() {
     if (oldBrowserFlag && location == parent.location) {
         var cookieName = "oldBrowserAlert";
         if (!OrcidCookie.getCookie(cookieName)) {
-            var wHtml = '<div class="alert alert-banner" id="browser-warn-div">';
-            wHtml = wHtml + '<p>';
-            wHtml = wHtml + om.get('common.old.browser_1');
-            wHtml = wHtml + om.get('common.old_browser_2');
-            wHtml = wHtml + ' <a href="' + om.get('common.kb_uri_default') + '360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
-            wHtml = wHtml + '</p>';
-            wHtml = wHtml
-                    + ' <button class="btn btn-primary" id="browser-warn-dismiss">'
-            wHtml = wHtml + om.get('common.cookies.click_dismiss');
-            wHtml = wHtml + '</button>';
-            wHtml = wHtml + '</div>';
-            $('body').prepend(wHtml);
-            $("#browser-warn-dismiss").click(function() {
-                $("#browser-warn-div").remove();
-                OrcidCookie.setCookie(cookieName, "dont show message", 7);
-                return false;
-            });
+            messagesPromise.then(function() {
+                var wHtml = '<div class="alert alert-banner" id="browser-warn-div">';
+                wHtml = wHtml + '<p>';
+                wHtml = wHtml + om.get('common.old.browser_1');
+                wHtml = wHtml + om.get('common.old_browser_2');
+                wHtml = wHtml + ' <a href="' + om.get('common.kb_uri_default') + '360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
+                wHtml = wHtml + '</p>';
+                wHtml = wHtml
+                        + ' <button class="btn btn-primary" id="browser-warn-dismiss">'
+                wHtml = wHtml + om.get('common.cookies.click_dismiss');
+                wHtml = wHtml + '</button>';
+                wHtml = wHtml + '</div>';
+                $('body').prepend(wHtml);
+                $("#browser-warn-dismiss").click(function() {
+                    $("#browser-warn-div").remove();
+                    OrcidCookie.setCookie(cookieName, "dont show message", 7);
+                    return false;
+                });                
+            });            
         }
     }
 
@@ -494,34 +523,35 @@ $(function() {
 
         var cookieName = "testWarningCookie";
         var warnMessCookie = OrcidCookie.getCookie(cookieName);
-        if (!warnMessCookie) {
-            var wHtml = '<div class="alert alert-banner" id="test-warn-div">';
-            wHtml = wHtml + '<p><strong>';
-            wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
-                    '{{curentDomian}}', window.location.hostname);
-            wHtml = wHtml + '</strong> <a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
-            wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
-            wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
-            wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
-            wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
-            wHtml = wHtml + '</p> ';
-            // don't let the warning be disabled for test-warn-dismiss
-            if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
-                    && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
-                wHtml = wHtml
-                        + ' <button class="btn btn-primary" id="test-warn-dismiss">'
-                wHtml = wHtml + om.get('common.cookies.click_dismiss');
-                wHtml = wHtml + '</button>';
-            }
-            wHtml = wHtml + '</div>';
-            $('body').prepend(wHtml);
-            $("#test-warn-dismiss").click(function() {
-                $("#test-warn-div").remove();
-                OrcidCookie.setCookie(cookieName, "dont show message", 365);
-                return false;
-            });
+        if (!warnMessCookie) {            
+            messagesPromise.then(function() {
+                var wHtml = '<div class="alert alert-banner" id="test-warn-div">';
+                wHtml = wHtml + '<p><strong>';
+                wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
+                        '{{curentDomian}}', window.location.hostname);
+                wHtml = wHtml + '</strong> <a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
+                wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
+                wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
+                wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
+                wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
+                wHtml = wHtml + '</p> ';
+                // don't let the warning be disabled for test-warn-dismiss
+                if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
+                        && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
+                    wHtml = wHtml
+                            + ' <button class="btn btn-primary" id="test-warn-dismiss">'
+                    wHtml = wHtml + om.get('common.cookies.click_dismiss');
+                    wHtml = wHtml + '</button>';
+                }
+                wHtml = wHtml + '</div>';
+                $('body').prepend(wHtml);
+                $("#test-warn-dismiss").click(function() {
+                    $("#test-warn-div").remove();
+                    OrcidCookie.setCookie(cookieName, "dont show message", 365);
+                    return false;
+                });    
+            });            
         }
-
     }
     
     $(document)
@@ -581,56 +611,60 @@ $(function() {
                                                 } else {
                                                     enableSignin(); 
                                                     var message;
-                                                    if (data.deprecated) {
-                                                        if (data.primary)
-                                                            message = om
-                                                                    .get(
-                                                                            'orcid.frontend.security.deprecated_with_primary')
-                                                                    .replace(
-                                                                            "{{primary}}",
-                                                                            data.primary);
-                                                        else
-                                                            message = om
-                                                                    .get('orcid.frontend.security.deprecated');
+                                                    if (data.deprecated) {                                                                                                               
+                                                        messagesPromise.then(function() {
+                                                            if (data.primary)
+                                                                message = om.get('orcid.frontend.security.deprecated_with_primary')
+                                                                        .replace("{{primary}}",data.primary);
+                                                            else
+                                                                message = om.get('orcid.frontend.security.deprecated');
+                                                            showLoginError(message);
+                                                        });
                                                     } else if (data.disabled) {
                                                             showLoginDeactivatedError();
                                                             return;
-                                                    } else if (data.unclaimed) {
-                                                        var resendClaimUrl = baseUrl
-                                                                + "resend-claim";
-                                                        var userId = $(
-                                                                '#userId')
-                                                                .val();
-                                                        if (userId
-                                                                .indexOf('@') != -1) {
-                                                            resendClaimUrl += '?email='
-                                                                   + encodeURIComponent(userId);
-                                                        }
-                                                        message = om
-                                                                .get(
-                                                                        'orcid.frontend.security.unclaimed_exists_1');
-                                                        message = message + '<a href="' + resendClaimUrl + '">';
-                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_2');
-                                                        message = message + '</a>';
-                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_3');
+                                                    } else if (data.unclaimed) {                                                        
+                                                        messagesPromise.then(function() {
+                                                                    var resendClaimUrl = baseUrl + "resend-claim";
+                                                                    var userId = $(
+                                                                            '#userId')
+                                                                            .val();
+                                                                    if (userId
+                                                                            .indexOf('@') != -1) {
+                                                                        resendClaimUrl += '?email='
+                                                                               + encodeURIComponent(userId);
+                                                                    }
+                                                                    message = om
+                                                                            .get(
+                                                                                    'orcid.frontend.security.unclaimed_exists_1');
+                                                                    message = message + '<a href="' + resendClaimUrl + '">';
+                                                                    message = message + om.get('orcid.frontend.security.unclaimed_exists_2');
+                                                                    message = message + '</a>';
+                                                                    message = message + om.get('orcid.frontend.security.unclaimed_exists_3');
+                                                                    showLoginError(message);
+                                                                    });
                                                     } else if (data.badVerificationCode) {
-                                                        message = om
-                                                        .get('orcid.frontend.security.2fa.bad_verification_code');
-                                                        show2FA();
+                                                        messagesPromise.then(function() {
+                                                            showLoginError(om.get('orcid.frontend.security.2fa.bad_verification_code'));
+                                                            show2FA();
+                                                            });
                                                     } else if (data.badRecoveryCode) {
-                                                        message = om
-                                                        .get('orcid.frontend.security.2fa.bad_recovery_code');
+                                                        messagesPromise.then(function() {
+                                                            showLoginError(om.get('orcid.frontend.security.2fa.bad_recovery_code'));
+                                                            });
                                                     } else if(data.invalidUserType) {
-                                                        message = om.get('orcid.frontend.security.invalid_user_type_1');
-                                                        message = message + ' <a href="https://orcid.org/help/contact-us">';
-                                                        message = message + om.get('orcid.frontend.security.invalid_user_type_2');
-                                                        message = message + '</a>';
+                                                        messagesPromise.then(function() {
+                                                            message = om.get('orcid.frontend.security.invalid_user_type_1');
+                                                            message = message + ' <a href="https://orcid.org/help/contact-us">';
+                                                            message = message + om.get('orcid.frontend.security.invalid_user_type_2');
+                                                            message = message + '</a>';
+                                                            showLoginError(message);
+                                                        });                                                        
                                                     } else {
-                                                        message = om
-                                                               .get('orcid.frontend.security.bad_credentials');
+                                                        messagesPromise.then(function() {
+                                                            showLoginError(om.get('orcid.frontend.security.bad_credentials'));
+                                                            });
                                                     }
-
-                                                    showLoginError(message);
                                                 }; 
                                             }
                                         }).fail(function(e) {
@@ -722,12 +756,15 @@ $(function() {
     function show2FA() {
         $('#verificationCodeFor2FA').attr("style", "display: block");
         $('#verificationCode').focus();
-        $('#form-sign-in-button').html(om.get('orcid.frontend.security.2fa.authenticate'));
         $('#RequestPasswordResetCtr').hide();
         $('#2FAInstructions').show();
         $('#enterRecoveryCode').click(function() {
            $('#recoveryCodeSignin').show(); 
         });
+        
+        messagesPromise.then(function() {
+            $('#form-sign-in-button').html(om.get('orcid.frontend.security.2fa.authenticate'));                        
+            });
     }
 
     // Privacy toggle
@@ -4253,7 +4290,7 @@ this.w3cLatexCharMap = {
                 + offset(input) : baseUrl + '?q=';
     }
 
-    exports.setBaseUrl = function(url) {
+    exports.setBaseUrl = function(url) {        
         baseUrl = url;
     };
 
@@ -4303,8 +4340,6 @@ this.w3cLatexCharMap = {
 })(typeof exports === 'undefined' ? this.orcidSearchUrlJs = {} : exports);
 
 /* END: orcidSearchUrlJs */
-orcidSearchUrlJs.setBaseUrl(orcidVar.searchBaseUrl);
-
 
 /* Mobile detection, useful for colorbox lightboxes resizing */
 function isMobile() {

@@ -216,6 +216,18 @@ import { bioModule }
 
 import { printIdBannerModule } 
     from './printIdBanner/printIdBanner';
+
+import { HtmlHeadModule } 
+    from './htmlHead/htmlHead';    
+
+import { OauthHeaderModule } 
+    from './oauthHeader/oauthHeader';
+
+import { FooterModule } 
+    from './footer/footer';    
+
+import { MaintenanceMessageModule } 
+    from './maintenanceMessage/maintenanceMessage';
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -291,6 +303,10 @@ export const orcidApp = angular.module(
         qrcodeModule.name,
         lastModifiedModule.name,
         bioModule.name,
-        printIdBannerModule.name
+        printIdBannerModule.name,
+        HtmlHeadModule.name,
+        OauthHeaderModule.name,
+        FooterModule.name,
+        MaintenanceMessageModule.name
     ]
 );

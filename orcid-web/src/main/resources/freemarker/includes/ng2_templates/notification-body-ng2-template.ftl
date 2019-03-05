@@ -5,7 +5,7 @@
 			<div *ngIf="notification.notificationType=='AMENDED'">
 				<p><strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.has_updated'/> {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.section_of'/></p>
 		    	<div class="pull-right topBuffer">
-					<button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button> <a href="<@orcid.rootPath '/my-orcid'/>" target="_parent" class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>
+					<button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button> <a href="{{getBaseUri()}}/my-orcid" target="_parent" class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>
 				</div>
 			</div>
 			<!--CUSTOM-->
@@ -14,7 +14,7 @@
 		    <!--INSTITUTIONAL_CONNECTION-->
 		    <div *ngIf="notification.notificationType=='INSTITUTIONAL_CONNECTION'">
 		    	<p *ngIf="notification?.authorizationUrl">
-		        <@orcid.msg 'email.institutional_connection.1' /> {{notification?.idpName}} <@orcid.msg 'email.institutional_connection.2' /><a href="<@orcid.rootPath '/inbox'/>/{{notification?.putCode}}/action?target={{encodedUrl}}" target="email.institutional_connection.here"><@orcid.msg 'email.institutional_connection.here' /></a><@orcid.msg 'email.institutional_connection.3' /> {{notification?.source?.sourceName?.content}} <@orcid.msg 'email.institutional_connection.4' />
+		        <@orcid.msg 'email.institutional_connection.1' /> {{notification?.idpName}} <@orcid.msg 'email.institutional_connection.2' /><a href="{{getBaseUri()}}/inbox/{{notification?.putCode}}/action?target={{encodedUrl}}" target="email.institutional_connection.here"><@orcid.msg 'email.institutional_connection.here' /></a><@orcid.msg 'email.institutional_connection.3' /> {{notification?.source?.sourceName?.content}} <@orcid.msg 'email.institutional_connection.4' />
 			    </p>
 			    <p *ngIf="!notification?.authorizationUrl">
 			       <@orcid.msg 'email.institutional_connection.disabled.1' /> {{notification?.idpName}}<@orcid.msg 'email.institutional_connection.disabled.2' />
@@ -68,7 +68,7 @@
 						<strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.would_permission' />
 					</div>
 					<div class="topBuffer pull-right">
-						<button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archivewithoutgranting' /></button> <a class="btn btn-primary" href="<@orcid.rootPath '/inbox'/>/{{notification.putCode}}/action?target={{encodedUrl}}" target="notifications.grant_permissions"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a>
+						<button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archivewithoutgranting' /></button> <a class="btn btn-primary" href="{{getBaseUri()}}/inbox/{{notification.putCode}}/action?target={{encodedUrl}}" target="notifications.grant_permissions"><span class="glyphicons cloud-upload"></span> <@orcid.msg 'notifications.grant_permissions'/></a>
 					</div>		
 				</div>
 			</div>

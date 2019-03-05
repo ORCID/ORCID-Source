@@ -141,4 +141,8 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         
     }; 
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

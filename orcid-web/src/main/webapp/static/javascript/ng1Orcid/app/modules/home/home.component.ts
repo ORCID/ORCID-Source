@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
     };
 
     ngOnInit() {
-        this.blogSrvc.getBlogFeed(orcidVar.baseUri + "/blog/feed")
+        this.blogSrvc.getBlogFeed(getBaseUri() + "/blog/feed")
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -66,5 +66,9 @@ export class HomeComponent implements OnInit {
                 console.log('error fetching blog feed: ', error);
             } 
         );
-    }
+    };
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

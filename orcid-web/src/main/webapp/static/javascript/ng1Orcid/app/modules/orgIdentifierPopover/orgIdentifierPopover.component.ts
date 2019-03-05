@@ -74,23 +74,24 @@ export class OrgIdentifierPopoverComponent implements OnInit {
 
     ngOnInit() {
         if (this.type != null) {
-            if (this.type == 'TEST') {
-                this.link = this.TEST_BASE_URL + this.value;
-                this.displayType = 'Test Id';
-            } else if (this.type == 'FUNDREF') {
-                this.link = this.value;
-                this.displayType = om.get('affiliation.org_id.value.label.fundref');
-            } else if (this.type == 'GRID') {
-                this.link = this.GRID_BASE_URL + this.value;
-                this.displayType = om.get('affiliation.org_id.value.label.grid');
-            } else if (this.type == 'RINGGOLD') {
-                this.link = null;
-                this.displayType = om.get('affiliation.org_id.value.label.ringgold');
-            } else {
-                this.link = null;
-                this.displayType = this.type;
-            }
-            
+            om.process().then(() => { 
+                if (this.type == 'TEST') {
+                    this.link = this.TEST_BASE_URL + this.value;
+                    this.displayType = 'Test Id';
+                } else if (this.type == 'FUNDREF') {
+                    this.link = this.value;
+                    this.displayType = om.get('affiliation.org_id.value.label.fundref');
+                } else if (this.type == 'GRID') {
+                    this.link = this.GRID_BASE_URL + this.value;
+                    this.displayType = om.get('affiliation.org_id.value.label.grid');
+                } else if (this.type == 'RINGGOLD') {
+                    this.link = null;
+                    this.displayType = om.get('affiliation.org_id.value.label.ringgold');
+                } else {
+                    this.link = null;
+                    this.displayType = this.type;
+                }                
+            });                       
         } 
         if(this.type && this.value){
             if(!this.commonSrvc.orgDisambiguatedDetails[this.type + this.value]){

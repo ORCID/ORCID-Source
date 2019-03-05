@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.jpa.criteria.expression.function.AggregationFunction.MAX;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -79,9 +80,8 @@ public class LoginController extends OauthControllerBase {
                 return handleOauthSignIn(request, response);
             }
         }
-        // in case have come via a link that requires them to be signed out        
-        ModelAndView mav = new ModelAndView("login");
-        return mav;
+
+        return new ModelAndView("login");
     }
 
     // We should go back to regular spring sign out with CSRF protection
@@ -202,8 +202,7 @@ public class LoginController extends OauthControllerBase {
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
         // Save a flag to indicate this is a request from the new
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
-
-        ModelAndView mav = new ModelAndView("login");
-        return mav;
+        
+        return new ModelAndView("login");
     }
 }

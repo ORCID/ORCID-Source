@@ -48,4 +48,8 @@ export class AuthorizeDelegateResultComponent implements OnDestroy, OnInit {
             this.wrongLink = true;
         }        
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

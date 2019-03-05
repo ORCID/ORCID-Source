@@ -108,4 +108,8 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.getDelegators();
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

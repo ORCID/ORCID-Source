@@ -60,4 +60,8 @@ export class ManageMemberAddFormSuccessComponent
       moduleId: "modalAddMemberSuccess"
     });
   }
+  
+  getBaseUri() : String {
+      return getBaseUri();
+  };
 }

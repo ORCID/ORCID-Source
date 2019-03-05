@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <script type="text/ng-template" id="reactivation-ng2-template">
     <div *ngIf="reactivationData && reactivationData.linkExpired" class="row">
         <div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
@@ -99,7 +81,7 @@
                             <span class="orcid-error" *ngIf="registrationForm?.emailsAdditional[i]?.errors && registrationForm?.emailsAdditional[i]?.errors?.length > 0">
                                 <div *ngFor="let error of registrationForm.emailsAdditional[i].errors;let i = index;trackBy:trackByIndex">
                                     <span class="orcid-error" *ngIf="error=='unavailable'">
-                                        {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_1_ng2' /> <a href="${baseUri}/signin?loginId={{registrationForm.emailsAdditional[i].value}}"><@orcid.msg 'oauth.registration.duplicate_email_2' /></a><@orcid.msg 'oauth.registration.duplicate_email_3_ng2' /> {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_4_ng2' />
+                                        {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_1_ng2' /> <a href="{{getBaseUri()}}/signin?loginId={{registrationForm.emailsAdditional[i].value}}"><@orcid.msg 'oauth.registration.duplicate_email_2' /></a><@orcid.msg 'oauth.registration.duplicate_email_3_ng2' /> {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_4_ng2' />
                                     </span>
                                     <span class="orcid-error" *ngIf="error!='unavailable'" [innerHTML]="error"></span>
                                 </div>
@@ -177,7 +159,7 @@
                             <span class="required"  [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}"></span></h4>  
                         <p>
                             <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
-                            <@orcid.msg 'register.labelconsent'/> <a href="${aboutUri}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="${aboutUri}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
+                            <@orcid.msg 'register.labelconsent'/> <a href="{{aboutUri}}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="{{aboutUri}}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
                         </p>
                         <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
                             <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>

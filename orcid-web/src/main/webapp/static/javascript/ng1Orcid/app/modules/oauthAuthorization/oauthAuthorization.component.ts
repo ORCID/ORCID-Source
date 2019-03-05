@@ -3,7 +3,6 @@ declare var OrcidCookie: any;
 declare var orcidVar: any;
 declare var orcidGA: any;
 declare var getBaseUri: any;
-declare var getStaticCdnPath: any;
 declare var orcidGA: any;
 declare var orcidVar: any;
 
@@ -109,6 +108,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     realLoggedInUserName: string;
     effectiveLoggedInUserName: string;
     isLoggedIn: boolean;    
+    assetsPath: String;
+    aboutUri: String;
+    shibbolethEnabled: boolean = false;
     
     constructor(
         private zone:NgZone,
@@ -174,14 +176,28 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.generalRegistrationError = null;
         this.initReactivationRequest = { "email": null, "error": null, "success": false };
         this.nameFormUrl = '/account/names/public';
-        this.isLoggedIn = false
+        this.isLoggedIn = false;
+        
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+                this.shibbolethEnabled = data.messages['SHIBBOLETH_ENABLED'];
+                this.aboutUri = data.messages['ABOUT_URI'];
+                this.site_key = data.messages['RECAPTCHA_WEB_KEY'];
+            },
+            error => {
+                console.log('oauthAuthorization.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
+
         this.userInfo = this.commonSrvc.userInfo$
           .subscribe(
               data => {
                   this.userInfo = data;           
               },
               error => {
-                  //console.log('idBanner.component.ts: unable to fetch userInfo', error);
+                  console.log('oauthAuthorization.component.ts: unable to fetch userInfo', error);
                   this.userInfo = {};
               } 
           );
@@ -190,7 +206,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     addScript(url, onLoadFunction): void {      
         let head = document.getElementsByTagName('head')[0];
         let script = document.createElement('script');
-        script.src = getStaticCdnPath() + url;
+        script.src = this.assetsPath + url;
         script.onload = onLoadFunction;
         head.appendChild(script); // Inject the script
     }; 
@@ -832,5 +848,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 console.log('oauthAuthorization: ngOnInit error', error);
             } 
         );
+    };
+    
+    getBaseUri() : String {
+        return getBaseUri();
     };
 }

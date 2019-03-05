@@ -104,7 +104,10 @@ export class NotificationBodyComponent implements OnInit {
         }
         if (this.notification.authorizationUrl){
             this.encodedUrl = encodeURIComponent(this.notification.authorizationUrl.uri);
-        }
-        
+        }        
     }; 
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

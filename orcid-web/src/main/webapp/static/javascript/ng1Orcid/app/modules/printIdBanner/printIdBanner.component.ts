@@ -35,5 +35,9 @@ export class printIdBannerComponent implements AfterViewInit, OnDestroy, OnInit 
         this.displayName = person.displayName;
       }
     });
-  }
+  };
+  
+  getBaseUri() : String {
+      return getBaseUri();
+  };
 }

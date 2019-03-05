@@ -25,6 +25,7 @@ export class CommonService {
     public orcidRegex = /(\d{4}-){3}\d{3}[\dX]/;
     public orgDisambiguatedDetails: any;    
     public userInfo$: Observable<any>;
+    public configInfo$: Observable<any>;
     public publicUserInfo$: Observable<any>;
     public isPublicPage: boolean;
     
@@ -33,6 +34,10 @@ export class CommonService {
     ) {        
         this.orgDisambiguatedDetails = new Array();
         this.shownElement = [];
+
+        this.userInfo$ = this.getUserInfo().pipe(share());  
+        this.configInfo$ = this.getConfigInfo().pipe(share());
+
         var path = window.location.pathname;        
         this.isPublicPage = this.publicPageRegex.test(path);
         if(this.isPublicPage) {
@@ -40,7 +45,7 @@ export class CommonService {
             this.publicUserInfo$ = this.getPublicUserInfo(orcidId).pipe(share()); 
         } else {
             this.userInfo$ = this.getUserInfo().pipe(share());  
-        }        
+        }
     }
 
     addComma(str): string {
@@ -311,6 +316,10 @@ export class CommonService {
         return this.http.get(getBaseUri() + '/' + orcid + '/userInfo.json'); 
     };
     
+    getConfigInfo(): Observable<any> {
+        return this.http.get(getBaseUri() + '/config.json');
+    };
+
     getEmailFrequencyOptions(): Observable<any> {
         return this.http.get(getBaseUri() + '/manage/emailFrequencyOptions.json');
     }

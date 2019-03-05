@@ -46,31 +46,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     externalIdType
     metadataNotFound
     loading
-
-    externalId = {
-        DOI :{
-            placeHolder: "10.1000/xyz123",
-            value: "",
-            url: () => '/works/resolve/doi?value='
-        },
-        arXiv : {
-            placeHolder: "1501.00001",
-            value: "",
-            url: () => "/works/resolve/arxiv?value="
-        },
-        pubMed : {
-            placeHolder: "12345678 " + om.get('common.or') + " PMC1234567",
-            value: "",
-            url: (value) => {
-                // Looks for a "pmc" string at the end of a url or a "PMC" string follow by at least 5 numbers 
-                var regex = new RegExp(/((.*[\/,\\](pmc))|(PMC)\d{5})/g)
-                var result = regex.exec(value)
-                return result? "/works/resolve/pmc/?value=":  "/works/resolve/pmid?value=";
-            }
-            
-        }
-    }
-
+    externalId
 
     constructor( 
         private worksService : WorksService,
@@ -79,7 +55,31 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
         private cd: ChangeDetectorRef,
         private renderer: Renderer2
     ) {
-
+        om.process().then(() => { 
+            this.externalId = {
+                    DOI :{
+                        placeHolder: "10.1000/xyz123",
+                        value: "",
+                        url: () => '/works/resolve/doi?value='
+                    },
+                    arXiv : {
+                        placeHolder: "1501.00001",
+                        value: "",
+                        url: () => "/works/resolve/arxiv?value="
+                    },
+                    pubMed : {
+                        placeHolder: "12345678 " + om.get('common.or') + " PMC1234567",
+                        value: "",
+                        url: (value) => {
+                            // Looks for a "pmc" string at the end of a url or a "PMC" string follow by at least 5 numbers 
+                            var regex = new RegExp(/((.*[\/,\\](pmc))|(PMC)\d{5})/g)
+                            var result = regex.exec(value)
+                            return result? "/works/resolve/pmc/?value=":  "/works/resolve/pmid?value=";
+                        }
+                        
+                    }
+                } 
+        });        
     }
 
     ngAfterViewInit() {

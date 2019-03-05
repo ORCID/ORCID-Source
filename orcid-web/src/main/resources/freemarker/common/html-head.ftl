@@ -16,23 +16,36 @@
     
     <script type="text/javascript">
         var orcidVar = {};
-        orcidVar.recaptchaKey = '${recaptchaWebKey}';
-        orcidVar.baseDomainRmProtocall = '${baseDomainRmProtocall}';
-        orcidVar.baseUri = '${baseUri}';
-        orcidVar.baseUriHttp = '${baseUriHttp}';
-        orcidVar.pubBaseUri = '${pubBaseUri}';
-		orcidVar.staticCdn = '${staticCdn}'
+            
+        <#if (workIdsJson)??>
+        orcidVar.workIds = JSON.parse("${workIdsJson}");
+        </#if>
+      
+        <#if (affiliationIdsJson)??>
+        orcidVar.affiliationIdsJson = JSON.parse("${affiliationIdsJson}");
+        </#if>
+      
+        <#if (fundingIdsJson)??>
+        orcidVar.fundingIdsJson = JSON.parse("${fundingIdsJson}");
+        </#if>        
+        
         orcidVar.orcidId = '${(effectiveUserOrcid)!}';
         orcidVar.lastModified = '${(lastModifiedTime?datetime)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
         orcidVar.realOrcidId = '${realUserOrcid!}';
         orcidVar.resetParams = '${(resetParams)!}';
-        orcidVar.emailToReactivate = '${(email)!}';
-        orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
-        orcidVar.searchBaseUrl = "${searchBaseUrl}";
-        orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};       
+        orcidVar.emailToReactivate = '${(email)!}';        
+        orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?c};        
+        orcidVar.providerId = '${(providerId)!}';           
         orcidVar.features = JSON.parse("${featuresJson}");
-        orcidVar.providerId = '${(providerId)!}'; 
+        
+        orcidVar.oauthUserId = "${(oauth_userId?js_string)!}";
+        orcidVar.firstName = "${(RequestParameters.firstName?js_string)!}";
+        orcidVar.lastName = "${(RequestParameters.lastName?js_string)!}"; 
+        orcidVar.emailId = "${(RequestParameters.emailId?js_string)!}";
+        orcidVar.linkRequest = "${(RequestParameters.linkRequest?js_string)!}";
+        
+        orcidVar.loginId = "${(request.getParameter('loginId'))!}";
         
         <#if verifiedEmail??>
             orcidVar.loginId = "${verifiedEmail}";
@@ -47,10 +60,10 @@
 
     <#include "/macros/orcid_ga.ftl">
     
-    <link rel="stylesheet" href="${staticLoc}/css/noto-sans-googlefonts.css"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
-    <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css"/>
-    <link rel="stylesheet" href="${staticLoc}/css/social.css"/>
-    <link rel="stylesheet" href="${staticLoc}/css/filetypes.css"/>    
+    <link rel="stylesheet" href="${staticCdn}/css/noto-sans-googlefonts.css"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
+    <link rel="stylesheet" href="${staticCdn}/css/glyphicons.css"/>
+    <link rel="stylesheet" href="${staticCdn}/css/social.css"/>
+    <link rel="stylesheet" href="${staticCdn}/css/filetypes.css"/>    
     
     <!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
@@ -68,6 +81,10 @@
 
     <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css"/>
     
+    <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
+    <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />
+    <link rel="stylesheet" href="${staticCdn}/css/noto-font.css"/> 
+    
     <style type="text/css">
         /* 
         Allow angular.js to be loaded in body, hiding cloaked elements until 
@@ -77,12 +94,8 @@
         [ng\:cloak], [ng-cloak], .ng-cloak {
             display: none !important;
         }
-    </style>    
-
-    <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
-    <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />
-    <link rel="stylesheet" href="${staticLoc}/css/noto-font.css"/> 
-
+    </style>
+    
     <!-- ***************************************************** -->
     <!-- Ng2 Templates - BEGIN -->
     <#include "/includes/ng2_templates/modal-ng2-template.ftl">

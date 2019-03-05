@@ -3,13 +3,13 @@
         <div *ngIf="!membersList" class="text-center">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
             <!--[if lt IE 8]>
-                <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                <img src="{{assetsPath}}/img/spin-big.gif" width="85" height ="85"/>
             <![endif]-->
         </div>
         <div *ngIf="membersList">
             <p><@orcid.msg 'member_list.there_are_currently'/> {{membersList.length}} <@orcid.msg 'member_list.orcid_consortia_members'/></p>
             <p>
-        		<a href="<@orcid.rootPath '/members'/>"><@orcid.msg 'member_details.all_members'/></a> | <a class="selected" href="<@orcid.rootPath '/consortia'/>"><@orcid.msg 'member_list.consortia_members'/></a>
+        		<a href="{{getBaseUri()}}/members"><@orcid.msg 'member_details.all_members'/></a> | <a class="selected" href="{{getBaseUri()}}/consortia"><@orcid.msg 'member_list.consortia_members'/></a>
         	<p>
 				<select [(ngModel)]="byCountry" (change)="filterSelected()">
     				<option value="" selected><@orcid.msg 'macros.orcid.Country'/></option>

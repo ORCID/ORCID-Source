@@ -1,22 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
-
 <script type="text/ng-template" id="switch-user-ng2-template">
     <#if springMacroRequestContext.requestUri?contains("/my-orcid")>
         <div class="dropdown id-banner-container" *ngIf="(me || unfilteredLength > 0)">
@@ -41,7 +22,7 @@
                         </ul>
                     </a>
                 </li>
-                <li *ngIf="delegators.length > 10"><a href="<@orcid.rootPath '/delegators?delegates'/>"><@orcid.msg 'id_banner.more'/></a></li>
+                <li *ngIf="delegators.length > 10"><a href="{{getBaseUri()}}/delegators?delegates"><@orcid.msg 'id_banner.more'/></a></li>
             </ul>
         </div> 
     </#if>
@@ -50,7 +31,7 @@
             <div class="dropdown id-banner-container" *ngIf="(me || unfilteredLength > 0)">
                 <a (click)="openMenu($event)" class="id-banner-switch">
                     <div class="orcid-id-container">
-                            ${baseUri}/{{requestInfoForm?.userOrcid}}
+                            {{getBaseUri()}}/{{requestInfoForm?.userOrcid}}
                         <span class="glyphicon glyphicon-chevron-down"></span>
                     </div>
                 </a>
@@ -81,7 +62,7 @@
             </div>
             <div *ngIf="!(me || unfilteredLength > 0)">
                 <div class="pull-right">
-                        <a href="${baseUri}/{{requestInfoForm?.userOrcid}}" target="userOrcid">${baseUri}/{{requestInfoForm?.userOrcid}}</a>
+                        <a href="{{getBaseUri()}}/{{requestInfoForm?.userOrcid}}" target="userOrcid">{{getBaseUri()}}/{{requestInfoForm?.userOrcid}}</a>
                 </div>
             </div>
         </div> 

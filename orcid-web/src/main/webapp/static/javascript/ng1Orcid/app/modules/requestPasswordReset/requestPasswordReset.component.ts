@@ -171,7 +171,8 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         // init reset password toggle text
         this.showSendResetLinkError = false;
         this.showResetPassword = (window.location.hash === "#resetPassword");
-        this.resetPasswordToggleText = om.get("login.forgotten_password");
-          
+        om.process().then(() => { 
+            this.resetPasswordToggleText = om.get("login.forgotten_password");
+        });                 
     }; 
 }

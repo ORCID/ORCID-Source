@@ -68,12 +68,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     editSources: any;
     editWork: any;
     emails: any;
-    exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
     fixedTitle: any;
     formData: any;
     geoArea: any;
     groupingSuggestionExtIdsPresent: boolean;
-    groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');
     groupingSuggestionPresent: boolean;
     groupingSuggestion: any;
     groupingSuggestionWorksToMerge: any;
@@ -101,9 +99,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
-    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean
-    bibTexIntervals: object
-
+    bibTexIntervals: object;
+    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean;
+    manualWorkGroupingEnabled: boolean;
+    exIdResolverFeatureEnabled: boolean;
+    groupingSuggestionFeatureEnabled: boolean;    
+    
     constructor( 
         private commonSrvc: CommonService,
         private cdr: ChangeDetectorRef,
@@ -114,8 +115,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private workspaceSrvc: WorkspaceService,
         private worksService: WorksService
     ) {
-
-        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
         this.addingWork = false;
         this.bibtexExportError = false;
         this.bibtexExportLoading = false;
@@ -149,8 +148,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.printView = elementRef.nativeElement.getAttribute('printView');
         this.savingBibtex = false;
         this.scriptsLoaded = false;
-        this.selectedGeoArea = null;
-        this.selectedWorkType = null;
         this.showBibtex = {};
         this.showBibtexExport = false;
         this.showBibtexImportWizard = false;
@@ -164,6 +161,14 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.workImportWizardsOriginal = null;
         this.workType = ['All'];
         this.worksFromBibtex = null;
+        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
+        this.manualWorkGroupingEnabled = this.featuresService.isFeatureEnabled('MANUAL_WORK_GROUPING');
+        this.exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
+        this.groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');        
+        om.process().then(() => { 
+            this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
+            this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
+        });        
     }
 
     addExternalIdentifier(): void {
@@ -806,8 +811,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(data == null || data.length == 0) {
                         this.noLinkFlag = false;
                     }
-                    this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
-                    this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
                     this.workImportWizardsOriginal = data;
                     this.bulkEditShow = false;
                     this.showBibtexImportWizard = false;
@@ -1318,5 +1321,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.loadMore();
         this.loadWorkImportWizardList();
+    };
+    
+    getBaseUri(): String {
+        return getBaseUri();
     };
 }

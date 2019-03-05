@@ -50,17 +50,28 @@ export class SelfServiceComponent {
     successEditMemberMessage : string;
     orgIdsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
     orgIdSearchResults: Array<object> = [];
+    assetsPath: String;
     
     constructor(
         private commonSrvc: CommonService,
         private consortiaService: ConsortiaService,
         private featuresService: FeaturesService,
         private modalService: ModalService
-    ) {}
+    ) {
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('selfService.component.ts: unable to fetch userInfo', error);                
+            } 
+        );        
+    }
   
   
     buildOrcidUri(orcid: String): string {
-        return orcidVar.baseUri + '/' + orcid;
+        return getBaseUri() + '/' + orcid;
     };
     
     getMemberDetails() {
@@ -422,4 +433,7 @@ export class SelfServiceComponent {
         );
     }
 
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

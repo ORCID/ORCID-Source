@@ -285,52 +285,53 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     updateToggleText(sectionName){
-        switch(sectionName) { 
-            case 'deactivate': { 
-                if(this.showSection[sectionName]==true){
-                    this.toggleText[sectionName] = om.get("manage.editTable.hide");
-                } else {
-                    this.toggleText[sectionName] = om.get("manage.editTable.deactivateRecord");
-                    this.showSendDeactivateEmailSuccess=false;
+        om.process().then(() => {
+            switch(sectionName) {     
+                case 'deactivate': { 
+                    if(this.showSection[sectionName]==true){
+                        this.toggleText[sectionName] = om.get("manage.editTable.hide");
+                    } else {
+                        this.toggleText[sectionName] = om.get("manage.editTable.deactivateRecord");
+                        this.showSendDeactivateEmailSuccess=false;
+                    }
+                    break; 
+                } 
+                case 'deprecate': { 
+                    if(this.showSection[sectionName]==true){
+                        this.toggleText[sectionName] = om.get("manage.editTable.hide");
+                    } else {
+                        this.toggleText[sectionName] = om.get("manage.editTable.removeDuplicate");
+                        this.deprecateProfilePojo = {};
+                    }
+                    break; 
+                } 
+                case 'editPassword': {
+                    if(this.showSection[sectionName]==true){
+                        this.toggleText[sectionName] = om.get("manage.editTable.hide");
+                    } else {
+                        this.toggleText[sectionName] = om.get("manage.editTable.edit");
+                        this.changePasswordPojo = {};
+                    }
+                    break;
                 }
-                break; 
+                case 'getMyData': {
+                    if(this.showSection[sectionName]==true){
+                        this.toggleText[sectionName] = om.get("manage.editTable.hide");
+                    } else {
+                        this.toggleText[sectionName] = om.get("manage.editTable.show");
+                    }
+                    break;
+                }
+                default: { 
+                    if(this.showSection[sectionName]==true){
+                        this.toggleText[sectionName] = om.get("manage.editTable.hide");
+                    } else {
+                        this.toggleText[sectionName] = om.get("manage.editTable.edit");
+                    }
+                    break; 
+                } 
             } 
-            case 'deprecate': { 
-                if(this.showSection[sectionName]==true){
-                    this.toggleText[sectionName] = om.get("manage.editTable.hide");
-                } else {
-                    this.toggleText[sectionName] = om.get("manage.editTable.removeDuplicate");
-                    this.deprecateProfilePojo = {};
-                }
-                break; 
-            } 
-            case 'editPassword': {
-                if(this.showSection[sectionName]==true){
-                    this.toggleText[sectionName] = om.get("manage.editTable.hide");
-                } else {
-                    this.toggleText[sectionName] = om.get("manage.editTable.edit");
-                    this.changePasswordPojo = {};
-                }
-                break;
-            }
-            case 'getMyData': {
-                if(this.showSection[sectionName]==true){
-                    this.toggleText[sectionName] = om.get("manage.editTable.hide");
-                } else {
-                    this.toggleText[sectionName] = om.get("manage.editTable.show");
-                }
-                break;
-            }
-            default: { 
-                if(this.showSection[sectionName]==true){
-                    this.toggleText[sectionName] = om.get("manage.editTable.hide");
-                } else {
-                    this.toggleText[sectionName] = om.get("manage.editTable.edit");
-                }
-                break; 
-            } 
-        } 
-
+        });        
     }
    
     getMyData(): void {
@@ -356,4 +357,8 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
         this.getPreferences();
         this.getDeprecateProfile();
     }; 
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

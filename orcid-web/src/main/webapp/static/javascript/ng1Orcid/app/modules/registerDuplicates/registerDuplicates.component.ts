@@ -46,4 +46,7 @@ export class RegisterDuplicatesComponent {
         ); 
     };
 
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

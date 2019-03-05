@@ -1,5 +1,3 @@
-declare var orcidSearchUrlJs: any;
-
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 

@@ -465,4 +465,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getFundingGroups();
         this.loadFundingImportWizards();
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

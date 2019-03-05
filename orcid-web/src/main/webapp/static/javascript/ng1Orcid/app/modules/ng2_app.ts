@@ -235,6 +235,18 @@ import { bioNg2Module }
 import { printIdBannerNg2Module } 
     from './printIdBanner/printIdBanner';
     
+import { HtmlHeadNg2Module } 
+    from './htmlHead/htmlHead';
+
+import { OauthHeaderNg2Module } 
+    from './oauthHeader/oauthHeader';    
+
+import { FooterNg2Module } 
+    from './footer/footer';   
+    
+import { MaintenanceMessageNg2Module } 
+    from './maintenanceMessage/maintenanceMessage';    
+        
 ///////////////////
 import {Injectable} 
     from '@angular/core';
@@ -367,7 +379,11 @@ export class RootCmp {
         qrcodeNg2Module,
         lastModifiedNg2Module, 
         bioNg2Module,
-        printIdBannerNg2Module
+        printIdBannerNg2Module,
+        HtmlHeadNg2Module,
+        OauthHeaderNg2Module,
+        FooterNg2Module,
+        MaintenanceMessageNg2Module
     ],
     providers: [{ 
             provide: HTTP_INTERCEPTORS,

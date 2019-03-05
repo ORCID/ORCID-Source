@@ -42,6 +42,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     showEmailsAdditionalDeactivatedError: any;
     showEmailsAdditionalReactivationSent: any;
     showEmailsAdditionalDuplicateEmailError: any;
+    aboutUri: String;
     reactivationData: any;
     
     constructor(
@@ -93,6 +94,15 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                     "errors": []
                 }                                                
             }; 
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {                
+                this.aboutUri = data.messages['ABOUT_URI'];
+            },
+            error => {
+                console.log('reactivation.component.ts: unable to fetch userInfo', error);
+            } 
+        );
     }
 
     isValidClass(cur) : string {
@@ -245,5 +255,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getReactivationData(resetParams);
     };
 
-
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

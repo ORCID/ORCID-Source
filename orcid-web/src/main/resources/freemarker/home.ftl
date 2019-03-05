@@ -6,7 +6,7 @@
 			<h1><@orcid.msg 'home.distinguish_yourself'/><br />
 			<span class="highlight"><@orcid.msg 'home.three_easy'/></span>
 			</h1>
-			<p class="description"><@orcid.msg 'home.orcid_provides'/> <a href="${baseUri}/about/what-is-orcid"><@orcid.msg 'home.find_out_more'/></a></p>
+			<p class="description"><@orcid.msg 'home.orcid_provides'/> <a href="{{getBaseUri()}}/about/what-is-orcid"><@orcid.msg 'home.find_out_more'/></a></p>
 			<!-- Step 1 -->
 			<div class="row">
 				<div class="col-md-12 step">
@@ -52,7 +52,7 @@
 				</ul>
 			</div>
 			<p>
-				<strong><a href="${baseUri}/about/news"><@orcid.msg 'home.more_news'/></a></strong>
+				<strong><a href="{{getBaseUri()}}/about/news"><@orcid.msg 'home.more_news'/></a></strong>
 			</p>
 		</div>
 	</div>

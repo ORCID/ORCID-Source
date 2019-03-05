@@ -140,5 +140,9 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
         }
       }.bind(this)
     );
-  }
+  };
+  
+  getBaseUri() : String {
+      return getBaseUri();
+  };
 }
