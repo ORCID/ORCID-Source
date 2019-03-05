@@ -42,8 +42,7 @@ export const WorksFormModule = angular.module(
         imports: [
             CommonNg2Module,
         ],
-        providers: [
-        ]
+        
     }
 )
 export class WorksFormNg2Module {}

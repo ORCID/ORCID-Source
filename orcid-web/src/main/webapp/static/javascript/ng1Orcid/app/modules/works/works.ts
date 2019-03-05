@@ -47,8 +47,7 @@ export const WorksModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-        ]
+        
     }
 )
 export class WorksNg2Module {}

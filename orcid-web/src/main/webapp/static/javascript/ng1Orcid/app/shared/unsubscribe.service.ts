@@ -11,7 +11,9 @@ import { Observable, Subject }
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class UnsubscribeService {
     private headers: HttpHeaders;    
     private notify = new Subject<any>();

@@ -31,9 +31,6 @@ export const FundingDeleteModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-            
         ]
     }
 )

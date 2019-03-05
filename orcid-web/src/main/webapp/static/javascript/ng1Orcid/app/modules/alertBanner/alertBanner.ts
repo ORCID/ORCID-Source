@@ -31,9 +31,6 @@ export const AlertBannerModule = angular.module(
         ],
         entryComponents: [ 
             AlertBannerComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

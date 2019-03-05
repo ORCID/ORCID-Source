@@ -31,9 +31,6 @@ export const PublicRecordModule = angular.module(
         ],
         entryComponents: [ 
             PublicRecordComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

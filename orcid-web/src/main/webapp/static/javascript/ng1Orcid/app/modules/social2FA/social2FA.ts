@@ -32,8 +32,7 @@ export const Social2FAModule = angular.module(
         entryComponents: [ 
             Social2FAComponent 
         ],
-        providers: [
-        ]
+        
     }
 )
 export class Social2FANg2Module {}
