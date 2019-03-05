@@ -31,8 +31,6 @@ export const AuthorizeDelegateResultModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
         ]
     }
 )

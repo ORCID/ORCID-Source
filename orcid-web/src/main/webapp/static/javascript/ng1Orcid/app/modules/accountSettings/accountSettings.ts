@@ -70,9 +70,6 @@ export const AccountSettingsModule = angular.module(
             DelegatesRevokeComponent,
             TrustedOrganizationsComponent,
             TrustedOrganizationsRevokeComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

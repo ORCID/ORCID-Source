@@ -32,8 +32,6 @@ export const ClientEditModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
         ]
     }
 )

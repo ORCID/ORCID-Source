@@ -51,6 +51,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+    private userInfo: any;
 
     public newInput = new EventEmitter<boolean>();
 
@@ -174,6 +175,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.initReactivationRequest = { "email": null, "error": null, "success": false };
         this.nameFormUrl = '/account/names/public';
         this.isLoggedIn = false
+        this.userInfo = this.commonSrvc.userInfo$
+          .subscribe(
+              data => {
+                  this.userInfo = data;           
+              },
+              error => {
+                  //console.log('idBanner.component.ts: unable to fetch userInfo', error);
+                  this.userInfo = {};
+              } 
+          );
     }
 
     addScript(url, onLoadFunction): void {      
@@ -359,7 +370,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                         if(this.requestInfoForm.userEmail || this.requestInfoForm.userFamilyNames || this.requestInfoForm.userGivenNames){
                             this.showRegisterForm = true;
                         }
-                    }    
+                    } 
+
                     this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {
                             this.showUpdateIcon = true;
@@ -720,7 +732,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }
 
         //param sent if user came via oauth
-        if(urlParams.has('oauth')){
+        if(urlParams.has('oauth') || (window.location.pathname.indexOf("/oauth") > -1)){
             this.oauthRequest = true;
         }
 

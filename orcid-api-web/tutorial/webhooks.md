@@ -49,7 +49,7 @@ Date: Fri, 05 Apr 2013 13:05:01 GMT
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[ORCID iD]/webhook/[encoded url to call] |
 | Method    | PUT |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 
 **Curl example:**
 
@@ -77,7 +77,7 @@ Location: https://api.sandbox.orcid.org/0000-0002-7465-2162/webhook/https%3A%2F%
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[ORCID iD]/webhook/[encoded url] |
 | Method    | DELETE |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 
 The response should be 204 No Content.
 

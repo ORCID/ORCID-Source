@@ -41,8 +41,7 @@ export const RequestPasswordResetModule = angular.module(
             CommonModule,
             FormsModule
         ],
-        providers: [
-        ]
+        
     }
 )
 export class RequestPasswordResetNg2Module {}

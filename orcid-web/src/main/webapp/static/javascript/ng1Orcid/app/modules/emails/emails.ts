@@ -32,8 +32,6 @@ export const EmailsModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
         ]
     }
 )

@@ -1,6 +1,6 @@
 # Read Public information from an ORCID Record
 
-This tutorial shows how to read public information from ORCID records without going through the 3-step OAuth process. If you do not have the list of autenticated ORCID iDs you want to read, we suggest using the OAuth process to collect iDs and read information on the records. See the [tutorial to get authenticate iDs](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/get_id.md).
+This tutorial shows how to read public information from ORCID records without going through the 3-step OAuth process. If you do not have the list of authenticated ORCID iDs you want to read, we suggest using the OAuth process to collect iDs and read information on the records. See the [tutorial to get authenticate iDs](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/get_id.md).
 
 This workflow can be used with Public or Member API credentials on sandbox or the production servers.
 
@@ -13,9 +13,9 @@ Send a request to the ORCID API for a two step token
 | Item              |Parameter               |
 |-------------------|--------------------------|
 | URL 				| https://sandbox.orcid.org/oauth/token|
-| client\_id 		| *Your client ID*|
-| client\_secret	| *Your client secret*|
-| grant\_type		| client\_credentials|
+| client_id 		| *Your client ID*|
+| client_secret	| *Your client secret*|
+| grant_type		| client_credentials|
 | scope				| /read-public|
 
 **Curl Example**
@@ -63,4 +63,4 @@ curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v2.1/0000-0001-2345-6789/personal-details' -i
 ```
 
-See the current [XSD documentation](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/README.md#calls) for possible endpoints.
+See the current [XSD documentation](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1#calls) for possible endpoints.

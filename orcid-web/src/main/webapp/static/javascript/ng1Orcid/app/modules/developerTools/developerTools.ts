@@ -31,9 +31,6 @@ export const DeveloperToolsModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-            
         ]
     }
 )

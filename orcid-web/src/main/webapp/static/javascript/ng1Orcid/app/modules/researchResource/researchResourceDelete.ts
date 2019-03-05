@@ -32,9 +32,7 @@ export const ResearchResourceDeleteModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class ResearchResourceDeleteNg2Module {}

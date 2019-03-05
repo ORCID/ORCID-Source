@@ -7,7 +7,9 @@ import { Injectable }
 import { Observable, Subject } 
     from 'rxjs';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class ConsortiaService {
     
     private notify = new Subject<any>();

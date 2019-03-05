@@ -108,6 +108,24 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editWork.workExternalIdentifiers.push({externalIdentifierId: {value: ""}, externalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
 
+    updateRelationships(): void {
+        var workType = this.editWork.workType;
+        if (this.editWork.workExternalIdentifiers && this.editWork.workExternalIdentifiers.length > 0) {
+            for (var key in this.editWork.workExternalIdentifiers) {
+                var extId = this.editWork.workExternalIdentifiers[key];
+                if (extId.externalIdentifierType && extId.relationship && workType) {
+                    if (extId.externalIdentifierType.value == 'isbn' && workType.value == 'book-chapter') {
+                        extId.relationship.value = 'part-of';
+                    } else if (extId.externalIdentifierType.value == 'isbn' && workType.value == 'book') {
+                        extId.relationship.value = 'self';
+                    } else if (extId.externalIdentifierType.value == 'issn') {
+                        extId.relationship.value = 'part-of';
+                    }
+                }
+            }
+        }
+    };
+
     addWork(): any{
         this.addingWork = true;
         this.editWork.errors.length = 0;
@@ -178,6 +196,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }
         this.fillUrl(i);
+        this.updateRelationships();
     }
 
     deleteContributor(obj): void {

@@ -39,8 +39,6 @@ export const ExtIdPopoverModule = angular.module(
         imports: [
             CommonModule,
             FormsModule
-        ],
-        providers: [
         ]
     }
 )

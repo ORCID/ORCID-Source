@@ -32,9 +32,7 @@ export const WorksBulkDeleteModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class WorksBulkDeleteNg2Module {}

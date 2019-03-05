@@ -31,9 +31,6 @@ export const InternalConsotiumModule = angular.module(
         ],
         entryComponents: [ 
             InternalConsotiumComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

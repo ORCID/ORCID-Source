@@ -10,7 +10,10 @@ import { Observable, Subject }
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
-@Injectable()
+
+@Injectable({
+    providedIn: 'root',
+})
 export class SwitchUserService {
     private headers: HttpHeaders;
     private url: string;

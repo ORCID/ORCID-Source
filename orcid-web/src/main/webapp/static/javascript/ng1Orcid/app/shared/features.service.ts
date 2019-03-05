@@ -6,7 +6,9 @@ import { HttpClient, HttpClientModule, HttpHeaders }
 
 
 
-@Injectable()
+@Injectable({
+ providedIn: 'root',
+})
 export class FeaturesService {
     
     private features = orcidVar.features;
