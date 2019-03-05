@@ -60,22 +60,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
-        ModelAndView mav = new ModelAndView("developer_tools/developer_tools");
-        String userOrcid = getCurrentUserOrcid();
-        ProfileEntity entity = profileEntityCacheManager.retrieve(userOrcid);
-        if(entity.getEnableDeveloperTools() != null) {
-            mav.addObject("developerToolsEnabled", entity.getEnableDeveloperTools());
-        }
-
-        mav.addObject("hideRegistration", (sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin()));
-        boolean hasVerifiedEmail = emailManagerReadOnly.haveAnyEmailVerified(userOrcid);
-        if(hasVerifiedEmail) {
-            mav.addObject("hasVerifiedEmail", true);
-        } else {
-            mav.addObject("hasVerifiedEmail", false);
-            mav.addObject("primaryEmail", emailManagerReadOnly.findPrimaryEmail(userOrcid).getEmail());
-        }
-        
+        ModelAndView mav = new ModelAndView("developer_tools");     
         return mav;
     }
     
