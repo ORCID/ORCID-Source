@@ -23,77 +23,77 @@ import {MultiSelectModule}
 
 //User generated attribute directives
 import { FocusMe }
-    from '../../directives/focusMe.directive.ts'; 
+    from '../../directives/focusMe.directive'; 
 
 //User generated filters
 
 import { AjaxTickDateToISO8601Pipe }
-    from '../../pipes/ajaxTickDateToISO8601Ng2.ts'; 
+    from '../../pipes/ajaxTickDateToISO8601Ng2'; 
 
 import { AjaxFormDateToISO8601Pipe }
-    from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
+    from '../../pipes/ajaxFormDateToISO8601Ng2'; 
 
 import { ContributorFilterPipe }
-    from '../../pipes/contributorFilterNg2.ts';
+    from '../../pipes/contributorFilterNg2';
 
 import { DashToSpacePipe }
-    from '../../pipes/dashToSpaceNg2.ts';
+    from '../../pipes/dashToSpaceNg2';
 
 import { ExternalIdentifierHtmlPipe }
-    from '../../pipes/externalIdentifierHtmlNg2.ts';
+    from '../../pipes/externalIdentifierHtmlNg2';
 
 import { ExtractContentFromBodyPipe }
-    from '../../pipes/extractContentFromBodyNg2.ts';
+    from '../../pipes/extractContentFromBodyNg2';
 
 import { FilterImportWizardsPipe }
-    from '../../pipes/filterImportWizardsNg2.ts'
+    from '../../pipes/filterImportWizardsNg2'
 
 import { KeysPipe }
-    from '../../pipes/keysNg2.ts'; 
+    from '../../pipes/keysNg2'; 
 
 import { LatexPipe }
-    from '../../pipes/latexNg2.ts'; 
+    from '../../pipes/latexNg2'; 
 
 import { OrderByAffiliationsPipe }
-    from '../../pipes/orderByAffiliationsNg2.ts'; 
+    from '../../pipes/orderByAffiliationsNg2'; 
     
 import { OrderByPipe }
-    from '../../pipes/orderByNg2.ts';
+    from '../../pipes/orderByNg2';
 
 import { OrderObjectByPipe }
-    from '../../pipes/orderObjectByNg2.ts'
+    from '../../pipes/orderObjectByNg2'
 
 import { ReplaceSeparatorWithSpacePipe }
-    from '../../pipes/replaceSeparatorWithSpaceNg2.ts'
+    from '../../pipes/replaceSeparatorWithSpaceNg2'
 
 import { SafeUrlPipe }
-    from '../../pipes/safeUrlNg2.ts';
+    from '../../pipes/safeUrlNg2';
 
 import { UriPipe }
-    from '../../pipes/uriNg2.ts';
+    from '../../pipes/uriNg2';
 
 import { UrlProtocolPipe }
-    from '../../pipes/urlProtocolNg2.ts';
+    from '../../pipes/urlProtocolNg2';
 
 import { WorkExternalIdentifierHtmlPipe }
-    from '../../pipes/workExternalIdentifierHtmlNg2.ts';
+    from '../../pipes/workExternalIdentifierHtmlNg2';
 
 //User generated modules
 
 import { ExtIdPopoverNg2Module }
-    from './../extIdPopover/extIdPopover.ts';
+    from './../extIdPopover/extIdPopover';
 
 import { LanguageNg2Module }
-    from './../language/language.ts';
+    from './../language/language';
 
 import { OrgIdentifierPopoverNg2Module } 
-    from './../orgIdentifierPopover/orgIdentifierPopover.ts';
+    from './../orgIdentifierPopover/orgIdentifierPopover';
 
 import { PrivacytoggleNg2Module }
-    from './../privacytoggle/privacyToggle.ts';
+    from './../privacytoggle/privacyToggle';
 
 import { RequestPasswordResetNg2Module }
-    from './../requestPasswordReset/requestPasswordReset.ts';
+    from './../requestPasswordReset/requestPasswordReset';
 
     
 // This is the Angular 2 part of the module

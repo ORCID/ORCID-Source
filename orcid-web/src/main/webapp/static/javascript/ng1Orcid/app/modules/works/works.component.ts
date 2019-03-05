@@ -21,22 +21,22 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';
+    from '../../shared/modal.service';
 
 import { WorksService } 
-    from '../../shared/works.service.ts';
+    from '../../shared/works.service';
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
+    from '../../shared/workspace.service'; 
 
 @Component({
     selector: 'works-ng2',

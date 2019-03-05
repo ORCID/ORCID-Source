@@ -16,10 +16,10 @@ import { catchError, map, tap }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { UrlProtocolPipe }
-    from '../../pipes/urlProtocolNg2.ts';
+    from '../../pipes/urlProtocolNg2';
 
 @Component({
     selector: 'ext-id-popover-ng2',

@@ -11,16 +11,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { FeaturesService } 
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 import { GenericService } 
-    from '../../shared/generic.service.ts';
+    from '../../shared/generic.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 @Component({
     selector: 'my-orcid-alerts-ng2',

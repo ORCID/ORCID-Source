@@ -13,10 +13,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AdminActionsService } 
-    from '../../shared/adminActions.service.ts';    
+    from '../../shared/adminActions.service';    
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
     
 @Component({
     selector: 'admin-actions-ng2',

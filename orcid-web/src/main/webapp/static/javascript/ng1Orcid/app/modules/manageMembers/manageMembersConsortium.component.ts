@@ -18,8 +18,8 @@ import {
 } from "@angular/core";
 
 import { Observable, Subject, Subscription } from "rxjs";
-import { ManageMembersService } from "../../shared/manageMembers.service.ts";
-import { ModalService } from "../../shared/modal.service.ts";
+import { ManageMembersService } from "../../shared/manageMembers.service";
+import { ModalService } from "../../shared/modal.service";
 
 @Component({
   selector: "manage-members-consortium-ng2",

@@ -13,16 +13,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { OauthService } 
-    from '../../shared/oauth.service.ts'; 
+    from '../../shared/oauth.service'; 
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { DeveloperToolsService } 
-    from '../../shared/developerTools.service.ts'; 
+    from '../../shared/developerTools.service'; 
     
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 @Component({
     selector: 'developer-tools-ng2',

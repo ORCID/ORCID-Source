@@ -15,7 +15,7 @@ import { CommonModule }
     from '@angular/common'; 
     
 import { RequestPasswordResetComponent } 
-    from './requestPasswordReset.component.ts';
+    from './requestPasswordReset.component';
 
 // This is the Angular 1 part of the module
 export const RequestPasswordResetModule = angular.module(

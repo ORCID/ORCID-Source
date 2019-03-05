@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { PublicRecordComponent } 
-    from './publicRecord.component.ts';
+    from './publicRecord.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const PublicRecordModule = angular.module(

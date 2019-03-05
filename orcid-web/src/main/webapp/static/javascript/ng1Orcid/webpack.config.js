@@ -22,12 +22,13 @@ module.exports = {
         'process.env':{
             'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
         }
-    })
+    }),
     ],
     resolve: {
         alias: {
             "@angular/upgrade/static": "@angular/upgrade/bundles/upgrade-static.umd.js"
-        }
+        },
+        extensions: [ ".js", ".ts" ]
     },
     watch: false
 }

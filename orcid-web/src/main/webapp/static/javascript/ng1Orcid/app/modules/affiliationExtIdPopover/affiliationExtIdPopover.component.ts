@@ -9,7 +9,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnInit}
     from '@angular/core';
 
 import { UrlProtocolPipe }
-    from '../../pipes/urlProtocolNg2.ts';
+    from '../../pipes/urlProtocolNg2';
 
 @Component({
     selector: 'affiliation-ext-id-popover-ng2',
