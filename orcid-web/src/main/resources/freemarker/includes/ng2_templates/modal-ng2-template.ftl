@@ -5,7 +5,6 @@
             class="popover-ng2-content"
             id="colorbox" 
             role="dialog" 
-            style="transition: width 2s, height 2s;"
             tabindex="-1" 
             [ngStyle]="{
             'height': this.elementHeight + 'px',

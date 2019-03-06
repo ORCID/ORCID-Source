@@ -404,9 +404,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     } else {
                         this.worksService.notifyOther({worksToMerge:dataGroup});       
                         this.worksService.notifyOther({mergeCount:mergeCount});
-                        this.worksService.notifyOther({groupingSuggestion: false})
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
-
+                        this.worksService.notifyOther({groupingSuggestion: false});
+                        if(mergeCount < 20){
+                            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+                        } else {
+                            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge', width: '600', height: '200'});
+                        }
                     }   
                     
                 },

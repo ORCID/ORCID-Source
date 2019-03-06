@@ -59,6 +59,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
 
     dismissWarning(): void{
         this.showWorksMergeWarning = false;
+        this.modalService.notifyOther({action:'resize', moduleId: 'modalWorksMerge', height:'500', width: '600'});
     }
 
     mergeConfirm(): void {
