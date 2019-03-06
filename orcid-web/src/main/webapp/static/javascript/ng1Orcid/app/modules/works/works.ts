@@ -65,5 +65,4 @@ WorksModule.directive(
             component: WorksMergeComponent,
         }
     )
-    )
 );

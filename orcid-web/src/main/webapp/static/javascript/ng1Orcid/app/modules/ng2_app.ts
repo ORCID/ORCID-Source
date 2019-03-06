@@ -207,9 +207,6 @@ import { WorksFormNg2Module }
 
 import { WorksNg2Module } 
     from './works/works.ts';
-    
-import { WorksMergeSuggestionsNg2Module } 
-    from './works/worksMergeSuggestions.ts';
 
 import { ManageMembersNg2Module } 
     from './manageMembers/manageMembers.ts';
@@ -357,7 +354,6 @@ export class RootCmp {
         WorksDeleteNg2Module,
         WorksFormNg2Module,
         WorksNg2Module,
-        WorksMergeSuggestionsNg2Module,
         ManageMembersNg2Module,
         DeveloperToolsNg2Module,
         RecordCorrectionsNg2Module,
