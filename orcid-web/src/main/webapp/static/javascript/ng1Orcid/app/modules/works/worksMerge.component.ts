@@ -14,10 +14,10 @@ import { takeUntil, switchMap }
     from 'rxjs/operators';
 
 import { WorksService } 
-    from '../../shared/works.service.ts';
+    from '../../shared/works.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 @Component({
     selector: 'works-merge-ng2',

@@ -9,17 +9,17 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 import { WorksComponent } 
-    from './works.component.ts';
+    from './works.component';
 
 import { WorksMergeComponent } 
-    from './worksMerge.component.ts';
+    from './worksMerge.component';
 
 //User generated filters
 import { FilterImportWizardsPipe }
-    from '../../pipes/filterImportWizardsNg2.ts'; 
+    from '../../pipes/filterImportWizardsNg2'; 
 
 // This is the Angular 1 part of the module
 export const WorksModule = angular.module(
@@ -42,8 +42,7 @@ export const WorksModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-        ]
+        
     }
 )
 export class WorksNg2Module {}

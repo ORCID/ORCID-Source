@@ -125,7 +125,7 @@
                     <div class="row wizards">               
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div *ngFor="let wtw of fundingImportWizardList">
-                                <strong><a (click)="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong>
+                                <strong><a (click)="openImportWizardUrlFilter(getBaseUri() + '/oauth/authorize', wtw)">{{wtw.name}}</a></strong>
 
                                 <br />                                                                                    
                                 <div class="justify">                       

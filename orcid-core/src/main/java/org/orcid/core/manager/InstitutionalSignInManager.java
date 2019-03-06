@@ -8,7 +8,7 @@ import org.orcid.pojo.RemoteUser;
 
 public interface InstitutionalSignInManager {
 
-    static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "edu-person-unique-id", "targeted-id-oid", "targeted-id" };
+    static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "edu-person-unique-id", "targeted-id-oid", "targeted-id", "subject-id" };
 
     static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
 

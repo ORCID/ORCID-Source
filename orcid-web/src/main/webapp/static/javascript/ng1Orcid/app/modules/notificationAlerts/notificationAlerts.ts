@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { NotificationAlertsComponent } 
-    from './notificationAlerts.component.ts';
+    from './notificationAlerts.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const NotificationAlertsModule = angular.module(
@@ -31,9 +31,6 @@ export const NotificationAlertsModule = angular.module(
         ],
         entryComponents: [ 
             NotificationAlertsComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

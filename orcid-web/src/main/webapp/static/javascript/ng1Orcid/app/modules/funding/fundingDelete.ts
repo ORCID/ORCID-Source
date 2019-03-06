@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { FundingDeleteComponent } 
-    from './fundingDelete.component.ts';
+    from './fundingDelete.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const FundingDeleteModule = angular.module(
@@ -31,9 +31,6 @@ export const FundingDeleteModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-            
         ]
     }
 )

@@ -13,16 +13,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { OauthService } 
-    from '../../shared/oauth.service.ts'; 
+    from '../../shared/oauth.service'; 
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { DeveloperToolsService } 
-    from '../../shared/developerTools.service.ts'; 
+    from '../../shared/developerTools.service'; 
     
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 @Component({
     selector: 'developer-tools-ng2',
@@ -30,6 +30,7 @@ import { EmailService }
 })
 export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit {    
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private userInfo: any;
 
     developerToolsEnabled: boolean;
     client: any;
@@ -41,7 +42,6 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     hideSwaggerUri: boolean;
     expandDetails: boolean;
     googleUri: string = 'https://developers.google.com/oauthplayground';
-    swaggerUri: string = orcidVar.pubBaseUri +"/v2.0/";
     authorizeUrlBase:string = getBaseUri() + '/oauth/authorize';
     tokenURL:string = getBaseUri() + '/oauth/token';    
     selectedRedirectUri: string;
@@ -49,6 +49,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     authorizeURL: String;
     sampleAuthCurl: String;
     sampleOpenId: String;
+    swaggerUri: String;
     
     constructor(
             private commonSrvc: CommonService,
@@ -59,14 +60,39 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.client = {clientId: {errors: [], value: ''}, clientSecret: {errors: [], value: ''}, displayName : {errors: [], value: ''}, website: {errors: [], value: ''}, shortDescription: {errors: [], value: ''}};
         this.showTerms = false;
         this.acceptedTerms = false;
+        this.developerToolsEnabled = false;
         this.verifyEmailSent = false;
-        this.developerToolsEnabled = orcidVar.developerToolsEnabled;
         this.showForm = false;
         this.hideGoogleUri = false;
         this.hideSwaggerUri = false;
         this.selectedRedirectUri = '';
         this.showResetClientSecret = false;
         this.expandDetails = false;
+        
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                var pubBaseUri = data.messages['PUB_BASE_URI'];
+                this.swaggerUri = pubBaseUri + '/v2.0/';                
+            },
+            error => {
+                console.log('developerTools.component.ts: unable to fetch configInfo', error);                
+            } 
+        );  
+
+        this.userInfo = this.commonSrvc.userInfo$
+          .subscribe(
+              data => {
+                  this.userInfo = data; 
+                  if(data.DEVELOPER_TOOLS_ENABLED=='true'){
+                    this.developerToolsEnabled = true;
+                  } 
+              },
+              error => {
+                  console.log('developerTools.component.ts: unable to fetch userInfo', error);
+                  this.userInfo = {};
+              } 
+          );
     }
     
     ngOnDestroy() {

@@ -187,8 +187,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
             }
         }
         
-        mav.addObject("hideSupportWidget", true);
-        mav.addObject("originalOauth2Process", true);
+        mav.addObject("hideSupportWidget", true);        
         mav.setViewName("confirm-oauth-access");        
         return mav;
     }    

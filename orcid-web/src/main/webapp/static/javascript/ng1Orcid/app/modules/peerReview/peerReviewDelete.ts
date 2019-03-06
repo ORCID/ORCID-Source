@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { PeerReviewDeleteComponent } 
-    from './peerReviewDelete.component.ts';
+    from './peerReviewDelete.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const PeerReviewDeleteModule = angular.module(
@@ -31,9 +31,6 @@ export const PeerReviewDeleteModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-            
         ]
     }
 )

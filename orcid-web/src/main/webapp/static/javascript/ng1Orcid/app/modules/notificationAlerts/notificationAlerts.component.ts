@@ -13,7 +13,7 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { NotificationsService } 
-    from '../../shared/notifications.service.ts'; 
+    from '../../shared/notifications.service'; 
 
 
 @Component({
@@ -116,4 +116,8 @@ export class NotificationAlertsComponent implements AfterViewInit, OnDestroy, On
     ngOnInit() {
         this.getNotificationAlerts();
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

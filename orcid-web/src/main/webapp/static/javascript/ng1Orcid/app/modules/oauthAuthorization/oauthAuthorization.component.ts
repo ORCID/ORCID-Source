@@ -3,7 +3,6 @@ declare var OrcidCookie: any;
 declare var orcidVar: any;
 declare var orcidGA: any;
 declare var getBaseUri: any;
-declare var getStaticCdnPath: any;
 declare var orcidGA: any;
 declare var orcidVar: any;
 
@@ -22,25 +21,25 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts'
+    from '../../shared/features.service'
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 import { OauthService } 
-    from '../../shared/oauth.service.ts';
+    from '../../shared/oauth.service';
 
 import { SearchService } 
-    from '../../shared/search.service.ts';
+    from '../../shared/search.service';
     
 import { GenericService }
-    from '../../shared/generic.service.ts';
+    from '../../shared/generic.service';
 
 @Component({
     selector: 'oauth-authorization-ng2',
@@ -51,6 +50,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+    private userInfo: any;
 
     public newInput = new EventEmitter<boolean>();
 
@@ -108,6 +108,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     realLoggedInUserName: string;
     effectiveLoggedInUserName: string;
     isLoggedIn: boolean;    
+    assetsPath: String;
+    aboutUri: String;
+    shibbolethEnabled: boolean = false;
     
     constructor(
         private zone:NgZone,
@@ -173,13 +176,37 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.generalRegistrationError = null;
         this.initReactivationRequest = { "email": null, "error": null, "success": false };
         this.nameFormUrl = '/account/names/public';
-        this.isLoggedIn = false
+        this.isLoggedIn = false;
+        
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+                this.shibbolethEnabled = data.messages['SHIBBOLETH_ENABLED'];
+                this.aboutUri = data.messages['ABOUT_URI'];
+                this.site_key = data.messages['RECAPTCHA_WEB_KEY'];
+            },
+            error => {
+                console.log('oauthAuthorization.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
+
+        this.userInfo = this.commonSrvc.userInfo$
+          .subscribe(
+              data => {
+                  this.userInfo = data;           
+              },
+              error => {
+                  console.log('oauthAuthorization.component.ts: unable to fetch userInfo', error);
+                  this.userInfo = {};
+              } 
+          );
     }
 
     addScript(url, onLoadFunction): void {      
         let head = document.getElementsByTagName('head')[0];
         let script = document.createElement('script');
-        script.src = getStaticCdnPath() + url;
+        script.src = this.assetsPath + url;
         script.onload = onLoadFunction;
         head.appendChild(script); // Inject the script
     }; 
@@ -359,7 +386,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                         if(this.requestInfoForm.userEmail || this.requestInfoForm.userFamilyNames || this.requestInfoForm.userGivenNames){
                             this.showRegisterForm = true;
                         }
-                    }    
+                    } 
+
                     this.requestInfoForm.scopes.forEach((scope) => {
                         if (scope.value.endsWith('/update')) {
                             this.showUpdateIcon = true;
@@ -720,7 +748,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }
 
         //param sent if user came via oauth
-        if(urlParams.has('oauth')){
+        if(urlParams.has('oauth') || (window.location.pathname.indexOf("/oauth") > -1)){
             this.oauthRequest = true;
         }
 
@@ -820,5 +848,9 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                 console.log('oauthAuthorization: ngOnInit error', error);
             } 
         );
+    };
+    
+    getBaseUri() : String {
+        return getBaseUri();
     };
 }

@@ -1,11 +1,11 @@
 <script type="text/ng-template" id="member-details-ng2-template">
     <div class="row member-list">
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
-            <p><a href="<@orcid.rootPath '/members'/>"><i class="glyphicon x075 glyphicon-chevron-left"></i> <@orcid.msg 'member_details.all_members'/></a></p>
+            <p><a href="{{getBaseUri()}}/members"><i class="glyphicon x075 glyphicon-chevron-left"></i> <@orcid.msg 'member_details.all_members'/></a></p>
             <div class="text-center">
                 <i *ngIf="showMemberDetailsLoader" class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
                 <!--[if lt IE 8]>
-                    <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                    <img src="{{assetsPath}}/img/spin-big.gif" width="85" height ="85"/>
                 <![endif]-->
                 <p *ngIf="showGetMemberDetailsError"><@orcid.msg 'member_details.could_not_get_details'/></p>
             </div>
@@ -47,7 +47,7 @@
 		                    <p><b>{{integration.name}}</b>&nbsp;<em>{{integration.stage}}</em></p>
 		                    <div *ngIf="!newBadgesEnabled && integration.badgeAwarded">
 		                        <div class="cc-badge authenticate popover-help-container" *ngIf="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
-		                            <img src="${staticCdn}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" />
+		                            <img src="{{assetsPath}}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" />
 		                            <div id="cc-authenticate-help" class="popover bottom">
 		                              <div class="arrow"></div>
 		                              <div class="popover-content">
@@ -56,7 +56,7 @@
 		                            </div>
 		                        </div>
 		                        <div class="cc-badge collect popover-help-container" *ngIf="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
-		                            <img src="${staticCdn}/img/cc_collect.png" height="34" width="34" alt="ORCID Collect badge" />
+		                            <img src="{{assetsPath}}/img/cc_collect.png" height="34" width="34" alt="ORCID Collect badge" />
 		                            <div id="cc-collect-help" class="popover bottom">
 		                              <div class="arrow"></div>
 		                              <div class="popover-content">
@@ -65,7 +65,7 @@
 		                            </div>
 		                        </div>
 		                        <div class="cc-badge display popover-help-container" *ngIf="integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
-		                            <img src="${staticCdn}/img/cc_display.png" height="34" width="34" alt="ORCID Display badge" />
+		                            <img src="{{assetsPath}}/img/cc_display.png" height="34" width="34" alt="ORCID Display badge" />
 		                            <div id="cc-display-help" class="popover bottom">
 		                              <div class="arrow"></div>
 		                              <div class="popover-content">
@@ -74,7 +74,7 @@
 		                            </div>
 		                        </div>
 		                        <div class="cc-badge connect popover-help-container" *ngIf="integration.level=='Connect'||integration.level=='Sync'">
-		                            <img src="${staticCdn}/img/cc_connect.png" height="34" width="34" alt="ORCID Connect badge" />
+		                            <img src="{{assetsPath}}/img/cc_connect.png" height="34" width="34" alt="ORCID Connect badge" />
 		                            <div id="cc-connect-help" class="popover bottom">
 		                              <div class="arrow"></div>
 		                              <div class="popover-content">
@@ -83,7 +83,7 @@
 		                            </div>
 		                        </div>
 		                        <div class="cc-badge sync popover-help-container" *ngIf="integration.level=='Sync'">
-		                            <img src="${staticCdn}/img/cc_sync.png" height="34" width="34" alt="ORCID Sync badge" />
+		                            <img src="{{assetsPath}}/img/cc_sync.png" height="34" width="34" alt="ORCID Sync badge" />
 		                            <div id="cc-sync-help" class="popover bottom">
 		                                <div class="arrow"></div>
 		                                <div class="popover-content">
@@ -94,7 +94,7 @@
 		                </div>
 		                <div *ngIf="newBadgesEnabled">
 	                        <div class="cc-badge authenticate popover-help-container" *ngIf="badgesAwarded[integration.id] && badgesAwarded[integration.id]['AUTHENTICATE']">
-	                            <img src="${staticCdn}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" />
+	                            <img src="{{assetsPath}}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" />
 	                            <div id="cc-authenticate-help" class="popover bottom">
 	                              <div class="arrow"></div>
 	                              <div class="popover-content">
@@ -103,7 +103,7 @@
 	                            </div>
 	                        </div>
 	                        <div class="cc-badge display popover-help-container" *ngIf="badgesAwarded[integration.id] && badgesAwarded[integration.id]['DISPLAY']">
-	                            <img src="${staticCdn}/img/cc_display.png" height="34" width="34" alt="ORCID Display badge" />
+	                            <img src="{{assetsPath}}/img/cc_display.png" height="34" width="34" alt="ORCID Display badge" />
 	                            <div id="cc-display-help" class="popover bottom">
 	                              <div class="arrow"></div>
 	                              <div class="popover-content">
@@ -112,7 +112,7 @@
 	                            </div>
 	                        </div>
 	                        <div class="cc-badge connect popover-help-container" *ngIf="badgesAwarded[integration.id] && badgesAwarded[integration.id]['CONNECT']">
-	                            <img src="${staticCdn}/img/cc_connect.png" height="34" width="34" alt="ORCID Connect badge" />
+	                            <img src="{{assetsPath}}/img/cc_connect.png" height="34" width="34" alt="ORCID Connect badge" />
 	                            <div id="cc-connect-help" class="popover bottom">
 	                              <div class="arrow"></div>
 	                              <div class="popover-content">
@@ -121,7 +121,7 @@
 	                            </div>
 	                        </div>
 	                        <div class="cc-badge collect popover-help-container" *ngIf="badgesAwarded[integration.id] && badgesAwarded[integration.id]['COLLECT']">
-	                            <img src="${staticCdn}/img/cc_collect.png" height="34" width="34" alt="ORCID Collect badge" />
+	                            <img src="{{assetsPath}}/img/cc_collect.png" height="34" width="34" alt="ORCID Collect badge" />
 	                            <div id="cc-collect-help" class="popover bottom">
 	                              <div class="arrow"></div>
 	                              <div class="popover-content">
@@ -130,7 +130,7 @@
 	                            </div>
 	                        </div>
 	                        <div class="cc-badge sync popover-help-container" *ngIf="badgesAwarded[integration.id] && badgesAwarded[integration.id]['SYNCHRONIZE']">
-	                            <img src="${staticCdn}/img/cc_sync.png" height="34" width="34" alt="ORCID Sync badge" />
+	                            <img src="{{assetsPath}}/img/cc_sync.png" height="34" width="34" alt="ORCID Sync badge" />
 	                            <div id="cc-sync-help" class="popover bottom">
 	                                <div class="arrow"></div>
 	                                <div class="popover-content">

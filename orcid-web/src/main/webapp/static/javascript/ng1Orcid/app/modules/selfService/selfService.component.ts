@@ -8,16 +8,16 @@ import { Observable, Subject, Subscription }
     from 'rxjs';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { ConsortiaService }
-    from '../../shared/consortia.service.ts'
+    from '../../shared/consortia.service'
 
 import { FeaturesService }
-    from '../../shared/features.service.ts'
+    from '../../shared/features.service'
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';
+    from '../../shared/modal.service';
 
 @Component({
     selector: 'self-service-ng2',
@@ -50,17 +50,28 @@ export class SelfServiceComponent {
     successEditMemberMessage : string;
     orgIdsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SELF_SERVICE_ORG_IDS');
     orgIdSearchResults: Array<object> = [];
+    assetsPath: String;
     
     constructor(
         private commonSrvc: CommonService,
         private consortiaService: ConsortiaService,
         private featuresService: FeaturesService,
         private modalService: ModalService
-    ) {}
+    ) {
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('selfService.component.ts: unable to fetch userInfo', error);                
+            } 
+        );        
+    }
   
   
     buildOrcidUri(orcid: String): string {
-        return orcidVar.baseUri + '/' + orcid;
+        return getBaseUri() + '/' + orcid;
     };
     
     getMemberDetails() {
@@ -422,4 +433,7 @@ export class SelfServiceComponent {
         );
     }
 
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

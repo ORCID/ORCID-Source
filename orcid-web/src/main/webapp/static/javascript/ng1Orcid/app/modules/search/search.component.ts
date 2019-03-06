@@ -1,5 +1,4 @@
 declare var $: any;
-declare var orcidSearchUrlJs: any;
 declare var orcidVar: any;
 
 import { NgForOf, NgIf } 
@@ -14,13 +13,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts'
+    from '../../shared/features.service'
 
 import { SearchService } 
-    from '../../shared/search.service.ts';
+    from '../../shared/search.service';
 
 @Component({
     selector: 'search-ng2',
@@ -99,7 +98,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     search(input: any) {
-        this.searchSrvc.getResults(orcidSearchUrlJs.buildUrl(this.input)).pipe(    
+        this.searchSrvc.getResults(this.input).pipe(    
             takeUntil(this.ngUnsubscribe)
         ).subscribe(
             searchResults => {
@@ -223,11 +222,11 @@ export class SearchComponent implements OnDestroy, OnInit {
     }
 
     isValid(): any {
-        return orcidSearchUrlJs.isValidInput(this.input);
+        return this.searchSrvc.isValid(this.input);
     };
 
     isValidOrcidId(): any{
-        if(typeof this.input.text === 'undefined' || this.input.text === null || this.input.text === '' || orcidSearchUrlJs.isValidOrcidId(this.input.text)){
+        if(typeof this.input.text === 'undefined' || this.input.text === null || this.input.text === '' || this.searchSrvc.isValidOrcidId(this.input.text)){
             return true;
         }
         return false;

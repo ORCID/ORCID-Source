@@ -15,10 +15,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service.ts';
+    from '../../shared/account.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';  
+    from '../../shared/modal.service';  
 
 @Component({
     selector: 'delegates-add-ng2',
@@ -141,4 +141,8 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         
     }; 
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

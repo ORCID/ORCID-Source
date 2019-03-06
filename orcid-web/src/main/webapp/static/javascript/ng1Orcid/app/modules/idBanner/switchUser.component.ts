@@ -20,8 +20,8 @@ import {
 
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { CommonService } from "../../shared/common.service.ts";
-import { SwitchUserService } from "../../shared/switchUser.service.ts";
+import { CommonService } from "../../shared/common.service";
+import { SwitchUserService } from "../../shared/switchUser.service";
 
 @Component({
   selector: "switch-user-ng2",
@@ -140,5 +140,9 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
         }
       }.bind(this)
     );
-  }
+  };
+  
+  getBaseUri() : String {
+      return getBaseUri();
+  };
 }

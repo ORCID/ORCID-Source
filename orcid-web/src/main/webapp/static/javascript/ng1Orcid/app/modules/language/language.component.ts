@@ -15,10 +15,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { LanguageService } 
-    from '../../shared/language.service.ts';
+    from '../../shared/language.service';
 
 import { WidgetService } 
-    from '../../shared/widget.service.ts';
+    from '../../shared/widget.service';
 
 
 @Component({

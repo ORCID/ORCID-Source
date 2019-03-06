@@ -12,14 +12,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { BlogService } 
-    from '../../shared/blog.service.ts';
+    from '../../shared/blog.service';
 
 import * as xml2js from 'xml2js';
 
 @Component({
     selector: 'home-ng2',
     template:  scriptTmpl("home-ng2-template"),
-    providers: [BlogService]
 })
 export class HomeComponent implements OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -51,7 +50,7 @@ export class HomeComponent implements OnInit {
     };
 
     ngOnInit() {
-        this.blogSrvc.getBlogFeed(orcidVar.baseUri + "/blog/feed")
+        this.blogSrvc.getBlogFeed(getBaseUri() + "/blog/feed")
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
@@ -67,5 +66,9 @@ export class HomeComponent implements OnInit {
                 console.log('error fetching blog feed: ', error);
             } 
         );
-    }
+    };
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

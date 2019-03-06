@@ -57,9 +57,6 @@ public enum Features implements Feature {
     @Label("Two factor authentication")
     TWO_FACTOR_AUTHENTICATION,
 
-    @Label("API analytics debug logging")
-    API_ANALYTICS_DEBUG,
-
     @Label("Self service org ids")
     SELF_SERVICE_ORG_IDS,
 

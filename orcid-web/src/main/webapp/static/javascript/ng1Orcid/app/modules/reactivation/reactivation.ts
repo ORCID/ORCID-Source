@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 import { ReactivationComponent } 
-    from './reactivation.component.ts';
+    from './reactivation.component';
 
 // This is the Angular 1 part of the module
 export const ReactivationModule = angular.module(
@@ -33,8 +33,7 @@ export const ReactivationModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-        ]
+        
     }
 )
 export class ReactivationNg2Module {}

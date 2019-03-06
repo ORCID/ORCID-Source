@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 import { ClaimThanksComponent } 
-    from './claimThanks.component.ts';
+    from './claimThanks.component';
 
 // This is the Angular 1 part of the module
 export const ClaimThanksModule = angular.module(
@@ -32,8 +32,6 @@ export const ClaimThanksModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
         ]
     }
 )

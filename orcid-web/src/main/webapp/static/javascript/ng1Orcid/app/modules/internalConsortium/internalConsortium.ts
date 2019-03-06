@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { InternalConsotiumComponent } 
-    from './internalConsortium.component.ts';
+    from './internalConsortium.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const InternalConsotiumModule = angular.module(
@@ -31,9 +31,6 @@ export const InternalConsotiumModule = angular.module(
         ],
         entryComponents: [ 
             InternalConsotiumComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

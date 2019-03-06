@@ -18,7 +18,7 @@ import {
 } from "@angular/core";
 
 import { Observable, Subject, Subscription } from "rxjs";
-import { ManageMembersService } from "../../shared/manageMembers.service.ts";
+import { ManageMembersService } from "../../shared/manageMembers.service";
 
 @Component({
   selector: "manage-members-find-ng2",

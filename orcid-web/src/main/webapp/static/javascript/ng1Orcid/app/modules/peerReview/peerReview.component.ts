@@ -20,22 +20,22 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { PeerReviewService } 
-    from '../../shared/peerReview.service.ts';
+    from '../../shared/peerReview.service';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
+    from '../../shared/workspace.service'; 
 
 import { OrgDisambiguated } 
-    from '../orgIdentifierPopover/orgDisambiguated.ts';
+    from '../orgIdentifierPopover/orgDisambiguated';
     
 @Component({
     selector: 'peer-review-ng2',
@@ -388,5 +388,9 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.getPeerReviewGroups();
         this.loadPeerReviewImportWizards();
+    };
+    
+    getBaseUri(): String {
+        return getBaseUri();
     };
 }

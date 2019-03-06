@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { ResearchResourceDeleteComponent } 
-    from './researchResourceDelete.component.ts';
+    from './researchResourceDelete.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const ResearchResourceDeleteModule = angular.module(
@@ -32,9 +32,7 @@ export const ResearchResourceDeleteModule = angular.module(
         imports: [
             CommonNg2Module
         ],
-        providers: [
-            
-        ]
+        
     }
 )
 export class ResearchResourceDeleteNg2Module {}

@@ -2,9 +2,9 @@ import * as angular from "angular";
 import { NgModule } from "@angular/core";
 import { downgradeComponent } from "@angular/upgrade/static";
 //User generated components
-import { CommonNg2Module } from "./../common/common.ts";
-import { OauthAuthorizationComponent } from "./oauthAuthorization.component.ts";
-import { idBannerNg2Module } from "./../idBanner/idBanner.ts";
+import { CommonNg2Module } from "./../common/common";
+import { OauthAuthorizationComponent } from "./oauthAuthorization.component";
+import { idBannerNg2Module } from "./../idBanner/idBanner";
 
 // This is the Angular 1 part of the module
 export const OauthAuthorizationModule = angular.module(

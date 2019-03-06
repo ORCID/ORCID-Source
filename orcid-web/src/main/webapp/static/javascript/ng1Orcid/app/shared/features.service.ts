@@ -4,15 +4,19 @@ import { Injectable }
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
+import { CommonService } 
+     from './common.service.ts'; 
 
-
-@Injectable()
+@Injectable({
+ providedIn: 'root',
+})
 export class FeaturesService {
     
     private features = orcidVar.features;
+    private done = false;
     
-     constructor(){
-        
+     constructor(private commonSrvc: CommonService){
+         
     }
     
     isFeatureEnabled(featureName: string) : boolean {

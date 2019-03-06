@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="delegates-revoke-ng2-template">
     <div class="lightbox-container">
         <h3><@orcid.msg 'manage_delegation.confirmrevoketrustedindividual'/></h3>
-        <p> {{delegateNameToRevoke}} (<a href="${baseUri}/{{delegateToRevoke}}" target="delegateToRevoke">${baseUri}/{{delegateToRevoke}}</a>)</p>
+        <p> {{delegateNameToRevoke}} (<a href="{{getBaseUri()}}/{{delegateToRevoke}}" target="delegateToRevoke">{{getBaseUri()}}/{{delegateToRevoke}}</a>)</p>
         <form (ngSubmit)="revoke()">
             <div *ngIf="isPasswordConfirmationRequired" ng-cloak>
                 <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>

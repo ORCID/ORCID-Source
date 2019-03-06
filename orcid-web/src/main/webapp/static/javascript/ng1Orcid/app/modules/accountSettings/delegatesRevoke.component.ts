@@ -15,10 +15,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service.ts';
+    from '../../shared/account.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';  
+    from '../../shared/modal.service';  
 
 @Component({
     selector: 'delegates-revoke-ng2',
@@ -95,4 +95,8 @@ export class DelegatesRevokeComponent implements AfterViewInit, OnDestroy, OnIni
 
     ngOnInit() {
     }; 
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

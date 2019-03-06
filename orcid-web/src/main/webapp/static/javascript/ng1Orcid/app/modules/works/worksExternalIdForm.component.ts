@@ -18,19 +18,19 @@ import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap,
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { WorksService } 
-    from '../../shared/works.service.ts';
+    from '../../shared/works.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';
+    from '../../shared/modal.service';
     
 import { GenericService } 
-    from '../../shared/generic.service.ts';
+    from '../../shared/generic.service';
 
 @Component({
     selector: 'works-external-id-form-ng2',
@@ -46,31 +46,7 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
     externalIdType
     metadataNotFound
     loading
-
-    externalId = {
-        DOI :{
-            placeHolder: "10.1000/xyz123",
-            value: "",
-            url: () => '/works/resolve/doi?value='
-        },
-        arXiv : {
-            placeHolder: "1501.00001",
-            value: "",
-            url: () => "/works/resolve/arxiv?value="
-        },
-        pubMed : {
-            placeHolder: "12345678 " + om.get('common.or') + " PMC1234567",
-            value: "",
-            url: (value) => {
-                // Looks for a "pmc" string at the end of a url or a "PMC" string follow by at least 5 numbers 
-                var regex = new RegExp(/((.*[\/,\\](pmc))|(PMC)\d{5})/g)
-                var result = regex.exec(value)
-                return result? "/works/resolve/pmc/?value=":  "/works/resolve/pmid?value=";
-            }
-            
-        }
-    }
-
+    externalId
 
     constructor( 
         private worksService : WorksService,
@@ -79,7 +55,31 @@ export class WorksExternalIdFormComponent implements AfterViewInit {
         private cd: ChangeDetectorRef,
         private renderer: Renderer2
     ) {
-
+        om.process().then(() => { 
+            this.externalId = {
+                    DOI :{
+                        placeHolder: "10.1000/xyz123",
+                        value: "",
+                        url: () => '/works/resolve/doi?value='
+                    },
+                    arXiv : {
+                        placeHolder: "1501.00001",
+                        value: "",
+                        url: () => "/works/resolve/arxiv?value="
+                    },
+                    pubMed : {
+                        placeHolder: "12345678 " + om.get('common.or') + " PMC1234567",
+                        value: "",
+                        url: (value) => {
+                            // Looks for a "pmc" string at the end of a url or a "PMC" string follow by at least 5 numbers 
+                            var regex = new RegExp(/((.*[\/,\\](pmc))|(PMC)\d{5})/g)
+                            var result = regex.exec(value)
+                            return result? "/works/resolve/pmc/?value=":  "/works/resolve/pmid?value=";
+                        }
+                        
+                    }
+                } 
+        });        
     }
 
     ngAfterViewInit() {

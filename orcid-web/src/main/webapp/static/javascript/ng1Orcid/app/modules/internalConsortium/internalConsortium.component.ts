@@ -17,10 +17,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { ManageMembersService } 
-    from '../../shared/manageMembers.service.ts'; 
+    from '../../shared/manageMembers.service'; 
 
 import { PreferencesService } 
-    from '../../shared/preferences.service.ts'; 
+    from '../../shared/preferences.service'; 
 
 
 @Component({
@@ -104,7 +104,6 @@ export class InternalConsotiumComponent implements AfterViewInit, OnDestroy, OnI
             },
             error => {
                 this.findConsortiumError = true;
-                //console.log('getAlsoKnownAsFormError', error);
             } 
         );
     };

@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { BiographyComponent } 
-    from './biography.component.ts';
+    from './biography.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const BiographyModule = angular.module(
@@ -31,9 +31,6 @@ export const BiographyModule = angular.module(
         ],
         entryComponents: [ 
             BiographyComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

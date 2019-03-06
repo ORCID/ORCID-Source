@@ -14,7 +14,7 @@ import { takeUntil, tap }
     from 'rxjs/operators';
 
 import { NotificationsService } 
-    from '../../shared/notifications.service.ts'; 
+    from '../../shared/notifications.service'; 
 
 
 @Component({

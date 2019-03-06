@@ -15,7 +15,7 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { RegisterDuplicatesComponent } 
-    from './registerDuplicates.component.ts';
+    from './registerDuplicates.component';
 
 // This is the Angular 1 part of the module
 export const RegisterDuplicatesModule = angular.module(
@@ -37,8 +37,7 @@ export const RegisterDuplicatesModule = angular.module(
             CommonModule,
             FormsModule,
         ],
-        providers: [
-        ]
+        
     }
 )
 export class RegisterDuplicatesNg2Module {}
