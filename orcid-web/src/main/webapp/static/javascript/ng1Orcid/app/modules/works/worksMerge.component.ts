@@ -30,6 +30,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
     mergeCount: any;
     mergeSubmit: boolean;
     showWorksMergeError: boolean;
+    showWorksMergeWarning: boolean;
     worksToMerge: Array<any>;
     externalIdsPresent: boolean;
     groupingSuggestion: any;
@@ -45,6 +46,7 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
         this.mergeSubmit = false;
         this.groupingSuggestion = false;
         this.showWorksMergeError = false;
+        this.showWorksMergeWarning = false;
     }
 
     cancelEdit(): void {
@@ -54,6 +56,11 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.worksService.notifyOther({action:'cancel', successful:true});
             }
     };
+
+    dismissWarning(): void{
+        this.showWorksMergeWarning = false;
+        this.modalService.notifyOther({action:'resize', moduleId: 'modalWorksMerge', height:'500', width: '600'});
+    }
 
     mergeConfirm(): void {
         if(this.worksToMerge.length > 20){
@@ -159,6 +166,9 @@ export class WorksMergeComponent implements AfterViewInit, OnDestroy, OnInit {
             (res) => {
                 if( res.mergeCount ) {
                     this.mergeCount = res.mergeCount;
+                    if(this.mergeCount > 19){
+                        this.showWorksMergeWarning = true;
+                    }
                 }
                 if( res.worksToMerge != null ) {
                     this.worksToMerge = res.worksToMerge;

@@ -194,10 +194,7 @@ import { WorksFormModule }
     from './works/worksForm';
 
 import { WorksModule } 
-    from './works/works';
-    
-import { WorksMergeSuggestionsModule } 
-    from './works/worksMergeSuggestions';
+    from './works/works.ts';
 
 import { ManageMembersModule } 
     from './manageMembers/manageMembers';      
@@ -297,7 +294,6 @@ export const orcidApp = angular.module(
         WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,
-        WorksMergeSuggestionsModule.name,
         ManageMembersModule.name,
         idBannerModule.name,
         qrcodeModule.name,
