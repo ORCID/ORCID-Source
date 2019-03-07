@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -84,6 +85,22 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         query.setParameter("orgDisambiguatedId", orgDisambiguated != null ? orgDisambiguated.getId() : null);
         List<OrgEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM org WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctClientSource(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE org SET client_source_id = source_id, source_id = NULL where id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
     }
 
 }
