@@ -74,7 +74,7 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
 
   search(): void {
     if (this.searchResultsCache[this.searchTerm] === undefined) {
-      if (this.searchTerm === "") {
+      if (this.searchTerm === "" && !this.commonService.isPublicPage) {
         this.getDelegates();
         this.searchResultsCache[this.searchTerm] = this.delegators;
       } else {
@@ -127,8 +127,9 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.getDelegates();
-
+    if(!this.commonService.isPublicPage) {
+        this.getDelegates();
+    }   
     //close delegate dropdown
     $(document).bind(
       "click",

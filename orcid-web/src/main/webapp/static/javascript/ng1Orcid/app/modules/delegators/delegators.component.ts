@@ -24,6 +24,8 @@ import { AccountService }
 import { GenericService } 
     from '../../shared/generic.service'; 
 
+import { CommonService } 
+    from '../../shared/common.service';
 
 @Component({
     selector: 'delegators-ng2',
@@ -38,7 +40,8 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     constructor(
         private delegatorsService: GenericService,
-        private accountService: AccountService
+        private accountService: AccountService,
+        private commonSrvc: CommonService
     ) {
         this.sort = {
             column: 'delegateSummary.giverName.value',
@@ -106,7 +109,11 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getDelegators();
+        if(!this.commonSrvc.isPublicPage) {
+            this.getDelegators();
+        } else {
+            console.log('Dont load delegators on public page');
+        }    
     }; 
     
     getBaseUri(): String {
