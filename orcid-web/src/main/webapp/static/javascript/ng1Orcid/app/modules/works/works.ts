@@ -17,9 +17,6 @@ import { WorksComponent }
 import { WorksMergeComponent } 
     from './worksMerge.component';
 
-import { WorksMergeWarningComponent } 
-    from './worksMergeWarning.component';
-
 //User generated filters
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2'; 
@@ -37,12 +34,10 @@ export const WorksModule = angular.module(
         declarations: [
             WorksComponent,
             WorksMergeComponent,
-            WorksMergeWarningComponent 
         ],
         entryComponents: [ 
             WorksComponent,
             WorksMergeComponent,
-            WorksMergeWarningComponent  
         ],
         imports: [
             CommonNg2Module
@@ -67,13 +62,6 @@ WorksModule.directive(
     <any>downgradeComponent(
         {
             component: WorksMergeComponent,
-        }
-    )
-    ).directive(
-    'worksMergeWarningNg2',
-    <any>downgradeComponent(
-        {
-            component: WorksMergeWarningComponent,
         }
     )
 );

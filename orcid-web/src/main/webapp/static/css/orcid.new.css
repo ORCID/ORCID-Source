@@ -6920,7 +6920,8 @@ ul.comma li:last-child:after {
 }
 
 .footer-main p {
-    margin: 0 0 6px
+    margin: 0 0 6px;
+    text-align: center;
 }
 
 .footer-main .social {
@@ -8735,3 +8736,76 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
 .merge-suggestions-list > div {
     margin-left: 20px;
 }
+
+.row.footer-row-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.footer-row-icons-container {
+    display: flex;
+    align-items: flex-end;
+    /* justify-content: space-between; */
+    height: 35px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.footer-row-icons-container > a {
+    margin-right: 12px;
+}
+
+.footer-row-icons-container > nav a {
+    margin-right: 2px;
+}
+
+.footer-row-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-row-text-container > nav a {
+    margin-right: 15px;
+}
+
+.footer-row-text-container > nav {
+    width: 100%;
+}
+
+
+@media (max-width:630px) { 
+    .footer-row-text-container > nav ul {
+        align-items: center;
+        justify-content: space-around;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        display: flex;
+        flex-direction: column;
+        margin-top: 20px;
+    }
+
+    .footer-row-text-container > nav a {
+        margin-bottom: 20px;
+        margin-right: 0px
+    }
+
+    .footer-row-icons-container {
+        justify-content: center;
+    }
+
+    .footer-row-text-container > nav {
+        width: initial;
+    }
+
+    
+}
+
+
+a.footer-url {
+    text-decoration: underline;
+}
+

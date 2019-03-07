@@ -18,6 +18,7 @@ import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
 import org.orcid.jaxb.model.v3.rc2.record.Membership;
 import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -133,7 +134,13 @@ public class JpaJaxbMembershipAdapterTest extends MockSourceNameCache {
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
-        orgEntity.setSource(new SourceEntity("APP-000000001"));
+        
+        ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
+        clientDetailsEntity.setId("APP-000000001");
+
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(clientDetailsEntity);
+        orgEntity.setSource(sourceEntity);
         
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
         result.setAffiliationType(AffiliationType.MEMBERSHIP.name());

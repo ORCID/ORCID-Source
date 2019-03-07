@@ -21,6 +21,7 @@ import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
 import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
@@ -166,7 +167,13 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
-        orgEntity.setSource(new SourceEntity("APP-000000001"));
+        
+        ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
+        clientDetailsEntity.setId("APP-000000001");
+
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(clientDetailsEntity);
+        orgEntity.setSource(sourceEntity);
         
         PeerReviewEntity result = new PeerReviewEntity();
         result.setOrg(orgEntity);

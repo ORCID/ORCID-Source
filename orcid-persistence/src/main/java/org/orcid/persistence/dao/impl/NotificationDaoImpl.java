@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -331,6 +332,22 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         }
         
         return results;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM notification WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctClientSource(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE notification SET client_source_id = source_id, source_id = NULL where id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
     }
 
 }

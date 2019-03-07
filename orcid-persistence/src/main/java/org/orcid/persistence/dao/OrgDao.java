@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
@@ -24,5 +25,9 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
     void removeOrgsByClientSourceId(String clientSourceId);
 
     OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, String country, OrgDisambiguatedEntity orgDisambiguated);
+
+    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<BigInteger> ids);
 
 }

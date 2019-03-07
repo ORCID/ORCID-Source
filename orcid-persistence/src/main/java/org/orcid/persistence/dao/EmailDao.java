@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -76,4 +77,8 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     Integer clearEmailsAfterReactivation(String orcid);
     
     List getEmailAndHash(int iteration, int batchSize);
+
+    List<String> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<String> ids);
 }

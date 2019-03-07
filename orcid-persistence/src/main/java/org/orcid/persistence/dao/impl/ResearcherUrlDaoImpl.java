@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -103,6 +104,22 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     public void removeAllResearcherUrls(String orcid) {
         Query query = entityManager.createQuery("delete from ResearcherUrlEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctClientSource(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE researcher_url SET client_source_id = source_id, source_id = NULL where id IN :ids");
+        query.setParameter("ids", ids);
         query.executeUpdate();
     }
 
