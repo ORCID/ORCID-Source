@@ -8747,8 +8747,10 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
 .footer-row-icons-container {
     display: flex;
     align-items: flex-end;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     height: 35px;
+    margin-bottom: 10px;
+    width: 100%;
 }
 
 .footer-row-icons-container > a {
@@ -8763,12 +8765,16 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 10px;
 }
 
 .footer-row-text-container > nav a {
     margin-right: 15px;
 }
+
+.footer-row-text-container > nav {
+    width: 100%;
+}
+
 
 @media (max-width:630px) { 
     .footer-row-text-container > nav ul {
@@ -8786,6 +8792,16 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
         margin-bottom: 20px;
         margin-right: 0px
     }
+
+    .footer-row-icons-container {
+        justify-content: center;
+    }
+
+    .footer-row-text-container > nav {
+        width: initial;
+    }
+
+    
 }
 
 
