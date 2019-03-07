@@ -444,8 +444,8 @@
         </div>
         <div class="col-md-3 col-sm-3 col-sm-pull-9 col-md-pull-9 reset logo">
             <h1>
-                <a href="{{aboutUri}}"><img
-                    src="{{assetsPath}}/img/orcid-logo.png" alt="ORCID logo" /></a>
+                <a href="{{aboutUri}}"><img *ngIf="assetsPath != null"
+                    src="{{assetsPath + '/img/orcid-logo.png'}}" alt="ORCID logo" /></a>
             </h1>
             <p><@orcid.msg 'public-layout.logo.tagline'/></p>
         </div>
