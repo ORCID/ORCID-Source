@@ -172,7 +172,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
             if (isDuplicated(existing, researcherUrl, activeSource)) {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("type", "researcher-url");
-                params.put("value", researcherUrl.getUrlName());
+                params.put("value", researcherUrl.getUrl().getValue());
                 throw new OrcidDuplicatedElementException(params);
             }
         }
