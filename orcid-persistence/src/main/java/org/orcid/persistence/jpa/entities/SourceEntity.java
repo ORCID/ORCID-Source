@@ -34,17 +34,6 @@ public class SourceEntity implements Serializable {
         this.sourceClient = cde;
     }
 
-    public SourceEntity(String sourceId) {
-        if (sourceId != null) {
-            if (sourceId.startsWith("APP-")) {
-                sourceClient = new ClientDetailsEntity();
-                sourceClient.setId(sourceId);
-            } else {
-                sourceProfile = new ProfileEntity(sourceId);
-            }
-        }
-    }
-
     @ManyToOne
     @JoinColumn(name = "source_id")
     public ProfileEntity getSourceProfile() {
