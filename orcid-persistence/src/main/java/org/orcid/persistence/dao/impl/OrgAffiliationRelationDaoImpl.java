@@ -279,4 +279,20 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         Long result = ((BigInteger)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM org_affiliation_relation WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctClientSource(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE org_affiliation_relation SET client_source_id = source_id, source_id = NULL where id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
 }

@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -299,5 +300,21 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setFirstResult(offset);
         query.setMaxResults(batchSize);        
         return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getIdsForClientSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctClientSource(List<String> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE email SET client_source_id = source_id, source_id = NULL where email_hash IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
     }       
 }

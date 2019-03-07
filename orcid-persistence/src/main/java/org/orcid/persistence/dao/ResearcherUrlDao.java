@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
@@ -57,4 +58,8 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
      *            removed.
      */
     void removeAllResearcherUrls(String orcid);
+
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit);
+
+    public void correctClientSource(List<BigInteger> ids);
 }

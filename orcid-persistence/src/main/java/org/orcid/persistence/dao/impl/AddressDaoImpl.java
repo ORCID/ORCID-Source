@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -76,6 +77,22 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     public void removeAllAddress(String orcid) {
         Query query = entityManager.createQuery("delete from AddressEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM address WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctClientSource(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE address SET client_source_id = source_id, source_id = NULL where id IN :ids");
+        query.setParameter("ids", ids);
         query.executeUpdate();
     }    
 }

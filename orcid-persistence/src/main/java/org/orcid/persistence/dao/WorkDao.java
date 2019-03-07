@@ -112,4 +112,8 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     List<WorkEntity> getWorksByOrcidId(String orcid);
     
     boolean hasPublicWorks(String orcid);
+
+    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<BigInteger> ids);
 }

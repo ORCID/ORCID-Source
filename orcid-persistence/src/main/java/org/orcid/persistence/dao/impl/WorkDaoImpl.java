@@ -240,5 +240,21 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         Long result = ((BigInteger)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctClientSource(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET client_source_id = source_id, source_id = NULL where work_id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
 }
 

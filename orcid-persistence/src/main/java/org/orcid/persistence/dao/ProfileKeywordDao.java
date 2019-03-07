@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
@@ -46,4 +47,8 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
      *            removed.
      */
     void removeAllKeywords(String orcid);
+
+    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<BigInteger> ids);
 }
