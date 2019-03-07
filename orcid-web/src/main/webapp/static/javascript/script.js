@@ -367,6 +367,14 @@ function getBaseUri() {
     return uri;
 }
 
+function getBaseUriHttps() {    
+    var uri = 'https://' + location.host
+    if(window.location.host.startsWith('localhost:8443') | window.location.host.startsWith('localhost:8080')) {
+        uri = uri + '/orcid-web';        
+    }    
+    return uri;
+}
+
 function getCookieDomain(location){
         host = location.host;
         if(host.indexOf("qa.orcid.org") >= 0){
@@ -381,9 +389,9 @@ function getCookieDomain(location){
 
 function checkOrcidLoggedIn() {	    
     if (OrcidCookie.checkIfCookiesEnabled()) {    
-        if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {
+        if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {            
             $.ajax({
-                url : getBaseUri() + '/userStatus.json?callback=?',
+                url : getBaseUriHttps() + '/userStatus.json?callback=?',
                 type : 'POST',
                 dataType : 'json',
                 headers: {
