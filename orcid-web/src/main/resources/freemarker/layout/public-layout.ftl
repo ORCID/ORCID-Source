@@ -106,7 +106,7 @@
                                 <div class="col-md-2">
                                     <p>
                                         <a href="{{aboutUri}}" alt="ORCID logo">
-                                            <img src="{{assetsPath}}/img/orcid-logo.svg" width="108px" alt="ORCID logo">
+                                            <img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" width="108px" alt="ORCID logo">
                                         </a>
                                     </p>
                                     <nav>
@@ -119,7 +119,7 @@
                                 </div>
                                 <div class="col-md-10">
                                     <p>
-                                        <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="{{assetsPath}}/img/cc0_80x15.png" style="border-style: none;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a></p>
+                                        <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/cc0_80x15.png'}}" style="border-style: none;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a></p>
                                     <nav>
                                         <ul class="inline-list">
                                             <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
