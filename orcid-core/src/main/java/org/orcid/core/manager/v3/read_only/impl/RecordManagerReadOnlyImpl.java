@@ -3,14 +3,15 @@ package org.orcid.core.manager.v3.read_only.impl;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier;
@@ -39,6 +40,9 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
     
     @Resource
     protected OrcidUrlManager orcidUrlManager;
+    
+    @Resource
+    protected SourceNameCacheManager sourceNameCacheManager;
     
     protected ProfileEntityCacheManager profileEntityCacheManager;
     
@@ -142,7 +146,8 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         }                
         
         if(profile.getSource() != null) {
-            history.setSource(new Source(SourceEntityUtils.getSourceId(profile.getSource())));                
+            Source source = SourceEntityUtils.extractSourceFromProfileComplete(profile, sourceNameCacheManager, orcidUrlManager);
+            history.setSource(source);                
         }
         
         boolean verfiedEmail = false;
