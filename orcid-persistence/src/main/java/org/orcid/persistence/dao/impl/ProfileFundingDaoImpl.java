@@ -286,7 +286,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
         query.setMaxResults(limit);
         return query.getResultList();
     }

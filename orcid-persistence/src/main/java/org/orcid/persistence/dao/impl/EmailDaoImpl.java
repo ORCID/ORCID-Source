@@ -305,7 +305,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @SuppressWarnings("unchecked")
     @Override
     public List<String> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
         query.setMaxResults(limit);
         return query.getResultList();
     }

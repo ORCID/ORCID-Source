@@ -112,7 +112,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details)");
+        Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
         query.setMaxResults(limit);
         return query.getResultList();
     }
