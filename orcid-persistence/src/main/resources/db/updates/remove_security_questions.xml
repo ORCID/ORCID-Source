@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	
+	<changeSet id="REMOVE-SECURITY-QUESTION-ID-COLUMN" author="George Nash">
+         <dropColumn tableName="profile" columnName="security_question_id"/>
+    </changeSet>
+    
+    <changeSet id="REMOVE-ENCRYPTED-SECURITY-ANSWER-COLUMN" author="George Nash">
+         <dropColumn tableName="profile" columnName="encrypted_security_answer"/>
+    </changeSet>
+    
+    <changeSet id="REMOVE-ENCRYPTED-VERIFICATION-CODE-COLUMN" author="George Nash">
+         <dropColumn tableName="profile" columnName="encrypted_verification_code"/>
+    </changeSet>
+    
+    <changeSet id="DROP-SECURITY-QUESTION-TABLE " author="George Nash">
+         <dropTable tableName="security_question"/>
+    </changeSet>
+</databaseChangeLog>
