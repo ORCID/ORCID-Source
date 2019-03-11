@@ -289,8 +289,7 @@ public class RegistrationController extends BaseController {
         } else if ("shibboleth".equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
-        String redirectUrl = calculateRedirectUrl(request, response);
-        redirectUrl += "?justRegistered";
+        String redirectUrl = calculateRedirectUrl(request, response, true);
         r.setUrl(redirectUrl);
         return r;
     }
