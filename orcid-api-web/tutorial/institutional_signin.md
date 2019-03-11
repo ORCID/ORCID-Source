@@ -55,7 +55,7 @@ If a researcher has previously linked their ORCID record to their insitutional a
 
 * Service Provider Session Initiator Handler URL: search for 'orcid' and select either the Sandbox or Production environment.
 * Session Initiator : Login
-* Service Provider Target URL : `https://sandbox.orcid.org/shibboleth/signin` or `https://sandbox.orcid.org/shibboleth/signin`
+* Service Provider Target URL : `https://sandbox.orcid.org/shibboleth/signin` or `https://orcid.org/shibboleth/signin`
 * Identity Provider entityID : Your entityID, if you do not know it you can look it up at https://met.refeds.org/
 * Initiation Type : Service Provider-initiated
 
