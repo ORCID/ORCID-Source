@@ -161,7 +161,7 @@ public class ShibbolethController extends BaseController {
                 SecurityContextHolder.getContext().setAuthentication(null);
                 LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
-            return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
+            return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
         } 
         return mav;
     }
@@ -203,7 +203,7 @@ public class ShibbolethController extends BaseController {
                 SecurityContextHolder.getContext().setAuthentication(null);
                 LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
-            codes.setRedirectUrl(calculateRedirectUrl(request, response));
+            codes.setRedirectUrl(calculateRedirectUrl(request, response, false));
             return codes;
         } else {
             codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/shibboleth/signin");

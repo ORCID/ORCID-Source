@@ -239,7 +239,7 @@ public class PasswordResetController extends BaseController {
         String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
 
-        String redirectUrl = calculateRedirectUrl(request, response);
+        String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         return oneTimeResetPasswordForm;
     }
@@ -333,7 +333,7 @@ public class PasswordResetController extends BaseController {
         } else if ("shibboleth".equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
-        String redirectUrl = calculateRedirectUrl(request, response);
+        String redirectUrl = calculateRedirectUrl(request, response, false);
         r.setUrl(redirectUrl);
         return r;
     }
