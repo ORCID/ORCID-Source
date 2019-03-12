@@ -575,10 +575,10 @@ $(function() {
                         if (signinLocked) return false;
                         disableSignin();
                         
-                        if (basePath.startsWith(baseUrl + 'shibboleth')) {
+                        if (basePath.startsWith('/shibboleth/')) {
                             loginUrl = baseUrl + 'shibboleth/signin/auth.json';
                         }
-                        else if (basePath.startsWith(baseUrl + 'social')) {
+                        else if (basePath.startsWith('/social/')) {
                             loginUrl = baseUrl + 'social/signin/auth.json';
                         }
 
