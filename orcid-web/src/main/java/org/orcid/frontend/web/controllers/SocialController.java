@@ -116,7 +116,7 @@ public class SocialController extends BaseController {
                     userConnectionManager.updateLoginInformation(pk);
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
+                    return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
                 } else {
                     return new ModelAndView("social_link_signin");
                 }
@@ -153,7 +153,7 @@ public class SocialController extends BaseController {
                     userConnectionManager.updateLoginInformation(pk);
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    codes.setRedirectUrl(calculateRedirectUrl(request, response));
+                    codes.setRedirectUrl(calculateRedirectUrl(request, response, false));
                 } else {
                     codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/social/access");
                 }

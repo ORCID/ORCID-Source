@@ -571,7 +571,7 @@ public class BaseController {
         }
     }
 
-    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
+    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered) {
         String targetUrl = null;
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
@@ -583,7 +583,14 @@ public class BaseController {
             targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);            
         }
         
-        return targetUrl == null ? getBaseUri() + "/my-orcid" : targetUrl;
+        if (targetUrl == null) {
+            targetUrl = getBaseUri() + "/my-orcid";
+            if (justRegistered) {
+                targetUrl += "?justRegistered";
+            }
+        }
+        
+        return targetUrl;
     }
 
     protected void passwordConfirmValidate(Text passwordConfirm, Text password) {
