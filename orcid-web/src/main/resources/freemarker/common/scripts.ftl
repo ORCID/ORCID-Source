@@ -3,6 +3,7 @@
 <script type="text/javascript" src="${staticCdn}/javascript/jquery-migrate/1.3.0/jquery-migrate-1.3.0.min.js"></script>
 <script type="text/javascript" src="${staticCdn}/javascript/typeahead/0.9.3/typeahead.min.js"></script>
 <script type="text/javascript" src="${staticCdn}/javascript/plugins.js"></script>
+<script src="//cdn.jsdelivr.net/npm/bluebird@3.5.3/js/browser/bluebird.min.js"></script>
 <script type="text/javascript" src="${staticCdn}/javascript/orcid.js"></script>
 <script type="text/javascript" src="${staticCdn}/javascript/script.js"></script>
 <script src="${staticCdn}/javascript/ng1Orcid/angular_orcid_generated.js"></script>
