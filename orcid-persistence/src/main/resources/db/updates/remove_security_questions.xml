@@ -1,0 +1,39 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	
+	<changeSet id="DROP-SECURITY-QUESTION-FK" author="George Nash">
+	     <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyName="fked8e89a96b6f57ec" />
+         </preConditions>
+	     <dropForeignKeyConstraint baseTableName="profile" constraintName="fked8e89a96b6f57ec" />
+	</changeSet>
+	
+	<changeSet id="REMOVE-SECURITY-QUESTION-ID-COLUMN" author="George Nash">
+	     <preConditions onFail="MARK_RAN">
+            <columnExists tableName="profile" columnName="security_question_id" />
+         </preConditions>
+         <dropColumn tableName="profile" columnName="security_question_id" />
+    </changeSet>
+    
+    <changeSet id="REMOVE-ENCRYPTED-SECURITY-ANSWER-COLUMN" author="George Nash">
+         <preConditions onFail="MARK_RAN">
+            <columnExists tableName="profile" columnName="encrypted_security_answer" />
+         </preConditions>
+         <dropColumn tableName="profile" columnName="encrypted_security_answer" />
+    </changeSet>
+    
+    <changeSet id="REMOVE-ENCRYPTED-VERIFICATION-CODE-COLUMN" author="George Nash">
+         <preConditions onFail="MARK_RAN">
+            <columnExists tableName="profile" columnName="encrypted_verification_code" />
+         </preConditions>
+         <dropColumn tableName="profile" columnName="encrypted_verification_code" />
+    </changeSet>
+    
+    <changeSet id="DROP-SECURITY-QUESTION-TABLE " author="George Nash">
+         <preConditions onFail="MARK_RAN">
+            <tableExists tableName="security_question" />
+         </preConditions>
+         <dropTable tableName="security_question" />
+    </changeSet>
+</databaseChangeLog>
