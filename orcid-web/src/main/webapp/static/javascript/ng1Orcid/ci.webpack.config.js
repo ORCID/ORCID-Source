@@ -2,13 +2,16 @@ var webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-    // devtool: "source-map",
     context: __dirname + "/",
     entry: "./require.js",
     mode: 'production',
     optimization: {
         minimizer: [new TerserPlugin({
-            extractComments: true,
+            terserOptions: {
+                output: {
+                    comments: false,
+                },
+            },
         })],
     },
     module: {

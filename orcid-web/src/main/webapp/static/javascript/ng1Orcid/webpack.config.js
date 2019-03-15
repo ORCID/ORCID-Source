@@ -7,7 +7,11 @@ module.exports = {
     mode: 'production',
     optimization: {
         minimizer: [new TerserPlugin({
-            extractComments: true,
+            terserOptions: {
+                output: {
+                    comments: false,
+                },
+            },
         })],
     },
     module: {
