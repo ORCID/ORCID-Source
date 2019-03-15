@@ -52,6 +52,7 @@
     "lite-server": "^2.4.0",
     "lodash": "4.17.10",
     "rimraf": "2.6.2",
+    "terser-webpack-plugin": "^1.2.3",
     "ts-loader": "4.3.1",
     "tslint": "5.10.0",
     "typescript": "2.8.3",
