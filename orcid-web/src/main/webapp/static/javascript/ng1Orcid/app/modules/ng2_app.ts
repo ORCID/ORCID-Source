@@ -1,7 +1,6 @@
 declare var OrcidCookie: any;
 
 //Angular imports
-import 'reflect-metadata';
 
 import { CommonModule } 
     from '@angular/common'; 
@@ -21,16 +20,10 @@ import { HttpModule, JsonpModule, Request, XSRFStrategy }
 import { BrowserModule } 
     from "@angular/platform-browser";
 
-import { platformBrowserDynamic } 
-    from '@angular/platform-browser-dynamic';
-
-import { RouterModule, UrlHandlingStrategy } 
-    from '@angular/router';
-
 import { UpgradeModule } 
     from '@angular/upgrade/static';
 
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
+import {NgbTypeaheadModule} from '@ng-bootstrap/ng-bootstrap'
 
 //User generated modules imports
 
@@ -305,7 +298,7 @@ export class RootCmp {
         HttpClientModule, //angular5
         HttpModule, //Angular2
         JsonpModule,
-        NgbModule.forRoot(),
+        NgbTypeaheadModule.forRoot(),
         UpgradeModule,
         /* User Generated Modules */
         AccountSettingsNg2Module,
