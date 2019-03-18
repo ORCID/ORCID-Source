@@ -308,7 +308,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     }
     
     private void assertUnavailableProfileBasicData(ModelAndView mav, String orcid, String displayName) {
-        assertEquals("public_profile_unavailable", mav.getViewName());
+        assertEquals("public_profile_v3", mav.getViewName());
         PublicRecordPersonDetails personDetails = publicProfileController.getPersonDetails(orcid);
         Map<String, Object> model = mav.getModel();
         assertTrue(model.containsKey("effectiveUserOrcid"));
