@@ -56,7 +56,7 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
 
         Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
         try {
-            return QR_PREFIX + URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, email.getEmail(), secret, APP_NAME), "UTF-8");
+            return URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, email.getEmail(), secret, APP_NAME), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             LOG.error("Error generating QR code", e);
             return null;

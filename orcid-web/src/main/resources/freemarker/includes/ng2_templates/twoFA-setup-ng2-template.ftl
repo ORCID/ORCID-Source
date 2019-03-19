@@ -21,7 +21,7 @@
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step2")}</li>
                         <p>${springMacroRequestContext.getMessage("2FA.setup.step2.details")}</p>
                         <p><span class="bold">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan1")}</span><a id="getTextCode" (click)="getTextCodeClick()">${springMacroRequestContext.getMessage("2FA.setup.cannot.scan2")}</a> ${springMacroRequestContext.getMessage("2FA.setup.cannot.scan3")}</p>
-                        <img id="2FA-QR-code" *ngIf="showQRCode" [src]="qrCodeUrl" />
+                        <qr-code [value]="qrCodeUrl" [size]="200"></qr-code>
                         <pre *ngIf="showTextCode">{{textCodeFor2FA}}</pre>
                         <p *ngIf="showTextCode">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR")}<a (click)="showQRCodeAgain()">${springMacroRequestContext.getMessage("2FA.setup.step2.prefer_QR.click_here")}</a></p>
                         <li class="bold">${springMacroRequestContext.getMessage("2FA.setup.step3")}</li>

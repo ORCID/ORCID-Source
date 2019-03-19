@@ -7,6 +7,8 @@ import { Directive, NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
+import { QRCodeModule } from 'angular2-qrcode';
+
 //User generated components
 import { CommonNg2Module }
     from './../common/common';
@@ -16,9 +18,8 @@ import { TwoFaSetupComponent }
 
 // This is the Angular 1 part of the module
 export const TwoFaSetupModule = angular.module(
-    'TwoFaSetupModule', 
-    []
-);
+    'TwoFaSetupModule', [
+    ]);
 
 // This is the Angular 2 part of the module
 
@@ -31,7 +32,8 @@ export const TwoFaSetupModule = angular.module(
             TwoFaSetupComponent 
         ],
         imports: [
-            CommonNg2Module
+            CommonNg2Module,
+            QRCodeModule,
         ]
     }
 )
