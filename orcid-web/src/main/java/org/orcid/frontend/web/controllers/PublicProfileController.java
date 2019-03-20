@@ -158,25 +158,6 @@ public class PublicProfileController extends BaseWorkspaceController {
             return new ModelAndView("error-404");
         }
 
-        try {
-            // Check if the profile is deprecated, non claimed or locked
-            orcidSecurityManager.checkProfile(orcid);
-        } catch (OrcidDeprecatedException | OrcidNotClaimedException | LockedException | DeactivatedException e) {
-            ModelAndView mav = new ModelAndView("public_profile_unavailable");
-            mav.addObject("effectiveUserOrcid", orcid);
-            if (e instanceof OrcidDeprecatedException) {
-                mav.addObject("deprecated", true);
-                mav.addObject("primaryRecord", profile.getPrimaryRecord().getId());
-            } else if (e instanceof LockedException) {
-                mav.addObject("locked", true);
-                mav.addObject("isPublicProfile", true);
-                mav.addObject("noIndex", true);
-            } else {
-                mav.addObject("deactivated", true);
-            }
-            return mav;
-        }
-
         Long lastModifiedTime = getLastModifiedTime(orcid);
         
         ModelAndView mav = null;

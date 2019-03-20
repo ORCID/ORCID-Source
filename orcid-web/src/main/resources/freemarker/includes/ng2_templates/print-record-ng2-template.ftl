@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="print-record-ng2-template">
-    <div class="print-orcid-record">
+    <div class="print-orcid-record" *ngIf="!hidePrint">
         <div *ngIf="isPublicPage">
             <a id="printRecord" (click)="printRecord()">
             <span class="glyphicon glyphicon-print"></span> ${springMacroRequestContext.getMessage("public_record.printView")}</a>
