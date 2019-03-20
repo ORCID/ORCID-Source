@@ -113,7 +113,7 @@ export class AccountService {
 
     searchByEmail( input ): Observable<any> {
         return this.http.get(
-            $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent(input) + '/',
+           getBaseUri() + '/manage/search-for-delegate-by-email/' + encodeURIComponent(input) + '/',
         )
         
     }
