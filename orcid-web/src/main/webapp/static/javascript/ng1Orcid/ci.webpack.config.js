@@ -1,9 +1,19 @@
 var webpack = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
     context: __dirname + "/",
     entry: "./require.js",
     mode: 'production',
+    optimization: {
+        minimizer: [new TerserPlugin({
+            terserOptions: {
+                output: {
+                    comments: false,
+                },
+            },
+        })],
+    },
     module: {
         rules: [
             {
