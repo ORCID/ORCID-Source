@@ -8809,6 +8809,6 @@ a.footer-url {
     text-decoration: underline;
 }
 
-#RegistrationForm i {
+#RegistrationForm .control-label>i {
     font-style: italic;
 }

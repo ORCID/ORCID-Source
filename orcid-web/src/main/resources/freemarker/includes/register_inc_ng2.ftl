@@ -90,7 +90,7 @@
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
         <div class="bottomBuffer">
-            <input id="register-form-password" type="password" name="password" tabindex="5" class="" [(ngModel)]="registrationForm.password.value" (blur)="serverValidate('Password')"/>
+            <input id="register-form-password" type="password" name="password" tabindex="5" class="" [(ngModel)]="registrationForm.password.value" (ngModelChange)="serverValidate('Password')"/>
             <@orcid.passwordHelpPopup />
             <span class="orcid-error" *ngIf="registrationForm?.password?.errors?.length > 0">
                 <div *ngFor="let error of registrationForm.password.errors" [innerHTML]="error"></div>
