@@ -97,6 +97,10 @@ export class TwoFaSetupComponent implements AfterViewInit, OnDestroy, OnInit {
         document.body.removeChild(element);
     };
 
+    getBaseUri(): String {
+        return getBaseUri();
+    };
+
     getTextCodeClick(): void{
         this.twoFAStateService.getTextCode()
         .pipe(    
