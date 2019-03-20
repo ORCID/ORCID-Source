@@ -47,7 +47,7 @@
                             <a
                                 href="${verificationUrl}?lang=${locale}"
                                 style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; text-decoration: none; border-radius: 4.8px; line-height: 25px; display: inline-block; font-weight: normal; white-space: nowrap; background-color: #31789B; color: #ffffff; padding: 8px 16px; border: 1px solid #31789B;"
-                                > <@emailMacros.msg "email.verify.button" /></a
+                                > <@emailMacros.msg "email.button" /></a
                             >
                             </td>
                         </tr>
