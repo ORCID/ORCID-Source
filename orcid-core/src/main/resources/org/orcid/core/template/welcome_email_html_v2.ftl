@@ -24,7 +24,7 @@
         <title>${subject}</title>
     </head>
     <body>
-        <div style="padding: 20px; padding-top: 10px; width: 700px; margin: auto;">
+        <div style="padding: 20px; padding-top: 10px; margin: auto;">
             <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
             <hr />
             <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
@@ -32,17 +32,53 @@
             </span>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.welcome.thank_you.1" />
-                <br />
-                <div align="center">
-                    <a href="${verificationUrl}?lang=${locale}" target="orcid.blank" 
-                    style="text-decoration: none; background: #31789B; border-color: #357ebd; color: #fff; margin-bottom: 0; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; border: 1px solid transparent; white-space: nowrap; padding: 6px 12px; font-size: 14px; line-height: 1.428571429; border-radius: 4px;"><@emailMacros.msg "email.button" /></a>
-                    <br /><br />
-                    <small style="font-size: 12px">
-                        ${verificationUrl}
-                    </small>
-                </div>
-                <br />
             </p>
+
+             <table
+                        cellpadding="0"
+                        cellspacing="0"
+                        style="font-family: Helvetica, Arial, sans-serif;  border-spacing: 0px; border-collapse: separate !important; border-radius: 4px; margin: 0 auto; margin-top:20px"
+                    >
+                        <tbody>
+                        <tr>
+                            <td
+                            style="border-spacing: 0px; border-collapse: collapse; line-height: 24px; font-size: 16px; border-radius: 4px; margin: 0;"
+                            >
+                            <a
+                                href="${verificationUrl}?lang=${locale}"
+                                style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; text-decoration: none; border-radius: 4.8px; line-height: 25px; display: inline-block; font-weight: normal; white-space: nowrap; background-color: #31789B; color: #ffffff; padding: 8px 16px; border: 1px solid #31789B;"
+                                > <@emailMacros.msg "email.button" /></a
+                            >
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <table
+                        cellpadding="0"
+                        cellspacing="0"
+                        style="font-family: arial, helvetica, sans-serif; border-spacing: 0px; border-collapse: separate !important; border-radius: 4px; margin: 0 auto; "
+                    >
+                        <tbody>
+                        <tr>
+                            <td>
+                            <p
+                                align="center"
+                                class="text-center"
+                                style="line-height: 24px; font-size: 16px; margin: 0; padding-bottom: 30px; padding-top: 20px; word-break: break-word;"
+                            >
+                                <a
+                                href="${verificationUrl}?lang=${locale}"
+                                target="orcid.blank"
+                                >${verificationUrl}?lang=${locale}</a
+                                >
+                            </p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+    
+
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space />${orcidId}<@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a>                
             </p>
