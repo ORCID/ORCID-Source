@@ -8809,3 +8809,6 @@ a.footer-url {
     text-decoration: underline;
 }
 
+#RegistrationForm i {
+    font-style: italic;
+}
