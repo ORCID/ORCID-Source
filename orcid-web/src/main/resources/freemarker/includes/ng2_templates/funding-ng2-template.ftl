@@ -64,7 +64,11 @@
                             <li class="hidden-xs">
                                 <div class="menu-container" id="add-funding-container">
                                     <ul class="toggle-menu">
-                                        <li [ngClass]="{'green-bg' : fundingImportWizard == true}">   
+                                         <li *ngIf="!noLinkFlag" [ngClass]="{'green-bg' : fundingImportWizard == true}" (click)="addFundingModal()">   
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                            <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
+                                        </li>
+                                        <li *ngIf="noLinkFlag" [ngClass]="{'green-bg' : fundingImportWizard == true}">   
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_funding_form_contents.add_grant' />    
                                             <ul class="menu-options funding">
