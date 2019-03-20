@@ -143,7 +143,7 @@ public class SelfServiceController extends BaseController {
     public @ResponseBody MemberDetailsForm validateMemberDetailsDescription(@RequestBody MemberDetailsForm consortium) {
         // validate description length
         consortium.getDescription().setErrors(new ArrayList<String>());
-        super.validateNoLongerThan(600, consortium.getDescription());
+        super.validateNoLongerThan(5000, consortium.getDescription());
         return consortium;
     }
 
