@@ -1,7 +1,5 @@
 package org.orcid.core.manager.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -17,14 +15,8 @@ import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticationManager {
-
-    private static final Logger LOG = LoggerFactory.getLogger(TwoFactorAuthenticationManagerImpl.class);
-
-    private static final String QR_PREFIX = "https://chart.googleapis.com/chart?chs=200x200&chld=M%7C0&cht=qr&chl=";
 
     private static final String APP_NAME = "orcid.org";
     
@@ -49,18 +41,13 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
             // don't allow generation of new code if user already using
             throw new UserAlreadyUsing2FAException();
         }
-
         // generate secret but don't switch on using2FA - user may abort process
         String secret = Base32.random();
         profileEntityManager.update2FASecret(orcid, encryptionManager.encryptForInternalUse(secret));
-
         Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
-        try {
-            return URLEncoder.encode(String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, email.getEmail(), secret, APP_NAME), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Error generating QR code", e);
-            return null;
-        }
+        //generatate URL for QR code per https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+        //do not URL encode - authenticator app throws error
+        return String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, email.getEmail(), secret, APP_NAME);
     }
 
     @Override

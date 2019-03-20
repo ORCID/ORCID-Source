@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -79,10 +78,9 @@ public class TwoFactorAuthenticationManagerTest {
         String qrCodeUrl = twoFactorAuthenticationManager.getQRCode("orcid");
         assertNotNull(qrCodeUrl);
 
-        qrCodeUrl = URLDecoder.decode(qrCodeUrl, "utf-8");
         assertNotNull(qrCodeUrl);
         assertTrue(qrCodeUrl.contains("x@orcid.org"));
-        assertTrue(qrCodeUrl.contains("https://"));
+        assertTrue(qrCodeUrl.contains("otpauth://"));
     }
     
     @Test(expected = UserAlreadyUsing2FAException.class)
