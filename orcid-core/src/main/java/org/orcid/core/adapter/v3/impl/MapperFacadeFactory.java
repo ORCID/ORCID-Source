@@ -12,14 +12,18 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.converter.EmptyStringToNullConverter;
-import org.orcid.core.adapter.impl.JsonOrikaConverter;
 import org.orcid.core.adapter.impl.WorkEntityFactory;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
+import org.orcid.core.adapter.v3.converter.CreditNameConverter;
+import org.orcid.core.adapter.v3.converter.FamilyNameConverter;
+import org.orcid.core.adapter.v3.converter.FundingContributorsConverter;
+import org.orcid.core.adapter.v3.converter.GivenNamesConverter;
 import org.orcid.core.adapter.v3.converter.VisibilityConverter;
+import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -41,9 +45,6 @@ import org.orcid.jaxb.model.v3.rc2.common.Month;
 import org.orcid.jaxb.model.v3.rc2.common.Organization;
 import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
 import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
-import org.orcid.jaxb.model.v3.rc2.common.SourceName;
-import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.rc2.common.Year;
 import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc2.notification.amended.NotificationAmended;
@@ -61,7 +62,6 @@ import org.orcid.jaxb.model.v3.rc2.record.Education;
 import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.jaxb.model.v3.rc2.record.Employment;
 import org.orcid.jaxb.model.v3.rc2.record.Funding;
-import org.orcid.jaxb.model.v3.rc2.record.FundingContributors;
 import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
 import org.orcid.jaxb.model.v3.rc2.record.Keyword;
 import org.orcid.jaxb.model.v3.rc2.record.Membership;
@@ -76,7 +76,6 @@ import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.rc2.record.Service;
 import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
 import org.orcid.jaxb.model.v3.rc2.record.Work;
-import org.orcid.jaxb.model.v3.rc2.record.WorkContributors;
 import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
@@ -128,7 +127,6 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.utils.OrcidStringUtils;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomMapper;
@@ -460,7 +458,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm,localeManager));
-        converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
+        converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter());
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
         
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
@@ -614,7 +612,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JSONFundingExternalIdentifiersConverterV3());
-        converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
+        converterFactory.registerConverter("fundingContributorsConverterId", new FundingContributorsConverter());
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
@@ -1023,12 +1021,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getNameMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("familyNameConverter", new FamilyNameConverter());
+        mapperFactory.getConverterFactory().registerConverter("givenNamesConverter", new GivenNamesConverter());
+        mapperFactory.getConverterFactory().registerConverter("creditNameConverter", new CreditNameConverter());
         
         ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);        
         addV3DateFields(nameClassMap);        
-        nameClassMap.field("creditName.content", "creditName");
-        nameClassMap.field("givenNames.content", "givenNames");
-        nameClassMap.field("familyName.content", "familyName");
+        nameClassMap.fieldMap("creditName", "creditName").converter("creditNameConverter").add();;
+        nameClassMap.fieldMap("givenNames", "givenNames").converter("givenNamesConverter").add();;
+        nameClassMap.fieldMap("familyName", "familyName").converter("familyNameConverter").add();;
         nameClassMap.field("path", "profile.id");
         nameClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         
