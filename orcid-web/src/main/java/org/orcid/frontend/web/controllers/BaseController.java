@@ -609,15 +609,15 @@ public class BaseController {
         }
         
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
-            setError(password, "Pattern.registrationForm.password.eigthCharacters");
+            password.getErrors().add("Pattern.registrationForm.password.eigthCharacters");
         }
 
-        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_SYMBOL)) {
-            setError(password, "Pattern.registrationForm.password.symbol");
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_LETTER_OR_SYMBOL)) {
+            password.getErrors().add("Pattern.registrationForm.password.letterOrSymbol");
         }
 
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_NUMBER)) {
-            setError(password, "Pattern.registrationForm.password.oneNumber");
+            password.getErrors().add("Pattern.registrationForm.password.oneNumber");
         }
         
         if (CommonPasswords.passwordIsCommon(password.getValue())) {

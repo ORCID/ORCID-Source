@@ -92,8 +92,22 @@
         <div class="bottomBuffer">
             <input id="register-form-password" type="password" name="password" tabindex="5" class="" [(ngModel)]="registrationForm.password.value" (ngModelChange)="serverValidate('Password')"/>
             <@orcid.passwordHelpPopup />
-            <span class="orcid-error" *ngIf="registrationForm?.password?.errors?.length > 0">
-                <div *ngFor="let error of registrationForm.password.errors" [innerHTML]="error"></div>
+            <span class="pattern-errors">
+                <div class="pattern-container">
+                    <img *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
+                    <img *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
+                    <@spring.message 'Pattern.registrationForm.password.eigthCharacters'/>
+                </div>
+                <div class="pattern-container">
+                    <img *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.letterOrSymbol')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
+                    <img *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.letterOrSymbol')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
+                    <@spring.message 'Pattern.registrationForm.password.letterOrSymbol'/>
+                </div>
+                <div class="pattern-container">
+                    <img *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.oneNumber')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
+                    <img *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.oneNumber')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
+                    <@spring.message 'Pattern.registrationForm.password.oneNumber'/>
+                </div>
             </span>
         </div>
     </div>

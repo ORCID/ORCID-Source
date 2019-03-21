@@ -15,7 +15,7 @@ public class OrcidPasswordConstants {
 
     public static final String ORCID_PASSWORD_EIGHT_CHARACTERS= "(?=.{8,}).*";
 
-    public static final String ORCID_PASSWORD_SYMBOL= "(?=.*[^\\w\\s]).*";
+    public static final String ORCID_PASSWORD_LETTER_OR_SYMBOL= "(?=.*[^\\d\\s]).*";
 
     public static final String ORCID_PASSWORD_NUMBER= "(?=.*[0-9]).*";
 
