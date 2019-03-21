@@ -15,6 +15,7 @@
             <column name="latest_sent" type="TIMESTAMP WITH TIME ZONE"/>
             <column name="schedule_interval" type="bigint" />
         </createTable>           
+        <createSequence sequenceName="email_schedule_seq"/>
     </changeSet>
     
     <changeSet id="ORCIDRO-GRANT-EMAIL-SCHEDULE" author="George Nash" dbms="postgresql">
