@@ -267,6 +267,12 @@
     
     <bean id="backupCodeDao" class="org.orcid.persistence.dao.impl.BackupCodeDaoImpl" />
     
+    <bean id="emailScheduleDao" class="org.orcid.persistence.dao.impl.EmailScheduleDaoImpl" />
+    
+    <bean id="emailScheduleDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailScheduleDaoImpl" >
+        <property name="entityManager" ref="entityManagerReadOnly" />       
+    </bean>
+    
     <bean id="profileHistoryEventDao" class="org.orcid.persistence.dao.impl.ProfileHistoryEventDaoImpl" />
     
     <bean id="miscDao" class="org.orcid.persistence.dao.impl.MiscDaoImpl" />
