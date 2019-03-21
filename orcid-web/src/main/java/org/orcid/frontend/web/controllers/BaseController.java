@@ -608,6 +608,18 @@ public class BaseController {
             setError(password, "Pattern.registrationForm.password");
         }
         
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
+            setError(password, "Pattern.registrationForm.password.eigthCharacters");
+        }
+
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_SYMBOL)) {
+            setError(password, "Pattern.registrationForm.password.symbol");
+        }
+
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_NUMBER)) {
+            setError(password, "Pattern.registrationForm.password.oneNumber");
+        }
+        
         if (CommonPasswords.passwordIsCommon(password.getValue())) {
             setError(password, "password.too_common", password.getValue());
         }
