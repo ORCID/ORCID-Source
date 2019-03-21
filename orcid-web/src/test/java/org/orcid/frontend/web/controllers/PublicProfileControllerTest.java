@@ -203,8 +203,6 @@ public class PublicProfileControllerTest extends DBUnitTest {
         ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, lockedUserOrcid);
         Map<String, Object> model = mav.getModel();
         assertUnavailableProfileBasicData(mav, lockedUserOrcid, displayName);    
-        assertTrue(model.containsKey("locked"));
-        assertTrue(Boolean.TRUE.equals(model.get("locked")));
     }
     
     @Test
@@ -212,10 +210,6 @@ public class PublicProfileControllerTest extends DBUnitTest {
         ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, deprecatedUserOrcid);
         Map<String, Object> model = mav.getModel();
         assertUnavailableProfileBasicData(mav, deprecatedUserOrcid, null);
-        assertTrue(model.containsKey("deprecated"));
-        assertTrue(Boolean.TRUE.equals(model.get("deprecated")));
-        assertTrue(model.containsKey("primaryRecord"));
-        assertEquals("0000-0000-0000-0003", model.get("primaryRecord"));
     }
     
     @Test
@@ -308,7 +302,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     }
     
     private void assertUnavailableProfileBasicData(ModelAndView mav, String orcid, String displayName) {
-        assertEquals("public_profile_unavailable", mav.getViewName());
+        assertEquals("public_profile_v3", mav.getViewName());
         PublicRecordPersonDetails personDetails = publicProfileController.getPersonDetails(orcid);
         Map<String, Object> model = mav.getModel();
         assertTrue(model.containsKey("effectiveUserOrcid"));

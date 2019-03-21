@@ -8,20 +8,20 @@ import {
 } from "@angular/core";
 import { Subject } from "rxjs";
 import { PersonService } from "../../shared/person.service";
+import { CommonService } from "../../shared/common.service";
 
 @Component({
   selector: "bio-ng2",
   template: scriptTmpl("bio-ng2-template")
 })
-export class bioComponent implements AfterViewInit, OnDestroy, OnInit {
+export class bioComponent implements OnDestroy, OnInit {
   private ngUnsubscribe: Subject<void> = new Subject<void>();
-  private bio: string;
+  private bio
+  public userInfo
+  public baseUrl: string
 
-  constructor(private personService: PersonService) {}
-
-  //Default init functions provided by Angular Core
-  ngAfterViewInit() {
-    //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
+  constructor(private personService: PersonService, private common: CommonService) {
+    this.baseUrl = getBaseUri()
   }
 
   ngOnDestroy() {
@@ -30,6 +30,10 @@ export class bioComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnInit() {
+    this.common.publicUserInfo$.subscribe(userInfo => {
+      this.userInfo = userInfo 
+    })
+
     this.personService.getPerson().subscribe(person => {
       if (person && person.biography) {
         this.bio = person.biography.content;

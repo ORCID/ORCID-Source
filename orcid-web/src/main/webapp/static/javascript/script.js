@@ -567,121 +567,119 @@ $(function() {
 
                     function() {
                         var loginUrl = baseUrl + 'signin/auth.json';
-                        //ng1
-                        var gaString = angular.element($("#loginForm")).scope().gaString;
-                        //ng2
-                        //var gaString = window.angularComponentReference.zone.run(() => { window.angularComponentReference.gaString; });
+                        window.angularComponentReference.zone.run(() => { 
+                            var gaString = window.angularComponentReference.component.gaString
+                            if (signinLocked) return false;
+                            disableSignin();
+                            
+                            if (basePath.startsWith('/shibboleth/')) {
+                                loginUrl = baseUrl + 'shibboleth/signin/auth.json';
+                            }
+                            else if (basePath.startsWith('/social/')) {
+                                loginUrl = baseUrl + 'social/signin/auth.json';
+                            }
 
-                        if (signinLocked) return false;
-                        disableSignin();
-                        
-                        if (basePath.startsWith('/shibboleth/')) {
-                            loginUrl = baseUrl + 'shibboleth/signin/auth.json';
-                        }
-                        else if (basePath.startsWith('/social/')) {
-                            loginUrl = baseUrl + 'social/signin/auth.json';
-                        }
+                            $('#login-error-mess, #login-deactivated-error').hide();
+                            $('#ajax-loader').css('display', 'block');
+                            $
+                                    .ajax(
+                                            {
+                                                url : loginUrl,
+                                                type : 'POST',
+                                                data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()) + '&oauthRequest=' + encodeURIComponent($('input[name=oauthRequest]').val()),
+                                                dataType : 'json',
+                                                success : function(data) {
+                                                    if (data.success) {
+                                                        if (gaString) {
 
-                        $('#login-error-mess, #login-deactivated-error').hide();
-                        $('#ajax-loader').css('display', 'block');
-                        $
-                                .ajax(
-                                        {
-                                            url : loginUrl,
-                                            type : 'POST',
-                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()) + '&oauthRequest=' + encodeURIComponent($('input[name=oauthRequest]').val()),
-                                            dataType : 'json',
-                                            success : function(data) {
-                                                if (data.success) {
-                                                    if (gaString) {
-
+                                                            orcidGA
+                                                                    .gaPush([
+                                                                            'send',
+                                                                            'event',
+                                                                            'RegGrowth',
+                                                                            'Sign-In',
+                                                                            'OAuth '
+                                                                                    + gaString ]);
+                                                        } else
+                                                            orcidGA.gaPush([
+                                                                    'send',
+                                                                    'event',
+                                                                    'RegGrowth',
+                                                                    'Sign-In',
+                                                                    'Website' ]);
                                                         orcidGA
-                                                                .gaPush([
-                                                                        'send',
-                                                                        'event',
-                                                                        'RegGrowth',
-                                                                        'Sign-In',
-                                                                        'OAuth '
-                                                                                + gaString ]);
-                                                    } else
-                                                        orcidGA.gaPush([
-                                                                'send',
-                                                                'event',
-                                                                'RegGrowth',
-                                                                'Sign-In',
-                                                                'Website' ]);
-                                                    orcidGA
-                                                            .windowLocationHrefDelay(data.url
-                                                                    + window.location.hash);
-                                                } else if (data.verificationCodeRequired && !data.badVerificationCode) {
-                                                    enableSignin(); 
-                                                    show2FA();
-                                                } else {
-                                                    enableSignin(); 
-                                                    var message;
-                                                    if (data.deprecated) {                                                                                                               
-                                                        messagesPromise.then(function() {
-                                                            if (data.primary)
-                                                                message = om.get('orcid.frontend.security.deprecated_with_primary')
-                                                                        .replace("{{primary}}",data.primary);
-                                                            else
-                                                                message = om.get('orcid.frontend.security.deprecated');
-                                                            showLoginError(message);
-                                                        });
-                                                    } else if (data.disabled) {
-                                                            showLoginDeactivatedError();
-                                                            return;
-                                                    } else if (data.unclaimed) {                                                        
-                                                        messagesPromise.then(function() {
-                                                                    var resendClaimUrl = baseUrl + "resend-claim";
-                                                                    var userId = $(
-                                                                            '#userId')
-                                                                            .val();
-                                                                    if (userId
-                                                                            .indexOf('@') != -1) {
-                                                                        resendClaimUrl += '?email='
-                                                                               + encodeURIComponent(userId);
-                                                                    }
-                                                                    message = om
-                                                                            .get(
-                                                                                    'orcid.frontend.security.unclaimed_exists_1');
-                                                                    message = message + '<a href="' + resendClaimUrl + '">';
-                                                                    message = message + om.get('orcid.frontend.security.unclaimed_exists_2');
-                                                                    message = message + '</a>';
-                                                                    message = message + om.get('orcid.frontend.security.unclaimed_exists_3');
-                                                                    showLoginError(message);
-                                                                    });
-                                                    } else if (data.badVerificationCode) {
-                                                        messagesPromise.then(function() {
-                                                            showLoginError(om.get('orcid.frontend.security.2fa.bad_verification_code'));
-                                                            show2FA();
-                                                            });
-                                                    } else if (data.badRecoveryCode) {
-                                                        messagesPromise.then(function() {
-                                                            showLoginError(om.get('orcid.frontend.security.2fa.bad_recovery_code'));
-                                                            });
-                                                    } else if(data.invalidUserType) {
-                                                        messagesPromise.then(function() {
-                                                            message = om.get('orcid.frontend.security.invalid_user_type_1');
-                                                            message = message + ' <a href="https://orcid.org/help/contact-us">';
-                                                            message = message + om.get('orcid.frontend.security.invalid_user_type_2');
-                                                            message = message + '</a>';
-                                                            showLoginError(message);
-                                                        });                                                        
+                                                                .windowLocationHrefDelay(data.url
+                                                                        + window.location.hash);
+                                                    } else if (data.verificationCodeRequired && !data.badVerificationCode) {
+                                                        enableSignin(); 
+                                                        show2FA();
                                                     } else {
-                                                        messagesPromise.then(function() {
-                                                            showLoginError(om.get('orcid.frontend.security.bad_credentials'));
+                                                        enableSignin(); 
+                                                        var message;
+                                                        if (data.deprecated) {                                                                                                               
+                                                            messagesPromise.then(function() {
+                                                                if (data.primary)
+                                                                    message = om.get('orcid.frontend.security.deprecated_with_primary')
+                                                                            .replace("{{primary}}",data.primary);
+                                                                else
+                                                                    message = om.get('orcid.frontend.security.deprecated');
+                                                                showLoginError(message);
                                                             });
-                                                    }
-                                                }; 
-                                            }
-                                        }).fail(function(e) {
-                                    // something bad is happening!
-                                    console.log("Error with log in");
-                                    logAjaxError(e);
-                                    window.location.reload();
-                                });
-                        return false;
+                                                        } else if (data.disabled) {
+                                                                showLoginDeactivatedError();
+                                                                return;
+                                                        } else if (data.unclaimed) {                                                        
+                                                            messagesPromise.then(function() {
+                                                                        var resendClaimUrl = baseUrl + "resend-claim";
+                                                                        var userId = $(
+                                                                                '#userId')
+                                                                                .val();
+                                                                        if (userId
+                                                                                .indexOf('@') != -1) {
+                                                                            resendClaimUrl += '?email='
+                                                                                + encodeURIComponent(userId);
+                                                                        }
+                                                                        message = om
+                                                                                .get(
+                                                                                        'orcid.frontend.security.unclaimed_exists_1');
+                                                                        message = message + '<a href="' + resendClaimUrl + '">';
+                                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_2');
+                                                                        message = message + '</a>';
+                                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_3');
+                                                                        showLoginError(message);
+                                                                        });
+                                                        } else if (data.badVerificationCode) {
+                                                            messagesPromise.then(function() {
+                                                                showLoginError(om.get('orcid.frontend.security.2fa.bad_verification_code'));
+                                                                show2FA();
+                                                                });
+                                                        } else if (data.badRecoveryCode) {
+                                                            messagesPromise.then(function() {
+                                                                showLoginError(om.get('orcid.frontend.security.2fa.bad_recovery_code'));
+                                                                });
+                                                        } else if(data.invalidUserType) {
+                                                            messagesPromise.then(function() {
+                                                                message = om.get('orcid.frontend.security.invalid_user_type_1');
+                                                                message = message + ' <a href="https://orcid.org/help/contact-us">';
+                                                                message = message + om.get('orcid.frontend.security.invalid_user_type_2');
+                                                                message = message + '</a>';
+                                                                showLoginError(message);
+                                                            });                                                        
+                                                        } else {
+                                                            messagesPromise.then(function() {
+                                                                showLoginError(om.get('orcid.frontend.security.bad_credentials'));
+                                                                });
+                                                        }
+                                                    }; 
+                                                }
+                                            }).fail(function(e) {
+                                        // something bad is happening!
+                                        console.log("Error with log in");
+                                        logAjaxError(e);
+                                        window.location.reload();
+                                    });
+                            return false;
+                        })
                     });
     
     $('.delete-url').on('click', function(e) {

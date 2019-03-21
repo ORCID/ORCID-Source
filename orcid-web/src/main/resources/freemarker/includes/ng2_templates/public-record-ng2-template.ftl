@@ -52,7 +52,7 @@
             </div>    
         
         <!-- Websites -->                       
-            <div *ngIf="personData && objectKeys(personData.publicGroupedResearcherUrls).length > 0" class="workspace-section">
+            <div *ngIf="personData && personData.publicGroupedResearcherUrls && objectKeys(personData.publicGroupedResearcherUrls).length > 0" class="workspace-section">
                 <div class="workspace-section-header">
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
