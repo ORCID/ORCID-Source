@@ -601,7 +601,7 @@ public class BaseController {
         }
     }
 
-    protected void passwordValidate(Text passwordConfirm, Text password) {
+    protected void passwordChecklistValidate(Text passwordConfirm, Text password) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
@@ -614,6 +614,23 @@ public class BaseController {
 
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_NUMBER)) {
             password.getErrors().add("Pattern.registrationForm.password.oneNumber");
+        }
+        
+        if (CommonPasswords.passwordIsCommon(password.getValue())) {
+            setError(password, "password.too_common", password.getValue());
+        }
+
+        if (passwordConfirm.getValue() != null) {
+            passwordConfirmValidate(passwordConfirm, password);
+        }
+        
+    }
+
+    protected void passwordValidate(Text passwordConfirm, Text password) {
+        password.setErrors(new ArrayList<String>());
+        // validate password regex
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(password, "Pattern.registrationForm.password");
         }
         
         if (CommonPasswords.passwordIsCommon(password.getValue())) {

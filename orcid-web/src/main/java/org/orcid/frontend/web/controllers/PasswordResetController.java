@@ -197,7 +197,7 @@ public class PasswordResetController extends BaseController {
     public @ResponseBody OneTimeResetPasswordForm resetPasswordConfirmValidate(@RequestBody OneTimeResetPasswordForm resetPasswordForm) {
         resetPasswordForm.setErrors(new ArrayList<String>());
 
-        passwordValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword());
+        passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword());
 
         if (resetPasswordForm.getRetypedPassword() != null && !resetPasswordForm.getRetypedPassword().equals(resetPasswordForm.getPassword())) {
             setError(resetPasswordForm, "FieldMatch.registrationForm");
@@ -230,7 +230,7 @@ public class PasswordResetController extends BaseController {
         }
 
         passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
-        passwordValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
         if (!oneTimeResetPasswordForm.getPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
             return oneTimeResetPasswordForm;
         }
