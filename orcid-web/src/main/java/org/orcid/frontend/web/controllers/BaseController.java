@@ -604,10 +604,6 @@ public class BaseController {
     protected void passwordValidate(Text passwordConfirm, Text password) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
-        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(password, "Pattern.registrationForm.password");
-        }
-        
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
             password.getErrors().add("Pattern.registrationForm.password.eigthCharacters");
         }

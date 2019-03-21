@@ -196,9 +196,8 @@ public class PasswordResetController extends BaseController {
     @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)
     public @ResponseBody OneTimeResetPasswordForm resetPasswordConfirmValidate(@RequestBody OneTimeResetPasswordForm resetPasswordForm) {
         resetPasswordForm.setErrors(new ArrayList<String>());
-        if (resetPasswordForm.getPassword().getValue() == null || !resetPasswordForm.getPassword().getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(resetPasswordForm, "Pattern.registrationForm.password");
-        }
+
+        passwordValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword());
 
         if (resetPasswordForm.getRetypedPassword() != null && !resetPasswordForm.getRetypedPassword().equals(resetPasswordForm.getPassword())) {
             setError(resetPasswordForm, "FieldMatch.registrationForm");

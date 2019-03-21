@@ -109,6 +109,11 @@
                     <@spring.message 'Pattern.registrationForm.password.oneNumber'/>
                 </div>
             </span>
+            <span class="orcid-error" *ngIf="registrationForm?.password?.errors?.length > 0">
+                    <div *ngFor='let error of registrationForm.password.errors'>
+                     <ng-container *ngIf="error.indexOf('Pattern.') < 0">{{error}} </ng-container>
+                    </div>
+            </span>  
         </div>
     </div>
     <!--Confirm password-->
