@@ -75,12 +75,15 @@ public class JSONExternalIdentifiersConverterV3 extends BidirectionalConverter<E
 
             if (!PojoUtil.isEmpty(externalIdentifier.getValue())) {
                 id.setValue(externalIdentifier.getValue());
-                id.setNormalized(new TransientNonEmptyString(norm.normalise(id.getType(), externalIdentifier.getValue())));
+                String normalised = norm.normalise(id.getType(), externalIdentifier.getValue());
+                if (normalised != null && !normalised.trim().isEmpty()) {
+                    id.setNormalized(new TransientNonEmptyString(normalised));
+                }
                 if (StringUtils.isEmpty(id.getNormalized().getValue())){
                     id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message", id.getType(), externalIdentifier.getValue())));
                 }
             }
-
+            
             if (externalIdentifier.getRelationship() != null) {
                 id.setRelationship(Relationship.fromValue(conv.convertFrom(externalIdentifier.getRelationship(), null)));
             }
