@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.converter.EmptyStringToNullConverter;
 import org.orcid.core.adapter.impl.JsonOrikaConverter;
 import org.orcid.core.adapter.impl.WorkEntityFactory;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
@@ -374,13 +375,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getResearcherUrlMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("emptyStringToNullConverter", new EmptyStringToNullConverter());
 
         ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);        
         addV3DateFields(researcherUrlClassMap);
         registerSourceConverters(mapperFactory, researcherUrlClassMap);
         researcherUrlClassMap.field("putCode", "id");
         researcherUrlClassMap.field("url.value", "url");
-        researcherUrlClassMap.field("urlName", "urlName");
+        researcherUrlClassMap.fieldMap("urlName", "urlName").converter("emptyStringToNullConverter").add();
         researcherUrlClassMap.fieldBToA("displayIndex", "displayIndex");
         researcherUrlClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         researcherUrlClassMap.byDefault();
