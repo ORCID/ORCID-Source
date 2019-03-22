@@ -1,6 +1,6 @@
 package org.orcid.core.adapter.converter;
 
-import org.orcid.jaxb.model.record_v2.CreditName;
+import org.orcid.jaxb.model.common_v2.CreditName;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;

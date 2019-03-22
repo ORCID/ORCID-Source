@@ -79,7 +79,7 @@ public class JSONExternalIdentifiersConverterV3 extends BidirectionalConverter<E
                 if (normalised != null && !normalised.trim().isEmpty()) {
                     id.setNormalized(new TransientNonEmptyString(normalised));
                 }
-                if (StringUtils.isEmpty(id.getNormalized().getValue())){
+                if (normalised == null || StringUtils.isEmpty(normalised)) {
                     id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message", id.getType(), externalIdentifier.getValue())));
                 }
             }
