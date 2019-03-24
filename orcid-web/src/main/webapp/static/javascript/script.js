@@ -1117,8 +1117,12 @@ function populateWorkAjaxForm(bibJson, work) {
       this.pos = 0;
       this.input = "";
       this.entries = new Array();
-
+      this.errors = new Array();
       this.currentEntry = "";
+
+      this.addError = function(e) {
+          this.errors.push(e);
+      };
 
       this.setInput = function(t) {
           this.input = t;
@@ -1139,8 +1143,7 @@ function populateWorkAjaxForm(bibJson, work) {
           if (this.input.substring(this.pos, this.pos + s.length) == s) {
               this.pos += s.length;
           } else {
-              throw "Token mismatch, expected " + s + ", found "
-                      + this.input.substring(this.pos);
+              throw "Token mismatch, expected " + s + ", found ";
           };
           this.skipWhitespace(canCommentOut);
       };
@@ -1199,7 +1202,7 @@ function populateWorkAjaxForm(bibJson, work) {
                   } else if (this.input[this.pos] == '{') {
                       bracecount++;
                   } else if (this.pos >= this.input.length - 1) {
-                      throw "Unterminated value";
+                      throw "Closing } character missing";
                   };
               };
               if (this.input[this.pos] == '\\' && escaped == false)
@@ -1220,7 +1223,7 @@ function populateWorkAjaxForm(bibJson, work) {
               if (this.input[this.pos] == '}')
                   brcktCnt--;
               if (this.pos >= this.input.length - 1) {
-                  throw "Unterminated value:" + this.input.substring(start);
+                  throw "Closing } character missing";
               };
               this.pos++;
           };
@@ -1238,7 +1241,7 @@ function populateWorkAjaxForm(bibJson, work) {
                       this.match('"', false);
                       return this.input.substring(start, end);
                   } else if (this.pos >= this.input.length - 1) {
-                      throw "Unterminated value:" + this.input.substring(start);
+                      throw "Closing \" character missing";
                   };
               }
               if (this.input[this.pos] == '\\' && escaped == false)
@@ -1256,13 +1259,14 @@ function populateWorkAjaxForm(bibJson, work) {
           } else if (this.tryMatch('"')) {
               return this.value_quotes();
           } else {
+            console.log(k);
               var k = this.key();
               if (k.match("^[0-9]+$"))
                   return k;
               else if (this.months.indexOf(k.toLowerCase()) >= 0)
                   return k.toLowerCase();
               else
-                  throw "Value expected:" + this.input.substring(start) + ' for key: ' + k;
+                  throw "Value missing for field";
 
           };
       };
@@ -1305,8 +1309,7 @@ function populateWorkAjaxForm(bibJson, work) {
               key = key.trim()
               return [ key, val ];
           } else {
-              throw "... = value expected, equals sign missing:"
-                      + this.input.substring(this.pos);
+              throw "Value missing for field " + key;
           };
       };
 
@@ -1395,8 +1398,21 @@ function populateWorkAjaxForm(bibJson, work) {
   exports.toJSON = function(bibtex) {
       var b = new BibtexParser();
       b.setInput(bibtex);
-      b.bibtex();
-      return b.entries;
+      if (b.tryMatch("@")){
+        try {
+            b.bibtex();
+            return b.entries;
+        } catch (e) {
+            var citationKey="";
+            if (b.currentEntry['citationKey']){
+                citationKey = " " + b.currentEntry['citationKey'];
+            }
+            return "Error parsing Bibtex in entry " + (b.entries.length+1) + citationKey + " near text '" + b.input.substring(b.pos-20, b.pos) + "'. " + e; 
+        }  
+      } else {
+        return "Error parsing Bibtex. No Bibtex entries found in file"
+      }
+       
   };
 
   /* added during hackathon don't hate on me */
