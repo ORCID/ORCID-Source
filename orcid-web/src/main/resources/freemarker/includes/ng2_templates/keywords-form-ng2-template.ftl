@@ -69,7 +69,7 @@
                                                     <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(bulkEdit +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(bulkEdit +'-privacy')">
                                                         <li class="publicActive publicInActive" [ngClass]="{publicInActive: bioModel != 'PUBLIC'}"><a (click)="setBulkGroupPrivacy('PUBLIC', 'keywords')" name="privacy-toggle-3-public" id=""></a></li>
                                                         <li class="limitedActive limitedInActive" [ngClass]="{limitedInActive: bioModel != 'LIMITED'}"><a (click)="setBulkGroupPrivacy('LIMITED', 'keywords')" name="privacy-toggle-3-limited" id=""></a></li>
-                                                        <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE', $event, 'keywords')" name="privacy-toggle-3-private" id=""></a></li>
+                                                        <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE', 'keywords')" name="privacy-toggle-3-private" id=""></a></li>
                                                     </ul>
                                                 </div>
                                                 <div class="popover-help-container" style="top: -75px; left: 512px;">
