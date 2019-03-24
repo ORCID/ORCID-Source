@@ -3,7 +3,6 @@
  */
 
 //Angular and other libraries imports
-import * as $ from 'jquery'
 import * as angular from 'angular'
 import * as ngCookies from 'angular-cookies'
 import * as ngSanitize from 'angular-sanitize'

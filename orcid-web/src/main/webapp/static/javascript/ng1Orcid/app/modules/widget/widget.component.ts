@@ -20,17 +20,9 @@ export class WidgetComponent {
     constructor(private commonSrvc: CommonService) {
         this.hash = orcidVar.orcidIdHash.substr(0, 6);
         this.showCode = false;
-        
-        this.commonSrvc.configInfo$
-        .subscribe(
-            data => {
-                this.domain = data.messages['BASE_DOMAIN_RM_PROTOCALL'];    
-                this.widgetURLND = '<div itemscope itemtype="https://schema.org/Person"><a itemprop="sameAs" content="'+ getBaseUri() + '/' + orcidVar.orcidId + '" href="'+ getBaseUri() + '/' + orcidVar.orcidId + '" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">' + this.domain + '/' + orcidVar.orcidId + '</a></div>';
-            },
-            error => {
-                console.log('widget.component.ts: unable to fetch configInfo', error);                
-            } 
-        );       
+        this.domain = getBaseUriHttps();    
+        this.widgetURLND = '<div itemscope itemtype="https://schema.org/Person"><a itemprop="sameAs" content="'+ getBaseUri() + '/' + orcidVar.orcidId + '" href="'+ getBaseUri() + '/' + orcidVar.orcidId + '" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">' + this.domain + '/' + orcidVar.orcidId + '</a></div>';
+     
     } 
 
     hideWidgetCode(): void{

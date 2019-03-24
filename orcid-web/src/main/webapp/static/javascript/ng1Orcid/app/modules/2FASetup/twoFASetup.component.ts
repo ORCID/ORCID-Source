@@ -1,21 +1,14 @@
 declare var getBaseUri: any;
 
-import { NgForOf, NgIf } 
-    from '@angular/common'; 
+import { NgForOf, NgIf } from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
-    from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Observable, Subject, Subscription } 
-    from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
     
-import { takeUntil } 
-    from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
-import { TwoFAStateService } 
-    from '../../shared/twoFAState.service';
-
-
+import { TwoFAStateService } from '../../shared/twoFAState.service';
 
 @Component({
     selector: 'two-fa-setup-ng2',
@@ -102,6 +95,10 @@ export class TwoFaSetupComponent implements AfterViewInit, OnDestroy, OnInit {
         element.click();
     
         document.body.removeChild(element);
+    };
+
+    getBaseUri(): String {
+        return getBaseUri();
     };
 
     getTextCodeClick(): void{

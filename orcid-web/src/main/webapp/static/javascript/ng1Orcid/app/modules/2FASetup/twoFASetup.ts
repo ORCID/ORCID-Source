@@ -16,9 +16,8 @@ import { TwoFaSetupComponent }
 
 // This is the Angular 1 part of the module
 export const TwoFaSetupModule = angular.module(
-    'TwoFaSetupModule', 
-    []
-);
+    'TwoFaSetupModule', [
+    ]);
 
 // This is the Angular 2 part of the module
 
@@ -31,7 +30,7 @@ export const TwoFaSetupModule = angular.module(
             TwoFaSetupComponent 
         ],
         imports: [
-            CommonNg2Module
+            CommonNg2Module,
         ]
     }
 )
