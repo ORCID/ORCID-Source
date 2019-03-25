@@ -524,43 +524,6 @@ $(function() {
             });            
         }
     }
-
-    // if not iframed check if not orcid.org
-    if (location == parent.location
-            && window.location.hostname.toLowerCase() != "orcid.org") {
-
-        var cookieName = "testWarningCookie";
-        var warnMessCookie = OrcidCookie.getCookie(cookieName);
-        if (!warnMessCookie) {            
-            messagesPromise.then(function() {
-                var wHtml = '<div class="alert alert-banner" id="test-warn-div">';
-                wHtml = wHtml + '<p><strong>';
-                wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
-                        '{{curentDomian}}', window.location.hostname);
-                wHtml = wHtml + '</strong> <a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
-                wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
-                wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
-                wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
-                wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
-                wHtml = wHtml + '</p> ';
-                // don't let the warning be disabled for test-warn-dismiss
-                if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
-                        && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
-                    wHtml = wHtml
-                            + ' <button class="btn btn-primary" id="test-warn-dismiss">'
-                    wHtml = wHtml + om.get('common.cookies.click_dismiss');
-                    wHtml = wHtml + '</button>';
-                }
-                wHtml = wHtml + '</div>';
-                $('body').prepend(wHtml);
-                $("#test-warn-dismiss").click(function() {
-                    $("#test-warn-div").remove();
-                    OrcidCookie.setCookie(cookieName, "dont show message", 365);
-                    return false;
-                });    
-            });            
-        }
-    }
     
     $(document)
             .on('submit', 'form#loginForm',
