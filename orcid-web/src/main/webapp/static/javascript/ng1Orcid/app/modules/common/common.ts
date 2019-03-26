@@ -1,5 +1,3 @@
-import * as angular 
-    from 'angular';
 
 import { CommonModule } 
     from '@angular/common'; 
@@ -10,7 +8,7 @@ import {  NgModule }
 import { FormsModule }
     from '@angular/forms'; // <-- NgModel lives here
 
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
+import {NgbTypeaheadModule} from '@ng-bootstrap/ng-bootstrap'
 
 import { ReCaptchaModule } 
     from 'angular2-recaptcha';
@@ -103,7 +101,6 @@ import { RequestPasswordResetNg2Module }
             //Angular Libraries
             CommonModule,
             FormsModule,
-            NgbModule,
             BrowserAnimationsModule,
             MultiSelectModule,
             //User Modules
@@ -139,7 +136,7 @@ import { RequestPasswordResetNg2Module }
             //Angular Libraries
             CommonModule,
             FormsModule,
-            NgbModule,
+            NgbTypeaheadModule,
             MultiSelectModule,
             //User directives
             FocusMe,

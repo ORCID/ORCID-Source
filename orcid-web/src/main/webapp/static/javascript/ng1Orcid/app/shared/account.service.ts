@@ -48,7 +48,7 @@ export class AccountService {
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 
-            $('body').data('baseurl') + 'account/addDelegateByEmail.json', 
+            getBaseUri() + '/account/addDelegateByEmail.json', 
             encoded_data, 
             { headers: this.headers }
         )
@@ -113,7 +113,7 @@ export class AccountService {
 
     searchByEmail( input ): Observable<any> {
         return this.http.get(
-            $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent(input) + '/',
+           getBaseUri() + '/manage/search-for-delegate-by-email/' + encodeURIComponent(input) + '/',
         )
         
     }

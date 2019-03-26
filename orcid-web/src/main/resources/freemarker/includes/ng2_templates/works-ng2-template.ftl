@@ -4,7 +4,7 @@
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
-                <div [ngClass]="(manualWorkGroupingEnabled)? 'col-md-4 col-sm-4 col-xs-12' : 'col-md-3 col-sm-3 col-xs-12' ">                
+                <div class="col-md-5 col-sm-5 col-xs-12">                
                     <div>
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
@@ -21,7 +21,7 @@
                         </div> 
                     </div>
                 </div>
-                <div *ngIf="workspaceSrvc.displayWorks" [ngClass]="(manualWorkGroupingEnabled)? 'col-md-8 col-sm-8 col-xs-12 action-button-bar' : 'col-md-9 col-sm-9 col-xs-12 action-button-bar' ">
+                <div *ngIf="workspaceSrvc.displayWorks" class="col-md-7 col-sm-7 col-xs-12 action-button-bar">
                     <!--Sort menu-->
                     <div class="menu-container">                                     
                         <ul class="toggle-menu">
@@ -341,6 +341,7 @@
             </div>          
             <div class="alert alert-block" *ngIf="bibtexParsingError">
                 <strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
+                <pre>{{bibtexParsingErrorText}}</pre>
             </div>
             <span class="dotted-bar" *ngIf="worksFromBibtex?.length > 0"></span>
             <!-- Bibtex Import Results List -->

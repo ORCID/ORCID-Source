@@ -71,8 +71,11 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
             if (workExternalIdentifier.getWorkExternalIdentifierId() != null) {
                 id.setValue(workExternalIdentifier.getWorkExternalIdentifierId().content);
                 //note, uses API type name.
-                id.setNormalized(new TransientNonEmptyString(norm.normalise(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
-                if (StringUtils.isEmpty(id.getNormalized().getValue())){
+                String normalised = norm.normalise(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content);
+                if (normalised != null && !normalised.trim().isEmpty()) {
+                    id.setNormalized(new TransientNonEmptyString(normalised));
+                }
+                if (normalised == null || StringUtils.isEmpty(normalised)){
                     id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
                 }
                 

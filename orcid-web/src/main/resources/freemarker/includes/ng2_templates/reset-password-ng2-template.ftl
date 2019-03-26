@@ -37,7 +37,7 @@
             <div class="control-group">
                 <label for="retypedPassword" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset.pleaseenternewpassword")}</label>
                 <div class="controls">
-                    <input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" [(ngModel)]="resetPasswordForm.retypedPassword.value" (onChange)="validatePassword(); serverValidate()" />
+                    <input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" [(ngModel)]="resetPasswordForm && resetPasswordForm.password && resetPasswordForm.retypedPassword.value" (onChange)="validatePassword(); serverValidate()" />
                     <span class="required">*</span>
                 </div>        
                 <span class="orcid-error" *ngIf="resetPasswordForm?.retypedPassword?.errors?.length > 0">

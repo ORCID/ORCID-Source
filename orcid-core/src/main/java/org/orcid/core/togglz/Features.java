@@ -24,9 +24,6 @@ public enum Features implements Feature {
     @Label("New style badges on member details")
     NEW_BADGES,
     
-    @Label("Cookie policy banner")
-    COOKIE_BANNER,
-
     @Label("Https for links to iDs")
     HTTPS_IDS,
 

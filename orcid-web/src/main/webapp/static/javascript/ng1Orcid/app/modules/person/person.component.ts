@@ -306,7 +306,6 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setBulkGroupPrivacy(priv, sectionName): void{
-        console.log(this.formData[sectionName][sectionName]);
         for (var idx in this.formData[sectionName][sectionName]){
             this.formData[sectionName][sectionName][idx].visibility.visibility = priv;        
         }
