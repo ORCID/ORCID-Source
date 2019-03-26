@@ -341,6 +341,7 @@
             </div>          
             <div class="alert alert-block" *ngIf="bibtexParsingError">
                 <strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
+                <pre>{{bibtexParsingErrorText}}</pre>
             </div>
             <span class="dotted-bar" *ngIf="worksFromBibtex?.length > 0"></span>
             <!-- Bibtex Import Results List -->
