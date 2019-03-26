@@ -723,19 +723,6 @@
 	<bean id="appIdGenerationManager" class="org.orcid.core.manager.impl.AppIdGenerationManagerImpl" />
 
 	<bean id="countryManager" class="org.orcid.core.manager.impl.CountryManagerImpl" />	
-
-	<bean id="orcidProfileManager" class="org.orcid.core.manager.impl.OrcidProfileManagerImpl">		
-		<property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
-		<property name="claimReminderAfterDays" value="${org.orcid.core.claimReminderAfterDays:8}" />
-		<property name="profileDao" ref="profileDao" />
-        <property name="transactionTemplate" ref="transactionTemplate" />
-	</bean>
-	
-	<bean id="orcidProfileManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileManagerReadOnlyImpl">
-        <property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
-        <property name="profileDao" ref="profileDaoReadOnly" />
-        <property name="transactionTemplate" ref="transactionTemplateReadOnly" />        
-    </bean>	
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>
 	

@@ -37,64 +37,6 @@
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
-    <bean id="orcidApiServiceDelegator" class="org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl" >
-        <property name="orcidSearchManager" ref="orcidSearchManagerReadOnly" />
-    </bean>
-    
-    <bean id="t1OrcidApiServiceDelegatorLatest" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl"/>
-    
-    <bean id="t1OrcidApiServiceImplRoot" class="org.orcid.api.t1.server.T1OrcidApiServiceImplRoot">
-        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorRoot"/>
-        <property name="api20ServiceDelegator" ref="publicV2ApiServiceDelegator"/>
-    </bean>
-    
-    <bean id="t1OrcidApiServiceDelegatorPrototype" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl" scope="prototype"/>
-    
-    <bean id="t1OrcidApiServiceDelegatorRoot" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="${org.orcid.core.default_api}"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerRoot"/>
-    </bean>
-    
-    <bean id="t1OrcidApiServiceImplV1_1" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_1">
-        <property name="orcidApiServiceDelegator" ref="t1OrcidApiServiceDelegatorV1_1"/>
-    </bean>
-    <bean id="t1OrcidApiServiceDelegatorV1_1" class="org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.1"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_1"/>
-    </bean>
-    
-    <bean id="t1OrcidApiServiceImplV1_2_rc1" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2_rc1">
-        <property name="externalVersion" value="1.2_rc1"/>
-    </bean>
-    
-    <bean id="t1OrcidApiServiceImplV1_2_rc2" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2_rc2">
-        <property name="externalVersion" value="1.2_rc2"/>
-    </bean>
-    
-    <bean id="t1OrcidApiServiceImplV1_2_rc3" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2_rc3">
-        <property name="externalVersion" value="1.2_rc3"/>
-    </bean>
-
-    <bean id="t1OrcidApiServiceImplV1_2_rc4" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2_rc4">
-        <property name="externalVersion" value="1.2_rc4"/>
-    </bean>
-   
-    <bean id="t1OrcidApiServiceImplV1_2_rc5" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2_rc5">
-        <property name="externalVersion" value="1.2_rc5"/>
-    </bean>
-
-    <bean id="t1OrcidApiServiceImplV1_2_rc6" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2_rc6">
-        <property name="externalVersion" value="1.2_rc6"/>
-    </bean>
-    
-    <bean id="t1OrcidApiServiceImplV1_2_rc7" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2_rc7">
-        <property name="externalVersion" value="1.2_rc7"/>
-    </bean>
-
-    <bean id="t1OrcidApiServiceImplV1_2" class="org.orcid.api.t1.server.T1OrcidApiServiceImplV1_2">
-        <property name="externalVersion" value="1.2"/>
-    </bean>
-    
     <!--  Public_2 API -->
     <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
     
