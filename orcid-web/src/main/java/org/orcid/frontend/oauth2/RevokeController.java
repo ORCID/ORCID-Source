@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
+import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value = { "/oauth/revoke" }, consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
+@RequestMapping(value = { T2OrcidApiService.OAUTH_REVOKE }, consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
 public class RevokeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RevokeController.class);
