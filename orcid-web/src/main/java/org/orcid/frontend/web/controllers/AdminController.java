@@ -282,7 +282,7 @@ public class AdminController extends BaseController {
             tempObj.setEmail(entry.getKey());
             if (!profileEntityManager.isProfileClaimed(entry.getValue())) {
                 tempObj.setStatus("Unclaimed");
-            } else if (orcidProfileManager.isLocked(entry.getValue())) {
+            } else if (profileEntityManager.isLocked(entry.getValue())) {
                 tempObj.setStatus("Locked");
             } else if (profileEntityManager.isDeactivated(entry.getValue())) {
                 tempObj.setStatus("Deactivated");

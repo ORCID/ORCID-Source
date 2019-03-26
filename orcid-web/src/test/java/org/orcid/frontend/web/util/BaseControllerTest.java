@@ -30,8 +30,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Ignore
 public class BaseControllerTest extends DBUnitTest {
 
-    protected OrcidProfile orcidProfile;
-    
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
 
