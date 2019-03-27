@@ -59,7 +59,9 @@
     </script>
 
     <#include "/macros/orcid_ga.ftl">
-    
+
+
+    <link rel="stylesheet" href="${staticCdn}/css/spinner.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/noto-sans-googlefonts.css"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
     <link rel="stylesheet" href="${staticCdn}/css/glyphicons.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/social.css"/>

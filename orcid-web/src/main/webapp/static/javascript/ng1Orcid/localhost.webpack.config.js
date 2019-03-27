@@ -25,7 +25,7 @@ module.exports = {
       },
       {
         test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)|\.png($|\?)|\.gif($|\?)/,
-        loader: "file-loader",
+        loader: "url-loader",
       }
     ]
   },
