@@ -963,21 +963,6 @@
 		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
 	
-	<bean id="orcidMessageVersionConverterChain" class="org.orcid.core.version.impl.OrcidMessageVersionConverterChainImpl">
-	    <property name="converters">
-	        <list>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_1ToV1_2_rc1"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc1ToV1_2_rc2"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc2ToV1_2_rc3"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc4ToV1_2_rc5"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc6ToV1_2_rc7"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc7ToV1_2"/>
-	        </list>
-	    </property>
-	</bean>
-	
 	<bean id="v2VersionConverterChain" class="org.orcid.core.version.impl.V2VersionConverterChainImpl">
 	    <property name="converters">
             <list>
