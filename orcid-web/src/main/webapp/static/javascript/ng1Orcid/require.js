@@ -6,6 +6,7 @@ function requireAll(requireContext) {
 
 require('./app/polyfills.ts');
 require('./app/main.ts');
+require('bluebird')
 requireAll(require.context("./app/directives", true, /^\.\/.*\.ts$/));
 requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
 requireAll(require.context("./app/pipes", true, /^\.\/.*\.ts$/));
