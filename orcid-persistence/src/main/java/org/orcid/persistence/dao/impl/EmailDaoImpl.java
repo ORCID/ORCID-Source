@@ -1,6 +1,5 @@
 package org.orcid.persistence.dao.impl;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -317,4 +316,14 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("ids", ids);
         query.executeUpdate();
     }       
+    
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<EmailEntity> getMarch2019QuarterlyEmailRecipients(int offset, int batchSize) {
+        Query query = entityManager.createNativeQuery("SELECT * from email WHERE is_verified IS TRUE AND is_primary IS TRUE AND orcid in (SELECT email.orcid FROM email INNER JOIN profile ON email.orcid = profile.orcid INNER JOIN email_frequency ON email.orcid = email_frequency.orcid WHERE email.is_current IS TRUE AND profile.record_locked IS FALSE AND profile.deprecated_date IS NULL AND profile.profile_deactivation_date IS NULL AND email_frequency.send_quarterly_tips IS TRUE GROUP BY email.orcid HAVING count(*) = 1 OFFSET :offset LIMIT :limit);", EmailEntity.class);
+        query.setParameter("offset", offset);
+        query.setParameter("limit", batchSize);
+        return query.getResultList();
+    }
 }

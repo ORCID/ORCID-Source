@@ -3,6 +3,10 @@ package org.orcid.email.trickle.queue.listener;
 import java.util.Date;
 
 import javax.annotation.Resource;
+<<<<<<< Updated upstream
+=======
+import javax.jms.Message;
+>>>>>>> Stashed changes
 
 import org.orcid.email.trickle.manager.TrickleManager;
 import org.slf4j.Logger;
@@ -22,7 +26,11 @@ public class EmailQueueListener {
     private TrickleManager trickleManager;
 
     @JmsListener(destination = EMAIL_QUEUE)
+<<<<<<< Updated upstream
     public void receiveMessage(@Payload String message) {
+=======
+    public void receiveMessage(Message message, @Payload String messagePayload) {
+>>>>>>> Stashed changes
         LOG.info("received message {} at {}", message, new Date());
         trickleManager.attemptSend();
     }

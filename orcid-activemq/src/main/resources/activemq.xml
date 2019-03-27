@@ -1,36 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- this is a spring XML file where we have ActiveMQ Broker embedded -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:broker="http://activemq.apache.org/schema/core"  
-       xmlns:context="http://www.springframework.org/schema/context"     
-       xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:broker="http://activemq.apache.org/schema/core"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
- 
- 	<context:property-placeholder location="${org.orcid.message-listener.properties}" />
- 
- 	<!-- create an ActiveMQ broker -->
-    <!-- do not use the shutdown hook as it would cause the broker to shutdown when you press ctrl + c,
-         instead we will let Spring shutdown the broker -->
-    <!-- notice this is a basic AMQ broker configuration, for production usage there is many more
-         options you may need to configure accordingly to your needs -->
-    <broker id="broker" brokerName="OrcidBroker" useShutdownHook="false" useJmx="true"
-                   persistent="true" dataDirectory="${org.orcid.persistence.path:activemq-data}"
-                   xmlns="http://activemq.apache.org/schema/core">
- 
-        <transportConnectors>
-            <!-- vm transport for intra-jvm communication -->
-            <transportConnector name="vm" uri="vm://OrcidBroker"/>
-            <!-- tcp for external communication -->
-            <transportConnector name="tcp" uri="tcp://0.0.0.0:61616"/>
-        </transportConnectors>
-        
-        <destinations>
-            <queue physicalName="${org.orcid.persistence.messaging.reindex.solr}" name="${org.orcid.persistence.messaging.reindex.solr}" />
-            <queue physicalName="${org.orcid.persistence.messaging.updated.solr}" name="${org.orcid.persistence.messaging.updated.solr}" />
-        </destinations>
-    </broker>
-    
+
+	<context:property-placeholder
+		location="${org.orcid.message-listener.properties}" />
+
+	<!-- create an ActiveMQ broker -->
+	<!-- do not use the shutdown hook as it would cause the broker to shutdown 
+		when you press ctrl + c, instead we will let Spring shutdown the broker -->
+	<!-- notice this is a basic AMQ broker configuration, for production usage 
+		there is many more options you may need to configure accordingly to your 
+		needs -->
+	<broker id="broker" brokerName="OrcidBroker" useShutdownHook="false"
+		useJmx="true" persistent="true" dataDirectory="${org.orcid.persistence.path:activemq-data}"
+		xmlns="http://activemq.apache.org/schema/core">
+
+		<transportConnectors>
+			<!-- vm transport for intra-jvm communication -->
+			<transportConnector name="vm" uri="vm://OrcidBroker" />
+			<!-- tcp for external communication -->
+			<transportConnector name="tcp" uri="tcp://0.0.0.0:61616" />
+		</transportConnectors>
+
+		<destinations>
+			<queue physicalName="${org.orcid.persistence.messaging.reindex.solr}"
+				name="${org.orcid.persistence.messaging.reindex.solr}" />
+			<queue physicalName="${org.orcid.persistence.messaging.updated.solr}"
+				name="${org.orcid.persistence.messaging.updated.solr}" />
+		</destinations>
+	</broker>
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>file:${activemq.base}/conf/credentials.properties</value>
+		</property>
+	</bean>
+
+	<!-- your broker config goes here -->
+
+	<import resource="${activemq.base}/conf/jetty.xml" />
 </beans>
