@@ -13,6 +13,10 @@ module.exports = {
                         loader: 'ts-loader'
                     }
                 ]
+            },
+            {
+                test: /((jquery.min)|(jquery-ui.min)|(jquery-migrate-1.3.0.min)|(typeahead.min)|(script)|(orcid)|(plugins))\.js/,
+                use: [ 'script-loader' ]
             }
         ]
     },
