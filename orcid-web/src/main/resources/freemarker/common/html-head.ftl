@@ -71,7 +71,6 @@
     <link type="text/css" rel="stylesheet" href="${staticCdn}/css/nova-light/theme.css"/>
     <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeicons.css"/>
     <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeng.min.css"/>
-    <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css"/>
     <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
     <link rel="stylesheet" href="${staticCdn}/css/academicons.css"/>
     
