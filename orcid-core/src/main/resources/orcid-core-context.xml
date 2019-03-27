@@ -724,18 +724,14 @@
 
 	<bean id="countryManager" class="org.orcid.core.manager.impl.CountryManagerImpl" />	
 			
-	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>
-	
-	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
+	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
 		<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
 		<property name="numberOfWebhookThreads" value="${org.orcid.core.numberOfWebhookThreads:4}" />
         <property name="retryDelayMinutes" value="${org.orcid.core.webhookRetryDelayMinutes:5}" />
         <property name="maxPerRun" value="${org.orcid.core.webhookMaxPerRun:10000}" />
-	</bean>
-
-	<bean id="orcidProfileCleaner" class="org.orcid.core.manager.impl.OrcidProfileCleanerImpl" />
+	</bean>	
 
 	<bean id="crossRefManager" class="org.orcid.core.manager.impl.CrossRefManagerImpl" />
 
