@@ -91,7 +91,10 @@ public enum Features implements Feature {
     GROUPING_SUGGESTIONS,
     
     @Label("Enable promotion of chosen orgs in search")
-    ENABLE_PROMOTION_OF_CHOSEN_ORGS;
+    ENABLE_PROMOTION_OF_CHOSEN_ORGS,
+    
+    @Label("Enable the API record create endpoint for QA purposes")
+    ENABLE_RECORD_CREATE_ENDPOINT;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
