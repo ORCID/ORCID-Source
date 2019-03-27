@@ -11,8 +11,14 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.converter.CreditNameConverter;
+import org.orcid.core.adapter.converter.EmptyStringToNullConverter;
+import org.orcid.core.adapter.converter.FamilyNameConverter;
+import org.orcid.core.adapter.converter.FundingContributorsConverter;
+import org.orcid.core.adapter.converter.GivenNamesConverter;
 import org.orcid.core.adapter.converter.PeerReviewSubjectTypeConverter;
 import org.orcid.core.adapter.converter.VisibilityConverter;
+import org.orcid.core.adapter.converter.WorkContributorsConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV2;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV2;
@@ -56,7 +62,6 @@ import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.FundingContributors;
 import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.jaxb.model.record_v2.OtherName;
@@ -65,7 +70,6 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkContributors;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
@@ -448,13 +452,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getResearcherUrlMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("emptyStringToNullConverter", new EmptyStringToNullConverter());
         
         ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);
         addV2DateFields(researcherUrlClassMap);
         registerSourceConverters(mapperFactory, researcherUrlClassMap);
         researcherUrlClassMap.field("putCode", "id");
         researcherUrlClassMap.field("url.value", "url");
-        researcherUrlClassMap.field("urlName", "urlName");
+        researcherUrlClassMap.fieldMap("urlName", "urlName").converter("emptyStringToNullConverter").add();
         researcherUrlClassMap.fieldBToA("displayIndex", "displayIndex");
         researcherUrlClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
         researcherUrlClassMap.byDefault();
@@ -534,7 +539,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV2());
-        converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
+        converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter());
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
@@ -705,7 +710,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = getNewMapperFactory();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JSONFundingExternalIdentifiersConverterV2());
-        converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
+        converterFactory.registerConverter("fundingContributorsConverterId", new FundingContributorsConverter());
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
@@ -1006,12 +1011,16 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getNameMapperFacade() {
         MapperFactory mapperFactory = getNewMapperFactory();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
+        mapperFactory.getConverterFactory().registerConverter("emptyStringToNullConverter", new EmptyStringToNullConverter());
+        mapperFactory.getConverterFactory().registerConverter("familyNameConverter", new FamilyNameConverter());
+        mapperFactory.getConverterFactory().registerConverter("givenNamesConverter", new GivenNamesConverter());
+        mapperFactory.getConverterFactory().registerConverter("creditNameConverter", new CreditNameConverter());
         
         ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);
         addV2DateFields(nameClassMap);
-        nameClassMap.field("creditName.content", "creditName");
-        nameClassMap.field("givenNames.content", "givenNames");
-        nameClassMap.field("familyName.content", "familyName");
+        nameClassMap.fieldMap("creditName", "creditName").converter("creditNameConverter").add();
+        nameClassMap.fieldMap("givenNames", "givenNames").converter("givenNamesConverter").add();
+        nameClassMap.fieldMap("familyName", "familyName").converter("familyNameConverter").add();
         nameClassMap.field("path", "profile.id");
         nameClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         nameClassMap.byDefault();

@@ -48,7 +48,7 @@ export class AccountService {
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 
-            $('body').data('baseurl') + 'account/addDelegateByEmail.json', 
+            getBaseUri() + '/account/addDelegateByEmail.json', 
             encoded_data, 
             { headers: this.headers }
         )

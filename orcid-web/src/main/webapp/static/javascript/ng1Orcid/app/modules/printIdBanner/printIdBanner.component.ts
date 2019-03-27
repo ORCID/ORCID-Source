@@ -38,6 +38,6 @@ export class printIdBannerComponent implements AfterViewInit, OnDestroy, OnInit 
   };
   
   getBaseUri() : String {
-      return getBaseUri();
+      return getBaseUriHttps();
   };
 }

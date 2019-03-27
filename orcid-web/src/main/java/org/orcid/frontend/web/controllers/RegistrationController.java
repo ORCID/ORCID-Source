@@ -154,6 +154,8 @@ public class RegistrationController extends BaseController {
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
         reg.getTermsOfUse().setValue(false);   
         
+        registerPasswordValidate(reg);
+        
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         if(isOauth2ScreensRequest != null) {
             reg.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
@@ -328,7 +330,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerPasswordValidate(@RequestBody Registration reg) {
-        passwordValidate(reg.getPasswordConfirm(), reg.getPassword());
+        passwordChecklistValidate(reg.getPasswordConfirm(), reg.getPassword());
         return reg;
     }    
 
