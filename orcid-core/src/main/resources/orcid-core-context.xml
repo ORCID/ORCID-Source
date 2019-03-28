@@ -1585,8 +1585,6 @@
         <property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
     </bean>
     
-    <bean id="findMyStuffManager" class="org.orcid.core.manager.v3.impl.FindMyStuffManagerImpl" />
-    
-    <bean id="apiRecordCreateManager" class="org.orcid.core.manager.impl.APIRecordCreateManagerImpl" />
+    <bean id="findMyStuffManager" class="org.orcid.core.manager.v3.impl.FindMyStuffManagerImpl" />        
     
 </beans>

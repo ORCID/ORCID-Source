@@ -9,7 +9,7 @@
 
     <import resource="classpath*:orcid-core-context.xml"/>
 
-    <context:component-scan base-package="org.orcid.api.member.common, org.orcid.api.common, org.orcid.core.security"/>
+    <context:component-scan base-package="org.orcid.api.common, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
      
     <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
@@ -140,7 +140,5 @@
         <property name="serviceDelegator" ref="memberV3ApiServiceDelegatorRc2"/>
         <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorV3Rc2"/>
     </bean>  
-    
-    <!-- Token endpoint -->
-    <bean id="orcidApiCommonEndpoints" class="org.orcid.api.member.common.OrcidApiCommonEndpoints" />
+        
 </beans>
