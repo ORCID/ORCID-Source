@@ -1,6 +1,6 @@
 package org.orcid.api.common;
 
-import static org.orcid.api.common.T2OrcidApiService.OAUTH_TOKEN;
+import static org.orcid.core.api.OrcidApiConstants.OAUTH_TOKEN;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -21,7 +21,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.springframework.stereotype.Component;
 
-@Path("/")
+@Path(OAUTH_TOKEN)
 @Component
 public class OrcidApiCommonEndpoints {
 
@@ -39,8 +39,7 @@ public class OrcidApiCommonEndpoints {
      * @param formParams
      * @return
      */
-    @POST
-    @Path(OAUTH_TOKEN)
+    @POST    
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@HeaderParam("Authorization") @DefaultValue(StringUtils.EMPTY) String authorization, @FormParam("grant_type") String grantType,

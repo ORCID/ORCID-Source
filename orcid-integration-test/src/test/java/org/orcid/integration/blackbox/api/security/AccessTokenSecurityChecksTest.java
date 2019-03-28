@@ -97,50 +97,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseV2Release {
         assertEquals("invalid_client", error.get("error"));
         assertEquals("Client not found: APP-0000000000000000", error.get("error_description"));
     }
-    
-    @Test
-    public void testTokenIssuedForOneUserFailForOtherUsers_12API() throws JSONException, InterruptedException, URISyntaxException {
-        String accessToken = getNonCachedAccessTokens(getUser2OrcidId(), getUser2Password(), getScopes(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
-        String orcid = getUser1OrcidId();
-        OrcidMessage message = new OrcidMessage();
-        message.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcidIdentifier(orcid);
-        message.setOrcidProfile(orcidProfile);
-        
-        // Add operations
-        evaluateResponseOn12API(t2OAuthClient_1_2.addAffiliationsJson(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.addAffiliationsXml(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.addExternalIdentifiersJson(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.addExternalIdentifiersXml(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.addFundingJson(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.addFundingXml(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.addWorksJson(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.addWorksXml(orcid, message, accessToken));
-        
-        // Update operations
-        evaluateResponseOn12API(t2OAuthClient_1_2.updateAffiliationsJson(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.updateAffiliationsXml(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.updateBioDetailsJson(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.updateBioDetailsXml(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.updateFundingJson(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.updateFundingXml(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.updateWorksJson(orcid, message, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.updateWorksXml(orcid, message, accessToken));
-        
-        // View operations        
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewAffiliationDetailsJson(orcid, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewAffiliationDetailsXml(orcid, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewBioDetailsJson(orcid, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewBioDetailsXml(orcid, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewFundingDetailsJson(orcid, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewFundingDetailsXml(orcid, accessToken));        
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewWorksDetailsJson(orcid, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewWorksDetailsXml(orcid, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewFullDetailsJson(orcid, accessToken));
-        evaluateResponseOn12API(t2OAuthClient_1_2.viewFullDetailsXml(orcid, accessToken));               
-    }
-    
+           
     @Test
     public void testTokenIssuedForOneUserFailForOtherUsers_20API() throws JSONException, InterruptedException, URISyntaxException {
         String accessToken = getNonCachedAccessTokens(getUser2OrcidId(), getUser2Password(), getScopes(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());

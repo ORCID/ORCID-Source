@@ -22,19 +22,20 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.orcid.api.common.T2OrcidApiService;
+import org.orcid.core.api.OrcidApiConstants;
 
 import com.sun.jersey.api.client.ClientResponse;
 
 public interface T1OAuthAPIService<T> {
 
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams);
 
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams);

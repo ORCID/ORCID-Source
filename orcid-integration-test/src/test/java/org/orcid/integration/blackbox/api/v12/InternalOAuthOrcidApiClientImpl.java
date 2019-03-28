@@ -12,6 +12,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.orcid.api.common.OrcidClientHelper;
 import org.orcid.api.common.T2OrcidApiService;
+import org.orcid.core.api.OrcidApiConstants;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -37,21 +38,21 @@ public class InternalOAuthOrcidApiClientImpl implements OAuthInternalAPIService<
      */
     @Override
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams) {
-        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
+        WebResource resource = orcidClientHelper.createRootResource(OrcidApiConstants.OAUTH_TOKEN);
         return resource.entity(formParams).post(ClientResponse.class);
     }
 
     @Override
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams) {
-        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
+        WebResource resource = orcidClientHelper.createRootResource(OrcidApiConstants.OAUTH_TOKEN);
         WebResource.Builder builder = resource.header("Authorization", "Bearer " + token);
         return builder.entity(formParams).post(ClientResponse.class);
     }

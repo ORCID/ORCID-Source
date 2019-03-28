@@ -19,7 +19,6 @@ import static org.orcid.core.api.OrcidApiConstants.*;
  */
 public interface T2OrcidApiService<T> extends OrcidApiService<T> {
 
-    public static final String OAUTH_TOKEN = "/oauth/token";
     public static final String OAUTH_REVOKE = "/oauth/revoke";
     public static final String CLIENT_ID_PARAM = "client_id";
     public static final String CLIENT_SECRET_PARAM = "client_secret";
