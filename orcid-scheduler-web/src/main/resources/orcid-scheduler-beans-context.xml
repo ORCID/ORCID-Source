@@ -22,11 +22,15 @@
     	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
 	</bean>
 	
-	<!-- so we can listen to queues -->
-	<bean id="jmsListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
-	    <property name="connectionFactory" ref="jmsConnectionFactory" />
-	    <property name="concurrency" value="1-10"/>
-	</bean>
+	 <!-- so we can listen to queues -->
+    <bean id="jmsListenerContainerFactory"
+        class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+        <property name="concurrency" value="1" />
+        
+        <!-- client acknowledge -->
+        <property name="sessionAcknowledgeMode" value="2" />
+    </bean>
 	
 	<!-- Default Destination Queue Definition -->
 	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
