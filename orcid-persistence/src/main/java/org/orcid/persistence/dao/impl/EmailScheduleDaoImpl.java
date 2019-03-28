@@ -18,7 +18,7 @@ public class EmailScheduleDaoImpl extends GenericDaoImpl<EmailScheduleEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    public Long currentScheduleAllows() {
+    public Long getValidScheduleId() {
         Query query = entityManager.createNativeQuery("SELECT id FROM email_schedule WHERE ((now() >= schedule_start AND schedule_end IS NULL) or (now() >= schedule_start AND now() < schedule_end)) AND latest_sent IS NULL OR EXTRACT(EPOCH FROM latest_sent) * 1000 + schedule_interval <= EXTRACT(EPOCH FROM now()) * 1000");
         List<BigInteger> results = query.getResultList();
         return results.isEmpty() ? -1L : results.get(0).longValue();

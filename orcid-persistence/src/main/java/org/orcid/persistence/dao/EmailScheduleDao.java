@@ -6,7 +6,7 @@ import org.orcid.persistence.jpa.entities.EmailScheduleEntity;
 
 public interface EmailScheduleDao extends GenericDao<EmailScheduleEntity, Long> {
 
-    Long currentScheduleAllows();
+    Long getValidScheduleId();
 
     void updateLatestSent(Long scheduleId, Date latestSentDate);
 
