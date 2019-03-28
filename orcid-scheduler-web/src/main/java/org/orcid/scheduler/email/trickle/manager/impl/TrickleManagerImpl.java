@@ -1,12 +1,21 @@
-package org.orcid.email.trickle.manager.impl;
+package org.orcid.scheduler.email.trickle.manager.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.orcid.email.trickle.error.TrickleTooHeavyException;
-import org.orcid.email.trickle.manager.TrickleManager;
+import org.orcid.core.email.trickle.producer.EmailTrickleItem;
+import org.orcid.core.manager.impl.MailGunManager;
+import org.orcid.core.manager.v3.EmailMessage;
+import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.dao.EmailScheduleDao;
+import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEventEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.scheduler.email.trickle.TrickleTooHeavyException;
+import org.orcid.scheduler.email.trickle.manager.TrickleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,15 +31,59 @@ public class TrickleManagerImpl implements TrickleManager {
     @Resource
     private EmailScheduleDao emailScheduleDao;
 
+    @Resource(name = "emailFrequencyDaoReadOnly")
+    private EmailFrequencyDao emailFrequencyDaoReadOnly;
+
+    @Resource(name = "profileDaoReadOnly")
+    private ProfileDao profileDaoReadOnly;
+
+    @Resource
+    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+
+    @Resource
+    private MailGunManager mailGunManager;
+
     @Override
-    public synchronized void attemptSend() {
-        Long scheduleId = emailScheduleDaoReadOnly.currentScheduleAllows();
+    public synchronized void attemptSend(EmailTrickleItem item) {
+        Long scheduleId = emailScheduleDaoReadOnly.getValidScheduleId();
         if (scheduleId == -1L) {
             throw new TrickleTooHeavyException();
         }
-        Date now = new Date();
-        LOG.info("Cleared to send at {}", now);
-        emailScheduleDao.updateLatestSent(scheduleId, now);
+
+        if (notAlreadySent(item)) {
+            if (emailPreferencesAllowSend(item.getOrcid())) {
+                Date now = new Date();
+                LOG.info("Cleared to send at {}", now);
+                EmailMessage emailMessage = item.getEmailMessage();
+                if (mailGunManager.sendEmail(emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject(), emailMessage.getBodyText(),
+                        emailMessage.getBodyHtml())) {
+                    profileEventDao.merge(getProfileEventEntity(item.getSuccessType(), item.getOrcid()));
+                    emailScheduleDao.updateLatestSent(scheduleId, now);
+                } else {
+                    profileEventDao.merge(getProfileEventEntity(item.getFailureType(), item.getOrcid()));
+                }
+            } else {
+                profileEventDao.merge(getProfileEventEntity(item.getSkippedType(), item.getOrcid()));
+            }
+        }
     }
-    
+
+    private ProfileEventEntity getProfileEventEntity(ProfileEventType type, String orcid) {
+        ProfileEventEntity event = new ProfileEventEntity();
+        event.setDateCreated(new Date());
+        event.setLastModified(new Date());
+        event.setOrcid(orcid);
+        event.setType(type);
+        return event;
+    }
+
+    private boolean emailPreferencesAllowSend(String orcid) {
+        return emailFrequencyDaoReadOnly.findByOrcid(orcid).getSendQuarterlyTips();
+    }
+
+    private boolean notAlreadySent(EmailTrickleItem item) {
+        return profileDaoReadOnly
+                .getProfileEvents(item.getOrcid(), Arrays.asList(item.getSuccessType().name(), item.getFailureType().name(), item.getSkippedType().name())).isEmpty();
+    }
+
 }

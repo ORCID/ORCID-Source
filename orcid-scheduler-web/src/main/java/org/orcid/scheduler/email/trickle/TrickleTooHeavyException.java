@@ -1,4 +1,4 @@
-package org.orcid.email.trickle.error;
+package org.orcid.scheduler.email.trickle;
 
 public class TrickleTooHeavyException extends RuntimeException {
 
