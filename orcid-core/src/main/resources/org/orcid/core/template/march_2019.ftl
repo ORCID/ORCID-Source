@@ -21,4 +21,4 @@
 <@emailMacros.msg "email.march_2019.note.part_1" /><@emailMacros.msg "email.march_2019.note.part_2" /> (${unsubscribeUrl}) <@emailMacros.msg "email.march_2019.note.part_3" />
 
 ----
-<#include "email_footer.ftl"/>
+<#include "email_footer.ftl"/>  

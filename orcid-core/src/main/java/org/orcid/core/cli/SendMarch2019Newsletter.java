@@ -32,11 +32,11 @@ public class SendMarch2019Newsletter {
      */
     private static final int BATCH_SIZE = 1000;
     
-    private static final String FROM_ADDRESS = "updates@comms.orcid.org";
+    private String fromAddress = "updates@comms.orcid.org";
     
     private EmailDao emailDaoReadOnly;
     
-    private NotificationManager notificationManagerReadOnly;
+    private NotificationManager notificationManager;
     
     private EmailFrequencyDao emailFrequencyDaoReadOnly;
     
@@ -55,7 +55,7 @@ public class SendMarch2019Newsletter {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         emailDaoReadOnly = (EmailDao) context.getBean("emailDaoReadOnly");
         emailFrequencyDaoReadOnly = (EmailFrequencyDao) context.getBean("emailFrequencyDaoReadOnly");
-        notificationManagerReadOnly = (NotificationManager) context.getBean("notificationManagerReadOnly");
+        notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
         encryptionManager = (EncryptionManager) context.getBean("encryptionManager");
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
         templateManager = (TemplateManager) context.getBean("templateManager");
@@ -88,7 +88,7 @@ public class SendMarch2019Newsletter {
     
     private EmailMessage getEmailMessage(EmailEntity email) {
         Locale locale = getUserLocaleFromProfileEntity(email.getProfile());
-        String emailName = notificationManagerReadOnly.deriveEmailFriendlyName(email.getProfile());
+        String emailName = notificationManager.deriveEmailFriendlyName(email.getProfile());
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("emailName", emailName);
@@ -102,7 +102,7 @@ public class SendMarch2019Newsletter {
         emailMessage.setSubject(subject);
         emailMessage.setBodyText(bodyText);
         emailMessage.setBodyHtml(bodyHtml);
-        emailMessage.setFrom(FROM_ADDRESS);
+        emailMessage.setFrom(fromAddress);
         return emailMessage;
     }
 
@@ -126,6 +126,9 @@ public class SendMarch2019Newsletter {
 
     public static void main(String[] args) {
         SendMarch2019Newsletter sender = new SendMarch2019Newsletter();
+        if (args.length > 0) {
+            sender.fromAddress = args[0];
+        }
         sender.init();
         sender.send();
     }

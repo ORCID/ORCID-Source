@@ -35,15 +35,4 @@
 				name="${org.orcid.persistence.messaging.updated.solr}" />
 		</destinations>
 	</broker>
-
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<value>file:${activemq.base}/conf/credentials.properties</value>
-		</property>
-	</bean>
-
-	<!-- your broker config goes here -->
-
-	<import resource="${activemq.base}/conf/jetty.xml" />
 </beans>
