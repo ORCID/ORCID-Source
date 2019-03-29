@@ -1,3 +1,5 @@
+__webpack_public_path__ = window.resourceBasePath;
+
 // require('../../css/noto-sans-googlefonts.css');
 // require('../../twitter-bootstrap/3.3.6/css/bootstrap.min.css');
 require('../../css/orcid.new.css');

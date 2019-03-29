@@ -15,6 +15,7 @@
     <#include "/layout/google_analytics.ftl">
     
     <script type="text/javascript">
+        window.resourceBasePath = "${staticCdn}"
         var orcidVar = {};
             
         <#if (workIdsJson)??>

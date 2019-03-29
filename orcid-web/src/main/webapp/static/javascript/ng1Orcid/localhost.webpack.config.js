@@ -2,7 +2,7 @@ var webpack = require("webpack");
 const path = require("path");
 
 module.exports = {
-  context: __dirname + "/",
+  context: __dirname + '/',
   entry: "./require.js",
   mode: "development",
   module: {
@@ -26,6 +26,14 @@ module.exports = {
       {
         test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)|\.png($|\?)|\.gif($|\?)/,
         loader: "url-loader",
+        options: {
+          limit: 8192,
+          fallback: 'file-loader',
+          emitFile: false,
+          path: path.resolve(__dirname, 'dist/assets'),
+          name: "/[path][name].[ext]",
+          context: '../../',
+        },
       }
     ]
   },
