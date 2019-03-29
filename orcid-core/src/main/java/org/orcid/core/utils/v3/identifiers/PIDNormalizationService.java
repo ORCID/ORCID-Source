@@ -21,6 +21,7 @@ import org.orcid.core.utils.v3.identifiers.normalizers.NormalizerWithURLTransfor
 import org.orcid.pojo.IdentifierType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriUtils;
 
 @Component
 public class PIDNormalizationService {
@@ -101,7 +102,7 @@ public class PIDNormalizationService {
             String prefix = type.getResolutionPrefix();
             if (!StringUtils.isEmpty(prefix)) {
                 try {
-                    return prefix + URLEncoder.encode(norm, "UTF-8");
+                    return UriUtils.encodePath(prefix + norm, "UTF-8");                    
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);
                 }
