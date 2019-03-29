@@ -530,7 +530,7 @@ $(function() {
 
                     function() {
                         var loginUrl = baseUrl + 'signin/auth.json';
-                        window.angularComponentReference.zone.run(() => { 
+                        window.angularComponentReference.zone.run(function() { 
                             var gaString = window.angularComponentReference.component.gaString
                             if (signinLocked) return false;
                             disableSignin();
