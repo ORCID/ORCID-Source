@@ -62,7 +62,7 @@
     <#include "/macros/orcid_ga.ftl">
 
 
-    <link rel="stylesheet" href="${staticCdn}/css/spinner.css"/>
+    <link rel="stylesheet" href="${staticCdn}/css/spinner.css"/>  
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />
     
