@@ -63,29 +63,8 @@
 
 
     <link rel="stylesheet" href="${staticCdn}/css/spinner.css"/>
-    <link rel="stylesheet" href="${staticCdn}/css/noto-sans-googlefonts.css"/> <!-- Src: //fonts.googleapis.com/css?family=Noto+Sans:400,700 -->
-    <link rel="stylesheet" href="${staticCdn}/css/glyphicons.css"/>
-    <link rel="stylesheet" href="${staticCdn}/css/social.css"/>
-    <link rel="stylesheet" href="${staticCdn}/css/filetypes.css"/>    
-    
-    <!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
-    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
-
-    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/nova-light/theme.css"/>
-    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeicons.css"/>
-    <link type="text/css" rel="stylesheet" href="${staticCdn}/css/primeng.min.css"/>
-    <link rel="stylesheet" href="${staticCdn}/css/idpselect.css" />
-    <link rel="stylesheet" href="${staticCdn}/css/academicons.css"/>
-    
-    <#if springMacroRequestContext.requestUri?contains("/print")>
-        <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css"/>
-    </#if>
-
-    <link rel="stylesheet" href="${staticCdn}/css/jquery-ui-1.10.0.custom.min.css"/>
-    
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />
-    <link rel="stylesheet" href="${staticCdn}/css/noto-font.css"/> 
     
     <style type="text/css">
         /* 
