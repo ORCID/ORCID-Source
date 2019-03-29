@@ -645,7 +645,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             reader.readAsText(bibtex);
             reader.onloadend = function(e){
                 var parsed = bibtexParse.toJSON(reader.result);
-                if (parsed.substring(0,5).toLowerCase().indexOf('error') > -1) {
+                if (typeof parsed == "string" && parsed.substring(0,5).toLowerCase().indexOf('error') > -1) {
                     this.bibtexParsingErrorText = parsed;
                     this.bibtexParsingError = true;
                 } else {
