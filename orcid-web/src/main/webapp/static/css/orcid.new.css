@@ -8739,3 +8739,11 @@ a.footer-url {
     text-decoration: underline;
 }
 
+#RegistrationForm .control-label>i {
+    font-style: italic;
+}
+
+.pattern-errors {
+    padding-top: 10px;
+    display: block;
+}

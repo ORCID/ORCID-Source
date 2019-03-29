@@ -2,6 +2,7 @@ package org.orcid.core.adapter.jsonidentifier.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -87,7 +88,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
         assertEquals(1, entityIDs.getExternalIdentifier().size());
         ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
         assertEquals("123", externalID.getValue());
-        assertEquals("",externalID.getNormalized().getValue());
+        assertNull(externalID.getNormalized());
         assertEquals("8001",externalID.getNormalizedError().getErrorCode());
         assertEquals("Cannot normalize identifier value doi:123",externalID.getNormalizedError().getErrorMessage());
         assertNotNull(externalID.getType());

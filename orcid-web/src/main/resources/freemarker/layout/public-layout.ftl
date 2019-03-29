@@ -50,11 +50,8 @@
 
 <#macro public css=[] js=[] classes=[] other=[] nav="" >
     <@base>
-    
-        <@orcid.checkFeatureStatus 'COOKIE_BANNER'>
-            <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">  
-            <alert-banner-ng2></alert-banner-ng2>
-        </@orcid.checkFeatureStatus>        
+        <#include "/includes/ng2_templates/alert-banner-ng2-template.ftl">  
+        <alert-banner-ng2></alert-banner-ng2>       
         <!--OAUTH SCREEN HEADER-->
         <#if (RequestParameters['oauth'])?? || nav == "oauth-error" || nav == "oauth-error-mismatch">            
             <div class="container">

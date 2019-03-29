@@ -70,8 +70,8 @@
                                                         <li class="privateActive privateInActive" [ngClass]="{privateInActive: bioModel != 'PRIVATE'}"><a (click)="setBulkGroupPrivacy('PRIVATE', 'websites')" name="privacy-toggle-3-private" id=""></a></li>
                                                     </ul>
                                                 </div>
-                                                <div class="popover-help-container" style="top: -75px; left: 512px;">
-                                                    <div class="popover top privacy-myorcid3" [ngClass]="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
+                                                <div class="popover-help-container" style="top: 110px; left: 492px;">
+                                                    <div class="popover bottom privacy-myorcid3" [ngClass]="commonSrvc.shownElement[bulkEdit +'-privacy'] == true ? 'block' : ''">
                                                         <div class="arrow"></div>
                                                         <div class="popover-content">
                                                             <strong><@orcid.msg 'privacyToggle.help.who_can_see'/> </strong>

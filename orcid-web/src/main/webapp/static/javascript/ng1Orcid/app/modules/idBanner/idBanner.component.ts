@@ -65,6 +65,6 @@ export class idBannerComponent implements AfterViewInit, OnDestroy, OnInit {
   }
   
   getBaseUri() : String {
-      return getBaseUri();
+      return getBaseUriHttps();
   };
 }
