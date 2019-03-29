@@ -1222,7 +1222,6 @@ function populateWorkAjaxForm(bibJson, work) {
           } else if (this.tryMatch('"')) {
               return this.value_quotes();
           } else {
-            console.log(k);
               var k = this.key();
               if (k.match("^[0-9]+$"))
                   return k;
