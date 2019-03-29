@@ -16,7 +16,7 @@ module.exports = {
         ]
       },
       {
-        test: /((jquery.min)|(jquery-ui.min)|(jquery-migrate-1.3.0.min)|(typeahead.min)|(script)|(orcid)|(plugins))\.js/,
+        test: /((script)|(orcid)|(plugins)|(typeahead.min))\.js/, //(jquery.min)|(jquery-ui.min)|(typeahead.min)|(jquery-migrate-1.3.0.min)|
         use: ["script-loader"]
       },
       {
@@ -34,6 +34,26 @@ module.exports = {
           name: "/[path][name].[ext]",
           context: '../../',
         },
+      },
+      {
+        test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)/,
+        loader: "file-loader",
+        options: {
+          emitFile: false,
+          path: path.resolve(__dirname, 'dist/assets'),
+          name: "/[path][name].[ext]",
+          context: '../../',
+        },
+      },
+      {
+        test: require.resolve('jquery'),
+        use: [{
+            loader: 'expose-loader',
+            options: 'jQuery'
+        },{
+            loader: 'expose-loader',
+            options: '$'
+        }]
       }
     ]
   },
