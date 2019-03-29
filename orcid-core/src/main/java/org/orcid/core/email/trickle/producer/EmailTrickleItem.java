@@ -1,10 +1,14 @@
 package org.orcid.core.email.trickle.producer;
 
+import java.io.Serializable;
+
 import org.orcid.core.manager.v3.EmailMessage;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 
-public class EmailTrickleItem {
+public class EmailTrickleItem implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     private EmailMessage emailMessage;
     
     private String orcid;

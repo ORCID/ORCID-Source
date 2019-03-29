@@ -91,8 +91,11 @@ public class SendMarch2019Newsletter {
         String emailName = notificationManager.deriveEmailFriendlyName(email.getProfile());
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
+        params.put("messages", messages);
+        params.put("messageArgs", new Object[0]);
         params.put("emailName", emailName);
-        params.put("unsubscribeUrl", getUnsubscribeLink(email.getProfile().getId()));        
+        params.put("baseUri", orcidUrlManager.getBaseUrl());
+        params.put("unsubscribeLink", getUnsubscribeLink(email.getProfile().getId()));        
         
         String subject = messages.getMessage("email.march_2019.subject", null, locale);
         String bodyText = templateManager.processTemplate("march_2019.ftl", params, locale);
@@ -103,6 +106,7 @@ public class SendMarch2019Newsletter {
         emailMessage.setBodyText(bodyText);
         emailMessage.setBodyHtml(bodyHtml);
         emailMessage.setFrom(fromAddress);
+        emailMessage.setTo(email.getEmail());
         return emailMessage;
     }
 

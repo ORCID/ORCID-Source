@@ -83,7 +83,7 @@ public class TrickleManagerImpl implements TrickleManager {
 
     private boolean notAlreadySent(EmailTrickleItem item) {
         return profileDaoReadOnly
-                .getProfileEvents(item.getOrcid(), Arrays.asList(item.getSuccessType().name(), item.getFailureType().name(), item.getSkippedType().name())).isEmpty();
+                .getProfileEvents(item.getOrcid(), Arrays.asList(item.getSuccessType(), item.getFailureType(), item.getSkippedType())).isEmpty();
     }
 
 }

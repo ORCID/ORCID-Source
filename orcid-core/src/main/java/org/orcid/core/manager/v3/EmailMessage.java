@@ -1,12 +1,15 @@
 package org.orcid.core.manager.v3;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Will Simpson
  * 
  */
-public class EmailMessage {
+public class EmailMessage implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private String to;
     private String from;
     private String subject;

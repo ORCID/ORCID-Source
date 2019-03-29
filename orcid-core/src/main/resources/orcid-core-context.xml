@@ -1625,6 +1625,7 @@
         <property name="brokerURL"
             value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}" />
         <property name="redeliveryPolicy" ref="redeliveryPolicy" />
+        <property name="trustAllPackages" value="true"/>
     </bean>
     <bean id="cachingJmsConnectionFactory"
         class="org.springframework.jms.connection.CachingConnectionFactory">

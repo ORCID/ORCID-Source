@@ -818,13 +818,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getResultList();
     }
     
-    
     @SuppressWarnings("unchecked")
     @Override
-    public List<ProfileEventEntity> getProfileEvents(String orcid, List<String> eventTypeNames) {
+    public List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypes) {
         Query query = entityManager.createQuery("from ProfileEventEntity where orcid = :orcid and type IN :types");
         query.setParameter("orcid", orcid);  
-        query.setParameter("types", eventTypeNames);  
+        query.setParameter("types", eventTypes);  
         return query.getResultList();
     }
 }

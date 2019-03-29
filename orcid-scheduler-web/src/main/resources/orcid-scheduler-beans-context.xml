@@ -17,6 +17,7 @@
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
 		<!-- lets use an embedded broker for now (easier to test!) -->
     	<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
+    	<property name="trustAllPackages" value="true"/>
 	</bean>
 	<bean id="cachingJmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
     	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
@@ -55,5 +56,11 @@
 	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.baseUrl:https://localhost:8443/orcid-pub-web/v3.0_rc2/}" />
 	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.developmentMode:false}" />
 	</bean>
+	
+	<bean id="emailQueueListener" class="org.orcid.scheduler.email.trickle.listener.EmailQueueListener" >
+	   <property name="trickleManager" ref="trickleManager" />
+	</bean>
+	
+	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />
 
 </beans>
