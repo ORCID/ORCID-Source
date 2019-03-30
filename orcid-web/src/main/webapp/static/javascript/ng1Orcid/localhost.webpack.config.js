@@ -16,7 +16,7 @@ module.exports = {
         ]
       },
       {
-        test: /((script)|(orcid)|(plugins)|(typeahead.min))\.js/, //(jquery.min)|(jquery-ui.min)|(typeahead.min)|(jquery-migrate-1.3.0.min)|
+        test: /((script)|(orcid)|(plugins)|(typeahead.min)|(XSRF.js))\.js/, //(jquery.min)|(jquery-ui.min)|(typeahead.min)|(jquery-migrate-1.3.0.min)|
         use: ["script-loader"]
       },
       {
@@ -24,7 +24,7 @@ module.exports = {
         loaders: ["style-loader", "css-loader"]
       },
       {
-        test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)|\.png($|\?)|\.gif($|\?)/,
+        test: /\.svg($|\?)|\.png($|\?)|\.gif($|\?)/,
         loader: "url-loader",
         options: {
           limit: 8192,

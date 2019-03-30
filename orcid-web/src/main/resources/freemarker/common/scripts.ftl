@@ -4,21 +4,6 @@
     var lang = OrcidCookie.getCookie('locale_v3');
 </script>
 
-<script type="text/javascript" >
-//CSRF
-var token = OrcidCookie.getCookie('XSRF-TOKEN');
-var header = 'x-xsrf-token';    
-if (header && token){
- $(document).ajaxSend(function(e, xhr, options) {
-     if (options.type != "GET") {
-        if (   options.url.startsWith(getBaseUri())            
-            || options.url.startsWith('/')) {            
-            xhr.setRequestHeader(header, token);
-        };
-     };
- });
-}
-</script>
 
 <script type="text/javascript">
     var head = document.getElementsByTagName('head')[0];

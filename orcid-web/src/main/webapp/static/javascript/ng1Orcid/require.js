@@ -19,6 +19,7 @@ if (window.location.href.indexOf("/print") > 0) {
 function requireAll(requireContext) {
   return requireContext.keys().map(requireContext);
 }
+
 require("./app/polyfills.ts");
 require("jquery");
 // require("../jqueryui/1.10.0/jquery-ui.min.js");
@@ -27,8 +28,8 @@ require("../typeahead/0.9.3/typeahead.min.js");
 require("../script.js");
 require("../orcid.js");
 require("../plugins.js");
-
 require("./app/main.ts");
+require("../XSRF.js");
 requireAll(require.context("./app/directives", true, /^\.\/.*\.ts$/));
 requireAll(require.context("./app/modules", true, /^\.\/.*\.ts$/));
 requireAll(require.context("./app/pipes", true, /^\.\/.*\.ts$/));
