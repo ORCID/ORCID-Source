@@ -21,11 +21,9 @@
 
 <#if isPrimary?? && isPrimary>
     <@emailMacros.msg "email.verify.primary_reminder_v2" /><@emailMacros.space />
-</#if>
+</#if>  
+<@emailMacros.msg "email.verify.thank_you" />
 
-<@emailMacros.msg "email.verify.thank_you" />    
-
-    
 ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.verify.1" /><@emailMacros.space />${orcid}<@emailMacros.msg "email.verify.2" /><@emailMacros.space />${baseUri}/${orcid}?lang=${locale}<@emailMacros.space /><@emailMacros.msg "email.verify.primary_email_1" /><@emailMacros.space />${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
