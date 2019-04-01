@@ -435,54 +435,54 @@ $(function() {
         });        
     }
 
-    // // jquery browser is deprecated, when you upgrade
-    // // to 1.9 or higher you will need to use the pluggin
-    // var oldBrowserFlag = false;
-    // //IE 11
-    // if (!!navigator.userAgent.match(/Trident\/7\./)) {
-    //     // IE 11
-    //     oldBrowserFlag = false;
-    // } else if ($.browser.msie && parseInt($.browser.version, 10) < 11) {
-    //     oldBrowserFlag = true;
-    // } else if (/edge/.test(navigator.userAgent.toLowerCase())
-    //         && parseInt($.browser.version, 10) < 14) {
-    //     oldBrowserFlag = true;
-    // } else if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())
-    //         && parseInt($.browser.version, 10) < 55) {
-    //     oldBrowserFlag = true;
-    // } else if ($.browser.mozilla && parseInt($.browser.version, 10) < 50) {
-    //     oldBrowserFlag = true;
-    // } else if ($.browser.opera && parseInt($.browser.version, 10) < 42) {
-    //     oldBrowserFlag = true;
-    // //safari 10
-    // } else if ($.browser.safari && parseInt($.browser.version, 10) < 602) {
-    //     oldBrowserFlag = true;
-    // }
+    // jquery browser is deprecated, when you upgrade
+    // to 1.9 or higher you will need to use the pluggin
+    var oldBrowserFlag = false;
+    //IE 11
+    if (!!navigator.userAgent.match(/Trident\/7\./)) {
+        // IE 11
+        oldBrowserFlag = false;
+    } else if ($.browser.msie && parseInt($.browser.version, 10) < 11) {
+        oldBrowserFlag = true;
+    } else if (/edge/.test(navigator.userAgent.toLowerCase())
+            && parseInt($.browser.version, 10) < 14) {
+        oldBrowserFlag = true;
+    } else if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())
+            && parseInt($.browser.version, 10) < 55) {
+        oldBrowserFlag = true;
+    } else if ($.browser.mozilla && parseInt($.browser.version, 10) < 50) {
+        oldBrowserFlag = true;
+    } else if ($.browser.opera && parseInt($.browser.version, 10) < 42) {
+        oldBrowserFlag = true;
+    //safari 10
+    } else if ($.browser.safari && parseInt($.browser.version, 10) < 602) {
+        oldBrowserFlag = true;
+    }
 
-    // if (oldBrowserFlag && location == parent.location) {
-    //     var cookieName = "oldBrowserAlert";
-    //     if (!OrcidCookie.getCookie(cookieName)) {
-    //         messagesPromise.then(function() {
-    //             var wHtml = '<div class="alert alert-banner" id="browser-warn-div">';
-    //             wHtml = wHtml + '<p>';
-    //             wHtml = wHtml + om.get('common.old.browser_1');
-    //             wHtml = wHtml + om.get('common.old_browser_2');
-    //             wHtml = wHtml + ' <a href="' + om.get('common.kb_uri_default') + '360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
-    //             wHtml = wHtml + '</p>';
-    //             wHtml = wHtml
-    //                     + ' <button class="btn btn-primary" id="browser-warn-dismiss">'
-    //             wHtml = wHtml + om.get('common.cookies.click_dismiss');
-    //             wHtml = wHtml + '</button>';
-    //             wHtml = wHtml + '</div>';
-    //             $('body').prepend(wHtml);
-    //             $("#browser-warn-dismiss").click(function() {
-    //                 $("#browser-warn-div").remove();
-    //                 OrcidCookie.setCookie(cookieName, "dont show message", 7);
-    //                 return false;
-    //             });                
-    //         });            
-    //     }
-    // }
+    if (oldBrowserFlag && location == parent.location) {
+        var cookieName = "oldBrowserAlert";
+        if (!OrcidCookie.getCookie(cookieName)) {
+            messagesPromise.then(function() {
+                var wHtml = '<div class="alert alert-banner" id="browser-warn-div">';
+                wHtml = wHtml + '<p>';
+                wHtml = wHtml + om.get('common.old.browser_1');
+                wHtml = wHtml + om.get('common.old_browser_2');
+                wHtml = wHtml + ' <a href="' + om.get('common.kb_uri_default') + '360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
+                wHtml = wHtml + '</p>';
+                wHtml = wHtml
+                        + ' <button class="btn btn-primary" id="browser-warn-dismiss">'
+                wHtml = wHtml + om.get('common.cookies.click_dismiss');
+                wHtml = wHtml + '</button>';
+                wHtml = wHtml + '</div>';
+                $('body').prepend(wHtml);
+                $("#browser-warn-dismiss").click(function() {
+                    $("#browser-warn-div").remove();
+                    OrcidCookie.setCookie(cookieName, "dont show message", 7);
+                    return false;
+                });                
+            });            
+        }
+    }
     
     $(document)
             .on('submit', 'form#loginForm',

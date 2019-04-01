@@ -23,7 +23,7 @@ function requireAll(requireContext) {
 require("./app/polyfills.ts");
 require("jquery");
 // require("../jqueryui/1.10.0/jquery-ui.min.js");
-// require("../jquery-migrate/1.3.0/jquery-migrate-1.3.0.min.js");
+require("../jquery-migrate/1.3.0/jquery-migrate-1.3.0.min.js");
 require("../typeahead/0.9.3/typeahead.min.js");
 require("../script.js");
 require("../orcid.js");
