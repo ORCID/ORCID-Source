@@ -13,6 +13,12 @@ public class OrcidPasswordConstants {
     //one digit, one character (including non-us ascii), mix the rest...
     public static final String ORCID_PASSWORD_REGEX = "(?=.{8,})(?=.*\\d)(?=.*\\D)(?=.*\\w).*";
 
+    public static final String ORCID_PASSWORD_EIGHT_CHARACTERS= "(?=.{8,}).*";
+
+    public static final String ORCID_PASSWORD_LETTER_OR_SYMBOL= "(?=.*[^\\d\\s]).*";
+
+    public static final String ORCID_PASSWORD_NUMBER= "(?=.*[0-9]).*";
+
     public static final String UNESCAPED_SYMBOL_RANGE = "!@#$%^*()[]~'{}|&_]";
 
     public static final String CHAR_CLASS_NUMBERS = "0123456789";

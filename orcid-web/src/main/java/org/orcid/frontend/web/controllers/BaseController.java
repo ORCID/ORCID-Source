@@ -601,6 +601,31 @@ public class BaseController {
         }
     }
 
+    protected void passwordChecklistValidate(Text passwordConfirm, Text password) {
+        password.setErrors(new ArrayList<String>());
+        // validate password regex
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
+            password.getErrors().add("Pattern.registrationForm.password.eigthCharacters");
+        }
+
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_LETTER_OR_SYMBOL)) {
+            password.getErrors().add("Pattern.registrationForm.password.letterOrSymbol");
+        }
+
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_NUMBER)) {
+            password.getErrors().add("Pattern.registrationForm.password.oneNumber");
+        }
+        
+        if (CommonPasswords.passwordIsCommon(password.getValue())) {
+            setError(password, "password.too_common", password.getValue());
+        }
+
+        if (passwordConfirm.getValue() != null) {
+            passwordConfirmValidate(passwordConfirm, password);
+        }
+        
+    }
+
     protected void passwordValidate(Text passwordConfirm, Text password) {
         password.setErrors(new ArrayList<String>());
         // validate password regex

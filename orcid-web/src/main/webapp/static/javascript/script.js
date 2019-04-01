@@ -524,43 +524,6 @@ $(function() {
             });            
         }
     }
-
-    // if not iframed check if not orcid.org
-    if (location == parent.location
-            && window.location.hostname.toLowerCase() != "orcid.org") {
-
-        var cookieName = "testWarningCookie";
-        var warnMessCookie = OrcidCookie.getCookie(cookieName);
-        if (!warnMessCookie) {            
-            messagesPromise.then(function() {
-                var wHtml = '<div class="alert alert-banner" id="test-warn-div">';
-                wHtml = wHtml + '<p><strong>';
-                wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
-                        '{{curentDomian}}', window.location.hostname);
-                wHtml = wHtml + '</strong> <a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
-                wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
-                wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
-                wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
-                wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
-                wHtml = wHtml + '</p> ';
-                // don't let the warning be disabled for test-warn-dismiss
-                if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
-                        && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
-                    wHtml = wHtml
-                            + ' <button class="btn btn-primary" id="test-warn-dismiss">'
-                    wHtml = wHtml + om.get('common.cookies.click_dismiss');
-                    wHtml = wHtml + '</button>';
-                }
-                wHtml = wHtml + '</div>';
-                $('body').prepend(wHtml);
-                $("#test-warn-dismiss").click(function() {
-                    $("#test-warn-div").remove();
-                    OrcidCookie.setCookie(cookieName, "dont show message", 365);
-                    return false;
-                });    
-            });            
-        }
-    }
     
     $(document)
             .on('submit', 'form#loginForm',
@@ -1117,8 +1080,12 @@ function populateWorkAjaxForm(bibJson, work) {
       this.pos = 0;
       this.input = "";
       this.entries = new Array();
-
+      this.errors = new Array();
       this.currentEntry = "";
+
+      this.addError = function(e) {
+          this.errors.push(e);
+      };
 
       this.setInput = function(t) {
           this.input = t;
@@ -1139,8 +1106,7 @@ function populateWorkAjaxForm(bibJson, work) {
           if (this.input.substring(this.pos, this.pos + s.length) == s) {
               this.pos += s.length;
           } else {
-              throw "Token mismatch, expected " + s + ", found "
-                      + this.input.substring(this.pos);
+              throw "Token mismatch, expected " + s + ", found ";
           };
           this.skipWhitespace(canCommentOut);
       };
@@ -1199,7 +1165,7 @@ function populateWorkAjaxForm(bibJson, work) {
                   } else if (this.input[this.pos] == '{') {
                       bracecount++;
                   } else if (this.pos >= this.input.length - 1) {
-                      throw "Unterminated value";
+                      throw "Closing } character missing";
                   };
               };
               if (this.input[this.pos] == '\\' && escaped == false)
@@ -1220,7 +1186,7 @@ function populateWorkAjaxForm(bibJson, work) {
               if (this.input[this.pos] == '}')
                   brcktCnt--;
               if (this.pos >= this.input.length - 1) {
-                  throw "Unterminated value:" + this.input.substring(start);
+                  throw "Closing } character missing";
               };
               this.pos++;
           };
@@ -1238,7 +1204,7 @@ function populateWorkAjaxForm(bibJson, work) {
                       this.match('"', false);
                       return this.input.substring(start, end);
                   } else if (this.pos >= this.input.length - 1) {
-                      throw "Unterminated value:" + this.input.substring(start);
+                      throw "Closing \" character missing";
                   };
               }
               if (this.input[this.pos] == '\\' && escaped == false)
@@ -1262,7 +1228,7 @@ function populateWorkAjaxForm(bibJson, work) {
               else if (this.months.indexOf(k.toLowerCase()) >= 0)
                   return k.toLowerCase();
               else
-                  throw "Value expected:" + this.input.substring(start) + ' for key: ' + k;
+                  throw "Value missing for field";
 
           };
       };
@@ -1305,8 +1271,7 @@ function populateWorkAjaxForm(bibJson, work) {
               key = key.trim()
               return [ key, val ];
           } else {
-              throw "... = value expected, equals sign missing:"
-                      + this.input.substring(this.pos);
+              throw "Value missing for field " + key;
           };
       };
 
@@ -1395,8 +1360,21 @@ function populateWorkAjaxForm(bibJson, work) {
   exports.toJSON = function(bibtex) {
       var b = new BibtexParser();
       b.setInput(bibtex);
-      b.bibtex();
-      return b.entries;
+      if (b.tryMatch("@")){
+        try {
+            b.bibtex();
+            return b.entries;
+        } catch (e) {
+            var citationKey="";
+            if (b.currentEntry['citationKey']){
+                citationKey = " " + b.currentEntry['citationKey'];
+            }
+            return "Error parsing Bibtex in entry " + (b.entries.length+1) + citationKey + " near text '" + b.input.substring(b.pos-20, b.pos) + "'. " + e; 
+        }  
+      } else {
+        return "Error parsing Bibtex. No Bibtex entries found in file"
+      }
+       
   };
 
   /* added during hackathon don't hate on me */
