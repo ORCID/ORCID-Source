@@ -9,9 +9,7 @@
     <import resource="classpath*:orcid-scheduler-beans-context.xml"/>
 
     <task:scheduled-tasks scheduler="scheduler">   
-	    <task:scheduled ref="orcidProfileManager" method="processUnclaimedProfilesToFlagForIndexing" cron="${org.orcid.scheduler.web.processUnclaimedProfilesToFlagForIndexingCron:25 25 * * * *}"/>
-        <task:scheduled ref="orcidProfileManager" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
-        <task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
+	    <task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
         <task:scheduled ref="statisticsCronJob" method="generateStatistics" cron="${org.orcid.scheduler.web.processStatisticsGeneratorManager:0 */5 * * * *}"/>
          <task:scheduled ref="memberChosenOrgDisambiguatedManager" method="refreshMemberChosenOrgs" cron="${org.orcid.scheduler.web.processMemberChosenOrgs:15 15 0-2 * * *}"/>
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
@@ -29,6 +27,10 @@
 		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:30}000"/>
      	<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
         <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
+		<task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesToFlagForIndexing" cron="${org.orcid.scheduler.web.processUnclaimedProfilesToFlagForIndexingCron:25 25 * * * *}"/>
+        <task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
+        
+
 
         <task:scheduled ref="publicProfileValidator" method="validatePublicRecords" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
     </task:scheduled-tasks>

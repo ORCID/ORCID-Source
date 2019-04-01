@@ -521,7 +521,6 @@ public class BlackBoxBase {
      * */
     public static void openEditOtherNamesModal() {
         waitForElementVisibility(By.id("open-edit-other-names"));
-        clickAwayFromPopOver();
         ngAwareClick(findElementById("open-edit-other-names"));
     }
 
@@ -555,6 +554,7 @@ public class BlackBoxBase {
     }
 
     public static void saveOtherNamesModal() {
+        waitForElementVisibility(By.xpath(SAVE_BUTTON_XPATH));
         ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));
         waitForAngular();
         waitForElementVisibility(By.id("open-edit-other-names"));

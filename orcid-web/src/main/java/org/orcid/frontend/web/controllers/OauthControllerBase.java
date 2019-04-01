@@ -67,7 +67,7 @@ public class OauthControllerBase extends BaseController {
     protected AuthenticationManager authenticationManager;
 
     @Resource
-    protected OrcidAuthorizationEndpoint authorizationEndpoint;    
+    protected OrcidAuthorizationEndpoint authorizationEndpoint;
     
     public AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
@@ -167,7 +167,7 @@ public class OauthControllerBase extends BaseController {
                     tempOrcid = OrcidStringUtils.stripHtml(URLDecoder.decode(tempOrcid, "UTF-8").trim());
                 } catch (UnsupportedEncodingException e) {
                 }
-                if (orcidProfileManager.exists(tempOrcid)) {
+                if (profileEntityManager.orcidExists(tempOrcid)) {
                     orcid = tempOrcid;
                 }
             }
@@ -278,7 +278,7 @@ public class OauthControllerBase extends BaseController {
             // Check if orcid exists, if so, show login screen
             if(!PojoUtil.isEmpty(orcid)) {
                 orcid = orcid.trim();
-                if(orcidProfileManager.exists(orcid)) {
+                if(profileEntityManager.orcidExists(orcid)) {
                     infoForm.setUserId(orcid);
                 }
             } else {

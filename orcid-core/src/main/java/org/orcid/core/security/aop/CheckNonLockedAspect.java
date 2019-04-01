@@ -4,8 +4,7 @@ import javax.annotation.Resource;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -18,15 +17,12 @@ import org.springframework.stereotype.Component;
 @Order(100)
 public class CheckNonLockedAspect {
 
-    @Resource
-    ProfileEntityManager profileEntityManager;
-    
-    @Resource
-    OrcidProfileManager orcidProfileManager;
+    @Resource(name = "profileEntityManagerReadOnlyV3")
+    ProfileEntityManagerReadOnly profileEntityManager;
     
     @Before("@annotation(nonLocked) && (args(orcid))")
     public void checkPermissionsWithAll(NonLocked nonLocked, String orcid) {        
-        if(orcidProfileManager.isLocked(orcid)) {            
+        if(profileEntityManager.isLocked(orcid)) {            
             throw new LockedException("The given account " + orcid + " is locked", orcid);
         }
     }

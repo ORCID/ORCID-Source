@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.util;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -12,11 +13,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
@@ -30,11 +35,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Ignore
 public class BaseControllerTest extends DBUnitTest {
 
-    protected OrcidProfile orcidProfile;
-    
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
 
+    @Resource(name = "profileEntityManagerReadOnlyV3")
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
+    
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
     @BeforeClass
     public static void beforeClass() throws Exception {
         initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
@@ -57,12 +66,12 @@ public class BaseControllerTest extends DBUnitTest {
     }
 
     protected Authentication getAuthentication(String orcid) {
-        if (orcidProfile == null) {
-            orcidProfile = getOrcidProfile();
-        }
-
-        OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername(orcidProfile.retrieveOrcidPath());
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, details.getPassword(), Arrays.asList(OrcidWebRole.ROLE_USER));
+        ProfileEntity p = profileEntityManagerReadOnly.findByOrcid(orcid);
+        Email e = emailManagerReadOnly.findPrimaryEmail(orcid);
+        List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
+                e.getEmail(), null, roles);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
         auth.setDetails(details);
         return auth;
     }

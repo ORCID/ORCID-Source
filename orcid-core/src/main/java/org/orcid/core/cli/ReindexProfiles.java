@@ -11,8 +11,6 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.OrcidIndexManager;
-import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.utils.NullUtils;
@@ -26,12 +24,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Will Simpson
  * 
  */
-public class IndexProfiles {
+public class ReindexProfiles {
 
-    private static Logger LOG = LoggerFactory.getLogger(IndexProfiles.class);
-
-    private OrcidProfileManager orcidProfileManager;
-    private OrcidIndexManager orcidIndexManager;
+    private static Logger LOG = LoggerFactory.getLogger(ReindexProfiles.class);        
     private ProfileDao profileDao;
     @Option(name = "-f", usage = "Path to file containing ORCIDs to index")
     private File fileToLoad;
@@ -43,7 +38,7 @@ public class IndexProfiles {
     private int errorCount;
 
     public static void main(String[] args) throws IOException {
-        IndexProfiles indexProfiles = new IndexProfiles();
+        ReindexProfiles indexProfiles = new ReindexProfiles();
         CmdLineParser parser = new CmdLineParser(indexProfiles);
         try {
             parser.parseArgument(args);
@@ -92,15 +87,13 @@ public class IndexProfiles {
     }
 
     private void processOrcid(final String orcid) {
-        LOG.info("Indexing profile: {}", orcid);
-        try {
-            OrcidProfile orcidProfile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
-            orcidIndexManager.persistProfileInformationForIndexing(orcidProfile);
-            profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+        LOG.info("Marking record as reindex: {}", orcid);
+        try {            
+            profileDao.updateIndexingStatus(orcid, IndexingStatus.REINDEX);
         } catch (RuntimeException e) {
             errorCount++;
             if (continueOnError) {
-                LOG.error("Error indexing profile: orcid={}", orcid, e);
+                LOG.error("Error setting indexing status: orcid={}", orcid, e);
                 return;
             } else {
                 throw e;
@@ -111,9 +104,7 @@ public class IndexProfiles {
 
     @SuppressWarnings("resource")
     private void init() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        orcidProfileManager = (OrcidProfileManager) context.getBean("orcidProfileManager");
-        orcidIndexManager = (OrcidIndexManager) context.getBean("orcidIndexManager");
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");                
         profileDao = (ProfileDao) context.getBean("profileDao");
     }
 

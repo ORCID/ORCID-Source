@@ -29,7 +29,6 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -48,11 +47,10 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.v3.rc2.record.Address;
 import org.orcid.jaxb.model.v3.rc2.record.Addresses;
 import org.orcid.jaxb.model.v3.rc2.record.Biography;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.jaxb.model.v3.rc2.record.Emails;
 import org.orcid.jaxb.model.v3.rc2.record.Keyword;
 import org.orcid.jaxb.model.v3.rc2.record.Keywords;
@@ -92,8 +90,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BaseController {
     
-    private static final Locale defaultLocale = Locale.US;
-
     String[] urlValschemes = { "http", "https", "ftp" }; // DEFAULT schemes =
                                                          // "http", "https",
                                                          // "ftp"
@@ -104,13 +100,7 @@ public class BaseController {
 
     private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
-    private boolean reducedFunctionalityMode;
-
     private String aboutUri;    
-
-    private String maintenanceMessage;
-
-    private URL maintenanceHeaderUrl;
 
     private String googleAnalyticsTrackingId;
 
@@ -125,10 +115,7 @@ public class BaseController {
 
     @Resource
     protected LocaleManager localeManager;
-
-    @Resource
-    protected OrcidProfileManager orcidProfileManager;
-
+    
     @Resource(name = "emailManagerV3")
     protected EmailManager emailManager;
     
@@ -269,13 +256,10 @@ public class BaseController {
         if (userDetails == null) {
             return true;
         }
-        OrcidProfile orcidProfile = getEffectiveProfile();
-        if (orcidProfile == null) {
-            return true;
-        }
-        List<Email> emails = orcidProfile.getOrcidBio().getContactDetails().getEmail();
-        for (Email email : emails) {
-            if (decryptedEmail.equalsIgnoreCase(email.getValue())) {
+        String effectiveOrcid = getEffectiveUserOrcid();
+        Emails emails = emailManagerReadOnly.getEmails(effectiveOrcid);
+        for (Email email : emails.getEmails()) {
+            if (decryptedEmail.equalsIgnoreCase(email.getEmail())) {
                 return true;
             }
         }
@@ -385,21 +369,18 @@ public class BaseController {
     }
 
     private boolean emailMatchesCurrentUser(String email) {
+        String effectiveOrcid = getEffectiveUserOrcid();
         OrcidProfileUserDetails currentUser = getCurrentUser();
         if (currentUser == null) {
             return false;
         }
         boolean match = false;
-        for (Email cuEmail : getEffectiveProfile().getOrcidBio().getContactDetails().getEmail()) {
-            if (cuEmail.getValue() != null && cuEmail.getValue().equalsIgnoreCase(email))
+        Emails emails = emailManagerReadOnly.getEmails(effectiveOrcid);
+        for (Email cuEmail : emails.getEmails()) {
+            if (cuEmail.getEmail() != null && cuEmail.getEmail().equalsIgnoreCase(email))
                 match = true;
         }
         return match;
-    }
-
-    public OrcidProfile getEffectiveProfile() {
-        String effectiveOrcid = getEffectiveUserOrcid();
-        return effectiveOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(effectiveOrcid);
     }
 
     public String getMessage(String messageCode, Object... messageParams) {

@@ -57,11 +57,11 @@ public class InternalOAuthOrcidApiClientImpl {
      * @return
      */
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams) {
-        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);  
+        WebResource resource = orcidClientHelper.createRootResource(OrcidApiConstants.OAUTH_TOKEN);  
         resource.accept(MediaType.APPLICATION_JSON);
         return resource.entity(formParams).post(ClientResponse.class);
     }

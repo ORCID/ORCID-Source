@@ -9,8 +9,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.v3.MembersManager;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.togglz.Features;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
@@ -27,12 +27,11 @@ import org.orcid.pojo.ajaxForm.Member;
  */
 public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelegator {
 
-    @Resource
-    private OrcidProfileManager orcidProfileManager;
-    
     @Resource(name = "membersManagerV3")
     private MembersManager memberManager;
     
+    @Resource(name = "profileEntityManagerReadOnlyV3")
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
     
     @Override
     public Response viewStatusText() {
@@ -42,7 +41,7 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
     @Override
     @AccessControl(requiredScope = ScopePathType.INTERNAL_PERSON_LAST_MODIFIED, requestComesFromInternalApi = true)
     public Response viewPersonLastModified(String orcid) {
-        Date lastModified = orcidProfileManager.retrieveLastModifiedDate(orcid);
+        Date lastModified = profileEntityManagerReadOnly.getLastModifiedDate(orcid);
         LastModifiedResponse obj = new LastModifiedResponse(orcid, lastModified.toString());        
         Response response = Response.ok(obj).build(); 
         return response;

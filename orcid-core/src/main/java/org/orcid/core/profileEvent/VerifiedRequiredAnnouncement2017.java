@@ -9,19 +9,21 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
+import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.togglz.Features;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 
 public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
 
@@ -47,8 +49,11 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
     
     @Resource
     private MailGunManager mailGunManager;
-
-    private OrcidProfile orcidProfile;
+    
+    @Resource(name = "emailManagerV3")
+    private EmailManager emailManager;
+    
+    String orcidId;
 
     /*
      * export MAVEN_OPTS=
@@ -62,43 +67,28 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
     private List<ProfileEventType> pes = Collections.unmodifiableList(Arrays.asList(ProfileEventType.VERIFIED_REQUIRED_SKIPPED_2017,
             ProfileEventType.VERIFIED_REQUIRED_HAS_VALIDATED_2017, ProfileEventType.VERIFIED_REQUIRED_SENT_2017, ProfileEventType.VERIFIED_REQUIRED_FAIL_2017));
 
-    VerifiedRequiredAnnouncement2017(OrcidProfile op) {
-        this.orcidProfile = op;
-    }
-
-    @Override
-    public OrcidProfile getOrcidProfile() {
-        return orcidProfile;
-    }
-
     @Override
     public ProfileEventResult call() throws Exception {
-        String orcidId = getOrcidProfile().getOrcidIdentifier().getPath();
+        ProfileEntity entity = profileDaoReadOnly.find(orcidId);
 
-        if (orcidProfile.getOrcidBio() == null || orcidProfile.getOrcidBio().getContactDetails() == null
-                || orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail() == null
-                || orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue() == null) {
+        if (!entity.isAccountNonLocked() || entity.getDeactivationDate() != null || entity.getPrimaryRecord() != null
+                || !entity.getClaimed()) {
             return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_SKIPPED_2017);
         }
 
-        if (orcidProfile.isLocked() || orcidProfile.isDeactivated() || orcidProfile.getOrcidDeprecated() != null
-                || !orcidProfile.getOrcidHistory().getClaimed().isValue()) {
-            return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_SKIPPED_2017);
-        }
-
-        Email primaryEmail = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail();
+        Email primaryEmail = emailManager.findPrimaryEmail(orcidId);
         if (primaryEmail.isVerified()) {
             return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_HAS_VALIDATED_2017);
         } else {
             try {
-                boolean sent = sendVerifiedRequiredAnnouncement2017(orcidProfile);
+                boolean sent = sendVerifiedRequiredAnnouncement2017(orcidId, primaryEmail.getEmail(), entity.getLocale());
                 if (sent) {
                     return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_SENT_2017);
                 } else {
                     return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_FAIL_2017);
                 }
             } catch (Exception e) {
-                LOG.error("ProfileEventType exception trying to send email to: " + orcidProfile.retrieveOrcidUriAsString(), e);
+                LOG.error("ProfileEventType exception trying to send email to: " + orcidId, e);
                 return new ProfileEventResult(orcidId, ProfileEventType.VERIFIED_REQUIRED_FAIL_2017);
             }
         }
@@ -109,19 +99,18 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
         return pes;
     }
     
-    public boolean sendVerifiedRequiredAnnouncement2017(OrcidProfile orcidProfile) {
-        String orcid = orcidProfile.getOrcidIdentifier().getPath();
-        String email = orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+    public boolean sendVerifiedRequiredAnnouncement2017(String orcid, String email, String localeString) {
         String emailFriendlyName = notificationManager.deriveEmailFriendlyName(profileDaoReadOnly.find(orcid));
         String verificationUrl = notificationManager.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        String emailFrequencyUrl = notificationManager.createUpdateEmailFrequencyUrl(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        String emailFrequencyUrl = notificationManager.createUpdateEmailFrequencyUrl(email);
 
         Map<String, Boolean> features = new HashMap<String, Boolean>();
         for(Features f : Features.values()) {
             features.put(f.name(), f.isActive());
         }
         
-        Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
+        Locale locale =  LocaleUtils
+                .toLocale(localeString == null ? org.orcid.jaxb.model.common_v2.Locale.EN.value() : org.orcid.jaxb.model.common_v2.Locale.valueOf(localeString).value());
         
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", emailFriendlyName);
@@ -140,6 +129,16 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
         String html = templateManager.processTemplate("verified_required_announcement_2017_html.ftl", templateParams);
 
         return mailGunManager.sendEmail("support@notify.orcid.org", email, subject, text, html);
+    }
+
+    @Override
+    public void setOrcidId(String orcid) {
+        this.orcidId = orcid;        
+    }
+
+    @Override
+    public String getOrcidId() {
+        return this.orcidId;
     }
 
 }

@@ -33,7 +33,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 
 import org.orcid.api.common.OrcidClientHelper;
-import org.orcid.api.common.T2OrcidApiService;
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 
@@ -69,21 +69,21 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
      */
     @Override
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams) {
-        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
+        WebResource resource = orcidClientHelper.createRootResource(OrcidApiConstants.OAUTH_TOKEN);
         return resource.entity(formParams).post(ClientResponse.class);
     }
 
     @Override
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams) {
-        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
+        WebResource resource = orcidClientHelper.createRootResource(OrcidApiConstants.OAUTH_TOKEN);
         WebResource.Builder builder = resource.getRequestBuilder();
         if (token != null) {
             builder.header("Authorization", "Bearer " + token);
@@ -93,7 +93,7 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
     
     public ClientResponse obtainOauth2RefreshTokenPostWithBasicAuth(String grantType, String username, String password, MultivaluedMap<String, String> formParams) {
         orcidClientHelper.addBasicAuth(username, password);
-        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
+        WebResource resource = orcidClientHelper.createRootResource(OrcidApiConstants.OAUTH_TOKEN);
         WebResource.Builder builder = resource.getRequestBuilder();
         ClientResponse response = builder.entity(formParams).post(ClientResponse.class);
         orcidClientHelper.removeBasicAuth();

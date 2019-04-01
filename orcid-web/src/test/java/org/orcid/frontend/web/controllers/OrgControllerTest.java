@@ -14,11 +14,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.http.ResponseEntity;
@@ -45,18 +47,23 @@ public class OrgControllerTest extends BaseControllerTest {
         private HttpServletRequest servletRequest;
         
         @Resource
-        protected OrcidProfileManager orcidProfileManager;
-        
-        @Resource
         private OrgController orgController;
+        
+        @Resource(name = "profileEntityManagerReadOnlyV3")
+        private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
+        
+        @Resource(name = "emailManagerReadOnlyV3")
+        private EmailManagerReadOnly emailManagerReadOnly;
         
         @Override
         protected Authentication getAuthentication() {
-            orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4443");
+            String orcid = "4444-4444-4444-4443";
+            ProfileEntity p = profileEntityManagerReadOnly.findByOrcid(orcid);
+            Email e = emailManagerReadOnly.findPrimaryEmail(orcid);
             List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
-            OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcidProfile.retrieveOrcidPath(),
-                    orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), null, roles);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("4444-4444-4444-4443", details.getPassword(), roles);
+            OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
+                    e.getEmail(), null, roles);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
             auth.setDetails(details);
             return auth;
         }

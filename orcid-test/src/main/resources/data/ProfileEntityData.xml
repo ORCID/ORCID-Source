@@ -1729,7 +1729,7 @@
         orcid="4444-4444-4444-4443"
         email="teddybass3private@semantico.com"
         email_hash="7ec2c813391c22a9b190062fe07a78b2a409e76eb7877b6bc01097422ca24a79"
-        is_primary="true"
+        is_primary="false"
         is_current="true"
         is_verified="true"
         visibility="PRIVATE"
