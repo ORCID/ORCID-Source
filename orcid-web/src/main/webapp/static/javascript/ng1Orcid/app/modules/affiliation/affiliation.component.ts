@@ -1,6 +1,5 @@
 declare var $: any;
 declare var orcidVar: any;
-declare var GroupedActivities: any;
 
 //Import all the angular components
 import { NgForOf, NgIf } 

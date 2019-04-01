@@ -26,3 +26,163 @@
     font-weight: bold;
     font-style: normal;
 }
+
+*,
+body,
+.orcid-id,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+b,
+strong,
+.table th,
+.close,
+.nav-header,
+.label,
+.badge,
+.header .main>.menu>li>a,
+.btn-update,
+.btn-update:visited,
+.overview-count,
+.overview-count:visited,
+.overview-title,
+.workspace-header-public h3,
+.workspace-help a,
+.full-name,
+.tabs a,
+.tabs a:visited {
+    font-family: 'Noto Sans', sans-serif;
+    font-style: normal;
+}
+
+.header .search form#form-search input[type="search"],
+.header .language-selector select#language-codes {
+    font-family: 'Noto Sans', sans-serif;
+    font-style: normal;
+    font-size: 11px;
+}
+
+body {
+    font-size: 14px;
+    line-height: 22px;
+}
+
+.fixed-area .aka {
+    font-size: 22px;
+}
+
+h2 {
+    font-size: 23px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+h4 {
+    font-size: 16px;
+}
+
+
+/* Used to be 16px */
+
+.affiliation-type,
+.journaltitle,
+.workspace-accordion-header a.toggle-text,
+.workspace-accordion-header h2.toggle-text,
+.work-title a.toggle-text {
+    font-size: 14px;
+}
+
+
+/* Used to be 14px */
+
+.orcid-id,
+.id-banner .oid .orcid-id-container .orcid-id-options a {
+    font-size: 13px;
+}
+
+.lang-rl .orcid-id-https {
+    font-size: 11px;
+}
+
+.orcid-id-https {
+    font-size: 12px;
+}
+
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input {
+    font-size: 12px;
+}
+
+label,
+input,
+button,
+select,
+textarea,
+.info-detail,
+.source-line,
+ul.toggle-menu > li,
+.btn,
+.popover-help-container .popover,
+.header .logo p,
+.manage-button {
+    font-size: 12px;
+}
+
+ul.menu-options li a {
+    font-size: 11px;
+}
+
+.workspace-right h3,
+.workspace-body-list h3,
+.admin-options .workspace-accordion-item p a {
+    font-size: 17px;
+}
+
+
+.peerReview .sources-container-header{
+    font-size: 12px;
+}
+/* Used to be 18px */
+
+.login .btn-group a {
+    font-size: 16px;
+}
+
+
+/* Used to be 20px */
+
+.login .title {
+    font-size: 18px;
+}
+
+small.italic {
+    line-height: 1.2em;
+}
+
+ul.toggle-menu > li {
+    padding: 4px 10px;
+}
+
+.text-14 {
+    font-size: 14px;
+}

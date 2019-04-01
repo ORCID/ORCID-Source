@@ -1,7 +1,5 @@
 declare var $: any;
 declare var ActSortState: any;
-declare var GroupedActivities: any;
-declare var groupedActivitiesUtil: any;
 declare var sortState: any;
 declare var typeahead: any;
 

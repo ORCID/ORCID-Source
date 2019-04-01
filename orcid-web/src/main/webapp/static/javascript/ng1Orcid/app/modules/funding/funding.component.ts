@@ -2,17 +2,13 @@ declare var $: any;
 declare var ActSortState: any;
 declare var GroupedActivities: any;
 declare var openImportWizardUrl: any;
-declare var sortState: any;
-declare var typeahead: any;
 
 //Import all the angular components
-import { NgForOf, NgIf } 
-    from '@angular/common'; 
 
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { Subject, Subscription } 
     from 'rxjs';
 
 import { takeUntil } 

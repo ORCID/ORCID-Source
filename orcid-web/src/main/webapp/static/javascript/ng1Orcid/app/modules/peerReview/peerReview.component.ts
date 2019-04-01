@@ -1,20 +1,13 @@
 declare var $: any;
 declare var ActSortState: any;
 declare var getBaseUri: any;
-declare var logAjaxError: any;
 declare var openImportWizardUrl: any;
-declare var orcidVar: any;
-declare var workIdLinkJs: any;
 declare var GroupedActivities: any;
-
-//Import all the angular components
-import { NgForOf, NgIf } 
-    from '@angular/common'; 
 
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { Subject, Subscription } 
     from 'rxjs';
 import { takeUntil } 
     from 'rxjs/operators';
@@ -33,9 +26,6 @@ import { ModalService }
 
 import { WorkspaceService } 
     from '../../shared/workspace.service'; 
-
-import { OrgDisambiguated } 
-    from '../orgIdentifierPopover/orgDisambiguated';
     
 @Component({
     selector: 'peer-review-ng2',

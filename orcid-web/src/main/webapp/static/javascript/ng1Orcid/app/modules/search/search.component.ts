@@ -1,19 +1,12 @@
 declare var $: any;
-declare var orcidVar: any;
 
-import { NgForOf, NgIf } 
-    from '@angular/common'; 
-
-import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef } 
+import {  Component, OnDestroy, OnInit, ChangeDetectorRef } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { Subject, Subscription } 
     from 'rxjs';
 import { takeUntil } 
     from 'rxjs/operators';
-
-import { CommonNg2Module }
-    from './../common/common';
 
 import { FeaturesService }
     from '../../shared/features.service'

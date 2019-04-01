@@ -6,15 +6,11 @@ declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
 declare var populateWorkAjaxForm: any;
-declare var workIdLinkJs: any;
-
-import { NgForOf, NgIf } 
-    from '@angular/common';
 
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { forkJoin, Observable, Subject, Subscription } 
+import { forkJoin, Subject, Subscription } 
     from 'rxjs';
 
 import { takeUntil } 

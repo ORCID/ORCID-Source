@@ -4,13 +4,11 @@ declare var orcidVar: any;
 
 //Import all the angular components
 
-import { NgForOf, NgIf } 
-    from '@angular/common'; 
 
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { Subject, Subscription } 
     from 'rxjs';
 import { takeUntil } 
     from 'rxjs/operators';

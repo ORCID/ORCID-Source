@@ -65,20 +65,6 @@ function contains(arr, obj) {
     return false;
 }
 
-function formatDate(oldDate) {
-    var date = new Date(oldDate);
-    var day = date.getDate();
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
-    if(month < 10) {
-        month = '0' + month;
-    }
-    if(day < 10) {
-        day = '0' + day;
-    }
-    return (year + '-' + month + '-' + day);
-}
-
 function getScripts(scripts, callback) {
     var progress = 0;
     var internalCallback = function () {        
@@ -89,20 +75,6 @@ function getScripts(scripts, callback) {
     scripts.forEach(function(script) {        
         $.getScript(script, internalCallback);        
     });
-}
-
-function formColorBoxWidth() {
-    return isMobile()? '100%': '800px';
-}
-
-function formColorBoxResize() {
-    if (isMobile())
-        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-    else
-        // IE8 and below doesn't take auto height
-        // however the default div height
-        // is auto anyway
-        $.colorbox.resize({width:'800px'});
 }
 
 function fixZindexIE7(target, zindex){
@@ -139,19 +111,6 @@ function removeBadContributors(dw) {
             && dw.contributors[idx].creditNameVisibility == null) {
                 dw.contributors.splice(idx,1);
             }
-    }
-}
-
-//Needs refactor for dw object
-function removeBadExternalIdentifiers(dw) {
-    for(var idx in dw.workExternalIdentifiers) {
-        if(dw.workExternalIdentifiers[idx].url == null){
-            dw.workExternalIdentifiers[idx].url = "";
-        }
-        if(dw.workExternalIdentifiers[idx].externalIdentifierType == null
-            && dw.workExternalIdentifiers[idx].externalIdentifierId == null) {
-            dw.workExternalIdentifiers.splice(idx,1);
-        }
     }
 }
 
@@ -4356,15 +4315,6 @@ function getWindowWidth() {
     return windowWidth;
 };
 
-function tabletDesktopActionButtons($event) {
-    var thisWidth = getWindowWidth();
-    if (thisWidth >= 767) {
-        $('.action-button-bar').addClass('tablet-desktop-display');
-    } else { // Mobile
-        $('.action-button-bar').removeClass('tablet-desktop-display');
-    }
-};
-
 function iframeResize(putCode){						
 	$('#'+putCode).iFrameResize({
 		log: false,
@@ -4372,22 +4322,3 @@ function iframeResize(putCode){
 	});
 }
 
-function isIndexOf(needle) {
-    if(typeof Array.prototype.indexOf === 'function') {
-        indexOf = Array.prototype.indexOf;
-    } else {
-        indexOf = function(needle) {
-            var i = -1, index = -1;
-
-            for(i = 0; i < this.length; i++) {
-                if(this[i] === needle) {
-                    index = i;
-                    break;
-                }
-            }
-
-            return index;
-        };
-    }
-    return indexOf.call(this, needle);
-};
