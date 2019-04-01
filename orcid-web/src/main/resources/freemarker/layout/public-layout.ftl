@@ -31,7 +31,7 @@
             </style>
         </noscript>            
         <div class="app-loading">
-            <i class="glyphicon glyphicon-refresh spin green x8" id="spinner"></i>
+            <i class="spin green x8" id="spinner"><img src="${staticCdn}/img/svg/refresh-curve-arrows.svg" class="spinner flip" width="85" height ="85"/></i>
             <!--[if lt IE 8]>    
                 <img src="${staticCdn}/img/spin-big.gif" class="spinner" width="85" height ="85"/>
             <![endif]-->
