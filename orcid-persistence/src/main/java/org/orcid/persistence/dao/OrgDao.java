@@ -30,4 +30,8 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
 
     void correctClientSource(List<BigInteger> ids);
 
+    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<BigInteger> ids);
+
 }

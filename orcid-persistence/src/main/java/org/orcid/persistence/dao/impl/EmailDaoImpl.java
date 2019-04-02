@@ -1,6 +1,5 @@
 package org.orcid.persistence.dao.impl;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -305,7 +304,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @SuppressWarnings("unchecked")
     @Override
     public List<String> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -314,6 +313,22 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Transactional
     public void correctClientSource(List<String> ids) {
         Query query = entityManager.createNativeQuery("UPDATE email SET client_source_id = source_id, source_id = NULL where email_hash IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getIdsForUserSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctUserSource(List<String> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE email SET source_id = client_source_id, client_source_id = NULL where email_hash IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
     }       

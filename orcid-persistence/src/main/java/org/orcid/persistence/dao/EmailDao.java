@@ -81,4 +81,8 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     List<String> getIdsForClientSourceCorrection(int limit);
 
     void correctClientSource(List<String> ids);
+
+    List<String> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<String> ids);
 }

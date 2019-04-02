@@ -283,7 +283,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT id FROM org_affiliation_relation WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+        Query query = entityManager.createNativeQuery("SELECT id FROM org_affiliation_relation WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -292,6 +292,22 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     public void correctClientSource(List<BigInteger> ids) {
         Query query = entityManager.createNativeQuery("UPDATE org_affiliation_relation SET client_source_id = source_id, source_id = NULL where id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM org_affiliation_relation WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctUserSource(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE org_affiliation_relation SET source_id = client_source_id, client_source_id = NULL where id IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
     }
