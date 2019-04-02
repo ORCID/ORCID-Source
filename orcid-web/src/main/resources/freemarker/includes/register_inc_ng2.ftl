@@ -163,7 +163,7 @@
         </div>        
         <!--Terms and conditions-->
         <div class="clearfix bottomBuffer">
-            <h4><@orcid.msg 'register.labelTermsofUse'/> <i><@orcid.msg 'register.optional'/></i></h4>  
+            <h4><@orcid.msg 'register.labelTermsofUse'/></h4>  
             <p>
                 <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
                 <@orcid.msg 'register.labelconsent'/> <a href="{{aboutUri}}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="{{aboutUri}}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
