@@ -21,6 +21,7 @@ import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -814,6 +815,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid) {
         Query query = entityManager.createQuery("from OrcidGrantedAuthority where profileEntity.id = :orcid");
         query.setParameter("orcid", orcid);  
+        return query.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypes) {
+        Query query = entityManager.createQuery("from ProfileEventEntity where orcid = :orcid and type IN :types");
+        query.setParameter("orcid", orcid);  
+        query.setParameter("types", eventTypes);  
         return query.getResultList();
     }
 }

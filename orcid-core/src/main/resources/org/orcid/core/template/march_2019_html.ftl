@@ -37,7 +37,7 @@
                 <@emailMacros.msg "email.march_2019.director_title" />
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.march_2019.note.part_1" /><a href="${unsubscribeUrl}" />" target="_blank"><@emailMacros.msg "email.march_2019.note.part_2" /></a><@emailMacros.msg "email.march_2019.note.part_3" />
+                <@emailMacros.msg "email.march_2019.note.part_1" /><a href="${unsubscribeLink}" />" target="_blank"><@emailMacros.msg "email.march_2019.note.part_2" /></a><@emailMacros.msg "email.march_2019.note.part_3" />
             </p>
             <#include "tips_disclaimer_html.ftl"/>
             <hr />

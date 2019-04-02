@@ -1587,4 +1587,32 @@
     
     <bean id="findMyStuffManager" class="org.orcid.core.manager.v3.impl.FindMyStuffManagerImpl" />        
     
+    <!-- email trickle -->
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <!-- lets use an embedded broker for now (easier to test!) -->
+        <property name="brokerURL"
+            value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}" />
+        <property name="redeliveryPolicy" ref="redeliveryPolicy" />
+        <property name="trustAllPackages" value="true"/>
+    </bean>
+    <bean id="cachingJmsConnectionFactory"
+        class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="jmsConnectionFactory" />
+    </bean>
+
+    <!-- JmsTemplate Definition so we can send to queues -->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+    </bean>
+    
+    <!-- redelivery policy -->
+    <bean id="redeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
+       <property name="maximumRedeliveries" value="-1" />
+       <property name="initialRedeliveryDelay" value="1" />
+    </bean>
+    
+    <bean id="emailQueueProducer" class="org.orcid.core.email.trickle.producer.EmailQueueProducer" >
+        <property name="jmsTemplate" ref="jmsTemplate" />
+    </bean>
+    
 </beans>
