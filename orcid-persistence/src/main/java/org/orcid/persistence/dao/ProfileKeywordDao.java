@@ -51,4 +51,8 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
     List<BigInteger> getIdsForClientSourceCorrection(int limit);
 
     void correctClientSource(List<BigInteger> ids);
+
+    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<BigInteger> ids);
 }

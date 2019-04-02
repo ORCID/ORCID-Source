@@ -112,7 +112,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+        Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -121,6 +121,22 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Transactional
     public void correctClientSource(List<BigInteger> ids) {
         Query query = entityManager.createNativeQuery("UPDATE other_name SET client_source_id = source_id, source_id = NULL where other_name_id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctUserSource(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE other_name SET source_id = client_source_id, client_source_id = NULL where other_name_id IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
     }
