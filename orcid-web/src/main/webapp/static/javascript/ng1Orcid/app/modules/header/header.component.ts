@@ -1,21 +1,15 @@
 declare var getWindowWidth: any;
-declare var orcidVar: any;
 
 //Import all the angular components
 
-import { NgForOf, NgIf } 
-    from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { FormsModule }
-    from '@angular/forms';
-
-import { Observable, Subject, Subscription } 
+import { Subject } 
     from 'rxjs';
     
-import { takeUntil, shareReplay } 
+import { takeUntil } 
     from 'rxjs/operators';
     
 import { NotificationsService } 

@@ -171,29 +171,6 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         }
     }
 
-    @Test
-    public void testGetOrcidIdBase() {
-        // Check client
-        OrcidIdBase base = adapter.getOrcidIdBase("APP-0000000000000001");
-        assertNotNull(base);
-        assertNotNull(base.getHost());
-        assertNotNull(base.getPath());
-        assertNotNull(base.getUri());
-        assertEquals("http://orcid.org/client/APP-0000000000000001", base.getUri());
-        assertEquals("orcid.org", base.getHost());
-        assertEquals("APP-0000000000000001", base.getPath());
-
-        // Check user
-        base = adapter.getOrcidIdBase("0000-0000-0000-0000");
-        assertNotNull(base);
-        assertNotNull(base.getHost());
-        assertNotNull(base.getPath());
-        assertNotNull(base.getUri());
-        assertEquals("http://orcid.org/0000-0000-0000-0000", base.getUri());
-        assertEquals("orcid.org", base.getHost());
-        assertEquals("0000-0000-0000-0000", base.getPath());
-    }
-
     @SuppressWarnings("deprecation")
     private void checkSource(Source source, String sourceId) {
         assertNotNull(source);

@@ -34,11 +34,7 @@
 		        <#if isPrimary?? && isPrimary>
                     <@emailMacros.msg "email.verify.primary_reminder_v2" /><@emailMacros.space />
                 </#if>
-		        <#if isReminder?? && isReminder>                    
-                    <@emailMacros.msg "email.verify.click_link" />
-                <#else>
-                    <@emailMacros.msg "email.verify.thank_you" />
-                </#if>
+                <@emailMacros.msg "email.verify.thank_you_button" />
             </p>
 				     <table
                         cellpadding="0"

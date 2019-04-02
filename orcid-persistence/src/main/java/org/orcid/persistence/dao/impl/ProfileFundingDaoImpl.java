@@ -286,7 +286,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id IS NULL AND source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+        Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -297,5 +297,22 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         Query query = entityManager.createNativeQuery("UPDATE profile_funding SET client_source_id = source_id, source_id = NULL where id IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctUserSource(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE profile_funding SET source_id = client_source_id, client_source_id = NULL where id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+        
     }
 }

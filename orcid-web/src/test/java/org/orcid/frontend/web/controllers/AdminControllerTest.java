@@ -40,7 +40,6 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -54,7 +53,6 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.record.Email;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
@@ -85,9 +83,6 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     private ProfileDao profileDao;
 
-    @Resource
-    protected OrcidProfileManager orcidProfileManager;
-
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
@@ -96,6 +91,9 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
+    
+    @Resource(name = "profileEntityManagerV3")
+    private ProfileEntityManager profileEntityManager;
     
     @Mock
     private NotificationManager mockNotificationManager;
@@ -164,11 +162,13 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Override
     protected Authentication getAuthentication() {
-        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4440");
+        String orcid = "4444-4444-4444-4440";
+        ProfileEntity p = profileEntityManager.findByOrcid(orcid);
+        Email e = emailManager.findPrimaryEmail(orcid);
         List<OrcidWebRole> roles = getRole();
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcidProfile.retrieveOrcidPath(),
-                orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), null, roles);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcidProfile.retrieveOrcidPath(), orcidProfile.getPassword(), getRole());
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
+                e.getEmail(), null, roles);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), getRole());
         auth.setDetails(details);
         return auth;
     }
@@ -322,26 +322,26 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Test
     public void resetPasswordTest() throws IllegalAccessException {
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
-        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", orcidProfile.getPassword());
+        ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4441");
+        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
         AdminChangePassword form = new AdminChangePassword();
         form.setOrcidOrEmail("4444-4444-4444-4441");
         form.setPassword("password1");
         adminController.resetPassword(mockRequest, mockResponse, form);
-        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
-        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
+        p = profileEntityManager.findByOrcid("4444-4444-4444-4441");
+        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(p.getPassword()));
     }
 
     @Test
     public void resetPasswordUsingEmailTest() throws IllegalAccessException {
-        OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
-        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", orcidProfile.getPassword());
+        ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4442");
+        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
         AdminChangePassword form = new AdminChangePassword();
         form.setOrcidOrEmail("michael@bentine.com");
         form.setPassword("password1");
         adminController.resetPassword(mockRequest, mockResponse, form);
-        orcidProfile = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4442");
-        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(orcidProfile.getPassword()));
+        p = profileEntityManager.findByOrcid("4444-4444-4444-4442");
+        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(p.getPassword()));
     }
 
     @Test

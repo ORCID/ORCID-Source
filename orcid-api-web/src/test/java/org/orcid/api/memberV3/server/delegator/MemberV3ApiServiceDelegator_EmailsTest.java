@@ -170,8 +170,17 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
                 assertEquals(Visibility.PRIVATE, email.getVisibility());
                 assertEquals("APP-5555555555555555", email.retrieveSourcePath());
                 assertEquals(true, email.isVerified());
+                assertEquals(false, email.isPrimary());
+                break;
+            case "peter@sellers.com":
+                assertEquals(Visibility.PRIVATE, email.getVisibility());
+                assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+                assertEquals(false, email.isVerified());
                 assertEquals(true, email.isPrimary());
                 break;
+            default: 
+                fail("Invalid email: " + email.getEmail());
+                    break;
             }
         }
     }

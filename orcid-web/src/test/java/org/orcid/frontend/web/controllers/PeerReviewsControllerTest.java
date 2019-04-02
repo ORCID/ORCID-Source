@@ -12,13 +12,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.security.OrcidUserDetailsService;
@@ -42,9 +40,6 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
             "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml");
 
     @Resource
-    protected OrcidProfileManager orcidProfileManager;
-
-    @Resource
     protected PeerReviewsController peerReviewsController;
     
     @Resource
@@ -52,11 +47,6 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
 
     @Mock
     private HttpServletRequest servletRequest;
-
-    @Before
-    public void init() {
-        orcidProfileManager.updateLastModifiedDate("4444-4444-4444-4446");
-    }
 
     @BeforeClass
     public static void beforeClass() throws Exception {

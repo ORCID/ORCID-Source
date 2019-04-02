@@ -4,6 +4,7 @@ import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_PERSON_READ;
 import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_TOGGLZ_READ;
 import static org.orcid.core.api.OrcidApiConstants.MEMBER_INFO;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.OAUTH_TOKEN;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -17,7 +18,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,7 +56,7 @@ public abstract class InternalApiServiceImplBase {
      * @return
      */
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {

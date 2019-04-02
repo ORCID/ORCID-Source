@@ -18,14 +18,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.jena.ext.com.google.common.collect.Sets;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
@@ -47,28 +45,17 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
             "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml",
             "/data/ResearchResourceEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
-    private static String OTHER_USER_ORCID = "4444-4444-4444-4446";
-
     @Resource
     private ResearchResourcesController controller;
 
     @Resource(name = "researchResourceManagerV3")
     private ResearchResourceManager researchResourceManager;
 
-    @Resource
-    protected OrcidProfileManager orcidProfileManager;
-
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
 
     @Mock
     private HttpServletRequest servletRequest;
-
-    @Before
-    public void init() {
-        orcidProfileManager.updateLastModifiedDate("4444-4444-4444-4446");
-        assertNotNull(controller);
-    }
 
     @BeforeClass
     public static void beforeClass() throws Exception {

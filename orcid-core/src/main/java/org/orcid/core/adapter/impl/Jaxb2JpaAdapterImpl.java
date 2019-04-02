@@ -108,7 +108,6 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
-import org.springframework.util.Assert;
 
 /**
  * orcid-persistence - Dec 7, 2011 - Jaxb2JpaAdapterImpl
@@ -153,12 +152,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
-        return toProfileEntity(profile, existingProfileEntity, UpdateOptions.ALL);
-    }
-
-    @Override
-    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity, UpdateOptions updateOptions) { 
-        Assert.notNull(profile, "Cannot convert a null OrcidProfile");
+        UpdateOptions updateOptions = UpdateOptions.ALL;
         ProfileEntity profileEntity = existingProfileEntity == null ? new ProfileEntity() : existingProfileEntity;
         
         // if orcid-id exist us it
@@ -255,9 +249,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    @Override
     @Deprecated
-    public WorkEntity getWorkEntity(String orcid, OrcidWork orcidWork, WorkEntity workEntity) {
+    private WorkEntity getWorkEntity(String orcid, OrcidWork orcidWork, WorkEntity workEntity) {
         if (orcidWork != null) {
             if(workEntity == null) {
                 String putCode = orcidWork.getPutCode();
@@ -1101,51 +1094,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileEntity.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN.name());
         }
     }    
-
-    @Override
-    public OrgAffiliationRelationEntity getNewOrgAffiliationRelationEntity(Affiliation affiliation, ProfileEntity profileEntity) {
-        OrgAffiliationRelationEntity orgAffiliationRelationEntity = getOrgAffiliationRelationEntity(affiliation, null);
-        orgAffiliationRelationEntity.setProfile(profileEntity);
-        return orgAffiliationRelationEntity;
-    }
-
-    @Override
-    public OrgAffiliationRelationEntity getUpdatedAffiliationRelationEntity(Affiliation updatedAffiliation) {
-        if (PojoUtil.isEmpty(updatedAffiliation.getPutCode()))
-            throw new IllegalArgumentException("Affiliation must contain a put code to be edited");
-        long affiliationId = Long.valueOf(updatedAffiliation.getPutCode());
-        OrgAffiliationRelationEntity exisitingOrgAffiliationEntity = orgAffiliationRelationDao.find(affiliationId);
-        OrgAffiliationRelationEntity orgAffiliationRelationEntity = getOrgAffiliationRelationEntity(updatedAffiliation, exisitingOrgAffiliationEntity);
-        return orgAffiliationRelationEntity;
-    }
-
-    /**
-     * Transforms a OrcidGrant object into a ProfileFundingEntity object
-     * 
-     * @param updatedFunding
-     * @param profileEntity
-     * @return ProfileFundingEntity
-     * */
-    @Override
-    public ProfileFundingEntity getNewProfileFundingEntity(Funding updatedFunding, ProfileEntity profileEntity) {
-        ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, null);
-        profileFundingEntity.setProfile(profileEntity);
-        return profileFundingEntity;
-    }
-
-    /**
-     * Transforms a OrcidGrant object into a ProfileFundingEntity object
-     * 
-     * @param updatedFunding
-     * @param profileEntity
-     * @return ProfileFundingEntity
-     * */
-    @Override
-    public ProfileFundingEntity getUpdatedProfileFundingEntity(Funding updatedFunding) {
-        ProfileFundingEntity existingProfileFundingEntity = profileFundingManager.getProfileFundingEntity(Long.valueOf(updatedFunding.getPutCode()));
-        ProfileFundingEntity profileFundingEntity = getProfileFundingEntity(updatedFunding, existingProfileFundingEntity);
-        return profileFundingEntity;
-    }
 
     private OrgAffiliationRelationEntity getOrgAffiliationRelationEntity(Affiliation affiliation, OrgAffiliationRelationEntity exisitingOrgAffiliationEntity) {
         if (affiliation != null) {

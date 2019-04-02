@@ -72,10 +72,6 @@ import { UriPipe }
 
 import { UrlProtocolPipe }
     from '../../pipes/urlProtocolNg2';
-
-import { WorkExternalIdentifierHtmlPipe }
-    from '../../pipes/workExternalIdentifierHtmlNg2';
-
 //User generated modules
 
 import { ExtIdPopoverNg2Module }
@@ -128,8 +124,7 @@ import { RequestPasswordResetNg2Module }
             ReplaceSeparatorWithSpacePipe,
             SafeUrlPipe,
             UriPipe,
-            UrlProtocolPipe,
-            WorkExternalIdentifierHtmlPipe,
+            UrlProtocolPipe
 
         ],
         exports: [
@@ -157,7 +152,6 @@ import { RequestPasswordResetNg2Module }
             SafeUrlPipe,
             UriPipe,
             UrlProtocolPipe,
-            WorkExternalIdentifierHtmlPipe,
             //User Modules
             ExtIdPopoverNg2Module,
             LanguageNg2Module,

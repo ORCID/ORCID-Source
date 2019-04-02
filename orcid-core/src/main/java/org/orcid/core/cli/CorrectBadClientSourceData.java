@@ -89,6 +89,17 @@ public class CorrectBadClientSourceData {
             }
             ids = addressDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
         }
+        
+        ids = addressDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<BigInteger> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                addressDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = addressDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        }
         LOG.info("Corrected {} records", corrected);
     }
     
@@ -104,6 +115,17 @@ public class CorrectBadClientSourceData {
                 subList = getNextIdSubset(ids);
             }
             ids = emailDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        }
+        
+        ids = emailDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<String> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                emailDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = emailDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -121,6 +143,17 @@ public class CorrectBadClientSourceData {
             }
             ids = notificationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
         }
+        
+        ids = notificationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<BigInteger> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                notificationDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = notificationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        }
         LOG.info("Corrected {} records", corrected);
     }
 
@@ -136,6 +169,17 @@ public class CorrectBadClientSourceData {
                 subList = getNextIdSubset(ids);
             }
             ids = orgAffiliationRelationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        }
+        
+        ids = orgAffiliationRelationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<BigInteger> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                orgAffiliationRelationDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = orgAffiliationRelationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -153,6 +197,17 @@ public class CorrectBadClientSourceData {
             }
             ids = orgDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
         }
+        
+        ids = orgDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<BigInteger> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                orgDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = orgDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        }
         LOG.info("Corrected {} records", corrected);
     }
 
@@ -168,6 +223,17 @@ public class CorrectBadClientSourceData {
                 subList = getNextIdSubset(ids);
             }
             ids = otherNameDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        }
+        
+        ids = otherNameDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<BigInteger> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                otherNameDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = otherNameDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -185,6 +251,17 @@ public class CorrectBadClientSourceData {
             }
             ids = profileFundingDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
         }
+        
+        ids = profileFundingDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<BigInteger> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                profileFundingDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = profileFundingDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        }
         LOG.info("Corrected {} records", corrected);
     }
 
@@ -200,6 +277,17 @@ public class CorrectBadClientSourceData {
                 subList = getNextIdSubset(ids);
             }
             ids = profileKeywordDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        }
+        
+        ids = profileKeywordDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<BigInteger> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                profileKeywordDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = profileKeywordDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -217,6 +305,17 @@ public class CorrectBadClientSourceData {
             }
             ids = researcherUrlDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
         }
+        
+        ids = researcherUrlDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<BigInteger> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                researcherUrlDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = researcherUrlDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        }
         LOG.info("Corrected {} records", corrected);
     }
 
@@ -232,6 +331,17 @@ public class CorrectBadClientSourceData {
                 subList = getNextIdSubset(ids);
             }
             ids = workDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        }
+        
+        ids = workDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        while (!ids.isEmpty()) {
+            List<BigInteger> subList = getNextIdSubset(ids);
+            while (!subList.isEmpty()) {
+                workDao.correctUserSource(subList);
+                corrected += subList.size();
+                subList = getNextIdSubset(ids);
+            }
+            ids = workDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
         }
         LOG.info("Corrected {} records", corrected);
     }

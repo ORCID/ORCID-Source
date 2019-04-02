@@ -74,5 +74,9 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
 
     void correctClientSource(List<BigInteger> ids);
 
+    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<BigInteger> ids);
+
 
 }
