@@ -8756,7 +8756,6 @@ a.footer-url {
     padding:0;
     list-style: none;
     position: relative;
-    margin-bottom: 200px;
     display: flex;
     align-items: center;
     height: 60px;
@@ -8879,4 +8878,26 @@ a.footer-url {
 
 .header2 .search-dropdown {
     cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
+    .header2 .menu-bar ul.menu li {
+        flex-direction: column;
+    }
+    
+    .header2 .menu-bar ul.menu {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .menu-bar ul.menu li:hover > ul {
+        display: flex;
+    }
+    .header2 .menu-bar li.first.expanded.active-trail {
+        display: flex;
+    }
+    .header2 .menu-bar ul.menu li:hover > ul {
+        z-index: 5;
+        position: relative;
+    }
 }

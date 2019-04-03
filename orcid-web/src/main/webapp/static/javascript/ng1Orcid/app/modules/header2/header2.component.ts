@@ -28,7 +28,6 @@ import { FeaturesService }
 export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     getUnreadCount: any;
-    menuVisible: boolean;
     headerSearch: any;
     searchFilterChanged: boolean;
     searchVisible: boolean;
@@ -52,7 +51,6 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
     ) {
         this.getUnreadCount = 0;
         this.headerSearch = {};
-        this.menuVisible = false;
         this.searchFilterChanged = false;
         this.searchVisible = false;
         this.secondaryMenuVisible = {};
@@ -115,18 +113,6 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
         return window.location.href.startsWith(getBaseUri() + '/' + path);
     };
 
-    onResize(event?): void {
-        let windowWidth = getWindowWidth();
-        if(windowWidth > 767){ /* Desktop view */
-            this.menuVisible = true;
-            this.searchVisible = true;
-            this.settingsVisible = true;
-        }else{
-            this.menuVisible = false;
-            this.searchVisible = false;
-            this.settingsVisible = false;
-        }
-    };
 
     retrieveUnreadCount(): any {
         if( this.notificationsSrvc.retrieveCountCalled == false ) {
@@ -157,14 +143,12 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
     }
   
     toggleMenu(): void {
-        this.menuVisible = !this.menuVisible;
         this.searchVisible = false;
         this.settingsVisible = false;     
     };
     
     toggleSearch(): void {
         this.searchVisible = !this.searchVisible;
-        this.menuVisible = false;     
         this.settingsVisible = false;
     };
 
@@ -174,7 +158,6 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
 
     toggleSettings(): void {
         this.settingsVisible = !this.settingsVisible;
-        this.menuVisible = false;
         this.searchVisible = false;
     };
     

@@ -85,7 +85,7 @@
             </a>
             
             <!-- Desktop / Tablet View -->
-            <ul class="menu public" *ngIf="menuVisible == true" (window:resize)="onResize($event)">
+            <ul class="menu public"  (window:resize)="onResize($event)">
                 <li class="active-trail"><a href="{{getBaseUri()}}/my-orcid"><@orcid.msg
                     'public-layout.edit_your_record'/></a></li>
                 <li><a href="{{getBaseUri()}}/about"><@orcid.msg
