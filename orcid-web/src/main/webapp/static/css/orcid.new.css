@@ -8747,3 +8747,77 @@ a.footer-url {
     padding-top: 10px;
     display: block;
 }
+
+.header2 .menu-bar {
+    background-color: #2E7F9F;
+}
+
+.header2  .menu-bar ul.menu{
+    padding:0;
+    list-style: none;
+    position: relative;
+    margin-bottom: 200px;
+    display: flex;
+    align-items: center;
+    height: 60px;
+}
+
+.header2  .menu-bar ul.menu li {
+    display: flex;
+    float:none;
+    white-space:nowrap;
+    height: 100%;
+}
+
+.header2  .menu-bar a {
+    padding:0 10px;
+    color:#fff;
+    font-size:20px;
+    line-height:30px;
+    text-decoration:none;
+    display: flex;
+    align-items: center;
+}
+
+.header2 .menu-bar a:hover {
+    color:#494a4c;
+    background-color:#e3e3e3;
+    transition: all .3s ease;
+    font-weight: 700;
+}
+
+.header2  .menu-bar ul.menu ul {
+    display:none;
+    position:absolute;
+    left: 0;
+    top:100%;
+}
+
+.header2 .menu-bar li.first.expanded.active-trail > ul, .menu-bar ul.menu li:hover > ul {
+    display:inherit;
+    transition: all .3s ease;
+    background: #fff;
+    width: 100%;
+    flex-wrap: wrap;
+    height: auto;
+
+}
+
+.header2 .menu-bar ul.menu li:hover > ul {
+    z-index: 5;
+}
+
+.header2 .menu-bar ul > li > ul a {
+    color: #494a4c ;
+    font-weight: 700;
+}
+
+.header2 .menu-bar ul > li > ul a:hover {
+    color: #2E7F9F ;
+    font-weight: 700;
+}
+
+
+.header2 .logo-search-bar .slogan {
+    font-size: 18px;
+}

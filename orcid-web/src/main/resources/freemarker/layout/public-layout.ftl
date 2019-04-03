@@ -73,7 +73,10 @@
         </#if>
         <!--NON-OAUTH HEADER-->
         <!--hide header if oauth login-->
-        <#if !(RequestParameters['oauth'])??>            
+        <#if !(RequestParameters['oauth'])??>  
+            <#include "/includes/ng2_templates/header2-ng2-template.ftl">
+            <header2-ng2></header2-ng2>
+         
             <div class="container">
                 <#include "/includes/ng2_templates/header-ng2-template.ftl">
                 <#include "/includes/ng2_templates/language-ng2-template.ftl">

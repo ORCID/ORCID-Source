@@ -90,6 +90,9 @@ import { FundingFormNg2Module }
 import { HeaderNg2Module } 
     from './header/header';
 
+import { Header2Ng2Module } 
+    from './header2/header2';
+
 import { HomeNg2Module } 
     from './home/home';
 
@@ -199,7 +202,7 @@ import { WorksFormNg2Module }
     from './works/worksForm';
 
 import { WorksNg2Module } 
-    from './works/works.ts';
+    from './works/works';
 
 import { ManageMembersNg2Module } 
     from './manageMembers/manageMembers';
@@ -319,6 +322,7 @@ export class RootCmp {
         EmailVerificationSentMesssageNg2Module,//Aproved
         ExtIdPopoverNg2Module,
         HeaderNg2Module,
+        Header2Ng2Module,
         HomeNg2Module,
         FundingDeleteNg2Module,
         FundingFormNg2Module,
