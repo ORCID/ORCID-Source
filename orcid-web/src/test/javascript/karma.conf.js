@@ -23,7 +23,6 @@ module.exports = function(config) {
         'src/main/webapp/static/javascript/angularjs/1.2.11/angular-cookies.min.js',
         'src/main/webapp/static/javascript/angularjs/1.2.11/angular-sanitize.min.js',
         'src/main/webapp/static/javascript/plugins.js',
-        'src/main/webapp/static/javascript/orcid.js',
         'src/main/webapp/static/javascript/script.js',
         'src/main/webapp/static/javascript/angularOrcid.js',
         'src/test/javascript/*_tests.js'

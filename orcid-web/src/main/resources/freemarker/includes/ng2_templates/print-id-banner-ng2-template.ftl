@@ -11,7 +11,6 @@
 					<div class="orcid-id-container">
 						<div class="orcid-id-info">
 	                        <span class="mini-orcid-icon"></span>
-	                        <!-- Reference: orcid.js:removeProtocolString() -->
 	                        <span id="orcid-id" class="orcid-id">{{getBaseUri()}}/${(effectiveUserOrcid)!}</span>	
 						</div>				
 					</div>
