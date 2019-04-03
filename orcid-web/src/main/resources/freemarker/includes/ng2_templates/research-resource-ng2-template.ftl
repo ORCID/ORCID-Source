@@ -7,7 +7,7 @@
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <a (click)="workspaceSrvc.toggleResearchResource()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayResearchResource==false}"></i>
-                            <@orcid.msg 'manage.research_resources'/> (<span>{{researchResourceService.groups.length}}</span>)
+                            <@orcid.msg 'manage.research_resources'/> (<span>{{researchResourceService.groupsLabel}}</span>)
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
