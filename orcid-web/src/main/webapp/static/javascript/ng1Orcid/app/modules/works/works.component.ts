@@ -1,8 +1,6 @@
 declare var $: any;
-declare var ActSortState: any;
 declare var bibtexParse: any;
 declare var blobObject: any;
-declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
 declare var populateWorkAjaxForm: any;
@@ -87,7 +85,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     showMergeWorksApiMissingExtIdsError: boolean;
     showMergeWorksExtIdsError: boolean;
-    sortState: any;
+    sortAsc: boolean;
+    sortKey: string;
     textFiles: any;
     wizardDescExpanded: any;
     workImportWizard: boolean;
@@ -152,7 +151,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement = {};
         this.showMergeWorksApiMissingExtIdsError = false;
         this.showMergeWorksExtIdsError = false;
-        this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+        this.sortAsc = false;
+        this.sortKey = "date";
         this.textFiles = [];
         this.wizardDescExpanded = {};
         this.workImportWizard = false;
@@ -471,7 +471,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(this.fixedTitle.length > maxSize){
                         this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
                     }
-                    this.worksService.notifyOther({fixedTitle:this.fixedTitle, putCode:putCode, deleteGroup:deleteGroup, sortState:this.sortState});
+                    this.worksService.notifyOther({fixedTitle:this.fixedTitle, putCode:putCode, deleteGroup:deleteGroup});
                     this.modalService.notifyOther({action:'open', moduleId: 'modalWorksDelete'});
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
@@ -708,8 +708,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     loadMore(): void {
         if(this.publicView === "true") {
             if(this.printView === "true") {
-                this.worksService.loadAllPublicWorkGroups(this.sortState.predicateKey, 
-                    !this.sortState.reverseKey[this.sortState.predicateKey]
+                this.worksService.loadAllPublicWorkGroups(this.sortKey, 
+                    this.sortAsc
                 )
                 .pipe(    
                     takeUntil(this.ngUnsubscribe)
@@ -726,8 +726,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     } 
                 );
             } else {
-                this.worksService.getWorksPage(this.worksService.constants.access_type.ANONYMOUS, this.sortState.predicateKey, 
-                    !this.sortState.reverseKey[this.sortState.predicateKey]
+                this.worksService.getWorksPage(this.worksService.constants.access_type.ANONYMOUS, this.sortKey, 
+                    this.sortAsc
                 )
                 .pipe(    
                     takeUntil(this.ngUnsubscribe)
@@ -745,8 +745,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 );
             }
         } else {
-            this.worksService.getWorksPage(this.worksService.constants.access_type.USER, this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey]
+            this.worksService.getWorksPage(this.worksService.constants.access_type.USER, this.sortKey, 
+                this.sortAsc
             )
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
@@ -901,8 +901,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     refreshWorkGroups(): void {
-        this.worksService.refreshWorkGroups(this.sortState.predicateKey, 
-            !this.sortState.reverseKey[this.sortState.predicateKey]
+        this.worksService.refreshWorkGroups(this.sortKey, 
+            this.sortAsc
         )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -1103,13 +1103,19 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     }; 
 
     sort(key): void {
-        this.sortState.sortBy(key);
+        if(key == this.sortKey){
+            this.sortAsc = !this.sortAsc;
+        } else {
+            this.sortKey = key;
+        }
+        console.log(this.sortKey);
+        console.log(this.sortAsc);
         this.worksService.resetWorkGroups();
         if(this.publicView === "true"){
             this.worksService.getWorksPage(
                 this.worksService.constants.access_type.ANONYMOUS, 
-                this.sortState.predicateKey, 
-                !this.sortState.reverseKey[key]
+                this.sortKey, 
+                this.sortAsc
             )
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
@@ -1129,8 +1135,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         } else {
             this.worksService.getWorksPage(
                 this.worksService.constants.access_type.USER, 
-                this.sortState.predicateKey, 
-                !this.sortState.reverseKey[key]
+                this.sortKey, 
+                this.sortAsc
             )
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
@@ -1179,8 +1185,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
-                    this.worksService.loadAllWorkGroups(this.sortState.predicateKey, 
-                    !this.sortState.reverseKey[this.sortState.predicateKey])
+                    this.worksService.loadAllWorkGroups(this.sortKey, 
+                    this.sortAsc)
                     .pipe(    
                         takeUntil(this.ngUnsubscribe)
                     )
@@ -1317,6 +1323,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.loadMore();
         this.loadWorkImportWizardList();
+        console.log(this.sortKey);
+        console.log(this.sortAsc);
     };
     
     getBaseUri(): String {
