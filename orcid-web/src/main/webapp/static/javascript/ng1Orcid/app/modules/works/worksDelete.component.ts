@@ -1,6 +1,4 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var sortState: any;
 
 //Import all the angular components
 import { NgForOf, NgIf } 
