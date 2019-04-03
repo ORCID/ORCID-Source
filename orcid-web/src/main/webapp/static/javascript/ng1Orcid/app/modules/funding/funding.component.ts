@@ -395,6 +395,9 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         if(key == this.sortKey){
             this.sortAsc = !this.sortAsc;
         } else {
+            if(key=='title' || key=='type'){
+                this.sortAsc = true;
+            }
             this.sortKey = key;
         }
         this.getFundingGroups();

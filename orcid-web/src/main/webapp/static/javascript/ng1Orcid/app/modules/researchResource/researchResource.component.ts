@@ -278,10 +278,11 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         if(key == this.sortKey){
             this.sortAsc = !this.sortAsc;
         } else {
+            if(key=='title'){
+                this.sortAsc = true;
+            }
             this.sortKey = key;
         }
-        console.log(this.sortKey);
-        console.log(this.sortAsc);
         this.researchResourceService.resetGroups();
         if(this.publicView === "true") {
             this.researchResourceService.getPublicResearchResourcePage(this.sortKey, this.sortAsc).pipe(    
@@ -360,8 +361,6 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     };
 
     ngOnInit() {
-        console.log(this.sortKey);
-        console.log(this.sortAsc);
         this.getResearchResourceGroups();
     };
 }

@@ -1106,10 +1106,11 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         if(key == this.sortKey){
             this.sortAsc = !this.sortAsc;
         } else {
+            if(key=='title' || key=='type'){
+                this.sortAsc = true;
+            }
             this.sortKey = key;
         }
-        console.log(this.sortKey);
-        console.log(this.sortAsc);
         this.worksService.resetWorkGroups();
         if(this.publicView === "true"){
             this.worksService.getWorksPage(
@@ -1323,8 +1324,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.loadMore();
         this.loadWorkImportWizardList();
-        console.log(this.sortKey);
-        console.log(this.sortAsc);
     };
     
     getBaseUri(): String {
