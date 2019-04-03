@@ -8821,3 +8821,62 @@ a.footer-url {
 .header2 .logo-search-bar .slogan {
     font-size: 18px;
 }
+
+.header2 .logo-search-bar {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header2 .search-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+
+.header2 .search-dropbtn {
+    padding: 0 16px;
+    font-size: 16px;
+    border: none;
+    line-height: 28px;
+  }
+
+
+  .header2 .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+  .header2 .dropdown-content div {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+
+  .header2 .dropdown-content.open a {
+    background-color: #ddd;
+}
+
+.header2 .search-dropdown.open .dropdown-content {
+    display: block;
+    padding: 0;
+    right: 0;
+}
+
+.header2 .input-group-addon {
+    padding: 0;
+    background-color: #808083;
+    color: white;
+}
+
+.header2 .logo-search-bar .input-group-addon .glyphicon{
+    padding: 0 10px;
+}
+
+.header2 .search-dropdown {
+    cursor: pointer;
+}

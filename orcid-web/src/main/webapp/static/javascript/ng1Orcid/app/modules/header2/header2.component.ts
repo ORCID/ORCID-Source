@@ -27,9 +27,6 @@ import { FeaturesService }
 })
 export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    
-    conditionsActive: boolean;
-    filterActive: boolean;
     getUnreadCount: any;
     menuVisible: boolean;
     headerSearch: any;
@@ -46,14 +43,13 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
     assetsPath: String;
     aboutUri: String;
     liveIds: String;    
-    
+    searchDropdownOpen = false; 
+
     constructor(
         private notificationsSrvc: NotificationsService,
         private featuresService: FeaturesService,
         private commonSrvc: CommonService
     ) {
-        this.conditionsActive = false;
-        this.filterActive = false;
         this.getUnreadCount = 0;
         this.headerSearch = {};
         this.menuVisible = false;
@@ -115,17 +111,6 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
-    hideSearchFilter(): void{
-        if (!this.headerSearch.searchInput){
-            var timeoutFunction = (function() { 
-                if ( this.searchFilterChanged === false ) {
-                    this.filterActive = false;
-                }           
-            }).bind(this);
-            setTimeout(timeoutFunction, 3000);
-        }
-    };
-
     isCurrentPage(path): any {
         return window.location.href.startsWith(getBaseUri() + '/' + path);
     };
@@ -158,16 +143,6 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         }
-    };
-
-    searchBlur(): void {    
-        this.hideSearchFilter();
-        this.conditionsActive = false;        
-    };
-
-    searchFocus(): void {
-        this.filterActive = true;
-        this.conditionsActive = true;
     };
 
     searchSubmit(): void {
@@ -225,4 +200,11 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
     getBaseUri(): String {
         return getBaseUri();
     };
+
+    clickDropdown (value) {
+        this.searchDropdownOpen = !this.searchDropdownOpen;
+        if (value) {
+            this.headerSearch.searchOption = value
+        }
+    }
 }

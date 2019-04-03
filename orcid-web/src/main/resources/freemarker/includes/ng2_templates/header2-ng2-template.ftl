@@ -13,52 +13,44 @@
     </ng-container>
     </#if>
 
-    <div *ngIf="!isOauth"> 
+    <div  *ngIf="!isOauth"> 
 
-
-        <div class="logo-search-bar container">
-            <div class="logo"> 
-                <a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.png'}}" alt="ORCID logo" /></a>
-                <div class="slogan"><@orcid.msg 'public-layout.logo.tagline'/></div>
-            </div>
-            <div class="search">
-                        <!-- Search Form  -->               
-            <form id="form-search" (ngSubmit)="searchSubmit()" *ngIf="searchVisible == true">
-                <div id="search-box">
-                    <input type="search" id="searchInput" [(ngModel)]="headerSearch.searchInput" name="searchInput"
-                        (focus)="searchFocus()" (blur)="searchBlur()"
-                        placeholder="<@orcid.msg 'public-layout.search'/>" />
+        <div class="container">
+            <div class="logo-search-bar">
+                <div class="logo"> 
+                    <a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.png'}}" alt="ORCID logo" /></a>
+                    <div class="slogan"><@orcid.msg 'public-layout.logo.tagline'/></div>
                 </div>
-
-                <div class="bar">
-                    <fieldset class="search_options" *ngIf="filterActive == true"
-                        >
-                        <input type="radio" name="searchOption" id="filter_registry" [(ngModel)]="headerSearch.searchOption" name="searchOption" (click)="filterChange()"
-                            value="registry" checked /> 
-                        <label for="filter_registry"><@orcid.msg 'public-layout.search.choice.registry'/></label> 
-                        <input type="radio" name="searchOption" (click)="filterChange()"id="filter_website" [(ngModel)]="headerSearch.searchOption" value="website" />
-            		    <label for="filter_website"><@orcid.msg 'public-layout.search.choice.website'/></label>
-                    </fieldset>
+                <div class="search">
+                <a href="{{getBaseUri()}}/orcid-search/search" class="settings-button"><@orcid.msg 'public-layout.search.advanced'/></a>
+                <div class="form-group ">
+                <div class="input-group">
+                <div class="input-group-addon">
+                    <div class="search-dropdown" [ngClass]="{'open': searchDropdownOpen}" >
+                        <div class="search-dropbtn" (click)="clickDropdown()"> {{headerSearch.searchOption === 'website'? '<@orcid.msg 'public-layout.search.choice.website'/>':'<@orcid.msg 'public-layout.search.choice.registry'/>'}} <span class="glyphicon glyphicon-chevron-down"></span> </div>
+                        <ul class="dropdown-content">
+                            <div (click)="clickDropdown('registry')"> <@orcid.msg 'public-layout.search.choice.registry'/> </div>
+                            <div (click)="clickDropdown('website')"> <@orcid.msg 'public-layout.search.choice.website'/> </div>
+                        </ul>
+                    </div>  
                 </div>
-
-                <div class="conditions" *ngIf="conditionsActive == true" >
-                    <p>                         
-                        <@orcid.msg 'public-layout.search.terms1'/><a
-                            href="{{aboutUri}}/legal"><@orcid.msg
-                            'public-layout.search.terms2'/></a><@orcid.msg
-                        'public-layout.search.terms3'/>
-                    </p>
+                <input class="form-control" id="email" name="email" type="text" placeholder="<@orcid.msg 'public-layout.search'/>"/>
+                <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-search" (click)="searchSubmit()"></span> 
                 </div>
-
-                <div class="top-buttons">
-                    <button type="submit" class="search-button">
-                        <i class="icon-orcid-search"></i>
-                    </button>
-                    <a href="{{getBaseUri()}}/orcid-search/search"
-                    class="settings-button" title="<@orcid.msg
-                    'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
                 </div>
-            </form>
+                </div>
+                         <#--  
+                        <div class="conditions" >
+                            <p>                         
+                                <@orcid.msg 'public-layout.search.terms1'/><a
+                                    href="{{aboutUri}}/legal"><@orcid.msg
+                                    'public-layout.search.terms2'/></a><@orcid.msg
+                                'public-layout.search.terms3'/>
+                            </p>
+                        </div>  
+                        -->
+                </div>
             </div>
         </div>
 
