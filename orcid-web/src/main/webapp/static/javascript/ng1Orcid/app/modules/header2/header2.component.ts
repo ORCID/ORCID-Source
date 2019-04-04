@@ -3,7 +3,7 @@ declare var getWindowWidth: any;
 //Import all the angular components
 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef } 
     from '@angular/core';
 
 import { Subject } 
@@ -25,8 +25,7 @@ import { FeaturesService }
     selector: 'header2-ng2',
     template: scriptTmpl("header2-ng2-template")
 })
-export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
+export class Header2Component  {
     getUnreadCount: any;
     headerSearch: any;
     searchFilterChanged: boolean;
@@ -43,11 +42,18 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
     aboutUri: String;
     liveIds: String;    
     searchDropdownOpen = false; 
+    mobileMenu = {
+        HELP: false,
+        ABOUT: false, 
+        ORGANIZATIONS: false,
+        RESEARCHERS: false
+    }
 
     constructor(
         private notificationsSrvc: NotificationsService,
         private featuresService: FeaturesService,
-        private commonSrvc: CommonService
+        private commonSrvc: CommonService, 
+        private ref: ChangeDetectorRef
     ) {
         this.getUnreadCount = 0;
         this.headerSearch = {};
@@ -99,27 +105,10 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
         this.searchFilterChanged = true;
     };
 
-    handleMobileMenuOption( $event ): void{
-        let w = getWindowWidth();           
-        
-        $event.preventDefault();
-        
-        if( w > 767) {               
-            window.location.href = $event.target.getAttribute('href');
-        }
-    };
-
-    isCurrentPage(path): any {
-        return window.location.href.startsWith(getBaseUri() + '/' + path);
-    };
-
 
     retrieveUnreadCount(): any {
         if( this.notificationsSrvc.retrieveCountCalled == false ) {
             this.notificationsSrvc.retrieveUnreadCount()
-            .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
             .subscribe(
                 data => {
                     this.getUnreadCount = data;
@@ -141,53 +130,28 @@ export class Header2Component implements AfterViewInit, OnDestroy, OnInit {
                     + encodeURIComponent(this.headerSearch.searchInput));
         }
     }
-  
-    toggleMenu(): void {
-        this.searchVisible = false;
-        this.settingsVisible = false;     
-    };
-    
-    toggleSearch(): void {
-        this.searchVisible = !this.searchVisible;
-        this.settingsVisible = false;
-    };
-
-    toggleSecondaryMenu(submenu): void {
-        this.secondaryMenuVisible[submenu] = !this.secondaryMenuVisible[submenu];
-    };
-
-    toggleSettings(): void {
-        this.settingsVisible = !this.settingsVisible;
-        this.searchVisible = false;
-    };
-    
-    toggleTertiaryMenu(submenu): void {
-        this.tertiaryMenuVisible[submenu] = !this.tertiaryMenuVisible[submenu];
-    };
-
-    //Default init functions provided by Angular Core
-    ngAfterViewInit() {
-        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-    };
-
-    ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
-    };
-
-    ngOnInit() {
-        this.onResize(); 
-        this.headerSearch.searchOption = 'registry';         
-    }; 
     
     getBaseUri(): String {
         return getBaseUri();
     };
 
-    clickDropdown (value) {
+    clickDropdown (value, $event) {
         this.searchDropdownOpen = !this.searchDropdownOpen;
         if (value) {
             this.headerSearch.searchOption = value
         }
+        $event.preventDefault();
+    }
+
+    mobileMenuHandler (value, $event) {
+        if (this.mobileMenu[value]) {
+            $event.preventDefault()
+        }
+        Object.keys(this.mobileMenu).forEach ( item => {
+            console.log ('---', item,  item === value)
+            this.mobileMenu[item] = item === value
+        })
+        this.ref.detectChanges();
+        
     }
 }

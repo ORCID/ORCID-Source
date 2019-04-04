@@ -58,11 +58,11 @@
                 <!--  Desktop / Tablet menu -->             
                 <ul class="menu container" resize>
                     <!-- FOR RESEARCHERS -->
-                    <li class="first expanded active-trail">
-                        <a href="{{aboutUri}}/about/what-is-orcid/mission" (click)="handleMobileMenuOption($event)" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
+                    <li class="first expanded active-trail" [ngClass]="{'open': mobileMenu.RESEARCHERS}" (click)="mobileMenuHandler('RESEARCHERS', $event)">
+                        <a href="{{aboutUri}}/about/what-is-orcid/mission" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
                         <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']">
                             <!-- Mobile view Only -->
-                            <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="{{getBaseUri()}}" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
+                            <li class="leaf    "><a href="{{getBaseUri()}}" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
                     
                             <!-- Menu -->
                             <li class="leaf last"><a ${(nav=="signin")?then('class="active" ', '')} href="{{getBaseUri()}}/signin"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
@@ -105,43 +105,43 @@
 
                     <!-- DRUPAL WEBSITE MENUS -->
                     <!-- FOR ORGANIZATIONS -->
-                    <li class="expanded">
-                        <a href="{{aboutUri}}/organizations" (click)="handleMobileMenuOption($event)"><@orcid.msg 'public-layout.for_organizations'/></a>
+                    <li class="expanded" [ngClass]="{'open': mobileMenu.ORGANIZATIONS}" (click)="mobileMenuHandler('ORGANIZATIONS', $event)">
+                        <a href="{{aboutUri}}/organizations" ><@orcid.msg 'public-layout.for_organizations'/></a>
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
-                            <li class="first leaf hidden-md hidden-lg hidden-sm visible-xs">
+                            <li class="first leaf    ">
                                 <a href="{{aboutUri}}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a>
                             </li>
 
                             <li class="first leaf">
-                                <a href="{{aboutUri}}/organizations/funders" class="russian-fix" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('funders')"><@orcid.msg 'public-layout.funders'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/funders" class="russian-fix" ><@orcid.msg 'public-layout.funders'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
                             </li>
                             <li class="leaf">
-                                <a href="{{aboutUri}}/organizations/institutions" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('institutions')"><@orcid.msg 'public-layout.research_organizations'/><span class="more" ></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/institutions" ><@orcid.msg 'public-layout.research_organizations'/><span class="more" ></span></a> <!-- Updated according Drupal website structure -->
                             </li>
                             <li class="leaf">
-                                <a href="{{aboutUri}}/organizations/publishers" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('publishers')"> <@orcid.msg 'public-layout.publishers'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/publishers" > <@orcid.msg 'public-layout.publishers'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
                             </li>
                             <li class="leaf">
-                                <a href="{{aboutUri}}/organizations/associations" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('associations')"><@orcid.msg 'public-layout.associations'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/associations" ><@orcid.msg 'public-layout.associations'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
                             </li>
                             <li class="last leaf">
-                                <a href="{{aboutUri}}/organizations/integrators" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('integrators')"><@orcid.msg 'public-layout.integrators'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/integrators" ><@orcid.msg 'public-layout.integrators'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
                             </li>
                         </ul>
                     </li>
                     <!-- ABOUT -->
-                    <li class="expanded"><a href="{{aboutUri}}/about" (click)="handleMobileMenuOption($event)"><@orcid.msg
+                    <li class="expanded" [ngClass]="{'open': mobileMenu.ABOUT}" (click)="mobileMenuHandler('ABOUT', $event)"><a href="{{aboutUri}}/about"><@orcid.msg
                             'public-layout.about'/></a>
 
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
                             <li><a href="{{aboutUri}}/about"
-                                class="first leaf hidden-md hidden-lg hidden-sm visible-xs"><@orcid.msg
+                                class="first leaf    "><@orcid.msg
                                     'public-layout.about'/></a></li>
                             <!-- What is ORCID? -->
                             <li class="first expanded">
-                                <a href="{{aboutUri}}/about/what-is-orcid" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('whatIsOrcid')"><@orcid.msg 'public-layout.what_is_orcid'/><span class="more"></span></a>
+                                <a href="{{aboutUri}}/about/what-is-orcid"><@orcid.msg 'public-layout.what_is_orcid'/><span class="more"></span></a>
                        
                             </li>
                             <!-- The ORCID Team -->
@@ -149,17 +149,17 @@
                                     'public-layout.the_orcid_team'/></a></li>
                             <!-- The ORCID Comunity -->
                             <li class="expanded">
-                                <a href="{{aboutUri}}/about/community" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('community')"><@orcid.msg 'public-layout.the_orcid_community'/><span class="more"></span></a>
+                                <a href="{{aboutUri}}/about/community"><@orcid.msg 'public-layout.the_orcid_community'/><span class="more"></span></a>
                              
                             </li>
                             <!-- Membership -->
                             <li class="expanded">
-                                <a href="{{aboutUri}}/about/membership" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('membership')"><@orcid.msg 'public-layout.membership'/><span class="more"></span></a>
+                                <a href="{{aboutUri}}/about/membership"><@orcid.msg 'public-layout.membership'/><span class="more"></span></a>
         
                             </li>
                             <!-- News -->
                             <li class="leaf">
-                                <a href="{{aboutUri}}/about/news/news" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('news')"><@orcid.msg 'public-layout.news'/><span class="more"></span></a>
+                                <a href="{{aboutUri}}/about/news/news"><@orcid.msg 'public-layout.news'/><span class="more"></span></a>
                             </li>
                             <!-- Events -->
                             <li class="last expanded">
@@ -168,11 +168,11 @@
                         </ul>
                     </li>
                     <!-- HELP -->
-                    <li class="expanded">
-                        <a href="{{aboutUri}}/help" (click)="handleMobileMenuOption($event)"><@orcid.msg 'public-layout.help'/></a>
+                    <li class="expanded" [ngClass]="{'open': mobileMenu.HELP}" (click)="mobileMenuHandler('HELP', $event)">
+                        <a href="{{aboutUri}}/help"><@orcid.msg 'public-layout.help'/></a>
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
-                            <li class="first leaf hidden-md hidden-lg hidden-sm visible-xs">
+                            <li class="first leaf    ">
                                 <a href="{{aboutUri}}/help"><@orcid.msg 'public-layout.help'/></a>
                             </li>
                             <li class="first leaf">
@@ -191,7 +191,7 @@
                     </li>
                     
                     <!-- SIGN IN/OUT -->
-                    <li class="last leaf">                    
+                    <li class="last leaf" [ngClass]="{'open': mobileMenu.SIGNIN}" (click)="mobileMenuHandler('SIGNIN', $event)">                    
                         <a *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin"><@orcid.msg 'public-layout.sign_in'/></a>                    
                         <a *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout"><@orcid.msg 'public-layout.sign_out'/></a>
                     </li>                    

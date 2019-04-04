@@ -8792,7 +8792,7 @@ a.footer-url {
     top:100%;
 }
 
-.header2 .menu-bar li.first.expanded.active-trail > ul, .menu-bar ul.menu li:hover > ul {
+.header2 .menu-bar li.active-trail > ul, .header2 .menu-bar ul.menu li:hover > ul, .header2 .menu-bar ul.menu li.open > ul{
     display:inherit;
     transition: all .3s ease;
     background: #fff;
@@ -8890,14 +8890,27 @@ a.footer-url {
         height: auto;
     }
 
-    .menu-bar ul.menu li:hover > ul {
+    .header2 .menu-bar ul.menu li {
+        width: 100%;
+        align-items: center;
+    }
+
+    .header2 .menu-bar ul.menu li.open > ul {
         display: flex;
     }
-    .header2 .menu-bar li.first.expanded.active-trail {
-        display: flex;
+
+    .header2 .menu-bar li.active-trail > ul {
+        display: none;
     }
     .header2 .menu-bar ul.menu li:hover > ul {
+        display: none;
+
+    }
+
+    .header2 .menu-bar ul.menu li.open > ul, .header2 .menu-bar li.active-trail.open > ul {
+        display: flex;
         z-index: 5;
         position: relative;
     }
+
 }
