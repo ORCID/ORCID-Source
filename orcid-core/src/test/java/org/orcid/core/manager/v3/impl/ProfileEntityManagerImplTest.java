@@ -281,11 +281,11 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Test
     public void testGetApplications() {
         Date expiration = new Date(System.currentTimeMillis() + 10000);
-        OrcidOauth2TokenDetail token1 = createToken(CLIENT_ID_1, "token-1", USER_ORCID, expiration, "/read-limited", false);
-        OrcidOauth2TokenDetail token2 = createToken(CLIENT_ID_1, "token-2", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
-        OrcidOauth2TokenDetail token3 = createToken(CLIENT_ID_1, "token-3", USER_ORCID, expiration, "/activities/update", false);
-        OrcidOauth2TokenDetail token4 = createToken(CLIENT_ID_1, "token-4", USER_ORCID, expiration, "/activities/read-limited", false);
-        OrcidOauth2TokenDetail token5 = createToken(CLIENT_ID_1, "token-5", USER_ORCID, expiration, "/orcid-works/read-limited", false);
+        createToken(CLIENT_ID_1, "token-1", USER_ORCID, expiration, "/read-limited", false);
+        createToken(CLIENT_ID_1, "token-2", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
+        createToken(CLIENT_ID_1, "token-3", USER_ORCID, expiration, "/activities/update", false);
+        createToken(CLIENT_ID_1, "token-4", USER_ORCID, expiration, "/activities/read-limited", false);
+        createToken(CLIENT_ID_1, "token-5", USER_ORCID, expiration, "/orcid-works/read-limited", false);
         
         List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
@@ -293,17 +293,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(4, applications.get(0).getScopePaths().keySet().size());
         
         //Assert we can delete them
-        profileEntityManager.disableApplication(token1.getId(), USER_ORCID);
-        profileEntityManager.disableApplication(token5.getId(), USER_ORCID);
-        
-        applications = profileEntityManager.getApplications(USER_ORCID);
-        assertEquals(1, applications.size());
-        assertEquals(3, applications.get(0).getScopePaths().keySet().size());
-        
-        //Revoke the others
-        profileEntityManager.disableApplication(token2.getId(), USER_ORCID);
-        profileEntityManager.disableApplication(token3.getId(), USER_ORCID);        
-        profileEntityManager.disableApplication(token4.getId(), USER_ORCID);                
+        profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
         
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
@@ -335,38 +325,27 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(3, applications.get(0).getScopePaths().keySet().size());
         
         //Revoke them to check revoking one revokes all the ones with the same scopes
-        profileEntityManager.disableApplication(token1.getId(), USER_ORCID);
-        profileEntityManager.disableApplication(token2.getId(), USER_ORCID);
-        
-        applications = profileEntityManager.getApplications(USER_ORCID);
-        assertNotNull(applications);
-        assertEquals(1, applications.size());
-        assertEquals(2, applications.get(0).getScopePaths().keySet().size());
-        
-        //Revoke them all
-        profileEntityManager.disableApplication(token3.getId(), USER_ORCID);
-        profileEntityManager.disableApplication(token10.getId(), USER_ORCID);
+        profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
         
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
         assertTrue(applications.isEmpty());
     }
     
-    @SuppressWarnings("unused")
     @Test
     public void testDontGetDuplicatedApplicationsSameScopes() {
         Long seed = System.currentTimeMillis();
         Date expiration = new Date(System.currentTimeMillis() + 10000);
-        OrcidOauth2TokenDetail token1 = createToken(CLIENT_ID_1, "token-1-" + seed, USER_ORCID, expiration, "/openid", false); // Displayed
-        OrcidOauth2TokenDetail token2 = createToken(CLIENT_ID_1, "token-2-" + seed, USER_ORCID, expiration, "/openid", false);
-        OrcidOauth2TokenDetail token3 = createToken(CLIENT_ID_1, "token-3-" + seed, USER_ORCID, expiration, "/openid", false);
-        
+        createToken(CLIENT_ID_1, "token-1-" + seed, USER_ORCID, expiration, "/openid", false); // Displayed
+        createToken(CLIENT_ID_1, "token-2-" + seed, USER_ORCID, expiration, "/openid", false);
+        createToken(CLIENT_ID_1, "token-3-" + seed, USER_ORCID, expiration, "/openid", false);
+
         List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
         assertEquals(1, applications.size());
         
         //Revoke them to check revoking one revokes all the ones with the same scopes
-        profileEntityManager.disableApplication(token1.getId(), USER_ORCID);
+        profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
         
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);

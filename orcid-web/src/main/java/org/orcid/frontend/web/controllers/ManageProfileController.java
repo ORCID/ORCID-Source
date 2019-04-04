@@ -215,10 +215,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         return manageSocialAccount;
     }
 
-    @RequestMapping(value = "/revoke-application", method = RequestMethod.POST)
-    public @ResponseBody boolean revokeApplication(@RequestParam("tokenId") String tokenId) {
+    @RequestMapping(value = "/revoke-application.json", method = RequestMethod.POST)
+    public @ResponseBody boolean revokeApplication(@RequestParam("clientId") String clientId) {
         String userOrcid = getCurrentUserOrcid();
-        profileEntityManager.disableApplication(Long.valueOf(tokenId), userOrcid);
+        profileEntityManager.disableClientAccess(clientId, userOrcid);
         return true;
     }
 

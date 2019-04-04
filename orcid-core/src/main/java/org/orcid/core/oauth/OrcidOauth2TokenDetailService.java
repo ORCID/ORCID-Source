@@ -80,5 +80,7 @@ public interface OrcidOauth2TokenDetailService {
      *            the id of the user owner of the token
      */
     void disableAccessTokenByUserOrcid(String userOrcid, RevokeReason reason);
+
+    void disableClientAccess(String clientDetailsId, String userOrcid);
     
 }

@@ -296,8 +296,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void disableApplication(Long tokenId, String userOrcid) {
-        orcidOauth2TokenService.disableAccessToken(tokenId, userOrcid);
+    public void disableClientAccess(String clientDetailsId, String userOrcid) {
+        orcidOauth2TokenService.disableClientAccess(clientDetailsId, userOrcid);
     }
 
     @Override
