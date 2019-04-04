@@ -254,6 +254,10 @@ input[type=submit] .caret {
     border-top-color: #fff
 }
 
+pre {
+    white-space: pre-wrap; 
+    word-wrap: break-word; 
+}
 select {
     background-color: #fff;
     border: 1px solid #ccc
