@@ -13,17 +13,18 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.orcid.core.manager.BackupCodeManager;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
@@ -86,6 +87,9 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
+    @Mock
+    private EmailFrequencyManager emailFrequencyManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
@@ -95,6 +99,13 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
     }    
+    
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        ReflectionTestUtils.setField(profileEntityManager, "emailFrequencyManager", emailFrequencyManager);
+        Mockito.when(emailFrequencyManager.createOnClaim(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(true);
+    }
     
     @Test
     public void testFindByOrcid() throws Exception {
@@ -278,60 +289,16 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         
         List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
-        assertEquals(5, applications.size());
-        
-        boolean found1 = false, found2=false, found3 = false, found4 = false, found5 = false;
-        
-        for(ApplicationSummary summary : applications) {
-            assertNotNull(summary.getTokenId());
-            if(summary.getTokenId().equals(String.valueOf(token1.getId()))) {
-                found1 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token2.getId()))) {
-                found2 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token3.getId()))) {
-                found3 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token4.getId()))) {
-                found4 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token5.getId()))) {
-                found5 = true;
-            }              
-        }
-        
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-        assertTrue(found5);
+        assertEquals(1, applications.size());
+        assertEquals(4, applications.get(0).getScopePaths().keySet().size());
         
         //Assert we can delete them
         profileEntityManager.disableApplication(token1.getId(), USER_ORCID);
         profileEntityManager.disableApplication(token5.getId(), USER_ORCID);
         
-        found1 = found2 = found3 = found4 = found5 = false;
-        
         applications = profileEntityManager.getApplications(USER_ORCID);
-        assertEquals(3, applications.size());
-        
-        for(ApplicationSummary summary : applications) {
-            assertNotNull(summary.getTokenId());
-            if(summary.getTokenId().equals(String.valueOf(token1.getId()))) {
-                found1 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token2.getId()))) {
-                found2 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token3.getId()))) {
-                found3 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token4.getId()))) {
-                found4 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token5.getId()))) {
-                found5 = true;
-            }     
-        }
-
-        assertFalse(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found4);
-        assertFalse(found5);
+        assertEquals(1, applications.size());
+        assertEquals(3, applications.get(0).getScopePaths().keySet().size());
         
         //Revoke the others
         profileEntityManager.disableApplication(token2.getId(), USER_ORCID);
@@ -362,27 +329,10 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         
         List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
-        assertEquals(4, applications.size());
+        assertEquals(1, applications.size());
         
-        boolean found1 = false, found2 = false, found3 = false, found10 = false;
-        
-        for(ApplicationSummary summary : applications) {
-            assertNotNull(summary.getTokenId());
-            if(summary.getTokenId().equals(String.valueOf(token1.getId()))) {
-                found1 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token2.getId()))) {
-                found2 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token3.getId()))) {
-                found3 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token10.getId()))) {
-                found10 = true;
-            } 
-        }
-        
-        assertTrue(found1);
-        assertTrue(found2);
-        assertTrue(found3);
-        assertTrue(found10);
+        // scopes grouped by label - Read limited information from your biography., Read your information with visibility set to Trusted Parties, Add/update your research activities (works, affiliations, etc)
+        assertEquals(3, applications.get(0).getScopePaths().keySet().size());
         
         //Revoke them to check revoking one revokes all the ones with the same scopes
         profileEntityManager.disableApplication(token1.getId(), USER_ORCID);
@@ -390,27 +340,8 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
-        assertEquals(2, applications.size());
-        
-        found1 = found2 = found3 = found10 = false;
-        
-        for(ApplicationSummary summary : applications) {
-            assertNotNull(summary.getTokenId());
-            if(summary.getTokenId().equals(String.valueOf(token1.getId()))) {
-                found1 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token2.getId()))) {
-                found2 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token3.getId()))) {
-                found3 = true;
-            } else if(summary.getTokenId().equals(String.valueOf(token10.getId()))) {
-                found10 = true;
-            } 
-        }
-        
-        assertFalse(found1);
-        assertFalse(found2);
-        assertTrue(found3);
-        assertTrue(found10);
+        assertEquals(1, applications.size());
+        assertEquals(2, applications.get(0).getScopePaths().keySet().size());
         
         //Revoke them all
         profileEntityManager.disableApplication(token3.getId(), USER_ORCID);
@@ -419,6 +350,27 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
         assertTrue(applications.isEmpty());
+    }
+    
+    @SuppressWarnings("unused")
+    @Test
+    public void testDontGetDuplicatedApplicationsSameScopes() {
+        Long seed = System.currentTimeMillis();
+        Date expiration = new Date(System.currentTimeMillis() + 10000);
+        OrcidOauth2TokenDetail token1 = createToken(CLIENT_ID_1, "token-1-" + seed, USER_ORCID, expiration, "/openid", false); // Displayed
+        OrcidOauth2TokenDetail token2 = createToken(CLIENT_ID_1, "token-2-" + seed, USER_ORCID, expiration, "/openid", false);
+        OrcidOauth2TokenDetail token3 = createToken(CLIENT_ID_1, "token-3-" + seed, USER_ORCID, expiration, "/openid", false);
+        
+        List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
+        assertNotNull(applications);
+        assertEquals(1, applications.size());
+        
+        //Revoke them to check revoking one revokes all the ones with the same scopes
+        profileEntityManager.disableApplication(token1.getId(), USER_ORCID);
+        
+        applications = profileEntityManager.getApplications(USER_ORCID);
+        assertNotNull(applications);
+        assertEquals(0, applications.size());
     }
     
     public void testDisable2FA() {
