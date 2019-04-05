@@ -8750,6 +8750,7 @@ a.footer-url {
 
 .header2 .menu-bar {
     background-color: #2E7F9F;
+    margin-bottom: 38px;
 }
 
 .header2  .menu-bar ul.menu{
@@ -8759,6 +8760,7 @@ a.footer-url {
     display: flex;
     align-items: center;
     height: 60px;
+    margin: 0;
 }
 
 .header2  .menu-bar ul.menu li {
@@ -8769,30 +8771,35 @@ a.footer-url {
 }
 
 .header2  .menu-bar a {
-    padding:0 10px;
+    padding:0 20px;
     color:#fff;
-    font-size:20px;
-    line-height:30px;
+    font-size:16px;
     text-decoration:none;
     display: flex;
     align-items: center;
 }
 
-.header2 .menu-bar a:hover {
+.header2  .menu-bar menu > ul > li > a {
+    padding:0 20px;
+}
+
+.header2 .menu-bar li.open > a  {
     color:#494a4c;
     background-color:#e3e3e3;
     transition: all .3s ease;
-    font-weight: 700;
+    text-shadow: 1px 0 0 currentColor;
 }
 
-.header2  .menu-bar ul.menu ul {
+
+.header2 .menu-bar ul.menu ul {
+    
     display:none;
     position:absolute;
     left: 0;
     top:100%;
 }
 
-.header2 .menu-bar li.active-trail > ul, .header2 .menu-bar ul.menu li:hover > ul, .header2 .menu-bar ul.menu li.open > ul{
+.header2 .menu-bar ul.menu li.open > ul{
     display:inherit;
     transition: all .3s ease;
     background: #fff;
@@ -8807,13 +8814,13 @@ a.footer-url {
 }
 
 .header2 .menu-bar ul > li > ul a {
-    color: #494a4c ;
-    font-weight: 700;
+    color: #2e7f9f ;
+    font-size: 14px;
+    padding: 12px 10px
 }
 
 .header2 .menu-bar ul > li > ul a:hover {
-    color: #2E7F9F ;
-    font-weight: 700;
+    color: #494a4c  ;
 }
 
 
@@ -8897,14 +8904,6 @@ a.footer-url {
 
     .header2 .menu-bar ul.menu li.open > ul {
         display: flex;
-    }
-
-    .header2 .menu-bar li.active-trail > ul {
-        display: none;
-    }
-    .header2 .menu-bar ul.menu li:hover > ul {
-        display: none;
-
     }
 
     .header2 .menu-bar ul.menu li.open > ul, .header2 .menu-bar li.active-trail.open > ul {

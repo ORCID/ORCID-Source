@@ -46,7 +46,7 @@ export class Header2Component  {
         HELP: false,
         ABOUT: false, 
         ORGANIZATIONS: false,
-        RESEARCHERS: false
+        RESEARCHERS: true
     }
 
     constructor(
@@ -143,15 +143,31 @@ export class Header2Component  {
         $event.preventDefault();
     }
 
-    mobileMenuHandler (value, $event) {
-        if (this.mobileMenu[value]) {
-            $event.preventDefault()
+    menuHandler (value, $event) {
+
+        // Ignore first click on mobile
+        if ($( window ).width() < 600) {
+            if (this.mobileMenu[value] == false) {
+                $event.preventDefault()
+            }
         }
-        Object.keys(this.mobileMenu).forEach ( item => {
-            console.log ('---', item,  item === value)
-            this.mobileMenu[item] = item === value
-        })
-        this.ref.detectChanges();
+
+        // If is mobile ignore no-click events
+        if ($event.type === "click" || $( window ).width() >= 600) {
+            Object.keys(this.mobileMenu).forEach ( item => {
+                this.mobileMenu[item] = item === value
+            })
+            this.ref.detectChanges();
+        }
         
+    }
+
+    mouseLeave( ){
+        //If is not mobile
+        if ($( window ).width() > 600) {
+            Object.keys(this.mobileMenu).forEach ( item => {
+                this.mobileMenu[item] = item === "RESEARCHERS"
+            })
+        }
     }
 }

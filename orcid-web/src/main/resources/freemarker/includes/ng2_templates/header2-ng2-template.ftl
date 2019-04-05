@@ -54,11 +54,12 @@
             </div>
         </div>
 
-        <div class="menu-bar">
+        <div class="menu-bar"  (mouseleave)="mouseLeave()">
                 <!--  Desktop / Tablet menu -->             
-                <ul class="menu container" resize>
+                <div class="container"> 
+                <ul class="menu " resize>
                     <!-- FOR RESEARCHERS -->
-                    <li class="first expanded active-trail" [ngClass]="{'open': mobileMenu.RESEARCHERS}" (click)="mobileMenuHandler('RESEARCHERS', $event)">
+                    <li class="first expanded" [ngClass]="{'open': mobileMenu.RESEARCHERS}" (mouseenter)="menuHandler('RESEARCHERS', $event)" (click)="menuHandler('RESEARCHERS', $event)">
                         <a href="{{aboutUri}}/about/what-is-orcid/mission" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
                         <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']">
                             <!-- Mobile view Only -->
@@ -105,7 +106,7 @@
 
                     <!-- DRUPAL WEBSITE MENUS -->
                     <!-- FOR ORGANIZATIONS -->
-                    <li class="expanded" [ngClass]="{'open': mobileMenu.ORGANIZATIONS}" (click)="mobileMenuHandler('ORGANIZATIONS', $event)">
+                    <li class="expanded" [ngClass]="{'open': mobileMenu.ORGANIZATIONS}" (mouseenter)="menuHandler('ORGANIZATIONS', $event)" (click)="menuHandler('ORGANIZATIONS', $event)">
                         <a href="{{aboutUri}}/organizations" ><@orcid.msg 'public-layout.for_organizations'/></a>
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
@@ -131,7 +132,7 @@
                         </ul>
                     </li>
                     <!-- ABOUT -->
-                    <li class="expanded" [ngClass]="{'open': mobileMenu.ABOUT}" (click)="mobileMenuHandler('ABOUT', $event)"><a href="{{aboutUri}}/about"><@orcid.msg
+                    <li class="expanded" [ngClass]="{'open': mobileMenu.ABOUT}" (mouseenter)="menuHandler('ABOUT', $event)"  (click)="menuHandler('ABOUT', $event)" ><a href="{{aboutUri}}/about"><@orcid.msg
                             'public-layout.about'/></a>
 
                         <ul class="menu lang-fixes">
@@ -168,7 +169,7 @@
                         </ul>
                     </li>
                     <!-- HELP -->
-                    <li class="expanded" [ngClass]="{'open': mobileMenu.HELP}" (click)="mobileMenuHandler('HELP', $event)">
+                    <li class="expanded" [ngClass]="{'open': mobileMenu.HELP}" (mouseenter)="menuHandler('HELP', $event)"  (click)="menuHandler('HELP', $event)">
                         <a href="{{aboutUri}}/help"><@orcid.msg 'public-layout.help'/></a>
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
@@ -191,12 +192,13 @@
                     </li>
                     
                     <!-- SIGN IN/OUT -->
-                    <li class="last leaf" [ngClass]="{'open': mobileMenu.SIGNIN}" (click)="mobileMenuHandler('SIGNIN', $event)">                    
+                    <li class="last leaf" [ngClass]="{'open': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
                         <a *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin"><@orcid.msg 'public-layout.sign_in'/></a>                    
                         <a *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout"><@orcid.msg 'public-layout.sign_out'/></a>
                     </li>                    
 
                 </ul>  
+                </div>
             <div class="header-secondary-bar-row">
             </div>
         </div>
