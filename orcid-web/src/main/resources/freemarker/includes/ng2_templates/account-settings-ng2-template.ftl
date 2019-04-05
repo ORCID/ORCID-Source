@@ -1,5 +1,15 @@
 <#include "/includes/ng2_templates/emails-form-ng2-template.ftl">
 <script type="text/ng-template" id="account-settings-ng2-template">
+    <h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
+    <div class="popover-help-container">
+        <i class="glyphicon glyphicon-question-sign"></i>
+        <div id="account-settings-help" class="popover bottom">
+            <div class="arrow"></div>
+            <div class="popover-content">
+                <p><@orcid.msg 'manage.help_popover.accountSettings'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360000661693" target="manage.help_popover.accountSettings"><@orcid.msg 'common.learn_more'/></a></p>
+            </div>
+        </div>
+    </div>
     <table class="table table-bordered settings-table account-settings" style="margin:0; padding:0;">
         <tbody>
             <!-- Email and notification preferences -->
