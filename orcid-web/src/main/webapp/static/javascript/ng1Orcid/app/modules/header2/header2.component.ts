@@ -3,7 +3,7 @@ declare var getWindowWidth: any;
 //Import all the angular components
 
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef } 
+import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, HostListener } 
     from '@angular/core';
 
 import { Subject } 
@@ -48,6 +48,8 @@ export class Header2Component  {
         ORGANIZATIONS: false,
         RESEARCHERS: true
     }
+    openMobileMenu = false
+    isMobile = false
 
     constructor(
         private notificationsSrvc: NotificationsService,
@@ -146,14 +148,14 @@ export class Header2Component  {
     menuHandler (value, $event) {
 
         // Ignore first click on mobile
-        if ($( window ).width() < 600) {
+        if (this.isMobile) {
             if (this.mobileMenu[value] == false) {
                 $event.preventDefault()
             }
         }
 
         // If is mobile ignore no-click events
-        if ($event.type === "click" || $( window ).width() >= 600) {
+        if ($event.type === "click" || !this.isMobile) {
             Object.keys(this.mobileMenu).forEach ( item => {
                 this.mobileMenu[item] = item === value
             })
@@ -163,11 +165,23 @@ export class Header2Component  {
     }
 
     mouseLeave( ){
-        //If is not mobile
-        if ($( window ).width() > 600) {
+        if (!this.isMobile) {
             Object.keys(this.mobileMenu).forEach ( item => {
                 this.mobileMenu[item] = item === "RESEARCHERS"
             })
         }
+    }
+
+    toggleMenu() {
+        this.openMobileMenu = !this.openMobileMenu; 
+    }
+
+    ngOnInit() {
+        this.isMobile = window.innerWidth < 600;
+    }
+
+    @HostListener('window:resize', ['$event'])
+        onResize(event) {
+        this.isMobile = window.innerWidth < 600;
     }
 }

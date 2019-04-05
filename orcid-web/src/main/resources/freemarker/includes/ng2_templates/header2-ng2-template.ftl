@@ -6,7 +6,7 @@
         <div class="row top-header">
             <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
                 <a href="https://orcid.org" alt="ORCID logo">
-                    <img src="${staticCdn}/img/orcid-logo-208-64.png" width="208px" height="64px" alt="ORCID logo">
+                    <img style="height: 55px" != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" width="110px" alt="ORCID logo">
                 </a>
             </div>       
         </div>
@@ -18,19 +18,25 @@
         <div class="container">
             <div class="logo-search-bar">
                 <div class="logo"> 
-                    <a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.png'}}" alt="ORCID logo" /></a>
+                    <a href="{{aboutUri}}"><img style="height: 55px" *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" alt="ORCID logo" /></a>
                     <div class="slogan"><@orcid.msg 'public-layout.logo.tagline'/></div>
+                    <div class="menu-control"> 
+                        <span [hidden]="!openMobileMenu" style="height: 35px" class="close" (click)="toggleMenu()" alt="close menu"> </span>
+                        <img [hidden]="openMobileMenu" (click)="toggleMenu()" style="height: 35px" src="{{assetsPath + '/img/glyphicon-menu.svg'}}" alt="open menu"/>
+                    </div>
                 </div>
                 <div class="search">
+                <div class="advance-search-link">
                 <a href="{{getBaseUri()}}/orcid-search/search" class="settings-button"><@orcid.msg 'public-layout.search.advanced'/></a>
+                </div>
                 <div class="form-group ">
                 <div class="input-group">
                 <div class="input-group-addon">
                     <div class="search-dropdown" [ngClass]="{'open': searchDropdownOpen}" >
-                        <div class="search-dropbtn" (click)="clickDropdown()"> {{headerSearch.searchOption === 'website'? '<@orcid.msg 'public-layout.search.choice.website'/>':'<@orcid.msg 'public-layout.search.choice.registry'/>'}} <span class="glyphicon glyphicon-chevron-down"></span> </div>
+                        <div class="search-dropbtn" (click)="clickDropdown()"> {{ (headerSearch.searchOption === 'website'? '<@orcid.msg 'layout.public-layout.website'/>':'<@orcid.msg 'layout.public-layout.registry'/>') | titlecase }} <span [ngClass]="{'dropdown-arrow': !searchDropdownOpen, 'dropdown-arrow-up': searchDropdownOpen}"></span> </div>
                         <ul class="dropdown-content">
-                            <div (click)="clickDropdown('registry')"> <@orcid.msg 'public-layout.search.choice.registry'/> </div>
-                            <div (click)="clickDropdown('website')"> <@orcid.msg 'public-layout.search.choice.website'/> </div>
+                            <div (click)="clickDropdown('registry')"> {{'<@orcid.msg 'layout.public-layout.registry'/>'| titlecase }} </div>
+                            <div (click)="clickDropdown('website')"> {{'<@orcid.msg 'layout.public-layout.website'/>'| titlecase  }} </div>
                         </ul>
                     </div>  
                 </div>
@@ -54,9 +60,9 @@
             </div>
         </div>
 
-        <div class="menu-bar"  (mouseleave)="mouseLeave()">
+        <div class="menu-bar"  [hidden]="!openMobileMenu && isMobile"  (mouseleave)="mouseLeave()">
                 <!--  Desktop / Tablet menu -->             
-                <div class="container"> 
+                <div class="container container-menu"> 
                 <ul class="menu " resize>
                     <!-- FOR RESEARCHERS -->
                     <li class="first expanded" [ngClass]="{'open': mobileMenu.RESEARCHERS}" (mouseenter)="menuHandler('RESEARCHERS', $event)" (click)="menuHandler('RESEARCHERS', $event)">

@@ -8831,6 +8831,7 @@ a.footer-url {
 .header2 .logo-search-bar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .header2 .search-dropdown {
@@ -8840,10 +8841,12 @@ a.footer-url {
 
 
 .header2 .search-dropbtn {
-    padding: 0 16px;
+    padding: 0 12px;
     font-size: 16px;
     border: none;
     line-height: 28px;
+    display: flex;
+    align-items: center;    
   }
 
 
@@ -8851,7 +8854,7 @@ a.footer-url {
     display: none;
     position: absolute;
     background-color: #f1f1f1;
-    min-width: 160px;
+    min-width: 125px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
@@ -8861,6 +8864,12 @@ a.footer-url {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+    background-color: #ffffff;
+  }
+
+  
+  .header2 .dropdown-content div:hover {
+    background-color: #d8d8d8
   }
 
   .header2 .dropdown-content.open a {
@@ -8879,13 +8888,27 @@ a.footer-url {
     color: white;
 }
 
-.header2 .logo-search-bar .input-group-addon .glyphicon{
-    padding: 0 10px;
-}
-
 .header2 .search-dropdown {
     cursor: pointer;
 }
+
+.header2 .logo-search-bar .slogan {
+    font-size: 14px;
+    color: #333333;
+}
+
+.header2  .logo {
+    padding: 20px 0;
+}
+
+.header2 .menu-control {
+    display: none;
+}
+
+.header2 span.glyphicon.glyphicon-search {
+    padding: 0 10px;
+}
+
 
 @media only screen and (max-width: 600px) {
     .header2 .menu-bar ul.menu li {
@@ -8896,20 +8919,130 @@ a.footer-url {
         flex-direction: column;
         height: auto;
     }
+        
+    .header2 .menu-bar > ul.menu {
+        flex-direction: column;
+        height: auto;
+        padding: 48px 0;
+    }
 
     .header2 .menu-bar ul.menu li {
         width: 100%;
         align-items: center;
     }
 
-    .header2 .menu-bar ul.menu li.open > ul {
-        display: flex;
-    }
-
     .header2 .menu-bar ul.menu li.open > ul, .header2 .menu-bar li.active-trail.open > ul {
         display: flex;
         z-index: 5;
         position: relative;
+        padding: 9px 0;
     }
 
+    .header2 .slogan {
+        display: none;
+    }
+
+    .header2 .menu-bar {
+        position: absolute;
+        width: 100%;
+        z-index: 100;
+        margin-top: -85px;
+    }
+    .header2 .logo-search-bar {
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .header2 .menu-control {
+        margin-right: 10px;
+    }
+
+    .header2 .logo {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+    .header2 .search {
+        width: cal(100% + 30);
+        width: calc(100% + 30px);
+        background-color: #f6f6f6;
+    }
+    
+    .header2 .menu-control {
+        display: flex;
+        align-items: center;
+    }
+
+    .header2 .container.container-menu {
+        padding: 48px 0;
+    }
+
+    .header2 .menu-bar li.open > a {
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
+    .header2 .menu-bar li > a {
+        padding: 12px 0;
+    }
+
+    .header2 .advance-search-link {
+        margin: 10px 0px;
+    }
+}
+
+
+
+.arrow {
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    margin-left: 6px;
+    /* color: white; */
+}
+
+
+.close {
+    position: absolute;
+    right: 26px;
+    top: 32px;
+    width: 32px;
+    height: 32px;
+    opacity: 1;
+  }
+  .close:before, .close:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 33px;
+    width: 2px;
+    background-color: #333;
+  }
+  .close:before {
+    transform: rotate(45deg);
+  }
+  .close:after {
+    transform: rotate(-45deg);
+  }
+  
+
+  .dropdown-arrow  {
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    margin-left: 6px;
+}
+
+.dropdown-arrow-up {
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(-135deg);
+    margin-left: 6px;
+    margin-bottom: -6px;
 }
