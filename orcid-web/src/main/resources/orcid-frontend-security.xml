@@ -260,6 +260,7 @@
 		<sec:headers>
 			<sec:frame-options policy="SAMEORIGIN" />
 		</sec:headers>
+		<sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="logAndSuppressRequestRejectedExceptionFilter" />
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 		<sec:intercept-url pattern="/"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -489,8 +490,10 @@
 		<property name="switchFailureUrl" value="/signin" />
 	</bean>
 	
-	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />			
-
+	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />
+				
+	<bean id="logAndSuppressRequestRejectedExceptionFilter" class="org.orcid.frontend.web.filter.LogAndSuppressRequestRejectedExceptionFilter" />	
+	
 	<oauth2:resource-server id="resourceServerFilter"
 		resource-id="orcid" token-services-ref="tokenServices" />
 
