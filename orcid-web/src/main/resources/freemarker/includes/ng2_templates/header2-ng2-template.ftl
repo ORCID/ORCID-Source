@@ -117,7 +117,7 @@
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
                             <li class="first leaf    ">
-                                <a href="{{aboutUri}}/organizations"><@orcid.msg 'public-layout.for_organizations'/></a>
+                                <a href="{{aboutUri}}/organizations" [hidden]="!isMobile" ><@orcid.msg 'public-layout.for_organizations'/></a>
                             </li>
 
                             <li class="first leaf">
@@ -143,7 +143,7 @@
 
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
-                            <li><a href="{{aboutUri}}/about"
+                            <li><a [hidden]="!isMobile" href="{{aboutUri}}/about"
                                 class="first leaf    "><@orcid.msg
                                     'public-layout.about'/></a></li>
                             <!-- What is ORCID? -->
@@ -180,7 +180,7 @@
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
                             <li class="first leaf    ">
-                                <a href="{{aboutUri}}/help"><@orcid.msg 'public-layout.help'/></a>
+                                <a href="{{aboutUri}}/help" [hidden]="!isMobile"><@orcid.msg 'public-layout.help'/></a>
                             </li>
                             <li class="first leaf">
                                 <a href="{{aboutUri}}/faq-page" title=""><@orcid.msg 'public-layout.faq'/></a>

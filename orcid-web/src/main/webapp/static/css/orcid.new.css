@@ -8387,7 +8387,8 @@ ul.comma li:last-child:after {
     display: flex;
     flex-direction: column-reverse;
     flex-wrap: wrap-reverse;
-    justify-content: flex-start
+    justify-content: flex-start;
+    
 }
 
 .lang-rl .header .navigation>.menu>li.active-trail>.menu {
@@ -8750,7 +8751,7 @@ a.footer-url {
 
 .header2 .menu-bar {
     background-color: #2E7F9F;
-    margin-bottom: 38px;
+    margin-bottom: 55px;
 }
 
 .header2  .menu-bar ul.menu{
@@ -8806,6 +8807,7 @@ a.footer-url {
     width: 100%;
     flex-wrap: wrap;
     height: auto;
+    max-height: 80px;
 
 }
 
@@ -8909,6 +8911,11 @@ a.footer-url {
     padding: 0 10px;
 }
 
+@media only screen and (max-width: 991px) {
+    .header2 .menu-bar {
+        margin-bottom: 75px;
+    }
+}
 
 @media only screen and (max-width: 600px) {
     .header2 .menu-bar ul.menu li {
@@ -8945,7 +8952,7 @@ a.footer-url {
     .header2 .menu-bar {
         position: absolute;
         width: 100%;
-        z-index: 100;
+        z-index: 1000;
         margin-top: -85px;
     }
     .header2 .logo-search-bar {
