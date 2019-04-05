@@ -9104,9 +9104,12 @@ a.footer-url {
     .lang-rl .header2 .menu-bar a {
         flex-direction: row-reverse;
     }
-    
+
     .lang-rl .header2 .menu-bar ul > li > ul a {
         padding-right: 42px;
+    }
+    .lang-rl .header2 .logo {
+        flex-direction: row-reverse;
     }
 }
 
@@ -9132,6 +9135,11 @@ a.footer-url {
     height: 32px;
     opacity: 1;
   }
+
+.lang-rl .close {
+    left: 26px;
+}
+
   .close:before, .close:after {
     position: absolute;
     left: 15px;
