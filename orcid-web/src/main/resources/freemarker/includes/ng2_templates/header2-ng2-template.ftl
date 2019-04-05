@@ -121,19 +121,19 @@
                             </li>
 
                             <li class="first leaf">
-                                <a href="{{aboutUri}}/organizations/funders" class="russian-fix" ><@orcid.msg 'public-layout.funders'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/funders" class="russian-fix" ><@orcid.msg 'public-layout.funders'/></a> <!-- Updated according Drupal website structure -->
                             </li>
                             <li class="leaf">
-                                <a href="{{aboutUri}}/organizations/institutions" ><@orcid.msg 'public-layout.research_organizations'/><span class="more" ></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/institutions" ><@orcid.msg 'public-layout.research_organizations'/></a> <!-- Updated according Drupal website structure -->
                             </li>
                             <li class="leaf">
-                                <a href="{{aboutUri}}/organizations/publishers" > <@orcid.msg 'public-layout.publishers'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/publishers" > <@orcid.msg 'public-layout.publishers'/></a> <!-- Updated according Drupal website structure -->
                             </li>
                             <li class="leaf">
-                                <a href="{{aboutUri}}/organizations/associations" ><@orcid.msg 'public-layout.associations'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/associations" ><@orcid.msg 'public-layout.associations'/></a> <!-- Updated according Drupal website structure -->
                             </li>
                             <li class="last leaf">
-                                <a href="{{aboutUri}}/organizations/integrators" ><@orcid.msg 'public-layout.integrators'/><span class="more"></span></a> <!-- Updated according Drupal website structure -->
+                                <a href="{{aboutUri}}/organizations/integrators" ><@orcid.msg 'public-layout.integrators'/></a> <!-- Updated according Drupal website structure -->
                             </li>
                         </ul>
                     </li>
@@ -148,7 +148,7 @@
                                     'public-layout.about'/></a></li>
                             <!-- What is ORCID? -->
                             <li class="first expanded">
-                                <a href="{{aboutUri}}/about/what-is-orcid"><@orcid.msg 'public-layout.what_is_orcid'/><span class="more"></span></a>
+                                <a href="{{aboutUri}}/about/what-is-orcid"><@orcid.msg 'public-layout.what_is_orcid'/></a>
                        
                             </li>
                             <!-- The ORCID Team -->
@@ -156,17 +156,17 @@
                                     'public-layout.the_orcid_team'/></a></li>
                             <!-- The ORCID Comunity -->
                             <li class="expanded">
-                                <a href="{{aboutUri}}/about/community"><@orcid.msg 'public-layout.the_orcid_community'/><span class="more"></span></a>
+                                <a href="{{aboutUri}}/about/community"><@orcid.msg 'public-layout.the_orcid_community'/></a>
                              
                             </li>
                             <!-- Membership -->
                             <li class="expanded">
-                                <a href="{{aboutUri}}/about/membership"><@orcid.msg 'public-layout.membership'/><span class="more"></span></a>
+                                <a href="{{aboutUri}}/about/membership"><@orcid.msg 'public-layout.membership'/></a>
         
                             </li>
                             <!-- News -->
                             <li class="leaf">
-                                <a href="{{aboutUri}}/about/news/news"><@orcid.msg 'public-layout.news'/><span class="more"></span></a>
+                                <a href="{{aboutUri}}/about/news/news"><@orcid.msg 'public-layout.news'/></a>
                             </li>
                             <!-- Events -->
                             <li class="last expanded">
