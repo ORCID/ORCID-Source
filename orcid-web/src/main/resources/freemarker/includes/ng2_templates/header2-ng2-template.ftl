@@ -18,7 +18,7 @@
         <div class="container">
             <div class="logo-search-bar">
                 <div class="logo"> 
-                    <a href="{{aboutUri}}"><img style="height: 55px" *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" alt="ORCID logo" /></a>
+                    <a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" alt="ORCID logo" /></a>
                     <div class="slogan"><@orcid.msg 'public-layout.logo.tagline'/></div>
                     <div class="menu-control"> 
                         <span [hidden]="!openMobileMenu" style="height: 35px" class="close" (click)="toggleMenu()" alt="close menu"> </span>
@@ -26,25 +26,30 @@
                     </div>
                 </div>
                 <div class="search">
-                <div class="advance-search-link">
-                <a href="{{getBaseUri()}}/orcid-search/search" class="settings-button"><@orcid.msg 'public-layout.search.advanced'/></a>
-                </div>
+
+                
                 <div class="form-group ">
-                <div class="input-group">
-                <div class="input-group-addon">
-                    <div class="search-dropdown" [ngClass]="{'open': searchDropdownOpen}" >
-                        <div class="search-dropbtn" (click)="clickDropdown()"> {{ (headerSearch.searchOption === 'website'? '<@orcid.msg 'layout.public-layout.website'/>':'<@orcid.msg 'layout.public-layout.registry'/>') | titlecase }} <span [ngClass]="{'dropdown-arrow': !searchDropdownOpen, 'dropdown-arrow-up': searchDropdownOpen}"></span> </div>
-                        <ul class="dropdown-content">
-                            <div (click)="clickDropdown('registry')"> {{'<@orcid.msg 'layout.public-layout.registry'/>'| titlecase }} </div>
-                            <div (click)="clickDropdown('website')"> {{'<@orcid.msg 'layout.public-layout.website'/>'| titlecase  }} </div>
-                        </ul>
-                    </div>  
-                </div>
-                <input class="form-control" id="email" name="email" type="text" placeholder="<@orcid.msg 'public-layout.search'/>"/>
-                <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-search" (click)="searchSubmit()"></span> 
-                </div>
-                </div>
+                    <div class="search-container"> 
+                        <div class="advance-search-link">
+                            <a href="{{getBaseUri()}}/orcid-search/search" class="settings-button"><@orcid.msg 'public-layout.search.advanced'/></a>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <div class="search-dropdown" [ngClass]="{'open': searchDropdownOpen}" >
+                                    <div class="search-dropbtn" (click)="clickDropdown()"> {{ (headerSearch.searchOption === 'website'? '<@orcid.msg 'layout.public-layout.website'/>':'<@orcid.msg 'layout.public-layout.registry'/>') | titlecase }} <span [ngClass]="{'dropdown-arrow': !searchDropdownOpen, 'dropdown-arrow-up': searchDropdownOpen}"></span> </div>
+                                    <ul class="dropdown-content">
+                                        <div (click)="clickDropdown('registry')"> {{'<@orcid.msg 'layout.public-layout.registry'/>'| titlecase }} </div>
+                                        <div (click)="clickDropdown('website')"> {{'<@orcid.msg 'layout.public-layout.website'/>'| titlecase  }} </div>
+                                    </ul>
+                                </div>  
+                            </div>
+                            <input class="form-control" name="search" type="text" placeholder="<@orcid.msg 'public-layout.search'/>"/>
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-search" (click)="searchSubmit()"></span> 
+                            </div>
+                        </div>
+                    </div>
+                    <language-ng2></language-ng2>
                 </div>
                          <#--  
                         <div class="conditions" >
