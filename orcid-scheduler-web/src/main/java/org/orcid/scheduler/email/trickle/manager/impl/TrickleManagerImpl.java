@@ -55,6 +55,7 @@ public class TrickleManagerImpl implements TrickleManager {
                 Date now = new Date();
                 LOG.info("Cleared to send at {}", now);
                 EmailMessage emailMessage = item.getEmailMessage();
+                LOG.info("Sending email from {} to {} with subject {}", new Object[] {emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject()});
                 if (mailGunManager.sendEmail(emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject(), emailMessage.getBodyText(),
                         emailMessage.getBodyHtml())) {
                     profileEventDao.merge(getProfileEventEntity(item.getSuccessType(), item.getOrcid()));
