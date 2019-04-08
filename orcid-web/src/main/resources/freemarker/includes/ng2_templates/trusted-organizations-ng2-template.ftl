@@ -1,4 +1,18 @@
 <script type="text/ng-template" id="trusted-organizations-ng2-template"> 
+    <div class="section-heading">
+        <h1 id="manage-permissions">
+            ${springMacroRequestContext.getMessage("manage.trusted_organisations")}
+        </h1>
+        <div class="popover-help-container">
+            <i class="glyphicon glyphicon-question-sign"></i>
+            <div id="trusted-organizations-help" class="popover bottom">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <p><@orcid.msg 'manage.help_popover.trustedOrganizations'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006973893" target="manage.help_popover.trustedOrganizations"><@orcid.msg 'common.learn_more'/></a></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="clearfix">
             <div *ngIf="!applicationSummaryList?.length > 0">
                 <p><@orcid.msg 'manage.none_added.trustedOrganizations'/></p>

@@ -1,4 +1,18 @@
 <script type="text/ng-template" id="alt-signin-accounts-ng2-template">
+    <div class="section-heading">
+        <h1>
+            <@orcid.msg 'manage_signin_title' />
+        </h1>
+        <div class="popover-help-container">
+            <i class="glyphicon glyphicon-question-sign"></i>
+            <div id="alternative-signin-accounts-help" class="popover bottom">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <p><@orcid.msg 'manage.help_popover.alternateSigninAccounts'/>  <a href="<@orcid.msg 'common.kb_uri_default'/>360006972693" target="manage.help_popover.alternateSigninAccounts"><@orcid.msg 'common.learn_more'/></a></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="clearfix" id="SocialCtrl">
           <div *ngIf="!socialAccounts?.length > 0">
               <p><@orcid.msg 'manage.none_added.alternateSigninAccounts'/></p>
