@@ -214,6 +214,11 @@
             </div>
         </div>
 
+        <p class="header2-see-more container">{{liveIds}} <@orcid.msg
+             'public-layout.amount_ids'/> <a href="{{getBaseUri()}}/statistics"
+             title=""><@orcid.msg 'public-layout.see_more'/></a>
+        </p>
+
     </div>   
 </div> 
 </script>

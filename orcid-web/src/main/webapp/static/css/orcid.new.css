@@ -8966,6 +8966,14 @@ a.footer-url {
     margin-bottom: 0;
 }
 
+.header2 .header2-see-more {
+    display: block;
+    font-size: 12px;
+    clear: right;
+    line-height: normal;
+    text-align: right;
+}
+
 .advance-search-link {
     margin-bottom: 8px;
 }
@@ -8997,6 +9005,10 @@ select#language-codes:focus {
 }
 
 @media only screen and (max-width: 600px) {
+
+    .header2 .header2-see-more {
+        text-align: center;
+    }
 
     .header2  .menu-bar ul.menu > li > ul {
         margin-left: 0px;
