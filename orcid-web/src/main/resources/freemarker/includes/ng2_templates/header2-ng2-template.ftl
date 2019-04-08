@@ -43,7 +43,7 @@
                                     </ul>
                                 </div>  
                             </div>
-                            <input class="form-control" name="search" type="text" placeholder="<@orcid.msg 'public-layout.search'/>"/>
+                            <input (keyup.enter)="searchSubmit()" [(ngModel)]="headerSearch.searchInput" class="form-control" name="search" type="text" placeholder="<@orcid.msg 'public-layout.search'/>"/>
                             <div class="input-group-addon">
                                 <span class="glyphicon glyphicon-search" (click)="searchSubmit()"></span> 
                             </div>

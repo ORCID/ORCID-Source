@@ -138,11 +138,10 @@ export class Header2Component  {
         return getBaseUri();
     };
 
-    clickDropdown (value, $event) {
+    clickDropdown (value) {
         this.searchDropdownOpen = !this.searchDropdownOpen;
         if (value) {
             this.headerSearch.searchOption = value
-            $event.preventDefault();
         }
     }
 
@@ -183,6 +182,8 @@ export class Header2Component  {
 
     ngOnInit() {
         this.isMobile = window.innerWidth < 600;
+        this.headerSearch.searchOption='website'
+        this.headerSearch.searchInput = ''
     }
 
     @HostListener('window:resize', ['$event'])
