@@ -8982,6 +8982,10 @@ a.footer-url {
 }
 
 @media only screen and (max-width: 600px) {
+
+    .header2 select#language-codes {
+        min-width: 80px;
+    }
     
     .header2 .input-group {
         max-width: unset;
@@ -9090,6 +9094,7 @@ a.footer-url {
     }
     .header2 .logo > a > img {
         height: 35px;
+        max-height: 100%;
     }
 
     .header2 span.close {

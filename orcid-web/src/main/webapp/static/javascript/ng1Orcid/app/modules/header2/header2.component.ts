@@ -145,6 +145,10 @@ export class Header2Component  {
         $event.preventDefault();
     }
 
+    closeDropdown () {
+        this.searchDropdownOpen = false;
+    }
+
     menuHandler (value, $event) {
 
         // Ignore first click on mobile
