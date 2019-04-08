@@ -8974,6 +8974,9 @@ a.footer-url {
     flex-direction: row-reverse;
 }
 
+select#language-codes:focus {
+    outline: 0;
+}
 
 @media only screen and (max-width: 991px) {
     .header2 .menu-bar {
@@ -9093,7 +9096,7 @@ a.footer-url {
         margin-left: 10px;
     }
     .header2 .logo > a > img {
-        height: 35px;
+        height: auto;
         max-height: 100%;
     }
 
@@ -9110,6 +9113,10 @@ a.footer-url {
     .lang-rl .header2 .logo-search-bar {
         flex-direction: column;
     }
+    .logo-search-bar > .logo > a {
+        height: 35px;
+    }
+
     .lang-rl .header2 .menu-bar ul.menu {
         flex-direction: column;
     }
