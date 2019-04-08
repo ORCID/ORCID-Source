@@ -8972,6 +8972,11 @@ a.footer-url {
     clear: right;
     line-height: normal;
     text-align: right;
+    padding-top: 5px;
+}
+
+.header2 .menu-bar ul.menu li[hidden] {
+    display: none;
 }
 
 .advance-search-link {
@@ -9008,6 +9013,7 @@ select#language-codes:focus {
 
     .header2 .header2-see-more {
         text-align: center;
+        padding: 10px;
     }
 
     .header2  .menu-bar ul.menu > li > ul {

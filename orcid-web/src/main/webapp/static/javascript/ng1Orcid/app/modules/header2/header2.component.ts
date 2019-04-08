@@ -47,7 +47,7 @@ export class Header2Component  {
         ABOUT: false, 
         ORGANIZATIONS: false,
         RESEARCHERS: true, 
-        SIGNIN: true
+        SIGNIN: false
     }
     openMobileMenu = false
     isMobile = false
@@ -152,9 +152,9 @@ export class Header2Component  {
 
     menuHandler (value, $event) {
 
-        // Ignore first click on mobile
+        // Ignore first click on mobile if not is SIGNIN 
         if (this.isMobile) {
-            if (this.mobileMenu[value] == false) {
+            if (this.mobileMenu[value] == false && value !== "SIGNIN") {
                 $event.preventDefault()
             }
         }

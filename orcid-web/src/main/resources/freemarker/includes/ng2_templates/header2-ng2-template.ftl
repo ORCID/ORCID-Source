@@ -74,7 +74,7 @@
                         <a href="{{aboutUri}}/about/what-is-orcid/mission" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
                         <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']">
                             <!-- Mobile view Only -->
-                            <li class="leaf    "><a href="{{getBaseUri()}}" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
+                            <li class="leaf    " [hidden]="!isMobile"><a href="{{getBaseUri()}}" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
                     
                             <!-- Menu -->
                             <li class="leaf last"><a ${(nav=="signin")?then('class="active" ', '')} href="{{getBaseUri()}}/signin"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
@@ -121,8 +121,8 @@
                         <a href="{{aboutUri}}/organizations" ><@orcid.msg 'public-layout.for_organizations'/></a>
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
-                            <li class="first leaf    ">
-                                <a href="{{aboutUri}}/organizations" [hidden]="!isMobile" ><@orcid.msg 'public-layout.for_organizations'/></a>
+                            <li class="first leaf" [hidden]="!isMobile" >
+                                <a href="{{aboutUri}}/organizations" ><@orcid.msg 'public-layout.for_organizations'/></a>
                             </li>
 
                             <li class="first leaf">
@@ -148,7 +148,7 @@
 
                         <ul class="menu lang-fixes">
                             <!-- Mobile view Only -->
-                            <li><a [hidden]="!isMobile" href="{{aboutUri}}/about"
+                            <li  [hidden]="!isMobile" ><a href="{{aboutUri}}/about"
                                 class="first leaf    "><@orcid.msg
                                     'public-layout.about'/></a></li>
                             <!-- What is ORCID? -->
@@ -182,10 +182,10 @@
                     <!-- HELP -->
                     <li class="expanded" [ngClass]="{'open': mobileMenu.HELP}" (mouseenter)="menuHandler('HELP', $event)"  (click)="menuHandler('HELP', $event)">
                         <a href="{{aboutUri}}/help"><@orcid.msg 'public-layout.help'/></a>
-                        <ul class="menu lang-fixes">
+                        <ul  [hidden]="!isMobile" class="menu lang-fixes">
                             <!-- Mobile view Only -->
-                            <li class="first leaf    ">
-                                <a href="{{aboutUri}}/help" [hidden]="!isMobile"><@orcid.msg 'public-layout.help'/></a>
+                            <li class="first leaf    "  [hidden]="!isMobile">
+                                <a href="{{aboutUri}}/help"><@orcid.msg 'public-layout.help'/></a>
                             </li>
                             <li class="first leaf">
                                 <a href="{{aboutUri}}/faq-page" title=""><@orcid.msg 'public-layout.faq'/></a>
