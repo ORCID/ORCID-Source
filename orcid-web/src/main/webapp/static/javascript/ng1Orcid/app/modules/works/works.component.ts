@@ -501,7 +501,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.bibtexExportLoading = false;
                 if(window.navigator.msSaveOrOpenBlob) {
                     var fileData = [data];
-                    blobObject = new Blob(fileData, {type: 'text/plain'});
+                    var blobObject = new Blob(fileData, {type: 'text/plain'});
                     window.navigator.msSaveOrOpenBlob(blobObject, "works.bib");                              
                 } else {
                     var anchor = document.createElement('a');
