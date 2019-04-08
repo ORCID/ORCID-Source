@@ -378,8 +378,8 @@
                     </div>
 
                     <div class="col-md-2 col-sm-2 col-xs-3" *ngIf="group.activePutCode == researchResource.putCode">
-                        <ul class="sources-options" >
-                            <li *ngIf="!isPublicPage && !(editSources[group.groupId] || group?.researchResources?.length == 1)">
+                        <ul *ngIf="!isPublicPage" class="sources-options" >
+                            <li *ngIf="!(editSources[group.groupId] || group?.researchResources?.length == 1)">
                                 <a (click)="showSources(group, $event)" (mouseenter)="showTooltip(group.groupId+'-deleteGroup')" (mouseleave)="hideTooltip(group.groupId+'-deleteGroup')">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </a>

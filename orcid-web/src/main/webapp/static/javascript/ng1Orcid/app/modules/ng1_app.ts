@@ -120,9 +120,6 @@ import { PersonModule }
 import { PrintRecordModule } 
     from './printRecord/printRecord';
 
-import { PublicEduAffiliationModule }
-    from './publicEduAffiliation/publicEduAffiliation';
-
 import { PublicRecordModule } 
     from './publicRecord/publicRecord';
 
@@ -268,7 +265,6 @@ export const orcidApp = angular.module(
         PeerReviewDeleteModule.name,
         PersonModule.name,
         PrintRecordModule.name,
-        PublicEduAffiliationModule.name,
         PublicRecordModule.name,
         ReactivationModule.name,
         RecordCorrectionsModule.name,

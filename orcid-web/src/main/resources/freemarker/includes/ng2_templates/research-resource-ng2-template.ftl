@@ -7,7 +7,7 @@
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <a (click)="workspaceSrvc.toggleResearchResource()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayResearchResource==false}"></i>
-                            <@orcid.msg 'manage.research_resources'/> (<span>{{researchResourceService.groups.length}}</span>)
+                            <@orcid.msg 'manage.research_resources'/> (<span>{{researchResourceService.groupsLabel}}</span>)
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
@@ -22,41 +22,34 @@
                     <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayResearchResource">
                         <#escape x as x?html>                        
                         <!--Sort menu-->
-                        <div class="menu-container">                                     
+                        <div class="menu-container">     
                             <ul class="toggle-menu">
                                 <li>
                                     <span class="glyphicon glyphicon-sort"></span>
                                     <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                     <ul class="menu-options sort">
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='startDate'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
+                                        <li [ngClass]="{'checked':sortKey=='startDate'}">
                                             <a (click)="sort('startDate');" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
-                                                <span *ngIf="sortState.reverseKey['startDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='startDate'}"></span>
-                                                <span *ngIf="sortState.reverseKey['startDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
+                                                <span *ngIf="!sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortKey=='startDate'}"></span>
+                                                <span *ngIf="sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortKey=='startDate'}"></span>
                                             </a>                                                                                    
                                         </li>
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='endDate'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
+                                        <li [ngClass]="{'checked':sortKey=='endDate'}"> 
                                             <a (click)="sort('endDate');" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
-                                                <span *ngIf="sortState.reverseKey['endDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='endDate'}"></span>
-                                                <span *ngIf="sortState.reverseKey['endDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='endDate'}"></span>
-                                            </a>                                                                                    
+                                                <span *ngIf="!sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortKey=='endDate'}"></span>
+                                                <span *ngIf="sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortKey=='endDate'}"></span>
+                                            </a>        
                                         </li>
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="sortHideOption != null">
-                                            <a (click)="sort('groupName');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
-                                                <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
-                                            </a>                                            
-                                        </li>
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='title'}" *ngIf="!sortHideOption">                                            
+                                        <li [ngClass]="{'checked':sortKey=='title'}">                                            
                                             <a (click)="sort('title');" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
-                                                <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
+                                                <span *ngIf="!sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortKey=='title'}" ></span>
+                                                <span *ngIf="sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortKey=='title'}" ></span>
                                             </a>                                            
                                         </li>
-                                    </ul>                                           
+                                    </ul>                                 
                                 </li>
                             </ul>                                   
                         </div>

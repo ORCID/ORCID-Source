@@ -72,6 +72,7 @@ export class ResearchResourceService {
     }
 
     getResearchResourcePage(sort, sortAsc): Observable<any> {
+        this.showLoadMore = false;
         this.loading = true;
         return this.http.get(
             getBaseUri() + '/research-resources/researchResourcePage.json?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc
@@ -99,7 +100,9 @@ export class ResearchResourceService {
 
     //remove callback if not needed
     handleGroupData(data, callback?): void {
-        this.groups = new Array();
+        if (this.groups == undefined) {
+            this.groups = new Array();
+        }
         this.groups = this.groups.concat(data.groups);
         this.groupsLabel = this.groups.length + " of " + data.totalGroups;
         this.showLoadMore = this.groups.length < data.totalGroups;

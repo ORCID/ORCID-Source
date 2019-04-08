@@ -1,5 +1,3 @@
-declare var ActSortState: any;
-declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
 declare var workIdLinkJs: any;

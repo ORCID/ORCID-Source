@@ -26,7 +26,6 @@ require("jquery");
 require("../jquery-migrate/1.3.0/jquery-migrate-1.3.0.min.js");
 require("../typeahead/0.9.3/typeahead.min.js");
 require("../script.js");
-require("../orcid.js");
 require("../plugins.js");
 require("./app/main.ts");
 require("../XSRF.js");
