@@ -75,8 +75,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
                 var pubBaseUri = data.messages['PUB_BASE_URI'];
                 this.swaggerUri = pubBaseUri + '/v2.0/';                
             },
-            error => {
-                console.log('developerTools.component.ts: unable to fetch configInfo', error);                
+            error => {               
             } 
         );  
 
@@ -89,7 +88,6 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
                   } 
               },
               error => {
-                  console.log('developerTools.component.ts: unable to fetch userInfo', error);
                   this.userInfo = {};
               } 
           );
@@ -142,7 +140,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
                 }
             },
             error => {
-                console.log("error ngOnInit", error);
+                console.log("error getClient", error);
             } 
         );
     };
@@ -161,7 +159,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
                     }                    
                 },
                 error => {
-                    console.log("error ngOnInit", error);
+                    console.log("error enableDeveloperTools", error);
                 } 
             );
         }

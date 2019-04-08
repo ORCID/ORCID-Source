@@ -21,7 +21,7 @@ export class FooterComponent {
                 this.aboutUri = data.messages['ABOUT_URI'];
             },
             error => {
-                console.log('header.component.ts: unable to fetch userInfo', error);
+                console.log('footer.component.ts: unable to fetch configInfo', error);  
             } 
         );
     }
