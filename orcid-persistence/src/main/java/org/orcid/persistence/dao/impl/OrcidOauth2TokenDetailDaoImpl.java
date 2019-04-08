@@ -11,7 +11,6 @@ import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -187,6 +186,17 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         int count = query.executeUpdate();
         if (count == 0) {
             LOGGER.debug("Cannot remove the refresh token {0}", accessToken);
+        }
+    }
+
+    @Override
+    public void disableClientAccessTokensByUserOrcid(String orcid, String clientDetailsId) {
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE, revocationDate=now(), revokeReason = 'CLIENT_REVOKED' where clientDetailsId = :clientDetailsId and profile.id = :orcid");
+        query.setParameter("clientDetailsId", clientDetailsId);
+        query.setParameter("orcid", orcid);
+        int count = query.executeUpdate();
+        if (count == 0) {
+            LOGGER.debug("Cannot remove disable tokens for client/orcid {0}/{1}", clientDetailsId, orcid);
         }
     }
 }

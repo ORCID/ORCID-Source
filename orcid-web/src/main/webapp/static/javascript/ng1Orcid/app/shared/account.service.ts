@@ -165,7 +165,7 @@ export class AccountService {
 
     revokeTrustedOrg(applicationSummary): Observable<any> {
         return this.http.post(
-            getBaseUri() + '/account/revoke-application.json?tokenId='+ applicationSummary.tokenId, 
+            getBaseUri() + '/account/revoke-application.json?clientId='+ applicationSummary.orcidPath, 
             null,
             { headers: this.headers }
         )
