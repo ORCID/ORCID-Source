@@ -350,21 +350,25 @@ function checkOrcidLoggedIn() {
     if (OrcidCookie.checkIfCookiesEnabled()) {    
         if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {            
             $.ajax({
-                url : getBaseUriHttps() + '/userStatus.json?callback=?',
+                url : getBaseUriHttps() + '/userStatus.json',
                 type : 'POST',
                 dataType : 'json',
                 headers: {
                     'x-xsrf-token': OrcidCookie.getCookie('XSRF-TOKEN')
                 },
                 success : function(data) {
-                    if (data.loggedIn == false
-                            && (basePath.startsWith(baseUrl
-                                    + 'my-orcid') || basePath
-                                    .startsWith(baseUrl + 'account') || basePath.startsWith(baseUrl + 'inbox'))) {
+                    if (data.loggedIn == false && (
+                        basePath.indexOf('my-orcid') > -1 || 
+                        basePath.indexOf('inbox') > -1 ||
+                        basePath.indexOf('account') > -1 || 
+                        basePath.indexOf('manage') > -1 ||
+                        basePath.indexOf('developer') > -1 || 
+                        basePath.indexOf('admin-actions') > -1 ||
+                        basePath.indexOf('self-service') > -1
+                    )){
                         console.log("loggedOutRedir " + data);
                         window.location.href = baseUrl + "signin";
                     }
-
                 }
             }).fail(
             // detects server is down or CSRF mismatches
