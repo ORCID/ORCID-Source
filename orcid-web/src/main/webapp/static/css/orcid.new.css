@@ -8827,7 +8827,7 @@ a.footer-url {
 
 .header2 .menu-bar ul > li > ul a:hover {
     color: #494a4c  ;
-    text-shadow: 0 -1px 0 #494a4c
+    text-shadow: 1px 0 0 #494a4c
 }
 
 
@@ -8918,6 +8918,7 @@ a.footer-url {
 }
 .header2 .input-group {
     flex-grow: 1;
+    max-width: 350px;
 }
 
 .header2 .logo > a > img {
@@ -8981,15 +8982,15 @@ a.footer-url {
 }
 
 @media only screen and (max-width: 600px) {
+    
+    .header2 .input-group {
+        max-width: unset;
+    }
 
     .advance-search-link {
         margin-bottom: 0px;
     }
 
-    .header2 .menu-bar ul.menu li {
-        flex-direction: column;
-    }
-    
     .header2 .menu-bar ul.menu {
         flex-direction: column;
         height: auto;
@@ -9003,13 +9004,21 @@ a.footer-url {
 
     .header2 .menu-bar ul.menu li {
         width: 100%;
+        flex-direction: column;
+        height: auto;
     }
+
+    .header2 .menu-bar ul.menu li.open > ul {
+        max-height: unset;
+    }
+
 
     .header2 .menu-bar ul.menu li.open > ul, .header2 .menu-bar li.active-trail.open > ul {
         display: flex;
         z-index: 5;
         position: relative;
         padding: 9px 0;
+        top: 0;
     }
 
     .header2 .slogan {
@@ -9029,6 +9038,7 @@ a.footer-url {
 
     .header2 .menu-control {
         margin-right: 10px;
+        cursor: pointer;
     }
 
     .header2 .logo {
@@ -9066,9 +9076,6 @@ a.footer-url {
         text-align: left;
     }
 
-    .header2 .menu-bar ul.menu li.open > ul {
-        max-height: unset;
-    }
 
     .header2 .menu-bar ul > li > ul a {
         padding: 9px 0;
