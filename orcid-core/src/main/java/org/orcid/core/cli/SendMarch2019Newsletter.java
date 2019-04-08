@@ -15,12 +15,15 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailMessage;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -50,6 +53,8 @@ public class SendMarch2019Newsletter {
     
     private EmailQueueProducer emailQueueProducer;
     
+    private static final Logger LOG = LoggerFactory.getLogger(SendMarch2019Newsletter.class);
+    
     @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
@@ -66,10 +71,12 @@ public class SendMarch2019Newsletter {
     private void send() {
         int offset = 0;
         List<EmailEntity> emails = emailDaoReadOnly.getMarch2019QuarterlyEmailRecipients(offset, BATCH_SIZE);
+        LOG.info("Fetched {} emails for queuing...", emails.size());
         while (!emails.isEmpty()) {
             sendToEmails(emails);
             offset += BATCH_SIZE;
             emails = emailDaoReadOnly.getMarch2019QuarterlyEmailRecipients(offset, BATCH_SIZE);
+            LOG.info("Fetched {} emails for queuing...", emails.size());
         }
     }
     
@@ -84,6 +91,7 @@ public class SendMarch2019Newsletter {
             item.setFailureType(ProfileEventType.MARCH_2019_FAILED);
             emailQueueProducer.queueEmail(item);
         }
+        LOG.info("Queued {} emails", emails.size());
     }
     
     private EmailMessage getEmailMessage(EmailEntity email) {
