@@ -83,12 +83,11 @@
             <div class="container">
                 <@orcid.checkFeatureStatus featureName='ENABLE_HEADER2' enabled=false>
                     <#include "/includes/ng2_templates/header-ng2-template.ftl">
-                    <header2-ng2></header2-ng2>
+                    <div class="header center">
+                        <header-ng2></header-ng2>
+                    </div><!-- .header -->
                 </@orcid.checkFeatureStatus>
-                <div class="header center">
-                    <header-ng2></header-ng2>
-                </div><!-- .header -->
-                <div id="main" role="main" class="main">
+                <div id="main" role="main" class="main <@orcid.checkFeatureStatus 'ENABLE_HEADER2'>header2-main</@orcid.checkFeatureStatus>">
         </#if>
                 <script type="text/ng-template" id="maintenance-message-ng2-template">
                     <div *ngIf="visible" class="row">

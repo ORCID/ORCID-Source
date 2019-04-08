@@ -9112,7 +9112,6 @@ select#language-codes:focus {
         margin-left: 10px;
     }
     .header2 .logo > a > img {
-        height: auto;
         max-height: 100%;
     }
 
@@ -9148,7 +9147,17 @@ select#language-codes:focus {
     }
 }
 
+.header2-main#main {
+    margin-top: 0px;
+    /* background: red; */
+}
 
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    .header2 .logo > a > img {
+        height: auto;
+    }
+}
 
 
 .arrow {
