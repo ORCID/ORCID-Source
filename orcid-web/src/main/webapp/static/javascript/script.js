@@ -350,7 +350,7 @@ function checkOrcidLoggedIn() {
     if (OrcidCookie.checkIfCookiesEnabled()) {    
         if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {            
             $.ajax({
-                url : getBaseUriHttps() + '/userStatus.json',
+                url : getBaseUriHttps() + '/userStatus.json?callback=?',
                 type : 'POST',
                 dataType : 'json',
                 headers: {
