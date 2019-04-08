@@ -141,8 +141,8 @@ export class Header2Component  {
         this.searchDropdownOpen = !this.searchDropdownOpen;
         if (value) {
             this.headerSearch.searchOption = value
+            $event.preventDefault();
         }
-        $event.preventDefault();
     }
 
     closeDropdown () {

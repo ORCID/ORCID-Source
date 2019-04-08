@@ -9170,7 +9170,9 @@ select#language-codes:focus {
     height: 32px;
     opacity: 1;
   }
-
+  .header2 .close:hover  {
+    opacity: 1 !important; 
+}
 .lang-rl .close {
     left: 26px;
 }

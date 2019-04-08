@@ -5,6 +5,9 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
+
+    @Label("Enable 2019 header")
+    ENABLE_HEADER2,
 	
     @Label("Add works based on ArXiv, DOI or PubMed id metadata")
     ADD_WORKS_WITH_EXTERNAL_ID,
@@ -90,7 +93,6 @@ public enum Features implements Feature {
     @Label("Grouping suggestions")
     GROUPING_SUGGESTIONS,
     
-    @Label("Enable promotion of chosen orgs in search")
     ENABLE_PROMOTION_OF_CHOSEN_ORGS,
     
     @Label("Enable the API record create endpoint for QA purposes")

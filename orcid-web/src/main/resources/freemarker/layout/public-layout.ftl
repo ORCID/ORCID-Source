@@ -74,12 +74,17 @@
         <!--NON-OAUTH HEADER-->
         <!--hide header if oauth login-->
         <#if !(RequestParameters['oauth'])??>  
-            <#include "/includes/ng2_templates/header2-ng2-template.ftl">
-            <header2-ng2></header2-ng2>
+            <#include "/includes/ng2_templates/language-ng2-template.ftl">
+            <@orcid.checkFeatureStatus 'ENABLE_HEADER2'>
+                <#include "/includes/ng2_templates/header2-ng2-template.ftl">
+                <header2-ng2></header2-ng2>
+            </@orcid.checkFeatureStatus>
          
             <div class="container">
-                <#include "/includes/ng2_templates/header-ng2-template.ftl">
-                <#include "/includes/ng2_templates/language-ng2-template.ftl">
+                <@orcid.checkFeatureStatus featureName='ENABLE_HEADER2' enabled=false>
+                    <#include "/includes/ng2_templates/header-ng2-template.ftl">
+                    <header2-ng2></header2-ng2>
+                </@orcid.checkFeatureStatus>
                 <div class="header center">
                     <header-ng2></header-ng2>
                 </div><!-- .header -->
