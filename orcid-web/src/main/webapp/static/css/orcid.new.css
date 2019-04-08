@@ -8775,6 +8775,11 @@ a.footer-url {
     height: 100%;
 }
 
+
+.header2  .menu-bar ul.menu > li > ul {
+    margin-left: 10px;
+}
+
 .header2  .menu-bar a {
     padding:0 20px;
     color:#fff;
@@ -8921,9 +8926,16 @@ a.footer-url {
     max-width: 350px;
 }
 
-.header2 .logo > a > img {
+.header2 .logo > a {
     height: 55px;
+    display: block;
 }
+
+.header2 .logo > a > img {
+    height: 100%;
+}
+
+
 
 .header2 .input-group {
     height: 42px;
@@ -8985,6 +8997,10 @@ select#language-codes:focus {
 }
 
 @media only screen and (max-width: 600px) {
+
+    .header2  .menu-bar ul.menu > li > ul {
+        margin-left: 0px;
+    }
 
     .header2 select#language-codes {
         min-width: 80px;
