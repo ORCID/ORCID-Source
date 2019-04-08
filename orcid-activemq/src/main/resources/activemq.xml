@@ -34,5 +34,9 @@
 			<queue physicalName="${org.orcid.persistence.messaging.updated.solr}"
 				name="${org.orcid.persistence.messaging.updated.solr}" />
 		</destinations>
+		
+		<plugins>
+	        <statisticsBrokerPlugin/>
+	    </plugins>
 	</broker>
 </beans>
