@@ -46,7 +46,8 @@ export class Header2Component  {
         HELP: false,
         ABOUT: false, 
         ORGANIZATIONS: false,
-        RESEARCHERS: true
+        RESEARCHERS: true, 
+        SIGNIN: true
     }
     openMobileMenu = false
     isMobile = false
