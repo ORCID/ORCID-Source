@@ -4995,9 +4995,9 @@ ul.sources-actions li {
 }
 
 .source-line, .source{
-    font-size: 13px;
-    word-break: break-all;
-    
+    font-size: 13px;  
+    line-height: normal;
+    padding-bottom: .5em;
 }
 
 .source-line b, .source > b {
