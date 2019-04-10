@@ -1,4 +1,5 @@
 var webpack = require("webpack");
+const path = require("path");
 
 module.exports = {
   context: __dirname + "/",
@@ -15,7 +16,7 @@ module.exports = {
         ]
       },
       {
-        test: /((script)|(orcid)|(plugins)|(typeahead.min)|(XSRF.js))\.js/, //(jquery.min)|(jquery-ui.min)|(typeahead.min)|(jquery-migrate-1.3.0.min)|
+        test: /((script)|(plugins)|(typeahead.min)|(XSRF.js))\.js/, //(jquery.min)|(jquery-ui.min)|(typeahead.min)|(jquery-migrate-1.3.0.min)|
         use: ["script-loader"]
       },
       {

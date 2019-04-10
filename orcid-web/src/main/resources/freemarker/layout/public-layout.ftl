@@ -32,7 +32,7 @@
         </noscript>            
         <div class="app-loading">
         <!--[if ! lte IE 9]><!-->
-            <i class="spin green x8" style="line-height: 0px;   " id="spinner"><img src="${staticCdn}/img/svg/refresh-curve-arrows.svg" class="spinner flip" width="85" height ="85"/></i>
+            <i class="spin green x8" style="line-height: 0px;" id="spinner"><img src="${staticCdn}/img/svg/refresh-curve-arrows.svg" class="spinner flip" width="85" height ="85"/></i>
         <!--<![endif]-->
 
         <!--[if lte IE 9]>
@@ -73,14 +73,21 @@
         </#if>
         <!--NON-OAUTH HEADER-->
         <!--hide header if oauth login-->
-        <#if !(RequestParameters['oauth'])??>            
+        <#if !(RequestParameters['oauth'])??>  
+            <#include "/includes/ng2_templates/language-ng2-template.ftl">
+            <@orcid.checkFeatureStatus 'ENABLE_HEADER2'>
+                <#include "/includes/ng2_templates/header2-ng2-template.ftl">
+                <header2-ng2></header2-ng2>
+            </@orcid.checkFeatureStatus>
+         
             <div class="container">
-                <#include "/includes/ng2_templates/header-ng2-template.ftl">
-                <#include "/includes/ng2_templates/language-ng2-template.ftl">
-                <div class="header center">
-                    <header-ng2></header-ng2>
-                </div><!-- .header -->
-                <div id="main" role="main" class="main">
+                <@orcid.checkFeatureStatus featureName='ENABLE_HEADER2' enabled=false>
+                    <#include "/includes/ng2_templates/header-ng2-template.ftl">
+                    <div class="header center">
+                        <header-ng2></header-ng2>
+                    </div><!-- .header -->
+                </@orcid.checkFeatureStatus>
+                <div id="main" role="main" class="main <@orcid.checkFeatureStatus 'ENABLE_HEADER2'>header2-main</@orcid.checkFeatureStatus>">
         </#if>
                 <script type="text/ng-template" id="maintenance-message-ng2-template">
                     <div *ngIf="visible" class="row">

@@ -52,7 +52,7 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.aboutUri = data.messages['ABOUT_URI'];
             },
             error => {
-                console.log('header.component.ts: unable to fetch userInfo', error);
+                console.log('header.component.ts: unable to fetch configInfo', error);
             } 
         );
     }

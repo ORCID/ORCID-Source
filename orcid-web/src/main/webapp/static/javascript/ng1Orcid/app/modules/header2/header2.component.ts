@@ -3,7 +3,7 @@ declare var getWindowWidth: any;
 //Import all the angular components
 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef, HostListener } 
     from '@angular/core';
 
 import { Subject } 
@@ -22,16 +22,11 @@ import { FeaturesService }
     from '../../shared/features.service';
 
 @Component({
-    selector: 'header-ng2',
-    template: scriptTmpl("header-ng2-template")
+    selector: 'header2-ng2',
+    template: scriptTmpl("header2-ng2-template")
 })
-export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
-    private ngUnsubscribe: Subject<void> = new Subject<void>();
-    
-    conditionsActive: boolean;
-    filterActive: boolean;
+export class Header2Component  {
     getUnreadCount: any;
-    menuVisible: boolean;
     headerSearch: any;
     searchFilterChanged: boolean;
     searchVisible: boolean;
@@ -46,17 +41,25 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     assetsPath: String;
     aboutUri: String;
     liveIds: String;    
-    
+    searchDropdownOpen = false; 
+    mobileMenu = {
+        HELP: false,
+        ABOUT: false, 
+        ORGANIZATIONS: false,
+        RESEARCHERS: true, 
+        SIGNIN: false
+    }
+    openMobileMenu = false
+    isMobile = false
+
     constructor(
         private notificationsSrvc: NotificationsService,
         private featuresService: FeaturesService,
-        private commonSrvc: CommonService
+        private commonSrvc: CommonService, 
+        private ref: ChangeDetectorRef
     ) {
-        this.conditionsActive = false;
-        this.filterActive = false;
         this.getUnreadCount = 0;
         this.headerSearch = {};
-        this.menuVisible = false;
         this.searchFilterChanged = false;
         this.searchVisible = false;
         this.secondaryMenuVisible = {};
@@ -83,6 +86,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.userInfo = data;                
                 },
                 error => {
+                    console.log('header.component.ts: unable to fetch userInfo', error);
                     this.userInfo = {};
                 } 
             );
@@ -104,50 +108,10 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         this.searchFilterChanged = true;
     };
 
-    handleMobileMenuOption( $event ): void{
-        let w = getWindowWidth();           
-        
-        $event.preventDefault();
-        
-        if( w > 767) {               
-            window.location.href = $event.target.getAttribute('href');
-        }
-    };
-
-    hideSearchFilter(): void{
-        if (!this.headerSearch.searchInput){
-            var timeoutFunction = (function() { 
-                if ( this.searchFilterChanged === false ) {
-                    this.filterActive = false;
-                }           
-            }).bind(this);
-            setTimeout(timeoutFunction, 3000);
-        }
-    };
-
-    isCurrentPage(path): any {
-        return window.location.href.startsWith(getBaseUri() + '/' + path);
-    };
-
-    onResize(event?): void {
-        let windowWidth = getWindowWidth();
-        if(windowWidth > 767){ /* Desktop view */
-            this.menuVisible = true;
-            this.searchVisible = true;
-            this.settingsVisible = true;
-        }else{
-            this.menuVisible = false;
-            this.searchVisible = false;
-            this.settingsVisible = false;
-        }
-    };
 
     retrieveUnreadCount(): any {
         if( this.notificationsSrvc.retrieveCountCalled == false ) {
             this.notificationsSrvc.retrieveUnreadCount()
-            .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
             .subscribe(
                 data => {
                     this.getUnreadCount = data;
@@ -157,16 +121,6 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         }
-    };
-
-    searchBlur(): void {    
-        this.hideSearchFilter();
-        this.conditionsActive = false;        
-    };
-
-    searchFocus(): void {
-        this.filterActive = true;
-        this.conditionsActive = true;
     };
 
     searchSubmit(): void {
@@ -179,49 +133,61 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                     + encodeURIComponent(this.headerSearch.searchInput));
         }
     }
-  
-    toggleMenu(): void {
-        this.menuVisible = !this.menuVisible;
-        this.searchVisible = false;
-        this.settingsVisible = false;     
-    };
-    
-    toggleSearch(): void {
-        this.searchVisible = !this.searchVisible;
-        this.menuVisible = false;     
-        this.settingsVisible = false;
-    };
-
-    toggleSecondaryMenu(submenu): void {
-        this.secondaryMenuVisible[submenu] = !this.secondaryMenuVisible[submenu];
-    };
-
-    toggleSettings(): void {
-        this.settingsVisible = !this.settingsVisible;
-        this.menuVisible = false;
-        this.searchVisible = false;
-    };
-    
-    toggleTertiaryMenu(submenu): void {
-        this.tertiaryMenuVisible[submenu] = !this.tertiaryMenuVisible[submenu];
-    };
-
-    //Default init functions provided by Angular Core
-    ngAfterViewInit() {
-        //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
-    };
-
-    ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
-    };
-
-    ngOnInit() {
-        this.onResize(); 
-        this.headerSearch.searchOption = 'registry';         
-    }; 
     
     getBaseUri(): String {
         return getBaseUri();
     };
+
+    clickDropdown (value) {
+        this.searchDropdownOpen = !this.searchDropdownOpen;
+        if (value) {
+            this.headerSearch.searchOption = value
+        }
+    }
+
+    closeDropdown () {
+        this.searchDropdownOpen = false;
+    }
+
+    menuHandler (value, $event) {
+
+        // Ignore first click on mobile if not is SIGNIN 
+        if (this.isMobile) {
+            if (this.mobileMenu[value] == false && value !== "SIGNIN") {
+                $event.preventDefault()
+            }
+        }
+
+        // If is mobile ignore no-click events
+        if ($event.type === "click" || !this.isMobile) {
+            Object.keys(this.mobileMenu).forEach ( item => {
+                this.mobileMenu[item] = item === value
+            })
+            this.ref.detectChanges();
+        }
+        
+    }
+
+    mouseLeave( ){
+        if (!this.isMobile) {
+            Object.keys(this.mobileMenu).forEach ( item => {
+                this.mobileMenu[item] = item === "RESEARCHERS"
+            })
+        }
+    }
+
+    toggleMenu() {
+        this.openMobileMenu = !this.openMobileMenu; 
+    }
+
+    ngOnInit() {
+        this.isMobile = window.innerWidth < 600;
+        this.headerSearch.searchOption='website'
+        this.headerSearch.searchInput = ''
+    }
+
+    @HostListener('window:resize', ['$event'])
+        onResize(event) {
+        this.isMobile = window.innerWidth < 600;
+    }
 }

@@ -197,7 +197,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                   this.userInfo = data;           
               },
               error => {
-                  console.log('oauthAuthorization.component.ts: unable to fetch userInfo', error);
                   this.userInfo = {};
               } 
           );

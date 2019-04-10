@@ -62,7 +62,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.userInfo = data;                
                 },
                 error => {
-                    console.log('header.component.ts: unable to fetch userInfo', error);
                     this.userInfo = {};
                 } 
             );

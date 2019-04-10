@@ -42,7 +42,7 @@ export class MemberDetailsComponent {
                 this.assetsPath = data.messages['STATIC_PATH'];
             },
             error => {
-                console.log('memberDetails.component.ts: unable to fetch userInfo', error);                
+                console.log('memberDetails.component.ts: unable to fetch configInfo', error);                
             } 
         );
     }

@@ -152,7 +152,7 @@
         </init-param>                               
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>org.orcid.core.web.filters.ApiVersionCheckFilter;org.orcid.core.web.filters.TokenTargetFilter</param-value>
+            <param-value>org.orcid.core.web.filters.ApiVersionCheckFilter;org.orcid.core.web.filters.TokenTargetFilter;org.orcid.core.web.filters.OboApiVersionCheckFilter</param-value>
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
