@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.rc2.record.summary;
+package org.orcid.jaxb.model.v3.release.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,16 +12,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.record.Group;
-import org.orcid.jaxb.model.v3.rc2.record.GroupsContainer;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.record.Group;
+import org.orcid.jaxb.model.v3.release.record.GroupsContainer;
 
 import io.swagger.annotations.ApiModel;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "researchResourceGroup" })
 @XmlRootElement(name = "research-resources", namespace = "http://www.orcid.org/ns/activities")
-@ApiModel(value = "ResearchResourcesV3_0_rc2")
+@ApiModel(value = "ResearchResourcesV3_0")
 public class ResearchResources implements GroupsContainer, Serializable {
     private static final long serialVersionUID = 7836684039680621797L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")

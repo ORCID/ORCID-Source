@@ -9,5 +9,5 @@
         @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),
         @javax.xml.bind.annotation.XmlNs(prefix = "search", namespaceURI = "http://www.orcid.org/ns/search")},
         elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.orcid.jaxb.model.v3.rc2.search;
+package org.orcid.jaxb.model.v3.release.search;
 

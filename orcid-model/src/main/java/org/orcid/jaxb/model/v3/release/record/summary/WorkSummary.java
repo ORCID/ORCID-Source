@@ -5,7 +5,7 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-package org.orcid.jaxb.model.v3.rc2.record.summary;
+package org.orcid.jaxb.model.v3.release.record.summary;
 
 import java.io.Serializable;
 
@@ -19,19 +19,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.common.adapters.WorkTypeAdapter;
-import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.common.Title;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.common.VisibilityType;
-import org.orcid.jaxb.model.v3.rc2.record.Activity;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
-import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
+import org.orcid.jaxb.model.v3.release.common.CreatedDate;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.PublicationDate;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.Title;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.VisibilityType;
+import org.orcid.jaxb.model.v3.release.record.Activity;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.record.SourceAware;
+import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 
 import io.swagger.annotations.ApiModel;
 
@@ -49,7 +49,7 @@ import io.swagger.annotations.ApiModel;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "url","type",  "publicationDate","journalTitle"  })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
-@ApiModel(value = "WorkSummaryV3_0_rc2")
+@ApiModel(value = "WorkSummaryV3_0")
 public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
     private static final long serialVersionUID = -5296202791403288760L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")

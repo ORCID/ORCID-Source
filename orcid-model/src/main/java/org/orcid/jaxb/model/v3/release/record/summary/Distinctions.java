@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.rc2.record.summary;
+package org.orcid.jaxb.model.v3.release.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import io.swagger.annotations.ApiModel;
 
 @XmlRootElement(name = "distinctions", namespace = "http://www.orcid.org/ns/activities")
-@ApiModel(value = "DistinctionsSummaryV3_0_rc2")
+@ApiModel(value = "DistinctionsSummaryV3_0")
 public class Distinctions extends Affiliations<DistinctionSummary> implements Serializable {
 
     /**

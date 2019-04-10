@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.rc2.search;
+package org.orcid.jaxb.model.v3.release.search;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiModel;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "results" })
 @XmlRootElement(name = "search", namespace = "http://www.orcid.org/ns/search")
-@ApiModel(value = "SearchV3_0_rc2")
+@ApiModel(value = "SearchV3_0")
 public class Search implements Serializable {
     private static final long serialVersionUID = -1791045354400556107L;
     @XmlElement(name = "result", namespace = "http://www.orcid.org/ns/search")

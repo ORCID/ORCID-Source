@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.rc2.record.summary;
+package org.orcid.jaxb.model.v3.release.record.summary;
 
 import java.io.Serializable;
 
@@ -14,25 +14,25 @@ import org.orcid.jaxb.model.common.PeerReviewType;
 import org.orcid.jaxb.model.common.Role;
 import org.orcid.jaxb.model.common.adapters.PeerReviewRoleAdapter;
 import org.orcid.jaxb.model.common.adapters.PeerReviewTypeAdapter;
-import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
-import org.orcid.jaxb.model.v3.rc2.common.Filterable;
-import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.common.Organization;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.Activity;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc2.record.SourceAware;
+import org.orcid.jaxb.model.v3.release.common.CreatedDate;
+import org.orcid.jaxb.model.v3.release.common.Filterable;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Activity;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.record.SourceAware;
 
 import io.swagger.annotations.ApiModel;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "role", "externalIdentifiers", "url", "type", "completionDate", "groupId", "organization" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
-@ApiModel(value = "PeerReviewSummaryV3_0_rc2")
+@ApiModel(value = "PeerReviewSummaryV3_0")
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable, SourceAware {
     private static final long serialVersionUID = -2215607501129977294L;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")

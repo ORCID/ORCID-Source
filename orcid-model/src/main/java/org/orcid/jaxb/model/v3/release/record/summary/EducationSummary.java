@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.rc2.record.summary;
+package org.orcid.jaxb.model.v3.release.record.summary;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import io.swagger.annotations.ApiModel;
 
 @XmlRootElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
-@ApiModel(value = "EducationSummaryV3_0_rc2")
+@ApiModel(value = "EducationSummaryV3_0")
 public class EducationSummary extends AffiliationSummary implements Serializable {
 
     /**

@@ -19,5 +19,5 @@
         @javax.xml.bind.annotation.XmlNs(prefix = "work", namespaceURI = "http://www.orcid.org/ns/work"),
         @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common")}, 
         elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.orcid.jaxb.model.v3.rc2.record.summary;
+package org.orcid.jaxb.model.v3.release.record.summary;
 

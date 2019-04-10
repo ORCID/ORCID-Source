@@ -5,7 +5,7 @@
 // Generated on: 2012.01.18 at 10:32:14 AM GMT 
 //
 
-package org.orcid.jaxb.model.v3.rc2.record.summary;
+package org.orcid.jaxb.model.v3.release.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.record.ActivitiesContainer;
-import org.orcid.jaxb.model.v3.rc2.record.Activity;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.record.ActivitiesContainer;
+import org.orcid.jaxb.model.v3.release.record.Activity;
 
 import io.swagger.annotations.ApiModel;
 
@@ -42,7 +42,7 @@ import io.swagger.annotations.ApiModel;
 @XmlType(propOrder = { "lastModifiedDate", "distinctions", "educations", "employments", "fundings", "invitedPositions", "memberships", "peerReviews", "qualifications",
         "researchResources", "services", "works" })
 @XmlRootElement(name = "activities-summary", namespace = "http://www.orcid.org/ns/activities")
-@ApiModel(value = "ActivitiesSummaryV3_0_rc2")
+@ApiModel(value = "ActivitiesSummaryV3_0")
 public class ActivitiesSummary implements Serializable, ActivitiesContainer {
     private static final long serialVersionUID = 6877440564967601718L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")

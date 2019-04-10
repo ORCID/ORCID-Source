@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.rc2.record.summary;
+package org.orcid.jaxb.model.v3.release.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,17 +11,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Group;
-import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.Group;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 
 import io.swagger.annotations.ApiModel;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "peerReviewSummary" })
 @XmlRootElement(name = "peer-review-duplicate-group", namespace = "http://www.orcid.org/ns/activities")
-@ApiModel(value = "PeerReviewDuplicateGroupV3_0_rc2")
+@ApiModel(value = "PeerReviewDuplicateGroupV3_0")
 public class PeerReviewDuplicateGroup implements Group, Serializable {
     private static final long serialVersionUID = -4120782840977081952L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")

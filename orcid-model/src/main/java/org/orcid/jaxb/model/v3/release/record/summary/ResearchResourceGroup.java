@@ -5,7 +5,7 @@
 // Generated on: 2012.08.09 at 01:52:56 PM BST 
 //
 
-package org.orcid.jaxb.model.v3.rc2.record.summary;
+package org.orcid.jaxb.model.v3.release.record.summary;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,17 +18,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Group;
-import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.Group;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 
 import io.swagger.annotations.ApiModel;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "researchResourceSummary" })
 @XmlRootElement(name = "research-resource-group", namespace = "http://www.orcid.org/ns/activities")
-@ApiModel(value = "ResearchResourceGroupV3_0_rc2")
+@ApiModel(value = "ResearchResourceGroupV3_0")
 public class ResearchResourceGroup implements Group, Serializable {
     private static final long serialVersionUID = -4032168708952113730L;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
