@@ -1,18 +1,6 @@
 <script type="text/ng-template" id="header2-ng2-template">
 
 <div class="header2">
-    <#if oauthError??>            
-    <ng-container *ngIf="isOauth"> 
-        <div class="row top-header">
-            <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
-                <a href="https://orcid.org" alt="ORCID logo">
-                    <img style="height: 55px" != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" width="110px" alt="ORCID logo">
-                </a>
-            </div>       
-        </div>
-    </ng-container>
-    </#if>
-
     <div  *ngIf="!isOauth"> 
 
         <div class="container">
