@@ -40,7 +40,7 @@ public class ViewMQStatistics {
         
         Queue replyTo = session.createTemporaryQueue();
         MessageConsumer consumer = session.createConsumer(replyTo);
-        Queue query = session.createQueue("ActiveMQ.Statistics.Broker." + queueName);
+        Queue query = session.createQueue("ActiveMQ.Statistics.Destination." + queueName);
         MessageProducer producer = session.createProducer(query);
         Message msg = session.createMessage();
         msg.setJMSReplyTo(replyTo);
