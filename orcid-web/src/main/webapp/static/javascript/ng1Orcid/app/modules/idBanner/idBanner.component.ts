@@ -39,7 +39,6 @@ export class idBannerComponent implements AfterViewInit, OnDestroy, OnInit {
                   this.userInfo = data;                
               },
               error => {
-                  console.log('idBanner.component.ts: unable to fetch userInfo', error);
                   this.userInfo = {};
               } 
           );

@@ -64,7 +64,7 @@ export class SelfServiceComponent {
                 this.assetsPath = data.messages['STATIC_PATH'];
             },
             error => {
-                console.log('selfService.component.ts: unable to fetch userInfo', error);                
+                console.log('selfService.component.ts: unable to fetch configInfo', error);                
             } 
         );        
     }

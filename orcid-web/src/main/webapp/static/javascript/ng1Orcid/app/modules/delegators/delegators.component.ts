@@ -56,7 +56,6 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
                   this.userInfo = data; 
               },
               error => {
-                  console.log('developerTools.component.ts: unable to fetch userInfo', error);
                   this.userInfo = {};
               } 
           );
@@ -122,9 +121,7 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         if(!this.commonSrvc.isPublicPage) {
             this.getDelegators();
-        } else {
-            console.log('Dont load delegators on public page');
-        }    
+        }   
     }; 
     
     getBaseUri(): String {
