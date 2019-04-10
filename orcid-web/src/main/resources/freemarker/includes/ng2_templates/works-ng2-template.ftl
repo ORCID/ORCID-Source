@@ -8,7 +8,7 @@
                     <div>
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-                           <@orcid.msg 'workspace.Works'/> (<span>{{worksService.groupsLabel}}</span>)
+                           <h2><@orcid.msg 'workspace.Works'/> (<span>{{worksService.groupsLabel}}</span>)</h2>
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>

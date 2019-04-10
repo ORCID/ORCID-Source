@@ -9242,3 +9242,21 @@ select#language-codes:focus {
     margin-left: 6px;
     margin-bottom: -6px;
 }
+
+.biography-controller h2 {
+    font-size: 17px;
+}
+
+
+.toggle-text h2:first-of-type {
+    /* margin-top: 0; */
+    color: white;
+    font-size: 17px;
+    font-size: 14px;
+    margin-left: 4px;
+}
+
+a.toggle-text {
+    display: flex;
+    align-items: center;
+}
