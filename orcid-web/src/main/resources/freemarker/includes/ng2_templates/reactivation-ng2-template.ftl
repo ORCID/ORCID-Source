@@ -2,7 +2,7 @@
     <div *ngIf="reactivationData && reactivationData.linkExpired" class="row">
         <div class ="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
             <p *ngIf="!showReactivationSent"><@orcid.msg 'orcid.frontend.reset.password.resetLinkExpired_1' /><a (click)="sendReactivationEmail(reactivationData.email)"><@orcid.msg 'orcid.frontend.reset.password.resetLinkExpired_2' /></a></p>
-            <p *ngIf="showReactivationSent"><@orcid.msg 'orcid.frontend.verify.reactivation_sent.1'/> <a href="mailto:support@orcid.org"><@orcid.msg 'orcid.frontend.verify.reactivation_sent.2' /></a><@orcid.msg 'orcid.frontend.verify.reactivation_sent.3' /></p>                         
+            <p *ngIf="showReactivationSent"><@orcid.msg 'orcid.frontend.verify.reactivation_sent.1'/> <a href="https://orcid.org/help/contact-us"><@orcid.msg 'orcid.frontend.verify.reactivation_sent.2' /></a><@orcid.msg 'orcid.frontend.verify.reactivation_sent.3' /></p>                         
         </div>
     </div>
 

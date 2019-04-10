@@ -13,8 +13,8 @@ The ORCID Registry from its start has been imagined, defined, and developed by m
 
 * **Bug reports should be made in the iDeas Forum or directly to the ORCID team**
 
-    Report the bug to our support team for investigation; once confirmed, we add it to the Bugs board to be addressed. You can report the bug by posting in the [iDeas Forum](https://support.orcid.org/hc/en-us/community/topics) or by submitting a ticket via [our webform](https://orcid.org/help/contact-us) or via [email](mailto:support@orcid.org). 
-
+    Report the bug to our support team for investigation; once confirmed, we add it to the Bugs board to be addressed. You can report the bug by posting in the [iDeas Forum](https://support.orcid.org/hc/en-us/community/topics) or by submitting a ticket via [our webform](https://orcid.org/help/contact-us).
+    
 * **Registry translations should be made in Transifex**
 
     We use [Transifex](https://www.transifex.com/orcid-inc-1/public/) to manage the translation and review of ORCID localizations. Join the [Translation Team](https://www.transifex.com/orcid-inc-1/public/) to contribute. See [Getting Started as a Translator](https://docs.transifex.com/getting-started/translators) to get started on Transifex. 

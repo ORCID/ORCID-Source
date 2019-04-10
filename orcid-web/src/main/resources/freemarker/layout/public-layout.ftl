@@ -32,7 +32,7 @@
         </noscript>            
         <div class="app-loading">
         <!--[if ! lte IE 9]><!-->
-            <i class="spin green x8" id="spinner"><img src="${staticCdn}/img/svg/refresh-curve-arrows.svg" class="spinner flip" width="85" height ="85"/></i>
+            <i class="spin green x8" style="line-height: 0px;   " id="spinner"><img src="${staticCdn}/img/svg/refresh-curve-arrows.svg" class="spinner flip" width="85" height ="85"/></i>
         <!--<![endif]-->
 
         <!--[if lte IE 9]>
