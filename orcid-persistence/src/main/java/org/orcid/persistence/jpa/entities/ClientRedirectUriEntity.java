@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -32,6 +35,7 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     private String redirectUriType;
     private String uriActType;
     private String uriGeoArea;
+    private ClientRedirectUriStatus status = ClientRedirectUriStatus.OK;
 
     public ClientRedirectUriEntity() {
     }
@@ -160,6 +164,17 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
 
     public void setUriGeoArea(String uriGeoArea) {
         this.uriGeoArea = uriGeoArea;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    public ClientRedirectUriStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ClientRedirectUriStatus status) {
+        this.status = status;
     }
 
     @Override

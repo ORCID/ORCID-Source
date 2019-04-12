@@ -199,6 +199,10 @@ export class ManageMembersFindClientComponent
       rUri.scopes.push({ name: "/authenticate" });
     }
   }
+  
+  isRetiredWizard(rUri) {
+    return rUri.status == "RETIRED" && rUri.type.value.endsWith("-wizard");
+  }  
 
   confirmUpdateClient() {
     let client = JSON.parse(JSON.stringify(this._client));

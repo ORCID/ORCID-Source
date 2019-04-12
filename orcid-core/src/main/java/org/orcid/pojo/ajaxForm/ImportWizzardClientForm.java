@@ -13,6 +13,8 @@ public class ImportWizzardClientForm implements Serializable {
     public String scopes;
     public List<String> actTypes = new ArrayList<String>();
     public List<String> geoAreas = new ArrayList<String>();
+    private String status;
+    private String clientWebsite;
 
     public String getId() {
         return id;
@@ -69,4 +71,21 @@ public class ImportWizzardClientForm implements Serializable {
     public void setGeoAreas(List<String> geoAreas) {
         this.geoAreas = geoAreas;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getClientWebsite() {
+        return clientWebsite;
+    }
+
+    public void setClientWebsite(String clientWebsite) {
+        this.clientWebsite = clientWebsite;
+    }
+
 }

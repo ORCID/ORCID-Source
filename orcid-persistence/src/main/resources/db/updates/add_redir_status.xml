@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet author="Will Simpson" id="ADD-REDIRECT-URI-STATUS-COLUMN">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="client_redirect_uri" columnName="status"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="client_redirect_uri">
+            <column name="status" type="VARCHAR(200)" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="ADD-REDIRECT-URI-STATUS-DEFAULT-VALUE" author="Will Simpson">
+        <sql>ALTER TABLE client_redirect_uri ALTER COLUMN status SET DEFAULT 'OK'</sql>
+    </changeSet>
+    <changeSet id="SET-REDIRECT-URI-STATUS-DEFAULT-VALUE-ON-EXISTING" author="Will Simpson">
+        <sql>UPDATE client_redirect_uri SET status ='OK'</sql>
+    </changeSet>
+</databaseChangeLog>

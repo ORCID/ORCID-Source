@@ -12,6 +12,7 @@ public class ClientRedirectUri implements Serializable {
     private String uriActType;
     private String uriGeoArea;
     private Set<ScopePathType> predefinedClientScopes;
+    private String status;
 
     public String getRedirectUri() {
         return redirectUri;
@@ -51,6 +52,14 @@ public class ClientRedirectUri implements Serializable {
 
     public void setPredefinedClientScopes(Set<ScopePathType> predefinedClientScopes) {
         this.predefinedClientScopes = predefinedClientScopes;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
