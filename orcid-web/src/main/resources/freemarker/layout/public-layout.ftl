@@ -92,7 +92,7 @@
                 <script type="text/ng-template" id="maintenance-message-ng2-template">
                     <div *ngIf="visible" class="row">
                         <div class="maintenance-header">              
-                           <p>{{maintenanceMessage}}</p>
+                           <p [innerHtml]="maintenanceMessage"></p>
                         </div>
                     </div>    
                 </script>
