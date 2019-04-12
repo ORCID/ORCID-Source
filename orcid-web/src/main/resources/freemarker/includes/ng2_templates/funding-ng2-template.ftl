@@ -7,7 +7,7 @@
                     <div class="col-md-4 col-sm-4 col-xs-12">
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
-                            <@orcid.msg 'workspace.Funding'/> (<span>{{groups.length}}</span>)
+                            <h2><@orcid.msg 'workspace.Funding'/> (<span>{{groups.length}}</span>)</h2>
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>

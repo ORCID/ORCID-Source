@@ -9,7 +9,7 @@
     <div class="biography-controller" id="bio-section">
         <div class="row">
             <div class="col-md-9 col-sm-8 col-xs-4">
-                <h3 (click)="toggleEdit()" class="workspace-title">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h3>  
+                <h2 (click)="toggleEdit()" class="workspace-title">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h2>  
                 <div class="popover-help-container">
                     <i class="glyphicon glyphicon-question-sign"></i>
                     <div id="bio-help" class="popover bottom">

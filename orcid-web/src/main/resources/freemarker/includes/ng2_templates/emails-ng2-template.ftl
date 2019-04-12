@@ -12,7 +12,7 @@
                         </div>
                     </div>                  
                 </div>
-                <div class="workspace-section-label"><@orcid.msg 'manage.emails'/></div>
+                <h3 class="workspace-section-label"><@orcid.msg 'manage.emails'/></h3>
             </div>
         </div> 
         <div class="workspace-section-content">

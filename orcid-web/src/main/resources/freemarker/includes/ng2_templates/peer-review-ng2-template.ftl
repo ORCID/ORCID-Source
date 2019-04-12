@@ -7,7 +7,7 @@
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <a (click)="workspaceSrvc.togglePeerReview()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i>
-                            <@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span>{{peerReviewService.groups.length}}</span>)
+                            <h2><@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span>{{peerReviewService.groups.length}}</span>)</h2>
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>

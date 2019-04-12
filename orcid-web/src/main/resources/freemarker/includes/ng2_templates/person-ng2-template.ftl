@@ -13,7 +13,7 @@
                         </div>                  
                     </div>
                 </div>
-            <div class="workspace-section-label"><@orcid.msg 'workspace.Alsoknownas'/></div>
+            <h3 class="workspace-section-label"><@orcid.msg 'workspace.Alsoknownas'/></h3>
             </div>                
         </div>
         <div class="workspace-section-content">
@@ -36,7 +36,7 @@
                         </div>
                     </div>                  
                 </div>
-                <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
+                <h3 class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></h3>
             </div>
         </div>
         <div class="workspace-section-content">
@@ -59,7 +59,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="workspace-section-label"><@orcid.msg 'public_profile.labelKeywords'/></div>
+                <h3 class="workspace-section-label"><@orcid.msg 'public_profile.labelKeywords'/></h3>
             </div>
             <div class="workspace-section-content">
                 <span *ngFor="let keyword of formData['keywords']?.keywords; let index = index; let first = first; let last = last;">
@@ -82,7 +82,7 @@
                         </div>
                     </div>         
                 </div>
-                <div class="workspace-section-label"><@orcid.msg 'public_profile.labelWebsites'/></div>
+                <h3 class="workspace-section-label"><@orcid.msg 'public_profile.labelWebsites'/></h3>
             </div>
         </div>  
         <div class="workspace-section-content">
@@ -105,7 +105,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="workspace-section-label"><@orcid.msg 'public_profile.labelOtherIDs'/></div>
+                <h3 class="workspace-section-label"><@orcid.msg 'public_profile.labelOtherIDs'/></h3>
             </div>
         </div>
         <div class="workspace-section-content">

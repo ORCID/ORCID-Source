@@ -9249,14 +9249,20 @@ select#language-codes:focus {
 
 
 .toggle-text h2:first-of-type {
-    /* margin-top: 0; */
     color: white;
     font-size: 17px;
     font-size: 14px;
-    margin-left: 4px;
+    margin: 0;
+
 }
 
 a.toggle-text {
     display: flex;
     align-items: center;
+}
+
+person-ng2 h3.workspace-section-label {
+    font-size: 14px;
+    line-height: 22px;
+    margin: 0;
 }
