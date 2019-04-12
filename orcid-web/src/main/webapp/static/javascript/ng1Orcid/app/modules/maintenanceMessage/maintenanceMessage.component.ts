@@ -14,7 +14,7 @@ export class MaintenanceMessageComponent {
     visible: boolean = false;
     
     constructor(private commonSrvc: CommonService) {
-        this.visible = commonSrvc.isPrintView(window.location.pathname);
+        this.visible = !commonSrvc.isPrintView(window.location.pathname);
         this.commonSrvc.configInfo$
         .subscribe(
             data => {
