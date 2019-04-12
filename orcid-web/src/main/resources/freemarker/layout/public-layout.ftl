@@ -79,7 +79,7 @@
                 <div id="main" role="main" class="main">
         </#if>
                 <script type="text/ng-template" id="maintenance-message-ng2-template">
-                    <div *ngIf="visible" class="row">
+                    <div *ngIf="maintenanceMessage!='' && visible" class="row">
                         <div class="maintenance-header">              
                            <p>{{maintenanceMessage}}</p>
                         </div>
