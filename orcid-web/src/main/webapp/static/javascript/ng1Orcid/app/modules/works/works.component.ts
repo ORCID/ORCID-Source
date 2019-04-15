@@ -896,7 +896,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openImportWizardUrlFilter(url, client): void {
-        url = url + '?client_id=' + client.id + '&response_type=code&scope=' + client.scopes + '&redirect_uri=' + client.redirectUri;
+        if(client.status == 'RETIRED'){
+           url = client.clientWebsite;
+        }
+        else{
+            url = url + '?client_id=' + client.id + '&response_type=code&scope=' + client.scopes + '&redirect_uri=' + client.redirectUri;
+        } 
         openImportWizardUrl(url);
     };
 
