@@ -58,6 +58,7 @@ public class TrickleManagerImpl implements TrickleManager {
                 LOG.info("Sending email from {} to {} with subject {}", new Object[] {emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject()});
                 if (mailGunManager.sendEmail(emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject(), emailMessage.getBodyText(),
                         emailMessage.getBodyHtml())) {
+                    LOG.info("Email sent to {}", emailMessage.getTo());
                     profileEventDao.merge(getProfileEventEntity(item.getSuccessType(), item.getOrcid()));
                     emailScheduleDao.updateLatestSent(scheduleId, now);
                 } else {
@@ -66,6 +67,8 @@ public class TrickleManagerImpl implements TrickleManager {
             } else {
                 profileEventDao.merge(getProfileEventEntity(item.getSkippedType(), item.getOrcid()));
             }
+        } else {
+            LOG.info("Email already sent to {}", item.getEmailMessage().getTo());
         }
     }
 

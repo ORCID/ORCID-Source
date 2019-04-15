@@ -61,6 +61,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class ProfileEntityManagerImplTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";   
+    private static final String CLIENT_ID_2 = "APP-5555555555555556";
     private static final String USER_ORCID = "0000-0000-0000-0001";    
     
     @Resource
@@ -287,13 +288,23 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         createToken(CLIENT_ID_1, "token-4", USER_ORCID, expiration, "/activities/read-limited", false);
         createToken(CLIENT_ID_1, "token-5", USER_ORCID, expiration, "/orcid-works/read-limited", false);
         
+        createToken(CLIENT_ID_2, "token-6", USER_ORCID, expiration, "/read-limited", false);
+        createToken(CLIENT_ID_2, "token-7", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
+        createToken(CLIENT_ID_2, "token-8", USER_ORCID, expiration, "/activities/update", false);
+        
         List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
-        assertEquals(1, applications.size());
+        assertEquals(2, applications.size());
         assertEquals(4, applications.get(0).getScopePaths().keySet().size());
+        assertEquals(2, applications.get(1).getScopePaths().keySet().size());
+        
+        // test ordering based on name
+        assertEquals(CLIENT_ID_1, applications.get(0).getOrcidPath());
+        assertEquals(CLIENT_ID_2, applications.get(1).getOrcidPath());
         
         //Assert we can delete them
         profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
+        profileEntityManager.disableClientAccess(CLIENT_ID_2, USER_ORCID);
         
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);

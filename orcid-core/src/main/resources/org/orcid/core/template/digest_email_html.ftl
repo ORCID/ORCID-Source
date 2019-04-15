@@ -11,7 +11,7 @@
                 <@emailMacros.msg "email.common.hi" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
             </span>
             <p>
-                <@emailMacros.msg "email.digest.youhave" /><@emailMacros.space />${totalMessageCount}<@emailMacros.space /><@emailMacros.msg "email.digest.new" /><@emailMacros.space /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.space /><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_1" /><@emailMacros.space /><a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.orcidinbox" /></a><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_4" />
+                <@emailMacros.msg "email.digest.youhave" /><@emailMacros.space />${totalMessageCount}<@emailMacros.space /><@emailMacros.msg "email.digest.new" /><@emailMacros.space /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.space /><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_1" /><@emailMacros.space /><a href="${baseUri}/inbox?lang=${locale}" style="color: #2E7F9F; text-decoration: none;"><@emailMacros.msg "email.digest.orcidinbox" /></a><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_4" />
             </p>
             <#if digestEmail.notificationsBySourceId['ORCID']??> 
             <p>
@@ -46,7 +46,7 @@
                			<#list itemsByType[itemType] as item>
                			<tr>
                				<td width="100%" style="padding-top: 15px; padding-bottom: 10px; font-weight: bold; color: #494A4C">
-               					${item.itemName?trim} <#if item.externalIdentifier??>(<span style="color: #338caf; font-weight: normal;">${item.externalIdentifier.type?lower_case}:</span> <#if item.externalIdentifier.value?starts_with("http")><a href="${item.externalIdentifier.value}" style="color: #338caf; font-weight: normal; text-decoration: none;">${item.externalIdentifier.value}</a><#else><span style="color: #338caf; font-weight: normal;">${item.externalIdentifier.value}</span></#if>)</#if>			
+               					${item.itemName?trim} <#if item.externalIdentifier??>(<span style="color: #2E7F9F; font-weight: normal;">${item.externalIdentifier.type?lower_case}:</span> <#if item.externalIdentifier.value?starts_with("http")><a href="${item.externalIdentifier.value}" style="color: #2E7F9F; font-weight: normal; text-decoration: none;">${item.externalIdentifier.value}</a><#else><span style="color: #2E7F9F; font-weight: normal;">${item.externalIdentifier.value}</span></#if>)</#if>			
                				</td>
                			</tr>
                 		</#list>
@@ -54,10 +54,10 @@
 							<td width="100%">
 								<ul style="padding: 0; margin: 0; float: right;">
 									<li style="display: inline;">						                
-			                			<a href="${baseUri}/inbox#${notification.putCode}" style="padding: 10px 15px; float: left; color: #338caf; text-decoration: none;">more info...</a>
+			                			<a href="${baseUri}/inbox#${notification.putCode}" style="padding: 10px 15px; float: left; color: #2E7F9F; text-decoration: none;">more info...</a>
 			                		</li>
 			                		<li style="display: inline;">
-			               				<a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action" style="padding: 10px 15px; background: #338caf; color: #FFF; text-decoration: none; float: right;"><@emailMacros.msg "email.digest.addnow" /></a> 
+			               				<a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action" style="padding: 10px 15px; background: #2E7F9F; color: #FFF; text-decoration: none; float: right;"><@emailMacros.msg "email.digest.addnow" /></a> 
 		                			</li>
 		                		</ul>
 		                	</td>
@@ -95,17 +95,17 @@
 			</#if>
             </#list>
             <p style="text-align: center;">
-                <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; color: #338caf;">                    
+                <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; color: #2E7F9F;">                    
                      <!-- Use assign to prevent strange whitespace formatting in output -->
                      <#assign viewyourinbox><@emailMacros.msg "email.digest.viewyourinbox" /></#assign>
                      ${viewyourinbox}                    
                 </a>
             </p>
             <p>                
-                <@emailMacros.msg "email.digest.youhavereceived_1" /><@emailMacros.space /><@emailMacros.msg "email.digest.youhavereceived_2" /><@emailMacros.space /><a href="<@emailMacros.msg "email.digest.learnmorelink" />" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.learnmore" /></a>
+                <@emailMacros.msg "email.digest.youhavereceived_1" /><@emailMacros.space /><@emailMacros.msg "email.digest.youhavereceived_2" /><@emailMacros.space /><a href="<@emailMacros.msg "email.digest.learnmorelink" />" style="color: #2E7F9F; text-decoration: none;"><@emailMacros.msg "email.digest.learnmore" /></a>
             </p>
             <p>
-                <@emailMacros.msg "email.digest.youmayadjust_1" /><@emailMacros.space /><a href="${baseUri}/account?lang=${locale}" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.accountsettings" /></a>.
+                <@emailMacros.msg "email.digest.youmayadjust_1" /><@emailMacros.space /><a href="${baseUri}/account?lang=${locale}" style="color: #2E7F9F; text-decoration: none;"><@emailMacros.msg "email.digest.accountsettings" /></a>.
             </p>
             <hr />
             <p>

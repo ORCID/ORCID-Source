@@ -38,7 +38,7 @@ export class MaintenanceMessageNg2Module {}
 //Must convert as much as possible of our code to directives
 
 MaintenanceMessageModule.directive(
-    'maintenanceMessageNg2', 
+    'maintenanceNg2', 
     <any>downgradeComponent(
         {
             component: MaintenanceMessageComponent

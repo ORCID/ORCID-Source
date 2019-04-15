@@ -26,6 +26,7 @@ import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriStatus;
 import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
@@ -124,6 +125,7 @@ public class JpaJaxbClientAdapterTest {
         rUri1.setRedirectUriType("type-1");
         rUri1.setUriActType("uri-act-type-1");
         rUri1.setUriGeoArea("uri-geo-area-1");
+        rUri1.setStatus("OK");
         ClientRedirectUri rUri2 = new ClientRedirectUri();
         Set<ScopePathType> scopes2 = new HashSet<ScopePathType>();
         scopes2.add(ScopePathType.ACTIVITIES_UPDATE);
@@ -132,6 +134,7 @@ public class JpaJaxbClientAdapterTest {
         rUri2.setRedirectUriType("type-2");
         rUri2.setUriActType("uri-act-type-2");
         rUri2.setUriGeoArea("uri-geo-area-2");
+        rUri2.setStatus("OK");
         ClientRedirectUri rUri3 = new ClientRedirectUri();
         Set<ScopePathType> scopes3 = new HashSet<ScopePathType>();
         scopes3.add(ScopePathType.AFFILIATIONS_CREATE);
@@ -140,6 +143,7 @@ public class JpaJaxbClientAdapterTest {
         rUri3.setRedirectUriType("type-3");
         rUri3.setUriActType("uri-act-type-3");
         rUri3.setUriGeoArea("uri-geo-area-3");
+        rUri3.setStatus("RETIRED");
         clientRedirectUris.add(rUri1);
         clientRedirectUris.add(rUri2);
         clientRedirectUris.add(rUri3);
@@ -225,6 +229,7 @@ public class JpaJaxbClientAdapterTest {
         rUri1.setRedirectUriType("type-1");
         rUri1.setUriActType("uri-act-type-1");
         rUri1.setUriGeoArea("uri-geo-area-1");
+        rUri1.setStatus(ClientRedirectUriStatus.OK);
         ClientRedirectUriEntity rUri2 = new ClientRedirectUriEntity();
         rUri2.setClientDetailsEntity(new ClientDetailsEntity("id"));
         rUri2.setDateCreated(now);
@@ -234,6 +239,7 @@ public class JpaJaxbClientAdapterTest {
         rUri2.setRedirectUriType("type-2");
         rUri2.setUriActType("uri-act-type-2");
         rUri2.setUriGeoArea("uri-geo-area-2");
+        rUri2.setStatus(ClientRedirectUriStatus.OK);
         ClientRedirectUriEntity rUri3 = new ClientRedirectUriEntity();
         rUri3.setClientDetailsEntity(new ClientDetailsEntity("id"));
         rUri3.setDateCreated(now);
@@ -243,6 +249,7 @@ public class JpaJaxbClientAdapterTest {
         rUri3.setRedirectUriType("type-3");
         rUri3.setUriActType("uri-act-type-3");
         rUri3.setUriGeoArea("uri-geo-area-3");
+        rUri3.setStatus(ClientRedirectUriStatus.RETIRED);
         clientRegisteredRedirectUris.add(rUri1);
         clientRegisteredRedirectUris.add(rUri2);
         clientRegisteredRedirectUris.add(rUri3);
