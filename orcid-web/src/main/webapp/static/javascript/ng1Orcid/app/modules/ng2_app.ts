@@ -279,7 +279,7 @@ export class TokenInterceptor implements HttpInterceptor {
 @Component(
     {
         selector: 'root-cmp',
-        template: '<div class="ng-view"></div>'
+        template: '<div class="ng-view" role="presentation"></div>'
     }
 ) 
 export class RootCmp {

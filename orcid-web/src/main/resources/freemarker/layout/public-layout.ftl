@@ -107,7 +107,7 @@
         <#if !(RequestParameters['oauth'])?? && nav != "oauth-error" && nav != "oauth-error-mismatch">
             <script type="text/ng-template" id="footer-ng2-template">
                 <@orcid.checkFeatureStatus 'NEW_FOOTER'>
-                    <footer class="footer-main">
+                    <footer class="footer-main" role="footer">
                         <div class="container">
             	            <span id="noop"><!-- For automated tests --> </span>
                             <div class="row footer-row-container">
@@ -159,7 +159,7 @@
                         </div>
                     </div>
                 </@orcid.checkFeatureStatus>
-                <form action="{{getBaseUri()}}">
+                <form action="{{getBaseUri()}}" aria-hidden="true">
                     <input id="imageUrl" type="hidden" value="{{assetsPath}}/images">                
                 </form>
             </script>
