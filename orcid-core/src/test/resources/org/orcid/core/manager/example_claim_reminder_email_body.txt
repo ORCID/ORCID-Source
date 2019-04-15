@@ -15,11 +15,11 @@ ORCID is a registry of unique identifiers for researchers. The ORCID iD helps li
 
 QUESTIONS?
 
-If you have any questions about the registration process, please contact the ORCID support team at https://orcid.org/help/contact-us.
+If you have any questions about the registration process, please contact the ORCID support team at <a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a>.
 
 Kind Regards,
 The ORCID Team
-https://orcid.org/help/contact-us
+<a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a>
 http://testserver.orcid.org
 
 You have received this e-mail in the genuine belief that its contents would be of interest to you. To opt-out of messages from ORCID please go to your Account Settings page at http://testserver.orcid.org/manage - you'll need to claim your record before you can do this.

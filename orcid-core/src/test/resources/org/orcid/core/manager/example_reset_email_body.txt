@@ -13,9 +13,9 @@ After changing your password you will be asked to sign in with your email
 address/ORCID iD and new password.
 
 If you have any questions or concerns about this password reset request, 
-please contact ORCID Support at https://orcid.org/help/contact-us.
+please contact ORCID Support at <a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a>.
 
 Kind Regards,
 The ORCID Team
-https://orcid.org/help/contact-us
+<a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a>
 http://testserver.orcid.org

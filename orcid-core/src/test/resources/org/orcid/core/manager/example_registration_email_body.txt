@@ -10,11 +10,11 @@ You may include your ORCID ID in processes such as manuscript submission and gra
 You may add or edit data in your ORCID record, adjust privacy settings, and select trusted parties with whom to share your data. 
 You have received this e-mail in the genuine belief that its contents would be of interest to you.
 
-If you have any questions about the registration process, please contact the ORCID support team at https://orcid.org/help/contact-us.
+If you have any questions about the registration process, please contact the ORCID support team at <a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a>.
 
 Kind Regards,
 The ORCID Team
-https://orcid.org/help/contact-us
+<a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a>
 http://www.orcid.org
 
 

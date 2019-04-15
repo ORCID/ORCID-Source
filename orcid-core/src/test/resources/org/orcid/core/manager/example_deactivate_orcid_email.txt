@@ -10,10 +10,10 @@ file your ORCID ID, name, and email address; all other data in your record will 
 You may contact ORCID if you later wish to re-claim your identifier and reactivate your account. 
 
 If you did not request account deactivation, please contact the ORCID Help Desk at 
-https://orcid.org/help/contact-us. 
+<a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a>. 
 
 Kind Regards,
 The ORCID Team
-https://orcid.org/help/contact-us 
+<a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a> 
 http://testserver.orcid.org
 

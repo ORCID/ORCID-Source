@@ -22,7 +22,7 @@ See these and other updates by clicking on the link above, or reading our blog
 
 Regards,
 The ORCID Team
-https://orcid.org/help/contact-us
+<a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a>
 
 You have received this email as a service announcement related to your ORCID Account.
 <#include "email_footer.ftl"/>
