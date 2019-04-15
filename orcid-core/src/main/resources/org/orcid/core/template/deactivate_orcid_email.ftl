@@ -19,7 +19,7 @@ https://support.orcid.org/hc/articles/360006973813
 <@emailMacros.msg "email.deactivate.if_you_did" /> https://orcid.org/help/contact-us <@emailMacros.msg "email.deactivate.gdpr_or_by_replying" />
 
 <@emailMacros.msg "email.common.warm_regards" />
-<@emailMacros.msg "email.common.need_help.description.2.href" />
+<a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
 
 
 ${baseUri}/home?lang=${locale}

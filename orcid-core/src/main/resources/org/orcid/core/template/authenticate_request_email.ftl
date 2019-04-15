@@ -5,7 +5,7 @@
 <@emailMacros.msg 'email.institutional_connection.2' /> <a href="${authorization_url}"><@emailMacros.msg 'email.institutional_connection.here' /></a> <@emailMacros.msg 'email.institutional_connection.3' />
 
 <@emailMacros.msg "email.common.warm_regards" />
-<@emailMacros.msg "email.common.need_help.description.2.href" />
+<a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
 
 
 ${baseUri}/home?lang=${locale}
