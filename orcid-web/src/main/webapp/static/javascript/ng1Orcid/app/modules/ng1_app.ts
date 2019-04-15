@@ -78,6 +78,10 @@ import { FundingFormModule }
 import { HeaderModule } 
     from './header/header';
 
+import { Header2Module } 
+    from './header2/header2';
+
+
 import { HomeModule } 
     from './home/home';
 
@@ -119,9 +123,6 @@ import { PersonModule }
 
 import { PrintRecordModule } 
     from './printRecord/printRecord';
-
-import { PublicEduAffiliationModule }
-    from './publicEduAffiliation/publicEduAffiliation';
 
 import { PublicRecordModule } 
     from './publicRecord/publicRecord';
@@ -193,7 +194,7 @@ import { WorksFormModule }
     from './works/worksForm';
 
 import { WorksModule } 
-    from './works/works.ts';
+    from './works/works';
 
 import { ManageMembersModule } 
     from './manageMembers/manageMembers';      
@@ -254,6 +255,7 @@ export const orcidApp = angular.module(
         FundingFormModule.name,
         FundingModule.name,
         HeaderModule.name,
+        Header2Module.name,
         HomeModule.name,
         LanguageModule.name,
         LinkAccountModule.name,
@@ -268,7 +270,6 @@ export const orcidApp = angular.module(
         PeerReviewDeleteModule.name,
         PersonModule.name,
         PrintRecordModule.name,
-        PublicEduAffiliationModule.name,
         PublicRecordModule.name,
         ReactivationModule.name,
         RecordCorrectionsModule.name,

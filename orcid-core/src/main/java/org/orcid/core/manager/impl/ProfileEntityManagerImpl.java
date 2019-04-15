@@ -2,17 +2,10 @@ package org.orcid.core.manager.impl;
 
 import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
@@ -38,30 +31,22 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Locale;
-import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -69,8 +54,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Declan Newman (declan) Date: 10/02/2012
  */
 public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl implements ProfileEntityManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
 
     @Resource
     private AffiliationsManager affiliationsManager;
@@ -234,111 +217,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public void disableApplication(Long tokenId, String userOrcid) {
         orcidOauth2TokenService.disableAccessToken(tokenId, userOrcid);
-    }
-
-    @Override
-    public List<ApplicationSummary> getApplications(String orcid) {
-        List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
-        List<ApplicationSummary> applications = new ArrayList<ApplicationSummary>();
-        Map<Pair<String, Set<ScopePathType>>, ApplicationSummary> existingApplications = new HashMap<Pair<String, Set<ScopePathType>>, ApplicationSummary>();
-        if (tokenDetails != null && !tokenDetails.isEmpty()) {
-            for (OrcidOauth2TokenDetail token : tokenDetails) {
-                if (token.getTokenDisabled() == null || !token.getTokenDisabled()) {
-                    ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(token.getClientDetailsId());
-                    if (client != null) {
-                        ApplicationSummary applicationSummary = new ApplicationSummary();
-                        // Check the scopes
-                        Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
-                        Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
-                        String scopeFullPath = ScopePathType.class.getName() + ".";
-                        for (ScopePathType tempScope : scopesGrantedToClient) {
-                            try {
-                                scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
-                            } catch (NoSuchMessageException e) {
-                                LOGGER.warn("No message to display for scope " + tempScope.toString());
-                            }
-                        }
-                        // If there is at least one scope in this token, fill
-                        // the application summary element
-                        if (!scopePathMap.isEmpty()) {
-                            applicationSummary.setScopePaths(scopePathMap);
-                            applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());
-                            applicationSummary.setOrcidUri(orcidUrlManager.getBaseUriHttp() + "/" + client.getId());
-                            applicationSummary.setOrcidPath(client.getId());
-                            applicationSummary.setName(client.getClientName());
-                            applicationSummary.setWebsiteValue(client.getClientWebsite());
-                            applicationSummary.setApprovalDate(token.getDateCreated());
-                            applicationSummary.setTokenId(String.valueOf(token.getId()));
-                            // Add member information
-                            if (!PojoUtil.isEmpty(client.getGroupProfileId())) {
-                                ProfileEntity member = profileEntityCacheManager.retrieve(client.getGroupProfileId());
-                                applicationSummary.setGroupOrcidPath(member.getId());
-                                applicationSummary.setGroupName(getMemberDisplayName(member));
-                            }
-
-                            if (shouldBeAddedToTheApplicationsList(applicationSummary, scopesGrantedToClient, existingApplications)) {
-                                applications.add(applicationSummary);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return applications;
-    }
-
-    private boolean shouldBeAddedToTheApplicationsList(ApplicationSummary application, Set<ScopePathType> scopes,
-            Map<Pair<String, Set<ScopePathType>>, ApplicationSummary> existingApplications) {
-        boolean result = false;
-        Pair<String, Set<ScopePathType>> key = Pair.of(application.getOrcidPath(), scopes);
-        if (!existingApplications.containsKey(key)) {
-            result = true;
-        } else {
-            Date existingAppCreatedDate = existingApplications.get(key).getApprovalDate();
-
-            // This case should never happen
-            if (existingAppCreatedDate == null) {
-                result = true;
-            }
-
-            if (application.getApprovalDate().before(existingAppCreatedDate)) {
-                result = true;
-            }
-        }
-
-        if (result) {
-            existingApplications.put(key, application);
-        }
-        return result;
-    }
-
-    private String getMemberDisplayName(ProfileEntity member) {
-        RecordNameEntity recordName = member.getRecordNameEntity();
-        if (recordName == null) {
-            return StringUtils.EMPTY;
-        }
-
-        // If it is a member, return the credit name
-        if (OrcidType.GROUP.equals(member.getOrcidType())) {
-            return recordName.getCreditName();
-        }
-
-        Visibility namesVisibilty = Visibility.valueOf(recordName.getVisibility());
-        if (Visibility.PUBLIC.equals(namesVisibilty)) {
-            if (!PojoUtil.isEmpty(recordName.getCreditName())) {
-                return recordName.getCreditName();
-            } else {
-                String displayName = recordName.getGivenNames();
-                String familyName = recordName.getFamilyName();
-                if (StringUtils.isNotBlank(familyName)) {
-                    displayName += " " + familyName;
-                }
-                return displayName;
-            }
-        }
-
-        return StringUtils.EMPTY;
     }
 
     @Override

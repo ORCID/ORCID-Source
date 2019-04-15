@@ -1,4 +1,18 @@
 <script type="text/ng-template" id="delegates-ng2-template">
+    <div class="section-heading">
+        <h1>
+            ${springMacroRequestContext.getMessage("settings.tdtrustindividual")}
+        </h1>
+        <div class="popover-help-container">
+            <i class="glyphicon glyphicon-question-sign"></i>
+            <div id="trusted-individuals-help" class="popover bottom">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <p><@orcid.msg 'manage.help_popover.trustedIndividuals'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006973613" target="manage.help_popover.trustedIndividuals"><@orcid.msg 'common.learn_more'/></a></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="clearfix" id="DelegatesCtrl"> 
         <div *ngIf="delegation?.length > 0" >
             <table class="table table-bordered settings-table normal-width" *ngIf="delegation">

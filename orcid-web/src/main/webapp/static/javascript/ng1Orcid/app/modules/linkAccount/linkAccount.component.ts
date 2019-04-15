@@ -79,7 +79,7 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.assetsPath = data.messages['STATIC_PATH'];
             },
             error => {
-                console.log('linkAccount.component.ts: unable to fetch userInfo', error);                
+                console.log('linkAccount.component.ts: unable to fetch configInfo', error);                
             } 
         );
     }

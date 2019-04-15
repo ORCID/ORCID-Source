@@ -33,6 +33,7 @@ import { CommonService }
 })
 export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private userInfo: any;
    
     delegators: any;
     sort: any;
@@ -49,6 +50,15 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.delegators = {};
         this.url_path = '/delegators/delegators-and-me.json';
+        this.userInfo = this.commonSrvc.userInfo$
+          .subscribe(
+              data => {
+                  this.userInfo = data; 
+              },
+              error => {
+                  this.userInfo = {};
+              } 
+          );
 
     }
 
@@ -111,9 +121,7 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         if(!this.commonSrvc.isPublicPage) {
             this.getDelegators();
-        } else {
-            console.log('Dont load delegators on public page');
-        }    
+        }   
     }; 
     
     getBaseUri(): String {

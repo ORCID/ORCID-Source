@@ -138,7 +138,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.aboutUri = data.messages['ABOUT_URI'];
             },
             error => {
-                console.log('emailsForm.component.ts: unable to fetch userInfo', error);
+                console.log('emailsForm.component.ts: unable to fetch configInfo', error);
             } 
         );
         

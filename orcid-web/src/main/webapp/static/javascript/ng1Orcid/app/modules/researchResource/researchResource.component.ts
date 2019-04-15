@@ -1,6 +1,4 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var GroupedActivities: any;
 
 //Import all the angular components
 import { NgForOf, NgIf } 
@@ -52,7 +50,8 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     privacyHelpCurKey: any;
     showElement: any;
     showResourceItemDetails: any;
-    sortState: any;
+    sortAsc: boolean;
+    sortKey: any;
 
     constructor(
         private researchResourceService: ResearchResourceService,
@@ -73,7 +72,8 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         this.privacyHelpCurKey = null;
         this.showElement = {};
         this.showResourceItemDetails = {};
-        this.sortState = this.sortState = new ActSortState(GroupedActivities.NG2_AFFILIATION);
+        this.sortAsc = false;
+        this.sortKey = "date";
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
 
@@ -111,8 +111,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
 
     getResearchResourceGroups(): void {
         if(this.publicView === "true") {
-            this.researchResourceService.getPublicResearchResourcePage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.researchResourceService.getPublicResearchResourcePage(this.sortKey, this.sortAsc).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -127,8 +126,8 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                     } 
             );
         } else {
-            this.researchResourceService.getResearchResourcePage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.researchResourceService.getResearchResourcePage(this.sortKey, 
+                this.sortAsc).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -276,11 +275,17 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     };
         
     sort(key): void {
-        this.sortState.sortBy(key);
+        if(key == this.sortKey){
+            this.sortAsc = !this.sortAsc;
+        } else {
+            if(key=='title'){
+                this.sortAsc = true;
+            }
+            this.sortKey = key;
+        }
         this.researchResourceService.resetGroups();
         if(this.publicView === "true") {
-            this.researchResourceService.getPublicResearchResourcePage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[key]).pipe(    
+            this.researchResourceService.getPublicResearchResourcePage(this.sortKey, this.sortAsc).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -295,8 +300,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
                     } 
             );
         } else {
-            this.researchResourceService.getResearchResourcePage(this.sortState.predicateKey, 
-                !this.sortState.reverseKey[key]).pipe(    
+            this.researchResourceService.getResearchResourcePage(this.sortKey, this.sortAsc).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(

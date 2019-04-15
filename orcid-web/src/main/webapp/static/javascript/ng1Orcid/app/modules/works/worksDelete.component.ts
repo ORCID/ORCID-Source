@@ -1,6 +1,4 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var sortState: any;
 
 //Import all the angular components
 import { NgForOf, NgIf } 
@@ -48,7 +46,6 @@ export class WorksDeleteComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     deleteByPutCode(putCode, deleteGroup): void {
-        //this.closeAllMoreInfo();
         this.deleteWork(putCode);
     };
 
@@ -122,9 +119,6 @@ export class WorksDeleteComponent implements AfterViewInit, OnDestroy, OnInit {
                 }
                 if( res.deleteGroup ) {
                     this.deleteGroup = res.deleteGroup;
-                }
-                if( res.sortState ) {
-                    this.sortState = res.sortState;
                 }
             }
         );

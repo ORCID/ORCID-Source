@@ -100,7 +100,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.aboutUri = data.messages['ABOUT_URI'];
             },
             error => {
-                console.log('reactivation.component.ts: unable to fetch userInfo', error);
+                console.log('reactivation.component.ts: unable to fetch configInfo', error);
             } 
         );
     }

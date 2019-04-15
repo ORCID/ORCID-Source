@@ -14,14 +14,6 @@
 	<!-- JMS Messaging -->
 	<!-- enable the configuration of jms on annotations -->
 	<jms:annotation-driven/>
-	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<!-- lets use an embedded broker for now (easier to test!) -->
-    	<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
-    	<property name="trustAllPackages" value="true"/>
-	</bean>
-	<bean id="cachingJmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
-    	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
-	</bean>
 	
 	 <!-- so we can listen to queues -->
     <bean id="jmsListenerContainerFactory"
@@ -32,18 +24,6 @@
         <!-- client acknowledge -->
         <property name="sessionAcknowledgeMode" value="2" />
     </bean>
-	
-	<!-- Default Destination Queue Definition -->
-	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
-	  <!-- name of the queue -->
-	  <constructor-arg index="0" value="test" />
-	</bean>
-	 
-	<!-- JmsTemplate Definition so we can send to queues -->
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-	  <property name="connectionFactory" ref="jmsConnectionFactory" />
-	  <property name="defaultDestination" ref="defaultJmsDestination" />
-	</bean>
 	
 	<bean id="jmsMessageSender" class="org.orcid.scheduler.messaging.JmsMessageSender">
 		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>

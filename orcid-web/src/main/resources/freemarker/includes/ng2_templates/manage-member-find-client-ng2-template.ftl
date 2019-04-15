@@ -158,14 +158,31 @@
 													</div>
 												</div>
 											</td>
-											<td>
-												<!-- Add button -->
-												<div class="col-md-1 col-sm-1 col-xs-12">
-								    				<a  id="load-empty-redirect-uri" (click)="addRedirectUri()" class="glyphicon glyphicon-plus grey" *ngIf="(i===_client.redirectUris.length-1)"></a>
+										</tr>
+										<tr>
+											<td class="edit-client-table-col">
+												<!-- Status -->
+												<div class="col-md-6 col-sm-6 col-xs-12">
+													<span class="edit-client-labels"><@orcid.msg 'manage_members.label.status'/></span><br>
+													<select name="type" class="input-large input-xlarge-full" [(ngModel)]="rUri.status">
+														<option value="OK"><@orcid.msg 'manage_members.label.status.ok'/></option>
+														<option value="RETIRED"><@orcid.msg 'manage_members.label.status.retired'/></option>
+													</select>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="edit-client-table-col">
+												<div *ngIf="isRetiredWizard(rUri)" class="alert alert-info">
+													<@orcid.msg 'manage_members.label.status.retiredWizardWarning'/>
 												</div>
 											</td>
 										</tr>
 									</table>
+									<!-- Add button -->
+									<div class="col-md-1 col-sm-1 col-xs-12">
+					    				<a  id="load-empty-redirect-uri" (click)="addRedirectUri()" class="glyphicon glyphicon-plus grey" *ngIf="(i===_client.redirectUris.length-1)"></a>
+									</div>
 								</div>
 								<div class="row">
 									<!-- Errors -->

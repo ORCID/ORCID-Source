@@ -65,10 +65,10 @@ Executive Director, ORCID
         </p>
         <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
             <small>
-            <a href="${baseUri}/account" style="color: #338caf;">email preferences</a> 
-            | <a href="${baseUri}/privacy-policy" style="color: #338caf;">privacy policy</a> 
+            <a href="${baseUri}/account" style="color: #2E7F9F;">email preferences</a> 
+            | <a href="${baseUri}/privacy-policy" style="color: #2E7F9F;">privacy policy</a> 
             | ORCID, Inc. | 10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA 
-            | <a href="${baseUri}" style="color: #338caf;">ORCID.org</a>
+            | <a href="${baseUri}" style="color: #2E7F9F;">ORCID.org</a>
             </small>            
         </p>                       
         </div>

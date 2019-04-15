@@ -1,6 +1,4 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var GroupedActivities: any;
 declare var openImportWizardUrl: any;
 
 //Import all the angular components
@@ -52,8 +50,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
-    sortHideOption: boolean;
-    sortState: any;
+    sortAsc: boolean;
+    sortKey: string;
     fundingMoreInfo: any;
     wizardDescExpanded: any;
 
@@ -79,7 +77,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.showElement = {};
-        this.sortState = new ActSortState(GroupedActivities.FUNDING);
+        this.sortAsc = false;
+        this.sortKey = 'date';
         this.fundingMoreInfo = {};
         this.wizardDescExpanded = {};
     }
@@ -136,7 +135,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     getFundingGroups(): any {
         this.groups = new Array();
         if(this.publicView === "true") {
-            this.fundingService.getPublicFundingGroups(this.sortState.predicateKey, !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.fundingService.getPublicFundingGroups(this.sortKey, this.sortAsc).pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
@@ -150,7 +149,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         } else {
-            this.fundingService.getFundingGroups(this.sortState.predicateKey, !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.fundingService.getFundingGroups(this.sortKey, this.sortAsc).pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
@@ -393,7 +392,14 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     sort(key): void {       
-        this.sortState.sortBy(key);
+        if(key == this.sortKey){
+            this.sortAsc = !this.sortAsc;
+        } else {
+            if(key=='title' || key=='type'){
+                this.sortAsc = true;
+            }
+            this.sortKey = key;
+        }
         this.getFundingGroups();
     };
 

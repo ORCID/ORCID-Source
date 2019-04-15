@@ -3,8 +3,6 @@ package org.orcid.pojo;
 import java.util.Date;
 import java.util.Map;
 
-import org.orcid.jaxb.model.message.ScopePathType;
-
 public class ApplicationSummary {
 
     private String orcidUri;
@@ -27,7 +25,7 @@ public class ApplicationSummary {
 
     private Date approvalDate;
 
-    private Map<ScopePathType, String> scopePaths;
+    private Map<String, String> scopePaths;
     
     private String tokenId;
 
@@ -111,11 +109,11 @@ public class ApplicationSummary {
         this.approvalDate = approvalDate;
     }
 
-    public Map<ScopePathType, String> getScopePaths() {
+    public Map<String, String> getScopePaths() {
         return scopePaths;
     }
 
-    public void setScopePaths(Map<ScopePathType, String> scopePaths) {
+    public void setScopePaths(Map<String, String> scopePaths) {
         this.scopePaths = scopePaths;
     }
 

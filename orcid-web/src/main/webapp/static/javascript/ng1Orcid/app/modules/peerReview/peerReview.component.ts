@@ -1,8 +1,6 @@
 declare var $: any;
-declare var ActSortState: any;
 declare var getBaseUri: any;
 declare var openImportWizardUrl: any;
-declare var GroupedActivities: any;
 
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
     from '@angular/core';
@@ -50,7 +48,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     showPeerReviewDetails: any;
     showResourceItemDetails: any;
-    sortState: any;
+    sortAsc: boolean;
     peerReviewImportWizard: boolean = false;
     wizardDescExpanded: any = {};
 
@@ -75,7 +73,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement = {};
         this.showPeerReviewDetails = new Array();
         this.showResourceItemDetails = {};
-        this.sortState = this.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
+        this.sortAsc = true;
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
 
@@ -113,7 +111,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getPeerReviewGroups(): void {
         if(this.publicView === "true") {
-            this.peerReviewService.getPublicPeerReviewGroups(!this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.peerReviewService.getPublicPeerReviewGroups(this.sortAsc).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -128,7 +126,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
                     } 
             );
         } else {
-            this.peerReviewService.getPeerReviewGroups(!this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.peerReviewService.getPeerReviewGroups(this.sortAsc).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -283,11 +281,11 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showElement[element] = true;
     };
         
-    sort(key): void {
-        this.sortState.sortBy(key);
+    sort(): void {
+        this.sortAsc = !this.sortAsc;
         this.peerReviewService.resetGroups();
         if(this.publicView === "true") {
-            this.peerReviewService.getPublicPeerReviewGroups(!this.sortState.reverseKey[key]).pipe(    
+            this.peerReviewService.getPublicPeerReviewGroups(this.sortAsc).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(
@@ -302,7 +300,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
                     } 
             );
         } else {
-            this.peerReviewService.getPeerReviewGroups(!this.sortState.reverseKey[key]).pipe(    
+            this.peerReviewService.getPeerReviewGroups(this.sortAsc).pipe(    
             takeUntil(this.ngUnsubscribe)
             )
                 .subscribe(

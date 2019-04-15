@@ -129,7 +129,6 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                 },
                 error => {
-                  console.log('developerTools.component.ts: unable to fetch userInfo', error);
                   this.userInfo = {};
                 } 
             );

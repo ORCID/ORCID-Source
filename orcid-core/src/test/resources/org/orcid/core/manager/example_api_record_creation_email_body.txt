@@ -13,11 +13,11 @@ http://testserver.orcid.org/claim/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95Sn
 
 Where do I learn more about ORCID? Please see our Webpage at http://orcid.org.  More on ORCID's Privacy Policy is available here - http://orcid.org/privacy-policy.
 
-Need help? If you have any questions about the registration process, please contact the ORCID support team at support@orcid.org.
+Need help? If you have any questions about the registration process, please contact the ORCID support team at https://orcid.org/help/contact-us.
 
 Kind Regards,
 The ORCID Team
-support@orcid.org
+https://orcid.org/help/contact-us
 http://testserver.orcid.org
 
 You have received this e-mail in the genuine belief that its contents would be of interest to you. To opt-out of messages from ORCID please go to your Account Settings page at http://testserver.orcid.org/manage - you'll need to claim your record before you can do this.

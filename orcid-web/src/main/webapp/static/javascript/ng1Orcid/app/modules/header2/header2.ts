@@ -8,17 +8,18 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //User generated
-import { PublicEduAffiliationComponent } 
-    from './publicEduAffiliation.component';
+import { Header2Component } 
+    from './header2.component';
 
 import { CommonNg2Module }
     from './../common/common';
 
 // This is the Angular 1 part of the module
-export const PublicEduAffiliationModule = angular.module(
-    'PublicEduAffiliationModule', 
+export const Header2Module = angular.module(
+    'Header2Module',
     []
 );
+
 
 // This is the Angular 2 part of the module
 @NgModule(
@@ -27,22 +28,23 @@ export const PublicEduAffiliationModule = angular.module(
             CommonNg2Module
         ],
         declarations: [ 
-            PublicEduAffiliationComponent
+            Header2Component
         ],
         entryComponents: [ 
-            PublicEduAffiliationComponent 
-        ]
+            Header2Component 
+        ],
+        providers: [],
     }
 )
-export class PublicEduAffiliationNg2Module {}
+export class Header2Ng2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-PublicEduAffiliationModule.directive(
-    'publicEduAffiliationNg2', 
+Header2Module.directive(
+    'header2Ng2', 
     <any>downgradeComponent(
         {
-            component: PublicEduAffiliationComponent,
+            component: Header2Component,
         }
     )
 );

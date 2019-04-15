@@ -165,6 +165,8 @@ public class ThirdPartyLinkManagerImpl implements ThirdPartyLinkManager {
                     clientForm.setDescription(clientDetails.getClientDescription());
                     clientForm.setRedirectUri(entity.getRedirectUri());
                     clientForm.setScopes(entity.getPredefinedClientScope());
+                    clientForm.setStatus(entity.getStatus().name());
+                    clientForm.setClientWebsite(clientDetails.getClientWebsite());
                     if(RedirectUriType.IMPORT_WORKS_WIZARD.equals(rut)) {                        
                         if(!PojoUtil.isEmpty(entity.getUriActType())) {
                             JsonNode node = JsonUtils.readTree(entity.getUriActType());

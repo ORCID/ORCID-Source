@@ -21,6 +21,7 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
     private Text type;
     private Text actType;
     private Text geoArea;
+    private String status = "OK";
     
     @Deprecated
     public static RedirectUri valueOf(ClientRedirectUriEntity rUri) {
@@ -87,12 +88,10 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
         }
         
         redirectUri.setValue(Text.valueOf(modelObject.getRedirectUri()));
-        
         redirectUri.setType(Text.valueOf(modelObject.getRedirectUriType()));
-        
         redirectUri.setActType(Text.valueOf(modelObject.getUriActType()));
-        
         redirectUri.setGeoArea(Text.valueOf(modelObject.getUriGeoArea()));
+        redirectUri.setStatus(modelObject.getStatus());
         return redirectUri;
     }
     
@@ -103,13 +102,9 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
                 redirectUri.getScopes().add(scope.value());
             }
         }
-        
         redirectUri.setValue(Text.valueOf(modelObject.getRedirectUri()));
-        
         redirectUri.setType(Text.valueOf(modelObject.getRedirectUriType()));
-        
         redirectUri.setActType(Text.valueOf(modelObject.getUriActType()));
-        
         redirectUri.setGeoArea(Text.valueOf(modelObject.getUriGeoArea()));
         return redirectUri;
     }
@@ -140,6 +135,8 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
             element.setUriGeoArea(this.geoArea.getValue());
         }
         
+        element.setStatus(this.status);
+        
         return element;
     }
     
@@ -166,6 +163,14 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
     }
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

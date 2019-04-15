@@ -95,6 +95,7 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriStatus;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -971,6 +972,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
                             existingEntity.setUriActType(cru.getUriActType());
                             existingEntity.setUriGeoArea(cru.getUriGeoArea());
+                            existingEntity.setStatus(ClientRedirectUriStatus.valueOf(cru.getStatus()));
                             b.getClientRegisteredRedirectUris().add(existingEntity);
                         } else {
                             ClientRedirectUriEntity newEntity = new ClientRedirectUriEntity();
@@ -982,6 +984,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             newEntity.setRedirectUriType(cru.getRedirectUriType());
                             newEntity.setUriActType(cru.getUriActType());
                             newEntity.setUriGeoArea(cru.getUriGeoArea());
+                            newEntity.setStatus(ClientRedirectUriStatus.valueOf(cru.getStatus()));
                             b.getClientRegisteredRedirectUris().add(newEntity);
                         }
                     }
@@ -1009,6 +1012,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         element.setUriActType(entity.getUriActType());
                         element.setUriGeoArea(entity.getUriGeoArea());
                         element.setPredefinedClientScopes(ScopePathType.getScopesFromSpaceSeparatedString(entity.getPredefinedClientScope()));
+                        element.setStatus(entity.getStatus().name());
                         a.getClientRedirectUris().add(element);
                     }
                 }                

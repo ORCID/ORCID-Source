@@ -191,21 +191,13 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.START_DATE_SORT_KEY, true);
+        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.DATE_SORT_KEY, true);
         assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.START_DATE_SORT_KEY, false);
+        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.DATE_SORT_KEY, false);
         assertEquals("the title2", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title3", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
-
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.END_DATE_SORT_KEY, true);
-        assertEquals("the title2", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
-        assertEquals("the title3", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
-
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.END_DATE_SORT_KEY, false);
-        assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
-        assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
     }
 
