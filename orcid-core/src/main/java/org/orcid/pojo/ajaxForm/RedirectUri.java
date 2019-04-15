@@ -21,7 +21,7 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
     private Text type;
     private Text actType;
     private Text geoArea;
-    private String status;
+    private String status = "OK";
     
     @Deprecated
     public static RedirectUri valueOf(ClientRedirectUriEntity rUri) {

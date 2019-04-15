@@ -12,7 +12,7 @@ public class ClientRedirectUri implements Serializable {
     private String uriActType;
     private String uriGeoArea;
     private Set<ScopePathType> predefinedClientScopes;
-    private String status;
+    private String status = "OK";
 
     public String getRedirectUri() {
         return redirectUri;
