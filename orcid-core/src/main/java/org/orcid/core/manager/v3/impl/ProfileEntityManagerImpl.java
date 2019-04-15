@@ -313,6 +313,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         for (String key : distinctApplications.keySet()) {
             applications.add(distinctApplications.get(key));
         }
+        
+        applications.sort((a1, a2) -> a1.getName().toLowerCase().compareTo(a2.getName().toLowerCase()));
         return applications;
     }
 
