@@ -494,7 +494,7 @@ public class SetUpClientsAndUsers {
         
         Registration registration = new Registration();
         org.orcid.pojo.ajaxForm.Visibility v = new org.orcid.pojo.ajaxForm.Visibility();
-        v.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC);
+        v.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
         registration.setActivitiesVisibilityDefault(v);
         registration.setEmail(Text.valueOf(params.get(EMAIL)));
         registration.setFamilyNames(Text.valueOf(params.get(FAMILY_NAMES)));
