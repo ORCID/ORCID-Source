@@ -53,7 +53,7 @@
             <small>
                 <@spring.message 'orcid.frontend.deactivated' /><br />
                 <@spring.message 'reset_password.enterEmail_2' />
-                <a href="mailto:support@orcid.org"><@spring.message 'resend_claim.labelorg' /></a>
+                <a href="https://orcid.org/help/contact-us"><@spring.message 'resend_claim.labelorg' /></a>
             </small>
         </p>
         <div id="reactivate" name="emailAddressForm">            
@@ -70,7 +70,7 @@
         </div>         
     </span> 
     <span *ngIf="showReactivationSent">
-        <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /> <a href="mailto:support@orcid.org"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />
+        <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /> <a href="https://orcid.org/help/contact-us"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />
     </span>
 </div>
 <div id="loginErrors"></div>
