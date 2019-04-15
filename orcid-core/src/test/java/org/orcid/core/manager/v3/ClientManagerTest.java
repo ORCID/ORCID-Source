@@ -41,6 +41,7 @@ import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriStatus;
 import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
@@ -119,18 +120,21 @@ public class ClientManagerTest extends BaseTest {
                 assertEquals("type-1 " + seed, rUri.getRedirectUriType());
                 assertEquals("uri-act-type-1 " + seed, rUri.getUriActType());
                 assertEquals("uri-geo-area-1 " + seed, rUri.getUriGeoArea());
+                assertEquals(ClientRedirectUriStatus.OK, rUri.getStatus());
                 found1 = true;
             } else if(rUri.getRedirectUri().equals("redirect-uri-2 " + seed)) {
                 assertEquals(ScopePathType.ACTIVITIES_UPDATE.value(), rUri.getPredefinedClientScope());
                 assertEquals("type-2 " + seed, rUri.getRedirectUriType());
                 assertEquals("uri-act-type-2 " + seed, rUri.getUriActType());
                 assertEquals("uri-geo-area-2 " + seed, rUri.getUriGeoArea());
+                assertEquals(ClientRedirectUriStatus.OK, rUri.getStatus());
                 found2 = true;
             } else if(rUri.getRedirectUri().equals("redirect-uri-3 " + seed)) {
                 assertEquals(ScopePathType.AFFILIATIONS_CREATE.value(), rUri.getPredefinedClientScope());
                 assertEquals("type-3 " + seed, rUri.getRedirectUriType());
                 assertEquals("uri-act-type-3 " + seed, rUri.getUriActType());
                 assertEquals("uri-geo-area-3 " + seed, rUri.getUriGeoArea());
+                assertEquals(ClientRedirectUriStatus.RETIRED, rUri.getStatus());
                 found3 = true;
             } else {
                 fail("Invalid redirect uri: " + rUri.getRedirectUri());
@@ -175,6 +179,7 @@ public class ClientManagerTest extends BaseTest {
         rUri.setRedirectUriType(RedirectUriType.IMPORT_WORKS_WIZARD.value());
         rUri.setUriActType("updated-uri-act-type");
         rUri.setUriGeoArea("updated-geo-area");
+        rUri.setStatus("OK");
         client.getClientRedirectUris().add(rUri);
         
         //Edit the client
@@ -235,6 +240,7 @@ public class ClientManagerTest extends BaseTest {
         rUri.setRedirectUriType(RedirectUriType.IMPORT_WORKS_WIZARD.value());
         rUri.setUriActType("updated-uri-act-type");
         rUri.setUriGeoArea("updated-geo-area");
+        rUri.setStatus("OK");
         client.getClientRedirectUris().add(rUri);
         
         //Edit the client
@@ -446,6 +452,7 @@ public class ClientManagerTest extends BaseTest {
         rUri1.setRedirectUriType("type-1 " + randomString);
         rUri1.setUriActType("uri-act-type-1 " + randomString);
         rUri1.setUriGeoArea("uri-geo-area-1 " + randomString);
+        rUri1.setStatus("OK");
         ClientRedirectUri rUri2 = new ClientRedirectUri();
         Set<ScopePathType> scopes2 = new HashSet<ScopePathType>();
         scopes2.add(ScopePathType.ACTIVITIES_UPDATE);
@@ -454,6 +461,7 @@ public class ClientManagerTest extends BaseTest {
         rUri2.setRedirectUriType("type-2 " + randomString);
         rUri2.setUriActType("uri-act-type-2 " + randomString);
         rUri2.setUriGeoArea("uri-geo-area-2 " + randomString);
+        rUri2.setStatus("OK");
         ClientRedirectUri rUri3 = new ClientRedirectUri();
         Set<ScopePathType> scopes3 = new HashSet<ScopePathType>();
         scopes3.add(ScopePathType.AFFILIATIONS_CREATE);
@@ -462,6 +470,7 @@ public class ClientManagerTest extends BaseTest {
         rUri3.setRedirectUriType("type-3 " + randomString);
         rUri3.setUriActType("uri-act-type-3 " + randomString);
         rUri3.setUriGeoArea("uri-geo-area-3 " + randomString);
+        rUri3.setStatus("RETIRED");
         clientRedirectUris.add(rUri1);
         clientRedirectUris.add(rUri2);
         clientRedirectUris.add(rUri3);
