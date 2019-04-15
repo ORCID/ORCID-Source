@@ -8,9 +8,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.ResearchResourceManager;
-import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 
 public class ResearchResourcePaginator {
@@ -33,7 +32,7 @@ public class ResearchResourcePaginator {
         page.setGroups(new ArrayList<ResearchResourceGroupPojo>());
         
         for (int i = offset; i < Math.min(offset + PAGE_SIZE, rr.getResearchResourceGroup().size()); i++) {
-            org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup group = rr.getResearchResourceGroup().get(i);
+            org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup group = rr.getResearchResourceGroup().get(i);
             page.getGroups().add(ResearchResourceGroupPojo.valueOf(group, i, orcid));
         }
         page.setTotalGroups(rr.getResearchResourceGroup().size());

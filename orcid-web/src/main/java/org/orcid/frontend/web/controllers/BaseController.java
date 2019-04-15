@@ -47,21 +47,21 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.Addresses;
-import org.orcid.jaxb.model.v3.rc2.record.Biography;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
-import org.orcid.jaxb.model.v3.rc2.record.Keyword;
-import org.orcid.jaxb.model.v3.rc2.record.Keywords;
-import org.orcid.jaxb.model.v3.rc2.record.Name;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
+import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.constants.SiteConstants;
@@ -791,7 +791,7 @@ public class BaseController {
 
             if (publicPersonalDetails.getName() != null) {
                 Name name = publicPersonalDetails.getName();
-                if (!justPublic || name.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
+                if (!justPublic || name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
                     if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
                         displayName = name.getCreditName().getContent();
                     } else {
@@ -815,7 +815,7 @@ public class BaseController {
             // Get biography
             if (publicPersonalDetails.getBiography() != null) {
                 Biography bio = publicPersonalDetails.getBiography();
-                if (!justPublic || org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
+                if (!justPublic || org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
                     publicRecordPersonDetails.setBiography(bio);
                 }
             }
@@ -826,7 +826,7 @@ public class BaseController {
                 Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
                 while (it.hasNext()) {
                     OtherName otherName = it.next();
-                    if (justPublic && !org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.equals(otherName.getVisibility())) {
+                    if (justPublic && !org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(otherName.getVisibility())) {
                         it.remove();
                     }
                 }
@@ -889,7 +889,7 @@ public class BaseController {
         } else {
             publicEmails = emailManagerReadOnly.getEmails(orcid);
         }        
-        Map<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>> groupedEmails = groupEmails(publicEmails);
+        Map<String, List<org.orcid.jaxb.model.v3.release.record.Email>> groupedEmails = groupEmails(publicEmails);
         publicRecordPersonDetails.setPublicGroupedEmails(groupedEmails);
 
         // Fill external identifiers
@@ -964,16 +964,16 @@ public class BaseController {
 
     }
 
-    private Map<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>> groupEmails(Emails emails) {
+    private Map<String, List<org.orcid.jaxb.model.v3.release.record.Email>> groupEmails(Emails emails) {
         if (emails == null || emails.getEmails() == null) {
             return null;
         }
-        Map<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>> groups = new TreeMap<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>>();
-        for (org.orcid.jaxb.model.v3.rc2.record.Email e : emails.getEmails()) {
+        Map<String, List<org.orcid.jaxb.model.v3.release.record.Email>> groups = new TreeMap<String, List<org.orcid.jaxb.model.v3.release.record.Email>>();
+        for (org.orcid.jaxb.model.v3.release.record.Email e : emails.getEmails()) {
             if (groups.containsKey(e.getEmail())) {
                 groups.get(e.getEmail()).add(e);
             } else {
-                List<org.orcid.jaxb.model.v3.rc2.record.Email> list = new ArrayList<org.orcid.jaxb.model.v3.rc2.record.Email>();
+                List<org.orcid.jaxb.model.v3.release.record.Email> list = new ArrayList<org.orcid.jaxb.model.v3.release.record.Email>();
                 list.add(e);
                 groups.put(e.getEmail(), list);
             }

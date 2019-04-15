@@ -34,7 +34,7 @@ import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.Date;

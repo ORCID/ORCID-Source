@@ -17,7 +17,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.jaxb.model.common.AvailableLocales;
-import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;

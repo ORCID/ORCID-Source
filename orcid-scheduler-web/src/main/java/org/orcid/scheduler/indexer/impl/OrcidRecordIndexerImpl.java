@@ -11,7 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.scheduler.indexer.OrcidRecordIndexer;

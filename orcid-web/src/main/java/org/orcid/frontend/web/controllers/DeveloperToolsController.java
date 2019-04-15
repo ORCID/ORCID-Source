@@ -16,8 +16,6 @@ import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -67,7 +65,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @RequestMapping(value = "/get-client.json", method = RequestMethod.GET)
     public @ResponseBody Client getClient() {
         String userOrcid = getEffectiveUserOrcid();
-        Set<org.orcid.jaxb.model.v3.rc2.client.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
+        Set<org.orcid.jaxb.model.v3.release.client.Client> existingClients = clientManagerReadOnly.getClients(userOrcid);
 
         if (existingClients.isEmpty()) {
             Client client = new Client();
@@ -94,7 +92,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
-            org.orcid.jaxb.model.v3.rc2.client.Client clientToCreate = client.toModelObject();
+            org.orcid.jaxb.model.v3.release.client.Client clientToCreate = client.toModelObject();
             try {
                 if(PojoUtil.isEmpty(client.getClientId())) {
                     clientToCreate = clientManager.createPublicClient(clientToCreate);
@@ -117,7 +115,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         validateClient(client);
 
         if (client.getErrors().isEmpty()) {
-            org.orcid.jaxb.model.v3.rc2.client.Client clientToEdit = client.toModelObject();
+            org.orcid.jaxb.model.v3.release.client.Client clientToEdit = client.toModelObject();
             try {
                 clientToEdit = clientManager.edit(clientToEdit, false);
             } catch (Exception e) {
@@ -140,7 +138,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         }
         
         //Verify this client belongs to the member
-        org.orcid.jaxb.model.v3.rc2.client.Client theClient = clientManagerReadOnly.get(client.getClientId().getValue());
+        org.orcid.jaxb.model.v3.release.client.Client theClient = clientManagerReadOnly.get(client.getClientId().getValue());
         if(theClient == null) {
             return false;
         }

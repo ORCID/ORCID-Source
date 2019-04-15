@@ -37,21 +37,21 @@ import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc2.record.Funding;
-import org.orcid.jaxb.model.v3.rc2.record.Name;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.PeerReview;
+import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -314,9 +314,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         List<FundingGroup> fundingGroups = new ArrayList<>();
         List<FundingSummary> summaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
         Fundings fundings = profileFundingManagerReadOnly.groupFundings(summaries, true);
-        for (org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup group : fundings.getFundingGroup()) {
+        for (org.orcid.jaxb.model.v3.release.record.summary.FundingGroup group : fundings.getFundingGroup()) {
             FundingGroup fundingGroup = FundingGroup.valueOf(group);
-            for(org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary summary : summaries) {
+            for(org.orcid.jaxb.model.v3.release.record.summary.FundingSummary summary : summaries) {
                 if(summary.getSource().retrieveSourcePath().equals(orcid)) {
                     fundingGroup.setUserVersionPresent(true);
                     break;
@@ -354,7 +354,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResource.json", method = RequestMethod.GET)
     public @ResponseBody ResearchResource getResearchResource(@PathVariable("orcid") String orcid, @RequestParam("id") int id) {
-        org.orcid.jaxb.model.v3.rc2.record.ResearchResource r = researchResourceManagerReadOnly.getResearchResource(orcid, Long.valueOf(id));
+        org.orcid.jaxb.model.v3.release.record.ResearchResource r = researchResourceManagerReadOnly.getResearchResource(orcid, Long.valueOf(id));
         validateVisibility(r.getVisibility());
         sourceUtils.setSourceName(r);
         return ResearchResource.fromValue(r);
@@ -425,7 +425,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
         List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
         PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, true);
-        for (org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+        for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
             Optional<GroupIdRecord> groupIdRecord = groupIdRecordManagerReadOnly.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
             PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
             for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {

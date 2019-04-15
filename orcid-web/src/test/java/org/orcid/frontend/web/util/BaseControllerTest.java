@@ -20,7 +20,7 @@ import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.springframework.aop.framework.Advised;

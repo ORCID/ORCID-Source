@@ -53,7 +53,7 @@ import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
