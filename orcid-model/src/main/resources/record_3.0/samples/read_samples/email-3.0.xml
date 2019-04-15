@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<email:email primary="true" verified="false" visibility="public" put-code="1" xmlns:email="http://www.orcid.org/ns/email"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/email ../email-3.0.xsd ">		
+		<common:created-date>2001-12-31T12:00:00</common:created-date>
+		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+		<common:source>
+			<common:source-orcid>
+				<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:source-orcid>
+			<common:source-name />
+		</common:source>
+		<email:email>user1@email.com</email:email>
+</email:email>

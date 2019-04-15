@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<peer-review:peer-review put-code="12345"
+	visibility="private" xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/peer-review ../peer-review-3.0.xsd ">		
+	<common:created-date>2001-12-31T12:00:00</common:created-date>
+	<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+	<common:source>
+		<common:source-orcid>
+			<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:source-orcid>
+		<common:source-name />
+	</common:source>	
+	<peer-review:reviewer-role>reviewer</peer-review:reviewer-role>	
+	<peer-review:review-identifiers>
+		<common:external-id>
+			<common:external-id-type>source-work-id</common:external-id-type>
+			<common:external-id-value>work:external-identifier-id</common:external-id-value>			
+			<common:external-id-url>http://orcid.org</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+	</peer-review:review-identifiers>
+	<peer-review:review-url>peer-review:url</peer-review:review-url>
+	<peer-review:review-type>review</peer-review:review-type>	
+	<peer-review:review-completion-date>
+		<common:year>1948</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</peer-review:review-completion-date>	
+	<peer-review:review-group-id>orcid-generated:12345</peer-review:review-group-id>		
+	<peer-review:subject-external-identifier>			
+		<common:external-id-type>doi</common:external-id-type>
+		<common:external-id-value>peer-review:subject-external-identifier-id</common:external-id-value>			
+		<common:external-id-url>http://orcid.org</common:external-id-url>
+		<common:external-id-relationship>self</common:external-id-relationship>
+	</peer-review:subject-external-identifier>
+	<peer-review:subject-container-name>peer-review:subject-container-name</peer-review:subject-container-name>
+	<peer-review:subject-type>journal-article</peer-review:subject-type>
+	<peer-review:subject-name>
+		<common:title>peer-review:subject-name</common:title>
+		<common:translated-title language-code="en">peer-review:subject-translated-name</common:translated-title>
+	</peer-review:subject-name>
+	<peer-review:subject-url>peer-review:subject-url</peer-review:subject-url>
+	<peer-review:convening-organization>
+		<common:name>common:name</common:name>
+		<common:address>
+			<common:city>common:city</common:city>
+			<common:region>common:region</common:region>
+			<common:country>AF</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>http://dx.doi.org/10.13039/100000001</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>FUNDREF</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</peer-review:convening-organization>	
+</peer-review:peer-review>
