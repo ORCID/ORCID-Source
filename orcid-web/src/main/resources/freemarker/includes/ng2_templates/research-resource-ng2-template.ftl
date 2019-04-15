@@ -28,19 +28,12 @@
                                     <span class="glyphicon glyphicon-sort"></span>
                                     <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                     <ul class="menu-options sort">
-                                        <li [ngClass]="{'checked':sortKey=='startDate'}">
-                                            <a (click)="sort('startDate');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
-                                                <span *ngIf="!sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortKey=='startDate'}"></span>
-                                                <span *ngIf="sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortKey=='startDate'}"></span>
+                                        <li [ngClass]="{'checked':sortKey=='date'}">
+                                            <a (click)="sort('date');" class="action-option manage-button">
+                                                <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
+                                                <span *ngIf="!sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortKey=='date'}"></span>
+                                                <span *ngIf="sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortKey=='date'}"></span>
                                             </a>                                                                                    
-                                        </li>
-                                        <li [ngClass]="{'checked':sortKey=='endDate'}"> 
-                                            <a (click)="sort('endDate');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
-                                                <span *ngIf="!sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortKey=='endDate'}"></span>
-                                                <span *ngIf="sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortKey=='endDate'}"></span>
-                                            </a>        
                                         </li>
                                         <li [ngClass]="{'checked':sortKey=='title'}">                                            
                                             <a (click)="sort('title');" class="action-option manage-button">

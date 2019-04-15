@@ -73,7 +73,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         this.showElement = {};
         this.showResourceItemDetails = {};
         this.sortAsc = false;
-        this.sortKey = "startDate";
+        this.sortKey = "date";
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
     }
 
