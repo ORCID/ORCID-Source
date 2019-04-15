@@ -88,7 +88,7 @@ public class ResearchResourcePaginator {
             FuzzyDate endDate1 = g1.getResearchResourceSummary().get(0).getProposal().getEndDate();
             FuzzyDate endDate2 = g2.getResearchResourceSummary().get(0).getProposal().getEndDate();
             if (endDate1 == null && endDate2 == null)
-                return TITLE_COMPARITOR.compare(g1, g2);
+                return TITLE_COMPARITOR.compare(g1, g2) * -1; // reverse secondary order;
             //Null = to present and should sort first
             if (endDate1 == null)
                 return 1;
