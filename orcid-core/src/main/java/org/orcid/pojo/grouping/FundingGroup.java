@@ -3,8 +3,8 @@ package org.orcid.pojo.grouping;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingForm;
@@ -73,7 +73,7 @@ public class FundingGroup extends ActivityGroup {
         this.fundings = fundings;
     }
     
-    public static FundingGroup valueOf(org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup fundingGroup) {
+    public static FundingGroup valueOf(org.orcid.jaxb.model.v3.release.record.summary.FundingGroup fundingGroup) {
         FundingGroup group = new FundingGroup();
         group.setFundings(new ArrayList<>());
         group.setUserVersionPresent(false);

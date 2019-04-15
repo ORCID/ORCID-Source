@@ -124,8 +124,8 @@ public class OrcidCoreExceptionMapper {
         return (org.orcid.jaxb.model.error_v2.OrcidError) getOrcidError(t, latest);
     }
     
-    public org.orcid.jaxb.model.v3.rc2.error.OrcidError getV3OrcidError(Throwable t) {
-        return (org.orcid.jaxb.model.v3.rc2.error.OrcidError) getOrcidError(t, V3_RC2);
+    public org.orcid.jaxb.model.v3.release.error.OrcidError getV3OrcidError(Throwable t) {
+        return (org.orcid.jaxb.model.v3.release.error.OrcidError) getOrcidError(t, V3_RC2);
     }
     
     public Object getOrcidError(Throwable t, String version) {
@@ -149,7 +149,7 @@ public class OrcidCoreExceptionMapper {
         } else if (V3_RC1.equals(version)) {
             orcidError = (org.orcid.jaxb.model.v3.rc1.error.OrcidError) getOrcidErrorV3Rc1(errorCode, status, t);
         } else if (V3_RC2.equals(version)) {
-            orcidError = (org.orcid.jaxb.model.v3.rc2.error.OrcidError) getOrcidErrorV3Rc2(errorCode, status, t);
+            orcidError = (org.orcid.jaxb.model.v3.release.error.OrcidError) getOrcidErrorV3Rc2(errorCode, status, t);
         } else {
             orcidError = (OrcidError) getOrcidErrorV2Rc1(errorCode, status, t);
         }
@@ -248,9 +248,9 @@ public class OrcidCoreExceptionMapper {
         return orcidError;
     }
     
-    public org.orcid.jaxb.model.v3.rc2.error.OrcidError getOrcidErrorV3Rc2(int errorCode, int status, Throwable t) {
+    public org.orcid.jaxb.model.v3.release.error.OrcidError getOrcidErrorV3Rc2(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
-        org.orcid.jaxb.model.v3.rc2.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.rc2.error.OrcidError();
+        org.orcid.jaxb.model.v3.release.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.release.error.OrcidError();
         orcidError.setResponseCode(status);
         orcidError.setErrorCode(errorCode);
         orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));

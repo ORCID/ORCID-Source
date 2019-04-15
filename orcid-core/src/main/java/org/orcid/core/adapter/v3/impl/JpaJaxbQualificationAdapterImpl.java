@@ -6,8 +6,8 @@ import java.util.List;
 import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.v3.JpaJaxbQualificationAdapter;
-import org.orcid.jaxb.model.v3.rc2.record.Qualification;
-import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.release.record.Qualification;
+import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

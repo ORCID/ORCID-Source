@@ -3,24 +3,24 @@ package org.orcid.core.manager.v3.read_only;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc2.record.Distinction;
-import org.orcid.jaxb.model.v3.rc2.record.Education;
-import org.orcid.jaxb.model.v3.rc2.record.Employment;
-import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc2.record.Membership;
-import org.orcid.jaxb.model.v3.rc2.record.Qualification;
-import org.orcid.jaxb.model.v3.rc2.record.Service;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Distinction;
+import org.orcid.jaxb.model.v3.release.record.Education;
+import org.orcid.jaxb.model.v3.release.record.Employment;
+import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.release.record.Membership;
+import org.orcid.jaxb.model.v3.release.record.Qualification;
+import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 
 public interface AffiliationsManagerReadOnly {
 

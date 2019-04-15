@@ -1,6 +1,6 @@
 package org.orcid.core.utils.v3.identifiers.resolvers;
 
-import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.release.record.Work;
 
 public interface MetadataResolver extends LinkResolver{
 

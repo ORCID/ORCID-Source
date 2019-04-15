@@ -1,6 +1,6 @@
 package org.orcid.core.manager.v3.read_only;
 
-import org.orcid.jaxb.model.v3.rc2.record.Name;
+import org.orcid.jaxb.model.v3.release.record.Name;
 
 /**
  * 

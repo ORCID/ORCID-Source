@@ -8,8 +8,8 @@ import org.orcid.jaxb.model.message.Month;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
 import org.orcid.jaxb.model.message.Year;
-import org.orcid.jaxb.model.v3.rc2.common.PublicationDate;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.common.PublicationDate;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 
 public class PojoUtil {
 	
@@ -55,7 +55,7 @@ public class PojoUtil {
         return false;
     }
     
-    public static boolean isEmpty(org.orcid.jaxb.model.v3.rc2.common.Url url) {
+    public static boolean isEmpty(org.orcid.jaxb.model.v3.release.common.Url url) {
         if (url == null || url.getValue() == null || url.getValue().trim().isEmpty()) return true;
         return false;
     }
@@ -111,7 +111,7 @@ public class PojoUtil {
         return year + "-" + month + '-' + day;
     }       
     
-    public static String createDateSortString(org.orcid.jaxb.model.v3.rc2.common.FuzzyDate start, org.orcid.jaxb.model.v3.rc2.common.FuzzyDate end) {
+    public static String createDateSortString(org.orcid.jaxb.model.v3.release.common.FuzzyDate start, org.orcid.jaxb.model.v3.release.common.FuzzyDate end) {
         String year = "0";
         String month = "0";
         String day = "0";
@@ -204,12 +204,12 @@ public class PojoUtil {
         return createDateSortStringForAffiliations(affiliation.getStartDate(), affiliation.getEndDate(), affiliation.getCreatedDate());
     }
 
-    public static String createDateSortString(org.orcid.jaxb.model.v3.rc2.record.Affiliation affiliation) {
+    public static String createDateSortString(org.orcid.jaxb.model.v3.release.record.Affiliation affiliation) {
         return createDateSortStringForAffiliations(affiliation.getStartDate(), affiliation.getEndDate(), affiliation.getCreatedDate());
     }
 
-    private static String createDateSortStringForAffiliations(org.orcid.jaxb.model.v3.rc2.common.FuzzyDate startDate,
-            org.orcid.jaxb.model.v3.rc2.common.FuzzyDate endDate, org.orcid.jaxb.model.v3.rc2.common.CreatedDate createdDate) {
+    private static String createDateSortStringForAffiliations(org.orcid.jaxb.model.v3.release.common.FuzzyDate startDate,
+            org.orcid.jaxb.model.v3.release.common.FuzzyDate endDate, org.orcid.jaxb.model.v3.release.common.CreatedDate createdDate) {
         String dateSortString = "";
         if (startDate == null && endDate == null) {
             XMLGregorianCalendar date = createdDate.getValue();
@@ -294,7 +294,7 @@ public class PojoUtil {
         return true;
     }
     
-    public static boolean isEmpty(org.orcid.jaxb.model.v3.rc2.common.FuzzyDate date) {
+    public static boolean isEmpty(org.orcid.jaxb.model.v3.release.common.FuzzyDate date) {
         if (date == null) return true;
         if (!isEmpty(date.getDay()))
             return false;
@@ -335,17 +335,17 @@ public class PojoUtil {
         return isEmpty(month.getValue());
     }
     
-    public static boolean isEmpty(org.orcid.jaxb.model.v3.rc2.common.Year year) {
+    public static boolean isEmpty(org.orcid.jaxb.model.v3.release.common.Year year) {
         if (year==null) return true;
         return isEmpty(year.getValue());
     }
     
-    public static boolean isEmpty(org.orcid.jaxb.model.v3.rc2.common.Day day) {
+    public static boolean isEmpty(org.orcid.jaxb.model.v3.release.common.Day day) {
         if (day==null) return true;
         return isEmpty(day.getValue());
     }
 
-    public static boolean isEmpty(org.orcid.jaxb.model.v3.rc2.common.Month month) {
+    public static boolean isEmpty(org.orcid.jaxb.model.v3.release.common.Month month) {
         if (month==null) return true;
         return isEmpty(month.getValue());
     }
@@ -368,7 +368,7 @@ public class PojoUtil {
         return isEmpty(contributorOrcid.getPath());
     }
     
-    public static boolean isEmpty(org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid contributorOrcid) {
+    public static boolean isEmpty(org.orcid.jaxb.model.v3.release.common.ContributorOrcid contributorOrcid) {
         if(contributorOrcid == null) return true;
         return isEmpty(contributorOrcid.getPath());
     }
@@ -383,7 +383,7 @@ public class PojoUtil {
         return areAllEmpty(translatedTitle.getContent(), translatedTitle.getLanguageCode());
     }
     
-    public static Date convertDate(org.orcid.jaxb.model.v3.rc2.common.FuzzyDate fuzzyDate) {
+    public static Date convertDate(org.orcid.jaxb.model.v3.release.common.FuzzyDate fuzzyDate) {
         if (fuzzyDate != null) {
             Integer year = PojoUtil.isEmpty(fuzzyDate.getYear()) ? null : Integer.valueOf(fuzzyDate.getYear().getValue());
             Integer month = PojoUtil.isEmpty(fuzzyDate.getMonth()) ? null : Integer.valueOf(fuzzyDate.getMonth().getValue());
@@ -397,7 +397,7 @@ public class PojoUtil {
             if (day != null && day == 0) {
                 day = null;
             }
-            return Date.valueOf(org.orcid.jaxb.model.v3.rc2.common.FuzzyDate.valueOf(year, month, day));
+            return Date.valueOf(org.orcid.jaxb.model.v3.release.common.FuzzyDate.valueOf(year, month, day));
         }
         return null;
     }

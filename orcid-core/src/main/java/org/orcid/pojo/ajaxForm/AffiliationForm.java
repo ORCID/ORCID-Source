@@ -5,33 +5,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.Organization;
-import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
-import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc2.record.Distinction;
-import org.orcid.jaxb.model.v3.rc2.record.Education;
-import org.orcid.jaxb.model.v3.rc2.record.Employment;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc2.record.Membership;
-import org.orcid.jaxb.model.v3.rc2.record.Qualification;
-import org.orcid.jaxb.model.v3.rc2.record.Service;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Distinction;
+import org.orcid.jaxb.model.v3.release.record.Education;
+import org.orcid.jaxb.model.v3.release.record.Employment;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.release.record.Membership;
+import org.orcid.jaxb.model.v3.release.record.Qualification;
+import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 import org.orcid.utils.OrcidStringUtils;
 
@@ -357,7 +357,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
             affiliation.setPutCode(Long.valueOf(putCode.getValue()));
         }
         if (visibility != null && visibility.getVisibility() != null) {
-            affiliation.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(visibility.getVisibility().value()));
+            affiliation.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(visibility.getVisibility().value()));
         }
         Organization organization = new Organization();
         affiliation.setOrganization(organization);
@@ -399,7 +399,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         }
 
         if(!PojoUtil.isEmpty(source)) {
-            org.orcid.jaxb.model.v3.rc2.common.Source source = new org.orcid.jaxb.model.v3.rc2.common.Source();
+            org.orcid.jaxb.model.v3.release.common.Source source = new org.orcid.jaxb.model.v3.release.common.Source();
             
             if(OrcidStringUtils.isClientId(this.getSource())) {
                 source.setSourceClientId(new SourceClientId(this.getSource()));

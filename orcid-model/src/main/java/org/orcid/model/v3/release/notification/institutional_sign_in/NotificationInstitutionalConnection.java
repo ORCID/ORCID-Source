@@ -5,13 +5,13 @@
 // Generated on: 2014.11.24 at 04:27:39 PM GMT 
 //
 
-package org.orcid.model.v3.rc2.notification.institutional_sign_in;
+package org.orcid.model.v3.release.notification.institutional_sign_in;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.v3.rc2.notification.Notification;
-import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.release.notification.Notification;
+import org.orcid.jaxb.model.v3.release.notification.NotificationType;
+import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
 
 public class NotificationInstitutionalConnection extends Notification {
 

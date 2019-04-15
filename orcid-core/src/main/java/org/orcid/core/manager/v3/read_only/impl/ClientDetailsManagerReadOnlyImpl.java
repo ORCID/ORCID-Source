@@ -11,7 +11,7 @@ import javax.persistence.NoResultException;
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc2.client.Client;
+import org.orcid.jaxb.model.v3.release.client.Client;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;

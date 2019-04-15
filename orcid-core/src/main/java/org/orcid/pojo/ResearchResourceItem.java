@@ -3,9 +3,9 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc2.common.Organization;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.GroupAble;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 
 public class ResearchResourceItem {
@@ -70,7 +70,7 @@ public class ResearchResourceItem {
         this.items = items;
     }
     
-    public static ResearchResourceItem fromValue(org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem item) {
+    public static ResearchResourceItem fromValue(org.orcid.jaxb.model.v3.release.record.ResearchResourceItem item) {
         if (item == null)
             return null;
         

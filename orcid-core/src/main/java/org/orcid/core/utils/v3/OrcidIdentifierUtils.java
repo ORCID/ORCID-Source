@@ -4,7 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.orcid.core.togglz.Features;
-import org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.springframework.beans.factory.annotation.Value;
 
 public class OrcidIdentifierUtils {

@@ -3,8 +3,8 @@ package org.orcid.core.manager.v3.read_only;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.EmailFrequencyOptions;
 

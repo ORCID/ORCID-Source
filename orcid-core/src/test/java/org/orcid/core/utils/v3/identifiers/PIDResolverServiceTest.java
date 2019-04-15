@@ -13,13 +13,12 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.resolvers.MetadataResolver;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.pojo.PIDResolutionResult;
 import org.springframework.test.util.ReflectionTestUtils;
 

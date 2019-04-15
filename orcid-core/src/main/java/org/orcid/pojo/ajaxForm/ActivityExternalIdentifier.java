@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.common.Relationship;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
 
 public class ActivityExternalIdentifier implements ErrorsInterface, Serializable {
     

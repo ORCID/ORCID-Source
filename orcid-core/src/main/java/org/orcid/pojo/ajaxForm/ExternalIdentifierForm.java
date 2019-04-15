@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 
 public class ExternalIdentifierForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -76,7 +76,7 @@ public class ExternalIdentifierForm extends VisibilityForm implements ErrorsInte
         }
         result.setDisplayIndex(displayIndex);
         if (visibility != null && visibility.getVisibility() != null) {
-            result.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(visibility.getVisibility().value()));
+            result.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(visibility.getVisibility().value()));
         }
         if (url != null) {
             result.setUrl(new Url(url));

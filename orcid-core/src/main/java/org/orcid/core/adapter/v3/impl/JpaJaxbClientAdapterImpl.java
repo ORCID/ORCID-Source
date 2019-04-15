@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
-import org.orcid.jaxb.model.v3.rc2.client.Client;
-import org.orcid.jaxb.model.v3.rc2.client.ClientSummary;
+import org.orcid.jaxb.model.v3.release.client.Client;
+import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 
 import ma.glasnost.orika.MapperFacade;

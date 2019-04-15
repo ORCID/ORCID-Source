@@ -11,13 +11,13 @@ import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.GroupableActivityComparator;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
-import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.GroupAble;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.record.ResearchResource;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.persistence.dao.ResearchResourceDao;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -62,7 +62,7 @@ public class ResearchResourceManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         ResearchResources rr = new ResearchResources();
         for (ResearchResourceSummary r : researchResources){
-            if (justPublic && !r.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
+            if (justPublic && !r.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
             } else {
                 groupGenerator.group(r);
             }

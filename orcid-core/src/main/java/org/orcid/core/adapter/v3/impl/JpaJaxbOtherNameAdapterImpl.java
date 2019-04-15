@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.adapter.v3.JpaJaxbOtherNameAdapter;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
 import ma.glasnost.orika.MapperFacade;
