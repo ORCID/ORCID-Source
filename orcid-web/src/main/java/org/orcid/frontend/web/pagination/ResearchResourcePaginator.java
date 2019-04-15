@@ -67,7 +67,7 @@ public class ResearchResourcePaginator {
             FuzzyDate startDate1 = g1.getResearchResourceSummary().get(0).getProposal().getStartDate();
             FuzzyDate startDate2 = g2.getResearchResourceSummary().get(0).getProposal().getStartDate();
             if (startDate1 == null && startDate2 == null) {
-                return TITLE_COMPARITOR.compare(g1, g2);
+                return TITLE_COMPARITOR.compare(g1, g2) * -1; // reverse secondary order
             }
             if (startDate1 == null) {
                 return -1;
@@ -95,7 +95,7 @@ public class ResearchResourcePaginator {
             if (endDate2 == null)
                 return -1;
             if (endDate1.compareTo(endDate2) == 0){
-                return TITLE_COMPARITOR.compare(g1, g2);
+                return TITLE_COMPARITOR.compare(g1, g2) * -1; // reverse secondary order;
             }
             return g1.getResearchResourceSummary().get(0).getProposal().getEndDate().compareTo(g2.getResearchResourceSummary().get(0).getProposal().getEndDate());
         }        
