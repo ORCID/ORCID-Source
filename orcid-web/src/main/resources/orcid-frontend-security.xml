@@ -33,6 +33,9 @@
             </list>
         </constructor-arg>
     </bean>
+    
+    <bean id="httpFirewall" 
+    		class="org.orcid.frontend.spring.LoggingStrictHttpFirewall" />
 
 	<bean id="roleHierarchy"
     	class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
@@ -103,6 +106,8 @@
     </bean>
     
     <bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.CookieCsrfTokenRepository" factory-method="withHttpOnlyFalse" />
+    	
+    	<sec:http-firewall ref="httpFirewall"/>
     	
 	<sec:http pattern="/robots.txt" security="none" create-session="stateless" />
 	<sec:http pattern="/tomcatUp.json" security="none" create-session="stateless" />
@@ -489,8 +494,8 @@
 		<property name="switchFailureUrl" value="/signin" />
 	</bean>
 	
-	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />			
-
+	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />
+					
 	<oauth2:resource-server id="resourceServerFilter"
 		resource-id="orcid" token-services-ref="tokenServices" />
 
