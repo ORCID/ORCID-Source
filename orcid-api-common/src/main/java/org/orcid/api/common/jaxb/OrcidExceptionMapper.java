@@ -123,6 +123,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3_RC1);
             case OrcidCoreExceptionMapper.V3_RC2:
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3_RC2);
+            case OrcidCoreExceptionMapper.V3:
+                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3);
             }
         }
 
@@ -285,6 +287,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             statusCode = ((org.orcid.jaxb.model.v3.rc1.error.OrcidError) orcidError).getResponseCode();
         } else if (org.orcid.jaxb.model.v3.rc2.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
             statusCode = ((org.orcid.jaxb.model.v3.rc2.error.OrcidError) orcidError).getResponseCode();
+        } else if (org.orcid.jaxb.model.v3.release.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+            statusCode = ((org.orcid.jaxb.model.v3.release.error.OrcidError) orcidError).getResponseCode();
         }
 
         if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {

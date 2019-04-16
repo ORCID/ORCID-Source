@@ -7,36 +7,36 @@ import java.util.List;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords;
-import org.orcid.jaxb.model.v3.rc2.record.ActivitiesContainer;
-import org.orcid.jaxb.model.v3.rc2.record.Activity;
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.Addresses;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
-import org.orcid.jaxb.model.v3.rc2.record.Group;
-import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.rc2.record.GroupsContainer;
-import org.orcid.jaxb.model.v3.rc2.record.Keyword;
-import org.orcid.jaxb.model.v3.rc2.record.Keywords;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc2.record.Person;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.rc2.record.Record;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewDuplicateGroup;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecords;
+import org.orcid.jaxb.model.v3.release.record.ActivitiesContainer;
+import org.orcid.jaxb.model.v3.release.record.Activity;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.Group;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.record.GroupsContainer;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.Person;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.release.record.Record;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewDuplicateGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 
-public class Api3_0_RC2LastModifiedDatesHelper {
+public class Api3_0LastModifiedDatesHelper {
 
     public static void calculateLastModified(ActivitiesSummary activitiesSummary) {
         if (activitiesSummary != null) {

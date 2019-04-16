@@ -160,7 +160,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     public void testCreateBulkWorksWithBlankTitles() {
         RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
-        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_rc2",  RequestAttributes.SCOPE_REQUEST);
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0",  RequestAttributes.SCOPE_REQUEST);
         RequestContextHolder.setRequestAttributes(attrs);
         
         Long time = System.currentTimeMillis();
@@ -510,7 +510,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     public void testCreateWorksWithBulkAllOK() {
         RequestAttributes previousAttrs = RequestContextHolder.getRequestAttributes();
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
-        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0_rc2",  RequestAttributes.SCOPE_REQUEST);
+        attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "3.0",  RequestAttributes.SCOPE_REQUEST);
         RequestContextHolder.setRequestAttributes(attrs);
         
         Long time = System.currentTimeMillis();

@@ -103,8 +103,13 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
                         workBulk.getBulk().remove(i);
                         errors.put(i, error);
                         workBulk.getBulk().add(i, error);
+                    } else if (org.orcid.jaxb.model.v3.rc2.record.Work.class.isAssignableFrom(bulkElement.getClass())) {
+                        org.orcid.jaxb.model.v3.rc2.error.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV3Rc2(9001, 400, e);
+                        workBulk.getBulk().remove(i);
+                        errors.put(i, error);
+                        workBulk.getBulk().add(i, error);
                     } else if (org.orcid.jaxb.model.v3.release.record.Work.class.isAssignableFrom(bulkElement.getClass())) {
-                        org.orcid.jaxb.model.v3.release.error.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV3Rc2(9001, 400, e);
+                        org.orcid.jaxb.model.v3.release.error.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV3(9001, 400, e);
                         workBulk.getBulk().remove(i);
                         errors.put(i, error);
                         workBulk.getBulk().add(i, error);

@@ -93,17 +93,24 @@
         <property name="externalVersion" value="3.0_rc1" />
         <property name="publicV3ApiServiceDelegator" ref="publicV3ApiServiceDelegatorRc1_FilterVersionOfIdsOnWorks" />
     </bean>
-    <bean id="publicV3ApiServiceDelegatorRc2" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="3.0_rc2" />
-        <property name="publicV3ApiServiceDelegator" ref="publicV3ApiServiceDelegator" />
-    </bean>
-    
     <bean id="publicV3ApiServiceImplV3_0_rc1" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0_rc1">
         <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorRc1"/>
     </bean>
     
+    <bean id="publicV3ApiServiceDelegatorRc2" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="3.0_rc2" />
+        <property name="publicV3ApiServiceDelegator" ref="publicV3ApiServiceDelegator" />
+    </bean>
     <bean id="publicV3ApiServiceImplV3_0_rc2" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0_rc2">
         <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorRc2"/>
+    </bean>
+    
+    <bean id="publicV3ApiServiceDelegatorRelease" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="3.0" />
+        <property name="publicV3ApiServiceDelegator" ref="publicV3ApiServiceDelegator" />
+    </bean>
+    <bean id="publicV3ApiServiceImplV3_0" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0">
+        <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorRelease"/>
     </bean>
     
     <!--  Statistics API -->
