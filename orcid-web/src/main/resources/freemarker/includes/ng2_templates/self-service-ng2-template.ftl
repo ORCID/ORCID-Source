@@ -4,7 +4,7 @@
         <h1 id="self-service-lead" *ngIf="!memberDetails?.consortiumLead"><@spring.message "manage_consortium.manage_member"/></h1>
         <p><@spring.message "manage_consortium.manage_consortium_text_1"/>
             <@spring.message "manage_consortium.manage_consortium_text_2"/>
-            <a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
+            <a href="<@spring.message "manage_consortium.support"/>"><@spring.message "manage_consortium.support"/></a></p>
         <div *ngIf="memberDetails != null">
             <div class="topBuffer">
                 <h3 class="topBuffer" *ngIf="memberDetails?.consortiumLead"><@spring.message "manage_consortium.public_display"/></h3>

@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-3 col-xs-12">
             <h2><@spring.message "resend_claim.title"/></h2>
-            <p><small><@orcid.msg "resend_claim.resend_help"/> <a href="mailto:support@orcid.org"><@orcid.msg "resend_claim.labelorg" /></a>.</small></p>            
+            <p><small><@orcid.msg "resend_claim.resend_help"/> <a href="https://orcid.org/help/contact-us"><@orcid.msg "resend_claim.labelorg" /></a>.</small></p>            
             <div name="emailAddress">                
             <span class="alert orcid-error" *ngIf="requestResendClaim.errors.length > 0">
                 <strong><span *ngFor="let error of requestResendClaim.errors" [innerHTML]="error"></span></strong>

@@ -50,7 +50,7 @@ import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.release.client.Client;
+import org.orcid.jaxb.model.v3.rc2.client.ClientSummary;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
@@ -1249,14 +1249,14 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testViewClient() {
+    public void testViewClientSummary() {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof Client);
+        assertTrue(response.getEntity() instanceof ClientSummary);
 
-        Client client = (Client) response.getEntity();
-        assertEquals("Source Client 2", client.getName());
-        assertEquals("A test source client", client.getDescription());
+        ClientSummary summary = (ClientSummary) response.getEntity();
+        assertEquals("Source Client 2", summary.getName());
+        assertEquals("A test source client", summary.getDescription());
     }
 
     // Distinction

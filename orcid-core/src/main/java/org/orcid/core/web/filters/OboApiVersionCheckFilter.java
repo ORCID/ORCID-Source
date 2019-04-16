@@ -2,12 +2,10 @@ package org.orcid.core.web.filters;
 
 import java.util.regex.Matcher;
 
-import javax.annotation.Resource;
 import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OboNotValidForApiVersionException;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.oauth.service.OrcidOauth2TokenDetailServiceImpl;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -42,10 +40,12 @@ public class OboApiVersionCheckFilter implements ContainerRequestFilter {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null && context.getAuthentication() != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            OAuth2AuthenticationDetails authDetails = (OAuth2AuthenticationDetails) ((OAuth2Authentication) authentication).getDetails();
-            if (authDetails != null && authDetails.getTokenValue() != null) { 
-                OrcidOauth2TokenDetail tokenDetail = orcidOauth2TokenService.findIgnoringDisabledByTokenValue(authDetails.getTokenValue());
-                return tokenDetail.getOboClientDetailsId() != null;
+            if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+                OAuth2AuthenticationDetails authDetails = (OAuth2AuthenticationDetails) ((OAuth2Authentication) authentication).getDetails();
+                if (authDetails != null && authDetails.getTokenValue() != null) { 
+                    OrcidOauth2TokenDetail tokenDetail = orcidOauth2TokenService.findIgnoringDisabledByTokenValue(authDetails.getTokenValue());
+                    return tokenDetail.getOboClientDetailsId() != null;
+                }
             }
         }
         return false;

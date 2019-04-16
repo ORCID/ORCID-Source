@@ -60,7 +60,7 @@
 		   <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 				<@emailMacros.msg "email.service_announcement.regards" />
 				<br><@emailMacros.msg "email.service_announcement.orcid_team" />
-				<br><@emailMacros.msg "email.service_announcement.support_id" />
+				<br><a href='<@emailMacros.msg "email.service_announcement.support_id" />'><@emailMacros.msg "email.service_announcement.support_id" /> </a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 				<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.footer_text1_title" /></span>

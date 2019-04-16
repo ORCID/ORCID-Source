@@ -182,7 +182,7 @@ export class Header2Component  {
 
     ngOnInit() {
         this.isMobile = window.innerWidth < 600;
-        this.headerSearch.searchOption='website'
+        this.headerSearch.searchOption='registry'
         this.headerSearch.searchInput = ''
     }
 

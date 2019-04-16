@@ -24,7 +24,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 
 
 
- For additional help please contact support@orcid.org.
+ For additional help please contact https://orcid.org/help/contact-us.
 
  ## List of Error codes and solutions
 
@@ -66,7 +66,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 |500|	Internal Server Error|	Ensure that that your XML is valid and that any ORCID records you reference in the file are valid|--|
 |500|	Redirect URI mismatch.	|Check that the redirect_uri in the request for the authorization code matches the redirect_uri used when exchanging the authorization code for an access token|--|
 |500|	Invalid authorization code	|Check that the authorization code has not already been exchanged for an access token, authorization codes can only be used once|--|
-|500|	Invalid scope: /webhook	|Your credentials are not authorized to create webhooks. Webhooks are available only to premium members, if you are a premium member contact support@orcid.org to correct this problem
+|500|	Invalid scope: /webhook	|Your credentials are not authorized to create webhooks. Webhooks are available only to premium members, if you are a premium member contact https://orcid.org/help/contact-us to correct this problem
 |500|	org.hibernate.exception.DataException: could not execute statement	|Something that you are posting doesn't comply with field restrictions, check that fields don't exceed character limits, urls are properly formatted, etc.|--|
 |***|Unable to find org.orcid.persistence.jpa.entities.ProfileEntity with id	﻿|Ensure that you have correct and consistent ORCID iDs throughout the XML, including in sub-elements, such as works source|--|
 |***|Could not resolve host: Bearer; nodename nor servname provided, or not known|Check the syntax of your request|--|

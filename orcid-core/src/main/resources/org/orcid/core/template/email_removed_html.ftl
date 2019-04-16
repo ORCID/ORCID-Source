@@ -22,7 +22,7 @@
 		    	<@emailMacros.msg "email.email_removed.please_click" />${baseUri}/account?lang=${locale}
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		    	<@emailMacros.msg "email.email_removed.important" />
+		    	<@emailMacros.msg "email.email_removed.important_html" />
 		    </p>		    
             <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
 <@emailMacros.msg "email.common.warm_regards" />
