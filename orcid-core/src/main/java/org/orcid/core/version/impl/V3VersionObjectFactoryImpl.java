@@ -39,9 +39,17 @@ public class V3VersionObjectFactoryImpl implements V3VersionObjectFactory {
         String requiredMinorVersion = (requiredVersion.equals("3.0") ? "release" : requiredVersion.substring(requiredVersion.lastIndexOf('_') + 1));
         String originalPackageName = originalClass.getPackage().getName();
         String packageNameBase = originalPackageName.substring(0, originalPackageName.lastIndexOf("v3.") + 3);
-        String packageNameRemainder = originalPackageName.substring(originalPackageName.lastIndexOf("v3.") + 6); // assumption that minor version is 3 chars, eg rc1
+        
+        String packageNameRemainder;
+        if(originalPackageName.contains(".release.")) {
+            packageNameRemainder = originalPackageName.substring(originalPackageName.lastIndexOf("release") + 7);
+        } else {
+            packageNameRemainder = originalPackageName.substring(originalPackageName.lastIndexOf("v3.") + 6); // assumption that minor version is 3 chars, eg rc1            
+        }        
+        
         String originalClassName = originalClass.getSimpleName();
         String requiredClassFullName = packageNameBase + requiredMinorVersion + packageNameRemainder + '.' + originalClassName;
+        
         return requiredClassFullName;
     }
 
