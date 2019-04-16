@@ -14,6 +14,6 @@ https://orcid.org/help/contact-us.
 
 Kind Regards,
 The ORCID Team
-https://orcid.org/help/contact-us 
+https://orcid.org/help/contact-us
 http://testserver.orcid.org
 

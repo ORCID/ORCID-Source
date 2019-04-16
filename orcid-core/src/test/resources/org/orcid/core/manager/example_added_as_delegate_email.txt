@@ -7,6 +7,6 @@ If you have questions or concerns about being a proxy, please contact the user a
 
 Kind Regards,
 The ORCID Team
-https://orcid.org/help/contact-us 
+https://orcid.org/help/contact-us
 http://testserver.orcid.org
 
