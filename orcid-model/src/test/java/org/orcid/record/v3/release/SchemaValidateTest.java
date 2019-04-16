@@ -20,7 +20,7 @@ import org.orcid.jaxb.test.utils.OrcidTranslator.SchemaVersion;
 
 public class SchemaValidateTest {
 
-  //checks our samples match our schema
+    //checks our samples match our schema
     @Test
     public void testReadWorkFullSchemaValidate() throws JAXBException{
         OrcidTranslator<Work> t = OrcidTranslator.forSchema(SchemaVersion.V3_0_WORK);
