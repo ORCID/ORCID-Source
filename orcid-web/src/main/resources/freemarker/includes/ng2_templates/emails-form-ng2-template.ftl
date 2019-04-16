@@ -19,7 +19,7 @@
                                     <p><@orcid.msg 'workspace.you_need_to_verify' /></p>
                                     <p><@orcid.msg 'workspace.ensure_future_access2' /><br />
                                     <p><strong>{{primaryEmail}}</strong></p>
-                                    <p><@orcid.msg 'workspace.ensure_future_access3' /> <a target="articles.149457" href="<@orcid.msg 'common.kb_uri_default'/>360006973793"><@orcid.msg 'workspace.ensure_future_access4' /></a> <@orcid.msg 'workspace.ensure_future_access5' /> <a target="workspace.link.email.support" href="mailto:<@orcid.msg 'workspace.link.email.support' />"><@orcid.msg 'workspace.link.email.support' /></a>.</p>
+                                    <p><@orcid.msg 'workspace.ensure_future_access3' /> <a target="articles.149457" href="<@orcid.msg 'common.kb_uri_default'/>360006973793"><@orcid.msg 'workspace.ensure_future_access4' /></a> <@orcid.msg 'workspace.ensure_future_access5' /> <a target="common.contact_us.uri" href="<@orcid.msg 'common.contact_us.uri' />"><@orcid.msg 'common.contact_us.uri' /></a>.</p>
                                     <div class="topBuffer">
                                         <a (click)="closeUnverifiedEmailSetPrimaryBox()"><@orcid.msg 'freemarker.btnclose' /></a>
                                     </div>
