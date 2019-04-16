@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.orcid.jaxb.model.v3.rc2.client.Client;
+import org.orcid.jaxb.model.v3.rc2.client.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 
@@ -44,4 +45,5 @@ public interface ClientDetailsManagerReadOnly extends ClientDetailsService {
 
     Client getClient(String clientId);
     
+    ClientSummary getClientSummary(String clientId);
 }

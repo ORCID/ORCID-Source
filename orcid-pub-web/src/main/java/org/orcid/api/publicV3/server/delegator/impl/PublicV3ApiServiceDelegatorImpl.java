@@ -52,6 +52,7 @@ import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.version.impl.Api3_0_RC2LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.rc2.client.Client;
+import org.orcid.jaxb.model.v3.rc2.client.ClientSummary;
 import org.orcid.jaxb.model.v3.rc2.common.Visibility;
 import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords;
@@ -720,8 +721,8 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public Response viewClient(String clientId) {
-        Client client = clientDetailsManagerReadOnly.getClient(clientId);
-        return Response.ok(client).build();
+        ClientSummary summary = clientDetailsManagerReadOnly.getClientSummary(clientId);
+        return Response.ok(summary).build();
     }
 
     @Override
