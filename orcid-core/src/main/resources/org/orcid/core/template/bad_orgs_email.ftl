@@ -10,7 +10,7 @@ As a result, your record may currently include incorrect information about the f
 
 We have fixed the bug and have tried to fix the affiliation data that was affected in your record, though some correction may still be needed. We have changed the visibility setting on affected information to private - visible only to you - to allow you to review changes. We encourage you to sign into your record at https://orcid.org/my-orcid to review and, if necessary, correct the affected affiliation information. You can then decide whether to keep this information visible only to you, make it publicly available, or share it only with those you trust.
 
-We apologize for any inconvenience this may cause you. If you have any questions or concerns, or need information about how to update your record and/or the visibility settings, our global support team are available to help you, at <a target="help-contact-us" href="https://orcid.org/help/contact-us">https://orcid.org/help/contact-us</a>. 
+We apologize for any inconvenience this may cause you. If you have any questions or concerns, or need information about how to update your record and/or the visibility settings, our global support team are available to help you, at https://orcid.org/help/contact-us. 
 
 Regards,
 

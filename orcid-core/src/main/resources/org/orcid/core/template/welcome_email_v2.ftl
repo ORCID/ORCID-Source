@@ -42,7 +42,7 @@ ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.welcome.need_help" />
 
-<@emailMacros.msg "email.common.need_help.description.1" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.1.text" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2" /><a href='<@emailMacros.msg "email.common.need_help.description.2.href" />'><@emailMacros.msg "email.common.need_help.description.2.text" /></a>
+<@emailMacros.msg "email.common.need_help.description.1" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.1.text" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2" /><@emailMacros.msg "email.common.need_help.description.2.text" />
 
 <@emailMacros.msg "email.common.warm_regards.simple" />
 ${baseUri}/home?lang=${locale}

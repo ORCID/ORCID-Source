@@ -13,10 +13,10 @@ ${passwordResetUrl}
 
 <@emailMacros.msg "email.reset_password.if_you_did_not" />
 
-<@emailMacros.msg "email.common.if_you_have_any1" /> <a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a><@emailMacros.msg "email.common.if_you_have_any2" />
+<@emailMacros.msg "email.common.if_you_have_any1" /> <@emailMacros.msg "email.common.need_help.description.2.href" /><@emailMacros.msg "email.common.if_you_have_any2" />
 
 <@emailMacros.msg "email.common.warm_regards" />
-<a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
+<@emailMacros.msg "email.common.need_help.description.2.href" />
 
 
 ${baseUri}/home?lang=${locale}

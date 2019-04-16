@@ -10,7 +10,7 @@
 
 <@emailMacros.msg "email.july_2018.paragraph.4" />
 
-<@emailMacros.msg "email.july_2018.paragraph.5.1" /> <@emailMacros.msg "email.july_2018.paragraph.5.1.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.5.1.url.link" />)<@emailMacros.msg "email.july_2018.paragraph.5.2" /> <@emailMacros.msg "email.july_2018.paragraph.5.2.url.text" /> (<a href="<@emailMacros.msg "email.july_2018.paragraph.5.2.url.link" />" target="_blank"><@emailMacros.msg "email.july_2018.paragraph.5.2.url.text" /></a>)
+<@emailMacros.msg "email.july_2018.paragraph.5.1" /> <@emailMacros.msg "email.july_2018.paragraph.5.1.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.5.1.url.link" />)<@emailMacros.msg "email.july_2018.paragraph.5.2" /> <@emailMacros.msg "email.july_2018.paragraph.5.2.url.text" /> (<@emailMacros.msg "email.july_2018.paragraph.5.2.url.link" />)
 
 <@emailMacros.msg "email.service_announcement.regards" />
 		

@@ -36,7 +36,7 @@
 
 <@emailMacros.msg "email.service_announcement.orcid_team" />
 
-<a href="<@orcid.msg "email.service_announcement.support_id" />"><@orcid.msg "email.service_announcement.support_id" /></a>
+<@emailMacros.msg "email.service_announcement.support_id" />
 
 
 <@emailMacros.msg "email.service_announcement.footer_text1_title" />
