@@ -32,7 +32,7 @@ ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.common.did_you_know" /><@emailMacros.space />${baseUri}/blog
 
-<@emailMacros.msg "email.common.need_help.description.1" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.1.text" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2" /><@emailMacros.space /> <@emailMacros.msg "email.common.need_help.description.2.text" />
+<@emailMacros.msg "email.common.need_help.description.1" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.1.text" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2.text" />
 
 <@emailMacros.msg "email.common.warm_regards.simple" />
 ${baseUri}/home?lang=${locale}
