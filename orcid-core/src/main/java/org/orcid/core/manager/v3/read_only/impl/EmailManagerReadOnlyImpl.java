@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -102,6 +103,14 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
         return emailDao.isPrimaryEmailVerified(orcid);
     }
     
+    @Override
+    public Emails getVerifiedEmails(String orcid) {
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid, getLastModified(orcid));
+        if (entities == null) {
+            return new Emails();
+        }
+        return toEmails(entities.stream().filter(e -> e.getVerified()).collect(Collectors.toList()));
+    }
     
     @Override
     public Emails getEmails(String orcid) {

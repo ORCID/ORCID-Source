@@ -88,7 +88,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
         record.setActivitiesSummary(activitiesSummaryManager.getActivitiesSummary(orcid, filterVersionOfIdentifiers));
-        record.setPerson(personDetailsManager.getPersonDetails(orcid));        
+        record.setPerson(personDetailsManager.getPersonDetails(orcid, false));        
         return record;
     }
     

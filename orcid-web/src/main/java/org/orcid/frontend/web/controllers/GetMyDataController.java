@@ -122,7 +122,7 @@ public class GetMyDataController extends BaseController {
     }
 
     private void generatePersonData(String orcid, ZipOutputStream zip) throws JAXBException, IOException {
-        Person person = personDetailsManager.getPersonDetails(orcid);
+        Person person = personDetailsManager.getPersonDetails(orcid, true);
         writeElement(toByteArray(person), "person.xml", zip);
     }
 
