@@ -1,4 +1,4 @@
-package org.orcid.api.publicV2.server;
+package org.orcid.api.publicV3.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,20 +27,20 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNoBioException;
-import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.core.version.V2VersionConverterChain;
-import org.orcid.jaxb.model.client_v2.ClientSummary;
-import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
-import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.jaxb.model.search_v2.Result;
-import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.core.version.V3VersionConverterChain;
+import org.orcid.jaxb.model.v3.release.client.Client;
+import org.orcid.jaxb.model.v3.release.client.ClientSummary;
+import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.release.error.OrcidError;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.search.Result;
+import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -55,26 +55,26 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-t1-security-context.xml" })
-public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
+public class PublicV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
             "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
     
-    @Resource(name = "publicV2ApiServiceDelegatorV2")
-    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
+    @Resource(name = "publicV3ApiServiceDelegatorRelease")
+    PublicV3ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
 
-    @Resource(name = "publicV2ApiServiceDelegator")
-    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegatorNonVersioned;
+    @Resource(name = "publicV3ApiServiceDelegator")
+    PublicV3ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegatorNonVersioned;
 
     @Mock
-    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> mockServiceDelegatorNonVersioned;
+    PublicV3ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> mockServiceDelegatorNonVersioned;
     
     @Resource
     private ProfileDao profileDao;
 
     @Resource    
-    private V2VersionConverterChain v2VersionConverterChain;
+    private V3VersionConverterChain v3VersionConverterChain;
     
     private String nonExistingUser = "0000-0000-0000-000X";
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
@@ -783,17 +783,17 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         search.getResults().add(result);
         Response searchResponse = Response.ok(search).build();        
         Mockito.when(mockServiceDelegatorNonVersioned.searchByQuery(Matchers.<Map<String, List<String>>>any())).thenReturn(searchResponse);
-        TargetProxyHelper.injectIntoProxy(serviceDelegator, "publicV2ApiServiceDelegator", mockServiceDelegatorNonVersioned);
+        TargetProxyHelper.injectIntoProxy(serviceDelegator, "publicV3ApiServiceDelegator", mockServiceDelegatorNonVersioned);
         Response response = serviceDelegator.searchByQuery(new HashMap<String, List<String>>());
         
-        // just testing MemberV2ApiServiceDelegatorImpl's response is returned 
+        // just testing MemberV3ApiServiceDelegatorImpl's response is returned 
         assertNotNull(response);
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof Search);
         assertEquals(1, ((Search) response.getEntity()).getResults().size());
         assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
         
-        TargetProxyHelper.injectIntoProxy(serviceDelegator, "publicV2ApiServiceDelegator", serviceDelegatorNonVersioned);        
+        TargetProxyHelper.injectIntoProxy(serviceDelegator, "publicV3ApiServiceDelegator", serviceDelegatorNonVersioned);        
     }
 
     @Test(expected = NoResultException.class)
@@ -806,11 +806,11 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testViewClient() {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof ClientSummary);
+        assertTrue(response.getEntity() instanceof Client);
 
-        ClientSummary client = (ClientSummary) response.getEntity();
+        Client client = (Client) response.getEntity();
         assertEquals("Source Client 2", client.getName());
-        assertEquals("A test source client", client.getDescription());
+        assertEquals("A test source client", client.getDescription());        
     }
     
     @Test
@@ -826,7 +826,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertTrue(workBulk.getBulk().get(3) instanceof OrcidError);
     }
     
-    @Test(expected = OrcidNoResultException.class)
+    @Test(expected = NoResultException.class)
     public void testViewBulkWorksNonExistentUser() {
         serviceDelegator.viewBulkWorks(nonExistingUser, "11,12,13,16");
         fail();
