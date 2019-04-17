@@ -30,6 +30,7 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNoBioException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.V3VersionConverterChain;
@@ -806,11 +807,11 @@ public class PublicV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
     public void testViewClient() {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof Client);
+        assertTrue(response.getEntity() instanceof ClientSummary);
 
-        Client client = (Client) response.getEntity();
-        assertEquals("Source Client 2", client.getName());
-        assertEquals("A test source client", client.getDescription());        
+        ClientSummary summary = (ClientSummary) response.getEntity();
+        assertEquals("Source Client 2", summary.getName());
+        assertEquals("A test source client", summary.getDescription());        
     }
     
     @Test
@@ -826,7 +827,7 @@ public class PublicV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertTrue(workBulk.getBulk().get(3) instanceof OrcidError);
     }
     
-    @Test(expected = NoResultException.class)
+    @Test(expected = OrcidNoResultException.class)
     public void testViewBulkWorksNonExistentUser() {
         serviceDelegator.viewBulkWorks(nonExistingUser, "11,12,13,16");
         fail();

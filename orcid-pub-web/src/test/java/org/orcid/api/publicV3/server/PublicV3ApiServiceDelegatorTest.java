@@ -50,7 +50,7 @@ import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc2.client.ClientSummary;
+import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
