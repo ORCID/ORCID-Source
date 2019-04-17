@@ -18,7 +18,9 @@ public class EmailTrickleItem implements Serializable {
     private ProfileEventType failureType;
     
     private ProfileEventType skippedType;
-
+    
+    private boolean marketingMail;
+    
     public EmailMessage getEmailMessage() {
         return emailMessage;
     }
@@ -57,6 +59,14 @@ public class EmailTrickleItem implements Serializable {
 
     public void setSkippedType(ProfileEventType skippedType) {
         this.skippedType = skippedType;
+    }
+
+    public boolean isMarketingMail() {
+        return marketingMail;
+    }
+
+    public void setMarketingMail(boolean marketingMail) {
+        this.marketingMail = marketingMail;
     }
     
 }
