@@ -54,8 +54,8 @@ public class MailGunManager {
     @Value("${com.mailgun.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String notifyApiUrl;
     
-    @Value("${com.mailgun.community.apiUrl:https://api.mailgun.net/v2/community.orcid.org/messages}")
-    private String communityApiUrl;
+    @Value("${com.mailgun.marketing.apiUrl:https://api.mailgun.net/v3/comms.qa.orcid.org}")
+    private String marketingApiUrl;
 
     @Value("${com.mailgun.testmode:yes}")
     private String testmode;
@@ -82,7 +82,7 @@ public class MailGunManager {
         WebResource webResource = null;
         String fromEmail = getFromEmail(from);
         if(marketing)
-            webResource = client.resource(getCommunityApiUrl());
+            webResource = client.resource(getMarketingApiUrl());
         else if (fromEmail.endsWith("@verify.orcid.org"))
             webResource = client.resource(getVerifyApiUrl());
         else if (fromEmail.endsWith("@notify.orcid.org"))
@@ -147,12 +147,12 @@ public class MailGunManager {
         this.notifyApiUrl = notifyApiUrl;
     }
 
-    public String getCommunityApiUrl() {
-        return communityApiUrl;
+    public String getMarketingApiUrl() {
+        return marketingApiUrl;
     }
 
-    public void setCommunityApiUrl(String communityApiUrl) {
-        this.communityApiUrl = communityApiUrl;
+    public void setMarketingApiUrl(String marketingApiUrl) {
+        this.marketingApiUrl = marketingApiUrl;
     }
 
     private String getFromEmail(String from) {
