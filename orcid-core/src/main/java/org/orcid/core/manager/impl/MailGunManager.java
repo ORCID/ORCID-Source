@@ -114,8 +114,11 @@ public class MailGunManager {
                 LOGGER.error("Post MailGunManager.sendEmail to {} not accepted", formData.get("to"));
                 return false;
             }
+            return true;
+        } else {
+            LOGGER.debug("Email not sent to {} due to regex mismatch", formData.get("to"));
+            return false;
         }
-        return true;
     }
 
     public String getApiKey() {
