@@ -60,7 +60,7 @@ public class TransientNonEmptyStringTest {
     
     @Test
     public void testUnmarshal(){
-        ExternalIDs ids = unmarshallFromPath("/common_3.0_rc2/samples/common-3.0_external-identifier.xml", ExternalIDs.class); 
+        ExternalIDs ids = unmarshallFromPath("/common_3.0/samples/common-3.0_external-identifier.xml", ExternalIDs.class); 
         assertEquals(ids.getExternalIdentifier().get(0).getNormalized().getValue(),"normalized-value");
     }
     
