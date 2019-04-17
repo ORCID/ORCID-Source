@@ -79,8 +79,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     }
 
     @Override
-    public Person getPersonDetails(String orcid) {
-        long lastModifiedTime = getLastModified(orcid);
+    public Person getPersonDetails(String orcid) {        
         Person person = new Person();
         person.setName(recordNameManager.getRecordName(orcid));
         person.setBiography(biographyManager.getBiography(orcid));
@@ -130,8 +129,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     }
 
     @Override
-    public Person getPublicPersonDetails(String orcid) {
-        long lastModifiedTime = getLastModified(orcid);
+    public Person getPublicPersonDetails(String orcid) {        
         Person person = new Person();
 
         Name name = recordNameManager.getRecordName(orcid);

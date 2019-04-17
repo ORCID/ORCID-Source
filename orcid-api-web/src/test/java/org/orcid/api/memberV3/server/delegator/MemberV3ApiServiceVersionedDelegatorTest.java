@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -33,7 +34,7 @@ import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.core.version.V2VersionConverterChain;
+import org.orcid.core.version.V3VersionConverterChain;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
@@ -94,7 +95,7 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
     private ProfileDao profileDao;
 
     @Resource
-    private V2VersionConverterChain v3VersionConverterChain;
+    private V3VersionConverterChain v3VersionConverterChain;
 
     @Value("${org.orcid.core.works.bulk.read.max:100}")
     private Long bulkReadSize;
@@ -314,6 +315,36 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         fail();
     }
 
+    @Test(expected = NoResultException.class)
+    public void test00ViewResearchResources() {
+        serviceDelegator.viewResearchResources(nonExistingUser);
+        fail();
+    }
+    
+    @Test(expected = NoResultException.class)
+    public void test00ViewResearchResource() {
+        serviceDelegator.viewResearchResource(nonExistingUser, 0L);
+        fail();
+    }
+    
+    @Test(expected = NoResultException.class)
+    public void test00UpdateResearchResource() {
+        serviceDelegator.updateResearchResource(nonExistingUser, 0L, null);
+        fail();
+    }
+        
+    @Test(expected = NoResultException.class)
+    public void test00CreateResearchResource() {
+        serviceDelegator.createResearchResource(nonExistingUser, null);
+        fail();
+    }
+    
+    @Test(expected = NoResultException.class)
+    public void test00DeleteResearchResource() {
+        serviceDelegator.deleteResearchResource(nonExistingUser, 0L);
+        fail();
+    }
+    
     @Test(expected = NoResultException.class)
     public void test00ViewEmails() {
         serviceDelegator.viewEmails(nonExistingUser);
@@ -648,6 +679,36 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
     }
 
     @Test(expected = LockedException.class)
+    public void test01ViewResearchResources() {
+        serviceDelegator.viewResearchResources(lockedUserOrcid);
+        fail();
+    }
+
+    @Test(expected = LockedException.class)
+    public void test01ViewResearchResource() {
+        serviceDelegator.viewResearchResource(lockedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = LockedException.class)
+    public void test01UpdateResearchResource() {
+        serviceDelegator.updateResearchResource(lockedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = LockedException.class)
+    public void test01CreateResearchResource() {
+        serviceDelegator.createResearchResource(lockedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = LockedException.class)
+    public void test01DeleteResearchResource() {
+        serviceDelegator.deleteResearchResource(lockedUserOrcid, 0L);
+        fail();
+    }
+    
+    @Test(expected = LockedException.class)
     public void test01ViewEmails() {
         serviceDelegator.viewEmails(lockedUserOrcid);
         fail();
@@ -979,7 +1040,37 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteResearcherUrl(deprecatedUserOrcid, 0L);
         fail();
     }
+    
+    @Test(expected = OrcidDeprecatedException.class)
+    public void test02ViewResearchResources() {
+        serviceDelegator.viewResearchResources(deprecatedUserOrcid);
+        fail();
+    }
 
+    @Test(expected = OrcidDeprecatedException.class)
+    public void test02ViewResearchResource() {
+        serviceDelegator.viewResearchResource(deprecatedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = OrcidDeprecatedException.class)
+    public void test02UpdateResearchResource() {
+        serviceDelegator.updateResearchResource(deprecatedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = OrcidDeprecatedException.class)
+    public void test02CreateResearchResource() {
+        serviceDelegator.createResearchResource(deprecatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = OrcidDeprecatedException.class)
+    public void test02DeleteResearchResource() {
+        serviceDelegator.deleteResearchResource(deprecatedUserOrcid, 0L);
+        fail();
+    }
+    
     @Test(expected = OrcidDeprecatedException.class)
     public void test02ViewEmails() {
         serviceDelegator.viewEmails(deprecatedUserOrcid);
@@ -1343,7 +1434,42 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteResearcherUrl(unclaimedUserOrcid, 0L);
         fail();
     }
+    
+    @Test(expected = OrcidNotClaimedException.class)
+    public void test03ViewResearchResources() {
+        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
+        serviceDelegator.viewResearchResources(unclaimedUserOrcid);
+        fail();
+    }
 
+    @Test(expected = OrcidNotClaimedException.class)
+    public void test03ViewResearchResource() {
+        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
+        serviceDelegator.viewResearchResource(unclaimedUserOrcid, 0L);
+        fail();
+    }
+
+    @Test(expected = OrcidNotClaimedException.class)
+    public void test03UpdateResearchResource() {
+        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
+        serviceDelegator.updateResearchResource(unclaimedUserOrcid, 0L, null);
+        fail();
+    }
+
+    @Test(expected = OrcidNotClaimedException.class)
+    public void test03CreateResearchResource() {
+        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
+        serviceDelegator.createResearchResource(unclaimedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = OrcidNotClaimedException.class)
+    public void test03DeleteResearchResource() {
+        updateProfileSubmissionDate(unclaimedUserOrcid, 0);
+        serviceDelegator.deleteResearchResource(unclaimedUserOrcid, 0L);
+        fail();
+    }
+    
     @Test(expected = OrcidNotClaimedException.class)
     public void test03ViewEmails() {
         updateProfileSubmissionDate(unclaimedUserOrcid, 0);
@@ -1521,7 +1647,7 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         search.getResults().add(result);
         Response searchResponse = Response.ok(search).build();
         Mockito.when(mockServiceDelegatorNonVersioned.searchByQuery(Matchers.<Map<String, List<String>>> any())).thenReturn(searchResponse);
-        TargetProxyHelper.injectIntoProxy(serviceDelegator, "memberV2ApiServiceDelegator", mockServiceDelegatorNonVersioned);
+        TargetProxyHelper.injectIntoProxy(serviceDelegator, "memberV3ApiServiceDelegator", mockServiceDelegatorNonVersioned);
         Response response = serviceDelegator.searchByQuery(new HashMap<String, List<String>>());
 
         // just testing MemberV2ApiServiceDelegatorImpl's response is returned
@@ -1531,7 +1657,7 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals(1, ((Search) response.getEntity()).getResults().size());
         assertEquals("some-orcid-id", ((Search) response.getEntity()).getResults().get(0).getOrcidIdentifier().getPath());
 
-        TargetProxyHelper.injectIntoProxy(serviceDelegator, "memberV2ApiServiceDelegator", serviceDelegatorNonVersioned);
+        TargetProxyHelper.injectIntoProxy(serviceDelegator, "memberV3ApiServiceDelegator", serviceDelegatorNonVersioned);
     }
 
     @Test(expected = NoResultException.class)
@@ -1611,7 +1737,7 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         if (activitiesSummary.getEducations() != null) {
             activitiesSummary.getEducations().getEducationGroups().forEach(e -> {
                 for (EducationSummary s : e.getActivities()) {
-                    assertSourceElement(s, false);
+                    assertSourceElement(s);
                 }
             });
         }
@@ -1619,52 +1745,60 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         if (activitiesSummary.getEmployments() != null) {
             activitiesSummary.getEmployments().getEmploymentGroups().forEach(e -> {
                 for (EmploymentSummary s : e.getActivities()) {
-                    assertSourceElement(s, false);
+                    assertSourceElement(s);
                 }
             });
         }
 
         if (activitiesSummary.getFundings() != null) {
             activitiesSummary.getFundings().getFundingGroup().forEach(g -> {
-                g.getFundingSummary().forEach(e -> assertSourceElement(e, false));
+                g.getFundingSummary().forEach(e -> assertSourceElement(e));
             });
         }
 
         if (activitiesSummary.getWorks() != null) {
             activitiesSummary.getWorks().getWorkGroup().forEach(g -> {
-                g.getWorkSummary().forEach(e -> assertSourceElement(e, false));
+                g.getWorkSummary().forEach(e -> assertSourceElement(e));
             });
         }
 
         if (activitiesSummary.getPeerReviews() != null) {
             activitiesSummary.getPeerReviews().getPeerReviewGroup().forEach(g -> {
                 for (PeerReviewDuplicateGroup pg : g.getPeerReviewGroup()) {
-                    pg.getPeerReviewSummary().forEach(e -> assertSourceElement(e, false));
+                    pg.getPeerReviewSummary().forEach(e -> assertSourceElement(e));
                 }
             });
+        }
+        
+        if(activitiesSummary.getResearchResources() != null) {
+            activitiesSummary.getResearchResources().getResearchResourceGroup().forEach(g -> {
+                for(ResearchResourceSummary rs : g.getResearchResourceSummary()) {
+                    assertSourceElement(rs);
+                }
+            }); 
         }
 
         assertNotNull(record.getPerson());
 
         Person person = record.getPerson();
         if (person.getAddresses() != null) {
-            person.getAddresses().getAddress().forEach(e -> assertSourceElement(e, false));
+            person.getAddresses().getAddress().forEach(e -> assertSourceElement(e));
         }
 
         if (person.getExternalIdentifiers() != null) {
-            person.getExternalIdentifiers().getExternalIdentifiers().forEach(e -> assertSourceElement(e, false));
+            person.getExternalIdentifiers().getExternalIdentifiers().forEach(e -> assertSourceElement(e));
         }
 
         if (person.getKeywords() != null) {
-            person.getKeywords().getKeywords().forEach(e -> assertSourceElement(e, false));
+            person.getKeywords().getKeywords().forEach(e -> assertSourceElement(e));
         }
 
         if (person.getOtherNames() != null) {
-            person.getOtherNames().getOtherNames().forEach(e -> assertSourceElement(e, false));
+            person.getOtherNames().getOtherNames().forEach(e -> assertSourceElement(e));
         }
 
         if (person.getResearcherUrls() != null) {
-            person.getResearcherUrls().getResearcherUrls().forEach(e -> assertSourceElement(e, false));
+            person.getResearcherUrls().getResearcherUrls().forEach(e -> assertSourceElement(e));
         }
     }
 
@@ -1688,6 +1822,7 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         serviceDelegator.viewPeerReviews(deactivatedUserOrcid);
         serviceDelegator.viewPersonalDetails(deactivatedUserOrcid);
         serviceDelegator.viewResearcherUrls(deactivatedUserOrcid);
+        serviceDelegator.viewResearchResources(deactivatedUserOrcid);
         serviceDelegator.viewWorks(deactivatedUserOrcid);
     }
 
@@ -1792,7 +1927,25 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteResearcherUrl(deactivatedUserOrcid, 0L);
         fail();
     }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordUpdateResearchResource() {
+        serviceDelegator.updateResearchResource(deactivatedUserOrcid, 0L, null);
+        fail();
+    }
 
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordCreateResearchResource() {
+        serviceDelegator.createResearchResource(deactivatedUserOrcid, null);
+        fail();
+    }
+
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordDeleteResearchResource() {
+        serviceDelegator.deleteResearchResource(deactivatedUserOrcid, 0L);
+        fail();
+    }
+    
     @Test(expected = DeactivatedException.class)
     public void testDeactivatedRecordCreateOtherName() {
         serviceDelegator.createOtherName(deactivatedUserOrcid, null);
@@ -1865,18 +2018,14 @@ public class MemberV3ApiServiceVersionedDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    private void assertSourceElement(SourceAware element, boolean isHttps) {
+    private void assertSourceElement(SourceAware element) {
         if (element.getSource() != null && element.getSource().getSourceOrcid() != null) {
-            assertProtocol(element.getSource().getSourceOrcid().getUri(), isHttps);
+            assertProtocol(element.getSource().getSourceOrcid().getUri());
         }
     }
 
-    private void assertProtocol(String url, boolean isHttps) {
-        if (isHttps) {
-            assertTrue(url.startsWith("https://"));
-        } else {
-            assertTrue(url.startsWith("http://"));
-        }
+    private void assertProtocol(String url) {
+        assertTrue(url.startsWith("https://"));        
     }
 
     private void updateProfileSubmissionDate(String orcid, int increment) {
