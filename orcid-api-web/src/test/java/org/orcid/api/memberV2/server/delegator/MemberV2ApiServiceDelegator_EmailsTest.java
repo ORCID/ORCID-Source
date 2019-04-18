@@ -44,9 +44,8 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
 public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
-    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
-            "/data/BiographyEntityData.xml");
+    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     // Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
@@ -142,38 +141,13 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals("/4444-4444-4444-4443/email", emails.getPath());
         Utils.verifyLastModified(emails.getLastModifiedDate());
         assertNotNull(emails.getEmails());
-        assertEquals(3, emails.getEmails().size());
-        for (Email email : emails.getEmails()) {
-            Utils.verifyLastModified(email.getLastModifiedDate());
-            assertThat(email.getEmail(), anyOf(is("teddybass2@semantico.com"), is("teddybass3public@semantico.com"), is("teddybass3private@semantico.com")));
-            switch (email.getEmail()) {
-            case "teddybass2@semantico.com":
-                assertEquals(Visibility.LIMITED, email.getVisibility());
-                assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
-                assertEquals(false, email.isVerified());
-                assertEquals(false, email.isPrimary());
-                break;
-            case "teddybass3public@semantico.com":
-                assertEquals(Visibility.PUBLIC, email.getVisibility());
-                assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
-                assertEquals(false, email.isVerified());
-                assertEquals(false, email.isPrimary());
-                break;
-            case "teddybass3private@semantico.com":
-                assertEquals(Visibility.PRIVATE, email.getVisibility());
-                assertEquals("APP-5555555555555555", email.retrieveSourcePath());
-                assertEquals(true, email.isVerified());
-                assertEquals(false, email.isPrimary());
-                break;
-            case "peter@sellers.com":
-                assertEquals(Visibility.PRIVATE, email.getVisibility());
-                assertEquals("APP-5555555555555555", email.retrieveSourcePath());
-                assertEquals(false, email.isVerified());
-                assertEquals(true, email.isPrimary());
-                break;
-            default:
-                fail("Invalid email: " + email.getEmail());
-            }
-        }
+        assertEquals(1, emails.getEmails().size());
+        Email email = emails.getEmails().get(0);
+        Utils.verifyLastModified(email.getLastModifiedDate());
+        assertEquals(email.getEmail(), "teddybass3private@semantico.com");
+        assertEquals(Visibility.PRIVATE, email.getVisibility());
+        assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+        assertEquals(true, email.isVerified());
+        assertEquals(false, email.isPrimary());
     }
 }

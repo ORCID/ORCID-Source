@@ -40,4 +40,6 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     boolean isPrimaryEmail(String email); 
     
     EmailFrequencyOptions getEmailFrequencyOptions();
+
+    Emails getVerifiedEmails(String orcid);
 }

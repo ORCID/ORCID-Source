@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Person;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,7 +46,7 @@ public class PersonDetailsManagerTest extends DBUnitTest {
     
     @Test
     public void testGetPersonDetails() {
-        Person person = personDetailsManager.getPersonDetails(ORCID);
+        Person person = personDetailsManager.getPersonDetails(ORCID, false);
         assertNotNull(person);
         
         assertNotNull(person.getExternalIdentifiers());
@@ -69,7 +71,11 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
-        assertEquals(5, person.getEmails().getEmails().size());
+        assertEquals(4, person.getEmails().getEmails().size());
+
+        for (Email email : person.getEmails().getEmails()) {
+            assertTrue(email.isVerified());
+        }
         
         assertNotNull(person.getBiography());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
@@ -83,6 +89,16 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         assertNotNull(person.getName().getGivenNames());
         assertEquals("Given Names", person.getName().getGivenNames().getContent());
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());        
+    }
+    
+    @Test
+    public void testGetPersonDetailsIncludeUnverifiedEmails() {
+        Person person = personDetailsManager.getPersonDetails(ORCID, true);
+        assertNotNull(person);
+        
+        assertNotNull(person.getEmails());
+        assertNotNull(person.getEmails().getEmails());
+        assertEquals(5, person.getEmails().getEmails().size());
     }
 
     @Test

@@ -43,6 +43,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -134,7 +135,7 @@ public class GetMyDataControllerTest {
         TargetProxyHelper.injectIntoProxy(getMyDataController, "peerReviewManagerReadOnly", mockPeerReviewManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(getMyDataController, "workManagerReadOnly", mockWorkManagerReadOnly);
 
-        when(mockPersonDetailsManager.getPersonDetails(anyString())).thenAnswer(new Answer<Person>() {
+        when(mockPersonDetailsManager.getPersonDetails(anyString(), Mockito.eq(true))).thenAnswer(new Answer<Person>() {
             @Override
             public Person answer(InvocationOnMock invocation) throws Throwable {
                 Person p = new Person();

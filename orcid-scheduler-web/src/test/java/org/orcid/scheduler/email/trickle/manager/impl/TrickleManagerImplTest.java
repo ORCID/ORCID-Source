@@ -53,6 +53,41 @@ public class TrickleManagerImplTest {
     }
 
     @Test
+    public void testAttemptSendMarketingSuccess() {
+        Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
+        Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsEnabled());
+        Mockito.when(profileDaoReadOnly.getProfileEvents(Mockito.eq("orcid"), Mockito.anyList())).thenReturn(new ArrayList<>());
+
+        ArgumentCaptor<String> fromCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> toCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> subjectCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> textCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> htmlCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<ProfileEventEntity> eventCaptor = ArgumentCaptor.forClass(ProfileEventEntity.class);
+
+        Mockito.when(mailGunManager.sendMarketingEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(Boolean.TRUE);
+        trickleManager.attemptSend(getMarketingEmailTrickleItem());
+        Mockito.verify(mailGunManager, Mockito.times(1)).sendMarketingEmail(fromCaptor.capture(), toCaptor.capture(), subjectCaptor.capture(), textCaptor.capture(),
+                htmlCaptor.capture());
+        Mockito.verify(profileDaoReadOnly, Mockito.times(1)).getProfileEvents(Mockito.eq("orcid"), Mockito.anyList());
+        Mockito.verify(emailScheduleDaoReadOnly, Mockito.times(1)).getValidScheduleId();
+        Mockito.verify(emailScheduleDao, Mockito.times(1)).updateLatestSent(Mockito.eq(2L), Mockito.any(Date.class));
+        Mockito.verify(emailFrequencyDaoReadOnly, Mockito.times(1)).findByOrcid(Mockito.eq("orcid"));
+        Mockito.verify(profileEventDao, Mockito.times(1)).merge(eventCaptor.capture());
+
+        assertEquals("me", fromCaptor.getValue());
+        assertEquals("you", toCaptor.getValue());
+        assertEquals("hello", subjectCaptor.getValue());
+        assertEquals("hello", textCaptor.getValue());
+        assertEquals("<p>hello</p>", htmlCaptor.getValue());
+
+        ProfileEventEntity event = eventCaptor.getValue();
+        assertEquals(ProfileEventType.MARCH_2019_SENT, event.getType());
+        assertEquals("orcid", event.getOrcid());
+    }
+    
+    @Test
     public void testAttemptSendSuccess() {
         Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
         Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsEnabled());
@@ -122,6 +157,40 @@ public class TrickleManagerImplTest {
         assertEquals("orcid", event.getOrcid());
     }
     
+    @Test
+    public void testAttemptMarketingSendFailure() {
+        Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
+        Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsEnabled());
+        Mockito.when(profileDaoReadOnly.getProfileEvents(Mockito.eq("orcid"), Mockito.anyList())).thenReturn(new ArrayList<>());
+
+        ArgumentCaptor<String> fromCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> toCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> subjectCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> textCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> htmlCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<ProfileEventEntity> eventCaptor = ArgumentCaptor.forClass(ProfileEventEntity.class);
+
+        Mockito.when(mailGunManager.sendMarketingEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(Boolean.FALSE);
+        trickleManager.attemptSend(getMarketingEmailTrickleItem());
+        Mockito.verify(mailGunManager, Mockito.times(1)).sendMarketingEmail(fromCaptor.capture(), toCaptor.capture(), subjectCaptor.capture(), textCaptor.capture(),
+                htmlCaptor.capture());
+        Mockito.verify(profileDaoReadOnly, Mockito.times(1)).getProfileEvents(Mockito.eq("orcid"), Mockito.anyList());
+        Mockito.verify(emailScheduleDaoReadOnly, Mockito.times(1)).getValidScheduleId();
+        Mockito.verify(emailScheduleDao, Mockito.never()).updateLatestSent(Mockito.eq(2L), Mockito.any(Date.class));
+        Mockito.verify(emailFrequencyDaoReadOnly, Mockito.times(1)).findByOrcid(Mockito.eq("orcid"));
+        Mockito.verify(profileEventDao, Mockito.times(1)).merge(eventCaptor.capture());
+
+        assertEquals("me", fromCaptor.getValue());
+        assertEquals("you", toCaptor.getValue());
+        assertEquals("hello", subjectCaptor.getValue());
+        assertEquals("hello", textCaptor.getValue());
+        assertEquals("<p>hello</p>", htmlCaptor.getValue());
+
+        ProfileEventEntity event = eventCaptor.getValue();
+        assertEquals(ProfileEventType.MARCH_2019_FAILED, event.getType());
+        assertEquals("orcid", event.getOrcid());
+    }
 
     @Test
     public void testAttemptSendSkipped() {
@@ -133,7 +202,7 @@ public class TrickleManagerImplTest {
 
         Mockito.when(mailGunManager.sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(Boolean.FALSE);
-        trickleManager.attemptSend(getEmailTrickleItem());
+        trickleManager.attemptSend(getMarketingEmailTrickleItem());
         Mockito.verify(mailGunManager, Mockito.never()).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
         Mockito.verify(profileDaoReadOnly, Mockito.times(1)).getProfileEvents(Mockito.eq("orcid"), Mockito.anyList());
         Mockito.verify(emailScheduleDaoReadOnly, Mockito.times(1)).getValidScheduleId();
@@ -154,7 +223,7 @@ public class TrickleManagerImplTest {
 
         Mockito.when(mailGunManager.sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
                 .thenReturn(Boolean.FALSE);
-        trickleManager.attemptSend(getEmailTrickleItem());
+        trickleManager.attemptSend(getMarketingEmailTrickleItem());
         Mockito.verify(mailGunManager, Mockito.never()).sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
         Mockito.verify(profileDaoReadOnly, Mockito.times(1)).getProfileEvents(Mockito.eq("orcid"), Mockito.anyList());
         Mockito.verify(emailScheduleDaoReadOnly, Mockito.times(1)).getValidScheduleId();
@@ -163,12 +232,19 @@ public class TrickleManagerImplTest {
         Mockito.verify(profileEventDao, Mockito.never()).merge(Mockito.any(ProfileEventEntity.class));
     }
 
+    private EmailTrickleItem getMarketingEmailTrickleItem() {
+        EmailTrickleItem item = getEmailTrickleItem();
+        item.setMarketingMail(true);
+        return item;
+    }
+    
     private EmailTrickleItem getEmailTrickleItem() {
         EmailTrickleItem item = new EmailTrickleItem();
         item.setOrcid("orcid");
         item.setSuccessType(ProfileEventType.MARCH_2019_SENT);
         item.setFailureType(ProfileEventType.MARCH_2019_FAILED);
         item.setSkippedType(ProfileEventType.MARCH_2019_SKIPPED);
+        item.setMarketingMail(false);
         item.setEmailMessage(getEmailMessage());
         return item;
     }

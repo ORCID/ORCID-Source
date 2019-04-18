@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.BiographyManagerReadOnly;
@@ -79,7 +80,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     }
 
     @Override
-    public Person getPersonDetails(String orcid) {        
+    public Person getPersonDetails(String orcid, boolean includeUnverifiedEmails) {
         Person person = new Person();
         person.setName(recordNameManager.getRecordName(orcid));
         person.setBiography(biographyManager.getBiography(orcid));
@@ -122,7 +123,12 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         Emails emails = emailManager.getEmails(orcid);
         if (emails.getEmails() != null) {
             Emails filteredEmails = new Emails();
-            filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
+            
+            if (includeUnverifiedEmails) {
+                filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
+            } else {
+                filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
+            }
             person.setEmails(filteredEmails);
         }
         return person;

@@ -15,7 +15,6 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailMessage;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.jaxb.model.common.AvailableLocales;
-import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -89,6 +88,7 @@ public class SendMarch2019Newsletter {
             item.setSuccessType(ProfileEventType.MARCH_2019_SENT);
             item.setSkippedType(ProfileEventType.MARCH_2019_SKIPPED);
             item.setFailureType(ProfileEventType.MARCH_2019_FAILED);
+            item.setMarketingMail(true);
             emailQueueProducer.queueEmail(item);
         }
         LOG.info("Queued {} emails", emails.size());

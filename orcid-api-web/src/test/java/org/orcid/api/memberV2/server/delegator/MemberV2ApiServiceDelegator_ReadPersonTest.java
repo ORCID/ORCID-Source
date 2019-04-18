@@ -498,9 +498,9 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Emails email = p.getEmails();
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(5, email.getEmails().size());
+        assertEquals(4, email.getEmails().size());
 
-        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        boolean found1 = false, found2 = false, found3 = false, found4 = false;
 
         for (Email element : email.getEmails()) {
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -511,8 +511,6 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
                 found3 = true;
             } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
                 found4 = true;
-            } else if (element.getEmail().equals("self_private_0000-0000-0000-0003@test.orcid.org")) {
-                found5 = true;
             } else {
                 fail("Invalid email " + element.getEmail());
             }
@@ -522,7 +520,6 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertTrue(found2);
         assertTrue(found3);
         assertTrue(found4);
-        assertTrue(found5);
 
         this.assertAllPublicButEmails(p);
     }    
