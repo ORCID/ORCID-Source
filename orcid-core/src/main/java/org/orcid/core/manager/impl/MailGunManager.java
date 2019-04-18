@@ -54,7 +54,7 @@ public class MailGunManager {
     @Value("${com.mailgun.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String notifyApiUrl;
     
-    @Value("${com.mailgun.marketing.apiUrl:https://api.mailgun.net/v3/comms.qa.orcid.org}")
+    @Value("${com.mailgun.marketing.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String marketingApiUrl;
 
     @Value("${com.mailgun.testmode:yes}")
