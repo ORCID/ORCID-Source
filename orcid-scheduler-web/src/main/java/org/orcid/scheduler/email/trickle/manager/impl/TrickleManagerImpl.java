@@ -55,9 +55,8 @@ public class TrickleManagerImpl implements TrickleManager {
                 Date now = new Date();
                 LOG.info("Cleared to send at {}", now);
                 EmailMessage emailMessage = item.getEmailMessage();
-                LOG.info("Sending email from {} to {} with subject {}", new Object[] {emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject()});
-                if (mailGunManager.sendEmail(emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject(), emailMessage.getBodyText(),
-                        emailMessage.getBodyHtml())) {
+                LOG.info("Sending email from {} to {} with subject {}", new Object[] { emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject() });
+                if (send(emailMessage, item.isMarketingMail())) {
                     LOG.info("Email sent to {}", emailMessage.getTo());
                     profileEventDao.merge(getProfileEventEntity(item.getSuccessType(), item.getOrcid()));
                     emailScheduleDao.updateLatestSent(scheduleId, now);
@@ -69,6 +68,16 @@ public class TrickleManagerImpl implements TrickleManager {
             }
         } else {
             LOG.info("Email already sent to {}", item.getEmailMessage().getTo());
+        }
+    }
+
+    private boolean send(EmailMessage emailMessage, boolean marketing) {
+        if (marketing) {
+            return mailGunManager.sendMarketingEmail(emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject(), emailMessage.getBodyText(),
+                    emailMessage.getBodyHtml());
+        } else {
+            return mailGunManager.sendEmail(emailMessage.getFrom(), emailMessage.getTo(), emailMessage.getSubject(), emailMessage.getBodyText(),
+                    emailMessage.getBodyHtml());
         }
     }
 
@@ -86,8 +95,7 @@ public class TrickleManagerImpl implements TrickleManager {
     }
 
     private boolean notAlreadySent(EmailTrickleItem item) {
-        return profileDaoReadOnly
-                .getProfileEvents(item.getOrcid(), Arrays.asList(item.getSuccessType(), item.getFailureType(), item.getSkippedType())).isEmpty();
+        return profileDaoReadOnly.getProfileEvents(item.getOrcid(), Arrays.asList(item.getSuccessType(), item.getFailureType(), item.getSkippedType())).isEmpty();
     }
 
 }
