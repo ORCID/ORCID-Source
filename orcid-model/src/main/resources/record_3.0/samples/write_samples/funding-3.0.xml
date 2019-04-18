@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<funding:funding
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:funding="http://www.orcid.org/ns/funding"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/funding /funding-3.0.xsd ">    
+	<funding:type>grant</funding:type>
+	<funding:organization-defined-type>Funding sub-type</funding:organization-defined-type>
+	<funding:title>
+		<common:title>Grant title</common:title>
+		<common:translated-title language-code="en">Translated title</common:translated-title>
+	</funding:title>
+	<funding:short-description>Short description of the award</funding:short-description>
+	<funding:amount currency-code="ADP">1000</funding:amount>
+	<common:url>https://alt-url.org</common:url>
+	<common:start-date>
+		<common:year>2000</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</common:start-date>
+	<common:end-date>
+		<common:year>2020</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</common:end-date>
+	<common:external-ids>
+		<common:external-id>
+			<common:external-id-type>grant_number</common:external-id-type>
+			<common:external-id-value>1234</common:external-id-value>			
+			<common:external-id-url>http://tempuri.org/12345</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+	</common:external-ids>
+	<common:organization>
+		<common:name>Wellcome Trust</common:name>
+		<common:address>
+			<common:city>London</common:city>
+			<common:country>GB</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>http://dx.doi.org/10.13039/100000001</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>FUNDREF</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</common:organization>
+</funding:funding>

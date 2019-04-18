@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
+	targetNamespace="http://www.orcid.org/ns/external-identifier"
+	xmlns:external-identifier="http://www.orcid.org/ns/external-identifier"
+	xmlns:common="http://www.orcid.org/ns/common">
+	<xs:annotation>
+		<xs:documentation>
+			=============================================================================
+
+			ORCID (R) Open Source
+			http://orcid.org
+
+			Copyright (c) 2012-2018 ORCID,
+			Inc.
+			Licensed under an MIT-Style License (MIT)
+			http://orcid.org/open-source-license
+
+			This copyright and license
+			information (including a link to the full
+			license)
+			shall be included in
+			its entirety in all copies or substantial portion of
+			the software.
+
+			=============================================================================
+			The schema describes the message format used for ORCID API requests
+			and responses.
+		</xs:documentation>
+		<xs:appinfo>
+			<sch:title>Schematron validation</sch:title>
+			<sch:ns prefix="external-identifier" uri="http://www.orcid.org/ns/external-identifier" />
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://www.orcid.org/ns/common"
+		schemaLocation="../common_3.0/common-3.0.xsd" />
+
+	<xs:element name="external-identifiers">
+		<xs:annotation>
+			<xs:documentation>Container for identifiers that apply to the researcher themselves.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
+				<xs:element name="external-identifier"
+					type="common:external-id" minOccurs="0"
+					maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute name="path" type="common:element-path" use="optional" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="external-identifier">
+		<xs:annotation>
+			<xs:documentation>External identifier container</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="common:external-id" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>	

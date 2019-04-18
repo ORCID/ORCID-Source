@@ -982,6 +982,7 @@
         <property name="converters">
             <list>
                 <ref bean="versionConverterV3_0_rc1ToV3_0_rc2" />
+                <ref bean="versionConverterV3_0_rc2ToV3_0" />
             </list>
         </property>
     </bean>
@@ -993,6 +994,8 @@
 	<bean id="versionConverterV2_0ToV2_1" class="org.orcid.core.version.impl.VersionConverterImplV2_0ToV2_1"/>
 
     <bean id="versionConverterV3_0_rc1ToV3_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV3_0_rc1ToV3_0_rc2"/>
+
+	<bean id="versionConverterV3_0_rc2ToV3_0" class="org.orcid.core.version.impl.VersionConverterImplV3_0_rc2ToV3_0"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	

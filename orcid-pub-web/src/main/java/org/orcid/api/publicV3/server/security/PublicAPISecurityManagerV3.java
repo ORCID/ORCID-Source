@@ -1,21 +1,21 @@
 package org.orcid.api.publicV3.server.security;
 
-import org.orcid.jaxb.model.v3.rc2.common.VisibilityType;
-import org.orcid.jaxb.model.v3.rc2.record.ActivitiesContainer;
-import org.orcid.jaxb.model.v3.rc2.record.Addresses;
-import org.orcid.jaxb.model.v3.rc2.record.Biography;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
-import org.orcid.jaxb.model.v3.rc2.record.GroupsContainer;
-import org.orcid.jaxb.model.v3.rc2.record.Keywords;
-import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc2.record.Person;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.rc2.record.Record;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.release.common.VisibilityType;
+import org.orcid.jaxb.model.v3.release.record.ActivitiesContainer;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.GroupsContainer;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.Person;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.release.record.Record;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 
 public interface PublicAPISecurityManagerV3 {
     void checkIsPublic(VisibilityType visibilityType);

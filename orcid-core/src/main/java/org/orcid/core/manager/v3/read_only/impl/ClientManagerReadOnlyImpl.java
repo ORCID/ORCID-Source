@@ -8,8 +8,8 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc2.client.Client;
-import org.orcid.jaxb.model.v3.rc2.client.ClientSummary;
+import org.orcid.jaxb.model.v3.release.client.Client;
+import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 

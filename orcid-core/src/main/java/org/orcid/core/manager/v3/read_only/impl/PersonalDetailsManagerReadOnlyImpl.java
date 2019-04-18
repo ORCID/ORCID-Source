@@ -8,13 +8,13 @@ import org.orcid.core.manager.v3.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.OtherNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.Biography;
-import org.orcid.jaxb.model.v3.rc2.record.Name;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.utils.DateUtils;
 
 /**

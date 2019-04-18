@@ -2,8 +2,8 @@ package org.orcid.core.adapter.v3;
 
 import java.util.Collection;
 
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.Addresses;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 
 public interface JpaJaxbAddressAdapter {

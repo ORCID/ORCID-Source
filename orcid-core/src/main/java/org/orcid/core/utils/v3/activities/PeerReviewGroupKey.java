@@ -1,7 +1,7 @@
 package org.orcid.core.utils.v3.activities;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
+import org.orcid.jaxb.model.v3.release.record.GroupAble;
 
 public class PeerReviewGroupKey implements GroupAble {    
     public static String KEY_NAME = "peer-review"; 

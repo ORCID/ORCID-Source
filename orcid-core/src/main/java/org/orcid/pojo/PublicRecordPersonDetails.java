@@ -3,13 +3,13 @@ package org.orcid.pojo;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.Biography;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Keyword;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 
 public class PublicRecordPersonDetails {
 

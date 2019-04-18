@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<education:education put-code="0" visibility="private"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/education ../education-3.0.xsd ">
+	<common:created-date>2001-12-31T12:00:00</common:created-date>
+	<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+	<common:source>
+		<common:source-orcid>
+			<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:source-orcid>
+		<common:source-name />
+	</common:source>
+	<common:department-name>education:department-name</common:department-name>
+	<common:role-title>education:role-title</common:role-title>
+	<common:start-date>
+		<common:year>1948</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</common:start-date>
+	<common:end-date>
+		<common:year>1948</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</common:end-date>
+	<common:organization>
+		<common:name>common:name</common:name>
+		<common:address>
+			<common:city>common:city</common:city>
+			<common:region>common:region</common:region>
+			<common:country>AF</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</common:organization>	
+	<common:url>http://tempuri.org</common:url>  
+    <common:external-ids>
+        <common:external-id>
+            <common:external-id-type>grant_number</common:external-id-type>
+            <common:external-id-value>external-identifier-value</common:external-id-value>          
+            <common:external-id-url>http://tempuri.org</common:external-id-url>
+            <common:external-id-relationship>self</common:external-id-relationship>
+        </common:external-id>
+        <common:external-id>
+            <common:external-id-type>grant_number</common:external-id-type>
+            <common:external-id-value>external-identifier-value2</common:external-id-value>         
+            <common:external-id-url>http://tempuri.org/2</common:external-id-url>
+            <common:external-id-relationship>self</common:external-id-relationship>
+        </common:external-id>
+    </common:external-ids>      		
+</education:education>

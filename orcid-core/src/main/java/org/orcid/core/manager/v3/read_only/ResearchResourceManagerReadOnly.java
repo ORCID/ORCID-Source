@@ -2,9 +2,9 @@ package org.orcid.core.manager.v3.read_only;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources;
+import org.orcid.jaxb.model.v3.release.record.ResearchResource;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 
 public interface ResearchResourceManagerReadOnly {
 

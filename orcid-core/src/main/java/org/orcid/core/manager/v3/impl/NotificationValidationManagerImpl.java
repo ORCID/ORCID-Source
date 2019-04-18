@@ -9,8 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.v3.NotificationValidationManager;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 
 public class NotificationValidationManagerImpl implements NotificationValidationManager {
 

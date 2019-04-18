@@ -8,20 +8,20 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc2.common.Amount;
-import org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization;
-import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.Organization;
-import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.rc2.common.OrganizationDefinedFundingSubType;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Funding;
-import org.orcid.jaxb.model.v3.rc2.record.FundingContributor;
-import org.orcid.jaxb.model.v3.rc2.record.FundingContributors;
-import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.common.Amount;
+import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.release.common.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.FundingContributor;
+import org.orcid.jaxb.model.v3.release.record.FundingContributors;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 
 public class FundingForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -315,7 +315,7 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
         else
             result.setUrl(new Url());
         if (visibility != null)
-            result.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(visibility.getVisibility().value()));
+            result.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(visibility.getVisibility().value()));
 
         // Set Organization
         Organization organization = new Organization();

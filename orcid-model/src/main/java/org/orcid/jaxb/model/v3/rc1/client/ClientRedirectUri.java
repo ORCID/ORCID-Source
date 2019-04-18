@@ -12,7 +12,8 @@ public class ClientRedirectUri implements Serializable {
     private String uriActType;
     private String uriGeoArea;
     private Set<ScopePathType> predefinedClientScopes;
-
+    private String status = "OK";
+    
     public String getRedirectUri() {
         return redirectUri;
     }
@@ -53,6 +54,14 @@ public class ClientRedirectUri implements Serializable {
         this.predefinedClientScopes = predefinedClientScopes;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -60,6 +69,7 @@ public class ClientRedirectUri implements Serializable {
         result = prime * result + ((predefinedClientScopes == null) ? 0 : predefinedClientScopes.hashCode());
         result = prime * result + ((redirectUri == null) ? 0 : redirectUri.hashCode());
         result = prime * result + ((redirectUriType == null) ? 0 : redirectUriType.hashCode());
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((uriActType == null) ? 0 : uriActType.hashCode());
         result = prime * result + ((uriGeoArea == null) ? 0 : uriGeoArea.hashCode());
         return result;
@@ -88,6 +98,11 @@ public class ClientRedirectUri implements Serializable {
             if (other.redirectUriType != null)
                 return false;
         } else if (!redirectUriType.equals(other.redirectUriType))
+            return false;
+        if (status == null) {
+            if (other.status != null)
+                return false;
+        } else if (!status.equals(other.status))
             return false;
         if (uriActType == null) {
             if (other.uriActType != null)

@@ -3,7 +3,7 @@ package org.orcid.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.model.v3.rc2.notification.internal.NotificationFindMyStuff;
+import org.orcid.model.v3.release.notification.internal.NotificationFindMyStuff;
 
 public class FindMyStuffResult {
 

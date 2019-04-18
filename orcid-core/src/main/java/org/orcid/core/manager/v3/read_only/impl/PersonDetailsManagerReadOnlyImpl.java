@@ -12,22 +12,22 @@ import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.Addresses;
-import org.orcid.jaxb.model.v3.rc2.record.Biography;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
-import org.orcid.jaxb.model.v3.rc2.record.Keyword;
-import org.orcid.jaxb.model.v3.rc2.record.Keywords;
-import org.orcid.jaxb.model.v3.rc2.record.Name;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc2.record.Person;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
+import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.Person;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
 
@@ -135,8 +135,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     }
 
     @Override
-    public Person getPublicPersonDetails(String orcid) {
-        long lastModifiedTime = getLastModified(orcid);
+    public Person getPublicPersonDetails(String orcid) {        
         Person person = new Person();
 
         Name name = recordNameManager.getRecordName(orcid);

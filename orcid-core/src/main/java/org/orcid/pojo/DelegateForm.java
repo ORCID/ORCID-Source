@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.orcid.pojo.ajaxForm.Text;
 
 public class DelegateForm implements Serializable {

@@ -18,7 +18,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.orcid.jaxb.model.v3.rc2.record.Record;
+import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.persistence.dao.ValidatedPublicProfileDao;
 import org.orcid.persistence.jpa.entities.ValidatedPublicProfileEntity;
 import org.slf4j.Logger;

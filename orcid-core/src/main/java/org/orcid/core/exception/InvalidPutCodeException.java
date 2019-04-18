@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
+import org.orcid.jaxb.model.v3.release.common.Source;
 
 /**
  * 

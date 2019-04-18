@@ -3,8 +3,8 @@ package org.orcid.core.adapter.v3;
 import java.util.Collection;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

@@ -97,6 +97,11 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
+    <bean id="memberV3_0ApiClient" class="org.orcid.integration.blackbox.api.v3.release.MemberV3ApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v3.0"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <!-- PUBLIC API -->
     <bean id="publicV1ApiClient" class="org.orcid.integration.api.pub.PublicV1ApiClientImpl">
         <constructor-arg value="${org.orcid.pub.baseUri}/v1.2"/>
@@ -143,6 +148,11 @@
         <constructor-arg ref="jerseyClient"/>
     </bean>
     
+    <bean id="publicV3_0ApiClient" class="org.orcid.integration.api.pub.PublicV3ApiClientImpl">
+        <constructor-arg value="${org.orcid.pub.baseUri}/v3.0"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <!-- INTERNAL API -->
     <bean id="internalOAuthClient" class="org.orcid.integration.api.internal.InternalOAuthOrcidApiClientImpl">
         <constructor-arg value="${org.orcid.internal.baseUri}"/>
@@ -150,6 +160,11 @@
     </bean>   
     
     <!-- Notifications -->
+    <bean id="notificationsClient_v3_0" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
+        <constructor-arg value="${org.orcid.api.baseUri}/v3.0"/>
+        <constructor-arg ref="jerseyClient"/>
+    </bean>
+    
     <bean id="notificationsClient_v3_0_rc2" class="org.orcid.integration.api.notifications.NotificationsApiClientImpl">
         <constructor-arg value="${org.orcid.api.baseUri}/v3.0_rc2"/>
         <constructor-arg ref="jerseyClient"/>

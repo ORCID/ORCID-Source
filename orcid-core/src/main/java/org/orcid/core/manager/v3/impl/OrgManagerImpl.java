@@ -11,8 +11,8 @@ import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
-import org.orcid.jaxb.model.v3.rc2.common.MultipleOrganizationHolder;
-import org.orcid.jaxb.model.v3.rc2.common.OrganizationHolder;
+import org.orcid.jaxb.model.v3.release.common.MultipleOrganizationHolder;
+import org.orcid.jaxb.model.v3.release.common.OrganizationHolder;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
@@ -129,10 +129,10 @@ public class OrgManagerImpl implements OrgManager {
         return getOrgEntity(holder.getOrganization());      
     }
     
-    private OrgEntity getOrgEntity(org.orcid.jaxb.model.v3.rc2.common.Organization organization){
+    private OrgEntity getOrgEntity(org.orcid.jaxb.model.v3.release.common.Organization organization){
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setName(organization.getName());
-        org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress address = organization.getAddress();
+        org.orcid.jaxb.model.v3.release.common.OrganizationAddress address = organization.getAddress();
         orgEntity.setCity(address.getCity());
         orgEntity.setRegion(address.getRegion());
         orgEntity.setCountry(address.getCountry().name());
@@ -152,7 +152,7 @@ public class OrgManagerImpl implements OrgManager {
     @Override
     public List<OrgEntity> getOrgEntities(MultipleOrganizationHolder holder) {
         ArrayList<OrgEntity> entities = new ArrayList<OrgEntity>();
-        for (org.orcid.jaxb.model.v3.rc2.common.Organization organization : holder.getOrganization()){
+        for (org.orcid.jaxb.model.v3.release.common.Organization organization : holder.getOrganization()){
             entities.add(getOrgEntity(organization));
         }
         return entities;

@@ -7,15 +7,15 @@ import java.util.List;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
-import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
-import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
-import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
-import org.orcid.jaxb.model.v3.rc2.record.WorkCategory;
+import org.orcid.jaxb.model.v3.release.common.CreatedDate;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 
@@ -149,7 +149,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         // Set publication date
         FuzzyDate fuzzyPublicationDate = null;
         if (work.getPublicationDate() != null) {
-            org.orcid.jaxb.model.v3.rc2.common.PublicationDate publicationDate = work.getPublicationDate();
+            org.orcid.jaxb.model.v3.release.common.PublicationDate publicationDate = work.getPublicationDate();
             Integer year = PojoUtil.isEmpty(publicationDate.getYear()) ? null : Integer.valueOf(publicationDate.getYear().getValue());
             Integer month = PojoUtil.isEmpty(publicationDate.getMonth()) ? null : Integer.valueOf(publicationDate.getMonth().getValue());
             Integer day = PojoUtil.isEmpty(publicationDate.getDay()) ? null : Integer.valueOf(publicationDate.getDay().getValue());
@@ -265,7 +265,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                 }
                 
                 if(!PojoUtil.isEmpty(wfExtId.getUrl())) {
-                    wExtId.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url(wfExtId.getUrl().getValue()));
+                    wExtId.setUrl(new org.orcid.jaxb.model.v3.release.common.Url(wfExtId.getUrl().getValue()));
                 }
                 workExternalIds.getExternalIdentifier().add(wExtId);
             }
@@ -276,9 +276,9 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     private static void populateContributors(Work work, WorkForm workForm) {
         List<Contributor> contributorsList = new ArrayList<Contributor>();
         if(work.getWorkContributors() != null) {
-            org.orcid.jaxb.model.v3.rc2.record.WorkContributors contributors = work.getWorkContributors();
+            org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = work.getWorkContributors();
             if (contributors != null) {
-                for (org.orcid.jaxb.model.v3.rc2.common.Contributor contributor : contributors.getContributor()) {
+                for (org.orcid.jaxb.model.v3.release.common.Contributor contributor : contributors.getContributor()) {
                     contributorsList.add(Contributor.valueOf(contributor));
                 }
             }
@@ -287,11 +287,11 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     }
     
     private static void populateContributors(WorkForm workForm, Work work) {
-        org.orcid.jaxb.model.v3.rc2.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.rc2.record.WorkContributors();
+        org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.release.record.WorkContributors();
         if(workForm.getContributors() != null && !workForm.getContributors().isEmpty()) {
             for(Contributor wfContributor : workForm.getContributors()) {
-                org.orcid.jaxb.model.v3.rc2.common.Contributor workContributor = new org.orcid.jaxb.model.v3.rc2.common.Contributor();
-                org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes();
+                org.orcid.jaxb.model.v3.release.common.Contributor workContributor = new org.orcid.jaxb.model.v3.release.common.Contributor();
+                org.orcid.jaxb.model.v3.release.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
                 if(!PojoUtil.isEmpty(wfContributor.getContributorRole())) {
                     contributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.fromValue(wfContributor.getContributorRole().getValue()));
                 }
@@ -302,16 +302,16 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                 workContributor.setContributorAttributes(contributorAttributes);
                 
                 if(!PojoUtil.isEmpty(wfContributor.getCreditName())) {
-                    org.orcid.jaxb.model.v3.rc2.common.CreditName creditName = new org.orcid.jaxb.model.v3.rc2.common.CreditName(); 
+                    org.orcid.jaxb.model.v3.release.common.CreditName creditName = new org.orcid.jaxb.model.v3.release.common.CreditName(); 
                     creditName.setContent(wfContributor.getCreditName().getValue());
                     workContributor.setCreditName(creditName);
                 }                                
                 
                 if(!PojoUtil.isEmpty(wfContributor.getEmail())) {                    
-                    workContributor.setContributorEmail(new org.orcid.jaxb.model.v3.rc2.common.ContributorEmail(wfContributor.getEmail().getValue()));
+                    workContributor.setContributorEmail(new org.orcid.jaxb.model.v3.release.common.ContributorEmail(wfContributor.getEmail().getValue()));
                 }
                 
-                org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid contributorOrcid = new org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid(); 
+                org.orcid.jaxb.model.v3.release.common.ContributorOrcid contributorOrcid = new org.orcid.jaxb.model.v3.release.common.ContributorOrcid(); 
                 if(!PojoUtil.isEmpty(wfContributor.getOrcid())) {
                     contributorOrcid.setPath(wfContributor.getOrcid().getValue());
                 }
@@ -344,15 +344,15 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
             work.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
         }        
         
-        org.orcid.jaxb.model.v3.rc2.record.WorkTitle workTitle = new org.orcid.jaxb.model.v3.rc2.record.WorkTitle();
+        org.orcid.jaxb.model.v3.release.record.WorkTitle workTitle = new org.orcid.jaxb.model.v3.release.record.WorkTitle();
         // Set title
         if(!PojoUtil.isEmpty(this.getTitle())) {            
-            workTitle.setTitle(new org.orcid.jaxb.model.v3.rc2.common.Title(this.getTitle().getValue()));
+            workTitle.setTitle(new org.orcid.jaxb.model.v3.release.common.Title(this.getTitle().getValue()));
         }
         
         // Set translated title        
         if(this.getTranslatedTitle() != null && !PojoUtil.isEmpty(this.getTranslatedTitle().getContent())) {
-            org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle();
+            org.orcid.jaxb.model.v3.release.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.v3.release.common.TranslatedTitle();
             translatedTitle.setContent(this.getTranslatedTitle().getContent());
             translatedTitle.setLanguageCode(this.getTranslatedTitle().getLanguageCode());
             workTitle.setTranslatedTitle(translatedTitle);
@@ -360,7 +360,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         
         // Set subtitle
         if (!PojoUtil.isEmpty(this.getSubtitle())) {
-            org.orcid.jaxb.model.v3.rc2.common.Subtitle subtitle = new  org.orcid.jaxb.model.v3.rc2.common.Subtitle();
+            org.orcid.jaxb.model.v3.release.common.Subtitle subtitle = new  org.orcid.jaxb.model.v3.release.common.Subtitle();
             subtitle.setContent(this.getSubtitle().getValue());
             workTitle.setSubtitle(subtitle);
         }
@@ -369,7 +369,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         
         // Set journal title
         if(!PojoUtil.isEmpty(this.getJournalTitle())) {
-            work.setJournalTitle(new org.orcid.jaxb.model.v3.rc2.common.Title(this.getJournalTitle().getValue()));            
+            work.setJournalTitle(new org.orcid.jaxb.model.v3.release.common.Title(this.getJournalTitle().getValue()));            
         }
 
         // Set description
@@ -386,12 +386,12 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
         // Set visibility
         if (this.getVisibility() != null && this.getVisibility().getVisibility() != null) {
-            work.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
+            work.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
         }
         
         // Set country
         if (!PojoUtil.isEmpty(this.getCountryCode())) {
-            work.setCountry(new org.orcid.jaxb.model.v3.rc2.common.Country(org.orcid.jaxb.model.common.Iso3166Country.fromValue(this.getCountryCode().getValue())));
+            work.setCountry(new org.orcid.jaxb.model.v3.release.common.Country(org.orcid.jaxb.model.common.Iso3166Country.fromValue(this.getCountryCode().getValue())));
         }
 
         // Set publication date        
@@ -399,24 +399,24 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
             Integer yearInteger = PojoUtil.isEmpty(this.getPublicationDate().getYear()) ? null : Integer.valueOf(this.getPublicationDate().getYear());
             Integer monthInteger = PojoUtil.isEmpty(this.getPublicationDate().getMonth()) ? null : Integer.valueOf(this.getPublicationDate().getMonth());
             Integer dayInteger = PojoUtil.isEmpty(this.getPublicationDate().getDay()) ? null : Integer.valueOf(this.getPublicationDate().getDay());
-            org.orcid.jaxb.model.v3.rc2.common.Year year = null;
-            org.orcid.jaxb.model.v3.rc2.common.Month month = null;
-            org.orcid.jaxb.model.v3.rc2.common.Day day = null;
+            org.orcid.jaxb.model.v3.release.common.Year year = null;
+            org.orcid.jaxb.model.v3.release.common.Month month = null;
+            org.orcid.jaxb.model.v3.release.common.Day day = null;
             if(yearInteger != null) {
-                year = new org.orcid.jaxb.model.v3.rc2.common.Year(yearInteger);
+                year = new org.orcid.jaxb.model.v3.release.common.Year(yearInteger);
             }
             if(monthInteger != null) {
-                month = new org.orcid.jaxb.model.v3.rc2.common.Month(monthInteger);
+                month = new org.orcid.jaxb.model.v3.release.common.Month(monthInteger);
             }
             if(dayInteger != null) {
-                day = new org.orcid.jaxb.model.v3.rc2.common.Day(dayInteger);
+                day = new org.orcid.jaxb.model.v3.release.common.Day(dayInteger);
             }                                                  
-            work.setPublicationDate(new org.orcid.jaxb.model.v3.rc2.common.PublicationDate(year, month, day));
+            work.setPublicationDate(new org.orcid.jaxb.model.v3.release.common.PublicationDate(year, month, day));
         }
                 
         // Set citation
         if(this.getCitation() != null) {
-            org.orcid.jaxb.model.v3.rc2.record.Citation citation = new org.orcid.jaxb.model.v3.rc2.record.Citation();
+            org.orcid.jaxb.model.v3.release.record.Citation citation = new org.orcid.jaxb.model.v3.release.record.Citation();
             if(!PojoUtil.isEmpty(this.getCitation().getCitation())) {
                 citation.setCitation(this.getCitation().getCitation().getValue());
             }
@@ -442,13 +442,13 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         
         // Set last modified
         if(!PojoUtil.isEmpty(this.getLastModified())) {
-            org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate lastModified = new org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate();
+            org.orcid.jaxb.model.v3.release.common.LastModifiedDate lastModified = new org.orcid.jaxb.model.v3.release.common.LastModifiedDate();
             lastModified.setValue(DateUtils.convertToXMLGregorianCalendar(this.getLastModified().toJavaDate()));
             work.setLastModifiedDate(lastModified);
         }
 
         if(!PojoUtil.isEmpty(this.getSource())) {
-            org.orcid.jaxb.model.v3.rc2.common.Source source = new org.orcid.jaxb.model.v3.rc2.common.Source();
+            org.orcid.jaxb.model.v3.release.common.Source source = new org.orcid.jaxb.model.v3.release.common.Source();
             
             if(OrcidStringUtils.isClientId(this.getSource())) {
                 source.setSourceClientId(new SourceClientId(this.getSource()));

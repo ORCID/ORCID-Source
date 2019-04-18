@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences:preferences xmlns:common="http://www.orcid.org/ns/common" xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/preferences ../preferences-3.0.xsd ">
+  <preferences:locale>en</preferences:locale>
+</preferences:preferences>

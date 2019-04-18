@@ -21,15 +21,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc2.common.Country;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.Addresses;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.jaxb.model.v3.release.common.Country;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.test.TargetProxyHelper;
 
 /**

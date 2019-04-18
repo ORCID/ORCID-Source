@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-
 public class Names implements ErrorsInterface, Serializable{
 
 
@@ -14,7 +12,7 @@ public class Names implements ErrorsInterface, Serializable{
     private NamesForm real = null;
     private List<String> errors = new ArrayList<String>();
     
-    public static Names valueOf(org.orcid.jaxb.model.v3.rc2.record.Name current, org.orcid.jaxb.model.v3.rc2.record.Name effective) {
+    public static Names valueOf(org.orcid.jaxb.model.v3.release.record.Name current, org.orcid.jaxb.model.v3.release.record.Name effective) {
     	Names names = new Names();
         if (current != null) {
         	names.setEffective(NamesForm.valueOf(current)); 

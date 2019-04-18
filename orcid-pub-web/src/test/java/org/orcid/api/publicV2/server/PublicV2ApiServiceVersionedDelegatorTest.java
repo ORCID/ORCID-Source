@@ -28,8 +28,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
-import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl;
-import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNoResultException;
@@ -63,9 +61,9 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
             "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
     
-	@Resource(name = "publicV2ApiServiceDelegatorV2")
-	PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
-	
+    @Resource(name = "publicV2ApiServiceDelegatorV2")
+    PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
+
     @Resource(name = "publicV2ApiServiceDelegator")
     PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegatorNonVersioned;
 

@@ -6,8 +6,8 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbKeywordAdapter;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc2.record.Keyword;
-import org.orcid.jaxb.model.v3.rc2.record.Keywords;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 

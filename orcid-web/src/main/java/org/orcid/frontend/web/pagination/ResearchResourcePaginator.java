@@ -8,10 +8,10 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.ResearchResourceManager;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources;
-import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 
 public class ResearchResourcePaginator {
@@ -34,8 +34,8 @@ public class ResearchResourcePaginator {
         Page<ResearchResourceGroupPojo> page = new Page<ResearchResourceGroupPojo>();
         page.setGroups(new ArrayList<ResearchResourceGroupPojo>());
         
-        for (int i = offset; i < Math.min(offset + PAGE_SIZE, sortedGroups.size()); i++) {
-            org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup group = sortedGroups.get(i);
+        for (int i = offset; i < Math.min(offset + PAGE_SIZE, rr.getResearchResourceGroup().size()); i++) {
+            org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup group = rr.getResearchResourceGroup().get(i);
             page.getGroups().add(ResearchResourceGroupPojo.valueOf(group, i, orcid));
         }
         page.setTotalGroups(sortedGroups.size());

@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.v3.rc2.record.GroupAble;
-import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.record.GroupAble;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 
 public class ActivitiesGroupGenerator {    
 

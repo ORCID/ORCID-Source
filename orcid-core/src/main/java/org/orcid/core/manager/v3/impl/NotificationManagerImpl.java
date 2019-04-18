@@ -43,18 +43,18 @@ import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
-import org.orcid.jaxb.model.v3.rc2.notification.Notification;
-import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
-import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc2.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.v3.rc2.notification.custom.NotificationAdministrative;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.Items;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermissions;
-import org.orcid.model.v3.rc2.notification.institutional_sign_in.NotificationInstitutionalConnection;
-import org.orcid.model.v3.rc2.notification.internal.NotificationFindMyStuff;
+import org.orcid.jaxb.model.v3.release.notification.Notification;
+import org.orcid.jaxb.model.v3.release.notification.NotificationType;
+import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
+import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.release.notification.permission.Item;
+import org.orcid.jaxb.model.v3.release.notification.permission.Items;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
+import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.model.v3.release.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -297,7 +297,7 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendOrcidDeactivateEmail(String userOrcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        org.orcid.jaxb.model.v3.rc2.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
+        org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String subject = getSubject("email.subject.deactivate", userLocale);
@@ -572,7 +572,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
         
-        org.orcid.jaxb.model.v3.rc2.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
+        org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
         String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
         String assetsUrl = getAssetsUrl();

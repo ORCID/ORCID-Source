@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc2.client.ClientRedirectUri;
+import org.orcid.jaxb.model.v3.release.client.ClientRedirectUri;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 
 public class RedirectUri implements ErrorsInterface, Serializable, Comparable<RedirectUri> {

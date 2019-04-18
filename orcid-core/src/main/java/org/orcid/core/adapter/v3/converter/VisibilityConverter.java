@@ -1,6 +1,6 @@
 package org.orcid.core.adapter.v3.converter;
 
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;

@@ -2,8 +2,8 @@ package org.orcid.core.manager.v3.read_only;
 
 import java.util.Set;
 
-import org.orcid.jaxb.model.v3.rc2.client.Client;
-import org.orcid.jaxb.model.v3.rc2.client.ClientSummary;
+import org.orcid.jaxb.model.v3.release.client.Client;
+import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 
 public interface ClientManagerReadOnly {
     

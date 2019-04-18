@@ -7,11 +7,11 @@ import java.util.List;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common.Relationship;
-import org.orcid.jaxb.model.v3.rc2.common.Title;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.WorkTitle;
-import org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.release.common.Title;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.WorkTitle;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 
 public class WorkGroupAndGroupingSuggestionGeneratorTest {

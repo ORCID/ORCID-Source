@@ -1,23 +1,16 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.jaxb.model.v3.rc2.notification.Notification;
-import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
-import org.orcid.model.v3.rc2.notification.internal.NotificationFindMyStuff;
-import org.orcid.persistence.jpa.entities.FindMyStuffHistoryEntity;
 import org.orcid.pojo.FindMyStuffResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
