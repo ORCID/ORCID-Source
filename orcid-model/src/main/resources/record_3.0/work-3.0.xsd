@@ -177,7 +177,7 @@
 				minOccurs="0" maxOccurs="1" />
 			<xs:element name="contributor-email" type="work:contributor-email"
 				minOccurs="0" maxOccurs="1" />
-			<xs:element name="contributor-attributes" type="work:contributor-attributes"
+			<xs:element name="contributor-attributes" type="common:contributor-attributes"
 				minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
@@ -191,53 +191,7 @@
 			<xs:extension base="common:email" />
 		</xs:simpleContent>
 	</xs:complexType>
-	<xs:complexType name="contributor-attributes">
-		<xs:annotation>
-			<xs:documentation>Provides detail of the nature of the contribution
-				by the collaborator or other contirbutor.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="contributor-sequence" type="work:contributor-sequence"
-				minOccurs="0" />
-			<xs:element name="contributor-role" type="work:contributor-role"
-				minOccurs="0" />
-		</xs:sequence>
-	</xs:complexType>
-	<xs:simpleType name="contributor-sequence">
-		<xs:annotation>
-			<xs:documentation>Indication of where in the contributor list the
-				collaborator or other contributor's name would appear
-			</xs:documentation>
-		</xs:annotation>
-
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="first" />
-			<xs:enumeration value="additional" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="contributor-role">
-		<xs:annotation>
-			<xs:documentation>The role performed by the collaborator or other
-				contributor.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="author" />
-			<xs:enumeration value="assignee" />
-			<xs:enumeration value="editor" />
-			<xs:enumeration value="chair-or-translator" />
-			<xs:enumeration value="co-investigator" />
-			<xs:enumeration value="co-inventor" />
-			<xs:enumeration value="graduate-student" />
-			<xs:enumeration value="other-inventor" />
-			<xs:enumeration value="principal-investigator" />
-			<xs:enumeration value="postdoctoral-researcher" />
-			<xs:enumeration value="support-staff" />
-		</xs:restriction>
-	</xs:simpleType>
-
+	
 	<xs:complexType name="work-title">
 		<xs:annotation>
 			<xs:documentation>Container for titles of the work.
