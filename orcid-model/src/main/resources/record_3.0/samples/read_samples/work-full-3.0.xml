@@ -53,10 +53,10 @@
 			</common:contributor-orcid>
 			<work:credit-name>work:credit-name</work:credit-name>
 			<work:contributor-email>work@contributor.email</work:contributor-email>
-			<work:contributor-attributes>
-				<work:contributor-sequence>first</work:contributor-sequence>
-				<work:contributor-role>author</work:contributor-role>
-			</work:contributor-attributes>
+			<common:contributor-attributes>
+				<common:contributor-sequence>first</common:contributor-sequence>
+				<common:contributor-role>author</common:contributor-role>
+			</common:contributor-attributes>
 		</work:contributor>
 	</work:contributors>
 	<common:language-code>en</common:language-code>
