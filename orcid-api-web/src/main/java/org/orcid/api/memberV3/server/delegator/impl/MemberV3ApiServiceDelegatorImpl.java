@@ -1529,6 +1529,21 @@ public class MemberV3ApiServiceDelegatorImpl implements
         }
         list = filteredList;
 
+        // Should we filter the version-of identifiers before grouping?
+        if(filterVersionOfIdentifiers) {
+            for(ResearchResourceSummary rr : list) {
+                if(rr.getExternalIdentifiers() != null && !rr.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                    Iterator<ExternalID> it = rr.getExternalIdentifiers().getExternalIdentifier().iterator();
+                    while(it.hasNext()) {
+                        ExternalID extId = it.next();
+                        if(Relationship.VERSION_OF.equals(extId.getRelationship())) {
+                            it.remove();
+                        }
+                    }
+                }
+            }
+        }        
+        
         orcidSecurityManager.checkAndFilter(orcid, list, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ResearchResources rr = researchResourceManagerReadOnly.groupResearchResources(list, false);
         ActivityUtils.setPathToResearchResources(rr, orcid);
