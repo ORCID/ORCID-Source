@@ -2,12 +2,10 @@ package org.orcid.core.manager;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import java.util.List;
 
 import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Locale;
-import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 
 /**
@@ -40,8 +38,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     boolean unreviewProfile(String orcid);
 
     boolean reviewProfile(String orcid);
-    
-    List<ApplicationSummary> getApplications(String orcid);
     
     void disableApplication(Long tokenId, String userOrcid);
     

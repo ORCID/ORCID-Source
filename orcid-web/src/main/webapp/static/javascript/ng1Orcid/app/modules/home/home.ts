@@ -10,7 +10,7 @@ import { NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-import { HomeComponent } from './home.component.ts';
+import { HomeComponent } from './home.component';
 
 // This is the Angular 1 part of the module
 export const HomeModule = angular.module(

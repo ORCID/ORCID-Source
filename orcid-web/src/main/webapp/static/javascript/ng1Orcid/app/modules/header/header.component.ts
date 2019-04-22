@@ -1,35 +1,29 @@
 declare var getWindowWidth: any;
-declare var orcidVar: any;
 
 //Import all the angular components
 
-import { NgForOf, NgIf } 
-    from '@angular/common'; 
 
 import { AfterViewInit, Component, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { FormsModule }
-    from '@angular/forms';
-
-import { Observable, Subject, Subscription } 
+import { Subject } 
     from 'rxjs';
     
-import { takeUntil, shareReplay } 
+import { takeUntil } 
     from 'rxjs/operators';
     
 import { NotificationsService } 
-    from '../../shared/notifications.service.ts'; 
+    from '../../shared/notifications.service'; 
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
     
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 @Component({
     selector: 'header-ng2',
-    template:  scriptTmpl("header-ng2-template")
+    template: scriptTmpl("header-ng2-template")
 })
 export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
@@ -49,6 +43,9 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     isPublicPage: boolean = false;
     profileOrcid: string = null;
     showSurvey = this.featuresService.isFeatureEnabled('SURVEY');
+    assetsPath: String;
+    aboutUri: String;
+    liveIds: String;    
     
     constructor(
         private notificationsSrvc: NotificationsService,
@@ -86,11 +83,21 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.userInfo = data;                
                 },
                 error => {
-                    console.log('header.component.ts: unable to fetch userInfo', error);
                     this.userInfo = {};
                 } 
             );
-        }      
+        }  
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+                this.aboutUri = data.messages['ABOUT_URI'];
+                this.liveIds = data.messages['LIVE_IDS'];                
+            },
+            error => {
+                console.log('header.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
     }
     
     filterChange(): void {
@@ -119,7 +126,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     isCurrentPage(path): any {
-        return window.location.href.startsWith(orcidVar.baseUri + '/' + path);
+        return window.location.href.startsWith(getBaseUri() + '/' + path);
     };
 
     onResize(event?): void {
@@ -164,10 +171,10 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
 
     searchSubmit(): void {
         if (this.headerSearch.searchOption=='website'){
-            window.location.assign(orcidVar.baseUri + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
+            window.location.assign(getBaseUri() + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
         }
         if(this.headerSearch.searchOption=='registry'){
-            window.location.assign(orcidVar.baseUri
+            window.location.assign(getBaseUri()
                     + "/orcid-search/quick-search/?searchQuery="
                     + encodeURIComponent(this.headerSearch.searchInput));
         }
@@ -213,4 +220,8 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
         this.onResize(); 
         this.headerSearch.searchOption = 'registry';         
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

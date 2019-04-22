@@ -4,12 +4,7 @@
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
-            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
-                <div class="col-md-4 col-sm-4 col-xs-12">
-            </@orcid.checkFeatureStatus>
-            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
-                <div class="col-md-3 col-sm-3 col-xs-12">
-            </@orcid.checkFeatureStatus>
+                <div class="col-md-5 col-sm-5 col-xs-12">                
                     <div>
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
@@ -26,12 +21,7 @@
                         </div> 
                     </div>
                 </div>
-                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
-                    <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
-                </@orcid.checkFeatureStatus> 
-                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
-                    <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayWorks">
-                </@orcid.checkFeatureStatus> 
+                <div *ngIf="workspaceSrvc.displayWorks" class="col-md-7 col-sm-7 col-xs-12 action-button-bar">
                     <!--Sort menu-->
                     <div class="menu-container">                                     
                         <ul class="toggle-menu">
@@ -39,33 +29,26 @@
                                 <span class="glyphicon glyphicon-sort"></span>
                                 <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                 <ul class="menu-options sort">
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='date'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
+                                    <li [ngClass]="{'checked':sortKey=='date'}">                                          
                                         <a (click)="sort('date');" class="action-option manage-button">
                                             <@orcid.msg 'manual_orcid_record_contents.sort_date'/>
-                                            <span *ngIf="sortState.reverseKey['date']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='date'}"></span>
-                                            <span *ngIf="sortState.reverseKey['date'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='date'}"></span>
-                                        </a>                                                                                    
+                                            <span *ngIf="!sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortKey=='date'}"></span>
+                                            <span *ngIf="sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortKey=='date'}"></span>
+                                        </a>
                                     </li>
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="sortHideOption != null">
-                                        <a (click)="sort('groupName');" class="action-option manage-button">
-                                            <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                            <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
-                                            <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
-                                        </a>                                            
-                                    </li>
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='title'}" *ngIf="!sortHideOption">                                            
+                                    <li [ngClass]="{'checked':sortKey=='title'}" *ngIf="!sortHideOption">
                                         <a (click)="sort('title');" class="action-option manage-button">
                                             <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                            <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
-                                            <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
-                                        </a>                                            
+                                            <span *ngIf="!sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortKey=='title'}" ></span>
+                                            <span *ngIf="sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortKey=='title'}" ></span>
+                                        </a>  
                                     </li>
-                                    <li [ngClass]="{'checked':sortState.predicateKey=='type'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
+                                    <li [ngClass]="{'checked':sortKey=='type'}">                                          
                                         <a (click)="sort('type');" class="action-option manage-button">
                                             <@orcid.msg 'manual_orcid_record_contents.sort_type'/>
-                                            <span *ngIf="sortState.reverseKey['type']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='type'}"></span>
-                                            <span *ngIf="sortState.reverseKey['type'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='type'}"></span>
-                                        </a>                                                                                        
+                                            <span *ngIf="!sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortKey=='type'}"></span>
+                                            <span *ngIf="sortAsc" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortKey=='type'}"></span>
+                                        </a>       
                                     </li>
                                 </ul>                                           
                             </li>
@@ -74,13 +57,11 @@
                     <!--End sort menu-->
                     <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
                         <!--Bulk edit-->
-                        <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
-                            <li *ngIf="worksService?.groups?.length > 1" >
-                                <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()">
-                                    <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
-                                </a>
-                            </li>
-                        </@orcid.checkFeatureStatus>
+                        <li *ngIf="!manualWorkGroupingEnabled && worksService?.groups?.length > 1" >
+                            <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()">
+                                <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
+                            </a>
+                        </li>
                         <!--Export bibtex-->
                         <li *ngIf="worksService?.groups?.length > 0" >
                             <a class="action-option works manage-button" [ngClass]="{'green-bg' : showBibtexExport}" (click)="toggleBibtexExport()">
@@ -212,7 +193,7 @@
                 <div class="row wizards">               
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div *ngFor="let wtw of workImportWizardsOriginal | orderBy: 'name' | filterImportWizards : selectedWorkType : selectedGeoArea; let index = index; let first = first; let last = last;">
-                            <strong><a (click)="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong>
+                            <strong><a (click)="openImportWizardUrlFilter(getBaseUri() + '/oauth/authorize', wtw)">{{wtw.name}}</a></strong>
 
                             <br />                                                                                    
                             <div class="justify">                       
@@ -353,6 +334,7 @@
             </div>          
             <div class="alert alert-block" *ngIf="bibtexParsingError">
                 <strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
+                <pre>{{bibtexParsingErrorText}}</pre>
             </div>
             <span class="dotted-bar" *ngIf="worksFromBibtex?.length > 0"></span>
             <!-- Bibtex Import Results List -->

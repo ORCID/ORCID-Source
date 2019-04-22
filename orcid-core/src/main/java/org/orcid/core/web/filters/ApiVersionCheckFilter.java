@@ -27,7 +27,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     
     @Context private HttpServletRequest httpRequest;
 
-    private static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
+    public static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
 
     private static final String WEBHOOKS_PATH_PATTERN = OrcidStringUtils.ORCID_STRING + "/webhook/.+";
     

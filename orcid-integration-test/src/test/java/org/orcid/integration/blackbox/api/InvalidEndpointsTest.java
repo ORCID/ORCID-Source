@@ -56,13 +56,6 @@ public class InvalidEndpointsTest extends BlackBoxBase {
     }
     
     @Test
-    public void public1_2ApiTest() {
-        ClientResponse response = publicV1ApiClient.viewInvalidEndpoint(getUser1OrcidId());
-        assertNotNull(response);
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }
-    
-    @Test
     public void member2_0ApiTest() {
         ClientResponse response = memberV2ApiClient.viewInvalidEndpoint(getUser1OrcidId(), getAccessToken());
         assertNotNull(response);

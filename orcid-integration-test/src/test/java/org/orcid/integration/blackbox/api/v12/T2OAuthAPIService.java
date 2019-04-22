@@ -22,7 +22,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.orcid.api.common.OAuthOrcidApiService;
-import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.OrcidMessage;
 
@@ -31,19 +30,19 @@ import com.sun.jersey.api.client.ClientResponse;
 public interface T2OAuthAPIService<T> extends OAuthOrcidApiService<T> {
 
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams);
 
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams);
     
     @POST
-    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Path(OrcidApiConstants.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     ClientResponse obtainOauth2RefreshTokenPostWithBasicAuth(String grantType, String username, String password, MultivaluedMap<String, String> formParams);

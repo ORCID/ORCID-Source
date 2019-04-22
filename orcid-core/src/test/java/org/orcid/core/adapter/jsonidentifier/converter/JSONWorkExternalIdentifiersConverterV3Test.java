@@ -2,6 +2,7 @@ package org.orcid.core.adapter.jsonidentifier.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -12,23 +13,18 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
-import org.orcid.jaxb.model.v3.rc2.common.TransientError;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
@@ -87,7 +83,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
         assertEquals(1, entityIDs.getExternalIdentifier().size());
         ExternalID externalID = entityIDs.getExternalIdentifier().get(0);
         assertEquals("123", externalID.getValue());
-        assertEquals("",externalID.getNormalized().getValue());
+        assertNull(externalID.getNormalized());
         assertEquals("8001",externalID.getNormalizedError().getErrorCode());
         assertEquals("Cannot normalize identifier value doi:123",externalID.getNormalizedError().getErrorMessage());
         assertNotNull(externalID.getType());

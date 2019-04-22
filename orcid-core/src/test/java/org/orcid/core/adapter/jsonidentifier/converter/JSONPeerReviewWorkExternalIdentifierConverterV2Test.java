@@ -16,6 +16,7 @@ import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.PeerReviewType;
 import org.orcid.jaxb.model.record_v2.Role;
 import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
@@ -60,7 +61,14 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV2Test {
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
-        orgEntity.setSource(new SourceEntity("APP-000000001"));
+        
+        ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
+        clientDetailsEntity.setId("APP-000000001");
+
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(clientDetailsEntity);
+        
+        orgEntity.setSource(sourceEntity);
 
         PeerReviewEntity result = new PeerReviewEntity();
         result.setOrg(orgEntity);

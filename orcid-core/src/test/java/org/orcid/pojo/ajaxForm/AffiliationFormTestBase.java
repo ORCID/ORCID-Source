@@ -7,24 +7,24 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
-import org.orcid.jaxb.model.v3.rc2.common.CreatedDate;
-import org.orcid.jaxb.model.v3.rc2.common.Day;
-import org.orcid.jaxb.model.v3.rc2.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.common.Month;
-import org.orcid.jaxb.model.v3.rc2.common.Organization;
-import org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.common.Year;
-import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc2.record.Distinction;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.common.CreatedDate;
+import org.orcid.jaxb.model.v3.release.common.Day;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Month;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.common.Year;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Distinction;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
 import org.orcid.utils.DateUtils;
 
 public abstract class AffiliationFormTestBase {
@@ -74,7 +74,7 @@ public abstract class AffiliationFormTestBase {
         form.setStartDate(startDate);
         
         Visibility v = new Visibility();
-        v.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.PRIVATE);
+        v.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PRIVATE);
         form.setVisibility(v);
         
         form.setSource("0000-0000-0000-0000");
@@ -118,7 +118,7 @@ public abstract class AffiliationFormTestBase {
         aff.setRoleTitle("role-title");
         
         aff.setStartDate(new FuzzyDate(new Year(2019), new Month(12), new Day(31)));
-        aff.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.PRIVATE);
+        aff.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PRIVATE);
         
         Source source = new Source();
         source.setSourceOrcid(new SourceOrcid("0000-0000-0000-0000"));
@@ -168,7 +168,7 @@ public abstract class AffiliationFormTestBase {
         aff.setRoleTitle("role-title");
         
         aff.setStartDate(new FuzzyDate(new Year(2019), new Month(12), new Day(31)));
-        aff.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.PRIVATE);
+        aff.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PRIVATE);
         
         Source source = new Source();
         source.setSourceOrcid(new SourceOrcid("0000-0000-0000-0000"));

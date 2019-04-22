@@ -65,7 +65,7 @@
 		<xs:complexContent>
 			<xs:extension base="common:element-summary">	
 				<xs:sequence>
-					<xs:element minOccurs="1" maxOccurs="1" name="url-name"
+					<xs:element minOccurs="0" maxOccurs="1" name="url-name"
 						type="common:string-350">
 						<xs:annotation>
 							<xs:documentation>A short display name describing the URL. Max length is 355 characters.

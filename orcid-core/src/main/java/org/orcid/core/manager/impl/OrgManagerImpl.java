@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.common_v2.OrganizationHolder;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
@@ -19,6 +20,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.utils.OrcidStringUtils;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -44,6 +46,9 @@ public class OrgManagerImpl implements OrgManager {
 
     @Resource
     private SourceManager sourceManager;
+
+    @Resource
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Override
     public List<AmbiguousOrgEntity> getAmbiguousOrgs(int firstResult, int maxResults) {
@@ -94,29 +99,29 @@ public class OrgManagerImpl implements OrgManager {
 
     @Override
     public List<OrgEntity> getOrgsByName(String searchTerm) {
-    	return orgDao.getOrgsByName(searchTerm);
-    }            
-    
+        return orgDao.getOrgsByName(searchTerm);
+    }
+
     @Override
     public OrgEntity createUpdate(OrgEntity org) {
         OrgEntity existingOrg = orgDao.findByNameCityRegionAndCountry(org.getName(), org.getCity(), org.getRegion(), org.getCountry());
         if (existingOrg != null) {
             return existingOrg;
         }
-        
+
         SourceEntity entity = sourceManager.retrieveSourceEntity();
         if (entity != null) {
             SourceEntity newEntity = new SourceEntity();
-            if(entity.getSourceClient() != null) {
+            if (entity.getSourceClient() != null) {
                 newEntity.setSourceClient(new ClientDetailsEntity(entity.getSourceClient().getId()));
             }
-            if(entity.getSourceProfile() != null) {
+            if (entity.getSourceProfile() != null) {
                 newEntity.setSourceProfile(new ProfileEntity(entity.getSourceProfile().getId()));
             }
-                
+
             org.setSource(newEntity);
         }
-        
+
         orgDao.persist(org);
         return org;
     }
@@ -135,17 +140,21 @@ public class OrgManagerImpl implements OrgManager {
             org.setOrgDisambiguated(disambiguatedOrg);
         }
         if (org.getSource() == null) {
-            org.setSource(new SourceEntity(sourceManager.retrieveSourceOrcid()));
+            String sourceId = sourceManager.retrieveSourceOrcid();
+            if (isClient(sourceId)) {
+                org.setSource(getClientSourceEntity(sourceId));
+            } else {
+                org.setSource(getProfileSourceEntity(sourceId));
+            }
         }
         return orgDao.merge(org);
     }
-    
-    
+
     @Override
     public OrgEntity getOrgEntity(OrganizationHolder holder) {
-        if(holder == null)
+        if (holder == null)
             return null;
-        
+
         OrgEntity orgEntity = new OrgEntity();
         org.orcid.jaxb.model.common_v2.Organization organization = holder.getOrganization();
         orgEntity.setName(organization.getName());
@@ -154,51 +163,75 @@ public class OrgManagerImpl implements OrgManager {
         orgEntity.setRegion(address.getRegion());
         orgEntity.setCountry(address.getCountry().value());
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
-            OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.findBySourceIdAndSourceType(organization.getDisambiguatedOrganization()
-                    .getDisambiguatedOrganizationIdentifier(), organization.getDisambiguatedOrganization().getDisambiguationSource());
+            OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.findBySourceIdAndSourceType(
+                    organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier(),
+                    organization.getDisambiguatedOrganization().getDisambiguationSource());
             if (disambiguatedOrg == null) {
                 throw new InvalidDisambiguatedOrgException();
             }
             orgEntity.setOrgDisambiguated(disambiguatedOrg);
         }
-        return matchOrCreateOrg(orgEntity);        
+        return matchOrCreateOrg(orgEntity);
     }
-    
+
     @Override
     public OrgEntity getOrgEntity(Organization org) {
         String name = org.getName();
         String city = "";
         String region = "";
         Iso3166Country country = null;
-        if(org.getAddress() != null) {
+        if (org.getAddress() != null) {
             city = org.getAddress().getCity();
             region = org.getAddress().getRegion();
             country = org.getAddress().getCountry();
-                    
+
         }
-        return orgDao.findByNameCityRegionAndCountry(name, city, region, country.value());        
+        return orgDao.findByNameCityRegionAndCountry(name, city, region, country.value());
     }
-    
+
     private OrgEntity matchOrCreateOrg(OrgEntity org) {
         OrgEntity match = orgDao.findByAddressAndDisambiguatedOrg(org.getName(), org.getCity(), org.getRegion(), org.getCountry(), org.getOrgDisambiguated());
         if (match != null) {
             return match;
         }
-        
+
         SourceEntity entity = sourceManager.retrieveSourceEntity();
         if (entity != null) {
             SourceEntity newEntity = new SourceEntity();
-            if(entity.getSourceClient() != null) {
+            if (entity.getSourceClient() != null) {
                 newEntity.setSourceClient(new ClientDetailsEntity(entity.getSourceClient().getId()));
             }
-            if(entity.getSourceProfile() != null) {
+            if (entity.getSourceProfile() != null) {
                 newEntity.setSourceProfile(new ProfileEntity(entity.getSourceProfile().getId()));
             }
-                
+
             org.setSource(newEntity);
         }
-        
+
         orgDao.persist(org);
         return org;
     }
+
+    private boolean isClient(String sourceId) {
+        return OrcidStringUtils.isClientId(sourceId) || clientDetailsManagerReadOnly.isLegacyClientId(sourceId);
+    }
+
+    private SourceEntity getClientSourceEntity(String sourceId) {
+        ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
+        clientDetailsEntity.setId(sourceId);
+
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceClient(clientDetailsEntity);
+        return sourceEntity;
+    }
+
+    private SourceEntity getProfileSourceEntity(String sourceId) {
+        ProfileEntity profileEntity = new ProfileEntity();
+        profileEntity.setId(sourceId);
+
+        SourceEntity sourceEntity = new SourceEntity();
+        sourceEntity.setSourceProfile(profileEntity);
+        return sourceEntity;
+    }
+
 }

@@ -23,26 +23,26 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.Distinction;
-import org.orcid.jaxb.model.v3.rc2.record.Education;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
-import org.orcid.jaxb.model.v3.rc2.record.Employment;
-import org.orcid.jaxb.model.v3.rc2.record.Funding;
-import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc2.record.Keyword;
-import org.orcid.jaxb.model.v3.rc2.record.Membership;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.Qualification;
-import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc2.record.Service;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
-import org.orcid.jaxb.model.v3.rc2.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Distinction;
+import org.orcid.jaxb.model.v3.release.record.Education;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.Employment;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Membership;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.PeerReview;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.Qualification;
+import org.orcid.jaxb.model.v3.release.record.ResearchResource;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
@@ -149,30 +149,12 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals("/4444-4444-4444-4443/email", emails.getPath());
         Utils.verifyLastModified(emails.getLastModifiedDate());
         assertNotNull(emails.getEmails());
-        assertEquals(3, emails.getEmails().size());
-        for (Email email : emails.getEmails()) {
-            Utils.verifyLastModified(email.getLastModifiedDate());
-            assertThat(email.getEmail(), anyOf(is("teddybass2@semantico.com"), is("teddybass3public@semantico.com"), is("teddybass3private@semantico.com")));
-            switch (email.getEmail()) {
-            case "teddybass2@semantico.com":
-                assertEquals(Visibility.LIMITED, email.getVisibility());
-                assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
-                assertEquals(false, email.isVerified());
-                assertEquals(false, email.isPrimary());
-                break;
-            case "teddybass3public@semantico.com":
-                assertEquals(Visibility.PUBLIC, email.getVisibility());
-                assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
-                assertEquals(false, email.isVerified());
-                assertEquals(false, email.isPrimary());
-                break;
-            case "teddybass3private@semantico.com":
-                assertEquals(Visibility.PRIVATE, email.getVisibility());
-                assertEquals("APP-5555555555555555", email.retrieveSourcePath());
-                assertEquals(true, email.isVerified());
-                assertEquals(true, email.isPrimary());
-                break;
-            }
-        }
+        assertEquals(1, emails.getEmails().size());
+        Email email = emails.getEmails().get(0);
+        assertEquals("teddybass3private@semantico.com", email.getEmail());
+        assertEquals(Visibility.PRIVATE, email.getVisibility());
+        assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+        assertEquals(true, email.isVerified());
+        assertEquals(false, email.isPrimary());
     }
 }

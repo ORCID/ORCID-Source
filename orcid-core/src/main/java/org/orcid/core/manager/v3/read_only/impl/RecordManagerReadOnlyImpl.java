@@ -3,26 +3,27 @@ package org.orcid.core.manager.v3.read_only.impl;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.record.CompletionDate;
-import org.orcid.jaxb.model.v3.rc2.record.DeactivationDate;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
-import org.orcid.jaxb.model.v3.rc2.record.History;
-import org.orcid.jaxb.model.v3.rc2.record.Preferences;
-import org.orcid.jaxb.model.v3.rc2.record.Record;
-import org.orcid.jaxb.model.v3.rc2.record.SubmissionDate;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.record.CompletionDate;
+import org.orcid.jaxb.model.v3.release.record.DeactivationDate;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.History;
+import org.orcid.jaxb.model.v3.release.record.Preferences;
+import org.orcid.jaxb.model.v3.release.record.Record;
+import org.orcid.jaxb.model.v3.release.record.SubmissionDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -39,6 +40,9 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
     
     @Resource
     protected OrcidUrlManager orcidUrlManager;
+    
+    @Resource
+    protected SourceNameCacheManager sourceNameCacheManager;
     
     protected ProfileEntityCacheManager profileEntityCacheManager;
     
@@ -84,7 +88,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
         record.setActivitiesSummary(activitiesSummaryManager.getActivitiesSummary(orcid, filterVersionOfIdentifiers));
-        record.setPerson(personDetailsManager.getPersonDetails(orcid));        
+        record.setPerson(personDetailsManager.getPersonDetails(orcid, false));        
         return record;
     }
     
@@ -142,7 +146,8 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         }                
         
         if(profile.getSource() != null) {
-            history.setSource(new Source(SourceEntityUtils.getSourceId(profile.getSource())));                
+            Source source = SourceEntityUtils.extractSourceFromProfileComplete(profile, sourceNameCacheManager, orcidUrlManager);
+            history.setSource(source);                
         }
         
         boolean verfiedEmail = false;

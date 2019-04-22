@@ -23,7 +23,7 @@
 		    	<@emailMacros.msg "email.locked.the_orcid_registry_provides" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		  		<@emailMacros.msg "email.locked.if_you_believe" />
+		  		<@emailMacros.msg "email.locked.if_you_believe_html" />
 		    </p>	
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
 <@emailMacros.msg "email.common.warm_regards" />

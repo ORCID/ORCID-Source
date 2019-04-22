@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated
 import { PrintRecordComponent } 
-    from './printRecord.component.ts';
+    from './printRecord.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const PrintRecordModule = angular.module(
@@ -31,9 +31,6 @@ export const PrintRecordModule = angular.module(
         ],
         entryComponents: [ 
             PrintRecordComponent 
-        ],
-        providers: [
-            
         ]
     }
 )

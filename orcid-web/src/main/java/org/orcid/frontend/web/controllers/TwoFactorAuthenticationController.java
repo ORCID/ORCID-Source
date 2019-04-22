@@ -10,12 +10,15 @@ import org.orcid.pojo.TwoFactorAuthRegistration;
 import org.orcid.pojo.TwoFactorAuthSecret;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import net.glxn.qrgen.QRCode;
 
 @Controller
 @RequestMapping(value = { "/2FA" })
@@ -57,6 +60,11 @@ public class TwoFactorAuthenticationController extends BaseController {
         TwoFactorAuthQRCodeUrl code = new TwoFactorAuthQRCodeUrl();
         code.setUrl(twoFactorAuthenticationManager.getQRCode(getCurrentUserOrcid()));
         return code;
+    }
+    
+    @RequestMapping(value = "/qr-code.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    public @ResponseBody byte[] generateQrCode() {
+        return QRCode.from(twoFactorAuthenticationManager.getQRCode(getCurrentUserOrcid())).withSize(250, 250).stream().toByteArray();
     }
 
     @RequestMapping("/register.json")

@@ -1,8 +1,5 @@
-declare var ActSortState: any;
-declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
-declare var typeahead: any;
 declare var workIdLinkJs: any;
 
 import { NgForOf, NgIf } 
@@ -18,16 +15,16 @@ import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap,
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { WorksService } 
-    from '../../shared/works.service.ts';
+    from '../../shared/works.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';
+    from '../../shared/modal.service';
 
 @Component({
     selector: 'works-form-ng2',
@@ -53,18 +50,15 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     togglzDialogPrivacyOption: boolean;
     sortedCountryNames: any;
     countryNamesToCountryCodes: any;
-
+    idUnresolvableError: string;
+    
     constructor( 
         private cdr: ChangeDetectorRef,
         private commonService: CommonService,
         private featuresService: FeaturesService,
         private modalService: ModalService,
         private worksService: WorksService
-    ) {
-        this.contentCopy = {
-            titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
-            titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
-        };
+    ) {        
         this.addingWork = false;
         this.bibtexWork = false;
         this.bibtexWorkIndex = null;
@@ -75,6 +69,13 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.externalIDTypeCache = [];//cache responses
         this.types = null;
         this.initCountries();
+        om.process().then(() => { 
+            this.contentCopy = {
+                    titleLabel: om.get("orcid.frontend.manual_work_form_contents.defaultTitle"),
+                    titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.defaultTitlePlaceholder")
+                };
+            this.idUnresolvableError = om.get('orcid.frontend.manual_work_form_errors.id_unresolvable')
+        });        
     }
     
     initCountries(): void {
@@ -106,6 +107,24 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     addExternalIdentifier(): void {
         this.editWork.workExternalIdentifiers.push({externalIdentifierId: {value: ""}, externalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
+    };
+
+    updateRelationships(): void {
+        var workType = this.editWork.workType;
+        if (this.editWork.workExternalIdentifiers && this.editWork.workExternalIdentifiers.length > 0) {
+            for (var key in this.editWork.workExternalIdentifiers) {
+                var extId = this.editWork.workExternalIdentifiers[key];
+                if (extId.externalIdentifierType && extId.relationship && workType) {
+                    if (extId.externalIdentifierType.value == 'isbn' && workType.value == 'book-chapter') {
+                        extId.relationship.value = 'part-of';
+                    } else if (extId.externalIdentifierType.value == 'isbn' && workType.value == 'book') {
+                        extId.relationship.value = 'self';
+                    } else if (extId.externalIdentifierType.value == 'issn') {
+                        extId.relationship.value = 'part-of';
+                    }
+                }
+            }
+        }
     };
 
     addWork(): any{
@@ -145,16 +164,12 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     applyLabelWorkType(): void {
-        var obj = null;
-        var that = this;
         setTimeout(
-            function() {
-                obj = that.worksService.getLabelMapping(that.editWork.workCategory.value, that.editWork.workType.value);
-                that.contentCopy = obj;
-            }, 
+            () => {
+                this.contentCopy = this.worksService.getLabelMapping(this.editWork.workCategory.value, this.editWork.workType.value);
+            },
             500
-        );
-
+        );        
     };
 
     clearErrors(): void {
@@ -178,6 +193,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         }
         this.fillUrl(i);
+        this.updateRelationships();
     }
 
     deleteContributor(obj): void {
@@ -216,7 +232,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                             }else{
                                 this.editWork.workExternalIdentifiers[i].url.value="";                        
                             }
-                            this.editWork.workExternalIdentifiers[i].externalIdentifierId.errors.push(om.get('orcid.frontend.manual_work_form_errors.id_unresolvable'));
+                            this.editWork.workExternalIdentifiers[i].externalIdentifierId.errors.push(this.idUnresolvableError);
                         }
                         this.editWork.workExternalIdentifiers[i].resolvingId = false;
                     },

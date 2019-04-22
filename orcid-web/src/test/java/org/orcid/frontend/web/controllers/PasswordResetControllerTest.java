@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -13,16 +12,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,13 +25,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.LoadOptions;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.EmailManager;
@@ -45,11 +36,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
-import org.orcid.jaxb.model.message.DeactivationDate;
-import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Text;
@@ -79,10 +65,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
     private PasswordResetController passwordResetController;
 
     @Mock
-    private RegistrationManager registrationManager;
-
-    @Mock
-    private OrcidProfileManager orcidProfileManager;
+    private RegistrationManager registrationManager;    
     
     @Mock
     private EmailManager emailManager;
@@ -124,8 +107,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "registrationManager", registrationManager);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "orcidProfileManager", orcidProfileManager);
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "registrationManager", registrationManager);       
         TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManager", emailManager); 
         TargetProxyHelper.injectIntoProxy(passwordResetController, "encryptionManager", encryptionManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManagerReadOnly", mockEmailManagerReadOnly);
@@ -154,23 +136,12 @@ public class PasswordResetControllerTest extends DBUnitTest {
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
         assertNotNull(resetRequest.getErrors());
         assertTrue(resetRequest.getErrors().isEmpty());   
-    }
-
-    @Test
-    //TODO: remove this test when RESET_PASSWORD_EMAIL feature is live
-    public void testPasswordResetUserNotFound() {
-        when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(null);
-        EmailRequest resetRequest = new EmailRequest();
-        resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
-        assertNotNull(resetRequest.getErrors());
-        assertFalse(resetRequest.getErrors().isEmpty());
-    }
+    }    
     
     @Test
     public void testPasswordResetUserNotFoundSendEmail() {
         //TODO: remove togglzRule.enable togglz when feature is live
-        togglzRule.enable(Features.RESET_PASSWORD_EMAIL);
-        when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(null);
+        togglzRule.enable(Features.RESET_PASSWORD_EMAIL);        
         EmailRequest resetRequest = new EmailRequest();
         resetRequest.setEmail("not_in_orcid@test.orcid.org");
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
@@ -178,27 +149,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
         assertTrue(resetRequest.getErrors().isEmpty());
     }
 
-    @Test
-    //TODO: remove this test when RESET_PASSWORD_EMAIL feature is live
-    public void testPasswordResetUserDeactivated() throws DatatypeConfigurationException {
-        GregorianCalendar c = new GregorianCalendar();
-        c.setTime(new Date());
-        XMLGregorianCalendar date = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-
-        OrcidHistory orcidHistory = new OrcidHistory();
-        orcidHistory.setDeactivationDate(new DeactivationDate(date));
-
-        OrcidProfile deactivatedProfile = new OrcidProfile();
-        deactivatedProfile.setOrcidHistory(orcidHistory);
-
-        when(orcidProfileManager.retrieveOrcidProfileByEmail(Mockito.anyString(), Mockito.any(LoadOptions.class))).thenReturn(deactivatedProfile);
-        EmailRequest resetRequest = new EmailRequest();
-        
-        resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
-        assertNotNull(resetRequest.getErrors());
-        assertFalse(resetRequest.getErrors().isEmpty());
-    }
-    
     @Test
     public void testPasswordResetUserDeactivatedSendEmail() throws DatatypeConfigurationException {
         //TODO: remove togglzRule.enable togglz when feature is live
@@ -237,7 +187,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(new OrcidProfile());
         ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
 
         assertEquals("password_one_time_reset", modelAndView.getViewName());
@@ -262,8 +211,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
         oneTimeResetPasswordForm.setPassword(Text.valueOf("Password#123"));
         oneTimeResetPasswordForm.setRetypedPassword(Text.valueOf("Password#123"));
-        when(bindingResult.hasErrors()).thenReturn(false);
-        when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(new OrcidProfile());
+        when(bindingResult.hasErrors()).thenReturn(false);        
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
         assertTrue(oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://testserver.orcid.org/my-orcid")
                 || oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://localhost:8443/orcid-web/my-orcid"));

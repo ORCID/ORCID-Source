@@ -26,12 +26,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -59,19 +58,10 @@ public class WorksControllerTest extends BaseControllerTest {
     @Resource
     WorksController worksController;
 
-    @Resource
-    protected OrcidProfileManager orcidProfileManager;
-
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
 
     private String _5000chars = null;
-
-    @Before
-    public void init() {
-        orcidProfileManager.updateLastModifiedDate("4444-4444-4444-4446");
-        assertNotNull(worksController);
-    }
 
     @BeforeClass
     public static void beforeClass() throws Exception {

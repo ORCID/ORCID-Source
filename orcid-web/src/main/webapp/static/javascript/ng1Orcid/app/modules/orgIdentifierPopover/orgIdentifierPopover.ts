@@ -15,7 +15,7 @@ import { CommonModule }
     from '@angular/common'; 
 
 import { OrgIdentifierPopoverComponent } 
-    from './orgIdentifierPopover.component.ts';
+    from './orgIdentifierPopover.component';
 
 // This is the Angular 1 part of the module
 export const OrgIdentifierPopoverModule = angular.module(
@@ -39,8 +39,6 @@ export const OrgIdentifierPopoverModule = angular.module(
         imports: [
             CommonModule,
             FormsModule
-        ],
-        providers: [
         ]
     }
 )

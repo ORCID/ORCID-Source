@@ -22,7 +22,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SubMember;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -143,7 +143,7 @@ public class SelfServiceController extends BaseController {
     public @ResponseBody MemberDetailsForm validateMemberDetailsDescription(@RequestBody MemberDetailsForm consortium) {
         // validate description length
         consortium.getDescription().setErrors(new ArrayList<String>());
-        super.validateNoLongerThan(600, consortium.getDescription());
+        super.validateNoLongerThan(5000, consortium.getDescription());
         return consortium;
     }
 

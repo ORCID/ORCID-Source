@@ -163,7 +163,10 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Cacheable(value = "public-emails", key = "#orcid.concat('-').concat(#lastModified)")
     public List<EmailEntity> findPublicEmails(String orcid, long lastModified) {
-        return findByOrcid(orcid, PUBLIC_VISIBILITY);
+        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and visibility = 'PUBLIC' and verified IS TRUE", EmailEntity.class);
+        query.setParameter("orcid", orcid);
+        List<EmailEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results;
     }
     
     @Override
@@ -299,5 +302,47 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setFirstResult(offset);
         query.setMaxResults(batchSize);        
         return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getIdsForClientSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctClientSource(List<String> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE email SET client_source_id = source_id, source_id = NULL where email_hash IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getIdsForUserSourceCorrection(int limit) {
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void correctUserSource(List<String> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE email SET source_id = client_source_id, client_source_id = NULL where email_hash IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
     }       
+    
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<EmailEntity> getMarch2019QuarterlyEmailRecipients(int offset, int batchSize) {
+        Query query = entityManager.createNativeQuery("SELECT * from email WHERE is_verified IS TRUE AND is_primary IS TRUE AND orcid in (SELECT email.orcid FROM email INNER JOIN profile ON email.orcid = profile.orcid INNER JOIN email_frequency ON email.orcid = email_frequency.orcid WHERE email.is_current IS TRUE AND profile.record_locked IS FALSE AND profile.deprecated_date IS NULL AND profile.profile_deactivation_date IS NULL AND email_frequency.send_quarterly_tips IS TRUE GROUP BY email.orcid HAVING count(*) = 1)", EmailEntity.class);
+        query.setMaxResults(batchSize);
+        query.setFirstResult(offset);
+        return query.getResultList();
+    }
 }

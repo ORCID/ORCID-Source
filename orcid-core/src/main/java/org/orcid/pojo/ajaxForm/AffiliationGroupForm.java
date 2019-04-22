@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 
 public class AffiliationGroupForm implements Serializable {
     
@@ -99,7 +99,7 @@ public class AffiliationGroupForm implements Serializable {
         this.affiliationType = affiliationType;
     }
     
-    public static AffiliationGroupForm valueOf(org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup<? extends AffiliationSummary> group, String id, String orcid) {
+    public static AffiliationGroupForm valueOf(org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup<? extends AffiliationSummary> group, String id, String orcid) {
         AffiliationGroupForm affiliationGroup = new AffiliationGroupForm();
         affiliationGroup.setGroupId(id);
         

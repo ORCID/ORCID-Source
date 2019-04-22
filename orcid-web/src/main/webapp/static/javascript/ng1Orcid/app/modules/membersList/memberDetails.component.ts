@@ -8,13 +8,13 @@ import { Observable, Subject, Subscription }
     from 'rxjs';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { MembersListService }
-    from '../../shared/membersList.service.ts';
+    from '../../shared/membersList.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 @Component({
     selector: 'member-details-ng2',
@@ -29,12 +29,23 @@ export class MemberDetailsComponent {
     currentMemberDetails: any = null;
     newBadgesEnabled : boolean;
     badgesAwarded: any = {}
-    
+    assetsPath: String;    
+
     constructor(
         protected commonSrvc: CommonService,
         protected membersListService: MembersListService,
         protected featuresService: FeaturesService,
-    ) {}
+    ) {
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('memberDetails.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
+    }
     
     getCommunityTypes(): void {
         this.membersListService.getCommunityTypes()
@@ -60,10 +71,7 @@ export class MemberDetailsComponent {
     }
     
     getCurrentMemberDetails(): void {
-
-        //var path = window.location.pathname;
         var memberSlug = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
-        console.log(memberSlug);
         var memberSlugStripped = memberSlug.replace(/<[^>]+>/g, '').trim();
         this.membersListService.getMemberDetailsBySlug(memberSlugStripped)
             .subscribe(data => {
@@ -97,7 +105,7 @@ export class MemberDetailsComponent {
     }
     
     getMemberPageUrl(slug: string): string {
-        return orcidVar.baseUri + '/members/' + slug;
+        return getBaseUri() + '/members/' + slug;
     }
     
     ngOnInit(): void {
@@ -107,4 +115,7 @@ export class MemberDetailsComponent {
         this.getCurrentMemberDetails();   
     }
 
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

@@ -10,10 +10,10 @@ import { Observable, Subject, Subscription }
     from 'rxjs';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 @Component(
     {
@@ -76,7 +76,6 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openModal(): void{
-        //$('body').addClass('overflow-hidden');
         this.showModal = true;
         if (this.setFocus == 'true') {
             setTimeout(
@@ -93,13 +92,26 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
         this.subscription = this.modalService.notifyObservable$.subscribe(
             (res) => {
-                //console.log('res.value',res, this.elementId);
+                if ( res.action === "resize") {
+                    if ( res.height) {
+                        this.elementHeight = res.height;
+                    }
+                    if ( res.width) {
+                        this.elementWidth = res.width;
+                    }
+                }
                 if ( res.moduleId == this.elementId ) {
                     if ( res.action === "close") {
                         this.closeModal();
                     }
 
                     if ( res.action === "open") {
+                        if ( res.height) {
+                            this.elementHeight = res.height;
+                        }
+                        if ( res.width) {
+                            this.elementWidth = res.width;
+                        }
                         this.openModal();
                     }
 

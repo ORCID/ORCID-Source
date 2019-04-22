@@ -12,10 +12,10 @@ import { takeUntil }
     from 'rxjs/operators';
     
 import { CommonService }
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { ResendClaimService } 
-    from '../../shared/resendClaim.service.ts'; 
+    from '../../shared/resendClaim.service'; 
 
 @Component({
     selector: 'resend-claim-ng2',

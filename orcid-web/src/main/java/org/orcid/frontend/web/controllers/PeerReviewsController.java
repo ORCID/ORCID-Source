@@ -17,11 +17,11 @@ import org.orcid.core.manager.v3.PeerReviewManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc2.record.PeerReview;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.release.record.PeerReview;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
@@ -73,7 +73,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
         List<PeerReviewSummary> summaries = peerReviewManager.getPeerReviewSummaryList(getEffectiveUserOrcid());
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(summaries, false);
-        for (org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+        for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
             Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
             PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
             for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {

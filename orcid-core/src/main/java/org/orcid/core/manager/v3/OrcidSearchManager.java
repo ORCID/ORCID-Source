@@ -3,7 +3,7 @@ package org.orcid.core.manager.v3;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.v3.rc2.search.Search;
+import org.orcid.jaxb.model.v3.release.search.Search;
 
 /**
  * Class to retrieve OrcidMessage objects (with nested Search Results) relating

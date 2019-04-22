@@ -368,7 +368,7 @@ public class PublicV3ApiServiceVersionedDelegatorImpl implements PublicV3ApiServ
     }
     
     private Response processReponse(Response response) {
-        if(externalVersion.equals("3.0_rc2")) {
+        if(externalVersion.equals("3.0")) {
             return upgradeResponse(response);
         } else {
             return downgradeResponse(response);

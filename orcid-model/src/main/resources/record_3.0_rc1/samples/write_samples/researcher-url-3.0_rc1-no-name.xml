@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<researcher-url:researcher-url xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/researcher-url ../researcher-url-3.0_rc1.xsd">
+	<researcher-url:url>https://site1.com/</researcher-url:url>	
+</researcher-url:researcher-url>

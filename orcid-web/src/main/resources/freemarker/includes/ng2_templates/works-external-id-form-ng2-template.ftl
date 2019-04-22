@@ -38,7 +38,7 @@
                         <input tabindex="1" #search (keydown)="onKeydown($event, 'work')" id="work-title" name="familyNames" type="text" class="form-control" [(ngModel)]="externalId[externalIdType].value" placeholder="{{externalId[externalIdType].placeHolder}}"/>
                         <div class="orcid-error" *ngIf="metadataNotFound">
                         
-                            <@orcid.msg 'externalwork.error'/> {{externalIdType}}.
+                            <@orcid.msg 'externalwork.error'/>
                         </div>
                         <div class="buttons-container">
                             <button tabindex="2" class="btn btn-primary" (click)="addWork()" [disabled]="addingWork" [ngClass]="{disabled:addingWork}">

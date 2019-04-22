@@ -5,10 +5,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 
 public interface ProfileDao extends GenericDao<ProfileEntity, String> {
@@ -78,7 +78,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateLastModifiedDateAndIndexingStatus(String orcid, IndexingStatus indexingStatus);
 
-    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev);
+    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults);
 
     String retrieveOrcidType(String orcid);
 
@@ -144,4 +144,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean deactivate(String orcid);
 
     List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid);
+
+    List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypeNames);
 }

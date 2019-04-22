@@ -14,7 +14,9 @@ import { Observable, Subject }
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class EmailService {
 
     //Broadcast events from other components that cause email list to change

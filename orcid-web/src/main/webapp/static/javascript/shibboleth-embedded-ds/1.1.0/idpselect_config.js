@@ -13,7 +13,7 @@ function IdPSelectUIParms(){
     
     this.currentLocation = window.location.href;
     
-  	this.defaultReturn = orcidVar.baseUri + '/Shibboleth.sso/Login?SAMLDS=1&target=' + orcidVar.baseUri + '/shibboleth/signin';       // If non null, then the default place to send users who are not 
+  	this.defaultReturn = getBaseUri() + '/Shibboleth.sso/Login?SAMLDS=1&target=' + getBaseUri() + '/shibboleth/signin';       // If non null, then the default place to send users who are not 
     
     // Approaching via the Discovery Protocol for example
     //this.defaultReturn = "https://example.org/Shibboleth.sso/DS?SAMLDS=1&target=https://example.org/secure";
@@ -36,10 +36,10 @@ function IdPSelectUIParms(){
 
     this.langBundles = {
         // Override all lang bundles with localized messages from ORCID back end. The user will get the language they have chosen from the drop down in the ORCID UI.
-        en : orcidVar.jsMessages.messages,
-        de : orcidVar.jsMessages.messages,
-        ja : orcidVar.jsMessages.messages,
-        "pt-br" : orcidVar.jsMessages.messages
+        en : messages,
+        de : messages,
+        ja : messages,
+        "pt-br" : messages
     }
     //
     // The following should not be changed without changes to the css.  Consider them as mandatory defaults

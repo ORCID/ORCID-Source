@@ -723,32 +723,15 @@
 	<bean id="appIdGenerationManager" class="org.orcid.core.manager.impl.AppIdGenerationManagerImpl" />
 
 	<bean id="countryManager" class="org.orcid.core.manager.impl.CountryManagerImpl" />	
-
-	<bean id="orcidProfileManager" class="org.orcid.core.manager.impl.OrcidProfileManagerImpl">		
-		<property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
-		<property name="claimReminderAfterDays" value="${org.orcid.core.claimReminderAfterDays:8}" />
-		<property name="profileDao" ref="profileDao" />
-        <property name="transactionTemplate" ref="transactionTemplate" />
-	</bean>
-	
-	<bean id="orcidProfileManagerReadOnly" class="org.orcid.core.manager.impl.OrcidProfileManagerReadOnlyImpl">
-        <property name="claimWaitPeriodDays" value="${org.orcid.core.claimWaitPeriodDays:10}" />
-        <property name="profileDao" ref="profileDaoReadOnly" />
-        <property name="transactionTemplate" ref="transactionTemplateReadOnly" />        
-    </bean>	
 			
-	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>
-	
-	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
+	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
 		<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
 		<property name="numberOfWebhookThreads" value="${org.orcid.core.numberOfWebhookThreads:4}" />
         <property name="retryDelayMinutes" value="${org.orcid.core.webhookRetryDelayMinutes:5}" />
         <property name="maxPerRun" value="${org.orcid.core.webhookMaxPerRun:10000}" />
-	</bean>
-
-	<bean id="orcidProfileCleaner" class="org.orcid.core.manager.impl.OrcidProfileCleanerImpl" />
+	</bean>	
 
 	<bean id="crossRefManager" class="org.orcid.core.manager.impl.CrossRefManagerImpl" />
 
@@ -976,21 +959,6 @@
 		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
 	
-	<bean id="orcidMessageVersionConverterChain" class="org.orcid.core.version.impl.OrcidMessageVersionConverterChainImpl">
-	    <property name="converters">
-	        <list>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_1ToV1_2_rc1"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc1ToV1_2_rc2"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc2ToV1_2_rc3"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc3ToV1_2_rc4"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc4ToV1_2_rc5"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc5ToV1_2_rc6"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc6ToV1_2_rc7"/>
-                <bean class="org.orcid.core.version.impl.OrcidMessageVersionConverterImplV1_2_rc7ToV1_2"/>
-	        </list>
-	    </property>
-	</bean>
-	
 	<bean id="v2VersionConverterChain" class="org.orcid.core.version.impl.V2VersionConverterChainImpl">
 	    <property name="converters">
             <list>
@@ -1014,6 +982,7 @@
         <property name="converters">
             <list>
                 <ref bean="versionConverterV3_0_rc1ToV3_0_rc2" />
+                <ref bean="versionConverterV3_0_rc2ToV3_0" />
             </list>
         </property>
     </bean>
@@ -1025,6 +994,8 @@
 	<bean id="versionConverterV2_0ToV2_1" class="org.orcid.core.version.impl.VersionConverterImplV2_0ToV2_1"/>
 
     <bean id="versionConverterV3_0_rc1ToV3_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV3_0_rc1ToV3_0_rc2"/>
+
+	<bean id="versionConverterV3_0_rc2ToV3_0" class="org.orcid.core.version.impl.VersionConverterImplV3_0_rc2ToV3_0"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	
@@ -1617,6 +1588,34 @@
         <property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
     </bean>
     
-    <bean id="findMyStuffManager" class="org.orcid.core.manager.v3.impl.FindMyStuffManagerImpl" />
+    <bean id="findMyStuffManager" class="org.orcid.core.manager.v3.impl.FindMyStuffManagerImpl" />        
+    
+    <!-- email trickle -->
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <!-- lets use an embedded broker for now (easier to test!) -->
+        <property name="brokerURL"
+            value="${org.orcid.persistence.messaging.brokerURL:vm://localhost?broker.persistent=false}" />
+        <property name="redeliveryPolicy" ref="redeliveryPolicy" />
+        <property name="trustAllPackages" value="true"/>
+    </bean>
+    <bean id="cachingJmsConnectionFactory"
+        class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="jmsConnectionFactory" />
+    </bean>
+
+    <!-- JmsTemplate Definition so we can send to queues -->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+    </bean>
+    
+    <!-- redelivery policy -->
+    <bean id="redeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
+       <property name="maximumRedeliveries" value="-1" />
+       <property name="initialRedeliveryDelay" value="5" />
+    </bean>
+    
+    <bean id="emailQueueProducer" class="org.orcid.core.email.trickle.producer.EmailQueueProducer" >
+        <property name="jmsTemplate" ref="jmsTemplate" />
+    </bean>
     
 </beans>

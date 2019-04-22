@@ -76,4 +76,19 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     Integer clearEmailsAfterReactivation(String orcid);
     
     List getEmailAndHash(int iteration, int batchSize);
+
+    List<String> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<String> ids);
+    
+    /**
+     * Gets list of email entities to which quarterly emails should be sent.
+     * 
+     * @return
+     */
+    List<EmailEntity> getMarch2019QuarterlyEmailRecipients(int offset, int batchSize);
+    
+    List<String> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<String> ids);
 }

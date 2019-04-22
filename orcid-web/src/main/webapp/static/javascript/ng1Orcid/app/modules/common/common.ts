@@ -1,16 +1,14 @@
-import * as angular 
-    from 'angular';
 
 import { CommonModule } 
     from '@angular/common'; 
 
-import { Directive, NgModule } 
+import {  NgModule } 
     from '@angular/core';
 
 import { FormsModule }
     from '@angular/forms'; // <-- NgModel lives here
 
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
+import {NgbTypeaheadModule} from '@ng-bootstrap/ng-bootstrap'
 
 import { ReCaptchaModule } 
     from 'angular2-recaptcha';
@@ -23,190 +21,74 @@ import {MultiSelectModule}
 
 //User generated attribute directives
 import { FocusMe }
-    from '../../directives/focusMe.directive.ts'; 
+    from '../../directives/focusMe.directive'; 
 
 //User generated filters
 
 import { AjaxTickDateToISO8601Pipe }
-    from '../../pipes/ajaxTickDateToISO8601Ng2.ts'; 
+    from '../../pipes/ajaxTickDateToISO8601Ng2'; 
 
 import { AjaxFormDateToISO8601Pipe }
-    from '../../pipes/ajaxFormDateToISO8601Ng2.ts'; 
+    from '../../pipes/ajaxFormDateToISO8601Ng2'; 
 
 import { ContributorFilterPipe }
-    from '../../pipes/contributorFilterNg2.ts';
+    from '../../pipes/contributorFilterNg2';
 
 import { DashToSpacePipe }
-    from '../../pipes/dashToSpaceNg2.ts';
+    from '../../pipes/dashToSpaceNg2';
 
 import { ExternalIdentifierHtmlPipe }
-    from '../../pipes/externalIdentifierHtmlNg2.ts';
+    from '../../pipes/externalIdentifierHtmlNg2';
 
 import { ExtractContentFromBodyPipe }
-    from '../../pipes/extractContentFromBodyNg2.ts';
+    from '../../pipes/extractContentFromBodyNg2';
 
 import { FilterImportWizardsPipe }
-    from '../../pipes/filterImportWizardsNg2.ts'
+    from '../../pipes/filterImportWizardsNg2'
 
 import { KeysPipe }
-    from '../../pipes/keysNg2.ts'; 
+    from '../../pipes/keysNg2'; 
 
 import { LatexPipe }
-    from '../../pipes/latexNg2.ts'; 
+    from '../../pipes/latexNg2'; 
 
 import { OrderByAffiliationsPipe }
-    from '../../pipes/orderByAffiliationsNg2.ts'; 
+    from '../../pipes/orderByAffiliationsNg2'; 
     
 import { OrderByPipe }
-    from '../../pipes/orderByNg2.ts';
+    from '../../pipes/orderByNg2';
 
 import { OrderObjectByPipe }
-    from '../../pipes/orderObjectByNg2.ts'
+    from '../../pipes/orderObjectByNg2'
 
 import { ReplaceSeparatorWithSpacePipe }
-    from '../../pipes/replaceSeparatorWithSpaceNg2.ts'
+    from '../../pipes/replaceSeparatorWithSpaceNg2'
 
 import { SafeUrlPipe }
-    from '../../pipes/safeUrlNg2.ts';
+    from '../../pipes/safeUrlNg2';
 
 import { UriPipe }
-    from '../../pipes/uriNg2.ts';
+    from '../../pipes/uriNg2';
 
 import { UrlProtocolPipe }
-    from '../../pipes/urlProtocolNg2.ts';
-
-import { WorkExternalIdentifierHtmlPipe }
-    from '../../pipes/workExternalIdentifierHtmlNg2.ts';
-
+    from '../../pipes/urlProtocolNg2';
 //User generated modules
 
 import { ExtIdPopoverNg2Module }
-    from './../extIdPopover/extIdPopover.ts';
-
-import { HeaderNg2Module }
-    from './../header/header.ts';
+    from './../extIdPopover/extIdPopover';
 
 import { LanguageNg2Module }
-    from './../language/language.ts';
+    from './../language/language';
 
 import { OrgIdentifierPopoverNg2Module } 
-    from './../orgIdentifierPopover/orgIdentifierPopover.ts';
+    from './../orgIdentifierPopover/orgIdentifierPopover';
 
 import { PrivacytoggleNg2Module }
-    from './../privacytoggle/privacyToggle.ts';
+    from './../privacytoggle/privacyToggle';
 
 import { RequestPasswordResetNg2Module }
-    from './../requestPasswordReset/requestPasswordReset.ts';
+    from './../requestPasswordReset/requestPasswordReset';
 
-//User generated services
-
-import { AffiliationService } 
-    from '../../shared/affiliation.service.ts';
-
-import { AccountService }
-    from '../../shared/account.service.ts';
-
-import { AdminActionsService }
-    from '../../shared/adminActions.service.ts';
-    
-import { BlogService }
-    from '../../shared/blog.service.ts';
-
-import { ClaimService }
-    from '../../shared/claim.service.ts';
-
-import { ClientService }
-    from '../../shared/client.service.ts';
-
-import { CommonService }
-    from '../../shared/common.service.ts'
-
-import { ConsortiaService }
-    from '../../shared/consortia.service.ts'
-
-import { DiscoService }
-    from '../../shared/disco.service.ts';
-
-import { EmailService } 
-    from '../../shared/email.service.ts';
-
-import { FeaturesService }
-    from '../../shared/features.service.ts';
-
-import { FundingService } 
-    from '../../shared/funding.service.ts';
-
-import { GenericService } 
-    from '../../shared/generic.service.ts';
-
-import { LanguageService }
-    from '../../shared/language.service.ts';
-
-import { ManageMembersService } 
-    from '../../shared/manageMembers.service.ts';
-
-import { MembersListService }
-    from '../../shared/membersList.service.ts'
-
-import { ModalService } 
-    from '../../shared/modal.service.ts';
-
-import { NotificationsService } 
-    from '../../shared/notifications.service.ts';
-
-import { OauthService }
-    from '../../shared/oauth.service.ts';
-
-import { PasswordService }
-    from '../../shared/password.service.ts';
-
-import { PeerReviewService }
-    from '../../shared/peerReview.service.ts';
-
-import { PreferencesService }
-    from '../../shared/preferences.service.ts';
-
-import { ReactivationService }
-    from '../../shared/reactivation.service.ts';
-
-import { ResearchResourceService }
-    from '../../shared/researchResource.service.ts';
-
-import { SearchService } 
-    from '../../shared/search.service.ts';
-
-import { SwitchUserService } 
-    from '../../shared/switchUser.service.ts';
-
-import { TwoFAStateService } 
-    from '../../shared/twoFAState.service.ts';
-    
-import { ShibbolethService } 
-    from '../../shared/shibboleth.service.ts'; 
-
-import { WidgetService }
-    from '../../shared/widget.service.ts'
-
-import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
-
-import { WorksService } 
-    from '../../shared/works.service.ts';
-    
-import { EmailFrequencyService }
-    from '../../shared/emailFrequency.service.ts';
-
-import { UnsubscribeService }
-    from '../../shared/unsubscribe.service.ts';
-
-import { ResendClaimService }
-    from '../../shared/resendClaim.service.ts';    
-
-import { DeveloperToolsService }
-    from '../../shared/developerTools.service.ts';
-
-import { PersonService } 
-    from '../../shared/person.service.ts';
     
 // This is the Angular 2 part of the module
 @NgModule(
@@ -215,7 +97,6 @@ import { PersonService }
             //Angular Libraries
             CommonModule,
             FormsModule,
-            NgbModule,
             BrowserAnimationsModule,
             MultiSelectModule,
             //User Modules
@@ -243,15 +124,14 @@ import { PersonService }
             ReplaceSeparatorWithSpacePipe,
             SafeUrlPipe,
             UriPipe,
-            UrlProtocolPipe,
-            WorkExternalIdentifierHtmlPipe,
+            UrlProtocolPipe
 
         ],
         exports: [
             //Angular Libraries
             CommonModule,
             FormsModule,
-            NgbModule,
+            NgbTypeaheadModule,
             MultiSelectModule,
             //User directives
             FocusMe,
@@ -272,7 +152,6 @@ import { PersonService }
             SafeUrlPipe,
             UriPipe,
             UrlProtocolPipe,
-            WorkExternalIdentifierHtmlPipe,
             //User Modules
             ExtIdPopoverNg2Module,
             LanguageNg2Module,
@@ -280,43 +159,6 @@ import { PersonService }
             PrivacytoggleNg2Module,
             ReCaptchaModule,
             RequestPasswordResetNg2Module,
-        ],
-        providers: [
-            AccountService,
-            AdminActionsService,
-            AffiliationService,
-            BlogService,
-            ClaimService,
-            ClientService,
-            ConsortiaService,
-            DiscoService,
-            EmailFrequencyService,
-            EmailService,
-            FeaturesService,
-            FundingService,
-            GenericService,
-            LanguageService,
-            ManageMembersService,
-            MembersListService,
-            ModalService,
-            NotificationsService,
-            OauthService,
-            PasswordService,
-            PeerReviewService,
-            PreferencesService,
-            ReactivationService,
-            ResearchResourceService,
-            SearchService,
-            TwoFAStateService,
-            ShibbolethService,
-            SwitchUserService,
-            WidgetService,
-            WorksService,
-            WorkspaceService,
-            UnsubscribeService,
-            ResendClaimService,
-            DeveloperToolsService,
-            PersonService
         ]
     }
 )

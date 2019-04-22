@@ -1,6 +1,8 @@
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
@@ -122,7 +124,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         Emails emails = emailManager.getEmails(orcid);
         if (emails.getEmails() != null) {
             Emails filteredEmails = new Emails();
-            filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
+            filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
             person.setEmails(filteredEmails);
         }
         return person;

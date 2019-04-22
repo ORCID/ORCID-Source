@@ -35,11 +35,11 @@ import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Name;
-import org.orcid.jaxb.model.v3.rc2.search.Result;
-import org.orcid.jaxb.model.v3.rc2.search.Search;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.search.Result;
+import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
@@ -153,6 +153,8 @@ public class RegistrationController extends BaseController {
         reg.getSendMemberUpdateRequests().setValue(true);
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
         reg.getTermsOfUse().setValue(false);   
+        
+        registerPasswordValidate(reg);
         
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         if(isOauth2ScreensRequest != null) {
@@ -289,8 +291,7 @@ public class RegistrationController extends BaseController {
         } else if ("shibboleth".equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
-        String redirectUrl = calculateRedirectUrl(request, response);
-        redirectUrl += "?justRegistered";
+        String redirectUrl = calculateRedirectUrl(request, response, true);
         r.setUrl(redirectUrl);
         return r;
     }
@@ -329,7 +330,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerPasswordValidate(@RequestBody Registration reg) {
-        passwordValidate(reg.getPasswordConfirm(), reg.getPassword());
+        passwordChecklistValidate(reg.getPasswordConfirm(), reg.getPassword());
         return reg;
     }    
 

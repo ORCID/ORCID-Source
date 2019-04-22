@@ -1,42 +1,36 @@
 declare var $: any;
-declare var ActSortState: any;
 declare var bibtexParse: any;
 declare var blobObject: any;
-declare var GroupedActivities: any;
 declare var om: any;
 declare var openImportWizardUrl: any;
 declare var populateWorkAjaxForm: any;
-declare var workIdLinkJs: any;
-
-import { NgForOf, NgIf } 
-    from '@angular/common';
 
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit } 
     from '@angular/core';
 
-import { forkJoin, Observable, Subject, Subscription } 
+import { forkJoin, Subject, Subscription } 
     from 'rxjs';
 
 import { takeUntil } 
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts';
+    from '../../shared/modal.service';
 
 import { WorksService } 
-    from '../../shared/works.service.ts';
+    from '../../shared/works.service';
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
+    from '../../shared/workspace.service'; 
 
 @Component({
     selector: 'works-ng2',
@@ -52,6 +46,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     bibtexExportError: boolean;
     bibtexImportLoading: boolean;
     bibtexParsingError: boolean;
+    bibtexParsingErrorText: any;
     bibtexExportLoading: boolean;
     bibtexWork: boolean;
     bibtexWorkIndex: any;
@@ -68,12 +63,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     editSources: any;
     editWork: any;
     emails: any;
-    exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
     fixedTitle: any;
     formData: any;
     geoArea: any;
     groupingSuggestionExtIdsPresent: boolean;
-    groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');
     groupingSuggestionPresent: boolean;
     groupingSuggestion: any;
     groupingSuggestionWorksToMerge: any;
@@ -92,7 +85,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     showElement: any;
     showMergeWorksApiMissingExtIdsError: boolean;
     showMergeWorksExtIdsError: boolean;
-    sortState: any;
+    sortAsc: boolean;
+    sortKey: string;
     textFiles: any;
     wizardDescExpanded: any;
     workImportWizard: boolean;
@@ -101,9 +95,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     workType: any;
     worksFromBibtex: any;
     allSelected: boolean;
-    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean
-    bibTexIntervals: object
-
+    bibTexIntervals: object;
+    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean;
+    manualWorkGroupingEnabled: boolean;
+    exIdResolverFeatureEnabled: boolean;
+    groupingSuggestionFeatureEnabled: boolean;    
+    
     constructor( 
         private commonSrvc: CommonService,
         private cdr: ChangeDetectorRef,
@@ -114,13 +111,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         private workspaceSrvc: WorkspaceService,
         private worksService: WorksService
     ) {
-
-        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
         this.addingWork = false;
         this.bibtexExportError = false;
         this.bibtexExportLoading = false;
         this.bibtexImportLoading = false;
         this.bibtexParsingError = false;
+        this.bibtexParsingErrorText = "";
         this.bibtexWork = false;
         this.bibtexWorkIndex = null;
         this.bulkChecked = false;
@@ -149,21 +145,28 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.printView = elementRef.nativeElement.getAttribute('printView');
         this.savingBibtex = false;
         this.scriptsLoaded = false;
-        this.selectedGeoArea = null;
-        this.selectedWorkType = null;
         this.showBibtex = {};
         this.showBibtexExport = false;
         this.showBibtexImportWizard = false;
         this.showElement = {};
         this.showMergeWorksApiMissingExtIdsError = false;
         this.showMergeWorksExtIdsError = false;
-        this.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
+        this.sortAsc = false;
+        this.sortKey = "date";
         this.textFiles = [];
         this.wizardDescExpanded = {};
         this.workImportWizard = false;
         this.workImportWizardsOriginal = null;
         this.workType = ['All'];
         this.worksFromBibtex = null;
+        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
+        this.manualWorkGroupingEnabled = this.featuresService.isFeatureEnabled('MANUAL_WORK_GROUPING');
+        this.exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
+        this.groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');        
+        om.process().then(() => { 
+            this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
+            this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
+        });        
     }
 
     addExternalIdentifier(): void {
@@ -404,9 +407,12 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     } else {
                         this.worksService.notifyOther({worksToMerge:dataGroup});       
                         this.worksService.notifyOther({mergeCount:mergeCount});
-                        this.worksService.notifyOther({groupingSuggestion: false})
-                        this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
-
+                        this.worksService.notifyOther({groupingSuggestion: false});
+                        if(mergeCount < 20){
+                            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge'});
+                        } else {
+                            this.modalService.notifyOther({action:'open', moduleId: 'modalWorksMerge', width: '600', height: '200'});
+                        }
                     }   
                     
                 },
@@ -465,7 +471,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(this.fixedTitle.length > maxSize){
                         this.fixedTitle = this.fixedTitle.substring(0, maxSize) + '...';
                     }
-                    this.worksService.notifyOther({fixedTitle:this.fixedTitle, putCode:putCode, deleteGroup:deleteGroup, sortState:this.sortState});
+                    this.worksService.notifyOther({fixedTitle:this.fixedTitle, putCode:putCode, deleteGroup:deleteGroup});
                     this.modalService.notifyOther({action:'open', moduleId: 'modalWorksDelete'});
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
@@ -495,7 +501,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.bibtexExportLoading = false;
                 if(window.navigator.msSaveOrOpenBlob) {
                     var fileData = [data];
-                    blobObject = new Blob(fileData, {type: 'text/plain'});
+                    var blobObject = new Blob(fileData, {type: 'text/plain'});
                     window.navigator.msSaveOrOpenBlob(blobObject, "works.bib");                              
                 } else {
                     var anchor = document.createElement('a');
@@ -629,65 +635,57 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     loadBibtexJs($event): void {
         this.bibtexImportLoading = true;
         this.textFiles = $event.target.files; 
-        try {
-            this.worksFromBibtex = new Array();
-            for (let bibtex of this.textFiles) {
-                    let reader = new FileReader();
-                    reader.readAsText(bibtex);
-                    reader.onloadend = function(e){
-                        try {
-                            var parsed = bibtexParse.toJSON(reader.result);
-                            if (parsed.length == 0) {
-                                throw "bibtex parse return nothing";
-                            }
-                        } catch(err){
-                            this.bibtexParsingError = true;
-                        }
-                        this.worksService.getBlankWork()
-                        .pipe(    
-                            takeUntil(this.ngUnsubscribe)
-                        )
-                        .subscribe(
-                            data => {
-                                var blankWork = data;
-                                var newWorks = new Array();
-                                while (parsed.length > 0) {
-                                    var cur = parsed.shift();
-                                    var bibtexEntry = cur.entryType.toLowerCase();
-                                    if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') {    
-                                        //Filtering @PREAMBLE and @COMMENT
-                                        newWorks.push( populateWorkAjaxForm( cur,JSON.parse( JSON.stringify(blankWork) ) ) );
+        this.worksFromBibtex = new Array();
+        for (let bibtex of this.textFiles) {
+            let reader = new FileReader();
+            reader.readAsText(bibtex);
+            reader.onloadend = function(e){
+                var parsed = bibtexParse.toJSON(reader.result);
+                if (typeof parsed == "string" && parsed.substring(0,5).toLowerCase().indexOf('error') > -1) {
+                    this.bibtexParsingErrorText = parsed;
+                    this.bibtexParsingError = true;
+                } else {
+                    this.worksService.getBlankWork()
+                    .pipe(    
+                        takeUntil(this.ngUnsubscribe)
+                    )
+                    .subscribe(
+                        data => {
+                            var blankWork = data;
+                            var newWorks = new Array();
+                            while (parsed.length > 0) {
+                                var cur = parsed.shift();
+                                var bibtexEntry = cur.entryType.toLowerCase();
+                                if (bibtexEntry != 'preamble' && bibtexEntry != 'comment') {    
+                                    //Filtering @PREAMBLE and @COMMENT
+                                    newWorks.push( populateWorkAjaxForm( cur,JSON.parse( JSON.stringify(blankWork) ) ) );
+                                }
+                            };
+                            this.worksService.worksValidate(newWorks)
+                            .pipe(    
+                                takeUntil(this.ngUnsubscribe)
+                            )
+                            .subscribe(
+                                data => {
+                                    for (var i in data) {                          
+                                        this.worksFromBibtex.push(data[i]);
                                     }
-                                };
-                                this.worksService.worksValidate(newWorks)
-                                .pipe(    
-                                    takeUntil(this.ngUnsubscribe)
-                                )
-                                .subscribe(
-                                    data => {
-                                        for (var i in data) {                          
-                                            this.worksFromBibtex.push(data[i]);
-                                        }
-                                        this.bibtexImportLoading = false; 
-                                    },
-                                    error => {
-                                        console.log('worksValidateError', error);
-                                    } 
-                                );
-                            },
-                            error => {
-                                console.log('parseBibtexError', error);
-                            } 
-                        );
-                    }.bind(this);
-                    
-                    this.bibtexParsingError = false;  
-            }  
-        } catch (err) {
-            this.bibtexImportLoading = false;
-            this.bibtexParsingError = true;
-            console.log('parseBibtexError', err);
-        }
+                                    this.bibtexImportLoading = false; 
+                                },
+                                error => {
+                                    console.log('worksValidateError', error);
+                                } 
+                            );
+                        },
+                        error => {
+                            console.log('parseBibtexError', error);
+                        } 
+                    );
+                }    
+            }.bind(this);
+            this.bibtexParsingError = false; 
+            this.bibtexParsingErrorText = "";  
+        }  
     };
 
     loadDetails(putCode, event): void {
@@ -710,8 +708,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     loadMore(): void {
         if(this.publicView === "true") {
             if(this.printView === "true") {
-                this.worksService.loadAllPublicWorkGroups(this.sortState.predicateKey, 
-                    !this.sortState.reverseKey[this.sortState.predicateKey]
+                this.worksService.loadAllPublicWorkGroups(this.sortKey, 
+                    this.sortAsc
                 )
                 .pipe(    
                     takeUntil(this.ngUnsubscribe)
@@ -728,8 +726,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     } 
                 );
             } else {
-                this.worksService.getWorksPage(this.worksService.constants.access_type.ANONYMOUS, this.sortState.predicateKey, 
-                    !this.sortState.reverseKey[this.sortState.predicateKey]
+                this.worksService.getWorksPage(this.worksService.constants.access_type.ANONYMOUS, this.sortKey, 
+                    this.sortAsc
                 )
                 .pipe(    
                     takeUntil(this.ngUnsubscribe)
@@ -747,8 +745,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 );
             }
         } else {
-            this.worksService.getWorksPage(this.worksService.constants.access_type.USER, this.sortState.predicateKey, 
-                !this.sortState.reverseKey[this.sortState.predicateKey]
+            this.worksService.getWorksPage(this.worksService.constants.access_type.USER, this.sortKey, 
+                this.sortAsc
             )
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
@@ -806,8 +804,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(data == null || data.length == 0) {
                         this.noLinkFlag = false;
                     }
-                    this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
-                    this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
                     this.workImportWizardsOriginal = data;
                     this.bulkEditShow = false;
                     this.showBibtexImportWizard = false;
@@ -856,6 +852,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
+                    this.bibtexImportLoading = false;
+                    this.bibtexParsingErrorText = "";
                     this.bibtexParsingError = false;
                     this.bulkEditShow = false;
                     this.showBibtexExport = false;
@@ -888,8 +886,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openFileDialog(): void{
-        this.textFiles = [];
+        this.bibtexParsingErrorText = "";
         this.bibtexParsingError = false;
+        this.textFiles = [];
     };
 
     openImportWizardUrl(url): void {
@@ -897,13 +896,18 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openImportWizardUrlFilter(url, client): void {
-        url = url + '?client_id=' + client.id + '&response_type=code&scope=' + client.scopes + '&redirect_uri=' + client.redirectUri;
+        if(client.status == 'RETIRED'){
+           url = client.clientWebsite;
+        }
+        else{
+            url = url + '?client_id=' + client.id + '&response_type=code&scope=' + client.scopes + '&redirect_uri=' + client.redirectUri;
+        } 
         openImportWizardUrl(url);
     };
 
     refreshWorkGroups(): void {
-        this.worksService.refreshWorkGroups(this.sortState.predicateKey, 
-            !this.sortState.reverseKey[this.sortState.predicateKey]
+        this.worksService.refreshWorkGroups(this.sortKey, 
+            this.sortAsc
         )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -1104,13 +1108,20 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     }; 
 
     sort(key): void {
-        this.sortState.sortBy(key);
+        if(key == this.sortKey){
+            this.sortAsc = !this.sortAsc;
+        } else {
+            if(key=='title' || key=='type'){
+                this.sortAsc = true;
+            }
+            this.sortKey = key;
+        }
         this.worksService.resetWorkGroups();
         if(this.publicView === "true"){
             this.worksService.getWorksPage(
                 this.worksService.constants.access_type.ANONYMOUS, 
-                this.sortState.predicateKey, 
-                !this.sortState.reverseKey[key]
+                this.sortKey, 
+                this.sortAsc
             )
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
@@ -1130,8 +1141,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         } else {
             this.worksService.getWorksPage(
                 this.worksService.constants.access_type.USER, 
-                this.sortState.predicateKey, 
-                !this.sortState.reverseKey[key]
+                this.sortKey, 
+                this.sortAsc
             )
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
@@ -1180,8 +1191,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
-                    this.worksService.loadAllWorkGroups(this.sortState.predicateKey, 
-                    !this.sortState.reverseKey[this.sortState.predicateKey])
+                    this.worksService.loadAllWorkGroups(this.sortKey, 
+                    this.sortAsc)
                     .pipe(    
                         takeUntil(this.ngUnsubscribe)
                     )
@@ -1318,5 +1329,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.loadMore();
         this.loadWorkImportWizardList();
+    };
+    
+    getBaseUri(): String {
+        return getBaseUri();
     };
 }

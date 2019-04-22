@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,4 +152,12 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * @return true if there is at least one public affiliation for a specific user
      * */
     Boolean hasPublicAffiliations(String orcid);
+
+    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<BigInteger> ids);
+
+    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<BigInteger> ids);
 }

@@ -14,13 +14,13 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { ClaimService } 
-    from '../../shared/claim.service.ts'; 
+    from '../../shared/claim.service'; 
 
 import { CommonService } 
-    from '../../shared/common.service.ts'; 
+    from '../../shared/common.service'; 
     
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 @Component({
     selector: 'claim-ng2',
@@ -31,6 +31,7 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
 
     postingClaim: boolean;
     claim: any;
+    aboutUri: String;
     
     constructor(
         private claimService: ClaimService,
@@ -44,7 +45,16 @@ export class ClaimComponent implements AfterViewInit, OnDestroy, OnInit {
                 'activitiesVisibilityDefault': {'visibility':'', 'errors':[]}, 
                 'sendOrcidNews': { 'value': false }, 
                 'termsOfUse': { 'value': false, 'errors':[] } 
-                };        
+                };      
+        this.commonService.configInfo$
+        .subscribe(
+            data => {
+                this.aboutUri = data.messages['ABOUT_URI'];
+            },
+            error => {
+                console.log('header.component.ts: unable to fetch configInfo', error);
+            } 
+        );
     }
 
     getClaim(): void{

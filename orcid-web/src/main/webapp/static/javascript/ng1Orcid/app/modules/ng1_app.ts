@@ -3,7 +3,6 @@
  */
 
 //Angular and other libraries imports
-import * as $ from 'jquery'
 import * as angular from 'angular'
 import * as ngCookies from 'angular-cookies'
 import * as ngSanitize from 'angular-sanitize'
@@ -14,208 +13,218 @@ import 'angular-route'
 //User generated imports
 
 import { AccountSettingsModule } 
-    from './accountSettings/accountSettings.ts';
+    from './accountSettings/accountSettings';
 
 import { AdminActionsModule } 
-    from './adminActions/adminActions.ts';  
+    from './adminActions/adminActions';  
 
 import { AffiliationModule } 
-    from './affiliation/affiliation.ts';
+    from './affiliation/affiliation';
 
 import { AffiliationDeleteModule } 
-    from './affiliation/affiliationDelete.ts';
+    from './affiliation/affiliationDelete';
 
 import { AffiliationFormModule } 
-    from './affiliation/affiliationForm.ts';
+    from './affiliation/affiliationForm';
 
 import { AlertBannerModule } 
-    from './alertBanner/alertBanner.ts';
+    from './alertBanner/alertBanner';
 
 import { AllConsortiumContactsModule } 
-    from './allConsortiumContacts/allConsortiumContacts.ts';
+    from './allConsortiumContacts/allConsortiumContacts';
     
 import { AuthorizeDelegateResultModule } 
-    from './delegators/authorizeDelegateResult.ts';
+    from './delegators/authorizeDelegateResult';
 
 import { BiographyModule } 
-    from './biography/biography.ts';
+    from './biography/biography';
 
 import {ClaimModule}
-    from './claim/claim.ts';
+    from './claim/claim';
 
 import { ClientEditModule } 
-    from './clientEdit/clientEdit.ts';
+    from './clientEdit/clientEdit';
 
 import { DelegatorsModule } 
-    from './delegators/delegators.ts';
+    from './delegators/delegators';
 
 import { DeveloperToolsModule } 
-    from './developerTools/developerTools.ts';  
+    from './developerTools/developerTools';  
 
 import { EmailsModule } 
-    from './emails/emails.ts';
+    from './emails/emails';
 
 import { EmailsFormModule } 
-    from './emailsForm/emailsForm.ts';
+    from './emailsForm/emailsForm';
 
 import { EmailUnverifiedWarningModule } 
-    from './emailUnverifiedWarning/emailUnverifiedWarning.ts';
+    from './emailUnverifiedWarning/emailUnverifiedWarning';
 
 import { EmailVerificationSentMesssageModule } 
-    from './emailVerificationSentMessage/emailVerificationSentMessage.ts';
+    from './emailVerificationSentMessage/emailVerificationSentMessage';
 
 import { ExtIdPopoverModule } 
-    from './extIdPopover/extIdPopover.ts';
+    from './extIdPopover/extIdPopover';
 
 import { FundingDeleteModule } 
-    from './funding/fundingDelete.ts';
+    from './funding/fundingDelete';
 
 import { FundingModule } 
-    from './funding/funding.ts';
+    from './funding/funding';
 
 import { FundingFormModule } 
-    from './funding/fundingForm.ts';
+    from './funding/fundingForm';
 
 import { HeaderModule } 
-    from './header/header.ts';
+    from './header/header';
+
+import { Header2Module } 
+    from './header2/header2';
+
 
 import { HomeModule } 
-    from './home/home.ts';
+    from './home/home';
 
 import { LanguageModule } 
-    from './language/language.ts';
+    from './language/language';
 
 import { LinkAccountModule } 
-    from './linkAccount/linkAccount.ts';
+    from './linkAccount/linkAccount';
 
 import { MembersListModule } 
-    from './membersList/membersList.ts';
+    from './membersList/membersList';
 
 import { ModalModule } 
-    from './modalNg2/modal-ng.ts';
+    from './modalNg2/modal-ng';
 
 import { MyOrcidAlertsModule } 
-    from './myOrcidAlerts/myOrcidAlerts.ts';
+    from './myOrcidAlerts/myOrcidAlerts';
 
 import { NotificationsModule }
-    from './notifications/notifications.ts';
+    from './notifications/notifications';
 
 import { NotificationAlertsModule }
-    from './notificationAlerts/notificationAlerts.ts';
+    from './notificationAlerts/notificationAlerts';
 
 import { OauthAuthorizationModule } 
-    from './oauthAuthorization/oauthAuthorization.ts';
+    from './oauthAuthorization/oauthAuthorization';
 
 import { OrgIdentifierPopoverModule } 
-    from './orgIdentifierPopover/orgIdentifierPopover.ts';
+    from './orgIdentifierPopover/orgIdentifierPopover';
 
 import { PeerReviewModule } 
-    from './peerReview/peerReview.ts';
+    from './peerReview/peerReview';
 
 import { PeerReviewDeleteModule } 
-    from './peerReview/peerReviewDelete.ts';
+    from './peerReview/peerReviewDelete';
 
 import { PersonModule } 
-    from './person/person.ts';
+    from './person/person';
 
 import { PrintRecordModule } 
-    from './printRecord/printRecord.ts';
-
-import { PublicEduAffiliationModule }
-    from './publicEduAffiliation/publicEduAffiliation.ts';
+    from './printRecord/printRecord';
 
 import { PublicRecordModule } 
-    from './publicRecord/publicRecord.ts';
+    from './publicRecord/publicRecord';
 
 import { ReactivationModule } 
-    from './reactivation/reactivation.ts';
+    from './reactivation/reactivation';
     
 import { RecordCorrectionsModule }
-    from './recordCorrections/recordCorrections.ts';
+    from './recordCorrections/recordCorrections';
 
 import { RegisterDuplicatesModule } 
-    from './registerDuplicates/registerDuplicates.ts';
+    from './registerDuplicates/registerDuplicates';
 
 import { RequestPasswordResetModule } 
-    from './requestPasswordReset/requestPasswordReset.ts';
+    from './requestPasswordReset/requestPasswordReset';
 
 import { ResetPasswordModule }
-    from './resetPassword/resetPassword.ts';
+    from './resetPassword/resetPassword';
 
 import { ResearchResourceModule } 
-    from './researchResource/researchResource.ts';
+    from './researchResource/researchResource';
 
 import { ResearchResourceDeleteModule } 
-    from './researchResource/researchResourceDelete.ts';
+    from './researchResource/researchResourceDelete';
 
 import { ResendClaimModule } 
-    from './resendClaim/resendClaim.ts';
+    from './resendClaim/resendClaim';
 
 import { SearchModule } 
-    from './search/search.ts';
+    from './search/search';
 
 import { SelfServiceModule } 
-    from './selfService/selfService.ts';
+    from './selfService/selfService';
 
 import { SelfServiceAddContactModule } 
-    from './selfServiceAddContact/selfServiceAddContact.ts';
+    from './selfServiceAddContact/selfServiceAddContact';
 
 import { SelfServiceExistingSubMemberModule } 
-    from './selfServiceExistingSubMember/selfServiceExistingSubMember.ts';
+    from './selfServiceExistingSubMember/selfServiceExistingSubMember';
 
 import { SelfServiceRemoveContactModule } 
-    from './selfServiceRemoveContact/selfServiceRemoveContact.ts';
+    from './selfServiceRemoveContact/selfServiceRemoveContact';
 
 import { SelfServiceRemoveSubMemberModule } 
-    from './selfServiceRemoveSubMember/selfServiceRemoveSubMember.ts';
+    from './selfServiceRemoveSubMember/selfServiceRemoveSubMember';
 
 import { Social2FAModule }
-    from './social2FA/social2FA.ts';
+    from './social2FA/social2FA';
 
 import { TwoFaSetupModule } 
-    from './2FASetup/twoFASetup.ts';
+    from './2FASetup/twoFASetup';
 
 import { StatisticsModule } 
-    from './statistics/statistics.ts';
+    from './statistics/statistics';
 
 import { UnsubscribeModule }
-    from './unsubscribe/unsubscribe.ts';
+    from './unsubscribe/unsubscribe';
 
 import { WidgetModule } 
-    from './widget/widget.ts';
+    from './widget/widget';
 
 import { WorksBulkDeleteModule } 
-    from './works/worksBulkDelete.ts';
+    from './works/worksBulkDelete';
 
 import { WorksDeleteModule } 
-    from './works/worksDelete.ts';
+    from './works/worksDelete';
 
 import { WorksFormModule } 
-    from './works/worksForm.ts';
+    from './works/worksForm';
 
 import { WorksModule } 
-    from './works/works.ts';
-    
-import { WorksMergeSuggestionsModule } 
-    from './works/worksMergeSuggestions.ts';
+    from './works/works';
 
 import { ManageMembersModule } 
-    from './manageMembers/manageMembers.ts';      
+    from './manageMembers/manageMembers';      
     
 import { idBannerModule } 
-    from './idBanner/idBanner.ts'
+    from './idBanner/idBanner'
 
 import { qrcodeModule } 
-    from './qrcode/qrcode.ts';
+    from './qrcode/qrcode';
 
 import { lastModifiedModule }
-    from './lastModified/lastModified.ts'
+    from './lastModified/lastModified'
 
 import { bioModule } 
-    from './bio/bio.ts';
+    from './bio/bio';
 
 import { printIdBannerModule } 
-    from './printIdBanner/printIdBanner.ts';
+    from './printIdBanner/printIdBanner';
+
+import { HtmlHeadModule } 
+    from './htmlHead/htmlHead';    
+
+import { OauthHeaderModule } 
+    from './oauthHeader/oauthHeader';
+
+import { FooterModule } 
+    from './footer/footer';    
+
+import { MaintenanceMessageModule } 
+    from './maintenanceMessage/maintenanceMessage';
     
 export const orcidApp = angular.module(
     'orcidApp', 
@@ -246,6 +255,7 @@ export const orcidApp = angular.module(
         FundingFormModule.name,
         FundingModule.name,
         HeaderModule.name,
+        Header2Module.name,
         HomeModule.name,
         LanguageModule.name,
         LinkAccountModule.name,
@@ -260,7 +270,6 @@ export const orcidApp = angular.module(
         PeerReviewDeleteModule.name,
         PersonModule.name,
         PrintRecordModule.name,
-        PublicEduAffiliationModule.name,
         PublicRecordModule.name,
         ReactivationModule.name,
         RecordCorrectionsModule.name,
@@ -285,12 +294,15 @@ export const orcidApp = angular.module(
         WorksDeleteModule.name,
         WorksFormModule.name,
         WorksModule.name,
-        WorksMergeSuggestionsModule.name,
         ManageMembersModule.name,
         idBannerModule.name,
         qrcodeModule.name,
         lastModifiedModule.name,
         bioModule.name,
-        printIdBannerModule.name
+        printIdBannerModule.name,
+        HtmlHeadModule.name,
+        OauthHeaderModule.name,
+        FooterModule.name,
+        MaintenanceMessageModule.name
     ]
 );

@@ -27,8 +27,8 @@ import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
-import org.orcid.jaxb.model.v3.rc2.record.WorkCategory;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
@@ -175,7 +175,7 @@ public class WorksController extends BaseWorkspaceController {
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
             ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-            org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            org.orcid.jaxb.model.v3.release.common.Visibility defaultVis = org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
             Visibility v = profile.getActivitiesVisibilityDefault() == null ? Visibility.valueOf(OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility())
                     : Visibility.valueOf(defaultVis);
             w.setVisibility(v);
@@ -779,7 +779,7 @@ public class WorksController extends BaseWorkspaceController {
         ArrayList<Long> workIds = new ArrayList<Long>();
         for (String workId : workIdsStr.split(","))
             workIds.add(new Long(workId));
-        workManager.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(visibilityStr));
+        workManager.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(visibilityStr));
         return workIds;
     }
 

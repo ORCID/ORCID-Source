@@ -27,9 +27,9 @@ import org.orcid.core.utils.v3.activities.FundingComparators;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.common.Relationship;
-import org.orcid.jaxb.model.v3.rc2.record.Funding;
-import org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -120,11 +120,11 @@ public class FundingsController extends BaseWorkspaceController {
         result.setUrl(new Text());
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
-        org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = null;
+        org.orcid.jaxb.model.v3.release.common.Visibility defaultVis = null;
         if (profile.getActivitiesVisibilityDefault() != null) {
-            defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            defaultVis = org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
         } else {
-            defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().name());
+            defaultVis = org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().name());
         }
         Visibility v = Visibility.valueOf(defaultVis);
         
@@ -175,9 +175,9 @@ public class FundingsController extends BaseWorkspaceController {
         List<FundingGroup> fundingGroups = new ArrayList<>();
         List<FundingSummary> summaries = profileFundingManager.getFundingSummaryList(getEffectiveUserOrcid());
         Fundings fundings = profileFundingManager.groupFundings(summaries, false);
-        for (org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup group : fundings.getFundingGroup()) {
+        for (org.orcid.jaxb.model.v3.release.record.summary.FundingGroup group : fundings.getFundingGroup()) {
             FundingGroup fundingGroup = FundingGroup.valueOf(group);
-            for(org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary summary : group.getFundingSummary()) {
+            for(org.orcid.jaxb.model.v3.release.record.summary.FundingSummary summary : group.getFundingSummary()) {
                 if(summary.getSource().retrieveSourcePath().equals(getCurrentUserOrcid())) {
                     fundingGroup.setUserVersionPresent(true);
                     break;
@@ -381,7 +381,7 @@ public class FundingsController extends BaseWorkspaceController {
         ArrayList<Long> fundIds = new ArrayList<Long>();
         for (String fundId : fundingIdsStr.split(","))
             fundIds.add(new Long(fundId));
-        profileFundingManager.updateProfileFundingVisibilities(orcid, fundIds, org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(visibilityStr));
+        profileFundingManager.updateProfileFundingVisibilities(orcid, fundIds, org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(visibilityStr));
         return fundIds;
     }
 

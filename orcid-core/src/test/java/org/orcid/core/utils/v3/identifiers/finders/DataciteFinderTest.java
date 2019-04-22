@@ -1,6 +1,6 @@
 package org.orcid.core.utils.v3.identifiers.finders;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,14 +17,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.orcid.core.utils.ArXivResolverTest;
-import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
-import org.orcid.core.utils.v3.identifiers.finders.DataciteFinder;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
-import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.pojo.FindMyStuffResult;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;

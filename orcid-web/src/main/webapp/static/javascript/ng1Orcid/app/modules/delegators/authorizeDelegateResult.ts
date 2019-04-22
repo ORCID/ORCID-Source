@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { AuthorizeDelegateResultComponent } 
-    from './authorizeDelegateResult.component.ts';
+    from './authorizeDelegateResult.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
     
 // This is the Angular 1 part of the module
 export const AuthorizeDelegateResultModule = angular.module(
@@ -31,8 +31,6 @@ export const AuthorizeDelegateResultModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
         ]
     }
 )

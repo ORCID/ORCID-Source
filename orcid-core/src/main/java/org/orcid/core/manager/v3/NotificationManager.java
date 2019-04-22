@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Locale;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
-import org.orcid.jaxb.model.v3.rc2.notification.Notification;
-import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermissions;
+import org.orcid.jaxb.model.v3.release.notification.Notification;
+import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.release.notification.permission.Item;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
@@ -99,7 +99,7 @@ public interface NotificationManager {
 
     ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
     
-    void processUnverifiedEmails7Days();
+    void processUnverifiedEmails2Days();
     
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
 

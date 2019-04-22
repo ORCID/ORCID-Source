@@ -12,16 +12,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { GenericService } 
-    from '../../shared/generic.service.ts'; 
+    from '../../shared/generic.service'; 
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
-    
+    from '../../shared/modal.service'; 
+
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 @Component({
     selector: 'biography-ng2',
@@ -62,7 +62,6 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.userInfo = data;                
                 },
                 error => {
-                    console.log('header.component.ts: unable to fetch userInfo', error);
                     this.userInfo = {};
                 } 
             );

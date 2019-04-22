@@ -149,4 +149,12 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * @return true if there is at least one public funding for a specific user
      * */
     Boolean hasPublicFunding(String orcid);
+
+    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<BigInteger> ids);
+
+    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<BigInteger> ids);
 }

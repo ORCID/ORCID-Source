@@ -54,8 +54,8 @@ public class MailGunManager {
     @Value("${com.mailgun.notify.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
     private String notifyApiUrl;
     
-    @Value("${com.mailgun.community.apiUrl:https://api.mailgun.net/v2/community.orcid.org/messages}")
-    private String communityApiUrl;
+    @Value("${com.mailgun.marketing.apiUrl:https://api.mailgun.net/v2/samples.mailgun.org/messages}")
+    private String marketingApiUrl;
 
     @Value("${com.mailgun.testmode:yes}")
     private String testmode;
@@ -66,18 +66,14 @@ public class MailGunManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
     public boolean sendMarketingEmail(String from, String to, String subject, String text, String html) {
-        return sendEmail(from, to, subject, text, html, false, true);
+        return sendEmail(from, to, subject, text, html, true);
     }
     
     public boolean sendEmail(String from, String to, String subject, String text, String html) {
-        return sendEmail(from, to, subject, text, html, false, false);
+        return sendEmail(from, to, subject, text, html, false);
     }
     
-    public boolean sendEmail(String from, String to, String subject, String text, String html, boolean custom) {
-        return sendEmail(from, to, subject, text, html, custom, false);
-    }
-
-    public boolean sendEmail(String from, String to, String subject, String text, String html, boolean custom, boolean marketing) {
+    public boolean sendEmail(String from, String to, String subject, String text, String html, boolean marketing) {
 
         Client client = Client.create();
         client.addFilter(new HTTPBasicAuthFilter("api", getApiKey()));
@@ -86,9 +82,7 @@ public class MailGunManager {
         WebResource webResource = null;
         String fromEmail = getFromEmail(from);
         if(marketing)
-            webResource = client.resource(getCommunityApiUrl());
-        else if (custom)
-            webResource = client.resource(getNotifyApiUrl());
+            webResource = client.resource(getMarketingApiUrl());
         else if (fromEmail.endsWith("@verify.orcid.org"))
             webResource = client.resource(getVerifyApiUrl());
         else if (fromEmail.endsWith("@notify.orcid.org"))
@@ -114,8 +108,11 @@ public class MailGunManager {
                 LOGGER.error("Post MailGunManager.sendEmail to {} not accepted", formData.get("to"));
                 return false;
             }
+            return true;
+        } else {
+            LOGGER.debug("Email not sent to {} due to regex mismatch", formData.get("to"));
+            return false;
         }
-        return true;
     }
 
     public String getApiKey() {
@@ -150,12 +147,12 @@ public class MailGunManager {
         this.notifyApiUrl = notifyApiUrl;
     }
 
-    public String getCommunityApiUrl() {
-        return communityApiUrl;
+    public String getMarketingApiUrl() {
+        return marketingApiUrl;
     }
 
-    public void setCommunityApiUrl(String communityApiUrl) {
-        this.communityApiUrl = communityApiUrl;
+    public void setMarketingApiUrl(String marketingApiUrl) {
+        this.marketingApiUrl = marketingApiUrl;
     }
 
     private String getFromEmail(String from) {

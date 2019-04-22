@@ -20,8 +20,8 @@ import {
 
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { CommonService } from "../../shared/common.service.ts";
-import { SwitchUserService } from "../../shared/switchUser.service.ts";
+import { CommonService } from "../../shared/common.service";
+import { SwitchUserService } from "../../shared/switchUser.service";
 
 @Component({
   selector: "switch-user-ng2",
@@ -74,7 +74,7 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
 
   search(): void {
     if (this.searchResultsCache[this.searchTerm] === undefined) {
-      if (this.searchTerm === "") {
+      if (this.searchTerm === "" && !this.commonService.isPublicPage) {
         this.getDelegates();
         this.searchResultsCache[this.searchTerm] = this.delegators;
       } else {
@@ -127,8 +127,9 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.getDelegates();
-
+    if(!this.commonService.isPublicPage) {
+        this.getDelegates();
+    }   
     //close delegate dropdown
     $(document).bind(
       "click",
@@ -140,5 +141,9 @@ export class SwitchUserComponent implements AfterViewInit, OnDestroy, OnInit {
         }
       }.bind(this)
     );
-  }
+  };
+  
+  getBaseUri() : String {
+      return getBaseUri();
+  };
 }

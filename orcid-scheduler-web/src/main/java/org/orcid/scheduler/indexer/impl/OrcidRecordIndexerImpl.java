@@ -1,12 +1,17 @@
 package org.orcid.scheduler.indexer.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.scheduler.indexer.OrcidRecordIndexer;
@@ -15,6 +20,9 @@ import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
 
@@ -43,10 +51,30 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
 
     @Resource
     private ProfileDao profileDaoReadOnly;
+    
+    @Resource(name = "profileEntityManagerV3")
+    private ProfileEntityManager profileEntityManager;
 
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
+    
+    @Resource
+    private TransactionTemplate transactionTemplate;
+    
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
+    
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
+    private int claimReminderAfterDays = 8;
+    
+    protected int claimWaitPeriodDays = 10;
 
+    public void setClaimWaitPeriodDays(int claimWaitPeriodDays) {
+        this.claimWaitPeriodDays = claimWaitPeriodDays;
+    }
+    
     @Override
     public void processProfilesWithPendingFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING, updateSolrQueueName, updateSummaryQueueName, updateActivitiesQueueName);
@@ -60,6 +88,33 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     @Override
     public void processProfilesWithFailedFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, updateSolrQueueName, updateSummaryQueueName, updateActivitiesQueueName);
+    }
+    
+    @Override
+    synchronized public void processUnclaimedProfilesToFlagForIndexing() {
+        LOG.info("About to process unclaimed profiles to flag for indexing");
+        List<String> orcidsToFlag = Collections.<String> emptyList();
+        do {
+            orcidsToFlag = profileDaoReadOnly.findUnclaimedNotIndexedAfterWaitPeriod(claimWaitPeriodDays, claimWaitPeriodDays * 2, INDEXING_BATCH_SIZE, orcidsToFlag);
+            LOG.info("Got batch of {} unclaimed profiles to flag for indexing", orcidsToFlag.size());
+            for (String orcid : orcidsToFlag) {
+                LOG.info("About to flag unclaimed profile for indexing: {}", orcid);
+                profileEntityManager.updateLastModifed(orcid);
+            }
+        } while (!orcidsToFlag.isEmpty());
+    }
+    
+    @Override
+    synchronized public void processUnclaimedProfilesForReminder() {
+        LOG.info("About to process unclaimed profiles for reminder");
+        List<String> orcidsToRemind = Collections.<String> emptyList();
+        do {
+            orcidsToRemind = profileDaoReadOnly.findUnclaimedNeedingReminder(claimReminderAfterDays, INDEXING_BATCH_SIZE, orcidsToRemind);
+            LOG.info("Got batch of {} unclaimed profiles for reminder", orcidsToRemind.size());
+            for (final String orcid : orcidsToRemind) {
+                processUnclaimedProfileForReminderInTransaction(orcid);
+            }
+        } while (!orcidsToRemind.isEmpty());
     }
 
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, String solrQueue, String summaryQueue, String activitiesQueue) {
@@ -103,4 +158,17 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
             }
         } while (!connectionIssue && !orcidsForIndexing.isEmpty());
     }
+    
+    private void processUnclaimedProfileForReminderInTransaction(final String orcid) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                LOG.info("About to process unclaimed profile for reminder: {}", orcid);  
+                Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
+                if(email != null) 
+                    notificationManager.sendClaimReminderEmail(orcid, claimWaitPeriodDays - claimReminderAfterDays, email.getEmail());
+            }
+        });
+    }
+
 }

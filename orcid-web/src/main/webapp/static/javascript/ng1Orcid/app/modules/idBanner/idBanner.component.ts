@@ -7,8 +7,8 @@ import {
   Input
 } from "@angular/core";
 import { Subject } from "rxjs";
-import { PersonService } from "../../shared/person.service.ts";
-import { CommonService } from "../../shared/common.service.ts";
+import { PersonService } from "../../shared/person.service";
+import { CommonService } from "../../shared/common.service";
 
 @Component({
   selector: "id-banner-ng2",
@@ -39,7 +39,6 @@ export class idBannerComponent implements AfterViewInit, OnDestroy, OnInit {
                   this.userInfo = data;                
               },
               error => {
-                  console.log('idBanner.component.ts: unable to fetch userInfo', error);
                   this.userInfo = {};
               } 
           );
@@ -63,4 +62,8 @@ export class idBannerComponent implements AfterViewInit, OnDestroy, OnInit {
       }
     });
   }
+  
+  getBaseUri() : String {
+      return getBaseUriHttps();
+  };
 }

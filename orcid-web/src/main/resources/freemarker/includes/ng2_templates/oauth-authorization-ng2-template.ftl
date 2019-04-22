@@ -7,7 +7,7 @@
                 <div class="row top-header">
                     <div class="col-md-4 col-sm-12 col-xs-12">
                         <div class="logo">
-                            <h1><a href="${aboutUri}"><img src="${staticCdn}/img/orcid-logo.png" alt="ORCID logo" /></a></h1>
+                            <h1><a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.png'}}" alt="ORCID logo" /></a></h1>
                         </div>      
                     </div>
                     <div class="col-md-8 col-sm-12 col-xs-12">
@@ -33,7 +33,7 @@
                             <#include "/includes/oauth/scopes_ng2.ftl"/>
                         </div>
                         <div>
-                            <p><@orcid.msg 'confirm-oauth-access.thisApplicationWillNot'/>&nbsp;<a href="${baseUri}/account#manage-permissions" target="confirm-oauth-access.accountSettings"><@orcid.msg 'confirm-oauth-access.accountSettings'/></a>.</p>
+                            <p><@orcid.msg 'confirm-oauth-access.thisApplicationWillNot'/>&nbsp;<a href="{{getBaseUri()}}/account#manage-permissions" target="confirm-oauth-access.accountSettings"><@orcid.msg 'confirm-oauth-access.accountSettings'/></a>.</p>
                         </div>          
                         <div id="login-buttons" ng-init="loadAndInitAuthorizationForm()">
                             <div class="row">
@@ -61,18 +61,16 @@
                 <p class="title" *ngIf="showRegisterForm" >${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account")} <a id = "switch-to-login-form" (click)="switchForm()">${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account.link.text")}</a></p>
                 <div *ngIf="!showRegisterForm">
                     <div class="personal-login" >
-                        <#if shibbolethEnabled>
-                            <div class="btn-group btn-group-justified" role="group">
-                                <a (click)="showPersonalLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-                                <a (click)="showInstitutionLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
-                            </div>
-                        </#if>  
+                        <div *ngIf="shibbolethEnabled" class="btn-group btn-group-justified" role="group">
+                            <a (click)="showPersonalLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+                            <a (click)="showInstitutionLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+                        </div>
                         <div *ngIf="personalLogin == true">
                             <div class="login-box">
                                 <!-- ORCID ACCOUNT LOGIN -->
                                 <div class="personal-account-login">
                                     <p class="title">${springMacroRequestContext.getMessage("login.signinwithyourorcidaccount")}</p>
-                                    <form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
+                                    <form class="form-sign-in" id="loginForm" action="{{getBaseUri()}}/signin/auth" method="post">
                                         <#include "/includes/login_personal_fields_inc_ng2.ftl"/>
                                     </form>
                                 </div>
@@ -96,7 +94,7 @@
                                     <ul class="social-icons">
                                         <!--FACEBOOK-->
                                         <li>
-                                            <form ngNoForm action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+                                            <form ngNoForm action="{{getBaseUri()}}/signin/facebook" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-social-icon btn-facebook"></button>
                                                 <input type="hidden" name="scope" value="email"/>
@@ -104,7 +102,7 @@
                                         </li>
                                         <!--TWITTER (NOT USED)
                                         <li>
-                                            <form ngNoForm action="<@orcid.rootPath '/signin/twitter'/>" method="POST">
+                                            <form ngNoForm action="{{getBaseUri()}}/signin/twitter" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-social-icon btn-twitter"></button>
                                             </form>
@@ -112,7 +110,7 @@
                                         -->
                                         <!--GOOGLE-->
                                         <li>
-                                            <form ngNoForm action="<@orcid.rootPath '/signin/google'/>" method="POST">
+                                            <form ngNoForm action="{{getBaseUri()}}/signin/google" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                                 <button type="submit" class="btn btn-social-icon btn-google" ></button>
                                                 <input type="hidden" name="scope" value="email" />
@@ -167,12 +165,12 @@
             </div><!--login-->
 
             <div *ngIf="this.isLoggedIn <#if (RequestParameters['oauth'])??>&& false</#if> " class="relogin-container">
-                <div><@orcid.msg 'login.reloginalert.youare'/> <b>{{realLoggedInUserName}} </b> <a target="_blank" href="${baseUri}/${realUserOrcid!}">${baseUri}/${realUserOrcid!}</a>
-                    <ng-container *ngIf=" '${realUserOrcid!}' !== '${effectiveUserOrcid!}'"> <@orcid.msg 'login.reloginalert.managing'/> <b>{{effectiveLoggedInUserName}} </b> <a target="_blank" href="${baseUri}/${effectiveUserOrcid!}">${baseUri}/${effectiveUserOrcid!}</a> </ng-container>
+                <div><@orcid.msg 'login.reloginalert.youare'/> <b>{{realLoggedInUserName}} </b> <a target="_blank" href="{{getBaseUri()}}/${realUserOrcid!}">{{getBaseUri()}}/${realUserOrcid!}</a>
+                    <ng-container *ngIf=" '${realUserOrcid!}' !== '${effectiveUserOrcid!}'"> <@orcid.msg 'login.reloginalert.managing'/> <b>{{effectiveLoggedInUserName}} </b> <a target="_blank" href="{{getBaseUri()}}/${effectiveUserOrcid!}">{{getBaseUri()}}/${effectiveUserOrcid!}</a> </ng-container>
                 </div>
                 <div class="menu-area"> 
-                <a href="<@orcid.rootPath "/my-orcid" />"><div class="btn btn-primary"><@orcid.msg 'login.reloginalert.continue'/></div></a>
-                <a href="<@orcid.rootPath "/signout" />"><div class="btn btn-white-no-border"><@orcid.msg 'login.reloginalert.no'/></div></a>
+                <a href="{{getBaseUri()}}/my-orcid"><div class="btn btn-primary"><@orcid.msg 'login.reloginalert.continue'/></div></a>
+                <a href="{{getBaseUri()}}/signout"><div class="btn btn-white-no-border"><@orcid.msg 'login.reloginalert.no'/></div></a>
                 </div>
             </div>
         </div><!--col-md-offset-3-->

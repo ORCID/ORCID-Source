@@ -9,7 +9,7 @@
 
     <import resource="classpath*:orcid-core-context.xml"/>
 
-    <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
+    <context:component-scan base-package="org.orcid.api.common, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
      
     <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
@@ -25,97 +25,6 @@
     <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
     <bean id="apiListingResource" class="org.orcid.api.swagger.MemberSwaggerResource"/>
      
-    <bean id="t2OrcidApiServiceImplRoot" class="org.orcid.api.t2.server.T2OrcidApiServiceImplRoot">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorRoot"/>
-    </bean>
-    
-    <bean id="orcidT2ServiceDelegator" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceDelegatorImpl">
-        <property name="orcidSearchManager" ref="orcidSearchManager" />
-    </bean>
-    
-    <bean id="t2OrcidApiServiceDelegatorLatest" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="incomingValidationManager" ref="incomingValidationManagerLatest"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerLatest"/>
-    </bean>
-    
-    <bean id="t2OrcidApiServiceDelegatorPrototype" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl" scope="prototype"/>
-
-    <bean id="t2OrcidApiServiceImplV1_1" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_1">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_1"/>
-    </bean>
-    <bean id="t2OrcidApiServiceDelegatorV1_1" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.1"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerV1_1"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_1"/>
-    </bean>
-    
-    <bean id="t2OrcidApiServiceDelegatorRoot" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="${org.orcid.core.default_api}"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerRoot"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerRoot"/>
-    </bean>
-    
-    <bean id="t2OrcidApiServiceImplV1_2_rc1" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc1">
-        <property name="externalVersion" value="1.2_rc1"/>
-    </bean>
-    <bean id="t2OrcidApiServiceImplV1_2_rc2" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc2">
-        <property name="externalVersion" value="1.2_rc2"/>
-    </bean>
-    
-    <bean id="t2OrcidApiServiceDelegatorV1_2_rc3" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.2_rc3"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerV1_2_rc3"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_2_rc3"/>
-    </bean>
-    <bean id="t2OrcidApiServiceImplV1_2_rc3" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc3">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2_rc3"/>
-    </bean>
- 
-    <bean id="t2OrcidApiServiceDelegatorV1_2_rc4" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.2_rc4"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerV1_2_rc4"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_2_rc4"/>
-    </bean>
-    <bean id="t2OrcidApiServiceImplV1_2_rc4" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc4">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2_rc4"/>
-    </bean>
-    
-    <bean id="t2OrcidApiServiceDelegatorV1_2_rc5" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.2_rc5"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerV1_2_rc5"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_2_rc5"/>
-    </bean>
-    <bean id="t2OrcidApiServiceImplV1_2_rc5" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc5">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2_rc5"/>
-    </bean>
-    
-    <bean id="t2OrcidApiServiceDelegatorV1_2_rc6" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.2_rc6"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerV1_2_rc6"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_2_rc6"/>
-    </bean>
-    <bean id="t2OrcidApiServiceImplV1_2_rc6" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc6">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2_rc6"/>
-    </bean>
-    
-    <bean id="t2OrcidApiServiceDelegatorV1_2_rc7" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.2_rc7"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerV1_2_rc7"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_2_rc7"/>
-    </bean>
-    <bean id="t2OrcidApiServiceImplV1_2_rc7" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2_rc7">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2_rc7"/>
-    </bean>
-
-    <bean id="t2OrcidApiServiceDelegatorV1_2" class="org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="1.2"/>
-        <property name="incomingValidationManager" ref="incomingValidationManagerV1_2"/>
-        <property name="outgoingValidationManager" ref="outgoingValidationManagerV1_2"/>
-    </bean>
-    <bean id="t2OrcidApiServiceImplV1_2" class="org.orcid.api.t2.server.T2OrcidApiServiceImplV1_2">
-        <property name="serviceDelegator" ref="t2OrcidApiServiceDelegatorV1_2"/>
-    </bean>
-
     <!--  Notifications -->
     <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
     
@@ -151,6 +60,10 @@
     
     <bean id="notificationsApiServiceDelegatorV3Rc2" class="org.orcid.api.notificationsV3.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="3.0_rc2" />
+    </bean>
+
+	<bean id="notificationsApiServiceDelegatorV3Release" class="org.orcid.api.notificationsV3.server.delegator.impl.NotificationsApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="3.0" />
     </bean>
 
     <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />
@@ -213,22 +126,33 @@
     <bean id="memberV3ApiServiceDelegatorRc1_FilterVersionOfIdsOnWorks" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceDelegatorImpl">
     	<property name="filterVersionOfIdentifiers" value="true" />
     </bean>
-    <bean id="memberV3ApiServiceDelegator" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceDelegatorImpl" />
-    
-    <bean id="memberV3ApiServiceDelegatorRc1" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="3.0_rc1" />
-        <property name="memberV3ApiServiceDelegator" ref="memberV3ApiServiceDelegatorRc1_FilterVersionOfIdsOnWorks" />
-    </bean>      
-    <bean id="memberV3ApiServiceDelegatorRc2" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="3.0_rc2" />
-        <property name="memberV3ApiServiceDelegator" ref="memberV3ApiServiceDelegator" />
-    </bean>      
     <bean id="memberV3ApiServiceImplV3_0_rc1" class="org.orcid.api.memberV3.server.MemberV3ApiServiceImplV3_0_rc1">     
         <property name="serviceDelegator" ref="memberV3ApiServiceDelegatorRc1"/>
         <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorV3Rc1"/>
     </bean>  
+    <bean id="memberV3ApiServiceDelegatorRc1" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="3.0_rc1" />
+        <property name="memberV3ApiServiceDelegator" ref="memberV3ApiServiceDelegatorRc1_FilterVersionOfIdsOnWorks" />
+    </bean>      
+    
+    <bean id="memberV3ApiServiceDelegatorRc2" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="3.0_rc2" />
+        <property name="memberV3ApiServiceDelegator" ref="memberV3ApiServiceDelegator" />
+    </bean>      
      <bean id="memberV3ApiServiceImplV3_0_rc2" class="org.orcid.api.memberV3.server.MemberV3ApiServiceImplV3_0_rc2">     
         <property name="serviceDelegator" ref="memberV3ApiServiceDelegatorRc2"/>
         <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorV3Rc2"/>
     </bean>  
+    
+    <bean id="memberV3ApiServiceDelegatorRelease" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceVersionedDelegatorImpl">
+        <property name="externalVersion" value="3.0" />
+        <property name="memberV3ApiServiceDelegator" ref="memberV3ApiServiceDelegator" />
+    </bean>      
+     <bean id="memberV3ApiServiceImplV3_0" class="org.orcid.api.memberV3.server.MemberV3ApiServiceImplV3_0">     
+        <property name="serviceDelegator" ref="memberV3ApiServiceDelegatorRelease"/>
+        <property name="notificationsServiceDelegator" ref="notificationsApiServiceDelegatorV3Release"/>
+    </bean>  
+    
+    <bean id="memberV3ApiServiceDelegator" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceDelegatorImpl" />
+           
 </beans>

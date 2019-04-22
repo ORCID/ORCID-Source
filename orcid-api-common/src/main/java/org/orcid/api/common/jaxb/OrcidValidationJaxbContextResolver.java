@@ -295,6 +295,53 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
 
     }
     
+    private static final Map<Class<?>, String> SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0 = new HashMap<>();
+    static {
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord.class, "group-id-3.0/group-id-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission.class, "notification_3.0/notification-permission-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(OrcidMessage.class, "orcid-message-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Address.class, "record_3.0/address-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Addresses.class, "record_3.0/address-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Education.class, "record_3.0/education-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Email.class, "record_3.0/email-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Employment.class, "record_3.0/employment-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier.class, "record_3.0/person-external-identifier-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers.class, "record_3.0/person-external-identifier-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Funding.class, "record_3.0/funding-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Keyword.class, "record_3.0/keyword-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Keywords.class, "record_3.0/keyword-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Name.class, "record_3.0/personal-details-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.OtherName.class, "record_3.0/other-name-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.OtherNames.class, "record_3.0/other-name-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.PeerReview.class, "record_3.0/peer-review-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.ResearcherUrl.class, "record_3.0/researcher-url-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.ResearcherUrls.class, "record_3.0/researcher-url-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Work.class, "record_3.0/work-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.WorkBulk.class, "record_3.0/bulk-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.summary.Educations.class, "record_3.0/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.summary.Employments.class, "record_3.0/activities-");
+        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Distinction.class, "record_3.0/distinction-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.InvitedPosition.class, "record_3.0/invited-position-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Membership.class, "record_3.0/membership-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Qualification.class, "record_3.0/qualification-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.Service.class, "record_3.0/service-");
+        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.summary.Distinctions.class, "record_3.0/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.summary.InvitedPositions.class, "record_3.0/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.summary.Memberships.class, "record_3.0/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.summary.Qualifications.class, "record_3.0/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.summary.Services.class, "record_3.0/activities-");
+        
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.summary.ResearchResources.class, "record_3.0/activities-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.ResearchResource.class, "record_3.0/research-resource-");
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.ResearchResourceItem.class, "record_3.0/research-resource-");
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.ResearchResourceProposal.class, "record_3.0/research-resource-");
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.ResearchResourceHosts.class, "record_3.0/research-resource-");
+//        SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.put(org.orcid.jaxb.model.v3.release.record.ResearchResourceTitle.class, "record_3.0/research-resource-");
+
+    }
+    
     private JAXBContext jaxbContext_2_0_rc1;
     private JAXBContext jaxbContext_2_0_rc2;
     private JAXBContext jaxbContext_2_0_rc3;
@@ -303,6 +350,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     private JAXBContext jaxbContext_2_1;
     private JAXBContext jaxbContext_3_0_rc1;
     private JAXBContext jaxbContext_3_0_rc2;
+    private JAXBContext jaxbContext_3_0;
     private Map<String, Schema> schemaByPath = new ConcurrentHashMap<>();
     
     @Resource
@@ -323,7 +371,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
                     || org.orcid.jaxb.model.record_rc4.WorkBulk.class.equals(type)
                     || org.orcid.jaxb.model.record_v2.WorkBulk.class.equals(type)
                     || org.orcid.jaxb.model.v3.rc1.record.WorkBulk.class.equals(type)
-                    || org.orcid.jaxb.model.v3.rc2.record.WorkBulk.class.equals(type)) {
+                    || org.orcid.jaxb.model.v3.rc2.record.WorkBulk.class.equals(type)
+                    || org.orcid.jaxb.model.v3.release.record.WorkBulk.class.equals(type)) {
                 return unmarshaller;
             }
             if (schemaFilenamePrefix != null) {
@@ -428,6 +477,11 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
                         jaxbContext_3_0_rc2 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC2.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC2.size()]));
                     }
                     return jaxbContext_3_0_rc2;
+                } else if(apiVersion.equals("3.0")) {
+                    if(jaxbContext_3_0 == null) {
+                        jaxbContext_3_0 = JAXBContext.newInstance(SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.keySet().toArray(new Class[SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.size()]));
+                    }
+                    return jaxbContext_3_0;
                 }
             }
             //Return rc1 as the last resource
@@ -475,6 +529,9 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
             }
             if(apiVersion.equals("3.0_rc2")) {
                 return SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0_RC2.get(type);
+            }
+            if(apiVersion.equals("3.0")) {
+                return SCHEMA_FILENAME_PREFIX_BY_CLASS_V3_0.get(type);
             }
         }               
         return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC1.get(type);

@@ -8,23 +8,23 @@ import { Observable, Subject, Subscription }
     from 'rxjs';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { MembersListService }
-    from '../../shared/membersList.service.ts';
+    from '../../shared/membersList.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts';
+    from '../../shared/features.service';
 
 import { MembersListComponent }
-    from './membersList.component.ts';
+    from './membersList.component';
 
 @Component({
     selector: 'consortia-list-ng2',
     template:  scriptTmpl("consortia-list-ng2-template")
 })
 export class ConsortiaListComponent extends MembersListComponent {
-    
+
     getMembersList() {
         this.membersListService.getConsortiaList()
             .subscribe(data => {
@@ -40,5 +40,9 @@ export class ConsortiaListComponent extends MembersListComponent {
         this.getCommunityTypes();
         this.getMembersList();
     }
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
     
 }

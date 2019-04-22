@@ -43,18 +43,18 @@ import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
-import org.orcid.jaxb.model.v3.rc2.notification.Notification;
-import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
-import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc2.notification.amended.NotificationAmended;
-import org.orcid.jaxb.model.v3.rc2.notification.custom.NotificationAdministrative;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.Item;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.Items;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermissions;
-import org.orcid.model.v3.rc2.notification.institutional_sign_in.NotificationInstitutionalConnection;
-import org.orcid.model.v3.rc2.notification.internal.NotificationFindMyStuff;
+import org.orcid.jaxb.model.v3.release.notification.Notification;
+import org.orcid.jaxb.model.v3.release.notification.NotificationType;
+import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
+import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.release.notification.permission.Item;
+import org.orcid.jaxb.model.v3.release.notification.permission.Items;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
+import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.model.v3.release.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -124,7 +124,7 @@ public class NotificationManagerImpl implements NotificationManager {
     @Value("${org.orcid.core.email.verify.tooOld:15}")
     private int emailTooOld;
     
-    private int verifyReminderAfterDays = 7;
+    private int verifyReminderAfterDays = 2;
 
     @Resource(name = "messageSource")
     private MessageSource messages;
@@ -297,7 +297,7 @@ public class NotificationManagerImpl implements NotificationManager {
     public void sendOrcidDeactivateEmail(String userOrcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        org.orcid.jaxb.model.v3.rc2.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
+        org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String subject = getSubject("email.subject.deactivate", userLocale);
@@ -572,7 +572,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
         
-        org.orcid.jaxb.model.v3.rc2.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
+        org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
         String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
         String assetsUrl = getAssetsUrl();
@@ -1138,17 +1138,17 @@ public class NotificationManagerImpl implements NotificationManager {
     }
     
     @Override
-    synchronized public void processUnverifiedEmails7Days() {
+    synchronized public void processUnverifiedEmails2Days() {
         LOGGER.info("About to process unverIfied emails for reminder");
         List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
         do {
-            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, 100, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT);
+            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, 100);
             LOGGER.info("Got batch of {} profiles with unverified emails for reminder", elements.size());
             LocalDateTime now = LocalDateTime.now();
             Date tooOld = now.minusDays(emailTooOld).toDate();
             for (Pair<String, Date> element : elements) {
                 if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmails7DaysInTransaction(element.getLeft());
+                    processUnverifiedEmails2DaysInTransaction(element.getLeft());
                 } else {
                     // Mark is as too old to send the verification email
                     markUnverifiedEmailAsTooOld(element.getLeft());
@@ -1157,7 +1157,7 @@ public class NotificationManagerImpl implements NotificationManager {
         } while (!elements.isEmpty());
     }
 
-    private void processUnverifiedEmails7DaysInTransaction(final String email) {
+    private void processUnverifiedEmails2DaysInTransaction(final String email) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             @Transactional
@@ -1165,11 +1165,11 @@ public class NotificationManagerImpl implements NotificationManager {
                 try {
                     String userOrcid = emailManager.findOrcidIdByEmail(email);
                     sendVerificationReminderEmail(userOrcid, email);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT));
                     emailEventDao.flush();
                 } catch (Exception e) {
                     LOGGER.error("Unable to send unverified email reminder to email: " + email, e);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED));
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED));
                     emailEventDao.flush();
                 }
             }

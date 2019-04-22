@@ -11,9 +11,12 @@ import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.common_v2.Locale;
+import org.orcid.jaxb.model.common_v2.OrcidIdBase;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.common_v2.SourceClientId;
+import org.orcid.jaxb.model.common_v2.SourceOrcid;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.record_v2.CompletionDate;
 import org.orcid.jaxb.model.record_v2.DeactivationDate;
@@ -144,7 +147,11 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         }                
         
         if(profile.getSource() != null) {
-            history.setSource(new Source(SourceEntityUtils.getSourceId(profile.getSource())));                
+            if (profile.getSource().getSourceClient() != null) {
+                history.setSource(getClientSource(profile.getSource().getSourceClient().getId()));
+            } else if (profile.getSource().getSourceProfile() != null) {
+                history.setSource(getOrcidSource(profile.getSource().getSourceProfile().getId()));
+            }
         }
         
         boolean verfiedEmail = false;
@@ -166,6 +173,26 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         history.setVerifiedPrimaryEmail(verfiedPrimaryEmail);
         
         return history;        
+    }
+    
+    private Source getClientSource(String sourceId) {
+        Source source = new Source();
+        SourceClientId sourceClientId = new SourceClientId();
+        source.setSourceClientId(sourceClientId);
+        sourceClientId.setHost(orcidUrlManager.getBaseHost());
+        sourceClientId.setUri(orcidUrlManager.getBaseUriHttp() + "/client/" + sourceId);
+        sourceClientId.setPath(sourceId);
+        return source;
+    }
+
+    private Source getOrcidSource(String sourceId) {
+        Source source = new Source();
+        SourceOrcid sourceOrcid = new SourceOrcid();
+        source.setSourceOrcid(sourceOrcid);
+        sourceOrcid.setHost(orcidUrlManager.getBaseHost());
+        sourceOrcid.setUri(orcidUrlManager.getBaseUriHttp() + "/" + sourceId);
+        sourceOrcid.setPath(sourceId);
+        return source;
     }
 
 }

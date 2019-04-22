@@ -10,11 +10,11 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.rc2.common.TransientError;
-import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.common.TransientError;
+import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -71,8 +71,11 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
             if (workExternalIdentifier.getWorkExternalIdentifierId() != null) {
                 id.setValue(workExternalIdentifier.getWorkExternalIdentifierId().content);
                 //note, uses API type name.
-                id.setNormalized(new TransientNonEmptyString(norm.normalise(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
-                if (StringUtils.isEmpty(id.getNormalized().getValue())){
+                String normalised = norm.normalise(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content);
+                if (normalised != null && !normalised.trim().isEmpty()) {
+                    id.setNormalized(new TransientNonEmptyString(normalised));
+                }
+                if (normalised == null || StringUtils.isEmpty(normalised)){
                     id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
                 }
                 

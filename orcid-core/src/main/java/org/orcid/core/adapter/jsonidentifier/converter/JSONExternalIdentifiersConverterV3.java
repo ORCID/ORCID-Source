@@ -9,11 +9,11 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.v3.rc2.common.TransientError;
-import org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.common.TransientError;
+import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -75,12 +75,15 @@ public class JSONExternalIdentifiersConverterV3 extends BidirectionalConverter<E
 
             if (!PojoUtil.isEmpty(externalIdentifier.getValue())) {
                 id.setValue(externalIdentifier.getValue());
-                id.setNormalized(new TransientNonEmptyString(norm.normalise(id.getType(), externalIdentifier.getValue())));
-                if (StringUtils.isEmpty(id.getNormalized().getValue())){
+                String normalised = norm.normalise(id.getType(), externalIdentifier.getValue());
+                if (normalised != null && !normalised.trim().isEmpty()) {
+                    id.setNormalized(new TransientNonEmptyString(normalised));
+                }
+                if (normalised == null || StringUtils.isEmpty(normalised)) {
                     id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message", id.getType(), externalIdentifier.getValue())));
                 }
             }
-
+            
             if (externalIdentifier.getRelationship() != null) {
                 id.setRelationship(Relationship.fromValue(conv.convertFrom(externalIdentifier.getRelationship(), null)));
             }

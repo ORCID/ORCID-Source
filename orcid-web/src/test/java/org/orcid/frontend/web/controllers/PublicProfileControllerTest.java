@@ -29,15 +29,14 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.jaxb.model.common.Iso3166Country;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc2.record.Biography;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Keyword;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
@@ -203,8 +202,6 @@ public class PublicProfileControllerTest extends DBUnitTest {
         ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, lockedUserOrcid);
         Map<String, Object> model = mav.getModel();
         assertUnavailableProfileBasicData(mav, lockedUserOrcid, displayName);    
-        assertTrue(model.containsKey("locked"));
-        assertTrue(Boolean.TRUE.equals(model.get("locked")));
     }
     
     @Test
@@ -212,10 +209,6 @@ public class PublicProfileControllerTest extends DBUnitTest {
         ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, deprecatedUserOrcid);
         Map<String, Object> model = mav.getModel();
         assertUnavailableProfileBasicData(mav, deprecatedUserOrcid, null);
-        assertTrue(model.containsKey("deprecated"));
-        assertTrue(Boolean.TRUE.equals(model.get("deprecated")));
-        assertTrue(model.containsKey("primaryRecord"));
-        assertEquals("0000-0000-0000-0003", model.get("primaryRecord"));
     }
     
     @Test
@@ -308,7 +301,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     }
     
     private void assertUnavailableProfileBasicData(ModelAndView mav, String orcid, String displayName) {
-        assertEquals("public_profile_unavailable", mav.getViewName());
+        assertEquals("public_profile_v3", mav.getViewName());
         PublicRecordPersonDetails personDetails = publicProfileController.getPersonDetails(orcid);
         Map<String, Object> model = mav.getModel();
         assertTrue(model.containsKey("effectiveUserOrcid"));

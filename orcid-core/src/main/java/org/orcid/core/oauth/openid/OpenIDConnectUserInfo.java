@@ -1,7 +1,7 @@
 package org.orcid.core.oauth.openid;
 
-import org.orcid.jaxb.model.v3.rc2.record.Person;
-import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.release.record.Person;
+import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 
 public class OpenIDConnectUserInfo {
     

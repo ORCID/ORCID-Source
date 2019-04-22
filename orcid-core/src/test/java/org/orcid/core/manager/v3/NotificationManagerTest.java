@@ -59,15 +59,15 @@ import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common.AvailableLocales;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.notification.Notification;
-import org.orcid.jaxb.model.v3.rc2.notification.NotificationType;
-import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.rc2.notification.permission.NotificationPermissions;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.model.v3.rc2.notification.institutional_sign_in.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.notification.Notification;
+import org.orcid.jaxb.model.v3.release.notification.NotificationType;
+import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -596,17 +596,17 @@ public class NotificationManagerTest extends DBUnitTest {
     }
 
     @Test
-    public void processUnverifiedEmails7DaysTest() {
+    public void processUnverifiedEmails2DaysTest() {
         List<Pair<String, Date>> emails = new ArrayList<Pair<String, Date>>();
         Pair<String, Date> tooOld1 = Pair.of("tooOld1@test.orcid.org", LocalDateTime.now().minusDays(15).toDate());
         Pair<String, Date> tooOld2 = Pair.of("tooOld2@test.orcid.org", LocalDateTime.now().minusDays(20).toDate());
-        Pair<String, Date> ok1 = Pair.of("michael@bentine.com", LocalDateTime.now().minusDays(7).toDate());
-        Pair<String, Date> ok2 = Pair.of("spike@milligan.com", LocalDateTime.now().minusDays(14).toDate());
+        Pair<String, Date> ok1 = Pair.of("michael@bentine.com", LocalDateTime.now().minusDays(2).toDate());
+        Pair<String, Date> ok2 = Pair.of("spike@milligan.com", LocalDateTime.now().minusDays(4).toDate());
         emails.add(ok1);
         emails.add(ok2);
         emails.add(tooOld1);
         emails.add(tooOld2);
-        when(mockProfileDaoReadOnly.findEmailsUnverfiedDays(Matchers.anyInt(), Matchers.anyInt(), Matchers.any())).thenReturn(emails)
+        when(mockProfileDaoReadOnly.findEmailsUnverfiedDays(Matchers.anyInt(), Matchers.anyInt())).thenReturn(emails)
                 .thenReturn(new ArrayList<Pair<String, Date>>());
 
         when(mockEmailManager.findOrcidIdByEmail("tooOld1@test.orcid.org")).thenReturn("0000-0000-0000-0001");
@@ -622,10 +622,10 @@ public class NotificationManagerTest extends DBUnitTest {
         email.setEmail("email@email.fom");
         when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
 
-        notificationManager.processUnverifiedEmails7Days();
+        notificationManager.processUnverifiedEmails2Days();
 
-        verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("michael@bentine.com", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
-        verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("spike@milligan.com", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
+        verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("michael@bentine.com", EmailEventType.VERIFY_EMAIL_2_DAYS_SENT));
+        verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("spike@milligan.com", EmailEventType.VERIFY_EMAIL_2_DAYS_SENT));
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("tooOld1@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
         verify(mockEmailEventDao, times(1)).persist(new EmailEventEntity("tooOld2@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
     }

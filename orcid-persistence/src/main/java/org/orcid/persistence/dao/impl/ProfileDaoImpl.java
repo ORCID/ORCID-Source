@@ -17,11 +17,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
-import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -156,21 +156,17 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev) {
-        // @formatter:off
-		String queryStr = "SELECT e.email, e.date_created FROM email e "
-				+ "LEFT JOIN email_event ev ON e.email = ev.email "
-				+ "AND (ev.email_event_type = :evt or ev.email_event_type='VERIFY_EMAIL_7_DAYS_SENT_SKIPPED' or ev.email_event_type = 'VERIFY_EMAIL_TOO_OLD') "
-				+ "JOIN profile p on p.orcid = e.orcid and p.claimed = true "
-				+ "AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null "
-				+ "where ev.email IS NULL " + "and e.is_verified = false "
-				+ "and e.date_created < (now() - CAST('" + daysUnverified
-				+ "' AS INTERVAL DAY)) "
-				+ "and (e.source_id = e.orcid OR e.source_id is null)"
-				+ " ORDER BY e.last_modified";
-		// @formatter:on
-        Query query = entityManager.createNativeQuery(queryStr);
-        query.setParameter("evt", ev.name());
+    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults) {
+        StringBuilder queryString = new StringBuilder("SELECT e.email, e.date_created FROM email e ");
+        queryString.append("LEFT JOIN email_event ev ON e.email = ev.email ");
+        queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
+        queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
+        queryString.append("where ev.email IS NULL " + "and e.is_verified = false ");
+        queryString.append("and e.date_created < (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
+        queryString.append("and (e.source_id = e.orcid OR e.source_id is null)");
+        queryString.append(" ORDER BY e.last_modified");
+        
+        Query query = entityManager.createNativeQuery(queryString.toString());
         query.setMaxResults(maxResults);
         List<Object[]> dbInfo = query.getResultList();
         List<Pair<String, Date>> results = new ArrayList<Pair<String, Date>>();
@@ -819,6 +815,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid) {
         Query query = entityManager.createQuery("from OrcidGrantedAuthority where profileEntity.id = :orcid");
         query.setParameter("orcid", orcid);  
+        return query.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypes) {
+        Query query = entityManager.createQuery("from ProfileEventEntity where orcid = :orcid and type IN :types");
+        query.setParameter("orcid", orcid);  
+        query.setParameter("types", eventTypes);  
         return query.getResultList();
     }
 }

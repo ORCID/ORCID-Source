@@ -12,11 +12,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -47,15 +45,15 @@ import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.rc2.common.CreditName;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
-import org.orcid.jaxb.model.v3.rc2.notification.amended.AmendedSection;
-import org.orcid.jaxb.model.v3.rc2.record.Biography;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
-import org.orcid.jaxb.model.v3.rc2.record.FamilyName;
-import org.orcid.jaxb.model.v3.rc2.record.GivenNames;
-import org.orcid.jaxb.model.v3.rc2.record.Name;
+import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.FamilyName;
+import org.orcid.jaxb.model.v3.release.record.GivenNames;
+import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -134,7 +132,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
-   
+
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
 
@@ -158,16 +156,16 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-    
+
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
-    
+
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
-    
+
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
-    
+
     @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
@@ -298,85 +296,66 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void disableApplication(Long tokenId, String userOrcid) {
-        orcidOauth2TokenService.disableAccessToken(tokenId, userOrcid);
+    public void disableClientAccess(String clientDetailsId, String userOrcid) {
+        orcidOauth2TokenService.disableClientAccess(clientDetailsId, userOrcid);
     }
 
     @Override
     public List<ApplicationSummary> getApplications(String orcid) {
         List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
-        List<ApplicationSummary> applications = new ArrayList<ApplicationSummary>();
-        Map<Pair<String, Set<ScopePathType>>, ApplicationSummary> existingApplications = new HashMap<Pair<String, Set<ScopePathType>>, ApplicationSummary>();
-        if (tokenDetails != null && !tokenDetails.isEmpty()) {
-            for (OrcidOauth2TokenDetail token : tokenDetails) {
-                if (token.getTokenDisabled() == null || !token.getTokenDisabled()) {
-                    ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(token.getClientDetailsId());
-                    if (client != null) {
-                        ApplicationSummary applicationSummary = new ApplicationSummary();
-                        // Check the scopes
-                        Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
-                        Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
-                        String scopeFullPath = ScopePathType.class.getName() + ".";
-                        for (ScopePathType tempScope : scopesGrantedToClient) {
-                            try {
-                                scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
-                            } catch (NoSuchMessageException e) {
-                                LOGGER.warn("No message to display for scope " + tempScope.toString());
-                            }
-                        }
-                        // If there is at least one scope in this token, fill
-                        // the application summary element
-                        if (!scopePathMap.isEmpty()) {
-                            applicationSummary.setScopePaths(scopePathMap);
-                            applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());
-                            applicationSummary.setOrcidUri(orcidUrlManager.getBaseUrl() + "/" + client.getId());
-                            applicationSummary.setOrcidPath(client.getId());
-                            applicationSummary.setName(client.getClientName());
-                            applicationSummary.setWebsiteValue(client.getClientWebsite());
-                            applicationSummary.setApprovalDate(token.getDateCreated());
-                            applicationSummary.setTokenId(String.valueOf(token.getId()));
-                            // Add member information
-                            if (!PojoUtil.isEmpty(client.getGroupProfileId())) {
-                                ProfileEntity member = profileEntityCacheManager.retrieve(client.getGroupProfileId());
-                                applicationSummary.setGroupOrcidPath(member.getId());
-                                applicationSummary.setGroupName(getMemberDisplayName(member));
-                            }
-
-                            if (shouldBeAddedToTheApplicationsList(applicationSummary, scopesGrantedToClient, existingApplications)) {
-                                applications.add(applicationSummary);
-                            }
-                        }
-                    }
-                }
+        Map<String, ApplicationSummary> distinctApplications = new HashMap<>();
+        for (OrcidOauth2TokenDetail token : tokenDetails) {
+            if (token.getTokenDisabled() == null || !token.getTokenDisabled()) {
+                addApplicationToMap(token, distinctApplications);
             }
         }
-
+        List<ApplicationSummary> applications = new ArrayList<>();
+        for (String key : distinctApplications.keySet()) {
+            applications.add(distinctApplications.get(key));
+        }
+        
+        applications.sort((a1, a2) -> a1.getName().toLowerCase().compareTo(a2.getName().toLowerCase()));
         return applications;
     }
 
-    private boolean shouldBeAddedToTheApplicationsList(ApplicationSummary application, Set<ScopePathType> scopes,
-            Map<Pair<String, Set<ScopePathType>>, ApplicationSummary> existingApplications) {
-        boolean result = false;
-        Pair<String, Set<ScopePathType>> key = Pair.of(application.getOrcidPath(), scopes);
-        if (!existingApplications.containsKey(key)) {
-            result = true;
-        } else {
-            Date existingAppCreatedDate = existingApplications.get(key).getApprovalDate();
+    private void addApplicationToMap(OrcidOauth2TokenDetail token, Map<String, ApplicationSummary> distinctApplications) {
+        ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(token.getClientDetailsId());
+        if (client != null) {
+            ApplicationSummary applicationSummary = distinctApplications.get(client.getId());
+            if (applicationSummary != null) {
+                if (token.getDateCreated().before(applicationSummary.getApprovalDate())) {
+                    applicationSummary.setApprovalDate(token.getDateCreated());
+                }
+            } else {
+                applicationSummary = new ApplicationSummary();
+                distinctApplications.put(client.getId(), applicationSummary);
+                applicationSummary.setScopePaths(new HashMap<String, String>());
+                applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());
+                applicationSummary.setOrcidUri(orcidUrlManager.getBaseUrl() + "/" + client.getId());
+                applicationSummary.setOrcidPath(client.getId());
+                applicationSummary.setName(client.getClientName());
+                applicationSummary.setWebsiteValue(client.getClientWebsite());
+                applicationSummary.setApprovalDate(token.getDateCreated());
+                applicationSummary.setTokenId(String.valueOf(token.getId()));
 
-            // This case should never happen
-            if (existingAppCreatedDate == null) {
-                result = true;
+                if (!PojoUtil.isEmpty(client.getGroupProfileId())) {
+                    ProfileEntity member = profileEntityCacheManager.retrieve(client.getGroupProfileId());
+                    applicationSummary.setGroupOrcidPath(member.getId());
+                    applicationSummary.setGroupName(getMemberDisplayName(member));
+                }
             }
 
-            if (application.getApprovalDate().before(existingAppCreatedDate)) {
-                result = true;
+            Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
+            String scopeFullPath = ScopePathType.class.getName() + ".";
+            for (ScopePathType tempScope : scopesGrantedToClient) {
+                try {
+                    String label = localeManager.resolveMessage(scopeFullPath + tempScope.toString());
+                    applicationSummary.getScopePaths().put(label, label);
+                } catch (NoSuchMessageException e) {
+                    LOGGER.warn("No message to display for scope " + tempScope.toString());
+                }
             }
         }
-
-        if (result) {
-            existingApplications.put(key, application);
-        }
-        return result;
     }
 
     private String getMemberDisplayName(ProfileEntity member) {
@@ -414,9 +393,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         }
         try {
             return encryptionManager.sha256Hash(string);
-        } catch(NoSuchAlgorithmException nsae) {
+        } catch (NoSuchAlgorithmException nsae) {
             throw new RuntimeException(nsae);
-        }        
+        }
     }
 
     @Override
@@ -507,22 +486,22 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             }
         }
         profileDao.merge(profile);
-        profileDao.flush();        
-        
-        if(!emailFrequencyManager.emailFrequencyExists(orcid)) {
-            if(claim.getSendOrcidNews() == null) {
+        profileDao.flush();
+
+        if (!emailFrequencyManager.emailFrequencyExists(orcid)) {
+            if (claim.getSendOrcidNews() == null) {
                 emailFrequencyManager.createOnClaim(orcid, false);
             } else {
                 emailFrequencyManager.createOnClaim(orcid, claim.getSendOrcidNews().getValue());
-            }            
+            }
         } else {
-            if(claim.getSendOrcidNews() == null) {
+            if (claim.getSendOrcidNews() == null) {
                 emailFrequencyManager.updateSendQuarterlyTips(orcid, false);
             } else {
                 emailFrequencyManager.updateSendQuarterlyTips(orcid, claim.getSendOrcidNews().getValue());
-            }    
+            }
         }
-        
+
         return true;
     }
 
@@ -533,64 +512,66 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public boolean isProfileClaimedByEmail(String email) {
-        return profileDao.getClaimedStatusByEmailHash(encryptionManager.getEmailHash(email));        
+        return profileDao.getClaimedStatusByEmailHash(encryptionManager.getEmailHash(email));
     }
-    
+
     @Override
-    public void reactivate(String orcid, String primaryEmail, Reactivation reactivation) {  
+    public void reactivate(String orcid, String primaryEmail, Reactivation reactivation) {
         ArrayList<String> emailsToNotify = new ArrayList<String>();
-        // Null reactivation object means the reactivation request comes from an admin
+        // Null reactivation object means the reactivation request comes from an
+        // admin
         transactionTemplate.execute(new TransactionCallback<Boolean>() {
             @Override
             public Boolean doInTransaction(TransactionStatus status) {
-                LOGGER.info("About to reactivate record, orcid={}", orcid);                
+                LOGGER.info("About to reactivate record, orcid={}", orcid);
                 // Populate primary email
-                String primaryEmailTrim = primaryEmail.trim();                    
+                String primaryEmailTrim = primaryEmail.trim();
                 emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim);
-                if(reactivation == null) {
+                if (reactivation == null) {
                     // Delete any non primary email
-                    emailManager.clearEmailsAfterReactivation(orcid);                    
+                    emailManager.clearEmailsAfterReactivation(orcid);
                 } else {
                     // Populate additional emails
-                    if(reactivation.getEmailsAdditional() != null && !reactivation.getEmailsAdditional().isEmpty()) {
-                        for(Text additionalEmail : reactivation.getEmailsAdditional()) {
-                            if(!PojoUtil.isEmpty(additionalEmail)) {
-                                String email = additionalEmail.getValue().trim();                                
-                                boolean isNewEmailOrShouldNotify = emailManager.reactivateOrCreate(orcid, email, reactivation.getActivitiesVisibilityDefault().getVisibility());                                      
-                                if(isNewEmailOrShouldNotify) {
+                    if (reactivation.getEmailsAdditional() != null && !reactivation.getEmailsAdditional().isEmpty()) {
+                        for (Text additionalEmail : reactivation.getEmailsAdditional()) {
+                            if (!PojoUtil.isEmpty(additionalEmail)) {
+                                String email = additionalEmail.getValue().trim();
+                                boolean isNewEmailOrShouldNotify = emailManager.reactivateOrCreate(orcid, email,
+                                        reactivation.getActivitiesVisibilityDefault().getVisibility());
+                                if (isNewEmailOrShouldNotify) {
                                     emailsToNotify.add(email);
                                 }
-                            }                
+                            }
                         }
                     }
                     // Delete any non populated email
-                    emailManager.clearEmailsAfterReactivation(orcid);                    
+                    emailManager.clearEmailsAfterReactivation(orcid);
                 }
-                
+
                 // Reactivate user
                 ProfileEntity profileEntity = profileDao.find(orcid);
                 profileEntity.setDeactivationDate(null);
                 profileEntity.setClaimed(true);
-                if(reactivation != null) {
+                if (reactivation != null) {
                     profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(reactivation.getPassword().getValue()));
                     profileEntity.setActivitiesVisibilityDefault(reactivation.getActivitiesVisibilityDefault().getVisibility().name());
                     RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
                     recordNameEntity.setGivenNames(reactivation.getGivenNames().getValue());
-                    recordNameEntity.setFamilyName(reactivation.getFamilyNames().getValue());                    
+                    recordNameEntity.setFamilyName(reactivation.getFamilyNames().getValue());
                 }
-                profileDao.merge(profileEntity);               
+                profileDao.merge(profileEntity);
                 LOGGER.info("Record orcid={} successfully reactivated", orcid);
                 return true;
-            }            
+            }
         });
-        
+
         // Notify any new email address
-        if(!emailsToNotify.isEmpty()) {
-            for(String emailToNotify: emailsToNotify) {
+        if (!emailsToNotify.isEmpty()) {
+            for (String emailToNotify : emailsToNotify) {
                 notificationManager.sendVerificationEmail(orcid, emailToNotify);
             }
         }
-        
+
     }
 
     @Override
@@ -678,8 +659,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
         // Remove peer reviews
         peerReviewManager.removeAllPeerReviews(orcid);
-        
-        // Research resource 
+
+        // Research resource
         researchResourceManager.removeAllResearchResources(orcid);
 
         // Remove addresses
@@ -696,13 +677,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
         // Remove keywords
         profileKeywordManager.removeAllKeywords(orcid);
-        
+
         // disable 2FA
         twoFactorAuthenticationManager.disable2FA(orcid);
-        
+
         // delete notifications
         notificationManager.deleteNotificationsForRecord(orcid);
-        
+
         // remove trusted individuals
         givenPermissionToManager.removeAllForProfile(orcid);
 
@@ -738,5 +719,5 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         if (updated) {
             profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, orcid, "deactivated/deprecated");
         }
-    }    
+    }
 }

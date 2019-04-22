@@ -14,9 +14,9 @@ import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.v3.rc2.common.Contributor;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.Work;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Joiner;

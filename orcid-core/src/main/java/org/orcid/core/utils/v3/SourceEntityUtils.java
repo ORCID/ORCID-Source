@@ -3,10 +3,11 @@ package org.orcid.core.utils.v3;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.v3.rc2.common.Source;
-import org.orcid.jaxb.model.v3.rc2.common.SourceClientId;
-import org.orcid.jaxb.model.v3.rc2.common.SourceName;
-import org.orcid.jaxb.model.v3.rc2.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.SourceName;
+import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
@@ -100,9 +101,27 @@ public class SourceEntityUtils {
         return source;
     }
     
+    public static Source extractSourceFromProfileComplete(ProfileEntity profile, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager) {
+        Source source = new Source();
+        SourceEntity entity = profile.getSource();
+        if (entity.getSourceProfile() != null) {
+            source.setSourceOrcid(new SourceOrcid(entity.getSourceProfile().getId()));
+        }
+        if (entity.getSourceClient() != null) {
+            source.setSourceClientId(new SourceClientId(entity.getSourceClient().getId()));
+        }
+        populateSource(source, sourceNameCacheManager, orcidUrlManager);
+        return source;
+    }
+    
     public static Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager) {
         Source s = extractSourceFromEntity(b);
-        //Set the source
+        populateSource(s, sourceNameCacheManager, orcidUrlManager);
+        return s;
+    }
+    
+    public static void populateSource(Source s, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager) {
+      //Set the source
         if(s.getSourceOrcid() != null && s.getSourceOrcid().getPath() != null) {
             s.getSourceOrcid().setHost(orcidUrlManager.getBaseHost());
             s.getSourceOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + s.getSourceOrcid().getPath());
@@ -136,8 +155,8 @@ public class SourceEntityUtils {
                 s.setAssertionOriginName(new SourceName(sourceNameValue));
             }
         } 
-        return s;
     }
+    
     //=================================
     //utils to help refactoring for OBO
     //=================================

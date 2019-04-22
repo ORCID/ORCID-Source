@@ -11,7 +11,7 @@ import { downgradeComponent, UpgradeModule }
     from '@angular/upgrade/static';
 
 //In the end only emailUnverifiedWarningNg2 should remain
-import { EmailUnverifiedWarningComponent } from './emailUnverifiedWarning.component.ts';
+import { EmailUnverifiedWarningComponent } from './emailUnverifiedWarning.component';
 
 // This is the Angular 1 part of the module
 export const EmailUnverifiedWarningModule = angular.module(

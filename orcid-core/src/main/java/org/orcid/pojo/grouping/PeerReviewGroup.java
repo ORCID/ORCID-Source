@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 
 public class PeerReviewGroup implements Serializable {
@@ -62,7 +62,7 @@ public class PeerReviewGroup implements Serializable {
         this.type = type;
     }
 
-    public static PeerReviewGroup getInstance(org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewGroup peerReviewGroup, GroupIdRecord groupIdRecord) {
+    public static PeerReviewGroup getInstance(org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup peerReviewGroup, GroupIdRecord groupIdRecord) {
         String groupName = groupIdRecord != null && groupIdRecord.getName() != null ? groupIdRecord.getName() : "";
         String groupDescription = groupIdRecord != null && groupIdRecord.getDescription() != null ? groupIdRecord.getDescription() : "";
         String type = groupIdRecord != null && groupIdRecord.getType() != null ? groupIdRecord.getType() : "";
@@ -74,7 +74,7 @@ public class PeerReviewGroup implements Serializable {
         group.setGroupId(groupIdRecord.getPutCode());
         group.setPeerReviewDuplicateGroups(new ArrayList<>());
 
-        for (org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewGroup()) {
+        for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewGroup()) {
             int highestDisplayIndex = 0;
             PeerReviewDuplicateGroup duplicateGroupPojo = new PeerReviewDuplicateGroup();
             duplicateGroupPojo.setPeerReviews(new ArrayList<>());

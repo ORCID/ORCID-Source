@@ -5,7 +5,7 @@ import javax.annotation.Resource;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.manager.v3.WorksCacheManager;
-import org.orcid.jaxb.model.v3.rc2.record.summary.Works;
+import org.orcid.jaxb.model.v3.release.record.summary.Works;
 
 public class WorksCacheManagerImpl implements WorksCacheManager {
     

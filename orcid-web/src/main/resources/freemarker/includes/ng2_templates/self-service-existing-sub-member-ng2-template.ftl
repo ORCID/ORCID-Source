@@ -7,7 +7,7 @@
         </p>
         
         <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text2'/></p>
-        <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text3'/> <button class="btn btn-white-no-border" (click)="closeModalReload()"><@orcid.msg 'freemarker.btncancel'/></button> <@orcid.msg 'manage_consortium.add_submember_existing_org_text4'/> <a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
+        <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text3'/> <button class="btn btn-white-no-border" (click)="closeModalReload()"><@orcid.msg 'freemarker.btncancel'/></button> <@orcid.msg 'manage_consortium.add_submember_existing_org_text4'/> <a href="<@spring.message "manage_consortium.support"/>"><@spring.message "manage_consortium.support"/></a></p>
         <form (submit)="addSubMember()">
             <button class="btn btn-danger"><@orcid.msg 'freemarker.btncontinue'/></button>
             <button (click)="closeModal()" class="btn btn-white-no-border cancel-option"><@orcid.msg 'freemarker.btncancel'/></button>

@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -30,5 +31,13 @@ public interface AddressDao extends GenericDao<AddressEntity, Long> {
     void removeAllAddress(String orcid);
 
     List<AddressEntity> getPublicAddresses(String orcid, long lastModified);
+
+    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<BigInteger> ids);
+
+    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<BigInteger> ids);
     
 }

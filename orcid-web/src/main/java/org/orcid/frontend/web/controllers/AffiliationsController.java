@@ -13,17 +13,17 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.v3.rc2.record.Affiliation;
-import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc2.record.Distinction;
-import org.orcid.jaxb.model.v3.rc2.record.Education;
-import org.orcid.jaxb.model.v3.rc2.record.Employment;
-import org.orcid.jaxb.model.v3.rc2.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.rc2.record.Membership;
-import org.orcid.jaxb.model.v3.rc2.record.Qualification;
-import org.orcid.jaxb.model.v3.rc2.record.Service;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Distinction;
+import org.orcid.jaxb.model.v3.release.record.Education;
+import org.orcid.jaxb.model.v3.release.record.Employment;
+import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.release.record.Membership;
+import org.orcid.jaxb.model.v3.release.record.Qualification;
+import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -115,11 +115,11 @@ public class AffiliationsController extends BaseWorkspaceController {
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
 
         Visibility v = null;
-        org.orcid.jaxb.model.v3.rc2.common.Visibility defaultVis = null;
+        org.orcid.jaxb.model.v3.release.common.Visibility defaultVis = null;
         if (profile.getActivitiesVisibilityDefault() != null) {
-            defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            defaultVis = org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
         } else {
-            defaultVis = org.orcid.jaxb.model.v3.rc2.common.Visibility.valueOf(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().name());
+            defaultVis = org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility().name());
         }
         v = Visibility.valueOf(defaultVis);
         affiliationForm.setVisibility(v);
@@ -326,7 +326,7 @@ public class AffiliationsController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
     public @ResponseBody AffiliationForm updateAffiliationVisibility(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
-        org.orcid.jaxb.model.v3.rc2.common.Visibility visibility = org.orcid.jaxb.model.v3.rc2.common.Visibility
+        org.orcid.jaxb.model.v3.release.common.Visibility visibility = org.orcid.jaxb.model.v3.release.common.Visibility
                 .fromValue(affiliation.getVisibility().getVisibility().value());
         affiliationsManager.updateVisibility(getEffectiveUserOrcid(), Long.valueOf(affiliation.getPutCode().getValue()), visibility);
         return affiliation;
@@ -342,7 +342,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         ArrayList<Long> affIds = new ArrayList<Long>();
         for (String affId : affiliationIdsStr.split(","))
             affIds.add(new Long(affId));
-        affiliationsManager.updateVisibilities(orcid, affIds, org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(visibilityStr));
+        affiliationsManager.updateVisibilities(orcid, affIds, org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(visibilityStr));
         return affIds;
     }
 

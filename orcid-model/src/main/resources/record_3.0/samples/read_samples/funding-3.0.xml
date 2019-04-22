@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<funding:funding put-code="0" visibility="private"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:funding="http://www.orcid.org/ns/funding"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/funding ../funding-3.0.xsd ">   
+	<common:created-date>2001-12-31T12:00:00</common:created-date>
+	<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+	<common:source>
+		<common:source-orcid>
+			<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:source-orcid>
+		<common:source-name />
+	</common:source>	 
+	<funding:type>grant</funding:type>
+	<funding:organization-defined-type>funding:organization-defined-type</funding:organization-defined-type>
+	<funding:title>
+		<common:title>common:title</common:title>
+		<common:translated-title language-code="en">common:translated-title</common:translated-title>
+	</funding:title>
+	<funding:short-description>funding:short-description</funding:short-description>
+	<funding:amount currency-code="ADP">1234</funding:amount>
+	<common:url>http://tempuri.org</common:url>
+	<common:start-date>
+		<common:year>1948</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</common:start-date>
+	<common:end-date>
+		<common:year>1948</common:year>
+		<common:month>02</common:month>
+		<common:day>02</common:day>
+	</common:end-date>
+	<common:external-ids>
+		<common:external-id>
+			<common:external-id-type>grant_number</common:external-id-type>
+			<common:external-id-value>funding:external-identifier-value</common:external-id-value>			
+			<common:external-id-url>http://tempuri.org</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+		<common:external-id>
+			<common:external-id-type>grant_number</common:external-id-type>
+			<common:external-id-value>funding:external-identifier-value2</common:external-id-value>			
+			<common:external-id-url>http://tempuri.org/2</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+	</common:external-ids>
+	<funding:contributors>
+		<funding:contributor>
+			<common:contributor-orcid>
+				<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:contributor-orcid>
+			<funding:credit-name>funding:credit-name</funding:credit-name>
+			<funding:contributor-email>funding@contributor.email</funding:contributor-email>
+			<funding:contributor-attributes>
+				<funding:contributor-role>lead</funding:contributor-role>
+			</funding:contributor-attributes>
+		</funding:contributor>
+	</funding:contributors>
+	<common:organization>
+		<common:name>common:name</common:name>
+		<common:address>
+			<common:city>common:city</common:city>
+			<common:region>common:region</common:region>
+			<common:country>AF</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+            <common:disambiguated-organization-identifier>http://dx.doi.org/10.13039/100000001</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>FUNDREF</common:disambiguation-source>
+        </common:disambiguated-organization>
+	</common:organization>	
+</funding:funding>

@@ -2,7 +2,7 @@ package org.orcid.core.utils.v3.activities;
 
 import java.util.Comparator;
 
-import org.orcid.jaxb.model.v3.rc2.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 
 public class GroupableActivityComparator implements Comparator<GroupableActivity> {
 

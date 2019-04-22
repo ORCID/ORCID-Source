@@ -9,13 +9,13 @@ import java.util.List;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common.Relationship;
-import org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.rc2.common.Url;
-import org.orcid.jaxb.model.v3.rc2.record.AffiliationType;
-import org.orcid.jaxb.model.v3.rc2.record.ExternalID;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.rc2.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
 
 public class AffiliationGroupFormTest extends AffiliationFormTestBase {
 
@@ -106,7 +106,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
         AffiliationSummary aff1 = getAffiliationSummary();
         aff1.setDisplayIndex("001");
         aff1.setPutCode(1L);
-        aff1.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC);
+        aff1.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
         return aff1;
     }
     
@@ -114,7 +114,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
         AffiliationSummary aff2 = getAffiliationSummary();
         aff2.setDisplayIndex("002");
         aff2.setPutCode(2L);
-        aff2.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED);        
+        aff2.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.LIMITED);        
         return aff2;
     }
     
@@ -124,7 +124,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
         affForm.setPutCode(Text.valueOf(2L));
         
         Visibility v = new Visibility();
-        v.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.LIMITED);
+        v.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.LIMITED);
         affForm.setVisibility(v);
         
         ActivityExternalIdentifier e1 = new ActivityExternalIdentifier();
@@ -143,7 +143,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
         affForm.setPutCode(Text.valueOf(1L));
         
         Visibility v = new Visibility();
-        v.setVisibility(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC);
+        v.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
         affForm.setVisibility(v);
         
         ActivityExternalIdentifier e1 = new ActivityExternalIdentifier();

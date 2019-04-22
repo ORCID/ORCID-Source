@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -457,9 +458,16 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
                 break;
             case "teddybass3private@semantico.com":
                 assertEquals("PRIVATE", email.getVisibility().name());
-                assertTrue(email.isPrimary());
+                assertFalse(email.isPrimary());
                 assertTrue(email.isVerified());
                 break;
+            case "peter@sellers.com":
+                assertEquals("PRIVATE", email.getVisibility().name());
+                assertTrue(email.isPrimary());
+                assertFalse(email.isVerified());
+                break;
+            default: 
+                fail("Invalid email found: " + email.getValue());
             }
            
             assertTrue(email.isCurrent());

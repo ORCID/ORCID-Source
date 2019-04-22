@@ -14,7 +14,7 @@ import { takeUntil }
     from 'rxjs/operators';
    
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service'; 
     
 @Component({
     selector: 'authorize-delegate-result-ng2',
@@ -48,4 +48,8 @@ export class AuthorizeDelegateResultComponent implements OnDestroy, OnInit {
             this.wrongLink = true;
         }        
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

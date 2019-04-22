@@ -13,10 +13,10 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { FundingService } 
-    from '../../shared/funding.service.ts';
+    from '../../shared/funding.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 @Component({
     selector: 'funding-delete-ng2',

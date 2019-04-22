@@ -62,10 +62,24 @@ public class FundingComparators {
         
         return f1.getFundingType().getValue().compareTo(f2.getFundingType().getValue());
     };
+    
+    public static Comparator<FundingGroup> END_DATE_COMPARATOR = (g1, g2) -> {
+        if (g1.getEndDate() == null && g2.getEndDate() == null)
+            return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
+        //Null = to present and should sort first
+        if (g1.getEndDate() == null)
+            return 1;
+        if (g2.getEndDate() == null)
+            return -1;
+        if (g1.getEndDate().compareTo(g2.getEndDate()) == 0){
+            return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
+        }
+        return g1.getEndDate().compareTo(g2.getEndDate());
+    };
 
     public static Comparator<FundingGroup> DATE_COMPARATOR = (g1, g2) -> {
         if (g1.getStartDate() == null && g2.getStartDate() == null) {
-            return TITLE_COMPARATOR.compare(g1, g2);
+            return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
         }
         if (g1.getStartDate() == null) {
             return -1;
@@ -74,6 +88,10 @@ public class FundingComparators {
         if (g2.getStartDate() == null) {
             return 1;
         }
+        if (g1.getStartDate().compareTo(g2.getStartDate()) == 0){
+            return END_DATE_COMPARATOR.compare(g1, g2);
+        }
         return g1.getStartDate().compareTo(g2.getStartDate());
     };
+
 }

@@ -16,23 +16,23 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { DiscoService } 
-    from '../../shared/disco.service.ts'; 
+    from '../../shared/disco.service'; 
 
 import { OauthService } 
-    from '../../shared/oauth.service.ts'; 
+    from '../../shared/oauth.service'; 
 
 import { WidgetService } 
-    from '../../shared/widget.service.ts'; 
+    from '../../shared/widget.service'; 
 
-
+import { CommonService } 
+    from '../../shared/common.service.ts';  
+    
 @Component({
     selector: 'link-account-ng2',
     template:  scriptTmpl("link-account-ng2-template")
 })
 export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-
-    //@Input() entityId: any;
 
     authorizationForm: any;
     entityId: any;
@@ -45,6 +45,7 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
     showDeactivatedError: any;
     showReactivationSent: any;
     initReactivationRequest: any;
+    assetsPath: String;
     registration: boolean;
     socialSignin: boolean;
     shibbolethSignin: boolean;    
@@ -55,6 +56,7 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         private discoService: DiscoService,
         private oauthService: OauthService,
         private widgetService: WidgetService,
+        private commonSrvc: CommonService,
         private cdr:ChangeDetectorRef
     ) {
         window['angularComponentReference'] = {
@@ -71,6 +73,15 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showDeactivatedError = false;
         this.showReactivationSent = false;
         this.initReactivationRequest = { "email":null, "error":null, "success":false };
+        this.commonSrvc.configInfo$
+        .subscribe(
+            data => {
+                this.assetsPath = data.messages['STATIC_PATH'];
+            },
+            error => {
+                console.log('linkAccount.component.ts: unable to fetch configInfo', error);                
+            } 
+        );
     }
 
     loadDiscoFeed = function() {
@@ -215,4 +226,8 @@ export class LinkAccountComponent implements AfterViewInit, OnDestroy, OnInit {
             userName:  {value: ""}
         } 
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

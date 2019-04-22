@@ -3,6 +3,7 @@ declare var $: any;
 declare var colorbox: any;
 declare var contains: any;
 declare var getBaseUri: any;
+declare var getBaseUriHttps: any;
 declare var isMobile: any;
 declare var logAjaxError: any;
 declare var om: any;

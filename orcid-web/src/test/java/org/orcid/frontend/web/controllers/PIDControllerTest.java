@@ -24,7 +24,7 @@ public class PIDControllerTest extends BaseControllerTest{
     @Test
     public void testNorm(){
         ResponseEntity<PIDPojo> norm = controller.getNormalized("doi", "10.1/123");
-        assertEquals("https://doi.org/10.1%2F123",norm.getBody().getNormUrl());
+        assertEquals("https://doi.org/10.1/123",norm.getBody().getNormUrl());
         assertEquals("10.1/123",norm.getBody().getNormValue());
         
         ResponseEntity<PIDPojo> norm2 = controller.getNormalized("issn", "ISSN: 1234-1234");

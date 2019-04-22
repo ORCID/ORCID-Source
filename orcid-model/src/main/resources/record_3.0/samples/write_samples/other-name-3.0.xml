@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<other-name:other-name xmlns:other-name="http://www.orcid.org/ns/other-name"
+	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/other-name ../other-name-3.0.xsd ">	
+	<other-name:content>Other Name</other-name:content>
+</other-name:other-name>	

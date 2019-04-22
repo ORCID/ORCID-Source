@@ -110,7 +110,7 @@ For this test there is a fair amount of set up. You need to have a Consortium Le
 57. Go to https://qa.orcid.org/signin and sign in with
 
 		0000-0003-0641-4661
-		Password: test1234. Check that there is a tab 'MEMBER TOOLS'
+		Password: *QA password*. Check that there is a tab 'MEMBER TOOLS'
 		
 58. Click on the 'MEMBER TOOLS' tab, and check the page loads
 
@@ -137,7 +137,7 @@ For this test there is a fair amount of set up. You need to have a Consortium Le
 
 		Sign in with
 		0000-0001-5870-8499
-		test1234
+		*QA password*
 		
 63. Go to https://qa.orcid.org/self-service
 

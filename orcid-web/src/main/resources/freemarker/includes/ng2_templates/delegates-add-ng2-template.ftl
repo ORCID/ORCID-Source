@@ -33,7 +33,7 @@
           <button class="btn btn-white-no-border" (click)="closeModal()"><@orcid.msg 'freemarker.btnclose'/></button>
        </div>
        <div *ngIf="!(effectiveUserOrcid === delegateToAdd)">
-          <p>{{delegateNameToAdd}} (<a href="${baseUri}/{{delegateToAdd}}" target="delegateToAdd">${baseUri}/{{delegateToAdd}}</a>)</p>
+          <p>{{delegateNameToAdd}} (<a href="{{getBaseUri()}}/{{delegateToAdd}}" target="delegateToAdd">{{getBaseUri()}}/{{delegateToAdd}}</a>)</p>
           <form (ngSubmit)="addDelegate()">
               <div *ngIf="isPasswordConfirmationRequired">
                   <h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>

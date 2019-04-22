@@ -1,9 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -18,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
@@ -26,7 +22,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -34,9 +29,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.InternalSSOManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -54,23 +47,23 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.v3.rc2.record.Address;
-import org.orcid.jaxb.model.v3.rc2.record.Addresses;
-import org.orcid.jaxb.model.v3.rc2.record.Biography;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
-import org.orcid.jaxb.model.v3.rc2.record.Keyword;
-import org.orcid.jaxb.model.v3.rc2.record.Keywords;
-import org.orcid.jaxb.model.v3.rc2.record.Name;
-import org.orcid.jaxb.model.v3.rc2.record.OtherName;
-import org.orcid.jaxb.model.v3.rc2.record.OtherNames;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.rc2.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.rc2.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
+import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.ajaxForm.Checkbox;
@@ -81,14 +74,10 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
-import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.ReleaseNameUtils;
-import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -96,14 +85,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BaseController {
     
-    private static final Locale defaultLocale = Locale.US;
-
     String[] urlValschemes = { "http", "https", "ftp" }; // DEFAULT schemes =
                                                          // "http", "https",
                                                          // "ftp"
@@ -112,17 +98,9 @@ public class BaseController {
     String[] redirectUriSchemes = { "http", "https" };
     UrlValidator redirectUriValidator = new RedirectUriValidator(redirectUriSchemes);
 
-    private String devSandboxUrl;
-
     private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
     private String aboutUri;    
-
-    private boolean reducedFunctionalityMode;
-
-    private String maintenanceMessage;
-
-    private URL maintenanceHeaderUrl;
 
     private String googleAnalyticsTrackingId;
 
@@ -132,25 +110,15 @@ public class BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);    
 
-    private String staticContentPath;
-
-    private String staticCdnPath;
-
     @Resource
     private String cdnConfigFile;
 
     @Resource
     protected LocaleManager localeManager;
-
-    @Resource
-    protected OrcidProfileManager orcidProfileManager;
-
+    
     @Resource(name = "emailManagerV3")
     protected EmailManager emailManager;
     
-    @Resource
-    private StatisticsCacheManager statisticsCacheManager;
-
     @Resource
     protected OrcidUrlManager orcidUrlManager;
 
@@ -164,9 +132,6 @@ public class BaseController {
     private InternalSSOManager internalSSOManager;
     
     protected static final String EMPTY = "empty";
-
-    @Value("${org.orcid.recaptcha.web_site_key:}")
-    private String recaptchaWebKey;
     
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean shibbolethEnabled;
@@ -190,34 +155,14 @@ public class BaseController {
     private ResearcherUrlManagerReadOnly researcherUrlManagerReadOnly;    
 
     @Resource(name = "externalIdentifierManagerReadOnlyV3")
-    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
-    
-    @ModelAttribute("recaptchaWebKey")
-    public String getRecaptchaWebKey() {
-        return recaptchaWebKey;
-    }
-
-    public void setRecaptchaWebKey(String recaptchaWebKey) {
-        this.recaptchaWebKey = recaptchaWebKey;
-    }
-    
-    @ModelAttribute("shibbolethEnabled")
+    private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;    
+        
     public boolean isShibbolethEnabled() {
         return shibbolethEnabled;
     }
 
     public void setShibbolethEnabled(boolean shibbolethEnabled) {
         this.shibbolethEnabled = shibbolethEnabled;
-    }
-
-    @ModelAttribute("devSandboxUrl")
-    public String getDevSandboxUrl() {
-        return devSandboxUrl;
-    }
-
-    @Value("${org.orcid.frontend.web.devSandboxUrl:}")
-    public void setDevSandboxUrl(String devSandboxUrl) {
-        this.devSandboxUrl = devSandboxUrl;
     }
 
     @ModelAttribute("aboutUri")
@@ -230,16 +175,6 @@ public class BaseController {
         this.aboutUri = aboutUri;
     }
 
-    @ModelAttribute("reducedFunctionalityMode")
-    public boolean isReducedFunctionalityMode() {
-        return reducedFunctionalityMode;
-    }
-
-    @Value("${org.orcid.frontend.web.reducedFunctionalityMode:false}")
-    public void setReducedFunctionalityMode(boolean reducedFunctionalityMode) {
-        this.reducedFunctionalityMode = reducedFunctionalityMode;
-    }
-
     @ModelAttribute("googleAnalyticsTrackingId")
     public String getGoogleAnalyticsTrackingId() {
         return googleAnalyticsTrackingId;
@@ -250,37 +185,13 @@ public class BaseController {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
     }
 
-    @ModelAttribute("maintenanceMessage")
-    public String getMaintenanceMessage() {
-        if (maintenanceHeaderUrl != null) {
-            try {
-                String maintenanceHeader = IOUtils.toString(maintenanceHeaderUrl);
-                if (StringUtils.isNotBlank(maintenanceHeader)) {
-                    return maintenanceHeader;
-                }
-            } catch (IOException e) {
-                LOGGER.debug("Error reading maintenance header", e);
-            }
+    @ModelAttribute("sendEmailFrequencies")
+    public Map<String, String> retrieveEmailFrequenciesAsMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        for (SendEmailFrequency freq : SendEmailFrequency.values()) {
+            map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));                
         }
-        return maintenanceMessage;
-    }
-
-    /**
-     * Use maintenanceHeaderUrl instead
-     */
-    @Deprecated
-    @Value("${org.orcid.frontend.web.maintenanceMessage:}")
-    public void setMaintenanceMessage(String maintenanceMessage) {
-        this.maintenanceMessage = maintenanceMessage;
-    }
-
-    public URL getMaintenanceHeaderUrl() {
-        return maintenanceHeaderUrl;
-    }
-
-    @Value("${org.orcid.frontend.web.maintenanceHeaderUrl:}")
-    public void setMaintenanceHeaderUrl(URL maintenanceHeaderUrl) {
-        this.maintenanceHeaderUrl = maintenanceHeaderUrl;
+        return map;
     }
 
     @Value("${org.orcid.frontend.web.domainsAllowingRobotsAsWhiteSpaceSeparatedList:orcid.org}")
@@ -345,13 +256,10 @@ public class BaseController {
         if (userDetails == null) {
             return true;
         }
-        OrcidProfile orcidProfile = getEffectiveProfile();
-        if (orcidProfile == null) {
-            return true;
-        }
-        List<Email> emails = orcidProfile.getOrcidBio().getContactDetails().getEmail();
-        for (Email email : emails) {
-            if (decryptedEmail.equalsIgnoreCase(email.getValue())) {
+        String effectiveOrcid = getEffectiveUserOrcid();
+        Emails emails = emailManagerReadOnly.getEmails(effectiveOrcid);
+        for (Email email : emails.getEmails()) {
+            if (decryptedEmail.equalsIgnoreCase(email.getEmail())) {
                 return true;
             }
         }
@@ -372,37 +280,6 @@ public class BaseController {
     public boolean isPasswordConfirmationRequired() {
         return orcidSecurityManager.isPasswordConfirmationRequired();
     } 
-
-    @ModelAttribute("jsMessagesJson")
-    public String getJavascriptMessages(HttpServletRequest request) {
-        Locale locale = RequestContextUtils.getLocale(request);
-        org.orcid.pojo.Local lPojo = new org.orcid.pojo.Local();
-        lPojo.setLocale(locale.toString());
-        
-        ResourceBundle definitiveProperties = ResourceBundle.getBundle("i18n/javascript", defaultLocale, new UTF8Control());
-        Map<String, String> definitivePropertyMap = OrcidStringUtils.resourceBundleToMap(definitiveProperties);
-        
-        ResourceBundle resources = ResourceBundle.getBundle("i18n/javascript", locale, new UTF8Control());
-        Map<String, String> localPropertyMap = OrcidStringUtils.resourceBundleToMap(resources);
-        
-        if (!defaultLocale.equals(locale)) {
-            for (String propertyKey : definitivePropertyMap.keySet()) {
-                String property = localPropertyMap.get(propertyKey);
-                if (StringUtils.isBlank(property)) {
-                    localPropertyMap.put(propertyKey, definitivePropertyMap.get(propertyKey));
-                }
-            }
-        }
-
-        lPojo.setMessages(localPropertyMap);
-        String messages = "";
-        try {
-            messages = StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(lPojo));
-        } catch (IOException e) {
-            LOGGER.error("getJavascriptMessages error:" + e.toString(), e);
-        }
-        return messages;
-    }
 
     protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
         validateEmailAddress(email, true, false, request, bindingResult);
@@ -492,51 +369,33 @@ public class BaseController {
     }
 
     private boolean emailMatchesCurrentUser(String email) {
+        String effectiveOrcid = getEffectiveUserOrcid();
         OrcidProfileUserDetails currentUser = getCurrentUser();
         if (currentUser == null) {
             return false;
         }
         boolean match = false;
-        for (Email cuEmail : getEffectiveProfile().getOrcidBio().getContactDetails().getEmail()) {
-            if (cuEmail.getValue() != null && cuEmail.getValue().equalsIgnoreCase(email))
+        Emails emails = emailManagerReadOnly.getEmails(effectiveOrcid);
+        for (Email cuEmail : emails.getEmails()) {
+            if (cuEmail.getEmail() != null && cuEmail.getEmail().equalsIgnoreCase(email))
                 match = true;
         }
         return match;
-    }
-
-    public OrcidProfile getEffectiveProfile() {
-        String effectiveOrcid = getEffectiveUserOrcid();
-        return effectiveOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(effectiveOrcid);
     }
 
     public String getMessage(String messageCode, Object... messageParams) {
         return localeManager.resolveMessage(messageCode, messageParams);
     }
 
-    @ModelAttribute("locale")
-    public String getLocaleAsString() {
-        return localeManager.getLocale().toString();
-    }
-
     public Locale getLocale() {
         return localeManager.getLocale();
-    }
-
-    @ModelAttribute("liveIds")
-    public String getLiveIds() {
-        return statisticsCacheManager.retrieveLiveIds(localeManager.getLocale());
     }
 
     @ModelAttribute("baseUri")
     public String getBaseUri() {
         return orcidUrlManager.getBaseUrl();
     }
-
-    @ModelAttribute("pubBaseUri")
-    public String getPubBaseUri() {
-        return orcidUrlManager.getPubBaseUrl();
-    }
-
+    
     /**
      * 
      * CDN Configuration
@@ -550,70 +409,7 @@ public class BaseController {
         this.cdnConfigFile = cdnConfigFile;
     }
 
-    /**
-     * @return the path to the static content on local project
-     */
-    @ModelAttribute("staticLoc")
-    public String getStaticContentPath(HttpServletRequest request) {
-        if (StringUtils.isBlank(this.staticContentPath)) {
-            String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
-            generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
-            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
-            if (!request.isSecure()) {
-                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
-            }
-            this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
-        }
-        return this.staticContentPath;
-    }
-
-    /**
-     * Return the path where the static content will be. If there is a cdn path
-     * configured, it will return the cdn path; if it is not a cdn path it will
-     * return a reference to the static folder "/static"
-     * 
-     * @return the path to the CDN or the path to the local static content
-     */
-    @ModelAttribute("staticCdn")
-    @Cacheable("staticContent")
-    public String getStaticCdnPath(HttpServletRequest request) {
-        if (StringUtils.isEmpty(this.cdnConfigFile)) {
-            return getStaticContentPath(request);
-        }
-
-        ClassPathResource configFile = new ClassPathResource(this.cdnConfigFile);
-        if (configFile.exists()) {
-            try (InputStream is = configFile.getInputStream(); BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-                String uri = br.readLine();
-                if (uri != null) {
-                    String releaseVersion = ReleaseNameUtils.getReleaseName();
-                    if(!uri.contains(releaseVersion)) {
-                        if(!uri.endsWith("/")) {
-                            uri += '/';
-                        }
-                        uri += releaseVersion;
-                    }
-                    this.staticCdnPath = uri;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (StringUtils.isBlank(this.staticCdnPath))
-            return getStaticContentPath(request);
-        return staticCdnPath;
-    }
-
-    @ModelAttribute("baseDomainRmProtocall")
-    public String getBaseDomainRmProtocall() {
-        return orcidUrlManager.getBaseDomainRmProtocall();
-    }
-
-    @ModelAttribute("baseUriHttp")
-    public String getBaseUriHttp() {
-        return orcidUrlManager.getBaseUriHttp();
-    }
+    
 
     @ModelAttribute("basePath")
     public String getBasePath() {
@@ -756,17 +552,7 @@ public class BaseController {
         }
     }
 
-    @ModelAttribute("searchBaseUrl")
-    protected String createSearchBaseUrl() {
-        if(Features.HTTPS_IDS.isActive()) {
-            return getPubBaseUri() + "/v2.1/search/";
-        } else {
-            return getPubBaseUri() + "/v1.2/search/orcid-bio/";
-        }  
-        
-    }
-
-    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
+    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered) {
         String targetUrl = null;
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
@@ -778,7 +564,14 @@ public class BaseController {
             targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);            
         }
         
-        return targetUrl == null ? getBaseUri() + "/my-orcid" : targetUrl;
+        if (targetUrl == null) {
+            targetUrl = getBaseUri() + "/my-orcid";
+            if (justRegistered) {
+                targetUrl += "?justRegistered";
+            }
+        }
+        
+        return targetUrl;
     }
 
     protected void passwordConfirmValidate(Text passwordConfirm, Text password) {
@@ -787,6 +580,31 @@ public class BaseController {
         if (passwordConfirm.getValue() == null || !passwordConfirm.getValue().equals(password.getValue())) {
             setError(passwordConfirm, "FieldMatch.registrationForm");
         }
+    }
+
+    protected void passwordChecklistValidate(Text passwordConfirm, Text password) {
+        password.setErrors(new ArrayList<String>());
+        // validate password regex
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
+            password.getErrors().add("Pattern.registrationForm.password.eigthCharacters");
+        }
+
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_LETTER_OR_SYMBOL)) {
+            password.getErrors().add("Pattern.registrationForm.password.letterOrSymbol");
+        }
+
+        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_NUMBER)) {
+            password.getErrors().add("Pattern.registrationForm.password.oneNumber");
+        }
+        
+        if (CommonPasswords.passwordIsCommon(password.getValue())) {
+            setError(password, "password.too_common", password.getValue());
+        }
+
+        if (passwordConfirm.getValue() != null) {
+            passwordConfirmValidate(passwordConfirm, password);
+        }
+        
     }
 
     protected void passwordValidate(Text passwordConfirm, Text password) {
@@ -973,7 +791,7 @@ public class BaseController {
 
             if (publicPersonalDetails.getName() != null) {
                 Name name = publicPersonalDetails.getName();
-                if (!justPublic || name.getVisibility().equals(org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC)) {
+                if (!justPublic || name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
                     if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
                         displayName = name.getCreditName().getContent();
                     } else {
@@ -997,7 +815,7 @@ public class BaseController {
             // Get biography
             if (publicPersonalDetails.getBiography() != null) {
                 Biography bio = publicPersonalDetails.getBiography();
-                if (!justPublic || org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
+                if (!justPublic || org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(bio.getVisibility()) && !PojoUtil.isEmpty(bio.getContent())) {
                     publicRecordPersonDetails.setBiography(bio);
                 }
             }
@@ -1008,7 +826,7 @@ public class BaseController {
                 Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
                 while (it.hasNext()) {
                     OtherName otherName = it.next();
-                    if (justPublic && !org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.equals(otherName.getVisibility())) {
+                    if (justPublic && !org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(otherName.getVisibility())) {
                         it.remove();
                     }
                 }
@@ -1071,7 +889,7 @@ public class BaseController {
         } else {
             publicEmails = emailManagerReadOnly.getEmails(orcid);
         }        
-        Map<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>> groupedEmails = groupEmails(publicEmails);
+        Map<String, List<org.orcid.jaxb.model.v3.release.record.Email>> groupedEmails = groupEmails(publicEmails);
         publicRecordPersonDetails.setPublicGroupedEmails(groupedEmails);
 
         // Fill external identifiers
@@ -1146,16 +964,16 @@ public class BaseController {
 
     }
 
-    private Map<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>> groupEmails(Emails emails) {
+    private Map<String, List<org.orcid.jaxb.model.v3.release.record.Email>> groupEmails(Emails emails) {
         if (emails == null || emails.getEmails() == null) {
             return null;
         }
-        Map<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>> groups = new TreeMap<String, List<org.orcid.jaxb.model.v3.rc2.record.Email>>();
-        for (org.orcid.jaxb.model.v3.rc2.record.Email e : emails.getEmails()) {
+        Map<String, List<org.orcid.jaxb.model.v3.release.record.Email>> groups = new TreeMap<String, List<org.orcid.jaxb.model.v3.release.record.Email>>();
+        for (org.orcid.jaxb.model.v3.release.record.Email e : emails.getEmails()) {
             if (groups.containsKey(e.getEmail())) {
                 groups.get(e.getEmail()).add(e);
             } else {
-                List<org.orcid.jaxb.model.v3.rc2.record.Email> list = new ArrayList<org.orcid.jaxb.model.v3.rc2.record.Email>();
+                List<org.orcid.jaxb.model.v3.release.record.Email> list = new ArrayList<org.orcid.jaxb.model.v3.release.record.Email>();
                 list.add(e);
                 groups.put(e.getEmail(), list);
             }
@@ -1211,4 +1029,22 @@ public class BaseController {
         Locale locale = localeManager.getLocale();
         return localeManager.getCountries(locale);
     }
+    
+    //TODO: remove @ModelAttribute and move to HomeController
+    private String staticContentPath;
+    
+    @ModelAttribute("staticCdn")
+    public String getStaticContentPath(HttpServletRequest request) {
+        if (StringUtils.isBlank(this.staticContentPath)) {
+            String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
+            generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
+            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
+            if (!request.isSecure()) {
+                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
+            }
+            this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
+        }
+        return this.staticContentPath;
+    }
+    
 }

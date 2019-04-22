@@ -106,6 +106,7 @@ public class PasswordResetController extends BaseController {
     public @ResponseBody EmailRequest validateResetPasswordRequest(@RequestBody EmailRequest passwordResetRequest) {
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
+        passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
         }
@@ -122,6 +123,7 @@ public class PasswordResetController extends BaseController {
         }
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
+        passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
         if (!validateEmailAddress(passwordResetRequest.getEmail())) {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
@@ -149,7 +151,7 @@ public class PasswordResetController extends BaseController {
                 if (profile == null) {
                     String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " "
                             + getMessage("orcid.frontend.reset.password.email_not_found_2");
-                    message += "<a href=\"mailto:support@orcid.org\">";
+                    message += "<a href=\"https://orcid.org/help/contact-us\">";
                     message += getMessage("orcid.frontend.reset.password.email_not_found_3");
                     message += "</a>";
                     message += getMessage("orcid.frontend.reset.password.email_not_found_4");
@@ -194,9 +196,8 @@ public class PasswordResetController extends BaseController {
     @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)
     public @ResponseBody OneTimeResetPasswordForm resetPasswordConfirmValidate(@RequestBody OneTimeResetPasswordForm resetPasswordForm) {
         resetPasswordForm.setErrors(new ArrayList<String>());
-        if (resetPasswordForm.getPassword().getValue() == null || !resetPasswordForm.getPassword().getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(resetPasswordForm, "Pattern.registrationForm.password");
-        }
+
+        passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword());
 
         if (resetPasswordForm.getRetypedPassword() != null && !resetPasswordForm.getRetypedPassword().equals(resetPasswordForm.getPassword())) {
             setError(resetPasswordForm, "FieldMatch.registrationForm");
@@ -229,7 +230,7 @@ public class PasswordResetController extends BaseController {
         }
 
         passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
-        passwordValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
         if (!oneTimeResetPasswordForm.getPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
             return oneTimeResetPasswordForm;
         }
@@ -237,7 +238,7 @@ public class PasswordResetController extends BaseController {
         String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
 
-        String redirectUrl = calculateRedirectUrl(request, response);
+        String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         return oneTimeResetPasswordForm;
     }
@@ -331,7 +332,7 @@ public class PasswordResetController extends BaseController {
         } else if ("shibboleth".equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
-        String redirectUrl = calculateRedirectUrl(request, response);
+        String redirectUrl = calculateRedirectUrl(request, response, false);
         r.setUrl(redirectUrl);
         return r;
     }

@@ -1,11 +1,11 @@
 package org.orcid.core.manager.read_only.impl;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.EmailDao;
@@ -104,8 +103,17 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
     
     @Override
+    public Emails getVerifiedEmails(String orcid) {
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid, getLastModified(orcid));
+        if (entities == null) {
+            return new Emails();
+        }
+        return toEmails(entities.stream().filter(e -> e.getVerified()).collect(Collectors.toList()));
+    }
+    
+    @Override
     public Emails getPublicEmails(String orcid) {
-        List<EmailEntity> entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC.name());
+        List<EmailEntity> entities = emailDao.findPublicEmails(orcid, getLastModified(orcid));
         return toEmails(entities);
     }
     

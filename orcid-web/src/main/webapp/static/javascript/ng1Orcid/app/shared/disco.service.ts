@@ -11,12 +11,14 @@ import { catchError, map, tap }
     from 'rxjs/operators';
 
 import { CommonNg2Module }
-    from './../modules/common/common.ts';
+    from './../modules/common/common';
 
 import { WidgetService } 
-    from './widget.service.ts';
-
-@Injectable()
+    from './widget.service';
+    
+@Injectable({
+    providedIn: 'root',
+})
 export class DiscoService {
     
     private headers: HttpHeaders;
@@ -24,7 +26,6 @@ export class DiscoService {
     private widgetService: WidgetService;
     
     notifyObservable$ = this.notify.asObservable();
-
     
     constructor(private http: HttpClient){
         this.headers = new HttpHeaders(

@@ -11,7 +11,7 @@
                 <div class="pull-right">
                     <a (click)="archive(notification.putCode)" class="cancel"><@orcid.msg 'notifications.archive'/></a>
                     <a (click)="suppressAlert(notification.putCode)" class="cancel"><@orcid.msg 'notifications.alert_close'/></a>
-                    <a href="<@orcid.rootPath '/inbox'/>/{{notification.putCode}}/action?target={{notification.authorizationUrl.uri}}" (click)="archive(notification.putCode)" target="notifications.alert_link" class="btn btn-primary"><@orcid.msg 'notifications.alert_link'/></a>
+                    <a href="{{getBaseUri()}}/inbox/{{notification.putCode}}/action?target={{notification.authorizationUrl.uri}}" (click)="archive(notification.putCode)" target="notifications.alert_link" class="btn btn-primary"><@orcid.msg 'notifications.alert_link'/></a>
                 </div>  
             </div>
         </ng-container>

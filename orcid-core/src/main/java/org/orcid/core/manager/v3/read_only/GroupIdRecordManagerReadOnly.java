@@ -2,8 +2,8 @@ package org.orcid.core.manager.v3.read_only;
 
 import java.util.Optional;
 
-import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecords;
 
 public interface GroupIdRecordManagerReadOnly {
 

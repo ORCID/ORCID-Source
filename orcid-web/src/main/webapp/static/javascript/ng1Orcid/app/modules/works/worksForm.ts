@@ -9,17 +9,17 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 import { WorksFormComponent } 
-    from './worksForm.component.ts';
+    from './worksForm.component';
 
 import { WorksExternalIdFormComponent}
-    from './worksExternalIdForm.component.ts'
+    from './worksExternalIdForm.component'
 
 //User generated filters
 import { FilterImportWizardsPipe }
-    from '../../pipes/filterImportWizardsNg2.ts'; 
+    from '../../pipes/filterImportWizardsNg2'; 
 
 // This is the Angular 1 part of the module
 export const WorksFormModule = angular.module(
@@ -42,8 +42,7 @@ export const WorksFormModule = angular.module(
         imports: [
             CommonNg2Module,
         ],
-        providers: [
-        ]
+        
     }
 )
 export class WorksFormNg2Module {}

@@ -1,37 +1,31 @@
 declare var $: any;
-declare var ActSortState: any;
-declare var GroupedActivities: any;
 declare var openImportWizardUrl: any;
-declare var sortState: any;
-declare var typeahead: any;
 
 //Import all the angular components
-import { NgForOf, NgIf } 
-    from '@angular/common'; 
 
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ElementRef, Input, Output } 
     from '@angular/core';
 
-import { Observable, Subject, Subscription } 
+import { Subject, Subscription } 
     from 'rxjs';
 
 import { takeUntil } 
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { FundingService } 
-    from '../../shared/funding.service.ts';
+    from '../../shared/funding.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 import { WorkspaceService } 
-    from '../../shared/workspace.service.ts'; 
+    from '../../shared/workspace.service'; 
 
 @Component({
     selector: 'funding-ng2',
@@ -56,8 +50,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     privacyHelp: any;
     privacyHelpCurKey: any;
     showElement: any;
-    sortHideOption: boolean;
-    sortState: any;
+    sortAsc: boolean;
+    sortKey: string;
     fundingMoreInfo: any;
     wizardDescExpanded: any;
 
@@ -83,7 +77,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.privacyHelpCurKey = null;
         this.publicView = elementRef.nativeElement.getAttribute('publicView');
         this.showElement = {};
-        this.sortState = new ActSortState(GroupedActivities.FUNDING);
+        this.sortAsc = false;
+        this.sortKey = 'date';
         this.fundingMoreInfo = {};
         this.wizardDescExpanded = {};
     }
@@ -140,7 +135,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     getFundingGroups(): any {
         this.groups = new Array();
         if(this.publicView === "true") {
-            this.fundingService.getPublicFundingGroups(this.sortState.predicateKey, !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.fundingService.getPublicFundingGroups(this.sortKey, this.sortAsc).pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
@@ -154,7 +149,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         } else {
-            this.fundingService.getFundingGroups(this.sortState.predicateKey, !this.sortState.reverseKey[this.sortState.predicateKey]).pipe(    
+            this.fundingService.getFundingGroups(this.sortKey, this.sortAsc).pipe(    
                 takeUntil(this.ngUnsubscribe)
             )
             .subscribe(
@@ -397,7 +392,14 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     sort(key): void {       
-        this.sortState.sortBy(key);
+        if(key == this.sortKey){
+            this.sortAsc = !this.sortAsc;
+        } else {
+            if(key=='title' || key=='type'){
+                this.sortAsc = true;
+            }
+            this.sortKey = key;
+        }
         this.getFundingGroups();
     };
 
@@ -465,4 +467,8 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getFundingGroups();
         this.loadFundingImportWizards();
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

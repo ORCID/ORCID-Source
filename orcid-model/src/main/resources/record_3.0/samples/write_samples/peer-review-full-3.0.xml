@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<peer-review:peer-review xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:work="http://www.orcid.org/ns/work"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/peer-review ../../peer-review-3.0.xsd ">	
+	<peer-review:reviewer-role>reviewer</peer-review:reviewer-role>	
+	<peer-review:review-identifiers>	
+		<common:external-id>
+			<common:external-id-type>source-work-id</common:external-id-type>
+			<common:external-id-value>1234</common:external-id-value>			
+			<common:external-id-url>https://localsystem.org/1234</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>		
+	</peer-review:review-identifiers>
+	<peer-review:review-url>https://alt-url.com</peer-review:review-url>
+	<peer-review:review-type>review</peer-review:review-type>	
+	<peer-review:review-completion-date>
+		<common:year>2012</common:year>
+		<common:month>08</common:month>
+		<common:day>01</common:day>
+	</peer-review:review-completion-date>
+	<peer-review:review-group-id>issn:1741-4857</peer-review:review-group-id>
+	<peer-review:subject-external-identifier>			
+		<common:external-id-type>doi</common:external-id-type>
+		<common:external-id-value>10.1087/20120404</common:external-id-value>			
+		<common:external-id-url>https://doi.org/10.1087/20120404</common:external-id-url>
+		<common:external-id-relationship>self</common:external-id-relationship>
+	</peer-review:subject-external-identifier>
+	<peer-review:subject-container-name>Journal title</peer-review:subject-container-name>
+	<peer-review:subject-type>journal-article</peer-review:subject-type>		
+	<peer-review:subject-name>
+		<common:title>Name of the paper reviewed</common:title>
+		<common:translated-title language-code="en">Translated title</common:translated-title>
+	</peer-review:subject-name>
+	<peer-review:subject-url>https://subject-alt-url.com</peer-review:subject-url>
+	<peer-review:convening-organization>
+		<common:name>ORCID</common:name>
+		<common:address>
+			<common:city>Bethesda</common:city>
+			<common:region>MD</common:region>
+			<common:country>US</common:country>
+		</common:address>
+		<common:disambiguated-organization>
+			<common:disambiguated-organization-identifier>385488</common:disambiguated-organization-identifier>
+			<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+		</common:disambiguated-organization>
+	</peer-review:convening-organization>
+</peer-review:peer-review>

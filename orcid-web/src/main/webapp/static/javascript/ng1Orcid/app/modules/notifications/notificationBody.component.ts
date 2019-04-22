@@ -16,10 +16,10 @@ import { catchError, map, tap }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { NotificationsService } 
-    from '../../shared/notifications.service.ts';
+    from '../../shared/notifications.service';
 
 @Component({
     selector: 'notification-body-ng2',
@@ -104,7 +104,10 @@ export class NotificationBodyComponent implements OnInit {
         }
         if (this.notification.authorizationUrl){
             this.encodedUrl = encodeURIComponent(this.notification.authorizationUrl.uri);
-        }
-        
+        }        
     }; 
+    
+    getBaseUri() : String {
+        return getBaseUri();
+    };
 }

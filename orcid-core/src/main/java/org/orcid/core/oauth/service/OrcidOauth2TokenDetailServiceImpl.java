@@ -241,5 +241,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Transactional
     public void disableAccessTokenByUserOrcid(String userOrcid, RevokeReason reason) {
         orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(userOrcid, reason.name());
+    }
+
+    @Override
+    @Transactional
+    public void disableClientAccess(String clientDetailsId, String userOrcid) {
+        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
     }        
 }

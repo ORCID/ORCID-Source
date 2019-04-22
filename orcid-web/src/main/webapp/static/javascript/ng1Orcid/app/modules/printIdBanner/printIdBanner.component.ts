@@ -7,7 +7,7 @@ import {
   Input
 } from "@angular/core";
 import { Subject } from "rxjs";
-import { PersonService } from "../../shared/person.service.ts";
+import { PersonService } from "../../shared/person.service";
 
 @Component({
   selector: "print-id-banner-ng2",
@@ -35,5 +35,9 @@ export class printIdBannerComponent implements AfterViewInit, OnDestroy, OnInit 
         this.displayName = person.displayName;
       }
     });
-  }
+  };
+  
+  getBaseUri() : String {
+      return getBaseUriHttps();
+  };
 }

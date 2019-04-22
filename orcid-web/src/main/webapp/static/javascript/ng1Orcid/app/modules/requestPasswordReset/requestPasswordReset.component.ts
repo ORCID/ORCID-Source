@@ -17,16 +17,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts';
+    from '../../shared/common.service';
 
 import { FeaturesService }
-    from '../../shared/features.service.ts'
+    from '../../shared/features.service'
 
 import { GenericService } 
-    from '../../shared/generic.service.ts';
+    from '../../shared/generic.service';
 
 import { OauthService } 
-    from '../../shared/oauth.service.ts';
+    from '../../shared/oauth.service';
 
 
 @Component({
@@ -171,7 +171,8 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
         // init reset password toggle text
         this.showSendResetLinkError = false;
         this.showResetPassword = (window.location.hash === "#resetPassword");
-        this.resetPasswordToggleText = om.get("login.forgotten_password");
-          
+        om.process().then(() => { 
+            this.resetPasswordToggleText = om.get("login.forgotten_password");
+        });                 
     }; 
 }

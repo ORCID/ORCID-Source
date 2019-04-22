@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -14,8 +15,8 @@ import org.orcid.core.adapter.v3.JpaJaxbEmailAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.v3.rc2.record.Email;
-import org.orcid.jaxb.model.v3.rc2.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -102,6 +103,14 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
         return emailDao.isPrimaryEmailVerified(orcid);
     }
     
+    @Override
+    public Emails getVerifiedEmails(String orcid) {
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid, getLastModified(orcid));
+        if (entities == null) {
+            return new Emails();
+        }
+        return toEmails(entities.stream().filter(e -> e.getVerified()).collect(Collectors.toList()));
+    }
     
     @Override
     public Emails getEmails(String orcid) {
@@ -116,7 +125,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
     
     private Emails toEmails(List<EmailEntity> entities) {
-        List<org.orcid.jaxb.model.v3.rc2.record.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+        List<org.orcid.jaxb.model.v3.release.record.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
         Emails emails = new Emails();
         emails.setEmails(emailList);        
         return emails;

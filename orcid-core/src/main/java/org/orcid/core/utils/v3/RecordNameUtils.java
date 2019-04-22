@@ -1,13 +1,13 @@
 package org.orcid.core.utils.v3;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 public class RecordNameUtils {
 
     public static String getPublicName(RecordNameEntity recordName) {
-        if (org.orcid.jaxb.model.v3.rc2.common.Visibility.PUBLIC.name().equals(recordName.getVisibility())) {
+        if (org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.name().equals(recordName.getVisibility())) {
             if (!StringUtils.isBlank(recordName.getCreditName())) {
                 return recordName.getCreditName();
             } else {

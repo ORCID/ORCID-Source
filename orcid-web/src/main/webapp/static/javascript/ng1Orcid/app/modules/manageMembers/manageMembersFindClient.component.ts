@@ -18,8 +18,8 @@ import {
 } from "@angular/core";
 
 import { Observable, Subject, Subscription } from "rxjs";
-import { ManageMembersService } from "../../shared/manageMembers.service.ts";
-import { ModalService } from "../../shared/modal.service.ts";
+import { ManageMembersService } from "../../shared/manageMembers.service";
+import { ModalService } from "../../shared/modal.service";
 
 @Component({
   selector: "manage-members-find-client-ng2",
@@ -199,6 +199,10 @@ export class ManageMembersFindClientComponent
       rUri.scopes.push({ name: "/authenticate" });
     }
   }
+  
+  isRetiredWizard(rUri) {
+    return rUri.status == "RETIRED" && rUri.type.value.endsWith("-wizard");
+  }  
 
   confirmUpdateClient() {
     let client = JSON.parse(JSON.stringify(this._client));

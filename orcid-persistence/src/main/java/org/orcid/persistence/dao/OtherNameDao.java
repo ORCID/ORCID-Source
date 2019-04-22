@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -60,4 +61,12 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
     void removeAllOtherNames(String orcid);
 
     List<OtherNameEntity> getPublicOtherNames(String orcid, long lastModified);
+
+    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<BigInteger> ids);
+
+    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<BigInteger> ids);
 }

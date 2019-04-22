@@ -22,41 +22,11 @@
                     <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayPeerReview">
                         <#escape x as x?html>
                         <!--Sort menu-->
-                        <div class="menu-container">                                     
+                        <div class="menu-container">      
                             <ul class="toggle-menu">
-                                <li>
+                                <li (click)="sort()">
                                     <span class="glyphicon glyphicon-sort"></span>
-                                    <@orcid.msg 'manual_orcid_record_contents.sort'/>
-                                    <ul class="menu-options sort">
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='startDate'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
-                                            <a (click)="sort('startDate');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
-                                                <span *ngIf="sortState.reverseKey['startDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='startDate'}"></span>
-                                                <span *ngIf="sortState.reverseKey['startDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='startDate'}"></span>
-                                            </a>                                                                                    
-                                        </li>
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='endDate'}" *ngIf="!(sortHideOption || sortState.type == 'affiliation')">                                          
-                                            <a (click)="sort('endDate');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
-                                                <span *ngIf="sortState.reverseKey['endDate']" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortState.predicateKey=='endDate'}"></span>
-                                                <span *ngIf="sortState.reverseKey['endDate'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortState.predicateKey=='endDate'}"></span>
-                                            </a>                                                                                    
-                                        </li>
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='groupName'}" *ngIf="sortHideOption != null">
-                                            <a (click)="sort('groupName');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                <span *ngIf="sortState.reverseKey['groupName']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='groupName'}" ></span>
-                                                <span *ngIf="sortState.reverseKey['groupName'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='groupName'}" ></span>
-                                            </a>                                            
-                                        </li>
-                                        <li [ngClass]="{'checked':sortState.predicateKey=='title'}" *ngIf="!sortHideOption">                                            
-                                            <a (click)="sort('title');" class="action-option manage-button">
-                                                <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
-                                                <span *ngIf="sortState.reverseKey['title']" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortState.predicateKey=='title'}" ></span>
-                                                <span *ngIf="sortState.reverseKey['title'] == false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortState.predicateKey=='title'}" ></span>
-                                            </a>                                            
-                                        </li>
-                                    </ul>                                           
+                                    <@orcid.msg 'manual_orcid_record_contents.sort'/>                                 
                                 </li>
                             </ul>                                   
                         </div>
@@ -107,7 +77,7 @@
                     <div class="row wizards">               
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div *ngFor="let wtw of peerReviewImportWizardList">
-                                <strong><a (click)="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.name}}</a></strong>
+                                <strong><a (click)="openImportWizardUrlFilter(getBaseUri() + '/oauth/authorize', wtw)">{{wtw.name}}</a></strong>
 
                                 <br />                                                                                    
                                 <div class="justify">                       

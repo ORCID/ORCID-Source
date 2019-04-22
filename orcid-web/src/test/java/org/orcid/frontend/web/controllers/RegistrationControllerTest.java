@@ -6,11 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doNothing;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -38,7 +38,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.impl.InternalSSOManagerImpl;
@@ -53,20 +52,8 @@ import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.message.Biography;
-import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidWorks;
-import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
-import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
@@ -118,10 +105,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     private InternalSSOManagerImpl internalSSOManager;
     
     @Mock
-    private NotificationManager notificationManager;
-    
-    @Mock
-    private OrcidProfileManager orcidProfileManager;
+    private NotificationManager notificationManager;    
     
     @Mock
     private EncryptionManager encryptionManagerMock;
@@ -156,8 +140,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         MockitoAnnotations.initMocks(this);        
         TargetProxyHelper.injectIntoProxy(registrationController, "registrationManager", registrationManager);        
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManager", emailManager); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);
-        TargetProxyHelper.injectIntoProxy(registrationController, "orcidProfileManager", orcidProfileManager);
+        TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);        
         TargetProxyHelper.injectIntoProxy(registrationController, "encryptionManager", encryptionManagerMock);
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManagerReadOnly", emailManagerReadOnlyMock);
         TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityCacheManager", profileEntityCacheManagerMock); 
@@ -536,28 +519,6 @@ public class RegistrationControllerTest extends DBUnitTest {
     	assertEquals(1, reg.getEmail().getErrors().size());
     	assertTrue(reg.getEmail().getErrors().get(0).startsWith("orcid.frontend.verify.duplicate_email"));    	
     }             
-    
-    protected OrcidProfile createBasicProfile() {
-        OrcidProfile profile = new OrcidProfile();
-        profile.setPassword("password");
-
-        OrcidBio bio = new OrcidBio();
-        ContactDetails contactDetails = new ContactDetails();
-        contactDetails.addOrReplacePrimaryEmail(new Email("will@semantico.com"));
-        bio.setContactDetails(contactDetails);
-        profile.setOrcidBio(bio);
-        PersonalDetails personalDetails = new PersonalDetails();
-        bio.setPersonalDetails(personalDetails);
-        personalDetails.setGivenNames(new GivenNames("Will"));
-        personalDetails.setFamilyName(new FamilyName("Simpson"));        
-        bio.setBiography(new Biography("Will is a software developer"));        
-        ResearcherUrls researcherUrls = new ResearcherUrls();
-        bio.setResearcherUrls(researcherUrls);
-        researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url("http://www.wjrs.co.uk"),null));
-        OrcidWorks orcidWorks = new OrcidWorks();
-        profile.setOrcidWorks(orcidWorks);        
-        return profile;
-    }
     
     @Test
     public void verifyEmailTest() throws UnsupportedEncodingException {

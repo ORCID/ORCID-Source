@@ -11,16 +11,16 @@ import { takeUntil }
     from 'rxjs/operators';
 
 import { CommonService } 
-    from '../../shared/common.service.ts'; 
+    from '../../shared/common.service'; 
 
 import { GenericService } 
-    from '../../shared/generic.service.ts';
+    from '../../shared/generic.service';
 
 import { EmailService } 
-    from '../../shared/email.service.ts';
+    from '../../shared/email.service';
 
 import { ModalService } 
-    from '../../shared/modal.service.ts'; 
+    from '../../shared/modal.service'; 
 
 @Component({
     selector: 'person-ng2',
@@ -306,7 +306,6 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     setBulkGroupPrivacy(priv, sectionName): void{
-        console.log(this.formData[sectionName][sectionName]);
         for (var idx in this.formData[sectionName][sectionName]){
             this.formData[sectionName][sectionName][idx].visibility.visibility = priv;        
         }

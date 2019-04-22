@@ -1,5 +1,3 @@
-declare var orcidSearchUrlJs: any;
-
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
 
@@ -12,7 +10,9 @@ import { Observable, Subject }
 import { catchError, map, tap } 
     from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root',
+})
 export class AccountService {
     private headers: HttpHeaders;
     private notify = new Subject<any>();
@@ -48,7 +48,7 @@ export class AccountService {
         let encoded_data = JSON.stringify(obj);
         
         return this.http.post( 
-            $('body').data('baseurl') + 'account/addDelegateByEmail.json', 
+            getBaseUri() + '/account/addDelegateByEmail.json', 
             encoded_data, 
             { headers: this.headers }
         )
@@ -113,7 +113,7 @@ export class AccountService {
 
     searchByEmail( input ): Observable<any> {
         return this.http.get(
-            $('body').data('baseurl') + "manage/search-for-delegate-by-email/" + encodeURIComponent(input) + '/',
+           getBaseUri() + '/manage/search-for-delegate-by-email/' + encodeURIComponent(input) + '/',
         )
         
     }
@@ -165,7 +165,7 @@ export class AccountService {
 
     revokeTrustedOrg(applicationSummary): Observable<any> {
         return this.http.post(
-            getBaseUri() + '/account/revoke-application.json?tokenId='+ applicationSummary.tokenId, 
+            getBaseUri() + '/account/revoke-application.json?clientId='+ applicationSummary.orcidPath, 
             null,
             { headers: this.headers }
         )

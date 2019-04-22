@@ -9,10 +9,10 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { AffiliationComponent } 
-    from './affiliation.component.ts';
+    from './affiliation.component';
 
 import { CommonNg2Module }
-    from './../common/common.ts';
+    from './../common/common';
 
 // This is the Angular 1 part of the module
 export const AffiliationModule = angular.module(
@@ -31,9 +31,6 @@ export const AffiliationModule = angular.module(
         ],
         imports: [
             CommonNg2Module
-        ],
-        providers: [
-            
         ]
     }
 )

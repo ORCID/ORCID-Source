@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<common:application-group-orcid
+    xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/common ../common-3.0.xsd ">
+    <common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
+    <common:path>8888-8888-8888-8880</common:path>
+    <common:host>orcid.org</common:host> 
+</common:application-group-orcid>

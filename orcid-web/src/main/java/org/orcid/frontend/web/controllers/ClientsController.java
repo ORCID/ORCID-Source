@@ -1,6 +1,5 @@
 package org.orcid.frontend.web.controllers;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,10 +19,8 @@ import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -68,22 +65,6 @@ public class ClientsController extends BaseWorkspaceController {
     @RequestMapping
     public ModelAndView manageClients() {
         ModelAndView mav = new ModelAndView("member_developer_tools");
-        String memberId = getCurrentUserOrcid();
-        ProfileEntity entity = profileEntityCacheManager.retrieve(memberId);
-        MemberType memberType = MemberType.valueOf(entity.getGroupType());
-        mav.addObject("member_id", memberId);
-        mav.addObject("member_type", memberType);
-
-        Set<org.orcid.jaxb.model.v3.rc2.client.Client> clients = clientManagerReadOnly.getClients(memberId);
-        if (clients.isEmpty()) {
-            mav.addObject("allow_more_clients", true);
-        } else if (MemberType.PREMIUM.equals(memberType) || MemberType.PREMIUM_INSTITUTION.equals(memberType)) {
-            mav.addObject("is_premium", true);
-            mav.addObject("allow_more_clients", true);
-        } else {
-            mav.addObject("allow_more_clients", false);
-        }
-
         return mav;
     }
 
@@ -106,32 +87,6 @@ public class ClientsController extends BaseWorkspaceController {
         redirectUris.add(emptyRedirectUri);
         emptyClient.setRedirectUris(redirectUris);
         return emptyClient;
-    }
-
-    private boolean validateUrl(String url, boolean checkProtocol) {
-        String urlToCheck = null;
-        if (PojoUtil.isEmpty(url))
-            return false;
-        // To validate the URL we need a string with a protocol, so, check if it
-        // have it, if it doesn't, add it.
-        // Check if the URL begins with the protocol
-        if (checkProtocol) {
-            urlToCheck = url;
-        } else {
-            if (url.startsWith("http://") || url.startsWith("https://")) {
-                urlToCheck = url;
-            } else {
-                // If it doesn't, add the http protocol by default
-                urlToCheck = "http://" + url;
-            }
-        }
-
-        try {
-            new java.net.URL(urlToCheck);
-        } catch (MalformedURLException e) {
-            return false;
-        }
-        return true;
     }
 
     public Client validateDisplayName(Client client) {
@@ -202,9 +157,9 @@ public class ClientsController extends BaseWorkspaceController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody List<Client> getClients() {
         String memberId = getEffectiveUserOrcid();
-        Set<org.orcid.jaxb.model.v3.rc2.client.Client> existingClients = clientManagerReadOnly.getClients(memberId);
+        Set<org.orcid.jaxb.model.v3.release.client.Client> existingClients = clientManagerReadOnly.getClients(memberId);
         List<Client> clients = new ArrayList<Client>();
-        for (org.orcid.jaxb.model.v3.rc2.client.Client existingClient : existingClients) {
+        for (org.orcid.jaxb.model.v3.release.client.Client existingClient : existingClients) {
             clients.add(Client.fromModelObject(existingClient));
         }
         Collections.sort(clients);
@@ -215,9 +170,8 @@ public class ClientsController extends BaseWorkspaceController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody Client createClient(@RequestBody Client client) {
         validateIncomingElement(client);
-
         if (client.getErrors().size() == 0) {
-            org.orcid.jaxb.model.v3.rc2.client.Client newClient = client.toModelObject();
+            org.orcid.jaxb.model.v3.release.client.Client newClient = client.toModelObject();
             try {
                 newClient = clientManager.create(newClient);
             } catch (Exception e) {
@@ -238,7 +192,7 @@ public class ClientsController extends BaseWorkspaceController {
         validateIncomingElement(client);
 
         if (client.getErrors().size() == 0) {
-            org.orcid.jaxb.model.v3.rc2.client.Client clientToEdit = client.toModelObject();
+            org.orcid.jaxb.model.v3.release.client.Client clientToEdit = client.toModelObject();
             try {
                 // Updating from the clients edit page should not overwrite
                 // configuration values on the DB
@@ -282,7 +236,7 @@ public class ClientsController extends BaseWorkspaceController {
     @RequestMapping(value = "/reset-client-secret.json", method = RequestMethod.POST)
     public @ResponseBody boolean resetClientSecret(@RequestBody String clientId) {
         // Verify this client belongs to the member
-        org.orcid.jaxb.model.v3.rc2.client.Client client = clientManagerReadOnly.get(clientId);
+        org.orcid.jaxb.model.v3.release.client.Client client = clientManagerReadOnly.get(clientId);
         if (client == null) {
             return false;
         }
@@ -293,6 +247,8 @@ public class ClientsController extends BaseWorkspaceController {
 
         return clientManager.resetClientSecret(clientId);
     }
+    
+    
 
     private void validateIncomingElement(Client client) {
         // Clean the error list

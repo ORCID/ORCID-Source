@@ -40,7 +40,7 @@ public class ResearchResourcesController extends BaseWorkspaceController {
     @RequestMapping(value = "/researchResource.json", method = RequestMethod.GET)
     public @ResponseBody ResearchResource getResearchResource(@RequestParam("id") long id) {
         String orcid = getCurrentUserOrcid();
-        org.orcid.jaxb.model.v3.rc2.record.ResearchResource r = researchResourceManager.getResearchResource(orcid, id);
+        org.orcid.jaxb.model.v3.release.record.ResearchResource r = researchResourceManager.getResearchResource(orcid, id);
         return ResearchResource.fromValue(r);
     }
     
@@ -62,7 +62,7 @@ public class ResearchResourcesController extends BaseWorkspaceController {
         ArrayList<Long> rrIds = new ArrayList<Long>();
         for (String workId : researchResourceIdsStr.split(","))
             rrIds.add(new Long(workId));
-        researchResourceManager.updateVisibilities(orcid, rrIds, org.orcid.jaxb.model.v3.rc2.common.Visibility.fromValue(visibilityStr));
+        researchResourceManager.updateVisibilities(orcid, rrIds, org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(visibilityStr));
         return rrIds;
     }
     

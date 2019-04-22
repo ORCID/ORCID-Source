@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -68,6 +69,14 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     void updateRetryCount(String orcid, Long id, Long retryCount);
 
     boolean deleteNotificationsForRecord(String orcid, int batchSize);
+
+    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+
+    void correctClientSource(List<BigInteger> ids);
+
+    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+
+    void correctUserSource(List<BigInteger> ids);
 
 
 }

@@ -15,7 +15,7 @@ import { downgradeComponent, UpgradeModule }
 
 //User generated components
 import { SelfServiceExistingSubMemberComponent } 
-    from './selfServiceExistingSubMember.component.ts';
+    from './selfServiceExistingSubMember.component';
 
 // This is the Angular 1 part of the module
 export const SelfServiceExistingSubMemberModule = angular.module(
@@ -37,8 +37,7 @@ export const SelfServiceExistingSubMemberModule = angular.module(
             CommonModule,
             FormsModule,
         ],
-        providers: [
-        ]
+        
     }
 )
 export class SelfServiceExistingSubMemberNg2Module {}

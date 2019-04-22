@@ -149,61 +149,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setLocked(profileEntity.getRecordLocked());
         profile.setReviewed(profileEntity.isReviewed());
 
-        Date lastModified = profileEntity.getLastModified() == null? new Date() : profileEntity.getLastModified();
-        
         return profile;
-    }
-
-    @Override
-    public OrcidClient toOrcidClient(ClientDetailsEntity clientDetailsEntity) {
-        OrcidClient client = new OrcidClient();
-        client.setClientId(clientDetailsEntity.getId());
-        client.setType(ClientType.valueOf(clientDetailsEntity.getClientType()));
-        if (clientDetailsEntity != null) {
-            client.setClientSecret(clientDetailsEntity.getClientSecretForJpa());
-            client.setDisplayName(clientDetailsEntity.getClientName());
-            client.setShortDescription(clientDetailsEntity.getClientDescription());
-            client.setWebsite(clientDetailsEntity.getClientWebsite());
-            client.setPersistentTokenEnabled(clientDetailsEntity.isPersistentTokensEnabled());
-            client.setIdp(clientDetailsEntity.getAuthenticationProviderId());
-            client.setAllowAutoDeprecate(clientDetailsEntity.isAllowAutoDeprecate());
-            Set<ClientRedirectUriEntity> redirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
-            RedirectUris redirectUris = new RedirectUris();
-            client.setRedirectUris(redirectUris);
-            for (ClientRedirectUriEntity redirectUriEntity : redirectUriEntities) {
-                RedirectUri redirectUri = new RedirectUri(redirectUriEntity.getRedirectUri());
-                redirectUri.setType(RedirectUriType.fromValue(redirectUriEntity.getRedirectUriType()));
-                String predefinedScope = redirectUriEntity.getPredefinedClientScope();
-                if (StringUtils.isNotBlank(predefinedScope)) {
-                    List<ScopePathType> scopePathType = new ArrayList<ScopePathType>(ScopePathType.getScopesFromSpaceSeparatedString(predefinedScope));
-                    redirectUri.setScope(scopePathType);
-                }
-                redirectUri.setActType(redirectUriEntity.getUriActType());
-                redirectUri.setGeoArea(redirectUriEntity.getUriGeoArea());
-                redirectUris.getRedirectUri().add(redirectUri);
-            }
-        }
-        return client;
-    }
-
-    @Override
-    public OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity) {
-        OrcidClientGroup group = new OrcidClientGroup();
-        group.setGroupOrcid(profileEntity.getId());
-        if(profileEntity.getRecordNameEntity() != null) {
-            group.setGroupName(profileEntity.getRecordNameEntity().getCreditName());
-        } 
-        
-        group.setType(MemberType.valueOf(profileEntity.getGroupType()));
-        Set<EmailEntity> emailEntities = profileEntity.getEmails();
-        for (EmailEntity emailEntity : emailEntities) {
-            group.setEmail(emailEntity.getEmail());
-        }
-        for (ClientDetailsEntity clientDetailsEntity : profileEntity.getClients()) {
-            OrcidClient client = toOrcidClient(clientDetailsEntity);
-            group.getOrcidClient().add(client);
-        }
-        return group;
     }
 
     private OrcidHistory getOrcidHistory(ProfileEntity profileEntity) {
@@ -262,9 +208,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         return orcidDeprecated;
     }
-
-    @Override
-    public OrcidIdBase getOrcidIdBase(String id) {
+    
+    private OrcidIdBase getOrcidIdBase(String id) {
         OrcidIdBase orcidId = new OrcidIdBase();
         String correctedBaseUri = baseUri.replace("https", "http");
         try {
@@ -329,12 +274,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    public List<OrcidWork> sortWorks(List<OrcidWork> unsorted) {
+    private List<OrcidWork> sortWorks(List<OrcidWork> unsorted) {
         return unsorted.stream().sorted(workDisplayIndexComparator().thenComparing(workPubDateComparator()).thenComparing(workTitleComparator()))
                 .collect(Collectors.toList());
     }
     
-    public Comparator<OrcidWork> workDisplayIndexComparator() {
+    private Comparator<OrcidWork> workDisplayIndexComparator() {
         return (work1, work2) -> {
             Long displayIndex1 = work1.getDisplayIndex();
             Long displayIndex2 = work2.getDisplayIndex();
@@ -346,7 +291,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         };
     }
 
-    public Comparator<OrcidWork> workPubDateComparator() {
+    private Comparator<OrcidWork> workPubDateComparator() {
         return (work1, work2) -> {
             PublicationDate pubDate1 = work1.getPublicationDate();
             PublicationDate pubDate2 = work2.getPublicationDate();
@@ -362,7 +307,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         };
     }
 
-    public Comparator<OrcidWork> workTitleComparator() {
+    private Comparator<OrcidWork> workTitleComparator() {
         return (work1, work2) -> {
             WorkTitle title1 = work1.getWorkTitle();
             WorkTitle title2 = work2.getWorkTitle();
@@ -440,7 +385,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * @param profileFundingEntity
      * @return Funding
      * */
-    public Funding getFunding(ProfileFundingEntity profileFundingEntity) {
+    private Funding getFunding(ProfileFundingEntity profileFundingEntity) {
         Funding funding = new Funding();
 
         if (profileFundingEntity.getNumericAmount() != null) {
@@ -547,7 +492,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return fundingContributors;
     }    
 
-    public DisambiguatedOrganization getDisambiguatedOrganization(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+    private DisambiguatedOrganization getDisambiguatedOrganization(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
         disambiguatedOrganization.setDisambiguatedOrganizationIdentifier(orgDisambiguatedEntity.getSourceId());
         disambiguatedOrganization.setDisambiguationSource(orgDisambiguatedEntity.getSourceType());
@@ -804,7 +749,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return null;
     }
 
-    public OrcidWork getOrcidWork(WorkEntity work) {
+    private OrcidWork getOrcidWork(WorkEntity work) {
         if (work == null) {
             return null;
         }
@@ -854,7 +799,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      * converts locale codes to only return language code, with the exception of
      * zh_CN and zh_TW
      */
-    static public String normalizeLanguageCode(String code) {
+    static private String normalizeLanguageCode(String code) {
         if (code == null || code.length() < 2)
             return null;
         java.util.Locale locale = new java.util.Locale(code);

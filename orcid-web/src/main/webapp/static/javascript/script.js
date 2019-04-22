@@ -65,20 +65,6 @@ function contains(arr, obj) {
     return false;
 }
 
-function formatDate(oldDate) {
-    var date = new Date(oldDate);
-    var day = date.getDate();
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
-    if(month < 10) {
-        month = '0' + month;
-    }
-    if(day < 10) {
-        day = '0' + day;
-    }
-    return (year + '-' + month + '-' + day);
-}
-
 function getScripts(scripts, callback) {
     var progress = 0;
     var internalCallback = function () {        
@@ -89,20 +75,6 @@ function getScripts(scripts, callback) {
     scripts.forEach(function(script) {        
         $.getScript(script, internalCallback);        
     });
-}
-
-function formColorBoxWidth() {
-    return isMobile()? '100%': '800px';
-}
-
-function formColorBoxResize() {
-    if (isMobile())
-        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-    else
-        // IE8 and below doesn't take auto height
-        // however the default div height
-        // is auto anyway
-        $.colorbox.resize({width:'800px'});
 }
 
 function fixZindexIE7(target, zindex){
@@ -139,19 +111,6 @@ function removeBadContributors(dw) {
             && dw.contributors[idx].creditNameVisibility == null) {
                 dw.contributors.splice(idx,1);
             }
-    }
-}
-
-//Needs refactor for dw object
-function removeBadExternalIdentifiers(dw) {
-    for(var idx in dw.workExternalIdentifiers) {
-        if(dw.workExternalIdentifiers[idx].url == null){
-            dw.workExternalIdentifiers[idx].url = "";
-        }
-        if(dw.workExternalIdentifiers[idx].externalIdentifierType == null
-            && dw.workExternalIdentifiers[idx].externalIdentifierId == null) {
-            dw.workExternalIdentifiers.splice(idx,1);
-        }
     }
 }
 
@@ -308,13 +267,43 @@ var OrcidCookie = new function() {
 };
 
 var OrcidMessage = function() {
-    // nothing to init now
+    
 };
+
+var messagesPromise = new Promise(function(resolve, reject) {
+    if(messages == null) {
+        $.ajax({
+            url : getBaseUri() + '/messages.json',
+            type : 'GET',
+            dataType: 'text',
+            contentType: "application/json",            
+            success : function(data) {     
+                var data = JSON.parse(data);
+                messages = data['messages'];  
+                resolve();
+            }
+        }).fail(
+        // detects server is down or CSRF mismatches
+        // do to session expiration or server bounces
+        function(e) {
+            console.log("error fetching javascript messages");
+            console.log(e);
+            reject();
+        });
+    } else {
+        resolve();
+    }
+});    
 
 OrcidMessage.prototype.get = function(name) {
-    return orcidVar.jsMessages.messages[name];
+    return messages[name];
 };
 
+OrcidMessage.prototype.process = function(name) {
+    return messagesPromise;
+};
+
+var messages = null;
 var om = new OrcidMessage();
 
 /*
@@ -329,9 +318,20 @@ function logAjaxError(e){
     console.log("responseText: " + e.responseText);*/
 }
 
-function getBaseUri() {
-    return 'https:' == document.location.protocol ? orcidVar.baseUri
-            : orcidVar.baseUriHttp;
+function getBaseUri() {    
+    var uri = location.protocol + '//' + location.host
+    if(window.location.host.startsWith('localhost:8443') | window.location.host.startsWith('localhost:8080')) {
+        uri = uri + '/orcid-web';        
+    }    
+    return uri;
+}
+
+function getBaseUriHttps() {    
+    var uri = 'https://' + location.host
+    if(window.location.host.startsWith('localhost:8443') | window.location.host.startsWith('localhost:8080')) {
+        uri = uri + '/orcid-web';        
+    }    
+    return uri;
 }
 
 function getCookieDomain(location){
@@ -346,33 +346,29 @@ function getCookieDomain(location){
         return cookieDomain;
 }
 
-function getStaticCdnPath() {
-    return orcidVar.staticCdn;
-}
-
-function myTest() {
-    return 'a success';
-}
-
 function checkOrcidLoggedIn() {	    
     if (OrcidCookie.checkIfCookiesEnabled()) {    
-        if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {
+        if (OrcidCookie.getCookie('XSRF-TOKEN') != '') {            
             $.ajax({
-                url : orcidVar.baseUri + '/userStatus.json?callback=?',
+                url : getBaseUriHttps() + '/userStatus.json?callback=?',
                 type : 'POST',
                 dataType : 'json',
                 headers: {
                     'x-xsrf-token': OrcidCookie.getCookie('XSRF-TOKEN')
                 },
                 success : function(data) {
-                    if (data.loggedIn == false
-                            && (basePath.startsWith(baseUrl
-                                    + 'my-orcid') || basePath
-                                    .startsWith(baseUrl + 'account') || basePath.startsWith(baseUrl + 'inbox'))) {
+                    if (data.loggedIn == false && (
+                        basePath.indexOf('my-orcid') > -1 || 
+                        basePath.indexOf('inbox') > -1 ||
+                        basePath.indexOf('account') > -1 || 
+                        basePath.indexOf('manage') > -1 ||
+                        basePath.indexOf('developer') > -1 || 
+                        basePath.indexOf('admin-actions') > -1 ||
+                        basePath.indexOf('self-service') > -1
+                    )){
                         console.log("loggedOutRedir " + data);
                         window.location.href = baseUrl + "signin";
                     }
-
                 }
             }).fail(
             // detects server is down or CSRF mismatches
@@ -426,7 +422,7 @@ function logOffReload(reload_param) {
 $(function() {
     
     // Common
-    window.baseUrl = $('body').data('baseurl');
+    window.baseUrl = getBaseUri() + '/';
     window.basePath = window.location.pathname;
 
     // fire off  check, if this page wasn't loaded via iframe (or html5
@@ -438,7 +434,9 @@ $(function() {
 
     // track when deactived people are pushed to signin page
     if (window.location.href.endsWith("signin#deactivated")) {
-        showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
+        messagesPromise.then(function() {
+            showLoginError(om.get('orcid.frontend.security.orcid_deactivated'));
+        });        
     }
 
     // jquery browser is deprecated, when you upgrade
@@ -468,60 +466,26 @@ $(function() {
     if (oldBrowserFlag && location == parent.location) {
         var cookieName = "oldBrowserAlert";
         if (!OrcidCookie.getCookie(cookieName)) {
-            var wHtml = '<div class="alert alert-banner" id="browser-warn-div">';
-            wHtml = wHtml + '<p>';
-            wHtml = wHtml + om.get('common.old.browser_1');
-            wHtml = wHtml + om.get('common.old_browser_2');
-            wHtml = wHtml + ' <a href="' + om.get('common.kb_uri_default') + '360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
-            wHtml = wHtml + '</p>';
-            wHtml = wHtml
-                    + ' <button class="btn btn-primary" id="browser-warn-dismiss">'
-            wHtml = wHtml + om.get('common.cookies.click_dismiss');
-            wHtml = wHtml + '</button>';
-            wHtml = wHtml + '</div>';
-            $('body').prepend(wHtml);
-            $("#browser-warn-dismiss").click(function() {
-                $("#browser-warn-div").remove();
-                OrcidCookie.setCookie(cookieName, "dont show message", 7);
-                return false;
-            });
-        }
-    }
-
-    // if not iframed check if not orcid.org
-    if (location == parent.location
-            && window.location.hostname.toLowerCase() != "orcid.org") {
-
-        var cookieName = "testWarningCookie";
-        var warnMessCookie = OrcidCookie.getCookie(cookieName);
-        if (!warnMessCookie) {
-            var wHtml = '<div class="alert alert-banner" id="test-warn-div">';
-            wHtml = wHtml + '<p><strong>';
-            wHtml = wHtml + om.get('common.js.domain.warn.template').replace(
-                    '{{curentDomian}}', window.location.hostname);
-            wHtml = wHtml + '</strong> <a href="http://ORCID.org">' + om.get('common.js.domain.warn.orcid_org') + '</a>';
-            wHtml = wHtml + om.get('common.js.domain.warn.is_the_official');
-            wHtml = wHtml + '<a href="http://mailinator.com">' + om.get('common.js.domain.warn.mailinator') + '</a>';
-            wHtml = wHtml + om.get('common.js.domain.warn.email_addresses');
-            wHtml = wHtml + '<a href="http://members.orcid.org/api/faq/why-am-i-not-receiving-messages-sandbox">' + om.get('common.js.domain.warn.more_information') + '</a>';
-            wHtml = wHtml + '</p> ';
-            // don't let the warning be disabled for test-warn-dismiss
-            if (window.location.hostname.toLowerCase() != "sandbox-1.orcid.org"
-                    && window.location.hostname.toLowerCase() != "sandbox.orcid.org") {
+            messagesPromise.then(function() {
+                var wHtml = '<div class="alert alert-banner" id="browser-warn-div">';
+                wHtml = wHtml + '<p>';
+                wHtml = wHtml + om.get('common.old.browser_1');
+                wHtml = wHtml + om.get('common.old_browser_2');
+                wHtml = wHtml + ' <a href="' + om.get('common.kb_uri_default') + '360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
+                wHtml = wHtml + '</p>';
                 wHtml = wHtml
-                        + ' <button class="btn btn-primary" id="test-warn-dismiss">'
+                        + ' <button class="btn btn-primary" id="browser-warn-dismiss">'
                 wHtml = wHtml + om.get('common.cookies.click_dismiss');
                 wHtml = wHtml + '</button>';
-            }
-            wHtml = wHtml + '</div>';
-            $('body').prepend(wHtml);
-            $("#test-warn-dismiss").click(function() {
-                $("#test-warn-div").remove();
-                OrcidCookie.setCookie(cookieName, "dont show message", 365);
-                return false;
-            });
+                wHtml = wHtml + '</div>';
+                $('body').prepend(wHtml);
+                $("#browser-warn-dismiss").click(function() {
+                    $("#browser-warn-div").remove();
+                    OrcidCookie.setCookie(cookieName, "dont show message", 7);
+                    return false;
+                });                
+            });            
         }
-
     }
     
     $(document)
@@ -529,117 +493,119 @@ $(function() {
 
                     function() {
                         var loginUrl = baseUrl + 'signin/auth.json';
-                        //ng1
-                        var gaString = angular.element($("#loginForm")).scope().gaString;
-                        //ng2
-                        //var gaString = window.angularComponentReference.zone.run(() => { window.angularComponentReference.gaString; });
+                        window.angularComponentReference.zone.run(function() { 
+                            var gaString = window.angularComponentReference.component.gaString
+                            if (signinLocked) return false;
+                            disableSignin();
+                            
+                            if (basePath.startsWith('/shibboleth/')) {
+                                loginUrl = baseUrl + 'shibboleth/signin/auth.json';
+                            }
+                            else if (basePath.startsWith('/social/')) {
+                                loginUrl = baseUrl + 'social/signin/auth.json';
+                            }
 
-                        if (signinLocked) return false;
-                        disableSignin();
-                        
-                        if (basePath.startsWith(baseUrl + 'shibboleth')) {
-                            loginUrl = baseUrl + 'shibboleth/signin/auth.json';
-                        }
-                        else if (basePath.startsWith(baseUrl + 'social')) {
-                            loginUrl = baseUrl + 'social/signin/auth.json';
-                        }
+                            $('#login-error-mess, #login-deactivated-error').hide();
+                            $('#ajax-loader').css('display', 'block');
+                            $
+                                    .ajax(
+                                            {
+                                                url : loginUrl,
+                                                type : 'POST',
+                                                data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()) + '&oauthRequest=' + encodeURIComponent($('input[name=oauthRequest]').val()),
+                                                dataType : 'json',
+                                                success : function(data) {
+                                                    if (data.success) {
+                                                        if (gaString) {
 
-                        $('#login-error-mess, #login-deactivated-error').hide();
-                        $('#ajax-loader').css('display', 'block');
-                        $
-                                .ajax(
-                                        {
-                                            url : loginUrl,
-                                            type : 'POST',
-                                            data : 'userId=' + encodeURIComponent(orcidLoginFitler($('input[name=userId]').val())) + '&password=' + encodeURIComponent($('input[name=password]').val()) + '&verificationCode=' + encodeURIComponent($('input[name=verificationCode]').val())  + '&recoveryCode=' + encodeURIComponent($('input[name=recoveryCode]').val()) + '&oauthRequest=' + encodeURIComponent($('input[name=oauthRequest]').val()),
-                                            dataType : 'json',
-                                            success : function(data) {
-                                                if (data.success) {
-                                                    if (gaString) {
-
+                                                            orcidGA
+                                                                    .gaPush([
+                                                                            'send',
+                                                                            'event',
+                                                                            'RegGrowth',
+                                                                            'Sign-In',
+                                                                            'OAuth '
+                                                                                    + gaString ]);
+                                                        } else
+                                                            orcidGA.gaPush([
+                                                                    'send',
+                                                                    'event',
+                                                                    'RegGrowth',
+                                                                    'Sign-In',
+                                                                    'Website' ]);
                                                         orcidGA
-                                                                .gaPush([
-                                                                        'send',
-                                                                        'event',
-                                                                        'RegGrowth',
-                                                                        'Sign-In',
-                                                                        'OAuth '
-                                                                                + gaString ]);
-                                                    } else
-                                                        orcidGA.gaPush([
-                                                                'send',
-                                                                'event',
-                                                                'RegGrowth',
-                                                                'Sign-In',
-                                                                'Website' ]);
-                                                    orcidGA
-                                                            .windowLocationHrefDelay(data.url
-                                                                    + window.location.hash);
-                                                } else if (data.verificationCodeRequired && !data.badVerificationCode) {
-                                                    enableSignin(); 
-                                                    show2FA();
-                                                } else {
-                                                    enableSignin(); 
-                                                    var message;
-                                                    if (data.deprecated) {
-                                                        if (data.primary)
-                                                            message = om
-                                                                    .get(
-                                                                            'orcid.frontend.security.deprecated_with_primary')
-                                                                    .replace(
-                                                                            "{{primary}}",
-                                                                            data.primary);
-                                                        else
-                                                            message = om
-                                                                    .get('orcid.frontend.security.deprecated');
-                                                    } else if (data.disabled) {
-                                                            showLoginDeactivatedError();
-                                                            return;
-                                                    } else if (data.unclaimed) {
-                                                        var resendClaimUrl = baseUrl
-                                                                + "resend-claim";
-                                                        var userId = $(
-                                                                '#userId')
-                                                                .val();
-                                                        if (userId
-                                                                .indexOf('@') != -1) {
-                                                            resendClaimUrl += '?email='
-                                                                   + encodeURIComponent(userId);
-                                                        }
-                                                        message = om
-                                                                .get(
-                                                                        'orcid.frontend.security.unclaimed_exists_1');
-                                                        message = message + '<a href="' + resendClaimUrl + '">';
-                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_2');
-                                                        message = message + '</a>';
-                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_3');
-                                                    } else if (data.badVerificationCode) {
-                                                        message = om
-                                                        .get('orcid.frontend.security.2fa.bad_verification_code');
+                                                                .windowLocationHrefDelay(data.url
+                                                                        + window.location.hash);
+                                                    } else if (data.verificationCodeRequired && !data.badVerificationCode) {
+                                                        enableSignin(); 
                                                         show2FA();
-                                                    } else if (data.badRecoveryCode) {
-                                                        message = om
-                                                        .get('orcid.frontend.security.2fa.bad_recovery_code');
-                                                    } else if(data.invalidUserType) {
-                                                        message = om.get('orcid.frontend.security.invalid_user_type_1');
-                                                        message = message + ' <a href="https://orcid.org/help/contact-us">';
-                                                        message = message + om.get('orcid.frontend.security.invalid_user_type_2');
-                                                        message = message + '</a>';
                                                     } else {
-                                                        message = om
-                                                               .get('orcid.frontend.security.bad_credentials');
-                                                    }
-
-                                                    showLoginError(message);
-                                                }; 
-                                            }
-                                        }).fail(function(e) {
-                                    // something bad is happening!
-                                    console.log("Error with log in");
-                                    logAjaxError(e);
-                                    window.location.reload();
-                                });
-                        return false;
+                                                        enableSignin(); 
+                                                        var message;
+                                                        if (data.deprecated) {                                                                                                               
+                                                            messagesPromise.then(function() {
+                                                                if (data.primary)
+                                                                    message = om.get('orcid.frontend.security.deprecated_with_primary')
+                                                                            .replace("{{primary}}",data.primary);
+                                                                else
+                                                                    message = om.get('orcid.frontend.security.deprecated');
+                                                                showLoginError(message);
+                                                            });
+                                                        } else if (data.disabled) {
+                                                                showLoginDeactivatedError();
+                                                                return;
+                                                        } else if (data.unclaimed) {                                                        
+                                                            messagesPromise.then(function() {
+                                                                        var resendClaimUrl = baseUrl + "resend-claim";
+                                                                        var userId = $(
+                                                                                '#userId')
+                                                                                .val();
+                                                                        if (userId
+                                                                                .indexOf('@') != -1) {
+                                                                            resendClaimUrl += '?email='
+                                                                                + encodeURIComponent(userId);
+                                                                        }
+                                                                        message = om
+                                                                                .get(
+                                                                                        'orcid.frontend.security.unclaimed_exists_1');
+                                                                        message = message + '<a href="' + resendClaimUrl + '">';
+                                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_2');
+                                                                        message = message + '</a>';
+                                                                        message = message + om.get('orcid.frontend.security.unclaimed_exists_3');
+                                                                        showLoginError(message);
+                                                                        });
+                                                        } else if (data.badVerificationCode) {
+                                                            messagesPromise.then(function() {
+                                                                showLoginError(om.get('orcid.frontend.security.2fa.bad_verification_code'));
+                                                                show2FA();
+                                                                });
+                                                        } else if (data.badRecoveryCode) {
+                                                            messagesPromise.then(function() {
+                                                                showLoginError(om.get('orcid.frontend.security.2fa.bad_recovery_code'));
+                                                                });
+                                                        } else if(data.invalidUserType) {
+                                                            messagesPromise.then(function() {
+                                                                message = om.get('orcid.frontend.security.invalid_user_type_1');
+                                                                message = message + ' <a href="https://orcid.org/help/contact-us">';
+                                                                message = message + om.get('orcid.frontend.security.invalid_user_type_2');
+                                                                message = message + '</a>';
+                                                                showLoginError(message);
+                                                            });                                                        
+                                                        } else {
+                                                            messagesPromise.then(function() {
+                                                                showLoginError(om.get('orcid.frontend.security.bad_credentials'));
+                                                                });
+                                                        }
+                                                    }; 
+                                                }
+                                            }).fail(function(e) {
+                                        // something bad is happening!
+                                        console.log("Error with log in");
+                                        logAjaxError(e);
+                                        window.location.reload();
+                                    });
+                            return false;
+                        })
                     });
     
     $('.delete-url').on('click', function(e) {
@@ -722,12 +688,15 @@ $(function() {
     function show2FA() {
         $('#verificationCodeFor2FA').attr("style", "display: block");
         $('#verificationCode').focus();
-        $('#form-sign-in-button').html(om.get('orcid.frontend.security.2fa.authenticate'));
         $('#RequestPasswordResetCtr').hide();
         $('#2FAInstructions').show();
         $('#enterRecoveryCode').click(function() {
            $('#recoveryCodeSignin').show(); 
         });
+        
+        messagesPromise.then(function() {
+            $('#form-sign-in-button').html(om.get('orcid.frontend.security.2fa.authenticate'));                        
+            });
     }
 
     // Privacy toggle
@@ -1074,8 +1043,12 @@ function populateWorkAjaxForm(bibJson, work) {
       this.pos = 0;
       this.input = "";
       this.entries = new Array();
-
+      this.errors = new Array();
       this.currentEntry = "";
+
+      this.addError = function(e) {
+          this.errors.push(e);
+      };
 
       this.setInput = function(t) {
           this.input = t;
@@ -1096,8 +1069,7 @@ function populateWorkAjaxForm(bibJson, work) {
           if (this.input.substring(this.pos, this.pos + s.length) == s) {
               this.pos += s.length;
           } else {
-              throw "Token mismatch, expected " + s + ", found "
-                      + this.input.substring(this.pos);
+              throw "Token mismatch, expected " + s + ", found ";
           };
           this.skipWhitespace(canCommentOut);
       };
@@ -1156,7 +1128,7 @@ function populateWorkAjaxForm(bibJson, work) {
                   } else if (this.input[this.pos] == '{') {
                       bracecount++;
                   } else if (this.pos >= this.input.length - 1) {
-                      throw "Unterminated value";
+                      throw "Closing } character missing";
                   };
               };
               if (this.input[this.pos] == '\\' && escaped == false)
@@ -1177,7 +1149,7 @@ function populateWorkAjaxForm(bibJson, work) {
               if (this.input[this.pos] == '}')
                   brcktCnt--;
               if (this.pos >= this.input.length - 1) {
-                  throw "Unterminated value:" + this.input.substring(start);
+                  throw "Closing } character missing";
               };
               this.pos++;
           };
@@ -1195,7 +1167,7 @@ function populateWorkAjaxForm(bibJson, work) {
                       this.match('"', false);
                       return this.input.substring(start, end);
                   } else if (this.pos >= this.input.length - 1) {
-                      throw "Unterminated value:" + this.input.substring(start);
+                      throw "Closing \" character missing";
                   };
               }
               if (this.input[this.pos] == '\\' && escaped == false)
@@ -1219,7 +1191,7 @@ function populateWorkAjaxForm(bibJson, work) {
               else if (this.months.indexOf(k.toLowerCase()) >= 0)
                   return k.toLowerCase();
               else
-                  throw "Value expected:" + this.input.substring(start) + ' for key: ' + k;
+                  throw "Value missing for field";
 
           };
       };
@@ -1262,8 +1234,7 @@ function populateWorkAjaxForm(bibJson, work) {
               key = key.trim()
               return [ key, val ];
           } else {
-              throw "... = value expected, equals sign missing:"
-                      + this.input.substring(this.pos);
+              throw "Value missing for field " + key;
           };
       };
 
@@ -1352,8 +1323,21 @@ function populateWorkAjaxForm(bibJson, work) {
   exports.toJSON = function(bibtex) {
       var b = new BibtexParser();
       b.setInput(bibtex);
-      b.bibtex();
-      return b.entries;
+      if (b.tryMatch("@")){
+        try {
+            b.bibtex();
+            return b.entries;
+        } catch (e) {
+            var citationKey="";
+            if (b.currentEntry['citationKey']){
+                citationKey = " " + b.currentEntry['citationKey'];
+            }
+            return "Error parsing Bibtex in entry " + (b.entries.length+1) + citationKey + " near text '" + b.input.substring(b.pos-20, b.pos) + "'. " + e; 
+        }  
+      } else {
+        return "Error parsing Bibtex. No Bibtex entries found in file"
+      }
+       
   };
 
   /* added during hackathon don't hate on me */
@@ -4253,7 +4237,7 @@ this.w3cLatexCharMap = {
                 + offset(input) : baseUrl + '?q=';
     }
 
-    exports.setBaseUrl = function(url) {
+    exports.setBaseUrl = function(url) {        
         baseUrl = url;
     };
 
@@ -4303,8 +4287,6 @@ this.w3cLatexCharMap = {
 })(typeof exports === 'undefined' ? this.orcidSearchUrlJs = {} : exports);
 
 /* END: orcidSearchUrlJs */
-orcidSearchUrlJs.setBaseUrl(orcidVar.searchBaseUrl);
-
 
 /* Mobile detection, useful for colorbox lightboxes resizing */
 function isMobile() {
@@ -4337,15 +4319,6 @@ function getWindowWidth() {
     return windowWidth;
 };
 
-function tabletDesktopActionButtons($event) {
-    var thisWidth = getWindowWidth();
-    if (thisWidth >= 767) {
-        $('.action-button-bar').addClass('tablet-desktop-display');
-    } else { // Mobile
-        $('.action-button-bar').removeClass('tablet-desktop-display');
-    }
-};
-
 function iframeResize(putCode){						
 	$('#'+putCode).iFrameResize({
 		log: false,
@@ -4353,22 +4326,3 @@ function iframeResize(putCode){
 	});
 }
 
-function isIndexOf(needle) {
-    if(typeof Array.prototype.indexOf === 'function') {
-        indexOf = Array.prototype.indexOf;
-    } else {
-        indexOf = function(needle) {
-            var i = -1, index = -1;
-
-            for(i = 0; i < this.length; i++) {
-                if(this[i] === needle) {
-                    index = i;
-                    break;
-                }
-            }
-
-            return index;
-        };
-    }
-    return indexOf.call(this, needle);
-};

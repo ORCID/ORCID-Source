@@ -3,9 +3,9 @@
 	    <h3><@orcid.msg 'manage_consortium.add_contacts_confirm_heading'/></h3>
         <div *ngIf="!emailSearchResult?.found" >
             <p class="alert alert-error"><@orcid.msg 'manage_delegation.sorrynoaccount1'/>{{input?.text}}<@orcid.msg 'manage_delegation.sorrynoaccount2'/></p>
-            <p><@orcid.msg 'manage_consortium.add_contacts_no_orcid_text1'/> <@spring.message "manage_consortium.add_contacts_no_orcid_text2"/> <a href="<@orcid.rootPath '/register'/>" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897554" target="manage_consortium.this_contact_does_not_5.link"></a></p>
+            <p><@orcid.msg 'manage_consortium.add_contacts_no_orcid_text1'/> <@spring.message "manage_consortium.add_contacts_no_orcid_text2"/> <a href="{{getBaseUri()}}/register" target="manage_consortium.this_contact_does_not_3.link"><@spring.message "manage_consortium.this_contact_does_not_3"/></a> <@spring.message "manage_consortium.this_contact_does_not_4"/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897554" target="manage_consortium.this_contact_does_not_5.link"></a></p>
             <p><@spring.message "manage_consortium.add_contacts_no_orcid_text3"/></p>
-            <p><@spring.message "manage_consortium.add_contacts_no_orcid_text4"/> <a href="mailto:<@spring.message "manage_consortium.support_email"/>"><@spring.message "manage_consortium.support_email"/></a></p>
+            <p><@spring.message "manage_consortium.add_contacts_no_orcid_text4"/> <a href="<@spring.message "manage_consortium.support"/>"><@spring.message "manage_consortium.support"/></a></p>
             <button class="btn btn-white-no-border" (click)="closeModal()"><@orcid.msg 'freemarker.btnclose'/></button>
         </div>
         <div *ngIf="emailSearchResult?.found">

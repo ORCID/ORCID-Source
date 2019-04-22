@@ -22,7 +22,7 @@ import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.resolvers.ArXivResolver;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
-import org.orcid.jaxb.model.v3.rc2.record.Work;
+import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.test.TargetProxyHelper;
 
 public class ArXivResolverTest {

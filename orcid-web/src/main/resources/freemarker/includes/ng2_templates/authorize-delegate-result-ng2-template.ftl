@@ -6,6 +6,6 @@
         <strong><@orcid.msg 'admin.delegate.error.invalid_link' /></strong>
     </div>
     <div *ngIf="wrongLink" class="alert alert-success">
-        <strong><@orcid.msg 'wrong_user.Wronguser' /></strong><a href="<@orcid.rootPath '/signout'/>"><@orcid.msg 'public-layout.sign_out' /></a> <@orcid.msg 'wrong_user.andtryagain' />
+        <strong><@orcid.msg 'wrong_user.Wronguser' /></strong><a href="{{getBaseUri()}}/signout"><@orcid.msg 'public-layout.sign_out' /></a> <@orcid.msg 'wrong_user.andtryagain' />
     </div>
 </script>

@@ -19,11 +19,13 @@ import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap,
     from 'rxjs/operators';
 
 import { AccountService } 
-    from '../../shared/account.service.ts'; 
+    from '../../shared/account.service'; 
 
 import { GenericService } 
-    from '../../shared/generic.service.ts'; 
+    from '../../shared/generic.service'; 
 
+import { CommonService } 
+    from '../../shared/common.service';
 
 @Component({
     selector: 'delegators-ng2',
@@ -31,6 +33,7 @@ import { GenericService }
 })
 export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
+    private userInfo: any;
    
     delegators: any;
     sort: any;
@@ -38,7 +41,8 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     constructor(
         private delegatorsService: GenericService,
-        private accountService: AccountService
+        private accountService: AccountService,
+        private commonSrvc: CommonService
     ) {
         this.sort = {
             column: 'delegateSummary.giverName.value',
@@ -46,6 +50,15 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
         };
         this.delegators = {};
         this.url_path = '/delegators/delegators-and-me.json';
+        this.userInfo = this.commonSrvc.userInfo$
+          .subscribe(
+              data => {
+                  this.userInfo = data; 
+              },
+              error => {
+                  this.userInfo = {};
+              } 
+          );
 
     }
 
@@ -106,6 +119,12 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getDelegators();
+        if(!this.commonSrvc.isPublicPage) {
+            this.getDelegators();
+        }   
     }; 
+    
+    getBaseUri(): String {
+        return getBaseUri();
+    };
 }

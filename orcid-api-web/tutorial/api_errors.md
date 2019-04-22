@@ -24,14 +24,14 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 
 
 
- For additional help please contact support@orcid.org.
+ For additional help please contact https://orcid.org/help/contact-us.
 
  ## List of Error codes and solutions
 
 |Error Code |	Message	|Possible Solution|Example|
 |-----------|---------|-----------------|-------|
 |301	|Moved Permanently|	This ORCID iD has been deprecated into another, see the location returned for the updated ORCID iD if you are not automatically forwarded| **Example of location returned in error message:** `<developer-message>301 Moved Permanently: This account is deprecated. Please refer to account: https://qa.orcid.org/0000-0000-0000-0000. ORCID https://qa.orcid.org/0000-1111-0000-0000</developer-message>`
-|302|Found|Check that you are making a call to the api url not the web interface. The URL should start http://api.sandbox.orcid.org|**Incorrect call notice how the URL has no 'api'**  curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer ************************' 'https:/orcid.org/v3.0_rc2/0000-0002-4575-651X/works'|
+|302|Found|Check that you are making a call to the api url not the web interface. The URL should start http://api.sandbox.orcid.org|**Incorrect call notice how the URL has no 'api'**  curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer ************************' 'https:/orcid.org/v3.0/0000-0002-4575-651X/works'|
 |400| The client application sent a bad request to ORCID. Full validation error: argument type mismatch|An example of this error occurring is when a post is made for bulk works using the work endpoint.  ... -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-4575-651X/work' instead of -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-4575-651X/works'
 |400|	Bad Request	Check XML headers|--|--|
 |400|Bad Request Please specify the API Version you want to PUT to|Although this says check API version this can happen if your ORCID's are inconsistent in the call and XML. Check both.|--|
@@ -66,7 +66,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 |500|	Internal Server Error|	Ensure that that your XML is valid and that any ORCID records you reference in the file are valid|--|
 |500|	Redirect URI mismatch.	|Check that the redirect_uri in the request for the authorization code matches the redirect_uri used when exchanging the authorization code for an access token|--|
 |500|	Invalid authorization code	|Check that the authorization code has not already been exchanged for an access token, authorization codes can only be used once|--|
-|500|	Invalid scope: /webhook	|Your credentials are not authorized to create webhooks. Webhooks are available only to premium members, if you are a premium member contact support@orcid.org to correct this problem
+|500|	Invalid scope: /webhook	|Your credentials are not authorized to create webhooks. Webhooks are available only to premium members, if you are a premium member contact https://orcid.org/help/contact-us to correct this problem
 |500|	org.hibernate.exception.DataException: could not execute statement	|Something that you are posting doesn't comply with field restrictions, check that fields don't exceed character limits, urls are properly formatted, etc.|--|
 |***|Unable to find org.orcid.persistence.jpa.entities.ProfileEntity with id	﻿|Ensure that you have correct and consistent ORCID iDs throughout the XML, including in sub-elements, such as works source|--|
 |***|Could not resolve host: Bearer; nodename nor servname provided, or not known|Check the syntax of your request|--|

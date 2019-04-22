@@ -18,19 +18,17 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.jena.ext.com.google.common.collect.Sets;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.util.BaseControllerTest;
-import org.orcid.jaxb.model.v3.rc2.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -47,28 +45,17 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
             "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml",
             "/data/ResearchResourceEntityData.xml", "/data/Oauth2TokenDetailsData.xml");
 
-    private static String OTHER_USER_ORCID = "4444-4444-4444-4446";
-
     @Resource
     private ResearchResourcesController controller;
 
     @Resource(name = "researchResourceManagerV3")
     private ResearchResourceManager researchResourceManager;
 
-    @Resource
-    protected OrcidProfileManager orcidProfileManager;
-
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
 
     @Mock
     private HttpServletRequest servletRequest;
-
-    @Before
-    public void init() {
-        orcidProfileManager.updateLastModifiedDate("4444-4444-4444-4446");
-        assertNotNull(controller);
-    }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -204,21 +191,13 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.START_DATE_SORT_KEY, true);
+        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.DATE_SORT_KEY, true);
         assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.START_DATE_SORT_KEY, false);
+        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.DATE_SORT_KEY, false);
         assertEquals("the title2", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title3", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
-
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.END_DATE_SORT_KEY, true);
-        assertEquals("the title2", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
-        assertEquals("the title3", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
-
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.END_DATE_SORT_KEY, false);
-        assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
-        assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
     }
 
