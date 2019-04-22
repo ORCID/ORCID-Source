@@ -153,6 +153,9 @@ public class ResearchResourceSummary implements VisibilityType, Activity, Groupa
 
     @Override
     public ExternalIdentifiersContainer getExternalIdentifiers() {
+        if(proposal == null) {
+            return null;
+        }
         return proposal.getExternalIdentifiers();
     }
 
