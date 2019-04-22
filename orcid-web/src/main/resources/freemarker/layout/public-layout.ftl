@@ -2,8 +2,8 @@
     <!DOCTYPE html>
     <html class="no-js oldie" lang="en">
     <#include "/common/html-head.ftl" />
-    <body>
-    <root-cmp>
+    <body role="presentation">
+    <root-cmp role="presentation">
         <style type="text/css">
             body, html {
                 height: 100%;
@@ -107,29 +107,29 @@
         <#if !(RequestParameters['oauth'])?? && nav != "oauth-error" && nav != "oauth-error-mismatch">
             <script type="text/ng-template" id="footer-ng2-template">
                 <@orcid.checkFeatureStatus 'NEW_FOOTER'>
-                    <footer class="footer-main" role="footer">
-                        <div class="container">
-            	            <span id="noop"><!-- For automated tests --> </span>
-                            <div class="row footer-row-container">
+                    <footer class="footer-main" aria-label="<@orcid.msg 'aria.footer'/>">
+                        <div class="container" role="presentation">
+            	            <span id="noop" role="presentation"><!-- For automated tests --> </span>
+                            <div class="row footer-row-container" role="presentation">
 
-                                <div class="footer-row-text-container">
-                                    <div class="footer-row-icons-container">
+                                <div class="footer-row-text-container" role="presentation">
+                                    <div class="footer-row-icons-container" role="presentation">
                                         <a href="{{aboutUri}}" alt="ORCID logo">
                                             <img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" width="110px" alt="ORCID logo">
                                         </a>
-                                        <nav>
-                                            <ul class="inline-list">
-                                                <li><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter"><span class="social social-twitter"></span></a></li>
-                                                <li><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss"><span class="social social-rss"></span></a></li>
-                                                <li><a class="social-button" href="https://github.com/ORCID" target="social-github"><span class="social social-github"></span></a></li>
+                                        <nav role="presentation">
+                                            <ul class="inline-list" role="presentation">
+                                                <li role="presentation"><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter"><span class="social social-twitter" aria-label="twitter"></span></a></li>
+                                                <li role="presentation"><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss"><span class="social social-rss" aria-label="rss"></span></a></li>
+                                                <li role="presentation"><a class="social-button" href="https://github.com/ORCID" target="social-github"><span class="social social-github" aria-label="github"></span></a></li>
                                             </ul>
                                         </nav>
                                     </div>
 
-                                    <p>
+                                    <p role="presentation">
                                         <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/cc0_80x15.png'}}" style="border-style: none; margin-right: 4px;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license" target="footer.copyright_cc0" class="footer-url" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a></p>
-                                    <nav>
-                                        <ul class="inline-list">
+                                    <nav role="presentation">
+                                        <ul class="inline-list" role="banner">
                                             <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
                                             <li><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
                                             <li><a href="https://orcid.org/orcid-dispute-procedures">Dispute procedures</a></li>

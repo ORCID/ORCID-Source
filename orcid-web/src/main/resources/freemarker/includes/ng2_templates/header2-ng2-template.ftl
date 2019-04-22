@@ -200,7 +200,7 @@
                 </div>
         </div>
 
-        <p class="header2-see-more container">{{liveIds}} <@orcid.msg
+        <p class="header2-see-more container" role="Complementary" aria-label="<@orcid.msg 'aria.orcid-statistics'/>">{{liveIds}} <@orcid.msg
              'public-layout.amount_ids'/> <a href="{{getBaseUri()}}/statistics"
              title=""><@orcid.msg 'public-layout.see_more'/></a>
         </p>

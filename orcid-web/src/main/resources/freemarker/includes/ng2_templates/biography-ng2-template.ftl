@@ -6,29 +6,29 @@
             <p><@orcid.msg 'workspace.locked.message_1'/><a href="http://orcid.org/help/contact-us" target="Orcid_support"><@orcid.msg 'workspace.locked.message_2'/></a><@orcid.msg 'workspace.locked.message_3'/></p>
         </div>
     </div>                
-    <div class="biography-controller" id="bio-section">
-        <div class="row">
-            <div class="col-md-9 col-sm-8 col-xs-4">
-                <h2 (click)="toggleEdit()" class="workspace-title">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h2>  
-                <div class="popover-help-container">
-                    <i class="glyphicon glyphicon-question-sign"></i>
-                    <div id="bio-help" class="popover bottom">
-                        <div class="arrow"></div>
-                        <div class="popover-content">
-                            <p><@orcid.msg 'manage_bio_settings.helpPopoverBio'/></p>
+    <div class="biography-controller" id="bio-section" aria-labelledby="labelbiography">
+        <div class="row" role="presentation">
+            <div class="col-md-9 col-sm-8 col-xs-4" role="presentation">
+                <h2 id="labelbiography"(click)="toggleEdit()" class="workspace-title" aria-describedby="tooltip-helpPopoverBio">${springMacroRequestContext.getMessage("manage_bio_settings.labelbiography")}</h2>  
+                <div class="popover-help-container" role="presentation" >
+                    <i class="glyphicon glyphicon-question-sign" role="presentation"></i>
+                    <div id="bio-help" class="popover bottom" role="presentation">
+                        <div class="arrow" role="presentation"></div>
+                        <div class="popover-content" role="presentation">
+                            <p  id="tooltip-helpPopoverBio" role="tooltip"><@orcid.msg 'manage_bio_settings.helpPopoverBio'/></p>
                         </div>
                     </div>
                 </div>   
             </div>
-            <div class="col-md-3 col-sm-4 col-xs-8">
-                <ul class="inline-list bio-edit right">
+            <div class="col-md-3 col-sm-4 col-xs-8" role="presentation">
+                <ul class="inline-list bio-edit right" role="presentation">
                     <li>
-                        <div (click)="toggleEdit()" *ngIf="!showEdit" class="edit-biography edit-option">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                            <div class="popover popover-tooltip top">
-                                <div class="arrow"></div>
-                                <div class="popover-content">
-                                    <span><@orcid.msg 'manage_bio_settings.editBio' /></span>
+                        <div (click)="toggleEdit()" *ngIf="!showEdit" class="edit-biography edit-option" role="Button" aria-label="<@orcid.msg 'aria.edit'/>" describedby="tooltip-editBio">
+                            <span class="glyphicon glyphicon-pencil"  role="presentation"></span>
+                            <div class="popover popover-tooltip top"  role="presentation">
+                                <div class="arrow"  role="presentation"></div>
+                                <div class="popover-content"  role="presentation">
+                                    <span role="tooltip" id="tooltip-editBio"><@orcid.msg 'manage_bio_settings.editBio' /></span>
                                 </div>                
                             </div>
                         </div>
@@ -45,8 +45,8 @@
             </div>
         </div>
         
-        <div class="row">
-            <div class="col-md-12">   
+        <div class="row" role="presentation">
+            <div class="col-md-12" role="presentation">   
                 <div style="white-space: pre-wrap" *ngIf="!showEdit" (click)="toggleEdit()">{{formData?.biography?.value}}</div> 
             </div>
         </div>
@@ -57,8 +57,8 @@
                     <textarea id="biography" name="biography" class="input-xlarge" rows="20" (change)="checkLength()" [(ngModel)]="formData.biography.value"></textarea>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="row" role="presentation">
+                <div class="col-md-12 col-sm-12 col-xs-12" role="presentation">
                     <span class="orcid-error" *ngIf="lengthError==true">
                         <div>${springMacroRequestContext.getMessage("Length.changePersonalInfoForm.biography")}</div>
                     </span>

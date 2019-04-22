@@ -1840,7 +1840,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     font-weight: 700;
     height: 30px;
     line-height: 31px;
-    width: 100%;
     cursor: pointer;
 }
 
@@ -9250,17 +9249,12 @@ select#language-codes:focus {
 
 .toggle-text h2:first-of-type {
     color: white;
-    font-size: 17px;
     font-size: 14px;
     margin: 0;
-
+    padding-left: 4px;
 }
 
 
-.btn-group-vertical>.btn-group:after, .btn-group-vertical>.btn-group:before, .btn-toolbar:after, .btn-toolbar:before, .clearfix:after, .clearfix:before, .container-fluid:after, .container-fluid:before, .container:after, .container:before, .dl-horizontal dd:after, .dl-horizontal dd:before, .form-horizontal .form-group:after, .form-horizontal .form-group:before, .modal-footer:after, .modal-footer:before, .modal-header:after, .modal-header:before, .nav:after, .nav:before, .navbar-collapse:after, .navbar-collapse:before, .navbar-header:after, .navbar-header:before, .navbar:after, .navbar:before, .pager:after, .pager:before, .panel-body:after, .panel-body:before, .row:after, .row:before {
-    display: table;
-    content: none;
-  }
 
 a.toggle-text {
     display: flex;
@@ -9271,4 +9265,14 @@ person-ng2 h3.workspace-section-label {
     font-size: 14px;
     line-height: 22px;
     margin: 0;
+}
+
+emails-ng2 h3.workspace-section-label {
+    font-size: 14px;
+    line-height: 22px;
+    margin: 0;
+}
+
+.affiliation-heading {
+    display: flex;
 }

@@ -1,20 +1,20 @@
 <script type="text/ng-template" id="funding-ng2-template">
     <div>
         <!-- Funding -->
-        <div id="workspace-fundings" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && groups.length < 1">
+        <div id="workspace-fundings" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && groups.length < 1" role="group" aria-labelledby="affiliationType.Funding" aria-describedby="tooltip-helpPopoverFunding">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-md-4 col-sm-4 col-xs-12 affiliation-heading">
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayFunding==false}"></i>
-                            <h2><@orcid.msg 'workspace.Funding'/> (<span>{{groups.length}}</span>)</h2>
+                            <h2 id="affiliationType.Funding"><@orcid.msg 'workspace.Funding'/> (<span>{{groups.length}}</span>)</h2>
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="funding-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897214" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <p id="tooltip-helpPopoverFunding"><@orcid.msg 'manage_funding_settings.helpPopoverFunding'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006897214" target="manage_funding_settings.helpPopoverFunding"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div> 

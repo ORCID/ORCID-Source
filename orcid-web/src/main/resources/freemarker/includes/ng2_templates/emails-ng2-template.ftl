@@ -2,8 +2,8 @@
     <div class="workspace-section">
         <div class="workspace-section-header">
             <div class="workspace-section-title">                  
-                <div class="edit-websites edit-option" (click)="openEditModal()">
-                    <div class="glyphicon glyphicon-pencil">
+                <div class="edit-websites edit-option" (click)="openEditModal()" aria-label="<@orcid.msg 'aria.edit' />">
+                    <div class="glyphicon glyphicon-pencil" >
                         <div class="popover popover-tooltip top">
                             <div class="arrow"></div>
                             <div class="popover-content">

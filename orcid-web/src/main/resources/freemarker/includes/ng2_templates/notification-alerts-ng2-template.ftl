@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="notification-alerts-ng2-template">
-    <div>
-        <ng-container *ngFor="let notification of  notificationsSrvc.notificationAlerts; let index = index">
+    <div role="presentation">
+        <ng-container *ngFor="let notification of  notificationsSrvc.notificationAlerts; let index = index"  role="Alert">
             <div class="notification-alert">        
                 <h3 class="notification-alert-title" >      
                     <@orcid.msg 'notifications.alert_title_1'/>

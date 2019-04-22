@@ -1,20 +1,20 @@
 <script type="text/ng-template" id="peer-review-ng2-template">
     <div>
         <!-- PEER REVIEW -->
-        <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && peerReviewService.groups.length < 1" *ngIf="noLinkFlag || peerReviewService?.groups?.length > 0">
+        <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && peerReviewService.groups.length < 1" *ngIf="noLinkFlag || peerReviewService?.groups?.length > 0" role="group" aria-labelledby="affiliationType.peerReview" aria-describedby="tooltip-helpPopoverPeerReview">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
-                    <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12 affiliation-heading">
                         <a (click)="workspaceSrvc.togglePeerReview()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayPeerReview==false}"></i>
-                            <h2><@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span>{{peerReviewService.groups.length}}</span>)</h2>
+                            <h2 id="affiliationType.peerReview"><@orcid.msg 'workspace_peer_review_body_list.peerReview'/> (<span>{{peerReviewService.groups.length}}</span>)</h2>
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="peer-review-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006971333" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <p id="tooltip-helpPopoverPeerReview"><@orcid.msg 'manage_peer_review_settings.helpPopoverPeerReview'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006971333" target="manage_peer_review_settings.helpPopoverPeerReview"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div>                    

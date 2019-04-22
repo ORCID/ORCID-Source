@@ -7,7 +7,7 @@
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</span></li>
                         <li class="right">                                  
-                            <span (click)="toggleSourcesDisplay('other-names')" class="right toggle" (mouseenter)="showPopover('other-names')" (mouseleave)="hidePopover('other-names')">
+                            <span  aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="toggleSourcesDisplay('other-names')" class="right toggle" (mouseenter)="showPopover('other-names')" (mouseleave)="hidePopover('other-names')">
                                 <i [ngClass]="(showSources['other-names'] || showSources['other-names'] == 'null')? 'glyphicons collapse_top relative' : 'glyphicons expand relative'"></i>
                                 <div class="popover top" [ngClass]="{'block' : popoverShowing['other-names']}">
                                     <div class="arrow"></div>
@@ -57,8 +57,8 @@
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
                         <li class="right">
-                            <span (click)="toggleSourcesDisplay('websites')" class="right toggle" (mouseenter)="showPopover('websites')" (mouseleave)="hidePopover('websites')">
-                                <i [ngClass]="(showSources['websites'] || showSources['websites'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+                            <span aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="toggleSourcesDisplay('websites')" class="right toggle" (mouseenter)="showPopover('websites')" (mouseleave)="hidePopover('websites')">
+                                <i [ngClass]="(showSources['websites'] || showSources['websites'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'" ></i>
                                 <div class="popover top" [ngClass]="{'block' : popoverShowing['websites']}">
                                     <div class="arrow"></div>
                                     <div class="popover-content">
@@ -105,7 +105,7 @@
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span></li>                                   
                             <li class="right">                  
-                                <span (click)="toggleSourcesDisplay('countries')" class="right toggle" (mouseenter)="showPopover('countries')" (mouseleave)="hidePopover('countries')">
+                                <span  aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="toggleSourcesDisplay('countries')" class="right toggle" (mouseenter)="showPopover('countries')" (mouseleave)="hidePopover('countries')">
                                     <i [ngClass]="(showSources['countries'] || showSources['countries'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
                                     <div class="popover top" [ngClass]="{'block' : popoverShowing['countries']}">
                                         <div class="arrow"></div>
@@ -158,7 +158,7 @@
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</span></li>
                         <li class="right">                                      
-                            <span (click)="toggleSourcesDisplay('keywords')" class="right toggle" (mouseenter)="showPopover('keywords')" (mouseleave)="hidePopover('keywords')">
+                            <span aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="toggleSourcesDisplay('keywords')" class="right toggle" (mouseenter)="showPopover('keywords')" (mouseleave)="hidePopover('keywords')">
                                 <i [ngClass]="(showSources['keywords'] || showSources['keywords'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
                                 <div class="popover top" [ngClass]="{'block' : popoverShowing['keywords']}">
                                     <div class="arrow"></div>
@@ -208,7 +208,7 @@
                     <ul class="inline-list visible workspace-section-heading">
                         <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</span></li>
                         <li class="right">
-                            <span (click)="toggleSourcesDisplay('external-identifiers')" class="right toggle" (mouseenter)="showPopover('external-identifiers')" (mouseleave)="hidePopover('external-identifiers')">
+                            <span aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="toggleSourcesDisplay('external-identifiers')" class="right toggle" (mouseenter)="showPopover('external-identifiers')" (mouseleave)="hidePopover('external-identifiers')">
                                 <i [ngClass]="(showSources['external-identifiers'] || showSources['external-identifiers'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
                                 <div class="popover top" [ngClass]="{'block' : popoverShowing['external-identifiers']}">
                                     <div class="arrow"></div>

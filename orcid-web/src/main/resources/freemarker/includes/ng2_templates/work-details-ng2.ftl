@@ -1,9 +1,9 @@
-<div class="work-list-container">
+<div class="work-list-container" aria-labelledby="work.title">
     <ul class="sources-edit-list">
         <!--Edit sources-->
-        <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}">
+        <li *ngIf="editSources[group.groupId]" class="source-header" [ngClass]="{'source-active' : editSources[group.groupId] == true}" role="presentation">
             <div class="sources-header">
-                <div class="row">
+                <div class="row" role="presentation">
                     <div class="col-md-7 col-sm-7 col-xs-6">
                         <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" (click)="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                     </div>
@@ -21,7 +21,7 @@
                                     </li>         
                                 </@orcid.checkFeatureStatus>     
                                 <li class="works-details">
-                                    <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                                    <a aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
                                         <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                         </span>
                                     </a>
@@ -58,7 +58,7 @@
                             <div *ngIf="!isPublicPage" class="left rightBuffer"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" (change)="bulkEditSelect()" class="bulk-edit-input ng-pristine ng-valid"></div> 
                         </@orcid.checkFeatureStatus>
                         <h3 class="workspace-title leftBuffer">
-                            <span>{{work.title.value}}</span>
+                            <span id="work.title">{{work.title.value}}</span>
                             <span class="journaltitle" *ngIf="work.journalTitle?.value">{{work.journalTitle.value}}</span>                                
                         </h3>                                                        
                         <div class="info-detail">
@@ -78,7 +78,7 @@
                             </@orcid.checkFeatureStatus>
                             <!--Show details toggle-->
                             <li class="works-details" *ngIf="!editSources[group.groupId]">
-                                <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                                <a  aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
                                     <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                     </span>
                                 </a>
