@@ -39,7 +39,7 @@
                                     <td colspan="4" class="pull-right">                                     
                                         <ul class="client-options">
                                             <li><a (click)="viewDetails(client)"><span class="glyphicon glyphicon-eye-open"></span><@orcid.msg 'manage.developer_tools.group.view_credentials_link' /></a></li>   
-                                            <li><a (click)="showEditClient(client)"><span class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'aria.edit' />"></span><@orcid.msg 'manage.developer_tools.group.edit_credentials_link' /></a></li>                                              
+                                            <li><a (click)="showEditClient(client)"><span class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'common.edit' />"></span><@orcid.msg 'manage.developer_tools.group.edit_credentials_link' /></a></li>                                              
                                         </ul>                                       
                                     </td>                                   
                                 </tr>                                               
@@ -168,7 +168,7 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">             
                     <ul class="sso-options pull-right"> 
                         <li><a href="#member_developer_tools_header" (click)="showViewLayout()" class="back" title="<@orcid.msg 'manage.developer_tools.tooltip.back' />"><span class="glyphicon glyphicon-arrow-left"></span></a></li>                        
-                        <li><a (click)="showEditClient(clientDetails)" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'aria.edit' />"></span></a></li>                            
+                        <li><a (click)="showEditClient(clientDetails)" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'common.edit' />"></span></a></li>                            
                     </ul>                   
                 </div>
             </div>

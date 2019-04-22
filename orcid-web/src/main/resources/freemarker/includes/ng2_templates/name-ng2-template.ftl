@@ -6,7 +6,7 @@
                 <div class="col-md-12">
                     <div class="workspace-section-title">
                         <div class="edit-name edit-option" *ngIf="!showEdit" id="open-edit-names">
-                            <div class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'aria.edit' />">
+                            <div class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'common.edit' />">
                                 <div class="popover popover-tooltip top">
                                     <div class="arrow"></div>
                                     <div class="popover-content">

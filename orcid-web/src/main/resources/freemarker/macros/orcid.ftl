@@ -243,7 +243,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro editActivityIcon activity click toolTipSuffix toolTipClass>   
-    <a aria-label="<@orcid.msg 'aria.edit' />" ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+    <a aria-label="<@orcid.msg 'common.edit' />" ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil" ></span>
     </a>
     <a ng-show="!userIsSource(${activity}) && group.hasUserVersion()" ng-click="showSources(group)" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
@@ -275,7 +275,7 @@ kind of variable. This temp value is only used in this macro lib -->
 <#macro editActivityIconNg2 activity click toolTipSuffix toolTipClass>
     <!--For activities without backend grouping-->
     <!--Edit activity pencil icon-->   
-    <a aria-label="<@orcid.msg 'aria.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+    <a aria-label="<@orcid.msg 'common.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
     <!--Make a copy disabled--> 
@@ -308,7 +308,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>    
 
 <#macro editWorkIcon activity click toolTipSuffix toolTipClass>   
-    <a aria-label="<@orcid.msg 'aria.edit' />" ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+    <a aria-label="<@orcid.msg 'common.edit' />" ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
     <a ng-show="!userIsSource(${activity}) && group.userVersionPresent" ng-click="showSources(group)" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
@@ -338,7 +338,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro editWorkIconNg2 activity click toolTipSuffix toolTipClass>  
-    <a aria-label="<@orcid.msg 'aria.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
+    <a aria-label="<@orcid.msg 'common.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
     <a *ngIf="!userIsSource(${activity}) && group.userVersionPresent" (click)="showSources(group,$event)" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">

@@ -58,7 +58,7 @@
                     <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
                         <!--Bulk edit-->
                         <li *ngIf="!manualWorkGroupingEnabled && worksService?.groups?.length > 1" >
-                            <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()" aria-label="<@orcid.msg 'aria.edit' />">
+                            <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()" aria-label="<@orcid.msg 'common.edit' />">
                                 <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                             </a>
                         </li>
@@ -389,7 +389,7 @@
                             <ul>
                                 <li><a (click)="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="<@orcid.msg 'common.ignore' />"></a></li>
                                 <li><a *ngIf="work?.errors?.length == 0" (click)="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="<@orcid.msg 'common.save' />"></a></li>
-                                <li><a *ngIf="work?.errors?.length > 0" (click)="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" aria-label="<@orcid.msg 'aria.edit' />" title="<@orcid.msg 'common.edit' />"></a></li>
+                                <li><a *ngIf="work?.errors?.length > 0" (click)="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" aria-label="<@orcid.msg 'common.edit' />" title="<@orcid.msg 'common.edit' />"></a></li>
                                 <li><span *ngIf="work?.errors?.length > 0"><a (click)="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
                             </ul>
                         </div>
