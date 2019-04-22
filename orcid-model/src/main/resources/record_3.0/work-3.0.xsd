@@ -200,7 +200,7 @@
 		<xs:sequence>
 			<xs:element name="contributor-sequence" type="work:contributor-sequence"
 				minOccurs="0" />
-			<xs:element name="contributor-role" type="work:contributor-role"
+			<xs:element name="contributor-role" type="common:contributor-role"
 				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
@@ -214,27 +214,6 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="first" />
 			<xs:enumeration value="additional" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="contributor-role">
-		<xs:annotation>
-			<xs:documentation>The role performed by the collaborator or other
-				contributor.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="author" />
-			<xs:enumeration value="assignee" />
-			<xs:enumeration value="editor" />
-			<xs:enumeration value="chair-or-translator" />
-			<xs:enumeration value="co-investigator" />
-			<xs:enumeration value="co-inventor" />
-			<xs:enumeration value="graduate-student" />
-			<xs:enumeration value="other-inventor" />
-			<xs:enumeration value="principal-investigator" />
-			<xs:enumeration value="postdoctoral-researcher" />
-			<xs:enumeration value="support-staff" />
 		</xs:restriction>
 	</xs:simpleType>
 

@@ -15,9 +15,10 @@
 	</common:source>	
 	<work:title>
 		<common:title>common:title</common:title>
-		<common:subtitle />
+		<common:subtitle>common:subtitle</common:subtitle>
 		<common:translated-title language-code="en">common:translated-title</common:translated-title>
 	</work:title>
+	<work:journal-title>common:journal-title</work:journal-title>
 	<work:short-description>work:short-description</work:short-description>
 	<work:citation>
 		<work:citation-type>formatted-unspecified</work:citation-type>
