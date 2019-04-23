@@ -28,9 +28,12 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.ContributorRole;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.PeerReviewSubjectType;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -66,6 +69,7 @@ import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Distinctions;
@@ -1364,6 +1368,53 @@ public class ValidateV3SamplesTest {
     }
 
     @Test
+    public void testUnmarshallWork() throws JAXBException, SAXException, URISyntaxException {
+        Work work = (Work) unmarshallFromPath("/record_3.0/samples/read_samples/work-full-3.0.xml", Work.class, "/record_3.0/activities-3.0.xsd");
+        assertNotNull(work);
+        assertEquals(Iso3166Country.AF, work.getCountry().getValue());        
+        assertNotNull(work.getCreatedDate().getValue());
+        assertNotNull(work.getExternalIdentifiers());        
+        assertEquals(2, work.getExternalIdentifiers().getExternalIdentifier().size());        
+        assertEquals(Relationship.VERSION_OF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("agr", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://orcid.org", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("work:external-identifier-id", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+        assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("http://orcid.org", work.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("work:doi", work.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertEquals("common:journal-title", work.getJournalTitle().getContent());
+        assertEquals("en", work.getLanguageCode());
+        assertNotNull(work.getLastModifiedDate());        
+        assertNotNull(work.getPublicationDate());
+        assertEquals("02", work.getPublicationDate().getDay().getValue());
+        assertEquals("02", work.getPublicationDate().getMonth().getValue());
+        assertEquals("1948", work.getPublicationDate().getYear().getValue());
+        assertEquals(Long.valueOf(123), work.getPutCode());
+        assertEquals("work:short-description", work.getShortDescription());
+        assertNotNull(work.getSource());
+        assertEquals("8888-8888-8888-8880", work.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org", work.getUrl().getValue());
+        assertEquals(Visibility.PRIVATE, work.getVisibility());
+        assertNotNull(work.getWorkCitation());
+        assertEquals("work:citation", work.getWorkCitation().getCitation());
+        assertEquals(CitationType.FORMATTED_UNSPECIFIED, work.getWorkCitation().getWorkCitationType());
+        assertNotNull(work.getWorkContributors());
+        assertEquals(1, work.getWorkContributors().getContributor().size());
+        assertEquals(ContributorRole.AUTHOR, work.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorRole());
+        assertEquals(SequenceType.FIRST, work.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorSequence());
+        assertEquals("work@contributor.email", work.getWorkContributors().getContributor().get(0).getContributorEmail().getValue());
+        assertEquals("8888-8888-8888-8880", work.getWorkContributors().getContributor().get(0).getContributorOrcid().getPath());
+        assertEquals("work:credit-name", work.getWorkContributors().getContributor().get(0).getCreditName().getContent());
+        assertNotNull(work.getWorkTitle());
+        assertEquals("common:subtitle", work.getWorkTitle().getSubtitle().getContent());
+        assertEquals("common:title", work.getWorkTitle().getTitle().getContent());
+        assertEquals("common:translated-title", work.getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("en", work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals(WorkType.ARTISTIC_PERFORMANCE, work.getWorkType());        
+    }
+        
+    @Test
     public void testUnmarshallWorks() throws JAXBException, SAXException, URISyntaxException {
         Works works = (Works) unmarshallFromPath("/record_3.0/samples/read_samples/works-3.0.xml", Works.class, "/record_3.0/activities-3.0.xsd");
         assertNotNull(works);
@@ -1728,6 +1779,8 @@ public class ValidateV3SamplesTest {
                 result = (ActivitiesSummary) obj;
             } else if (Works.class.equals(type)) {
                 result = (Works) obj;
+            } else if (Work.class.equals(type)) {
+                result = (Work) obj;
             } else if (Education.class.equals(type)) {
                 result = (Education) obj;
             } else if (Educations.class.equals(type)) {
