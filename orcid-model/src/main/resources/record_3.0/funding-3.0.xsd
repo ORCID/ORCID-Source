@@ -134,12 +134,12 @@
 		<xs:annotation>
 			<xs:documentation>
 			The type of funding, selected from the following options:
-    		* Award: Peer-reviewed funding providing direct research costs through competitions
-    		* Contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria
-    		* Grant: Peer-reviewed funding providing direct research costs through competitions
-    		* Salary award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
+    		* award: Peer-reviewed funding providing direct research costs through competitions
+    		* contract: Works commissioned by external public agencies or industry building on research expertise and aimed at deliverables. Include research contracts awarded by federal agencies for both direct and indirect costs, and honoraria
+    		* grant: Peer-reviewed funding providing direct research costs through competitions
+    		* salary-award: A competitive, peer-reviewed award that is paid as salary to the awardee/faculty member
     		ORCID will validate this value against the enumeration 
-			org.orcid.jaxb.model.common.FundingType and other rules when necessary
+			https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/java/org/orcid/jaxb/model/common/FundingType.java and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
 
@@ -189,9 +189,13 @@
 	<xs:simpleType name="contributor-role">
 		<xs:annotation>
 			<xs:documentation>The role performed by the collaborator or other
-				contributor.
+				contributor, selected from the following options:
+    			* lead
+    			* co-lead:
+    			* supported-by
+    			* other-contribution
 				ORCID will validate this value against the enumeration 
-				org.orcid.jaxb.model.common.FundingContributorRole and other rules when necessary
+				https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/java/org/orcid/jaxb/model/common/FundingContributorRole.java and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string" />

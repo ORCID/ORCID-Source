@@ -119,13 +119,13 @@
 
 	<xs:simpleType name="resource-type">
 		<xs:annotation>
-			<xs:documentation>Types of research-resources. Options are:
-    		* Collection: An object or group of objects used for research purposes; can be tangible or digital. Examples include ocean mission, field campaign, data sets, rare book collections, museum collections, biological specimen collections
-    		* Equipment: Hardware used for research purposes. Examples include microscopes, telescopes, computers, glassware, samples, materials
-    		* Infrastructure: A facility, building, or other physical space used to perform research. Examples incldue a neutron spallation source, animal facility, data enclave, archaeological site, telescope array, ship, plane, farm, laboratory
-    		* Service: Services used for research purposes. Examples include data analysis, computing services, logistical support, legal services, copyediting, expert or staff advisement.
+			<xs:documentation>The type of research resource, selected from the following options:
+    		* collections: An object or group of objects used for research purposes; can be tangible or digital. Examples include ocean mission, field campaign, data sets, rare book collections, museum collections, biological specimen collections
+    		* equipment: Hardware used for research purposes. Examples include microscopes, telescopes, computers, glassware, samples, materials
+    		* infrastructures: A facility, building, or other physical space used to perform research. Examples incldue a neutron spallation source, animal facility, data enclave, archaeological site, telescope array, ship, plane, farm, laboratory
+    		* services: Services used for research purposes. Examples include data analysis, computing services, logistical support, legal services, copyediting, expert or staff advisement.
 			ORCID will validate this value against the enumeration 
-			org.orcid.jaxb.model.common.ResourceType and other rules when necessary
+			https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/java/org/orcid/jaxb/model/common/ResourceType.java and other rules when necessary
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string" />
