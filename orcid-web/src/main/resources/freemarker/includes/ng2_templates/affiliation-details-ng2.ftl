@@ -194,7 +194,7 @@
                         <div>
                             <ul *ngIf="!isPublicPage" class="sources-actions">
                                 <li> 
-                                    <@orcid.editWorkIconNg2
+                                    <@orcid.editActivityIconNg2
                                         activity="affiliation"
                                         click="openEditAffiliation(affiliation, group)"
                                         toolTipSuffix="editToolTipSource"
@@ -244,7 +244,7 @@
                     <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
                         <ul *ngIf="!isPublicPage" class="sources-actions">
                             <li> 
-                                <@orcid.editWorkIconNg2
+                                <@orcid.editActivityIconNg2
                                     activity="affiliation"
                                     click="openEditAffiliation(affiliation, group)"
                                     toolTipSuffix="editToolTipSourceActions"
@@ -290,7 +290,7 @@
                     <div class="col-md-2 col-sm-2 col-xs-3" *ngIf="group.activePutCode == affiliation.putCode.value">
                         <ul *ngIf="!isPublicPage" class="sources-options" >
                             <li>
-                                <@orcid.editWorkIconNg2
+                                <@orcid.editActivityIconNg2
                                     activity="affiliation"
                                     click="openEditAffiliation(affiliation, group)"
                                     toolTipSuffix="editToolTip"
