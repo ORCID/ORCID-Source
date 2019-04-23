@@ -2,6 +2,7 @@ package org.orcid.core.version;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.GregorianCalendar;
 
@@ -10,6 +11,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.ResourceType;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
@@ -162,7 +166,240 @@ public class V3VersionConverterChainTest {
     }
 
     @Test
-    public void downgradeRC2ToRC1Test() {
+    public void downgradeRC2ToRC1ResearchResourceAndResearchResourceSummaryTest() {
+        // Research resource
+        org.orcid.jaxb.model.v3.rc2.record.ResearchResource rrRc2 = new org.orcid.jaxb.model.v3.rc2.record.ResearchResource();
+        org.orcid.jaxb.model.v3.rc2.record.ResearchResourceProposal rp = new org.orcid.jaxb.model.v3.rc2.record.ResearchResourceProposal();
+        rrRc2.setProposal(rp);
+        rp.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://orcid.org"));
+        rp.setTitle(new org.orcid.jaxb.model.v3.rc2.record.ResearchResourceTitle());
+        rp.getTitle().setTitle(new org.orcid.jaxb.model.v3.rc2.common.Title("Research resource"));
+        rp.getTitle().setTranslatedTitle(new org.orcid.jaxb.model.v3.rc2.common.TranslatedTitle("translatedTitle","en"));
+        org.orcid.jaxb.model.v3.rc2.record.ExternalIDs extIds = new org.orcid.jaxb.model.v3.rc2.record.ExternalIDs();
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId1 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+        extId1.setRelationship(Relationship.SELF);
+        extId1.setType("doi");
+        extId1.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://orcid.org"));        
+        extId1.setValue("extId1");               
+        extIds.getExternalIdentifier().add(extId1);
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId2 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+        extId2.setRelationship(Relationship.VERSION_OF);
+        extId2.setType("doi");
+        extId2.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://orcid.org"));        
+        extId2.setValue("extId2");               
+        extIds.getExternalIdentifier().add(extId2);
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId3 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+        extId3.setRelationship(Relationship.PART_OF);
+        extId3.setType("doi");
+        extId3.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://orcid.org"));        
+        extId3.setValue("extId3");               
+        extIds.getExternalIdentifier().add(extId3);
+        rp.setExternalIdentifiers(extIds);
+        rp.setEndDate(new org.orcid.jaxb.model.v3.rc2.common.FuzzyDate(new org.orcid.jaxb.model.v3.rc2.common.Year(2012),new org.orcid.jaxb.model.v3.rc2.common.Month(1),new org.orcid.jaxb.model.v3.rc2.common.Day(1)));
+        rp.setStartDate(new org.orcid.jaxb.model.v3.rc2.common.FuzzyDate(new org.orcid.jaxb.model.v3.rc2.common.Year(2011),new org.orcid.jaxb.model.v3.rc2.common.Month(1),new org.orcid.jaxb.model.v3.rc2.common.Day(1)));
+        org.orcid.jaxb.model.v3.rc2.common.Organization org1 = new org.orcid.jaxb.model.v3.rc2.common.Organization();
+        org1.setName("orgName1");
+        org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress address = new org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress();
+        address.setCity("city");
+        address.setCountry(Iso3166Country.US);
+        org1.setAddress(address);
+        org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization disambiguatedOrg = new org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("def456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        org1.setDisambiguatedOrganization(disambiguatedOrg);
+        org.orcid.jaxb.model.v3.rc2.common.Organization org2 = new org.orcid.jaxb.model.v3.rc2.common.Organization();
+        org2.setName("orgName2");
+        org2.setAddress(address);
+        org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization disambiguatedOrg2 = new org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization();
+        disambiguatedOrg2.setDisambiguatedOrganizationIdentifier("def456");
+        disambiguatedOrg2.setDisambiguationSource("WDB");
+        org2.setDisambiguatedOrganization(disambiguatedOrg2);
+        rp.getHosts().getOrganization().add(org1);
+        rp.getHosts().getOrganization().add(org2);
+        rrRc2.getResourceItems().add(generateResearchResourceItem("item1"));
+        
+        // Map and test
+        org.orcid.jaxb.model.v3.rc1.record.ResearchResource rrRc1 = (org.orcid.jaxb.model.v3.rc1.record.ResearchResource) (v3VersionConverterChain
+                .downgrade(new V3Convertible(rrRc2, "3.0_rc2"), "3.0_rc1")).getObjectToConvert();
+        assertNotNull(rrRc1);
+        assertNull(rrRc1.getPath());
+        assertNotNull(rrRc1.getProposal());
+        assertNotNull(rrRc1.getProposal().getEndDate());
+        assertEquals("01", rrRc1.getProposal().getEndDate().getDay().getValue());
+        assertEquals("01", rrRc1.getProposal().getEndDate().getMonth().getValue());
+        assertEquals("2012", rrRc1.getProposal().getEndDate().getYear().getValue());
+        assertNotNull(rrRc1.getProposal().getExternalIdentifiers());
+        assertEquals(2, rrRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().size());        
+        assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.SELF, rrRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("doi", rrRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://orcid.org", rrRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("extId1", rrRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getValue());        
+        assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.PART_OF, rrRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+        assertEquals("doi", rrRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("http://orcid.org", rrRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("extId3", rrRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertNotNull(rrRc1.getProposal().getHosts());
+        assertEquals(2, rrRc1.getProposal().getHosts().getOrganization().size());
+        assertEquals("city", rrRc1.getProposal().getHosts().getOrganization().get(0).getAddress().getCity());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, rrRc1.getProposal().getHosts().getOrganization().get(0).getAddress().getCountry());
+        assertNotNull(rrRc1.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization());
+        assertEquals("def456", rrRc1.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals("WDB", rrRc1.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguationSource());
+        assertEquals("orgName1", rrRc1.getProposal().getHosts().getOrganization().get(0).getName());
+        assertEquals("city", rrRc1.getProposal().getHosts().getOrganization().get(1).getAddress().getCity());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, rrRc1.getProposal().getHosts().getOrganization().get(1).getAddress().getCountry());
+        assertNotNull(rrRc1.getProposal().getHosts().getOrganization().get(1).getDisambiguatedOrganization());
+        assertEquals("def456", rrRc1.getProposal().getHosts().getOrganization().get(1).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals("WDB", rrRc1.getProposal().getHosts().getOrganization().get(1).getDisambiguatedOrganization().getDisambiguationSource());
+        assertEquals("orgName2", rrRc1.getProposal().getHosts().getOrganization().get(1).getName());        
+        assertNotNull(rrRc1.getProposal().getStartDate());
+        assertEquals("01", rrRc1.getProposal().getStartDate().getDay().getValue());
+        assertEquals("01", rrRc1.getProposal().getStartDate().getMonth().getValue());
+        assertEquals("2011", rrRc1.getProposal().getStartDate().getYear().getValue());
+        assertNotNull(rrRc1.getProposal().getTitle());
+        assertNotNull(rrRc1.getProposal().getTitle().getTitle());
+        assertNotNull(rrRc1.getProposal().getTitle().getTranslatedTitle());
+        assertEquals("Research resource", rrRc1.getProposal().getTitle().getTitle().getContent());
+        assertEquals("translatedTitle", rrRc1.getProposal().getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", rrRc1.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("http://orcid.org", rrRc1.getProposal().getUrl().getValue());
+        assertNotNull(rrRc1.getResourceItems());
+        assertEquals(1, rrRc1.getResourceItems().size());
+        assertEquals(2, rrRc1.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.SELF, rrRc1.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("doi", rrRc1.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://orcid.org", rrRc1.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("extId1", rrRc1.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.PART_OF, rrRc1.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+        assertEquals("doi", rrRc1.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("http://orcid.org", rrRc1.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("extId3", rrRc1.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertNotNull(rrRc1.getResourceItems().get(0).getHosts());
+        assertEquals(2, rrRc1.getResourceItems().get(0).getHosts().getOrganization().size());        
+        assertEquals("city", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(0).getAddress().getCity());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(0).getAddress().getCountry());
+        assertEquals("region", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(0).getAddress().getRegion());
+        assertEquals("def456", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals("WDB", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguationSource());
+        assertEquals("orgName", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(0).getName());        
+        assertEquals("city", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(1).getAddress().getCity());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(1).getAddress().getCountry());
+        assertEquals("region", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(1).getAddress().getRegion());
+        assertEquals("def4567", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(1).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals("WDBA", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(1).getDisambiguatedOrganization().getDisambiguationSource());
+        assertEquals("orgName2", rrRc1.getResourceItems().get(0).getHosts().getOrganization().get(1).getName());        
+        assertEquals("item1", rrRc1.getResourceItems().get(0).getResourceName());
+        assertEquals("infrastructures", rrRc1.getResourceItems().get(0).getResourceType());
+        assertEquals("http://orcid.org", rrRc1.getResourceItems().get(0).getUrl().getValue());         
+        
+        
+        // Summary
+        org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary rrsRc2 = new org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary();
+        rrsRc2.setProposal(rp);
+        
+        // Map and test
+        org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary rrsRc1 = (org.orcid.jaxb.model.v3.rc1.record.summary.ResearchResourceSummary) (v3VersionConverterChain
+                .downgrade(new V3Convertible(rrsRc2, "3.0_rc2"), "3.0_rc1")).getObjectToConvert();
+        
+        assertNotNull(rrsRc1);
+        assertNull(rrsRc1.getPath());
+        assertNotNull(rrsRc1.getProposal());
+        assertNotNull(rrsRc1.getProposal().getEndDate());
+        assertEquals("01", rrsRc1.getProposal().getEndDate().getDay().getValue());
+        assertEquals("01", rrsRc1.getProposal().getEndDate().getMonth().getValue());
+        assertEquals("2012", rrsRc1.getProposal().getEndDate().getYear().getValue());
+        assertNotNull(rrsRc1.getProposal().getExternalIdentifiers());
+        assertEquals(2, rrsRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().size());        
+        assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.SELF, rrsRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("doi", rrsRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://orcid.org", rrsRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("extId1", rrsRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getValue());        
+        assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.PART_OF, rrsRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
+        assertEquals("doi", rrsRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(1).getType());
+        assertEquals("http://orcid.org", rrsRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
+        assertEquals("extId3", rrsRc1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertNotNull(rrsRc1.getProposal().getHosts());
+        assertEquals(2, rrsRc1.getProposal().getHosts().getOrganization().size());
+        assertEquals("city", rrsRc1.getProposal().getHosts().getOrganization().get(0).getAddress().getCity());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, rrsRc1.getProposal().getHosts().getOrganization().get(0).getAddress().getCountry());
+        assertNotNull(rrsRc1.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization());
+        assertEquals("def456", rrsRc1.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals("WDB", rrsRc1.getProposal().getHosts().getOrganization().get(0).getDisambiguatedOrganization().getDisambiguationSource());
+        assertEquals("orgName1", rrsRc1.getProposal().getHosts().getOrganization().get(0).getName());
+        assertEquals("city", rrsRc1.getProposal().getHosts().getOrganization().get(1).getAddress().getCity());
+        assertEquals(org.orcid.jaxb.model.v3.rc1.common.Iso3166Country.US, rrsRc1.getProposal().getHosts().getOrganization().get(1).getAddress().getCountry());
+        assertNotNull(rrsRc1.getProposal().getHosts().getOrganization().get(1).getDisambiguatedOrganization());
+        assertEquals("def456", rrsRc1.getProposal().getHosts().getOrganization().get(1).getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+        assertEquals("WDB", rrsRc1.getProposal().getHosts().getOrganization().get(1).getDisambiguatedOrganization().getDisambiguationSource());
+        assertEquals("orgName2", rrsRc1.getProposal().getHosts().getOrganization().get(1).getName());        
+        assertNotNull(rrsRc1.getProposal().getStartDate());
+        assertEquals("01", rrsRc1.getProposal().getStartDate().getDay().getValue());
+        assertEquals("01", rrsRc1.getProposal().getStartDate().getMonth().getValue());
+        assertEquals("2011", rrsRc1.getProposal().getStartDate().getYear().getValue());
+        assertNotNull(rrsRc1.getProposal().getTitle());
+        assertNotNull(rrsRc1.getProposal().getTitle().getTitle());
+        assertNotNull(rrsRc1.getProposal().getTitle().getTranslatedTitle());
+        assertEquals("Research resource", rrsRc1.getProposal().getTitle().getTitle().getContent());
+        assertEquals("translatedTitle", rrsRc1.getProposal().getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", rrsRc1.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("http://orcid.org", rrsRc1.getProposal().getUrl().getValue());
+    }
+    
+    private org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem generateResearchResourceItem(String title){
+        org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem ri1 = new org.orcid.jaxb.model.v3.rc2.record.ResearchResourceItem();
+        ri1.setResourceName(title);
+        ri1.setResourceType(ResourceType.valueOf("infrastructures"));
+        ri1.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://orcid.org")); 
+        
+        org.orcid.jaxb.model.v3.rc2.common.Organization org1 = new org.orcid.jaxb.model.v3.rc2.common.Organization();
+        org1.setName("orgName");
+        org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress address = new org.orcid.jaxb.model.v3.rc2.common.OrganizationAddress();
+        address.setCity("city");
+        address.setCountry(Iso3166Country.US);
+        address.setRegion("region");
+        org1.setAddress(address);
+        org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization disambiguatedOrg = new org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("def456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        org1.setDisambiguatedOrganization(disambiguatedOrg);
+        org.orcid.jaxb.model.v3.rc2.common.Organization org2 = new org.orcid.jaxb.model.v3.rc2.common.Organization();
+        org2.setName("orgName2");
+        org2.setAddress(address);
+        org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization disambiguatedOrg2 = new org.orcid.jaxb.model.v3.rc2.common.DisambiguatedOrganization();
+        disambiguatedOrg2.setDisambiguatedOrganizationIdentifier("def4567");
+        disambiguatedOrg2.setDisambiguationSource("WDBA");
+        org2.setDisambiguatedOrganization(disambiguatedOrg2);
+        ri1.getHosts().getOrganization().add(org1);
+        ri1.getHosts().getOrganization().add(org2);
+        
+        org.orcid.jaxb.model.v3.rc2.record.ExternalIDs extIds = new org.orcid.jaxb.model.v3.rc2.record.ExternalIDs();
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId1 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+        extId1.setRelationship(Relationship.SELF);
+        extId1.setType("doi");
+        extId1.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://orcid.org"));        
+        extId1.setValue("extId1");               
+        extIds.getExternalIdentifier().add(extId1);
+        
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId2 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+        extId2.setRelationship(Relationship.VERSION_OF);
+        extId2.setType("doi");
+        extId2.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://orcid.org"));        
+        extId2.setValue("extId2");               
+        extIds.getExternalIdentifier().add(extId2);
+        
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId3 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+        extId3.setRelationship(Relationship.PART_OF);
+        extId3.setType("doi");
+        extId3.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://orcid.org"));        
+        extId3.setValue("extId3");               
+        extIds.getExternalIdentifier().add(extId3);
+        ri1.setExternalIdentifiers(extIds);
+        
+        return ri1;
+    }
+    
+    @Test
+    public void downgradeRC2ToRC1WorksAndWorkSummaryTest() {
         XMLGregorianCalendar gc1 = DateUtils.convertToXMLGregorianCalendar(new GregorianCalendar(2018, 1, 1));
         XMLGregorianCalendar gc2 = DateUtils.convertToXMLGregorianCalendar(new GregorianCalendar(2019, 1, 1));
 
@@ -193,20 +430,8 @@ public class V3VersionConverterChainTest {
         org.orcid.jaxb.model.v3.rc2.record.WorkContributors wc = new org.orcid.jaxb.model.v3.rc2.record.WorkContributors();
         wc.getContributor().add(c);
         rc2Work.setWorkContributors(wc);
-        org.orcid.jaxb.model.v3.rc2.record.ExternalIDs extIds = new org.orcid.jaxb.model.v3.rc2.record.ExternalIDs();
-        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId1 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
-        extId1.setRelationship(org.orcid.jaxb.model.common.Relationship.SELF);
-        extId1.setType("type");
-        extId1.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
-        extId1.setValue("extId1");
-        extIds.getExternalIdentifier().add(extId1);
-        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId2 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
-        extId2.setRelationship(org.orcid.jaxb.model.common.Relationship.PART_OF);
-        extId2.setType("type");
-        extId2.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
-        extId2.setValue("extId2");
-        extIds.getExternalIdentifier().add(extId2);
-        rc2Work.setWorkExternalIdentifiers(extIds);
+        rc2Work.setWorkExternalIdentifiers(getExternalIdentifiers());        
+        
         org.orcid.jaxb.model.v3.rc2.record.WorkTitle title = new org.orcid.jaxb.model.v3.rc2.record.WorkTitle();
         title.setSubtitle(new org.orcid.jaxb.model.v3.rc2.common.Subtitle("The subtitle"));
         title.setTitle(new org.orcid.jaxb.model.v3.rc2.common.Title("The title"));
@@ -254,7 +479,7 @@ public class V3VersionConverterChainTest {
         assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.PART_OF, rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
         assertEquals("type", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("http://www.orcid.org", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
-        assertEquals("extId2", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        assertEquals("extId3", rc1Work.getWorkExternalIdentifiers().getExternalIdentifier().get(1).getValue());
 
         assertEquals("The subtitle", rc1Work.getWorkTitle().getSubtitle().getContent());
         assertEquals("The title", rc1Work.getWorkTitle().getTitle().getContent());
@@ -267,7 +492,7 @@ public class V3VersionConverterChainTest {
         org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary rc2WorkSummary = new org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary();
         rc2WorkSummary.setCreatedDate(new org.orcid.jaxb.model.v3.rc2.common.CreatedDate(gc1));
         rc2WorkSummary.setDisplayIndex("1");
-        rc2WorkSummary.setExternalIdentifiers(extIds);
+        rc2WorkSummary.setExternalIdentifiers(getExternalIdentifiers());
         rc2WorkSummary.setJournalTitle(new org.orcid.jaxb.model.v3.rc2.common.Title("Journal title"));
         rc2WorkSummary.setLastModifiedDate(new org.orcid.jaxb.model.v3.rc2.common.LastModifiedDate(gc2));
         rc2WorkSummary.setPath("/0000-0000-0000-0000/rcX/work/123");
@@ -290,12 +515,12 @@ public class V3VersionConverterChainTest {
         assertEquals("type", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("http://www.orcid.org", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
         assertEquals("extId1", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-
+        
         assertEquals(org.orcid.jaxb.model.v3.rc1.record.Relationship.PART_OF, rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
         assertEquals("type", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getType());
         assertEquals("http://www.orcid.org", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getUrl().getValue());
-        assertEquals("extId2", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
-
+        assertEquals("extId3", rc1WorkSummary.getExternalIdentifiers().getExternalIdentifier().get(1).getValue());
+        
         assertEquals("Journal title", rc1WorkSummary.getJournalTitle().getContent());
         assertEquals(new org.orcid.jaxb.model.v3.rc1.common.LastModifiedDate(gc2), rc1WorkSummary.getLastModifiedDate());
         assertEquals("/0000-0000-0000-0000/rcX/work/123", rc1WorkSummary.getPath());
@@ -313,6 +538,29 @@ public class V3VersionConverterChainTest {
         assertEquals(org.orcid.jaxb.model.v3.rc1.common.Visibility.LIMITED, rc1WorkSummary.getVisibility());
     }
 
+    private org.orcid.jaxb.model.v3.rc2.record.ExternalIDs getExternalIdentifiers() {
+        org.orcid.jaxb.model.v3.rc2.record.ExternalIDs extIds = new org.orcid.jaxb.model.v3.rc2.record.ExternalIDs();
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId1 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+        extId1.setRelationship(org.orcid.jaxb.model.common.Relationship.SELF);
+        extId1.setType("type");
+        extId1.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
+        extId1.setValue("extId1");
+        extIds.getExternalIdentifier().add(extId1);
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId2 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+        extId2.setRelationship(org.orcid.jaxb.model.common.Relationship.VERSION_OF);
+        extId2.setType("type");
+        extId2.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
+        extId2.setValue("extId2");
+        extIds.getExternalIdentifier().add(extId2);
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID extId3 = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+        extId3.setRelationship(org.orcid.jaxb.model.common.Relationship.PART_OF);
+        extId3.setType("type");
+        extId3.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url("http://www.orcid.org"));
+        extId3.setValue("extId3");
+        extIds.getExternalIdentifier().add(extId3);
+        return extIds;
+    }
+    
     @Test
     public void upgradeRC2ToReleaseTest() {
         XMLGregorianCalendar gc1 = DateUtils.convertToXMLGregorianCalendar(new GregorianCalendar(2018, 1, 1));
