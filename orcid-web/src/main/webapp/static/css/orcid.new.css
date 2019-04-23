@@ -2637,7 +2637,14 @@ span.orcid-error {
     float: left;
     clear: both;
     width: 100%;
-    margin-bottom: 15px
+    margin-bottom: 15px;
+    white-space: normal;
+    word-break: normal;
+    word-wrap: break-word;
+}
+
+span.orcid-error a{
+    white-space: nowrap;
 }
 
 input.error {
@@ -2974,7 +2981,7 @@ input.error {
 
 .workspace-profile p {
     margin-bottom: 5px;
-    word-wrap: break-word
+    word-break: break-word
 }
 
 .work-title {
