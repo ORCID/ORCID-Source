@@ -2,8 +2,8 @@
     <div class="workspace-section">
         <div class="workspace-section-header">
             <div class="workspace-section-title">                  
-                <div class="edit-websites edit-option" (click)="openEditModal()">
-                    <div class="glyphicon glyphicon-pencil">
+                <div class="edit-websites edit-option" (click)="openEditModal()" aria-label="<@orcid.msg 'common.edit' />">
+                    <div class="glyphicon glyphicon-pencil" >
                         <div class="popover popover-tooltip top">
                             <div class="arrow"></div>
                             <div class="popover-content">
@@ -12,7 +12,7 @@
                         </div>
                     </div>                  
                 </div>
-                <div class="workspace-section-label"><@orcid.msg 'manage.emails'/></div>
+                <h3 class="workspace-section-label"><@orcid.msg 'manage.emails'/></h3>
             </div>
         </div> 
         <div class="workspace-section-content">

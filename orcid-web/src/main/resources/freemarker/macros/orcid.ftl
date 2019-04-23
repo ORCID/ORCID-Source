@@ -243,8 +243,8 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro editActivityIcon activity click toolTipSuffix toolTipClass>   
-    <a ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
-        <span class="glyphicon glyphicon-pencil"></span>
+    <a aria-label="<@orcid.msg 'common.edit' />" ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+        <span class="glyphicon glyphicon-pencil" ></span>
     </a>
     <a ng-show="!userIsSource(${activity}) && group.hasUserVersion()" ng-click="showSources(group)" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicons git_create grey"></span>
@@ -275,7 +275,7 @@ kind of variable. This temp value is only used in this macro lib -->
 <#macro editActivityIconNg2 activity click toolTipSuffix toolTipClass>
     <!--For activities without backend grouping-->
     <!--Edit activity pencil icon-->   
-    <a *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+    <a aria-label="<@orcid.msg 'common.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
     <!--Make a copy disabled--> 
@@ -308,7 +308,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>    
 
 <#macro editWorkIcon activity click toolTipSuffix toolTipClass>   
-    <a ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
+    <a aria-label="<@orcid.msg 'common.edit' />" ng-show="userIsSource(${activity})" ng-click="${click}" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
     <a ng-show="!userIsSource(${activity}) && group.userVersionPresent" ng-click="showSources(group)" ng-mouseenter="showTooltip(${activity}.putCode.value+'-${toolTipSuffix}')" ng-mouseleave="hideTooltip(${activity}.putCode.value+'-${toolTipSuffix}')">
@@ -338,7 +338,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro editWorkIconNg2 activity click toolTipSuffix toolTipClass>  
-    <a *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
+    <a aria-label="<@orcid.msg 'common.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
         <span class="glyphicon glyphicon-pencil"></span>
     </a>
     <a *ngIf="!userIsSource(${activity}) && group.userVersionPresent" (click)="showSources(group,$event)" (mouseenter)="showTooltip(${activity}.putCode.value +'-${toolTipSuffix}')" (mouseleave)="hideTooltip(${activity}.putCode.value +'-${toolTipSuffix}')">
@@ -370,17 +370,17 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>  
 
 <#macro privacyToggle2 angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">  
-    <div class="relative" id="privacy-bar">
-        <ul class="privacyToggle" ng-mouseenter="showTooltip(group.groupId+'-privacy')" ng-mouseleave="hideTooltip(group.groupId+'-privacy')">
-            <li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a ng-click="${publicClick}"></a></li>
-            <li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a ng-click="${limitedClick}"></a></li>
-            <li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a ng-click="${privateClick}"></a></li>
+    <div class="relative" id="privacy-bar" role="presentation">
+        <ul aria-label="<@orcid.msg 'aria.privacy_menu' />" aria-describedby="tool-tip-who_can_see_macro" class="privacyToggle" aria-label="<@orcid.msg 'aria.privacy_menu' />" ng-mouseenter="showTooltip(group.groupId+'-privacy')" ng-mouseleave="hideTooltip(group.groupId+'-privacy')">
+            <li role="presentation" class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a aria-label="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
+            <li role="presentation" class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a aria-label="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>
+            <li role="presentation" class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a aria-label="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"></a></li>
         </ul>
     </div>
     <div class="popover-help-container">
        <div class="popover top privacy-myorcid3" ng-class="showElement[group.groupId+'-privacy'] == true ? 'block' : ''">
             <div class="arrow"></div>
-            <div class="popover-content">
+            <div class="popover-content" id="tool-tip-who_can_see_macro">
                 <strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
                 <ul class="privacyHelp">
                     <li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
@@ -396,9 +396,9 @@ kind of variable. This temp value is only used in this macro lib -->
 <#macro privacyToggle2Ng2 angularModel publicClick limitedClick privateClick elementId popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">  
 <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
     <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(${elementId} +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(${elementId} +'-privacy')">
-        <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a (click)="${publicClick}"></a></li>
-        <li class="limitedActive" [ngClass]="{limitedInActive: ${angularModel} != 'LIMITED'}"><a (click)="${limitedClick}"></a></li>
-        <li class="privateActive" [ngClass]="{privateInActive: ${angularModel} != 'PRIVATE'}"><a (click)="${privateClick}"></a></li>
+        <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a aria-label="<@orcid.msg 'manage.lipublic' />"  (click)="${publicClick}"></a></li>
+        <li class="limitedActive" [ngClass]="{limitedInActive: ${angularModel} != 'LIMITED'}"><a aria-label="<@orcid.msg 'manage.lilimited' />" (click)="${limitedClick}"></a></li>
+        <li class="privateActive" [ngClass]="{privateInActive: ${angularModel} != 'PRIVATE'}"><a aria-label="<@orcid.msg 'manage.liprivate' />" (click)="${privateClick}"></a></li>
     </ul>
 </div>
 <div class="popover-help-container">
@@ -420,9 +420,9 @@ kind of variable. This temp value is only used in this macro lib -->
 <#macro privacyToggle3 angularModel publicClick limitedClick privateClick elementId publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">  
 <div ng-class="{'relative' : modal == false}" id="privacy-bar">
     <ul class="privacyToggle" ng-mouseenter="commonSrvc.showPrivacyHelp(${elementId} +'-privacy', $event, 145)" ng-mouseleave="commonSrvc.hideTooltip(${elementId} +'-privacy')">
-        <li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a ng-click="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
-        <li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a ng-click="${limitedClick}" name="privacy-toggle-3-limited" id="${limitedId}"></a></li>
-        <li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a ng-click="${privateClick}"  name="privacy-toggle-3-private" id="${privateId}"></a></li>
+        <li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a aria-label="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
+        <li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a aria-label="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}" name="privacy-toggle-3-limited" id="${limitedId}"></a></li>
+        <li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a aria-label="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"  name="privacy-toggle-3-private" id="${privateId}"></a></li>
     </ul>
 </div>
 <div class="popover-help-container">
@@ -444,9 +444,9 @@ kind of variable. This temp value is only used in this macro lib -->
 <#macro privacyToggle3Ng2 angularModel publicClick limitedClick privateClick elementId position="top" publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle=""> 
     <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
         <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(${elementId} +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(${elementId} +'-privacy')">
-            <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a (click)="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
-            <li class="limitedActive" [ngClass]="{limitedInActive: ${angularModel} != 'LIMITED'}"><a (click)="${limitedClick}" name="privacy-toggle-3-limited" id="${limitedId}"></a></li>
-            <li class="privateActive" [ngClass]="{privateInActive: ${angularModel} != 'PRIVATE'}"><a (click)="${privateClick}"  name="privacy-toggle-3-private" id="${privateId}"></a></li>
+            <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a aria-label="<@orcid.msg 'manage.lipublic' />" (click)="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
+            <li class="limitedActive" [ngClass]="{limitedInActive: ${angularModel} != 'LIMITED'}"><a aria-label="<@orcid.msg 'manage.lilimited' />" (click)="${limitedClick}" name="privacy-toggle-3-limited" id="${limitedId}"></a></li>
+            <li class="privateActive" [ngClass]="{privateInActive: ${angularModel} != 'PRIVATE'}"><a aria-label="<@orcid.msg 'manage.liprivate' />" (click)="${privateClick}"  name="privacy-toggle-3-private" id="${privateId}"></a></li>
         </ul>
     </div>
     <div class="popover-help-container" >
@@ -468,9 +468,9 @@ kind of variable. This temp value is only used in this macro lib -->
 <#macro privacyToggleBulkWorksNg2 angularModel publicClick limitedClick privateClick elementId popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">  
 <div [ngClass]="{'relative' : modal == false}" id="privacy-bar">
     <ul class="privacyToggle" (mouseenter)="commonSrvc.showPrivacyHelp(${elementId} +'-privacy', $event, 145)" (mouseleave)="commonSrvc.hideTooltip(${elementId} +'-privacy')">
-        <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a (click)="${publicClick}"></a></li>
-        <li class="limitedActive" [ngClass]="{limitedInActive: ${angularModel} != 'LIMITED'}"><a (click)="${limitedClick}"></a></li>
-        <li class="privateActive" [ngClass]="{privateInActive: ${angularModel} != 'PRIVATE'}"><a (click)="${privateClick}"></a></li>
+        <li class="publicActive" [ngClass]="{publicInActive: ${angularModel} != 'PUBLIC'}"><a aria-label="<@orcid.msg 'manage.lipublic' />" (click)="${publicClick}"></a></li>
+        <li class="limitedActive" [ngClass]="{limitedInActive: ${angularModel} != 'LIMITED'}"><a aria-label="<@orcid.msg 'manage.lilimited' />" (click)="${limitedClick}"></a></li>
+        <li class="privateActive" [ngClass]="{privateInActive: ${angularModel} != 'PRIVATE'}"><a aria-label="<@orcid.msg 'manage.liprivate' />" (click)="${privateClick}"></a></li>
     </ul>
 </div>
 <div class="popover-help-container bulk-edit-privacy-help-container">

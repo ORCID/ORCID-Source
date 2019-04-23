@@ -1,21 +1,21 @@
 <script type="text/ng-template" id="works-ng2-template">
     <!--WORKS-->
-    <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active">
+    <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" role="group" aria-labelledby="affiliationType.Works" aria-describedby="tooltip-helpPopoverWorks">
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
-                <div class="col-md-5 col-sm-5 col-xs-12">                
+                <div class="col-md-5 col-sm-5 col-xs-12 affiliation-heading">                
                     <div>
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-                           <@orcid.msg 'workspace.Works'/> (<span>{{worksService.groupsLabel}}</span>)
+                           <h2 id="affiliationType.Works"><@orcid.msg 'workspace.Works'/> (<span>{{worksService.groupsLabel}}</span>)</h2>
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="works-help" class="popover bottom">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
-                                    <p><@orcid.msg 'manage_works_settings.helpPopoverWorks'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006973133" target="manage_works_settings.helpPopoverWorks"><@orcid.msg 'common.learn_more'/></a></p>
+                                    <p id="tooltip-helpPopoverWorks"><@orcid.msg 'manage_works_settings.helpPopoverWorks'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006973133" target="manage_works_settings.helpPopoverWorks"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div> 
@@ -58,7 +58,7 @@
                     <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
                         <!--Bulk edit-->
                         <li *ngIf="!manualWorkGroupingEnabled && worksService?.groups?.length > 1" >
-                            <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()">
+                            <a class="action-option works manage-button" [ngClass]="{'green-bg' : bulkEditShow == true}" (click)="toggleBulkEdit()" aria-label="<@orcid.msg 'common.edit' />">
                                 <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                             </a>
                         </li>
@@ -389,7 +389,7 @@
                             <ul>
                                 <li><a (click)="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="<@orcid.msg 'common.ignore' />"></a></li>
                                 <li><a *ngIf="work?.errors?.length == 0" (click)="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="<@orcid.msg 'common.save' />"></a></li>
-                                <li><a *ngIf="work?.errors?.length > 0" (click)="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="<@orcid.msg 'common.edit' />"></a></li>
+                                <li><a *ngIf="work?.errors?.length > 0" (click)="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" aria-label="<@orcid.msg 'common.edit' />" title="<@orcid.msg 'common.edit' />"></a></li>
                                 <li><span *ngIf="work?.errors?.length > 0"><a (click)="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
                             </ul>
                         </div>
@@ -472,7 +472,7 @@
                     </div>
                 </div>             
             </@orcid.checkFeatureStatus>
-            <ul *ngIf="worksService?.groups?.length" class="workspace-publications bottom-margin-medium" id="body-work-list">
+            <ul *ngIf="worksService?.groups?.length" class="workspace-publications bottom-margin-medium" id="body-work-list" role="presentation">
                 <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of worksService.groups">
                     <#include "work-details-ng2.ftl"/>  
                 </li>

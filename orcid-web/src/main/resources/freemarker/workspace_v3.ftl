@@ -2,13 +2,13 @@
 <#escape x as x?html>
 <#include "/includes/ng2_templates/my-orcid-alerts-ng2-template.ftl">
 <my-orcid-alerts-ng2 checkEmailValidated=${(Session.CHECK_EMAIL_VALIDATED?exists?c)!} inDelegationMode=${(inDelegationMode?c)!}></my-orcid-alerts-ng2>
-<div class="row public-profile">
+<div class="row public-profile" role="presentation">
   <!--Left col-->
-  <div class="col-md-3 lhs left-aside">
-    <div class="workspace-profile">
+  <div class="col-md-3 lhs left-aside" role="presentation">
+    <div class="workspace-profile" aria-label="<@orcid.msg 'aria.person-information'/>">
       <!-- ID Banner-->
       <#include "/includes/ng2_templates/id-banner-ng2-template.ftl"/>
-      <id-banner-ng2> </id-banner-ng2>
+      <id-banner-ng2 aria-label="<@orcid.msg 'aria.id-banner'/>"> </id-banner-ng2>
       <!--Public record widget-->
       <#include "/includes/ng2_templates/widget-ng2-template.ftl">
       <widget-ng2></widget-ng2>
@@ -26,37 +26,37 @@
     </div>
   </div>
   <!--Right col-->
-  <div class="col-md-9 right-aside">
-    <div class="workspace-right">
-      <div class="workspace-accordion" id="workspace-accordion">
+  <div class="col-md-9 right-aside" aria-label="<@orcid.msg 'aria.person-activities'/>" >
+    <div class="workspace-right" role="presentation" >
+      <div class="workspace-accordion" id="workspace-accordion" role="presentation">
         <!-- Notification alert -->                       
         <#include "/includes/ng2_templates/notification-alerts-ng2-template.ftl">
-        <notification-alerts-ng2></notification-alerts-ng2>           
+        <notification-alerts-ng2 role="presentation"></notification-alerts-ng2>           
         <!-- Biography -->        
-        <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active">  
-          <div class="workspace-accordion-content">
+        <div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" role="presentation">  
+          <div class="workspace-accordion-content" role="presentation" >
             <#include "/includes/ng2_templates/biography-ng2-template.ftl">
-            <biography-ng2></biography-ng2>
+            <biography-ng2 role="presentation"></biography-ng2>
           </div>
         </div>    
         <!-- Affiliations -->
         <#include "/includes/ng2_templates/affiliation-ng2-template.ftl">
-        <affiliation-ng2 publicView="false"></affiliation-ng2>
+        <affiliation-ng2 publicView="false" role="presentation"></affiliation-ng2>
         <!-- Funding -->
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
-        <funding-ng2></funding-ng2>
+        <funding-ng2 role="presentation"></funding-ng2>
         <!-- Research resources -->
         <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>
           <!--Research resources-->
           <#include "/includes/ng2_templates/research-resource-ng2-template.ftl">
-          <research-resource-ng2 publicView="false"></research-resource-ng2>
+          <research-resource-ng2 publicView="false" role="presentation"></research-resource-ng2>
         </@orcid.checkFeatureStatus>
         <!-- Works -->
         <#include "/includes/ng2_templates/works-ng2-template.ftl">
-        <works-ng2></works-ng2>
+        <works-ng2 role="presentation"></works-ng2>
         <!--Peer review-->
         <#include "/includes/ng2_templates/peer-review-ng2-template.ftl">
-        <peer-review-ng2 publicView="false"></peer-review-ng2>
+        <peer-review-ng2 publicView="false" role="presentation"></peer-review-ng2>
       </div>
     </div>
   </div>    
