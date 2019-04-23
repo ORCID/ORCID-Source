@@ -28,6 +28,11 @@
 	<task:annotation-driven />
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+    
+    <mvc:cors>
+       <mvc:mapping path="/**"
+        allowed-origins="http://localhost:4200, https://localhost:4200" />
+    </mvc:cors>
 
     <mvc:interceptors>
         <ref bean="localeChangeInterceptor" />
