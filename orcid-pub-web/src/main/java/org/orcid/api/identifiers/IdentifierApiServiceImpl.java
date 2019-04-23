@@ -21,9 +21,9 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 
-@Api("Identifier API v2.0")
-@Path("/v2.0" + OrcidApiConstants.IDENTIFIER_PATH)
-public class IdentifierApiServiceImplV2_0 {
+@Api("Identifier API")
+@Path("/v{version: 2.0|2.1|3.0|3.0_rc1|3.0_rc2}" + OrcidApiConstants.IDENTIFIER_PATH)
+public class IdentifierApiServiceImpl {
 
     public final String xmllocation = "<?xml-stylesheet type=\"text/xsl\" href=\"../static/identifierTypes.xsl\"?>";
     
@@ -39,7 +39,7 @@ public class IdentifierApiServiceImplV2_0 {
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Path("")
-    @ApiOperation(value = "Fetch identifier type map.  Defaults to English descriptions", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @ApiOperation(value = "Fetch identifier type map. Defaults to English descriptions", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "")})
     @XmlHeader(xmllocation)
     public Response viewIdentifierTypes(@ApiParam() @QueryParam("locale") String locale) {

@@ -121,7 +121,7 @@
     
     <!--  Identifier API -->
     <bean id="identifierApiServiceDelegator" class="org.orcid.api.identifiers.delegator.impl.IdentifierApiServiceDelegatorImpl" />
-    <bean id="identifierApiServiceImplV2_0" class="org.orcid.api.identifiers.IdentifierApiServiceImplV2_0">
+    <bean id="identifierApiServiceImpl" class="org.orcid.api.identifiers.IdentifierApiServiceImpl">
         <property name="serviceDelegator" ref="identifierApiServiceDelegator"/>
     </bean>
     
