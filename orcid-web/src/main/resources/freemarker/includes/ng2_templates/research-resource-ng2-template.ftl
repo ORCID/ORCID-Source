@@ -4,7 +4,7 @@
         <div class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && researchResourceService.groups.length < 1">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
-                    <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12 affiliation-heading">
                         <a (click)="workspaceSrvc.toggleResearchResource()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayResearchResource==false}"></i>
                             <h2><@orcid.msg 'manage.research_resources'/> (<span>{{researchResourceService.groupsLabel}}</span>)</h2>
