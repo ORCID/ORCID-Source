@@ -1,8 +1,8 @@
 <@public classes=['home'] >
 <script type="text/ng-template" id="search-ng2-template">
-    <div class="row">
-        <div class="col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-offset-9 col-xs-12">
-            <div class="main-search">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9 col-xs-12 main-search">
                 <div class="row">
                     <h1>${springMacroRequestContext.getMessage("orcid_bio_search.h1advancedsearch")}</h1>
                     <p>${springMacroRequestContext.getMessage("orcid_bio_search.searchpublicly")}</p>
@@ -39,38 +39,20 @@
                             <div class="control-group col-md-6">
                                 <!-- Affiliation organization -->
                                 <label for="affiliationOrg" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelaffiliationorg")}</label>
-                                <div class="popover-help-container">
-                                    <i class="glyphicon glyphicon-question-sign"></i>
-                                    <div id="search-help-affiliation" class="popover bottom">
-                                      <div class="arrow"></div>
-                                      <div class="popover-content">
-                                        <p>${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.affiliation1")} <a href="https://www.ringgold.com/" target="orcid_bio_search.popover_help.affiliation2" rel="noopener noreferrer">${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.affiliation2")}</a> ${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.affiliation3")}</p>
-                                      </div>
-                                    </div>
-                                 </div>
                                 <div class="controls">
-                                    <input type="text" class="input-xlarge" name="affiliationOrg" id="affiliationOrg" [(ngModel)]="input.affiliationOrg">
+                                    <input placeholder="${springMacroRequestContext.getMessage('orcid_bio_search.placeholder.affiliation')}" type="text" class="input-xlarge" name="affiliationOrg" id="affiliationOrg" [(ngModel)]="input.affiliationOrg">
                                 </div>
                             </div>
                             <div class="control-group col-md-6">
                                 <!-- Keyword -->
                                 <label for="familyName" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelkeywords")}</label>
-                                <div class="popover-help-container">
-                                    <i class="glyphicon glyphicon-question-sign"></i>
-                                    <div id="search-help-keyword" class="popover bottom">
-                                      <div class="arrow"></div>
-                                      <div class="popover-content">
-                                        <p>${springMacroRequestContext.getMessage("orcid_bio_search.popover_help.keyword")}</p>
-                                      </div>
-                                    </div>
-                                 </div>
                                 <div class="controls">
                                         <input type="text" class="input-xlarge" name="keyword" id="keyword" [(ngModel)]="input.keyword">
                                 </div>
                             </div>
                         </div>
                     </fieldset>
-                    <hr>
+                    <hr class="row">
                     <fieldset>
                         <div class="row">
                             <p>${springMacroRequestContext.getMessage("orcid_bio_search.searchorcid")}</p>
@@ -78,13 +60,13 @@
                                 <!-- Search by ORCID iD -->
                                 <label for="orcid" class="control-label">${springMacroRequestContext.getMessage("orcid_bio_search.labelsearchbyorcid")}</label>
                                 <div class="controls">
-                                    <input type="text" class="input-xlarge" name="orcid" id="orcid" [(ngModel)]="input.text">
+                                    <input  placeholder="XXXX-XXXX-XXXX-XXXX" type="text" class="input-xlarge" name="orcid" id="orcid" [(ngModel)]="input.text">
                                     <span id="invalid-orcid" class="orcid-error" *ngIf="!isValidOrcidId()"><@orcid.msg 'admin.profile_deprecation.errors.invalid_regex' /></span>
                                 </div>
                             </div>
                         </div>
                     </fieldset>
-                    <hr>
+                    <hr class="row">
                     <div class="row">
                         <p *ngIf="hasErrors"><span class="orcid-error">${springMacroRequestContext.getMessage("orcid_bio_search.pyoumustpopulate")}</span></p>
                         <div class="control-group">
@@ -98,7 +80,7 @@
             </div>
         </div>
     </div>
-    <div class="row search-results">
+    <div class="container search-results">
         <#include "includes/search/search_results_ng2.ftl"/>
     </div><!--search results-->
 </script>

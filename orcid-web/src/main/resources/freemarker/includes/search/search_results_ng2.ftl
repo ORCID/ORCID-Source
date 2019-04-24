@@ -1,4 +1,4 @@
-<div class="col-md-12">
+<div class="row col-md-12">
     <p *ngIf="areResults()">${springMacroRequestContext.getMessage("search_results.showing")} {{resultsShowing}} ${springMacroRequestContext.getMessage("search_results.of")} {{numFound}} <span *ngIf="numFound==1">${springMacroRequestContext.getMessage("search_results.result")}</span><span *ngIf="numFound>1">${springMacroRequestContext.getMessage("search_results.results")}</span></p>
     <table class="table table-striped" *ngIf="areResults()">
         <thead>
