@@ -36,6 +36,13 @@
             <version>4.0.2</version>
         </dependency>
 
+		<!-- Solr -->
+		<dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>4.10.4</version>        	
+        </dependency>
+
 		<!-- Test dependencies -->
         <dependency>
             <groupId>org.orcid</groupId>
