@@ -32,9 +32,12 @@ public class WebhooksService {
     private WebhooksServiceDelegator serviceDelegator;
     
     /**
+     * Register a webhook for a specific client.
      * 
-     * @param formParams
-     * @return
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @param webhook_uri
+     *            the webhook that will be added 
      */
     @PUT    
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
@@ -44,9 +47,12 @@ public class WebhooksService {
     } 
     
     /**
+     * Register a webhook for a specific client.
      * 
-     * @param formParams
-     * @return
+     * @param orcid
+     *            the ORCID that corresponds to the user's record
+     * @param webhook_uri
+     *            the webhook that will be added 
      */
     @PUT    
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
