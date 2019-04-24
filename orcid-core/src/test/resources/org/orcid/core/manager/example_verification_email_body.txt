@@ -1,5 +1,3 @@
-Dear Josiah Carberry,
-
 To verify your email address, click the following link and sign into your ORCID record. If you can't click the link, copy and paste it into your browser's address bar:
 http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95SnNxeVJSMy9Scz0?lang=en
 
