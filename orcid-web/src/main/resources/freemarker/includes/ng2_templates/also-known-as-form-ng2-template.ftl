@@ -112,7 +112,10 @@
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
                                                         <div class="aka" *ngIf="otherName">   
                                                             <input class="other-name-content" type="text" [(ngModel)]="otherName.content" *ngIf="otherName.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !otherName.content}" />  
-                                                            <span *ngIf="otherName.source != orcidId && otherName.source != null">{{otherName.content}}</span>                                       
+                                                            <span class="orcid-error" *ngIf="otherName.errors?.length > 0">
+                                                                <div *ngFor='let error of otherName.errors'>{{error}}</div>
+                                                            </span>
+                                                            <span *ngIf="otherName.source != orcidId && otherName.source != null">{{otherName.content}}</span>                                           
                                                         </div>                                      
                                                         <div class="source" *ngIf="otherName.sourceName || otherName.sourceName == null">
                                                             <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="otherName.sourceName">{{otherName.sourceName}}

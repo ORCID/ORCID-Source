@@ -9287,3 +9287,27 @@ emails-ng2 h3.workspace-section-label {
 .affiliation-heading {
     display: flex;
 }
+
+.aka .orcid-error {
+    font-size: 14px;
+}
+
+person-ng2 .workspace-section-content {
+    word-break: break-word;
+}
+
+person-ng2 .source span {
+    word-break: break-all;
+}
+
+div#bio-section {
+    word-break: break-all;
+}
+
+.bio-content {
+    word-break: break-all;
+}
+
+.row.source-line {
+    word-break: break-all;
+}
