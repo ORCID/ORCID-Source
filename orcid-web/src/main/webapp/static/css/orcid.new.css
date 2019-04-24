@@ -9246,3 +9246,54 @@ a.footer-url {
     margin-left: 6px;
     margin-bottom: -6px;
 }
+
+.biography-controller h2 {
+    font-size: 17px;
+}
+
+
+.toggle-text h2:first-of-type {
+    color: white;
+    font-size: 14px;
+    margin: 0;
+    padding-left: 4px;
+}
+
+
+
+a.toggle-text {
+    display: flex;
+    align-items: center;
+}
+
+person-ng2 h3.workspace-section-label {
+    font-size: 14px;
+    line-height: 22px;
+    margin: 0;
+}
+
+emails-ng2 h3.workspace-section-label {
+    font-size: 14px;
+    line-height: 22px;
+    margin: 0;
+}
+
+.affiliation-heading {
+    display: flex;
+}
+
+.aka .orcid-error {
+    font-size: 14px;
+}
+
+person-ng2 .workspace-section-content {
+    word-break: break-word;
+}
+
+person-ng2 .source span {
+    word-break: break-all;
+}
+
+.row.source-line {
+    word-break: break-all;
+}

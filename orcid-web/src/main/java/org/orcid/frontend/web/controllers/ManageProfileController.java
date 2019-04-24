@@ -643,8 +643,16 @@ public class ManageProfileController extends BaseWorkspaceController {
                 
         if (nf.getGivenNames() == null)
             nf.setGivenNames(new Text());
+        if (nf.getFamilyName() == null)
+            nf.setFamilyName(new Text());
+        if (nf.getCreditName() == null)
+            nf.setCreditName(new Text());
         givenNameValidate(nf.getGivenNames());
+        familyNameValidate(nf.getFamilyName());
+        creditNameValidate(nf.getCreditName());
         copyErrors(nf.getGivenNames(), nf);
+        copyErrors(nf.getFamilyName(), nf);
+        copyErrors(nf.getCreditName(), nf);
         copyErrors(nf.getVisibility(), nf);
         if (nf.getErrors().size() > 0)
             return nf;

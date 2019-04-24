@@ -37,11 +37,17 @@
                 <div *ngFor='let error of nameForm.givenNames.errors'>{{error}}</div>
             </span>
             <label for="lastName">${springMacroRequestContext.getMessage("manage_bio_settings.labellastname")}</label>
-           
             <input type="text" [(ngModel)]="nameForm.familyName.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
-           
+            <span class="orcid-error" *ngIf="nameForm?.familyName?.errors?.length > 0">
+                <div *ngFor='let error of nameForm.familyName.errors'>{{error}}</div>
+            </span>
+
+
             <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>                               
             <input type="text" [(ngModel)]="nameForm.creditName.value" (keydown)="setNameFormEnter($event)" class="full-width-input" />
+            <span class="orcid-error" *ngIf="nameForm?.creditName?.errors?.length > 0">
+                <div *ngFor='let error of nameForm.creditName.errors'>{{error}}</div>
+            </span>
            
             <div>
                 <privacy-toggle-ng2 
