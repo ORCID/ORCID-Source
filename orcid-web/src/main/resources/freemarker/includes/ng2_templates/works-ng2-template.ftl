@@ -4,8 +4,8 @@
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">
-                <div class="col-md-5 col-sm-5 col-xs-12 affiliation-heading">                
-                    <div>
+                <div class="col-md-5 col-sm-5 col-xs-12">                
+                    <div class="affiliation-heading">
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
                            <h2 id="affiliationType.Works"><@orcid.msg 'workspace.Works'/> (<span>{{worksService.groupsLabel}}</span>)</h2>
