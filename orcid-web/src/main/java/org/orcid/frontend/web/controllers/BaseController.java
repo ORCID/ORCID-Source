@@ -550,6 +550,22 @@ public class BaseController {
         if (givenName.getValue() == null || givenName.getValue().trim().isEmpty()) {
             setError(givenName, "NotBlank.registrationForm.givenNames");
         }
+        if (givenName.getValue().length() >= 100)
+            setError(givenName, "Pattern.registrationForm.nameSegment");
+    }
+
+    void familyNameValidate(Text familyName) {
+        familyName.setErrors(new ArrayList<String>());
+
+        if (familyName.getValue() != null && familyName.getValue().length() >= 100)
+            setError(familyName, "Pattern.registrationForm.nameSegment");
+    }
+
+    void creditNameValidate(Text creditName) {
+        creditName.setErrors(new ArrayList<String>());
+
+        if (creditName.getValue() != null && creditName.getValue().length() >= 100)
+            setError(creditName, "Pattern.registrationForm.nameSegment");
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered) {
