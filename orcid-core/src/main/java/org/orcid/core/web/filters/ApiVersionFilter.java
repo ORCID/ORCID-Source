@@ -27,6 +27,8 @@ public class ApiVersionFilter extends OncePerRequestFilter {
     private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
 
     private static final Pattern NOTIFICATIONS_PATTERN = Pattern.compile("/notifications/");
+    
+    private static final Pattern WEBHOOKS_PATTERN = Pattern.compile("/webhook/");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -57,6 +59,11 @@ public class ApiVersionFilter extends OncePerRequestFilter {
             section = ApiSection.V2;
         } else if (version != null && version.startsWith("3.")) {
             section = ApiSection.V3;
+        } else {
+            Matcher webhooksMatcher = WEBHOOKS_PATTERN.matcher(path);
+            if(webhooksMatcher.find()) {
+                section = ApiSection.WEBHOOKS;
+            }
         }
         httpRequest.setAttribute(API_SECTION_REQUEST_ATTRIBUTE_NAME, section);
     }
