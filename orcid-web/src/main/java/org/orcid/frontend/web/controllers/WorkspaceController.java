@@ -234,6 +234,10 @@ public class WorkspaceController extends BaseWorkspaceController {
                     it.remove();
                 } 
                 
+                k.setErrors(new ArrayList<String>());
+                if (k.getContent() != null && k.getContent().length() >= 100)
+                    setError(k, "Pattern.registrationForm.keywords");
+
                 //Validate visibility is not null
                 validateVisibility(k);
                 

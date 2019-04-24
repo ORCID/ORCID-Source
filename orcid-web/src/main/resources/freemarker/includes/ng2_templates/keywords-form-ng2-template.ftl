@@ -113,6 +113,9 @@
                                                     <div class="col-md-6">
                                                         <div class="aka" *ngIf="keyword">                                       
                                                             <input type="text" [(ngModel)]="keyword.content" *ngIf="keyword.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !keyword.content}" />
+                                                            <span class="orcid-error" *ngIf="keyword.errors?.length > 0">
+                                                                <div *ngFor='let error of keyword.errors'>{{error}}</div>
+                                                            </span>
                                                             <span *ngIf="keyword.source != orcidId">{{keyword.content}}</span>                                     
                                                         </div>
                                                         <div class="source" *ngIf="keyword.sourceName || keyword.sourceName == null">
