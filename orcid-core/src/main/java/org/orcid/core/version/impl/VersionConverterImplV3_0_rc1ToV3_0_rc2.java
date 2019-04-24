@@ -92,9 +92,126 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         mapperFactory.classMap(GroupIdRecord.class, org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord.class).byDefault().register();
 
         // ExternalIDs
-        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs.class).byDefault().register();
-        mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.v3.rc2.record.ExternalID.class).byDefault().register();
-        
+        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs.class)
+                .customize(new CustomMapper<ExternalIDs, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs>() {
+
+                    public void mapAtoB(ExternalIDs rc1, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs rc2, MappingContext context) {
+                        rc2.getExternalIdentifier().clear();
+                        for (org.orcid.jaxb.model.v3.rc1.record.ExternalID rc1ExtId : rc1.getExternalIdentifier()) {
+                            org.orcid.jaxb.model.v3.rc2.record.ExternalID rc2ExtId = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+                            if (rc1ExtId.getNormalized() != null) {
+                                org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString rc1TNES = rc1ExtId.getNormalized();
+                                org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString rc2TNES = new org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString();
+                                rc2TNES.setTransient(rc1TNES.getTransient());
+                                rc2TNES.setValue(rc1TNES.getValue());
+                                rc2ExtId.setNormalized(rc2TNES);
+                            }
+
+                            if (rc1ExtId.getNormalizedError() != null) {
+                                org.orcid.jaxb.model.v3.rc1.common.TransientError rc1TE = rc1ExtId.getNormalizedError();
+                                org.orcid.jaxb.model.v3.rc2.common.TransientError rc2TE = new org.orcid.jaxb.model.v3.rc2.common.TransientError();
+                                rc2TE.setErrorCode(rc1TE.getErrorCode());
+                                rc2TE.setErrorMessage(rc1TE.getErrorMessage());
+                                rc2TE.setTransient(rc1TE.getTransient());
+                                rc2ExtId.setNormalizedError(rc2TE);
+                            }
+
+                            if (rc1ExtId.getNormalizedUrl() != null) {
+                                org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString rc1TNES = rc1ExtId.getNormalizedUrl();
+                                org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString rc2TNES = new org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString();
+                                rc2TNES.setTransient(rc1TNES.getTransient());
+                                rc2TNES.setValue(rc1TNES.getValue());
+                                rc2ExtId.setNormalizedUrl(rc2TNES);
+                            }
+
+                            if (rc1ExtId.getNormalizedUrlError() != null) {
+                                org.orcid.jaxb.model.v3.rc1.common.TransientError rc1TE = rc1ExtId.getNormalizedUrlError();
+                                org.orcid.jaxb.model.v3.rc2.common.TransientError rc2TE = new org.orcid.jaxb.model.v3.rc2.common.TransientError();
+                                rc2TE.setErrorCode(rc1TE.getErrorCode());
+                                rc2TE.setErrorMessage(rc1TE.getErrorMessage());
+                                rc2TE.setTransient(rc1TE.getTransient());
+                                rc2ExtId.setNormalizedUrlError(rc2TE);
+                            }
+
+                            if (rc1ExtId.getRelationship() != null) {
+                                rc2ExtId.setRelationship(org.orcid.jaxb.model.common.Relationship.fromValue(rc1ExtId.getRelationship().value()));
+                            }
+
+                            if (rc1ExtId.getUrl() != null) {
+                                org.orcid.jaxb.model.v3.rc1.common.Url rc1Url = rc1ExtId.getUrl();
+                                org.orcid.jaxb.model.v3.rc2.common.Url rc2Url = new org.orcid.jaxb.model.v3.rc2.common.Url();
+                                rc2Url.setValue(rc1Url.getValue());
+                                rc2ExtId.setUrl(rc2Url);
+                            }
+
+                            rc2ExtId.setType(rc1ExtId.getType());
+                            rc2ExtId.setValue(rc1ExtId.getValue());
+
+                            rc2.getExternalIdentifier().add(rc2ExtId);
+                        }
+                    }
+
+                    public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.ExternalIDs rc2, ExternalIDs rc1, MappingContext context) {
+                        rc1.getExternalIdentifier().clear();
+
+                        for (org.orcid.jaxb.model.v3.rc2.record.ExternalID rc2ExtId : rc2.getExternalIdentifier()) {
+                            if (!org.orcid.jaxb.model.common.Relationship.VERSION_OF.equals(rc2ExtId.getRelationship())) {
+                                ExternalID rc1ExtId = new ExternalID();
+                                if (rc2ExtId.getNormalized() != null) {
+                                    org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString rc2TNES = rc2ExtId.getNormalized();
+                                    org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString rc1TNES = new org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString();
+                                    rc1TNES.setTransient(rc2TNES.getTransient());
+                                    rc1TNES.setValue(rc2TNES.getValue());
+                                    rc1ExtId.setNormalized(rc1TNES);
+                                }
+
+                                if (rc2ExtId.getNormalizedError() != null) {
+                                    org.orcid.jaxb.model.v3.rc2.common.TransientError rc2TE = rc2ExtId.getNormalizedError();
+                                    org.orcid.jaxb.model.v3.rc1.common.TransientError rc1TE = new org.orcid.jaxb.model.v3.rc1.common.TransientError();
+                                    rc1TE.setErrorCode(rc2TE.getErrorCode());
+                                    rc1TE.setErrorMessage(rc2TE.getErrorMessage());
+                                    rc1TE.setTransient(rc2TE.getTransient());
+                                    rc1ExtId.setNormalizedError(rc1TE);
+                                }
+
+                                if (rc2ExtId.getNormalizedUrl() != null) {
+                                    org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString rc2TNES = rc2ExtId.getNormalizedUrl();
+                                    org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString rc1TNES = new org.orcid.jaxb.model.v3.rc1.common.TransientNonEmptyString();
+                                    rc1TNES.setTransient(rc2TNES.getTransient());
+                                    rc1TNES.setValue(rc2TNES.getValue());
+                                    rc1ExtId.setNormalizedUrl(rc1TNES);
+                                }
+
+                                if (rc2ExtId.getNormalizedUrlError() != null) {
+                                    org.orcid.jaxb.model.v3.rc2.common.TransientError rc2TE = rc2ExtId.getNormalizedUrlError();
+                                    org.orcid.jaxb.model.v3.rc1.common.TransientError rc1TE = new org.orcid.jaxb.model.v3.rc1.common.TransientError();
+                                    rc1TE.setErrorCode(rc2TE.getErrorCode());
+                                    rc1TE.setErrorMessage(rc2TE.getErrorMessage());
+                                    rc1TE.setTransient(rc2TE.getTransient());
+                                    rc1ExtId.setNormalizedUrlError(rc1TE);
+                                }
+
+                                if (rc2ExtId.getRelationship() != null) {
+                                    rc1ExtId.setRelationship(Relationship.fromValue(rc2ExtId.getRelationship().value()));
+                                }
+
+                                if (rc2ExtId.getUrl() != null) {
+                                    org.orcid.jaxb.model.v3.rc2.common.Url rc2Url = rc2ExtId.getUrl();
+                                    org.orcid.jaxb.model.v3.rc1.common.Url rc1Url = new org.orcid.jaxb.model.v3.rc1.common.Url();
+                                    rc1Url.setValue(rc2Url.getValue());
+                                    rc1ExtId.setUrl(rc1Url);
+                                }
+
+                                rc1ExtId.setType(rc2ExtId.getType());
+                                rc1ExtId.setValue(rc2ExtId.getValue());
+
+                                rc1.getExternalIdentifier().add(rc1ExtId);
+                            }
+                        }
+                    }
+                }).register();
+        ;
+
         // Contributor
         mapperFactory.classMap(ContributorOrcid.class, org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid.class).customize(orcidIdBaseMapper).register();
 
@@ -136,60 +253,64 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         // WORK
         mapperFactory.classMap(WorkGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup.class).byDefault().register();
         mapperFactory.classMap(Works.class, org.orcid.jaxb.model.v3.rc2.record.summary.Works.class).byDefault().register();
-        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class).exclude("workType").customize(new CustomMapper<Work, org.orcid.jaxb.model.v3.rc2.record.Work>() {
-            /**
-             * From rc1 object to rc2 object
-             */            
-            @Override
-            public void mapAtoB(Work a, org.orcid.jaxb.model.v3.rc2.record.Work b, MappingContext context) {
-                // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
-                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getWorkType())) {
-                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
-                } else {
-                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.fromValue(a.getWorkType().value()));
-                }                
-            }
-            
-            /**
-             * From rc2 object to rc1 object
-             */
-            @Override
-            public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Work b, Work a, MappingContext context) {
-                if(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.equals(b.getWorkType())) {
-                    a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
-                } else {
-                    a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getWorkType().value()));
-                }                
-            }
-            
-        }).byDefault().register();
-        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).exclude("type").customize(new CustomMapper<WorkSummary, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary>() {
-            /**
-             * From rc1 object to rc2 object
-             */            
-            @Override
-            public void mapAtoB(WorkSummary a, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, MappingContext context) {
-                // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
-                if(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getType())) {
-                    b.setType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
-                } else {
-                    b.setType(org.orcid.jaxb.model.common.WorkType.fromValue(a.getType().value()));
-                }                
-            }
-            
-            /**
-             * From rc2 object to rc1 object
-             */
-            @Override
-            public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, WorkSummary a, MappingContext context) {
-                if(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.equals(b.getType())) {
-                    a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
-                } else {
-                    a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getType().value()));
-                }                
-            }
-            
-        }).byDefault().register();
+        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class).exclude("workType")
+                .customize(new CustomMapper<Work, org.orcid.jaxb.model.v3.rc2.record.Work>() {
+                    /**
+                     * From rc1 object to rc2 object
+                     */
+                    @Override
+                    public void mapAtoB(Work a, org.orcid.jaxb.model.v3.rc2.record.Work b, MappingContext context) {
+                        // Starting with 3.0_rc2 dissertation will be migrated
+                        // to dissertation-thesis
+                        if (org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getWorkType())) {
+                            b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
+                        } else {
+                            b.setWorkType(org.orcid.jaxb.model.common.WorkType.fromValue(a.getWorkType().value()));
+                        }
+                    }
+
+                    /**
+                     * From rc2 object to rc1 object
+                     */
+                    @Override
+                    public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Work b, Work a, MappingContext context) {
+                        if (org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.equals(b.getWorkType())) {
+                            a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
+                        } else {
+                            a.setWorkType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getWorkType().value()));
+                        }
+                    }
+
+                }).byDefault().register();
+        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).exclude("type")
+                .customize(new CustomMapper<WorkSummary, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary>() {
+                    /**
+                     * From rc1 object to rc2 object
+                     */
+                    @Override
+                    public void mapAtoB(WorkSummary a, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, MappingContext context) {
+                        // Starting with 3.0_rc2 dissertation will be migrated
+                        // to dissertation-thesis
+                        if (org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION.equals(a.getType())) {
+                            b.setType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS);
+                        } else {
+                            b.setType(org.orcid.jaxb.model.common.WorkType.fromValue(a.getType().value()));
+                        }
+                    }
+
+                    /**
+                     * From rc2 object to rc1 object
+                     */
+                    @Override
+                    public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary b, WorkSummary a, MappingContext context) {
+                        if (org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.equals(b.getType())) {
+                            a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.DISSERTATION);
+                        } else {
+                            a.setType(org.orcid.jaxb.model.v3.rc1.record.WorkType.fromValue(b.getType().value()));
+                        }
+                    }
+
+                }).byDefault().register();
 
         // FUNDING
         mapperFactory.classMap(FundingGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup.class).byDefault().register();
@@ -236,27 +357,28 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
 
         // PEER REVIEW
         mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviews.class).byDefault().register();
-        mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.v3.rc2.record.PeerReview.class).exclude("subjectType").customize(new CustomMapper<PeerReview, org.orcid.jaxb.model.v3.rc2.record.PeerReview>() {
+        mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.v3.rc2.record.PeerReview.class).exclude("subjectType")
+                .customize(new CustomMapper<PeerReview, org.orcid.jaxb.model.v3.rc2.record.PeerReview>() {
 
-            @Override
-            public void mapAtoB(PeerReview a, org.orcid.jaxb.model.v3.rc2.record.PeerReview b, MappingContext context) {
-                if(org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.DISSERTATION.equals(a.getSubjectType())) {
-                    b.setSubjectType(org.orcid.jaxb.model.common.PeerReviewSubjectType.DISSERTATION_THESIS);
-                } else {
-                    b.setSubjectType(org.orcid.jaxb.model.common.PeerReviewSubjectType.fromValue(a.getSubjectType().value()));
-                }                
-            }
-            
-            @Override
-            public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.PeerReview b, PeerReview a, MappingContext context) {
-                if(org.orcid.jaxb.model.common.PeerReviewSubjectType.DISSERTATION_THESIS.equals(b.getSubjectType())) {
-                    a.setSubjectType(org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.DISSERTATION);
-                } else {
-                    a.setSubjectType(org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.fromValue(b.getSubjectType().value()));
-                }                
-            }
-        }).byDefault().register();
-        
+                    @Override
+                    public void mapAtoB(PeerReview a, org.orcid.jaxb.model.v3.rc2.record.PeerReview b, MappingContext context) {
+                        if (org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.DISSERTATION.equals(a.getSubjectType())) {
+                            b.setSubjectType(org.orcid.jaxb.model.common.PeerReviewSubjectType.DISSERTATION_THESIS);
+                        } else {
+                            b.setSubjectType(org.orcid.jaxb.model.common.PeerReviewSubjectType.fromValue(a.getSubjectType().value()));
+                        }
+                    }
+
+                    @Override
+                    public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.PeerReview b, PeerReview a, MappingContext context) {
+                        if (org.orcid.jaxb.model.common.PeerReviewSubjectType.DISSERTATION_THESIS.equals(b.getSubjectType())) {
+                            a.setSubjectType(org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.DISSERTATION);
+                        } else {
+                            a.setSubjectType(org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.fromValue(b.getSubjectType().value()));
+                        }
+                    }
+                }).byDefault().register();
+
         mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.PeerReviewSummary.class).byDefault().register();
 
         // NOTIFICATIONS
@@ -300,14 +422,16 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
         public void mapBtoA(org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase b, OrcidIdBase a, MappingContext context) {
             a.setHost(b.getHost());
             a.setPath(b.getPath());
-            a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class) ? "/client/" : "/") + b.getPath());
+            a.setUri(orcidUrlManager.getBaseUrl() + (b.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc2.common.SourceClientId.class) ? "/client/" : "/")
+                    + b.getPath());
         }
-        
+
         @Override
         public void mapAtoB(OrcidIdBase a, org.orcid.jaxb.model.v3.rc2.common.OrcidIdBase b, MappingContext context) {
             b.setHost(a.getHost());
             b.setPath(a.getPath());
-            b.setUri(orcidUrlManager.getBaseUrl() + (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc1.common.SourceClientId.class) ? "/client/" : "/") + a.getPath());
+            b.setUri(orcidUrlManager.getBaseUrl() + (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.rc1.common.SourceClientId.class) ? "/client/" : "/")
+                    + a.getPath());
         }
     }
 
@@ -315,9 +439,15 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
 
         @Override
         public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Email b, Email a, MappingContext context) {
-            a.setCurrent(b.isCurrent());
-            a.setPrimary(b.isPrimary());
-            a.setVerified(b.isVerified());
+            if(b.isCurrent() != null) {
+                a.setCurrent(b.isCurrent());
+            }
+            if(b.isPrimary() != null) {
+                a.setPrimary(b.isPrimary());                
+            }
+            if(b.isVerified() != null) {
+                a.setVerified(b.isVerified());
+            }
         }
 
     }

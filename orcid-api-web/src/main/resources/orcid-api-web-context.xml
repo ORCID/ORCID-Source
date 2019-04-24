@@ -9,7 +9,7 @@
 
     <import resource="classpath*:orcid-core-context.xml"/>
 
-    <context:component-scan base-package="org.orcid.api.common, org.orcid.api.common, org.orcid.core.security"/>
+    <context:component-scan base-package="org.orcid.api.common, org.orcid.api.member.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
      
     <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
@@ -154,5 +154,7 @@
     </bean>  
     
     <bean id="memberV3ApiServiceDelegator" class="org.orcid.api.memberV3.server.delegator.impl.MemberV3ApiServiceDelegatorImpl" />
+    
+    <bean id="webhooksServiceDelegator" class="org.orcid.api.member.common.delegator.impl.WebhooksServiceDelegatorImpl" />
            
 </beans>

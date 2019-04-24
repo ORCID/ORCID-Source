@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class IdentifierApiServiceDelegatorTest {
 
     @Resource
-    IdentifierApiServiceImplV2_0 service;
+    IdentifierApiServiceImpl service;
 
     @Before
     public void init(){

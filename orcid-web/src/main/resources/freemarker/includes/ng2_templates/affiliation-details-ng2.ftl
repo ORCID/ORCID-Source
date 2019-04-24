@@ -17,7 +17,7 @@
                             <ul class="workspace-private-toolbar"> 
                                 <!--Show/hide details-->              
                                 <li *ngIf="orgIdsFeatureEnabled" class="works-details">
-                                    <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.activePutCode+'-showHideDetails')" (mouseleave)="hideTooltip(group?.activePutCode+'-showHideDetails')">
+                                    <a aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.activePutCode+'-showHideDetails')" (mouseleave)="hideTooltip(group?.activePutCode+'-showHideDetails')">
                                         <span [ngClass]="(moreInfo[group?.activePutCode] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                         </span>
                                     </a>
@@ -80,7 +80,7 @@
                         <ul class="workspace-private-toolbar" *ngIf="!editSources[group.activePutCode]"> 
                             <!--Show details toggle-->
                             <li class="works-details" *ngIf="!editSources[group.activePutCode]">
-                                <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.activePutCode+'-showHideDetails')" (mouseleave)="hideTooltip(group?.activePutCode+'-showHideDetails')">
+                                <a aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.activePutCode+'-showHideDetails')" (mouseleave)="hideTooltip(group?.activePutCode+'-showHideDetails')">
                                     <span [ngClass]="(z == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                     </span>
                                 </a>
@@ -194,7 +194,7 @@
                         <div>
                             <ul *ngIf="!isPublicPage" class="sources-actions">
                                 <li> 
-                                    <@orcid.editWorkIconNg2
+                                    <@orcid.editActivityIconNg2
                                         activity="affiliation"
                                         click="openEditAffiliation(affiliation, group)"
                                         toolTipSuffix="editToolTipSource"
@@ -244,7 +244,7 @@
                     <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
                         <ul *ngIf="!isPublicPage" class="sources-actions">
                             <li> 
-                                <@orcid.editWorkIconNg2
+                                <@orcid.editActivityIconNg2
                                     activity="affiliation"
                                     click="openEditAffiliation(affiliation, group)"
                                     toolTipSuffix="editToolTipSourceActions"
@@ -290,7 +290,7 @@
                     <div class="col-md-2 col-sm-2 col-xs-3" *ngIf="group.activePutCode == affiliation.putCode.value">
                         <ul *ngIf="!isPublicPage" class="sources-options" >
                             <li>
-                                <@orcid.editWorkIconNg2
+                                <@orcid.editActivityIconNg2
                                     activity="affiliation"
                                     click="openEditAffiliation(affiliation, group)"
                                     toolTipSuffix="editToolTip"

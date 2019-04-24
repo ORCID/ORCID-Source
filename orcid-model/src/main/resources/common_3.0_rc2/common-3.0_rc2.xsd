@@ -315,10 +315,10 @@
 	<xs:simpleType name="currency-code">
 		<xs:annotation>
 			<xs:documentation>
-				The currency code used for funding amounts. From the ISO 4217 list
-				(www.iso.org/iso/home/standards/currency_codes.htm).
+				The currency code used for funding amounts, from the ISO 4217 list
+				https://www.iso.org/iso-4217-currency-codes.html .
 				ORCID will validate this value against the enumeration 
-				java.util.Currency and other rules when necessary
+				java.util.Currency (https://docs.oracle.com/javase/8/docs/api/java/util/Currency.html) and other rules when necessary.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string" />
@@ -338,10 +338,10 @@
 
 	<xs:simpleType name="language-code">
 		<xs:annotation>
-			<xs:documentation>Two letter language code to identify the language
-				used in work fields. Chinese is expressed in more than two letters,
-				with a modifier to indicate simplified (zh_CN) or traditional
-				(zh_TW) Chinese.
+			<xs:documentation>A code to identify the language
+				that a field value is expressed in, selected from the following options:
+				ab, aa, af, ak, sq, am, ar, an, hy, as, av, ae, ay, az, bm, ba, eu, be, bn, bh, bi, bs, br, bg, my, ca, ch, ce, zh_CN, zh_TW, cu, cv, kw, co, cr, hr, cs, da, dv, nl, dz, en, eo, et, ee, fo, fj, fi, fr, fy, ff, gl, lg, ka, de, el, kl, gn, gu, ht, ha, iw, hz, hi, ho, hu, is, io, ig, in, ia, ie, iu, ik, ga, it, ja, jv, kn, kr, ks, kk, km, ki, rw, ky, kv, kg, ko, ku, kj, lo, la, lv, li, ln, lt, lu, lb, mk, mg, ms, ml, mt, gv, mi, mr, mh, mo, mn, na, nv, ng, ne, nd, se, no, nb, nn, ny, oc, oj, or, om, os, pi, pa, fa, pl, pt, ps, qu, rm, ro, rn, ru, sm, sg, sa, sc, gd, sr, sn, ii, sd, si, sk, sl, so, nr, st, es, su, sw, ss, sv, tl, ty, tg, ta, tt, te, th, bo, ti, to, ts, tn, tr, tk, tw, ug, uk, ur, uz, ve, vi, vo, wa, cy, wo, xh, ji, yo, za, zu 
+				ORCID will validate this value against the enumeration https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/java/org/orcid/jaxb/model/common/LanguageCode.java and other rules when necessary.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string" />
@@ -669,10 +669,7 @@
 
 	<xs:simpleType name="iso-3166-country">
 		<xs:annotation>
-			<xs:documentation>ISO 3166-1 alpha-2 country codes. NOTE: the values displayed
-				to the website user are localized (translated) in the ORCID Registry
-				web interface. For reference:
-				https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n
+			<xs:documentation>ISO 3166-1 alpha-2 country code from https://www.iso.org/iso-3166-country-codes.html .
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string" />
@@ -892,9 +889,11 @@
 	<xs:simpleType name="contributor-sequence">
 		<xs:annotation>
 			<xs:documentation>Indication of where in the contributor list the
-				collaborator or other contributor's name would appear.
-				ORCID will validate this value against the enumeration 
-				org.orcid.jaxb.model.common.SequenceType and other rules when necessary.
+				collaborator or other contributor's name should appear, selected from the following options:
+				* first
+				* additional
+				ORCID will validate this value against the enumeration
+				https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/java/org/orcid/jaxb/model/common/SequenceType.java
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string" />
@@ -903,9 +902,20 @@
 	<xs:simpleType name="contributor-role">
 		<xs:annotation>
 			<xs:documentation>The role performed by the collaborator or other
-				contributor.
+				contributor, selected from the following options:
+				* author 
+			    * assignee 
+			    * editor
+			    * chair-or-translator
+			    * co-investigator 
+			    * co-inventor 
+			    * graduate-student"
+			    * other-inventor 
+			    * principal-investigator 
+			    * postdoctoral-researcher
+			    * support-staff
 				ORCID will validate this value against the enumeration 
-				org.orcid.jaxb.model.common.ContributorRole and other rules when necessary.
+				https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/java/org/orcid/jaxb/model/common/ContributorRole.java and other rules when necessary.
 			</xs:documentation>
 		</xs:annotation>
 
@@ -971,9 +981,12 @@
 	<xs:simpleType name="relationship-type">
 		<xs:annotation>
 			<xs:documentation>
-			Indicates the relationship type.
+			Indicates the relationship type, selected from the following options:
+			* part-of
+			* self
+			* version-of
 			ORCID will validate this value against the enumeration 
-			org.orcid.jaxb.model.common.Relationship and other rules when necessary
+			https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/java/org/orcid/jaxb/model/common/Relationship.java and other rules when necessary.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string" />

@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.GroupAble;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Distinctions;
@@ -145,7 +147,21 @@ public class ActivitiesSummaryManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
         Works works = workManager.groupWorks(workSummaries, justPublic);        
         activities.setWorks(works);
         
-        List<ResearchResourceSummary> researchResourceSummary = researchResourceManager.getResearchResourceSummaryList(orcid); 
+        List<ResearchResourceSummary> researchResourceSummary = researchResourceManager.getResearchResourceSummaryList(orcid);
+        // Should we filter the version-of identifiers before grouping?
+        if(filterVersionOfIdentifiers) {            
+            for(ResearchResourceSummary rr : researchResourceSummary) {
+                if(rr.getExternalIdentifiers() != null && !rr.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                    Iterator<ExternalID> it = rr.getExternalIdentifiers().getExternalIdentifier().iterator();
+                    while(it.hasNext()) {
+                        ExternalID extId = it.next();
+                        if(Relationship.VERSION_OF.equals(extId.getRelationship())) {
+                            it.remove();
+                        }
+                    }
+                }
+            }
+        }
         ResearchResources researchResources = researchResourceManager.groupResearchResources(researchResourceSummary, justPublic);
         activities.setResearchResources(researchResources);
 

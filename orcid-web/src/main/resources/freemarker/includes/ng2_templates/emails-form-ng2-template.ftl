@@ -30,7 +30,8 @@
                                         <tr *ngFor="let email of formData.emails | orderBy:'value'" class="data-row-group" name="email">
                                             <!-- Primary Email -->
                                             <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" >                                                     
-                                                <span>{{email.value}}</span>
+                                                <span>{{email.value}}</span><br>
+                                                <span class="orcid-error small" *ngIf="!email.verified && !(email.visibility=='PRIVATE')">${springMacroRequestContext.getMessage("manage.email.only_verified")} ${springMacroRequestContext.getMessage("common.please")} <a (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.developer_tools.verify_your_email")}</a></span>
                                             </td>
                                             <td>                     
                                                 <span *ngIf="!email.primary"> <a 

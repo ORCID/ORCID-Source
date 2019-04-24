@@ -15,6 +15,7 @@ import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.common.VisibilityType;
 import org.orcid.jaxb.model.v3.release.record.Activity;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.ExternalIdentifiersContainer;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.release.record.ResearchResourceProposal;
@@ -152,7 +153,7 @@ public class ResearchResourceSummary implements VisibilityType, Activity, Groupa
     }
 
     @Override
-    public ExternalIdentifiersContainer getExternalIdentifiers() {
+    public ExternalIDs getExternalIdentifiers() {
         return proposal.getExternalIdentifiers();
     }
 

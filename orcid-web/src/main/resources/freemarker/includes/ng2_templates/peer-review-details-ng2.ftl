@@ -91,7 +91,7 @@
                                                         <div *ngIf="peerReview?.type?.value" class="col-md-2 col-sm-2 col-xs-2">{{peerReview.type?.value}}</div>
                                                         <div *ngIf="peerReview?.role?.value" class="col-md-3 col-sm-3 col-xs-3">{{peerReview.role?.value}}</div>
                                                         <div class="col-md-4 col-sm-4 col-xs-4">    <span class="pull-right"> 
-                                                                <a (click)="showMoreDetails(peerReview.putCode.value,$event)" *ngIf="!showPeerReviewDetails[peerReview.putCode.value]">
+                                                                <a  aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="showMoreDetails(peerReview.putCode.value,$event)" *ngIf="!showPeerReviewDetails[peerReview.putCode.value]">
                                                                     <span class="glyphicons expand"></span>  
                                                                     <span class="hidden-xs"><@orcid.msg 'common.details.show_details_lc' /></span>
                                                                 </a> 

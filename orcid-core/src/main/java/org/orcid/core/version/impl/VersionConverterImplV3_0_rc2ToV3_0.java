@@ -128,7 +128,7 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
 
         // Emails
         mapperFactory.classMap(Emails.class, org.orcid.jaxb.model.v3.rc2.record.Emails.class).byDefault().register();
-        mapperFactory.classMap(Email.class, org.orcid.jaxb.model.v3.rc2.record.Email.class).register();
+        mapperFactory.classMap(Email.class, org.orcid.jaxb.model.v3.rc2.record.Email.class).byDefault().register();
 
         // WORK
         mapperFactory.classMap(WorkGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup.class).byDefault().register();

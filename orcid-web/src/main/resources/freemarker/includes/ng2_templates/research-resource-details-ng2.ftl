@@ -16,7 +16,7 @@
                         <div class="workspace-toolbar">
                             <ul class="workspace-private-toolbar">              
                                 <li class="works-details">
-                                    <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                                    <a aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
                                         <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                         </span>
                                     </a>
@@ -90,7 +90,7 @@
                         <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
                             <!--Show details toggle-->
                             <li class="works-details" *ngIf="!editSources[group.groupId]">
-                                <a (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
+                                <a aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="showDetailsMouseClick(group,$event)" (mouseenter)="showTooltip(group?.groupId+'-showHideDetails')" (mouseleave)="hideTooltip(group?.groupId+'-showHideDetails')">
                                     <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                     </span>
                                 </a>
@@ -227,7 +227,7 @@
                                                 <!--Action buttons-->
                                                 <div class="col-md-2 col-sm-2 col-xs-2 pull-right">                              
                                                     <span> 
-                                                        <a (click)="toggleResourceItemDetails(researchResource.putCode + 'resourceItem' + index,$event)" *ngIf="!showResourceItemDetails[researchResource.putCode+'resourceItem'+index]">
+                                                        <a aria-label="<@orcid.msg 'aria.toggle-details'/>" aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="toggleResourceItemDetails(researchResource.putCode + 'resourceItem' + index,$event)" *ngIf="!showResourceItemDetails[researchResource.putCode+'resourceItem'+index]">
                                                         <span class="glyphicons expand"></span>
                                                         <span class="hidden-xs"><@orcid.msg 'common.details.show_details_lc' /></span>
                                                         </a> 

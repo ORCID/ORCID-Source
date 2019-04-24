@@ -1,48 +1,48 @@
 <script type="text/ng-template" id="affiliation-ng2-template">
     <div>
         <!-- EMPLOYMENT -->
-        <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && employments.length < 1">
-            <div class="workspace-accordion-header clearfix">
-                <div class="row">
-                    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && employments.length < 1" role="group" aria-labelledby="affiliationType.employment" aria-describedby="tooltip-helpPopoverEmployment">
+            <div class="workspace-accordion-header clearfix" role="presentation">
+                <div class="row" role="banner">
+                    <div class="col-md-6 col-sm-6 col-xs-12 affiliation-heading" role="presentation">
                         <a (click)="workspaceSrvc.toggleEmployment()" class="toggle-text">
-                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
-                            <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span>{{employments.length}}</span>)
+                            <i role="presentation" class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayEmployment==false}"></i>
+                            <h2 id="affiliationType.employment" ><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.employment'/> (<span>{{employments.length}}</span>)</h2>
                         </a>
-                        <div *ngIf="!isPublicPage" class="popover-help-container">
-                            <i class="glyphicon glyphicon-question-sign"></i>
-                            <div id="employment-help" class="popover bottom">
-                                <div class="arrow"></div>
-                                <div class="popover-content">
+                        <div role="presentation" *ngIf="!isPublicPage" class="popover-help-container">
+                            <i class="glyphicon glyphicon-question-sign" role="presentation"></i>
+                            <div id="employment-help" class="popover bottom" role="presentation">
+                                <div class="arrow" role="presentation"></div>
+                                <div class="popover-content" role="tooltip" id="tooltip-helpPopoverEmployment">
                                     <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEmployment_2'/><br>
                                     <a href="<@orcid.msg 'common.kb_uri_default'/>360006897694" target="manage_affiliations_settings.helpPopoverEmployment"><@orcid.msg 'common.learn_more'/></a></p>
                                 </div>
                             </div>
                         </div>                   
                     </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayEmployment">
+                    <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayEmployment" role="presentation">
                         <#escape x as x?html>                        
-                        <div class="menu-container">                                     
-                            <ul class="toggle-menu">
+                        <div class="menu-container" role="presentation">                                     
+                            <ul class="toggle-menu" role="menu" >
                                 <li>
-                                    <span class="glyphicon glyphicon-sort"></span>                          
+                                    <span id="manual_orcid_record_contents.sort" class="glyphicon glyphicon-sort" role="presentation"></span>                          
                                     <@orcid.msg 'manual_orcid_record_contents.sort'/>
                                     <ul class="menu-options sort">
-                                        <li [ngClass]="{'checked':sortDisplayKeyEmployments=='startDate'}">                                         
+                                        <li [ngClass]="{'checked':sortDisplayKeyEmployments=='startDate'}" role="menu-item">                                         
                                             <a (click)="sort('employment', 'startDate', true);" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
                                                 <span *ngIf="sortDisplayKeyEmployments=='startDate' && sortAscEmployments==false" [ngClass]="{'glyphicon glyphicon-sort-by-order-alt':sortDisplayKeyEmployments=='startDate'}"></span>
                                                 <span *ngIf="sortDisplayKeyEmployments=='startDate' && sortAscEmployments==true" [ngClass]="{'glyphicon glyphicon-sort-by-order':sortDisplayKeyEmployments=='startDate'}"></span>
                                             </a>                                                                                    
                                         </li>
-                                        <li [ngClass]="{'checked':sortDisplayKeyEmployments=='endDate'}">
+                                        <li [ngClass]="{'checked':sortDisplayKeyEmployments=='endDate'}"  role="menu-item">
                                             <a (click)="sort('employment', 'endDate', true);" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_end_date'/>
                                                 <span *ngIf="sortDisplayKeyEmployments=='endDate' && sortAscEmployments==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortDisplayKeyEmployments=='endDate'}" ></span>
                                                 <span *ngIf="sortDisplayKeyEmployments=='endDate' && sortAscEmployments==true" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet':sortDisplayKeyEmployments=='endDate'}" ></span>
                                             </a>                                            
                                         </li>
-                                        <li [ngClass]="{'checked':sortDisplayKeyEmployments=='title'}">                                            
+                                        <li [ngClass]="{'checked':sortDisplayKeyEmployments=='title'}"  role="menu-item">                                            
                                             <a (click)="sort('employment', 'title', true);" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_title'/>
                                                 <span *ngIf="sortDisplayKeyEmployments=='title' && sortAscEmployments==false" [ngClass]="{'glyphicon glyphicon-sort-by-alphabet-alt':sortDisplayKeyEmployments=='title'}" ></span>
@@ -54,10 +54,10 @@
                             </ul>                                   
                         </div>
                         </#escape>
-                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
-                            <li class="hidden-xs">                  
-                                <div class="menu-container" id="add-employment-container">
-                                    <ul class="toggle-menu">
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu" role="presentation">
+                            <li class="hidden-xs" role="presentation">                  
+                                <div class="menu-container" id="add-employment-container" role="presentation">
+                                    <ul class="toggle-menu" role="menu">
                                         <li [ngClass]="{'green-bg' : showBibtexImportWizard == true}" (click)="addAffiliationModal('employment')">       
                                             <span class="glyphicon glyphicon-plus"></span>
                                             <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />    
@@ -65,8 +65,8 @@
                                     </ul>
                                 </div>         
                             </li>                            
-                            <li class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
-                                <a class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
+                            <li role="presentation" class="affiliations-mobile hidden-md hidden-sm visible-xs-inline">                     
+                                <a role="menu-item" class="action-option manage-button two-options" (click)="addAffiliationModal('employment')">
                                     <span class="glyphicon glyphicon-plus"></span>
                                     <@orcid.msgCapFirst 'manual_affiliation_form_contents.add_employment' />  
                                 </a>                
@@ -91,20 +91,20 @@
             </div>                                                  
         </div>        
         <!-- EDUCATION AND QUALIFICATION -->
-        <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && educationsAndQualifications.length < 1">
-            <div class="workspace-accordion-header clearfix">
-                <div class="row">                    
-                    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div id="workspace-education" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && educationsAndQualifications.length < 1" role="group" aria-labelledby="affiliationType.education_qualification" aria-describedby="tooltip-helpPopoverEducationAndQualification">
+            <div class="workspace-accordion-header clearfix" role="presentation">
+                <div class="row" role="banner">                    
+                    <div class="col-md-6 col-sm-6 col-xs-12 affiliation-heading" role="presentation">
                         <a name='workspace-educations-qualifications'></a>
                         <a (click)="workspaceSrvc.toggleEducation();workspaceSrvc.toggleEducationAndQualification();" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{ 'glyphicon-chevron-right': displayEducationAndQualification()==false }"></i>                               
-                            <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education_qualification'/> (<span>{{educationsAndQualifications.length}}</span>)
+                            <h2 id="affiliationType.education_qualification"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education_qualification'/> (<span>{{educationsAndQualifications.length}}</span>)</h2>
                         </a>    
-                        <div *ngIf="!isPublicPage" class="popover-help-container">
-                            <i class="glyphicon glyphicon-question-sign"></i>
-                            <div id="education-qualification-help" class="popover bottom">
-                                <div class="arrow"></div>
-                                <div class="popover-content">
+                        <div *ngIf="!isPublicPage" class="popover-help-container" role="presentation">
+                            <i class="glyphicon glyphicon-question-sign" role="presentation"></i>
+                            <div id="education-qualification-help" class="popover bottom" role="presentation">
+                                <div class="arrow" role="presentation"></div>
+                                <div class="popover-content" id="tooltip-helpPopoverEducationAndQualification">
                                     <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_2'/><br>
                                     <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverEducationAndQualification_4'/><br>
                                     <a href="<@orcid.msg 'common.kb_uri_default'/>360006973933" target="manage_affiliations_settings.helpPopoverEducationAndQualification"><@orcid.msg 'common.learn_more'/></a></p>
@@ -112,10 +112,10 @@
                             </div>
                         </div>  
                     </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="displayEducationAndQualification()">
+                    <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="displayEducationAndQualification()" role="presentation">
                         <#escape x as x?html>
-                            <div class="menu-container">   
-                                <ul class="toggle-menu">
+                            <div class="menu-container" role="presentation">   
+                                <ul class="toggle-menu" role="menu">
                                     <li>
                                         <span class="glyphicon glyphicon-sort"></span>                          
                                         <@orcid.msg 'manual_orcid_record_contents.sort'/>
@@ -146,7 +146,7 @@
                                 </ul>                                   
                             </div>
                         </#escape>               
-                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">      
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu" role="menu">      
                             <li class="hidden-xs">                  
                                 <div class="menu-container" id="add-education-container">
                                     <ul class="toggle-menu">
@@ -164,7 +164,7 @@
                                 </a>
                             </li>
                         </ul>
-                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">      
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu" role="menu">      
                             <li class="hidden-xs">                  
                                 <div class="menu-container" id="add-qualification-container">
                                     <ul class="toggle-menu">
@@ -203,20 +203,20 @@
             </div>
         </div>
         <!-- INVITED POSITION AND DISTINCTION -->
-        <div id="workspace-distinction-invited-position" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && distinctionsAndInvitedPositions.length < 1">
+        <div id="workspace-distinction-invited-position" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && distinctionsAndInvitedPositions.length < 1" role="group" aria-labelledby="affiliationType.distinction_invited_position" aria-describedby="tooltip-helpPopoverDistinctionAndInvitedPosition">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
-                    <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12 affiliation-heading">
                         <a name='workspace-distinction-invited-position'></a>
-                        <a (click)="workspaceSrvc.toggleDistinctionAndInvitedPosition($event)" class="toggle-text">
+                        <a role="presentation" (click)="workspaceSrvc.toggleDistinctionAndInvitedPosition($event)" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayDistinctionAndInvitedPosition==false}"></i>
-                            <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.distinction_invited_position'/> (<span>{{distinctionsAndInvitedPositions.length}}</span>)
+                            <h2 id="affiliationType.distinction_invited_position"><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.distinction_invited_position'/> (<span>{{distinctionsAndInvitedPositions.length}}</span>)</h2>
                         </a>
-                        <div *ngIf="!isPublicPage" class="popover-help-container">
-                            <i class="glyphicon glyphicon-question-sign"></i>
-                            <div id="distinction-invited-position-help" class="popover bottom">
-                                <div class="arrow"></div>
-                                <div class="popover-content">
+                        <div role="presentation" *ngIf="!isPublicPage" class="popover-help-container">
+                            <i role="presentation"class="glyphicon glyphicon-question-sign"></i>
+                            <div role="presentation"id="distinction-invited-position-help" class="popover bottom">
+                                <div class="arrow" role="presentation"></div>
+                                <div id="tooltip-helpPopoverDistinctionAndInvitedPosition" class="popover-content">
                                     <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_2'/><br>
                                     <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition_4'/><br>
                                     <a href="<@orcid.msg 'common.kb_uri_default'/>360008897654" target="manage_affiliations_settings.helpPopoverDistinctionAndInvitedPosition"><@orcid.msg 'common.learn_more'/></a></p>
@@ -224,14 +224,14 @@
                             </div>
                         </div>                   
                     </div>
-                    <div class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayDistinctionAndInvitedPosition">
+                    <div  role="presentation" class="col-md-6 col-sm-6 col-xs-12 action-button-bar" *ngIf="workspaceSrvc.displayDistinctionAndInvitedPosition">
                         <#escape x as x?html>                            
-                        <div class="menu-container">                                     
-                            <ul class="toggle-menu">
+                        <div role="presentation" class="menu-container">                                     
+                            <ul  role="presentation"class="toggle-menu">
                                 <li>
                                     <span class="glyphicon glyphicon-sort"></span>                          
                                     <@orcid.msg 'manual_orcid_record_contents.sort'/>
-                                    <ul class="menu-options sort">
+                                    <ul class="menu-options sort" role="menu">
                                         <li [ngClass]="{'checked':sortDisplayKeyDistinctions=='startDate'}">                                         
                                             <a (click)="sort('distinction_invited_position', 'startDate', true);" class="action-option manage-button">
                                                 <@orcid.msg 'manual_orcid_record_contents.sort_start_date'/>
@@ -258,7 +258,7 @@
                             </ul>                                   
                         </div>
                         </#escape>                                           
-                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu" role="menu">
                             <li class="hidden-xs">                  
                                 <div class="menu-container" id="add-distinction-container">
                                     <ul class="toggle-menu">
@@ -276,7 +276,7 @@
                                 </a>                
                             </li>
                         </ul>
-                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu">
+                        <ul *ngIf="!isPublicPage" class="workspace-bar-menu" role="menu">
                             <li class="hidden-xs">                  
                                 <div class="menu-container" id="add-invited-position-container">
                                     <ul class="toggle-menu">
@@ -315,20 +315,20 @@
             </div>                                                  
         </div>       
         <!-- MEMBERSHIP AND SERVICE -->
-        <div id="workspace-membership-service" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && membershipsAndServices.length < 1">
+        <div id="workspace-membership-service" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && membershipsAndServices.length < 1"  role="group" aria-labelledby="affiliationType.membership_service" aria-describedby="tooltip-tooltip-helpPopoverMembershipAndService">
             <div class="workspace-accordion-header clearfix">
                 <div class="row">
-                    <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="col-md-6 col-sm-6 col-xs-12 affiliation-heading">
                         <a name='workspace-membership-service'></a>
                         <a (click)="workspaceSrvc.toggleMembershipAndService()" class="toggle-text">
                             <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayMembershipAndService==false}"></i>
-                            <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.membership_service'/> (<span>{{membershipsAndServices.length}}</span>)
+                            <h2 id="affiliationType.membership_service" ><@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.membership_service'/> (<span>{{membershipsAndServices.length}}</span>) </h2>
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="membership-service-help" class="popover bottom">
                                 <div class="arrow"></div>
-                                <div class="popover-content">
+                                <div class="popover-content" id="tooltip-helpPopoverMembershipAndService">
                                     <p><strong><@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_1'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_2'/><br>
                                     <strong><@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_3'/></strong> <@orcid.msg 'manage_affiliations_settings.helpPopoverMembershipAndService_4'/><br>
                                     <a href="<@orcid.msg 'common.kb_uri_default'/>360008897694" target="manage_affiliations_settings.helpPopoverMembershipAndService"><@orcid.msg 'common.learn_more'/></a></p>

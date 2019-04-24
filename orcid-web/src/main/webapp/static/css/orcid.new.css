@@ -1840,7 +1840,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     font-weight: 700;
     height: 30px;
     line-height: 31px;
-    width: 100%;
     cursor: pointer;
 }
 
@@ -2638,7 +2637,14 @@ span.orcid-error {
     float: left;
     clear: both;
     width: 100%;
-    margin-bottom: 15px
+    margin-bottom: 15px;
+    white-space: normal;
+    word-break: normal;
+    word-wrap: break-word;
+}
+
+span.orcid-error a{
+    white-space: nowrap;
 }
 
 input.error {
@@ -2975,7 +2981,7 @@ input.error {
 
 .workspace-profile p {
     margin-bottom: 5px;
-    word-wrap: break-word
+    word-break: break-word
 }
 
 .work-title {
@@ -9245,4 +9251,39 @@ a.footer-url {
     transform: rotate(-135deg);
     margin-left: 6px;
     margin-bottom: -6px;
+}
+
+.biography-controller h2 {
+    font-size: 17px;
+}
+
+
+.toggle-text h2:first-of-type {
+    color: white;
+    font-size: 14px;
+    margin: 0;
+    padding-left: 4px;
+}
+
+
+
+a.toggle-text {
+    display: flex;
+    align-items: center;
+}
+
+person-ng2 h3.workspace-section-label {
+    font-size: 14px;
+    line-height: 22px;
+    margin: 0;
+}
+
+emails-ng2 h3.workspace-section-label {
+    font-size: 14px;
+    line-height: 22px;
+    margin: 0;
+}
+
+.affiliation-heading {
+    display: flex;
 }
