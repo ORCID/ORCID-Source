@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -29,11 +30,6 @@
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
     
-    <mvc:cors>
-       <mvc:mapping path="/**"
-        allowed-origins="http://localhost:4200, https://localhost:4200" />
-    </mvc:cors>
-
     <mvc:interceptors>
         <ref bean="localeChangeInterceptor" />
     </mvc:interceptors>
