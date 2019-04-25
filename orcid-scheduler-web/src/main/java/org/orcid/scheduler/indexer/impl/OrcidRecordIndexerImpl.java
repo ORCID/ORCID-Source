@@ -46,6 +46,9 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     @Value("${org.orcid.persistence.indexing.delay:5}")
     private Integer indexingDelay;
 
+    @Value("${org.orcid.persistence.solr.legacy.on:true}")
+    private Boolean feedLegacySolr;
+    
     @Resource
     private ProfileDao profileDao;
 
@@ -154,6 +157,10 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                     continue;
                 }
 
+                if(feedLegacySolr) {
+                    
+                }
+                
                 profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
             }
         } while (!connectionIssue && !orcidsForIndexing.isEmpty());
