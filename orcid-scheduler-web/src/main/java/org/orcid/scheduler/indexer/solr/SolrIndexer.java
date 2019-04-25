@@ -26,15 +26,15 @@ public class SolrIndexer {
 
     Logger LOG = LoggerFactory.getLogger(SolrIndexer.class);
 
-    @Resource(name = "solrServer")
-    private SolrServer solrServer;
+    @Resource(name = "legacySolrServer")
+    private SolrServer legacySolrServer;
     
     @Resource
     private RecordManagerReadOnly recordManagerReadOnly;
     @Resource
     private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
     
-    @Resource
+    @Resource(name = "researchResourceManagerReadOnlyV3")
     private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
     
     private OrcidRecordToSolrDocument converter = new OrcidRecordToSolrDocument(true);
@@ -66,8 +66,8 @@ public class SolrIndexer {
     
     private void persist(OrcidSolrDocument orcidSolrDocument) {
         try {
-            solrServer.addBean(orcidSolrDocument);
-            solrServer.commit();
+            legacySolrServer.addBean(orcidSolrDocument);
+            legacySolrServer.commit();
         } catch (SolrServerException se) {
             throw new NonTransientDataAccessResourceException("Error persisting to SOLR Server", se);
         } catch (IOException ioe) {

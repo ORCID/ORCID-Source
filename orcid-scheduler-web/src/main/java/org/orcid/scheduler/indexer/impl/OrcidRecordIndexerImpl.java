@@ -161,8 +161,9 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                     continue;
                 }
 
+                // Should we still feed the old solr instance?
                 if(feedLegacySolr) {
-                    
+                    solrIndexer.persist(orcid);
                 }
                 
                 profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
