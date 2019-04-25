@@ -2641,6 +2641,7 @@ span.orcid-error {
     white-space: normal;
     word-break: normal;
     word-wrap: break-word;
+    font-weight: normal;
 }
 
 span.orcid-error a{
