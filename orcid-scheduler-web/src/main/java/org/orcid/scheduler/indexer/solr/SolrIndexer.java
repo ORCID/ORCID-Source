@@ -12,7 +12,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;

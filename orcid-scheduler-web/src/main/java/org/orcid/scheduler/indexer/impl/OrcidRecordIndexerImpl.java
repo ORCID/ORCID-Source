@@ -15,6 +15,7 @@ import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.scheduler.indexer.OrcidRecordIndexer;
+import org.orcid.scheduler.indexer.solr.SolrIndexer;
 import org.orcid.scheduler.messaging.JmsMessageSender;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
@@ -69,6 +70,9 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Resource
+    private SolrIndexer solrIndexer;
     
     private int claimReminderAfterDays = 8;
     
