@@ -25,7 +25,7 @@
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labellastname'/> <i><@orcid.msg 'register.optional'/></i></label>
         <div class="bottomBuffer">
-            <input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class=""  [(ngModel)]="registrationForm.familyNames.value"/>
+            <input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class=""  [(ngModel)]="registrationForm.familyNames.value" (blur)="serverValidate('FamilyNames')"/>
             <span class="orcid-error" *ngIf="registrationForm?.familyNames?.errors?.length > 0">
                 <div *ngFor="let error of registrationForm.familyNames.errors" [innerHTML]="error"></div>
             </span>
