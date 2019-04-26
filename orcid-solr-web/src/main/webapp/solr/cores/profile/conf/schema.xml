@@ -159,7 +159,7 @@
     <!-- Field to use to determine and enforce document uniqueness.
       Unless this field is marked with required="false", it will be a required field
     -->
-    <uniqueKey>id</uniqueKey>
+    <uniqueKey>orcid</uniqueKey>
 
     <!-- copyField commands copy one field to another at the time a document
        is added to the index.  It's used either to index the same field differently,
@@ -989,6 +989,19 @@
       </analyzer>
     </fieldType>
 
+	<!-- Custom field type for ORCID to get stricter person name matching -->
+	<fieldType name="orcid_text_name" class="solr.TextField"
+		positionIncrementGap="100">
+		<analyzer type="index">
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+		</analyzer>
+		<analyzer type="query">
+			<tokenizer class="solr.StandardTokenizerFactory" />
+			<filter class="solr.LowerCaseFilterFactory" />
+		</analyzer>
+	</fieldType>
+
     <!-- Similarity is the scoring routine for each document vs. a query.
        A custom Similarity or SimilarityFactory may be specified here, but 
        the default is fine for most applications.  
@@ -999,5 +1012,138 @@
        <str name="paramkey">param value</str>
      </similarity>
     -->
+	
+	<field name="orcid" type="string" indexed="true" stored="true"
+		multiValued="false" />
+	<field name="email" type="string" indexed="true" stored="true"
+		multiValued="true" />
+	<field name="given-names" type="text_general" indexed="true"
+		stored="true" multiValued="false" />
+	<field name="family-name" type="text_general" indexed="true"
+		stored="true" multiValued="false" />
+	<field name="given-and-family-names" type="orcid_text_name"
+		indexed="true" stored="false" multiValued="false" />
+	<field name="current-primary-institution-affiliation-name" type="text_general"
+		indexed="true" stored="true" multiValued="true" />
+	<field name="current-institution-affiliation-name" type="text_general"
+		indexed="true" stored="true" multiValued="true" />
+	<field name="past-institution-affiliation-name" type="text_general"
+		indexed="true" stored="true" multiValued="true" />
+	<field name="credit-name" type="text_general" indexed="true"
+		stored="true" multiValued="false" />
+	<field name="other-names" type="text_general" indexed="true"
+		stored="true" multiValued="true" />
+	<field name="external-id-source" type="string" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="external-id-orcid" type="string" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="external-id-reference" type="string" indexed="true"
+			stored="false" multiValued="true" />
+	<field name="external-id-source-and-reference" type="string"
+		indexed="true" stored="false" multiValued="true" />
+	<field name="external-id-orcid-and-reference" type="string"
+		indexed="true" stored="false" multiValued="true" />
+	<field name="digital-object-ids" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<!-- Indexing all possible external identifier types -->
+	<field name="agr" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="arxiv" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="asin" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="asin-tld" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="bibcode" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="cba" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="cit" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="ctx" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="eid" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="ethos" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="handle" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="hir" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="isbn" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="issn" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="jfm" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="jstor" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="lccn" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="mr" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="oclc" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="ol" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="osti" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="pat" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="pmc" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="pmid" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="rfc" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="source-work-id" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="ssrn" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="uri" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="urn" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="wosuid" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="zbl" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="other-identifier-type" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="work-titles" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="funding-titles" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="grant-numbers" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="patent-numbers" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="keyword" type="text_general" indexed="true" stored="false"
+		multiValued="true" />
+	<field name="profile-submission-date" type="pdate" indexed="true"
+		stored="true" multiValued="false" />
+	<field name="profile-last-modified-date" type="pdate" indexed="true"
+		stored="true" multiValued="false" />
+	<field name="public-profile-message" type="string" indexed="false"
+		stored="false" multiValued="false" />
+	<field name="primary-record" type="string" indexed="true"
+		stored="true" multiValued="false" />
+		
+	<!-- research resources -->
+	<field name="research-resource-proposal-title" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="research-resource-item-name" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+
+	<!-- work external identifier fields -->
+	<dynamicField name="*-self" type="string" indexed="true" stored="false" multiValued="true"/>
+	<dynamicField name="*-part-of" type="string" indexed="true" stored="false" multiValued="true"/>
+	
+	<!-- education and employment ids -->
+	<dynamicField name="*-org-id" type="string" indexed="true" stored="false" multiValued="true"/>
+	<dynamicField name="*-org-name" type="text_general" indexed="true" stored="false" multiValued="true"/>
+	
+	<copyField source="external-id-source-and-reference" dest="external-id-orcid-and-reference"/>
+	<copyField source="external-id-source" dest="external-id-orcid"/>
 
 </schema>

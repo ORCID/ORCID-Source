@@ -27,9 +27,11 @@ public class SolrBeanFactory {
     @Resource(name = "responseParser")
     private XMLResponseParser responseParser;
     
+    private static final String DEFAULT_COLLECTION = "/profile";
+    
     @Bean(name = "solrClient")
     public SolrClient solrClient() {
-        return new HttpSolrClient.Builder(solrUrl)
+        return new HttpSolrClient.Builder(solrUrl + DEFAULT_COLLECTION)
                 .withConnectionTimeout(connectionTimeout)
                 .withSocketTimeout(socketTimeout)
                 .allowCompression(allowCompression)
