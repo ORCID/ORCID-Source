@@ -110,7 +110,6 @@
          If you don't need it, consider removing it and the corresponding copyField directive.
     -->
 
-    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
     <!-- docValues are enabled by default for long type so we don't need to index the version field  -->
     <field name="_version_" type="plong" indexed="false" stored="false"/>
     <field name="_root_" type="string" indexed="true" stored="false" docValues="false" />
@@ -1014,7 +1013,7 @@
     -->
 	
 	<field name="orcid" type="string" indexed="true" stored="true"
-		multiValued="false" />
+		required="true" multiValued="false"/>
 	<field name="email" type="string" indexed="true" stored="true"
 		multiValued="true" />
 	<field name="given-names" type="text_general" indexed="true"
