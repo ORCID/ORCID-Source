@@ -48,6 +48,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.EXTERNAL_ID_SOURCE_AND_REFERENCES)
     private List<String> externalIdSourcesAndReferences;
 
+    @Field(SolrConstants.EXTERNAL_ID_TYPE_AND_VALUE)
+    private List<String> externalIdTypeAndValue;
+    
     @Field(SolrConstants.DIGITAL_OBJECT_IDS)
     private List<String> digitalObjectIds = new ArrayList<String>();;
 
@@ -684,6 +687,14 @@ public class OrcidSolrDocument {
         this.organisationNames = organisationNames;
     }
 
+    public List<String> getExternalIdTypeAndValue() {
+        return externalIdTypeAndValue;
+    }
+
+    public void setExternalIdTypeAndValue(List<String> externalIdTypeAndValue) {
+        this.externalIdTypeAndValue = externalIdTypeAndValue;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -714,6 +725,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
         result = prime * result + ((externalIdSources == null) ? 0 : externalIdSources.hashCode());
         result = prime * result + ((externalIdSourcesAndReferences == null) ? 0 : externalIdSourcesAndReferences.hashCode());
+        result = prime * result + ((externalIdTypeAndValue == null) ? 0 : externalIdTypeAndValue.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
         result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
         result = prime * result + ((givenAndFamilyNames == null) ? 0 : givenAndFamilyNames.hashCode());
@@ -848,6 +860,11 @@ public class OrcidSolrDocument {
             if (other.externalIdSourcesAndReferences != null)
                 return false;
         } else if (!externalIdSourcesAndReferences.equals(other.externalIdSourcesAndReferences))
+            return false;
+        if (externalIdTypeAndValue == null) {
+            if (other.externalIdTypeAndValue != null)
+                return false;
+        } else if (!externalIdTypeAndValue.equals(other.externalIdTypeAndValue))
             return false;
         if (familyName == null) {
             if (other.familyName != null)

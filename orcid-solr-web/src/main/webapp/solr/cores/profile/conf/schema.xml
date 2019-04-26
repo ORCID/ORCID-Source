@@ -1040,6 +1040,8 @@
 			stored="false" multiValued="true" />
 	<field name="external-id-source-and-reference" type="string"
 		indexed="true" stored="false" multiValued="true" />
+	<field name="external-id-type-and-value" type="string"
+		indexed="true" stored="false" multiValued="true" />
 	<field name="external-id-orcid-and-reference" type="string"
 		indexed="true" stored="false" multiValued="true" />
 	<field name="digital-object-ids" type="text_general" indexed="true"

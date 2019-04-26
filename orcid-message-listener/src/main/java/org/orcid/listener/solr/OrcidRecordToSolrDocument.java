@@ -95,6 +95,7 @@ public class OrcidRecordToSolrDocument {
             if (record.getPerson().getExternalIdentifiers() != null && record.getPerson().getExternalIdentifiers().getExternalIdentifiers() != null){
                 List<String> extIdOrcids = new ArrayList<String>();
                 List<String> extIdRefs = new ArrayList<String>();
+                List<String> extIdTypeAndValue = new ArrayList<String>();
                 List<String> extIdOrcidsAndRefs = new ArrayList<String>();
                 for (PersonExternalIdentifier externalIdentifier : record.getPerson().getExternalIdentifiers().getExternalIdentifiers()){
                         String sourcePath = null;
@@ -103,11 +104,12 @@ public class OrcidRecordToSolrDocument {
                                 extIdOrcids.add(sourcePath);
                         }
                         if (externalIdentifier.getValue() != null) {
-                            extIdRefs.add(externalIdentifier.getValue());//weird, the type is not indexed...!
+                            extIdRefs.add(externalIdentifier.getValue());
+                            extIdTypeAndValue.add(externalIdentifier.getType() + ':' + externalIdentifier.getValue());
                         }
                         if (NullUtils.noneNull(sourcePath, externalIdentifier.getValue())) {
                             extIdOrcidsAndRefs.add(sourcePath + "=" + externalIdentifier.getValue());
-                        }
+                        }                        
                 }
                 if (!extIdOrcids.isEmpty()) {
                     profileIndexDocument.setExternalIdSources(extIdOrcids);
@@ -117,6 +119,10 @@ public class OrcidRecordToSolrDocument {
                 }
                 if (!extIdOrcidsAndRefs.isEmpty()) {
                     profileIndexDocument.setExternalIdSourcesAndReferences(extIdOrcidsAndRefs);
+                }
+                
+                if(!extIdTypeAndValue.isEmpty()) {
+                    profileIndexDocument.setExternalIdTypeAndValue(extIdTypeAndValue);
                 }
             }
 
