@@ -198,8 +198,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Override
     public void sendEmailMessages() {
-        LOGGER.info("About to send email messages");
-        
         List<Object[]> orcidsWithUnsentNotifications = new ArrayList<Object[]>();
         orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();        
         
@@ -235,7 +233,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 LOGGER.warn("Problem sending email message to user: " + orcid, e);
             }
         }
-        LOGGER.info("Finished sending email messages");
     }
 
     @Override
