@@ -91,7 +91,6 @@ public class OrcidRecordToSolrDocument {
                 }
             }
             
-            //TODO: weird, the type is not indexed...!
             if (record.getPerson().getExternalIdentifiers() != null && record.getPerson().getExternalIdentifiers().getExternalIdentifiers() != null){
                 List<String> extIdOrcids = new ArrayList<String>();
                 List<String> extIdRefs = new ArrayList<String>();
@@ -384,6 +383,8 @@ public class OrcidRecordToSolrDocument {
                     }
                 }
             }
+            
+            //TODO: include orgs from all the affiliation types
             
             // Now add all self, part of and version of identifiers
             profileIndexDocument.setSelfIds(self);
