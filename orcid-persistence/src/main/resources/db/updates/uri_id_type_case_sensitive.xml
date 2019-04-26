@@ -2,6 +2,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
     <changeSet author="George Nash" id="MAKE_URI_ID_TYPE_CASE_SENSITIVE">
-        <sql>UPDATE identifier_type SET case_sensitive = TRUE where id_name = 'URI'</sql>
+        <sql>UPDATE identifier_type SET "case_sensitive" = TRUE where id_name = 'URI'</sql>
     </changeSet>
 </databaseChangeLog>
