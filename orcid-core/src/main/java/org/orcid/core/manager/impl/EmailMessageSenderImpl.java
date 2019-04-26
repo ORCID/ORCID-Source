@@ -50,8 +50,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.google.common.collect.Lists;
-
 /**
  * 
  * @author Will Simpson
@@ -212,7 +210,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 Date recordActiveDate = null;
                 recordActiveDate = (Date) element[1];
                     
-                LOGGER.info("Sending messages for orcid: {}", orcid);
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
                                 
                 EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
@@ -233,8 +230,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                             notificationDao.flagAsSent(notification.getPutCode());
                         }
                     }
-                } else {
-                    LOGGER.info("There are no notifications to send for orcid: {}", orcid);
                 }
             } catch (RuntimeException e) {
                 LOGGER.warn("Problem sending email message to user: " + orcid, e);
@@ -243,18 +238,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         LOGGER.info("Finished sending email messages");
     }
 
-    private void flagAsSent(List<Notification> notifications) {
-        List<Long> notificationIds = new ArrayList<>();
-        for (Notification notification : notifications) {
-            notificationIds.add(notification.getPutCode());
-        }
-        List<List<Long>> batches = Lists.partition(notificationIds, 30000);
-        for (List<Long> batch : batches) {
-            notificationDao.flagAsSent(batch);
-        }
-        notificationDao.flush();
-    }
-    
     @Override
     public void sendServiceAnnouncements(Integer customBatchSize) {
         LOGGER.info("About to send Service Announcements messages");
