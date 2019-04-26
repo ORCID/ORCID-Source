@@ -1123,8 +1123,6 @@
 		stored="true" multiValued="false" />
 	<field name="profile-last-modified-date" type="pdate" indexed="true"
 		stored="true" multiValued="false" />
-	<field name="public-profile-message" type="string" indexed="false"
-		stored="false" multiValued="false" />
 	<field name="primary-record" type="string" indexed="true"
 		stored="true" multiValued="false" />
 		
@@ -1144,5 +1142,15 @@
 	
 	<copyField source="external-id-source-and-reference" dest="external-id-orcid-and-reference"/>
 	<copyField source="external-id-source" dest="external-id-orcid"/>
+
+
+	<!-- TODO: Do we really want to store the full message???? -->
+	<fieldtype name="textField" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+  		<analyzer>
+    		<tokenizer class="solr.KeywordTokenizerFactory"/>
+  		</analyzer>
+	</fieldtype>
+	<field name="public-profile-message" type="textField" indexed="false"
+		stored="false" multiValued="false" omitNorms="true"/>
 
 </schema>
