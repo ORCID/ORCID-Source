@@ -18,7 +18,8 @@ public class URINormalizerTest {
             "https://www.bbc.co.uk",
             "http://www.bbc.co.uk",
             "bbc.co.uk",
-            "www.bbc.co.uk");
+            "www.bbc.co.uk",
+            "https://youtu.be/delYABXr4p0");
     
     List<String> results = Lists.newArrayList(
             "https://bbc.co.uk",
@@ -26,7 +27,8 @@ public class URINormalizerTest {
             "https://www.bbc.co.uk",
             "http://www.bbc.co.uk",
             "http://bbc.co.uk",
-            "http://www.bbc.co.uk");
+            "http://www.bbc.co.uk",
+            "https://youtu.be/delYABXr4p0");
     
     @Test
     public void go(){
