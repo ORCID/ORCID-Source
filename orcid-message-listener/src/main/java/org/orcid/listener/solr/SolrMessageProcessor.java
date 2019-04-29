@@ -7,16 +7,18 @@ import java.util.function.Consumer;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
-import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceGroup;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResources;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.Record;
+import org.orcid.jaxb.model.v3.release.record.ResearchResource;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
-import org.orcid.listener.orcid.Orcid20Manager;
+import org.orcid.listener.exception.V3DeprecatedRecordException;
+import org.orcid.listener.exception.V3LockedRecordException;
 import org.orcid.listener.orcid.Orcid30Manager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
@@ -36,9 +38,6 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
 
     @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
     private boolean isSolrIndexingEnabled;
-    
-    @Resource
-    private Orcid20Manager orcid20ApiClient;
     
     @Resource
     private Orcid30Manager orcid30ApiClient;
@@ -76,7 +75,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             return;
         }
         try{
-            org.orcid.jaxb.model.record_v2.Record record = orcid20ApiClient.fetchPublicRecord(message); 
+            Record record = orcid30ApiClient.fetchPublicRecord(message); 
             
             // Remove deactivated records from SOLR index
             if (record.getHistory() != null && record.getHistory().getDeactivationDate() != null && record.getHistory().getDeactivationDate().getValue() != null) {
@@ -91,7 +90,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
                 for (FundingGroup group : record.getActivitiesSummary().getFundings().getFundingGroup()){
                     if (group.getFundingSummary() !=null){
                         for (FundingSummary f : group.getFundingSummary()){
-                            fundings.add(orcid20ApiClient.fetchFunding(record.getOrcidIdentifier().getPath(), f.getPutCode()));
+                            fundings.add(orcid30ApiClient.fetchFunding(record.getOrcidIdentifier().getPath(), f.getPutCode()));
                         }
                     }
                 }
@@ -112,11 +111,11 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
             
             solrUpdater.persist(recordConv.convert(record, fundings, researchResourcesList));
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
-        } catch(LockedRecordException lre) {
+        } catch(V3LockedRecordException lre) {
             LOG.error("Record " + orcid + " is locked");
             solrUpdater.processInvalidRecord(orcid);
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
-        } catch(DeprecatedRecordException dre) {
+        } catch(V3DeprecatedRecordException dre) {
             LOG.error("Record " + orcid + " is deprecated");
             solrUpdater.processInvalidRecord(orcid);
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);

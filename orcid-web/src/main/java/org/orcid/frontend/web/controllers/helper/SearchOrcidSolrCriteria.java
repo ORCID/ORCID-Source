@@ -106,7 +106,6 @@ public class SearchOrcidSolrCriteria {
 
         deriveGivenNameFamilyNameClause(givenName, familyName);
         deriveOtherNamesCondition(includeOtherNames, givenName);
-        derivePrimaryInstitutionName(institutionName);
         derivePastInstitutionsNamesCondition(isPastInstitutionsSearchable, institutionName);
         deriveKeywordSearchCondition(keyword);
         deriveTextSearchCondition(text);
@@ -141,17 +140,7 @@ public class SearchOrcidSolrCriteria {
             return;
         }
 
-    }
-
-    private void derivePrimaryInstitutionName(String institutionName) {
-        if (!orcidSolrQueryBuilder.isEmpty()) {
-            orcidSolrQueryBuilder.addPrimaryInstitutionAsLowercaseWildcardANDOperation(institutionName);
-        }
-
-        else {
-            orcidSolrQueryBuilder.addPrimaryInstitutionAsLowercaseWildcard(institutionName);
-        }
-    }
+    }    
 
     private void deriveOtherNamesCondition(Boolean otherNamesSearchable, String givenName) {
 

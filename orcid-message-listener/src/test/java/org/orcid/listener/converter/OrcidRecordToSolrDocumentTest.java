@@ -9,10 +9,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.jaxb.model.v3.rc2.record.ResearchResource;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.Record;
+import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.listener.solr.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 
@@ -21,7 +20,7 @@ public class OrcidRecordToSolrDocumentTest {
     @Test
     public void testNonSchemaExternalID() throws JAXBException{
         //as above, but with PDB identifier
-        Record record = getRecord("/v20recordWithPDB.xml");
+        Record record = getRecord("/record_3.0/samples/read_samples/record-3.0.xml");
         OrcidRecordToSolrDocument v20 = new  OrcidRecordToSolrDocument(false);
         OrcidSolrDocument v20Doc = v20.convert(record,new ArrayList<Funding>(), new ArrayList<ResearchResource>());
         
@@ -50,13 +49,6 @@ public class OrcidRecordToSolrDocumentTest {
         Assert.assertTrue(v20Doc.getOrganisationNames().get("funding-org-name").contains("THOR - Technical and Human Infrastructure for Open Research"));
         Assert.assertTrue(v20Doc.getGrantNumbers().contains("H2020-EU.1.4.1.3."));
         */
-    }
-        
-    private OrcidMessage getOrcidMessage() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.message");
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = this.getClass().getResourceAsStream("/v12profile.xml");
-        return (OrcidMessage) unmarshaller.unmarshal(inputStream);
     }
     
     private Record getRecord(String name) throws JAXBException {

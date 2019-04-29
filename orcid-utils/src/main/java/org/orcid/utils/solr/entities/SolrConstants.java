@@ -8,7 +8,6 @@ public class SolrConstants {
     public static final String GIVEN_AND_FAMILY_NAMES = "given-and-family-names";
     public static final String EMAIL_ADDRESS = "email";
     public static final String AFFILIATE_PAST_INSTITUTION_NAMES = "past-institution-affiliation-name";
-    public static final String AFFILIATE_PRIMARY_INSTITUTION_NAMES = "current-primary-institution-affiliation-name";
     public static final String AFFILIATE_INSTITUTION_NAME = "current-institution-affiliation-name";
     public static final String CREDIT_NAME = "credit-name";
     public static final String OTHER_NAMES = "other-names";
