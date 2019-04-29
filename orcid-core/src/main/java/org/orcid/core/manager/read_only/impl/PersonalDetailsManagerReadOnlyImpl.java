@@ -45,7 +45,6 @@ public class PersonalDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl 
     @Override
     public PersonalDetails getPersonalDetails(String orcid) {
         Date lastModified = getLastModifiedDate(orcid);
-        long lastModifiedTime = lastModified.getTime();
         PersonalDetails personalDetails = new PersonalDetails();
         Name name = recordNameManager.getRecordName(orcid);
         if (name != null) {

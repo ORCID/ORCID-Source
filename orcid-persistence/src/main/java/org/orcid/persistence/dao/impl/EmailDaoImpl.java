@@ -170,6 +170,14 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
+    public List<EmailEntity> findPublicEmailsIncludeUnverified(String orcid) {
+        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and visibility = 'PUBLIC'", EmailEntity.class);
+        query.setParameter("orcid", orcid);
+        List<EmailEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results;
+    }
+    
+    @Override
     public List<EmailEntity> findByOrcid(String orcid, String visibility) {
         TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and visibility = :visibility", EmailEntity.class);
         query.setParameter("orcid", orcid);

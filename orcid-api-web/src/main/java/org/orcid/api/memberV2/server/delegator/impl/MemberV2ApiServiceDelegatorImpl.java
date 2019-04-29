@@ -54,6 +54,7 @@ import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
@@ -130,7 +131,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-
+    
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
 
@@ -766,13 +767,25 @@ public class MemberV2ApiServiceDelegatorImpl implements
         try {
             // return all emails if client has /email/read-private scope
             orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.EMAIL_READ_PRIVATE);
-            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
+            
+            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
+                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
+            } else {
+                emailManagerReadOnly.getEmails(orcid);
+            }
+            
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
             emails.setEmails(filteredList);
         } catch (OrcidAccessControlException e) {
-            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
+            
+            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
+                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
+            } else {
+                emailManagerReadOnly.getEmails(orcid);
+            }
+            
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
