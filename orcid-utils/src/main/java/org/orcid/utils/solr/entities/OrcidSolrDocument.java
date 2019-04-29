@@ -43,10 +43,7 @@ public class OrcidSolrDocument {
     private List<String> externalIdSources;
 
     @Field(SolrConstants.EXTERNAL_ID_REFERENCES)
-    private List<String> externalIdReferences;
-
-    @Field(SolrConstants.EXTERNAL_ID_SOURCE_AND_REFERENCES)
-    private List<String> externalIdSourcesAndReferences;
+    private List<String> externalIdReferences;    
 
     @Field(SolrConstants.EXTERNAL_ID_TYPE_AND_VALUE)
     private List<String> externalIdTypeAndValue;
@@ -161,9 +158,6 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.FUNDING_TITLES)
     private List<String> fundingTitles;
-
-    @Field(SolrConstants.PATENT_NUMBERS)
-    private List<String> patentNumbers;
 
     @Field(SolrConstants.PROFILE_SUBMISSION_DATE)
     private Date profileSubmissionDate;
@@ -317,14 +311,6 @@ public class OrcidSolrDocument {
 
     public void setFundingTitles(List<String> fundingTitles) {
         this.fundingTitles = fundingTitles;
-    }
-
-    public List<String> getPatentNumbers() {
-        return patentNumbers;
-    }
-
-    public void setPatentNumbers(List<String> patentNumbers) {
-        this.patentNumbers = patentNumbers;
     }
 
     public Date getProfileSubmissionDate() {
@@ -543,14 +529,6 @@ public class OrcidSolrDocument {
         this.externalIdSources = externalIdSources;
     }
 
-    public List<String> getExternalIdSourcesAndReferences() {
-        return externalIdSourcesAndReferences;
-    }
-
-    public void setExternalIdSourcesAndReferences(List<String> externalIdSourcesAndReferences) {
-        this.externalIdSourcesAndReferences = externalIdSourcesAndReferences;
-    }
-
     public List<String> getAgr() {
         return agr;
     }
@@ -723,8 +701,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((emailAddresses == null) ? 0 : emailAddresses.hashCode());
         result = prime * result + ((ethos == null) ? 0 : ethos.hashCode());
         result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
-        result = prime * result + ((externalIdSources == null) ? 0 : externalIdSources.hashCode());
-        result = prime * result + ((externalIdSourcesAndReferences == null) ? 0 : externalIdSourcesAndReferences.hashCode());
+        result = prime * result + ((externalIdSources == null) ? 0 : externalIdSources.hashCode());        
         result = prime * result + ((externalIdTypeAndValue == null) ? 0 : externalIdTypeAndValue.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
         result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
@@ -750,7 +727,6 @@ public class OrcidSolrDocument {
         result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
         result = prime * result + ((partOfIds == null) ? 0 : partOfIds.hashCode());
         result = prime * result + ((pat == null) ? 0 : pat.hashCode());
-        result = prime * result + ((patentNumbers == null) ? 0 : patentNumbers.hashCode());
         result = prime * result + ((pmc == null) ? 0 : pmc.hashCode());
         result = prime * result + ((pmid == null) ? 0 : pmid.hashCode());
         result = prime * result + ((primaryRecord == null) ? 0 : primaryRecord.hashCode());
@@ -855,11 +831,6 @@ public class OrcidSolrDocument {
             if (other.externalIdSources != null)
                 return false;
         } else if (!externalIdSources.equals(other.externalIdSources))
-            return false;
-        if (externalIdSourcesAndReferences == null) {
-            if (other.externalIdSourcesAndReferences != null)
-                return false;
-        } else if (!externalIdSourcesAndReferences.equals(other.externalIdSourcesAndReferences))
             return false;
         if (externalIdTypeAndValue == null) {
             if (other.externalIdTypeAndValue != null)
@@ -985,11 +956,6 @@ public class OrcidSolrDocument {
             if (other.pat != null)
                 return false;
         } else if (!pat.equals(other.pat))
-            return false;
-        if (patentNumbers == null) {
-            if (other.patentNumbers != null)
-                return false;
-        } else if (!patentNumbers.equals(other.patentNumbers))
             return false;
         if (pmc == null) {
             if (other.pmc != null)

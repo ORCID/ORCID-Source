@@ -336,8 +336,7 @@ public class SolrDaoTest {
         OrcidSolrDocument testDoc = new OrcidSolrDocument();
         testDoc.setOrcid(firstOrcid);
         testDoc.setGivenNames("Given Name of Person");
-        testDoc.setFamilyName("Smith");
-        testDoc.setPatentNumbers(Arrays.asList(new String[] { "Elec-hammer01X:" }));
+        testDoc.setFamilyName("Smith");        
         return testDoc;
     }
 

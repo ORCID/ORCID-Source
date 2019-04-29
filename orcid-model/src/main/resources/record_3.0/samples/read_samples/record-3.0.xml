@@ -35,7 +35,6 @@
 				<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 				<common:path>8888-8888-8888-8880</common:path>
 				<common:host>orcid.org</common:host>
-
 			</common:source-orcid>
 			<common:source-name />
 		</common:source>

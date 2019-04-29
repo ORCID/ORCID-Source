@@ -113,10 +113,7 @@ public class OrcidRecordToSolrDocument {
                 }
                 if (!extIdRefs.isEmpty()) {
                     profileIndexDocument.setExternalIdReferences(extIdRefs);
-                }
-                if (!extIdOrcidsAndRefs.isEmpty()) {
-                    profileIndexDocument.setExternalIdSourcesAndReferences(extIdOrcidsAndRefs);
-                }
+                }                
             }
 
             if (record.getPerson() != null && record.getPerson().getKeywords() != null && record.getPerson().getKeywords().getKeywords() != null){

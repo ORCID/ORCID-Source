@@ -1022,8 +1022,6 @@
 		stored="true" multiValued="false" />
 	<field name="given-and-family-names" type="orcid_text_name"
 		indexed="true" stored="false" multiValued="false" />
-	<field name="current-primary-institution-affiliation-name" type="text_general"
-		indexed="true" stored="true" multiValued="true" />
 	<field name="current-institution-affiliation-name" type="text_general"
 		indexed="true" stored="true" multiValued="true" />
 	<field name="past-institution-affiliation-name" type="text_general"
@@ -1034,15 +1032,11 @@
 		stored="true" multiValued="true" />
 	<field name="external-id-source" type="string" indexed="true"
 		stored="false" multiValued="true" />
-	<field name="external-id-orcid" type="string" indexed="true"
-		stored="false" multiValued="true" />
 	<field name="external-id-reference" type="string" indexed="true"
 			stored="false" multiValued="true" />
 	<field name="external-id-source-and-reference" type="string"
 		indexed="true" stored="false" multiValued="true" />
 	<field name="external-id-type-and-value" type="string"
-		indexed="true" stored="false" multiValued="true" />
-	<field name="external-id-orcid-and-reference" type="string"
 		indexed="true" stored="false" multiValued="true" />
 	<field name="digital-object-ids" type="text_general" indexed="true"
 		stored="false" multiValued="true" />
@@ -1116,8 +1110,6 @@
 	<field name="funding-titles" type="text_general" indexed="true"
 		stored="false" multiValued="true" />
 	<field name="grant-numbers" type="text_general" indexed="true"
-		stored="false" multiValued="true" />
-	<field name="patent-numbers" type="text_general" indexed="true"
 		stored="false" multiValued="true" />
 	<field name="keyword" type="text_general" indexed="true" stored="false"
 		multiValued="true" />

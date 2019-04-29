@@ -117,7 +117,7 @@ public class OrcidRecordToSolrDocument {
                     }
                     if (externalIdentifier.getValue() != null) {
                         extIdRefs.add(externalIdentifier.getValue());
-                        extIdTypeAndValue.add(externalIdentifier.getType() + ':' + externalIdentifier.getValue());
+                        extIdTypeAndValue.add(externalIdentifier.getType() + '=' + externalIdentifier.getValue());
                     }
                     if (NullUtils.noneNull(sourcePath, externalIdentifier.getValue())) {
                         extIdOrcidsAndRefs.add(sourcePath + "=" + externalIdentifier.getValue());
@@ -129,10 +129,7 @@ public class OrcidRecordToSolrDocument {
                 if (!extIdRefs.isEmpty()) {
                     profileIndexDocument.setExternalIdReferences(extIdRefs);
                 }
-                if (!extIdOrcidsAndRefs.isEmpty()) {
-                    profileIndexDocument.setExternalIdSourcesAndReferences(extIdOrcidsAndRefs);
-                }
-
+                
                 if (!extIdTypeAndValue.isEmpty()) {
                     profileIndexDocument.setExternalIdTypeAndValue(extIdTypeAndValue);
                 }
