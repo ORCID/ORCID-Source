@@ -214,8 +214,8 @@
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-distinction</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>GRID</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</distinction:distinction-summary>
@@ -267,8 +267,8 @@
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-education</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>GRID</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</education:education-summary>
@@ -321,8 +321,8 @@
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-employment</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>GRID</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</employment:employment-summary>
@@ -335,7 +335,7 @@
 				<common:external-ids>
 					<common:external-id>
 						<common:external-id-type>grant_number</common:external-id-type>
-						<common:external-id-value>external-id-value</common:external-id-value>
+						<common:external-id-value>external-id-value-1</common:external-id-value>
 					</common:external-id>
 				</common:external-ids>
 				<funding:funding-summary put-code="0" visibility="private">
@@ -356,7 +356,7 @@
 					<common:external-ids>
 						<common:external-id>
 							<common:external-id-type>grant_number</common:external-id-type>
-							<common:external-id-value>external-id-value</common:external-id-value>
+							<common:external-id-value>external-id-value-1</common:external-id-value>
 							<common:external-id-url>http://tempuri.org</common:external-id-url>
 							<common:external-id-relationship>self</common:external-id-relationship>
 						</common:external-id>
@@ -380,8 +380,8 @@
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-funding</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>FUNDREF</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</funding:funding-summary>
@@ -433,8 +433,8 @@
 						<common:country>AF</common:country>
 					</common:address>
 					<common:disambiguated-organization>
-						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-invited-position</common:disambiguated-organization-identifier>
+						<common:disambiguation-source>FUNDREF</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
 			</invited-position:invited-position-summary>
@@ -486,8 +486,8 @@
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-membership</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>FUNDREF</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</membership:membership-summary>
@@ -553,8 +553,8 @@
 								<common:country>AF</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-								<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+								<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-peer-review</common:disambiguated-organization-identifier>
+								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</peer-review:convening-organization>
 					</peer-review:peer-review-summary>
@@ -607,8 +607,8 @@
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-qualification</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</qualification:qualification-summary>
@@ -660,8 +660,8 @@
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-service</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</service:service-summary>

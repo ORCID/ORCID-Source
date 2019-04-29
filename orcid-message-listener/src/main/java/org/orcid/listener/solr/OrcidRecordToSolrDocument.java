@@ -19,7 +19,6 @@ import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
-import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.Keyword;
 import org.orcid.jaxb.model.v3.release.record.OtherName;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
@@ -32,6 +31,8 @@ import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
@@ -60,7 +61,7 @@ public class OrcidRecordToSolrDocument {
 
     Logger LOG = LoggerFactory.getLogger(OrcidRecordToSolrDocument.class);
 
-    public OrcidSolrDocument convert(Record record, List<Funding> fundings, List<ResearchResource> researchResources) {
+    public OrcidSolrDocument convert(Record record, List<ResearchResource> researchResources) {
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(record.getOrcidIdentifier().getPath());
 
@@ -346,32 +347,35 @@ public class OrcidRecordToSolrDocument {
                 }
             }
 
-            if (!fundings.isEmpty()) {
+            if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getFundings() != null && !record.getActivitiesSummary().getFundings().getFundingGroup().isEmpty()) {
                 Set<String> fundingTitle = new HashSet<String>();
                 Set<String> fundingGrantNumbers = new HashSet<String>();
-                for (Funding f : fundings) {
-                    if (f.getTitle() != null) {
-                        if (f.getTitle().getTitle() != null && StringUtils.isNotEmpty(f.getTitle().getTitle().getContent())) {
-                            fundingTitle.add(f.getTitle().getTitle().getContent());
-                        }
-                        if (f.getTitle().getTranslatedTitle() != null && StringUtils.isNotEmpty(f.getTitle().getTranslatedTitle().getContent())) {
-                            fundingTitle.add(f.getTitle().getTranslatedTitle().getContent());
-                        }
-                    }
-                    if (f.getExternalIdentifiers() != null && f.getExternalIdentifiers().getExternalIdentifier() != null) {
-                        for (ExternalID id : f.getExternalIdentifiers().getExternalIdentifier()) {
-                            if (id.getType().equals("grant_number")) {
-                                fundingGrantNumbers.add(id.getValue());
+                for(FundingGroup g : record.getActivitiesSummary().getFundings().getFundingGroup()) {
+                    for (FundingSummary f : g.getFundingSummary()) {
+                        if (f.getTitle() != null) {
+                            if (f.getTitle().getTitle() != null && StringUtils.isNotEmpty(f.getTitle().getTitle().getContent())) {
+                                fundingTitle.add(f.getTitle().getTitle().getContent());
+                            }
+                            if (f.getTitle().getTranslatedTitle() != null && StringUtils.isNotEmpty(f.getTitle().getTranslatedTitle().getContent())) {
+                                fundingTitle.add(f.getTitle().getTranslatedTitle().getContent());
                             }
                         }
-                    }
-                    if (f.getOrganization() != null) {
-                        organisationNames.get(SolrConstants.FUNDING_ORGANISATION_NAME).add(f.getOrganization().getName());
-                        if (f.getOrganization().getDisambiguatedOrganization() != null)
-                            organisationIds.get(SolrConstants.FUNDREF_ORGANISATION_ID)
-                                    .add(f.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                        if (f.getExternalIdentifiers() != null && f.getExternalIdentifiers().getExternalIdentifier() != null) {
+                            for (ExternalID id : f.getExternalIdentifiers().getExternalIdentifier()) {
+                                if (id.getType().equals("grant_number")) {
+                                    fundingGrantNumbers.add(id.getValue());
+                                }
+                            }
+                        }
+                        if (f.getOrganization() != null) {
+                            organisationNames.get(SolrConstants.FUNDING_ORGANISATION_NAME).add(f.getOrganization().getName());
+                            if (f.getOrganization().getDisambiguatedOrganization() != null)
+                                organisationIds.get(SolrConstants.FUNDREF_ORGANISATION_ID)
+                                        .add(f.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                        }
                     }
                 }
+                
                 profileIndexDocument.setFundingTitles(new ArrayList<String>(fundingTitle));
                 profileIndexDocument.setGrantNumbers(new ArrayList<String>(fundingGrantNumbers));
             }

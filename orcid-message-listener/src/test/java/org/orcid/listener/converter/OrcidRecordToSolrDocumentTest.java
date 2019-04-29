@@ -1,6 +1,7 @@
 package org.orcid.listener.converter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.listener.solr.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.SolrConstants;
 
 public class OrcidRecordToSolrDocumentTest {
         
@@ -23,7 +25,7 @@ public class OrcidRecordToSolrDocumentTest {
         //as above, but with PDB identifier
         Record record = getRecord("/record_3.0/samples/read_samples/record-3.0.xml");
         OrcidRecordToSolrDocument v3 = new  OrcidRecordToSolrDocument(false);
-        OrcidSolrDocument v3Doc = v3.convert(record,new ArrayList<Funding>(), new ArrayList<ResearchResource>());
+        OrcidSolrDocument v3Doc = v3.convert(record, new ArrayList<ResearchResource>());
         
         assertEquals("8888-8888-8888-8880", v3Doc.getOrcid());
         assertEquals("credit-name", v3Doc.getCreditName());
@@ -40,22 +42,26 @@ public class OrcidRecordToSolrDocumentTest {
         assertEquals("value-1", v3Doc.getExternalIdReferences().get(0));
         assertEquals(1, v3Doc.getExternalIdTypeAndValue().size());
         assertEquals("type-1=value-1", v3Doc.getExternalIdTypeAndValue().get(0));
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
-        assertEquals("", v3Doc);
+        assertEquals(2, v3Doc.getFundingTitles().size());
+        assertTrue(v3Doc.getFundingTitles().contains("common:title"));
+        assertTrue(v3Doc.getFundingTitles().contains("common:translated-title"));
+        assertEquals(1, v3Doc.getGrantNumbers().size());        
+        assertEquals("external-id-value-1", v3Doc.getGrantNumbers().get(0));        
+        assertEquals(1, v3Doc.getKeywords().size());
+        assertEquals("keyword1", v3Doc.getKeywords().get(0));
+        assertEquals(3, v3Doc.getOrganisationIds().size());
+        assertEquals(3, v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).size());
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-funding"));
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-invited-position"));
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-membership"));
+        assertEquals(3, v3Doc.getOrganisationIds().get(SolrConstants.GRID_ORGANISATION_ID).size());
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.GRID_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-distinction"));
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.GRID_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-education"));
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.GRID_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-employment"));
+        assertEquals(3, v3Doc.getOrganisationIds().get(SolrConstants.RINGGOLD_ORGANISATION_ID).size());
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.RINGGOLD_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-membership"));
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.RINGGOLD_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-qualification"));
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.RINGGOLD_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-service"));
         assertEquals("", v3Doc);
         assertEquals("", v3Doc);
         assertEquals("", v3Doc);

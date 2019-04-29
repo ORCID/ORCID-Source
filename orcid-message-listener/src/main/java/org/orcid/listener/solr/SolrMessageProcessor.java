@@ -7,16 +7,11 @@ import java.util.function.Consumer;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
-import org.orcid.listener.exception.DeprecatedRecordException;
-import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.exception.V3DeprecatedRecordException;
 import org.orcid.listener.exception.V3LockedRecordException;
 import org.orcid.listener.orcid.Orcid30Manager;
@@ -82,19 +77,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
                 solrUpdater.processInvalidRecord(orcid);
                 recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
                 return;
-            }
-            
-            //get detailed funding so we can discover org name and id
-            List<Funding> fundings = new ArrayList<Funding>();
-            if (record.getActivitiesSummary() != null && record.getActivitiesSummary().getFundings() != null && record.getActivitiesSummary().getFundings().getFundingGroup() != null){
-                for (FundingGroup group : record.getActivitiesSummary().getFundings().getFundingGroup()){
-                    if (group.getFundingSummary() !=null){
-                        for (FundingSummary f : group.getFundingSummary()){
-                            fundings.add(orcid30ApiClient.fetchFunding(record.getOrcidIdentifier().getPath(), f.getPutCode()));
-                        }
-                    }
-                }
-            }          
+            }        
             
             //get detailed research resources to discover proposal and resource properties
             List<ResearchResource> researchResourcesList = new ArrayList<ResearchResource>();
@@ -109,7 +92,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
                 }
             }            
             
-            solrUpdater.persist(recordConv.convert(record, fundings, researchResourcesList));
+            solrUpdater.persist(recordConv.convert(record, researchResourcesList));
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
         } catch(V3LockedRecordException lre) {
             LOG.error("Record " + orcid + " is locked");
