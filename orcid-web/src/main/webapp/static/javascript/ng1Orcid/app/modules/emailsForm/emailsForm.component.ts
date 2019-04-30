@@ -42,6 +42,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() popUp: any;
     MAX_EMAIL_COUNT: number = 30;
 
+    TOGGLZ_HIDE_UNVERIFIED_EMAILS: boolean;
     defaultVisibility: any;
     emails: any;
     emailStatusOptions: any;
@@ -87,6 +88,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         private prefsSrvc: PreferencesService,
         private emailFrequencyService: EmailFrequencyService
     ) {
+        this.TOGGLZ_HIDE_UNVERIFIED_EMAILS = this.featuresService.isFeatureEnabled('HIDE_UNVERIFIED_EMAILS');
         this.verifyEmailObject = {};
         this.showEmailVerifBox = false;
         this.showEmailVerifBoxNewsTips = false;
