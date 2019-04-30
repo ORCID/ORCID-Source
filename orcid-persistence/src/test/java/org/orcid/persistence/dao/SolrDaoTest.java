@@ -69,17 +69,7 @@ public class SolrDaoTest {
         assertFalse(secondOrcid.getOrcid().equals(firstOrcidResult.getOrcid()));
         assertEquals("1234-5678", firstOrcidResult.getOrcid());
     }
-
-    @Test
-    public void queryStringSearchPatent() throws Exception {
-        OrcidSolrDocument firstOrcid = buildAndPersistFirstOrcid();
-        String patentQueryString = "patent-numbers:Elec-hammer01X%3A";
-        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(patentQueryString, null, null);
-        List<OrcidSolrResult> solrResultsList = orcidSolrResults.getResults();
-        assertTrue(solrResultsList.size() == 1);
-        assertEquals(firstOrcid.getOrcid(), solrResultsList.get(0).getOrcid());
-    }
-
+    
     @Test
     public void queryStringSearchGrant() throws Exception {
         OrcidSolrDocument secondOrcid = buildAndPersistSecondOrcid();
@@ -293,10 +283,6 @@ public class SolrDaoTest {
 
         String familyNameQueryString = "text=Smith";
         solrResults = solrDao.findByDocumentCriteria(familyNameQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
-
-        String patentsQueryString = "text=Elec-hammer01X%3A";
-        solrResults = solrDao.findByDocumentCriteria(patentsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
 
         String grantQueryString = "text=Grant-number02X%3A";
