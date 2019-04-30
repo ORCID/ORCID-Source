@@ -258,7 +258,7 @@ public class OrcidRecordToSolrDocument {
                     
                     if(r.getResourceItems() != null) {
                         List<String> itemNames = new ArrayList<String>();
-                        profileIndexDocument.setResearhResourceItemName(itemNames);
+                        profileIndexDocument.setResearchResourceItemNames(itemNames);
                         for(ResearchResourceItem item : r.getResourceItems()) {
                             itemNames.add(item.getName());
                             if(item.getHosts() != null) {

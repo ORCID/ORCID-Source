@@ -207,7 +207,7 @@ public class OrcidSolrDocument {
     private Map<String, Set<String>> organisationNames;
 
     @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_NAME)
-    private List<String> researhResourceItemNames;
+    private List<String> researchResourceItemNames;
     
     @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_TITLES)
     private List<String> researchResourceProposalTitles;
@@ -362,15 +362,7 @@ public class OrcidSolrDocument {
     public void setPrimaryRecord(String primaryRecord) {
         this.primaryRecord = primaryRecord;
     }
-
-    public List<String> getResearhResourceItemName() {
-        return researhResourceItemNames;
-    }
-
-    public void setResearhResourceItemName(List<String> researhResourceItemNames) {
-        this.researhResourceItemNames = researhResourceItemNames;
-    }
-
+    
     public List<String> getResearchResourceProposalTitles() {
         return researchResourceProposalTitles;
     }
@@ -699,12 +691,12 @@ public class OrcidSolrDocument {
         this.externalIdSourceReferences = externalIdSourceReferences;
     }
 
-    public List<String> getResearhResourceItemNames() {
-        return researhResourceItemNames;
+    public List<String> getResearchResourceItemNames() {
+        return researchResourceItemNames;
     }
 
-    public void setResearhResourceItemNames(List<String> researhResourceItemNames) {
-        this.researhResourceItemNames = researhResourceItemNames;
+    public void setResearchResourceItemNames(List<String> researchResourceItemNames) {
+        this.researchResourceItemNames = researchResourceItemNames;
     }
 
     public Set<String> getPeerReviewGroupId() {
@@ -814,7 +806,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((profileSubmissionDate == null) ? 0 : profileSubmissionDate.hashCode());
         result = prime * result + ((publicProfileMessage == null) ? 0 : publicProfileMessage.hashCode());
         result = prime * result + ((researchResourceProposalTitles == null) ? 0 : researchResourceProposalTitles.hashCode());
-        result = prime * result + ((researhResourceItemNames == null) ? 0 : researhResourceItemNames.hashCode());
+        result = prime * result + ((researchResourceItemNames == null) ? 0 : researchResourceItemNames.hashCode());
         result = prime * result + ((rfc == null) ? 0 : rfc.hashCode());
         result = prime * result + ((selfIds == null) ? 0 : selfIds.hashCode());
         result = prime * result + ((sourceWorkId == null) ? 0 : sourceWorkId.hashCode());
@@ -1102,10 +1094,10 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!researchResourceProposalTitles.equals(other.researchResourceProposalTitles))
             return false;
-        if (researhResourceItemNames == null) {
-            if (other.researhResourceItemNames != null)
+        if (researchResourceItemNames == null) {
+            if (other.researchResourceItemNames != null)
                 return false;
-        } else if (!researhResourceItemNames.equals(other.researhResourceItemNames))
+        } else if (!researchResourceItemNames.equals(other.researchResourceItemNames))
             return false;
         if (rfc == null) {
             if (other.rfc != null)
