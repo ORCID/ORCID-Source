@@ -163,10 +163,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Cacheable(value = "public-emails", key = "#orcid.concat('-').concat(#lastModified)")
     public List<EmailEntity> findPublicEmails(String orcid, long lastModified) {
-        TypedQuery<EmailEntity> query = entityManager.createQuery("from EmailEntity where orcid = :orcid and visibility = 'PUBLIC' and verified IS TRUE", EmailEntity.class);
-        query.setParameter("orcid", orcid);
-        List<EmailEntity> results = query.getResultList();
-        return results.isEmpty() ? null : results;
+        return findByOrcid(orcid, PUBLIC_VISIBILITY);
     }
     
     @Override
