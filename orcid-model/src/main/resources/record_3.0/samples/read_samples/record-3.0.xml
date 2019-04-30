@@ -434,7 +434,7 @@
 					</common:address>
 					<common:disambiguated-organization>
 						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-invited-position</common:disambiguated-organization-identifier>
-						<common:disambiguation-source>FUNDREF</common:disambiguation-source>
+						<common:disambiguation-source>GRID</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
 			</invited-position:invited-position-summary>
@@ -487,7 +487,7 @@
 						</common:address>
 						<common:disambiguated-organization>
 							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-membership</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>FUNDREF</common:disambiguation-source>
+							<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</membership:membership-summary>

@@ -1032,8 +1032,10 @@
 		stored="true" multiValued="true" />
 	<field name="external-id-source" type="string" indexed="true"
 		stored="false" multiValued="true" />
+	<field name="external-id-source-and-reference" type="string" indexed="true" 
+		stored="false" multiValued="true" />	
 	<field name="external-id-reference" type="string" indexed="true"
-			stored="false" multiValued="true" />
+		stored="false" multiValued="true" />
 	<field name="external-id-source-and-reference" type="string"
 		indexed="true" stored="false" multiValued="true" />
 	<field name="external-id-type-and-value" type="string"
@@ -1126,19 +1128,24 @@
 	<field name="research-resource-item-name" type="text_general" indexed="true"
 		stored="false" multiValued="true" />
 
-	<!-- work external identifier fields -->
+	<!-- peer review fields -->
+	<field name="peer-review-type" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="peer-review-role" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	<field name="peer-review-group-id" type="text_general" indexed="true"
+		stored="false" multiValued="true" />
+	
+	<!-- activities external identifier fields -->
 	<dynamicField name="*-self" type="string" indexed="true" stored="false" multiValued="true"/>
 	<dynamicField name="*-part-of" type="string" indexed="true" stored="false" multiValued="true"/>
 	
-	<!-- education and employment ids -->
+	<!-- org names and org ids -->
 	<dynamicField name="*-org-id" type="string" indexed="true" stored="false" multiValued="true"/>
 	<dynamicField name="*-org-name" type="text_general" indexed="true" stored="false" multiValued="true"/>
 	
-	<copyField source="external-id-source-and-reference" dest="external-id-orcid-and-reference"/>
 	<copyField source="external-id-source" dest="external-id-orcid"/>
-
-
-	<!-- TODO: Do we really want to store the full message???? -->
+	
 	<fieldtype name="textField" class="solr.TextField" sortMissingLast="true" omitNorms="true">
   		<analyzer>
     		<tokenizer class="solr.KeywordTokenizerFactory"/>

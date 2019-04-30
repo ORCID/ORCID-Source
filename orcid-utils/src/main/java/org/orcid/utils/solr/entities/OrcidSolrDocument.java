@@ -45,6 +45,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.EXTERNAL_ID_REFERENCES)
     private List<String> externalIdReferences;    
 
+    @Field(SolrConstants.EXTERNAL_ID_SOURCE_AND_REFERENCE)
+    private List<String> externalIdSourceReferences;
+    
     @Field(SolrConstants.EXTERNAL_ID_TYPE_AND_VALUE)
     private List<String> externalIdTypeAndValue;
     
@@ -173,6 +176,15 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.PRIMARY_RECORD)
     private String primaryRecord;
+    
+    @Field(SolrConstants.PEER_REVIEW_GROUP_ID)
+    private Set<String> peerReviewGroupId;
+    
+    @Field(SolrConstants.PEER_REVIEW_ROLE)
+    private Set<String> peerReviewRole;
+    
+    @Field(SolrConstants.PEER_REVIEW_TYPE)
+    private Set<String> peerReviewType;
 
     // e.g. doi-self
     @Field("*" + SolrConstants.DYNAMIC_SELF)
@@ -199,7 +211,13 @@ public class OrcidSolrDocument {
     
     @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_TITLES)
     private List<String> researchResourceProposalTitles;
-
+    
+    @Field(SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES)
+    private List<String> pastInstitutionAffiliationNames;
+    
+    @Field(SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME)
+    private List<String> currentInstitutionAffiliationNames;
+    
     public String getOrcid() {
         return orcid;
     }
@@ -673,6 +691,62 @@ public class OrcidSolrDocument {
         this.externalIdTypeAndValue = externalIdTypeAndValue;
     }
 
+    public List<String> getExternalIdSourceReferences() {
+        return externalIdSourceReferences;
+    }
+
+    public void setExternalIdSourceReferences(List<String> externalIdSourceReferences) {
+        this.externalIdSourceReferences = externalIdSourceReferences;
+    }
+
+    public List<String> getResearhResourceItemNames() {
+        return researhResourceItemNames;
+    }
+
+    public void setResearhResourceItemNames(List<String> researhResourceItemNames) {
+        this.researhResourceItemNames = researhResourceItemNames;
+    }
+
+    public Set<String> getPeerReviewGroupId() {
+        return peerReviewGroupId;
+    }
+
+    public void setPeerReviewGroupId(Set<String> peerReviewGroupId) {
+        this.peerReviewGroupId = peerReviewGroupId;
+    }
+
+    public Set<String> getPeerReviewRole() {
+        return peerReviewRole;
+    }
+
+    public void setPeerReviewRole(Set<String> peerReviewRole) {
+        this.peerReviewRole = peerReviewRole;
+    }
+
+    public Set<String> getPeerReviewType() {
+        return peerReviewType;
+    }
+
+    public void setPeerReviewType(Set<String> peerReviewType) {
+        this.peerReviewType = peerReviewType;
+    }
+
+    public List<String> getPastInstitutionAffiliationNames() {
+        return pastInstitutionAffiliationNames;
+    }
+
+    public void setPastInstitutionAffiliationNames(List<String> pastInstitutionAffiliationNames) {
+        this.pastInstitutionAffiliationNames = pastInstitutionAffiliationNames;
+    }
+
+    public List<String> getCurrentInstitutionAffiliationNames() {
+        return currentInstitutionAffiliationNames;
+    }
+
+    public void setCurrentInstitutionAffiliationNames(List<String> currentInstitutionAffiliationNames) {
+        this.currentInstitutionAffiliationNames = currentInstitutionAffiliationNames;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -696,12 +770,14 @@ public class OrcidSolrDocument {
         result = prime * result + ((cit == null) ? 0 : cit.hashCode());
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
         result = prime * result + ((ctx == null) ? 0 : ctx.hashCode());
+        result = prime * result + ((currentInstitutionAffiliationNames == null) ? 0 : currentInstitutionAffiliationNames.hashCode());
         result = prime * result + ((digitalObjectIds == null) ? 0 : digitalObjectIds.hashCode());
         result = prime * result + ((eid == null) ? 0 : eid.hashCode());
         result = prime * result + ((emailAddresses == null) ? 0 : emailAddresses.hashCode());
         result = prime * result + ((ethos == null) ? 0 : ethos.hashCode());
         result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
-        result = prime * result + ((externalIdSources == null) ? 0 : externalIdSources.hashCode());        
+        result = prime * result + ((externalIdSourceReferences == null) ? 0 : externalIdSourceReferences.hashCode());
+        result = prime * result + ((externalIdSources == null) ? 0 : externalIdSources.hashCode());
         result = prime * result + ((externalIdTypeAndValue == null) ? 0 : externalIdTypeAndValue.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
         result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
@@ -726,7 +802,11 @@ public class OrcidSolrDocument {
         result = prime * result + ((otherIdentifierType == null) ? 0 : otherIdentifierType.hashCode());
         result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
         result = prime * result + ((partOfIds == null) ? 0 : partOfIds.hashCode());
+        result = prime * result + ((pastInstitutionAffiliationNames == null) ? 0 : pastInstitutionAffiliationNames.hashCode());
         result = prime * result + ((pat == null) ? 0 : pat.hashCode());
+        result = prime * result + ((peerReviewGroupId == null) ? 0 : peerReviewGroupId.hashCode());
+        result = prime * result + ((peerReviewRole == null) ? 0 : peerReviewRole.hashCode());
+        result = prime * result + ((peerReviewType == null) ? 0 : peerReviewType.hashCode());
         result = prime * result + ((pmc == null) ? 0 : pmc.hashCode());
         result = prime * result + ((pmid == null) ? 0 : pmid.hashCode());
         result = prime * result + ((primaryRecord == null) ? 0 : primaryRecord.hashCode());
@@ -802,6 +882,11 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!ctx.equals(other.ctx))
             return false;
+        if (currentInstitutionAffiliationNames == null) {
+            if (other.currentInstitutionAffiliationNames != null)
+                return false;
+        } else if (!currentInstitutionAffiliationNames.equals(other.currentInstitutionAffiliationNames))
+            return false;
         if (digitalObjectIds == null) {
             if (other.digitalObjectIds != null)
                 return false;
@@ -826,6 +911,11 @@ public class OrcidSolrDocument {
             if (other.externalIdReferences != null)
                 return false;
         } else if (!externalIdReferences.equals(other.externalIdReferences))
+            return false;
+        if (externalIdSourceReferences == null) {
+            if (other.externalIdSourceReferences != null)
+                return false;
+        } else if (!externalIdSourceReferences.equals(other.externalIdSourceReferences))
             return false;
         if (externalIdSources == null) {
             if (other.externalIdSources != null)
@@ -952,10 +1042,30 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!partOfIds.equals(other.partOfIds))
             return false;
+        if (pastInstitutionAffiliationNames == null) {
+            if (other.pastInstitutionAffiliationNames != null)
+                return false;
+        } else if (!pastInstitutionAffiliationNames.equals(other.pastInstitutionAffiliationNames))
+            return false;
         if (pat == null) {
             if (other.pat != null)
                 return false;
         } else if (!pat.equals(other.pat))
+            return false;
+        if (peerReviewGroupId == null) {
+            if (other.peerReviewGroupId != null)
+                return false;
+        } else if (!peerReviewGroupId.equals(other.peerReviewGroupId))
+            return false;
+        if (peerReviewRole == null) {
+            if (other.peerReviewRole != null)
+                return false;
+        } else if (!peerReviewRole.equals(other.peerReviewRole))
+            return false;
+        if (peerReviewType == null) {
+            if (other.peerReviewType != null)
+                return false;
+        } else if (!peerReviewType.equals(other.peerReviewType))
             return false;
         if (pmc == null) {
             if (other.pmc != null)
