@@ -61,6 +61,10 @@
 		<constructor-arg ref="s3ActivitiesConsumer" />
     </bean>
 
+	<bean id="indexDisambiguatedOrgsListener" class="org.orcid.listener.BaseListener">
+		<constructor-arg ref="s3ActivitiesConsumer" />
+    </bean>
+
 	<!-- listener container (routing info) -->
 	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="queue">
 	       <jms:listener ref="reindexSOLRListener" destination="${org.orcid.persistence.messaging.reindex.solr}" concurrency="${org.orcid.persistence.messaging.reindex.solr.concurrency}" />
@@ -69,6 +73,10 @@
 	       <jms:listener ref="updateSummaryListener" destination="${org.orcid.persistence.messaging.updated.summary}" concurrency="${org.orcid.persistence.messaging.updated.summary.concurrency}" />
 	       <jms:listener ref="reindexActivitiesListener" destination="${org.orcid.persistence.messaging.reindex.activity}" concurrency="${org.orcid.persistence.messaging.reindex.activity.concurrency}" />
 	       <jms:listener ref="updateActivitiesListener" destination="${org.orcid.persistence.messaging.updated.activity}" concurrency="${org.orcid.persistence.messaging.updated.activity.concurrency}" />
+	
+	       <jms:listener ref="indexDisambiguatedOrg" destination="${org.orcid.persistence.messaging.index.disambiguated_orgs}" concurrency="${org.orcid.persistence.messaging.index.disambiguated_orgs.concurrency}" />
+
+
 	</jms:listener-container>
 	
     <!-- Jersey client -->

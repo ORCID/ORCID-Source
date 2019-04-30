@@ -98,6 +98,11 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     }
     
     @Override
+    public void reindexRecordsForSolrUpgrade() {
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.SOLR_UPDATE, updateSolrQueueName, updateSummaryQueueName, updateActivitiesQueueName);
+    }
+    
+    @Override
     synchronized public void processUnclaimedProfilesToFlagForIndexing() {
         LOG.info("About to process unclaimed profiles to flag for indexing");
         List<String> orcidsToFlag = Collections.<String> emptyList();
@@ -144,25 +149,22 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                 // Send message to solr queue
                 if (!messaging.send(mess, solrQueue)) {
                     connectionIssue = true;
-                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + solrQueue);
-                    continue;
+                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + solrQueue);                    
                 }
 
                 // Send message to summary queue
                 if (!messaging.send(mess, summaryQueue)) {
                     connectionIssue = true;
-                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + summaryQueue);
-                    continue;
+                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + summaryQueue);                    
                 }
                 // Send message to activities queue
                 if (!messaging.send(mess, activitiesQueue)) {
                     connectionIssue = true;
-                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + activitiesQueue);
-                    continue;
+                    LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + activitiesQueue);                    
                 }
 
-                // Should we still feed the old solr instance?
-                if(feedLegacySolr) {
+                // Feed the old SOLR instance, just don't feed it for all records, just for the ones that are created/modified by users
+                if(!IndexingStatus.SOLR_UPDATE.equals(status) && feedLegacySolr) {
                     solrIndexer.persist(orcid);
                 }
                 

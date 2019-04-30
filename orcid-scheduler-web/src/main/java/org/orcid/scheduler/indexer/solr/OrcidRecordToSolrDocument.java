@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.v3.release.record.ResearchResourceProposal;
 import org.orcid.jaxb.model.v3.release.record.ResearchResourceTitle;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.OrcidSolrDocumentLegacy;
 import org.orcid.utils.solr.entities.SolrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +51,8 @@ public class OrcidRecordToSolrDocument {
         }
     }
     
-    public OrcidSolrDocument convert(Record record, List<Funding> fundings, List<ResearchResource> researchResources) {
-        OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
+    public OrcidSolrDocumentLegacy convert(Record record, List<Funding> fundings, List<ResearchResource> researchResources) {
+        OrcidSolrDocumentLegacy profileIndexDocument = new OrcidSolrDocumentLegacy();
         profileIndexDocument.setOrcid(record.getOrcidIdentifier().getPath());
         
         if(record.getHistory() != null) {
@@ -244,13 +245,6 @@ public class OrcidRecordToSolrDocument {
                                     if (!partOf.get(id.getType()+SolrConstants.DYNAMIC_PART_OF).contains(id.getValue())){
                                         partOf.get(id.getType()+SolrConstants.DYNAMIC_PART_OF).add(id.getValue());
                                     }
-                                } else if (org.orcid.jaxb.model.common.Relationship.VERSION_OF.equals(id.getRelationship())) {
-                                    if (!versionOf.containsKey(id.getType()+SolrConstants.DYNAMIC_VERSION_OF)){
-                                        versionOf.put(id.getType()+SolrConstants.DYNAMIC_VERSION_OF, new ArrayList<String>());
-                                    }                                 
-                                    if (!versionOf.get(id.getType()+SolrConstants.DYNAMIC_VERSION_OF).contains(id.getValue())){
-                                        versionOf.get(id.getType()+SolrConstants.DYNAMIC_VERSION_OF).add(id.getValue());
-                                    }
                                 }                                
                             }
                         }                        
@@ -408,7 +402,7 @@ public class OrcidRecordToSolrDocument {
      * @param externalIdentifiers
      *            The list of external identifiers
      */
-    private void addExternalIdentifiersToIndexDocument(OrcidSolrDocument profileIndexDocument, Map<String, List<String>> externalIdentifiers) {
+    private void addExternalIdentifiersToIndexDocument(OrcidSolrDocumentLegacy profileIndexDocument, Map<String, List<String>> externalIdentifiers) {
 
         Iterator<Entry<String, List<String>>> it = externalIdentifiers.entrySet().iterator();
         while (it.hasNext()) {

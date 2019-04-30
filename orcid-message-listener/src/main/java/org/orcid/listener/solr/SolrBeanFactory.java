@@ -29,6 +29,8 @@ public class SolrBeanFactory {
     
     private static final String DEFAULT_COLLECTION = "/profile";
     
+    private static final String ORGS_COLLECTION = "/org";
+    
     @Bean(name = "solrClient")
     public SolrClient solrClient() {
         return new HttpSolrClient.Builder(solrUrl + DEFAULT_COLLECTION)
@@ -39,4 +41,13 @@ public class SolrBeanFactory {
                 .build();
     }
     
+    @Bean(name = "solrOrgsClient")
+    public SolrClient solrOrgsClient() {
+        return new HttpSolrClient.Builder(solrUrl + ORGS_COLLECTION)
+                .withConnectionTimeout(connectionTimeout)
+                .withSocketTimeout(socketTimeout)
+                .allowCompression(allowCompression)
+                .withResponseParser(responseParser)                
+                .build();
+    }
 }

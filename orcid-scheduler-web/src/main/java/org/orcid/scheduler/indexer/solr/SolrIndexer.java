@@ -16,6 +16,7 @@ import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.OrcidSolrDocumentLegacy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.NonTransientDataAccessResourceException;
@@ -64,7 +65,7 @@ public class SolrIndexer {
         persist(converter.convert(publicRecord, allFundings, allResearchResources));
     }
     
-    private void persist(OrcidSolrDocument orcidSolrDocument) {
+    private void persist(OrcidSolrDocumentLegacy orcidSolrDocument) {
         try {
             legacySolrServer.addBean(orcidSolrDocument);
             legacySolrServer.commit();
@@ -76,7 +77,7 @@ public class SolrIndexer {
     } 
 
     public void processInvalidRecord(String orcid, Date lastModified) {
-        OrcidSolrDocument doc = new OrcidSolrDocument();
+        OrcidSolrDocumentLegacy doc = new OrcidSolrDocumentLegacy();
         doc.setOrcid(orcid);
         doc.setProfileLastModifiedDate(lastModified);
         this.persist(doc);
