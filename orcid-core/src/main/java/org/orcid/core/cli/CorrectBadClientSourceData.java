@@ -6,7 +6,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.dao.AddressDao;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -16,6 +18,7 @@ import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -26,6 +29,9 @@ public class CorrectBadClientSourceData {
     private static final Logger LOG = LoggerFactory.getLogger(CorrectBadClientSourceData.class);
     
     private static final int BATCH_SIZE = 100;
+    
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
     
     @Resource
     private ResearcherUrlDao researcherUrlDao;
@@ -57,6 +63,10 @@ public class CorrectBadClientSourceData {
     @Resource
     private OrgDao orgDao;
     
+    private List<String> publicClients = new ArrayList<>();
+    
+    private List<String> nonPublicClients = new ArrayList<>();
+    
     public static void main(String[] args) {
         CorrectBadClientSourceData corrector = new CorrectBadClientSourceData();
         corrector.init();
@@ -79,7 +89,7 @@ public class CorrectBadClientSourceData {
     private void correctAddresses() {
         LOG.info("Correcting addresses...");
         int corrected = 0;
-        List<BigInteger> ids = addressDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        List<BigInteger> ids = addressDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -87,10 +97,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = addressDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = addressDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = addressDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = addressDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -98,7 +108,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = addressDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = addressDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -106,7 +116,7 @@ public class CorrectBadClientSourceData {
     private void correctEmails() {
         LOG.info("Correcting emails...");
         int corrected = 0;
-        List<String> ids = emailDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        List<String> ids = emailDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<String> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -114,10 +124,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = emailDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = emailDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = emailDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = emailDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<String> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -125,7 +135,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = emailDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = emailDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -133,7 +143,7 @@ public class CorrectBadClientSourceData {
     private void correctNotifications() {
         LOG.info("Correcting notifications...");
         int corrected = 0;
-        List<BigInteger> ids = notificationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        List<BigInteger> ids = notificationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -141,10 +151,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = notificationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = notificationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = notificationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = notificationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -152,7 +162,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = notificationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = notificationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -160,7 +170,7 @@ public class CorrectBadClientSourceData {
     private void correctOrgAffiliationRelations() {
         LOG.info("Correcting org affiliation relations...");
         int corrected = 0;
-        List<BigInteger> ids = orgAffiliationRelationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        List<BigInteger> ids = orgAffiliationRelationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -168,10 +178,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = orgAffiliationRelationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = orgAffiliationRelationDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = orgAffiliationRelationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = orgAffiliationRelationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -179,7 +189,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = orgAffiliationRelationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = orgAffiliationRelationDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -187,7 +197,7 @@ public class CorrectBadClientSourceData {
     private void correctOrgs() {
         LOG.info("Correcting orgs...");
         int corrected = 0;
-        List<BigInteger> ids = orgDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        List<BigInteger> ids = orgDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -195,10 +205,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = orgDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = orgDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = orgDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = orgDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -206,7 +216,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = orgDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = orgDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -214,7 +224,7 @@ public class CorrectBadClientSourceData {
     private void correctOtherNames() {
         LOG.info("Correcting other names...");
         int corrected = 0;
-        List<BigInteger> ids = otherNameDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        List<BigInteger> ids = otherNameDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -222,10 +232,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = otherNameDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = otherNameDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = otherNameDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = otherNameDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -233,7 +243,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = otherNameDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = otherNameDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -241,7 +251,7 @@ public class CorrectBadClientSourceData {
     private void correctFundings() {
         LOG.info("Correcting fundings...");
         int corrected = 0;
-        List<BigInteger> ids = profileFundingDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        List<BigInteger> ids = profileFundingDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -249,10 +259,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileFundingDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = profileFundingDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = profileFundingDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = profileFundingDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -260,7 +270,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileFundingDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = profileFundingDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -268,7 +278,7 @@ public class CorrectBadClientSourceData {
     private void correctKeywords() {
         LOG.info("Correcting keywords...");
         int corrected = 0;
-        List<BigInteger> ids = profileKeywordDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        List<BigInteger> ids = profileKeywordDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -276,10 +286,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileKeywordDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = profileKeywordDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = profileKeywordDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = profileKeywordDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -287,7 +297,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileKeywordDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = profileKeywordDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -295,7 +305,7 @@ public class CorrectBadClientSourceData {
     private void correctResearcherUrls() {
         LOG.info("Correcting researcher urls...");
         int corrected = 0;
-        List<BigInteger> ids = researcherUrlDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        List<BigInteger> ids = researcherUrlDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -303,10 +313,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = researcherUrlDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = researcherUrlDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = researcherUrlDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = researcherUrlDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -314,7 +324,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = researcherUrlDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = researcherUrlDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -322,7 +332,8 @@ public class CorrectBadClientSourceData {
     private void correctWorks() {
         LOG.info("Correcting works...");
         int corrected = 0;
-        List<BigInteger> ids = workDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+        
+        List<BigInteger> ids = workDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -330,10 +341,10 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = workDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20);
+            ids = workDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
         }
         
-        ids = workDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+        ids = workDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -341,7 +352,7 @@ public class CorrectBadClientSourceData {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = workDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20);
+            ids = workDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);
         }
         LOG.info("Corrected {} records", corrected);
     }
@@ -368,6 +379,16 @@ public class CorrectBadClientSourceData {
         profileKeywordDao  = (ProfileKeywordDao) context.getBean("profileKeywordDao");
         researcherUrlDao  = (ResearcherUrlDao) context.getBean("researcherUrlDao");
         workDao  = (WorkDao) context.getBean("workDao");
+        clientDetailsDao = (ClientDetailsDao) context.getBean("clientDetailsDao");
+
+        List<ClientDetailsEntity> allClients = clientDetailsDao.getAll();
+        for (ClientDetailsEntity client : allClients) {
+            if (ClientType.PUBLIC_CLIENT.name().equals(client.getClientType())) {
+                publicClients.add(client.getId());
+            } else {
+                nonPublicClients.add(client.getId());
+            }
+        }
     }
 
 }
