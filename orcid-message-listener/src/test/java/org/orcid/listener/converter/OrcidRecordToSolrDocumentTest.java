@@ -11,7 +11,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.listener.solr.OrcidRecordToSolrDocument;
@@ -34,6 +33,15 @@ public class OrcidRecordToSolrDocumentTest {
         assertEquals("give-names family-name", v3Doc.getGivenAndFamilyNames());
         assertEquals(1, v3Doc.getEmailAddresses().size());
         assertEquals("user1@email.com", v3Doc.getEmailAddresses().get(0));
+        assertEquals(5, v3Doc.getCurrentInstitutionAffiliationNames().size());
+        assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("service-org"));
+        assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("qualification-org"));
+        assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("membership-org"));
+        assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("invited-position-org"));
+        assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("employment-org"));        
+        assertEquals(2, v3Doc.getPastInstitutionAffiliationNames().size());
+        assertTrue(v3Doc.getPastInstitutionAffiliationNames().contains("distinction-org"));
+        assertTrue(v3Doc.getPastInstitutionAffiliationNames().contains("education-org"));        
         assertEquals(1, v3Doc.getExternalIdReferences().size());
         assertEquals("value-1", v3Doc.getExternalIdReferences().get(0));
         assertEquals(1, v3Doc.getExternalIdSources().size());

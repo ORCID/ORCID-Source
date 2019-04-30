@@ -207,7 +207,7 @@
 						<common:day>02</common:day>
 					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>distinction-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
@@ -255,12 +255,12 @@
 						<common:day>02</common:day>
 					</common:start-date>
 					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
+						<common:year>2019</common:year>
+						<common:month>01</common:month>
+						<common:day>01</common:day>
 					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>education-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
@@ -297,7 +297,6 @@
 							<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 							<common:path>8888-8888-8888-8880</common:path>
 							<common:host>orcid.org</common:host>
-	
 						</common:source-orcid>
 						<common:source-name />
 					</common:source>
@@ -309,12 +308,10 @@
 						<common:day>02</common:day>
 					</common:start-date>
 					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
+						<common:year>2025</common:year>						
 					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>employment-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
@@ -414,19 +411,19 @@
 					<common:source-name />
 				</common:source>
 				<common:department-name>invited-position:department-name</common:department-name>
-				<common:role-title>invited-position:role-title</common:role-title>
+				<common:role-title>invited-position:role-title</common:role-title>				
 				<common:start-date>
-					<common:year>1948</common:year>
-					<common:month>02</common:month>
-					<common:day>02</common:day>
+					<common:year>2019</common:year>
+					<common:month>01</common:month>
+					<common:day>01</common:day>
 				</common:start-date>
 				<common:end-date>
-					<common:year>1948</common:year>
-					<common:month>02</common:month>
-					<common:day>02</common:day>
+					<common:year>2025</common:year>
+					<common:month>01</common:month>
+					<common:day>01</common:day>
 				</common:end-date>
 				<common:organization>
-					<common:name>common:name</common:name>
+					<common:name>invited-position-org</common:name>
 					<common:address>
 						<common:city>common:city</common:city>
 						<common:region>common:region</common:region>
@@ -473,13 +470,8 @@
 						<common:month>02</common:month>
 						<common:day>02</common:day>
 					</common:start-date>
-					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
-					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>membership-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
@@ -595,12 +587,11 @@
 						<common:day>02</common:day>
 					</common:start-date>
 					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
+						<common:year>2025</common:year>
+						<common:month>12</common:month>						
 					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>qualification-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
@@ -647,13 +638,8 @@
 						<common:month>02</common:month>
 						<common:day>02</common:day>
 					</common:start-date>
-					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
-					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>service-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>

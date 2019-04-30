@@ -634,6 +634,10 @@ public class OrcidRecordToSolrDocument {
             // Now add all activities ext ids to the doc, the old way
             addExternalIdentifiersToIndexDocument(profileIndexDocument, allExternalIdentifiers);
 
+            // Now add all affiliation names 
+            profileIndexDocument.setCurrentInstitutionAffiliationNames(currentInstitutionAffiliationNames);
+            profileIndexDocument.setPastInstitutionAffiliationNames(pastInstitutionAffiliationNames);
+            
             profileIndexDocument.setOrganisationIds(organisationIds);
             profileIndexDocument.setOrganisationNames(organisationNames);
         }
@@ -788,7 +792,7 @@ public class OrcidRecordToSolrDocument {
                     Integer aYear = Integer.valueOf(endDate.getYear().getValue());
                     if(aYear < currentYear) {
                         pastInstitutionAffiliationNames.add(e.getOrganization().getName());
-                    } else if(aYear == currentYear) {
+                    } else if(aYear.equals(currentYear)) {
                         Integer aMonth = (endDate.getMonth() == null || endDate.getMonth().getValue() == null) ? null : Integer.valueOf(endDate.getMonth().getValue());
                         if(aMonth == null || aMonth > currentMonth) {
                             currentInstitutionAffiliationNames.add(e.getOrganization().getName());
