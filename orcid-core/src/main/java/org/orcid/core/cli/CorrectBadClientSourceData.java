@@ -28,7 +28,7 @@ public class CorrectBadClientSourceData {
     
     private static final Logger LOG = LoggerFactory.getLogger(CorrectBadClientSourceData.class);
     
-    private static final int BATCH_SIZE = 100;
+    private static final int BATCH_SIZE = 400;
     
     @Resource
     private ClientDetailsDao clientDetailsDao;
