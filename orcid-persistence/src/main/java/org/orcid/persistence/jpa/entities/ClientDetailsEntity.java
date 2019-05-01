@@ -60,6 +60,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private boolean persistentTokensEnabled = false;
     private String emailAccessReason;
     private boolean allowAutoDeprecate = false;
+    private boolean userOBOEnabled = false;
     
     public ClientDetailsEntity() {
     }
@@ -447,6 +448,15 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public void setAllowAutoDeprecate(boolean allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
     }
+    
+    @Column(name = "user_obo_enabled")
+    public boolean isUserOBOEnabled() {
+        return userOBOEnabled;
+    }
+
+    public void setUserOBOEnabled(boolean userOBOEnabled) {
+        this.userOBOEnabled = userOBOEnabled;
+    }
 
     @Override
     public int hashCode() {
@@ -472,6 +482,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         result = prime * result + ((emailAccessReason == null) ? 0 : emailAccessReason.hashCode());
         result = prime * result + ((groupProfileId == null) ? 0 : groupProfileId.hashCode());
         result = prime * result + (persistentTokensEnabled ? 1231 : 1237);
+        result = prime * result + (userOBOEnabled ? 1243 : 1254);
         return result;
     }
 
@@ -571,6 +582,8 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         } else if (!groupProfileId.equals(other.groupProfileId))
             return false;
         if (persistentTokensEnabled != other.persistentTokensEnabled)
+            return false;
+        if (userOBOEnabled != other.userOBOEnabled) 
             return false;
         return true;
     }                  
