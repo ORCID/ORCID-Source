@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -904,8 +905,15 @@ public class BaseController {
             publicEmails = emailManagerReadOnly.getPublicEmails(orcid);
         } else {
             publicEmails = emailManagerReadOnly.getEmails(orcid);
-        }        
-        Map<String, List<org.orcid.jaxb.model.v3.release.record.Email>> groupedEmails = groupEmails(publicEmails);
+        }   
+        Emails filteredEmails = new Emails();
+        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
+            filteredEmails.setEmails(new ArrayList<Email>(publicEmails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
+        } else {
+            filteredEmails.setEmails(new ArrayList<Email>(publicEmails.getEmails()));
+        } 
+        
+        Map<String, List<org.orcid.jaxb.model.v3.release.record.Email>> groupedEmails = groupEmails(filteredEmails);
         publicRecordPersonDetails.setPublicGroupedEmails(groupedEmails);
 
         // Fill external identifiers
