@@ -9312,9 +9312,3 @@ div#bio-section {
 .row.source-line {
     word-break: break-all;
 }
-
-
-.obo-member-flag {
-    display: flex;
-    justify-content: space-around;
-}

@@ -13,23 +13,17 @@
 					<div class="col-md-5 col-sm-5 col-xs-5">
 						<strong><@orcid.msg 'admin.edit_client.client_id'/></strong>
 					</div>
-					<div class="col-md-5 col-sm-5 col-xs-5">
+					<div class="col-md-7 col-sm-7 col-xs-7">
 						<strong><@orcid.msg 'manage.developer_tools.group.display_name'/></strong>
-					</div>
-					<div class="col-md-2 col-sm-2 col-xs-2">
-						<strong><@orcid.msg 'manage_member.edit_client.use_OBO'/></strong>
 					</div>
 					<div *ngFor="let client of member.clients">
 						<div class="col-md-5 col-sm-5 col-xs-5">
 							{{client.clientId.value}}
 						</div>
-						<div class="col-md-5 col-sm-5 col-xs-5">
+						<div class="col-md-7 col-sm-7 col-xs-7">
 							{{client.displayName.value}}
 						</div>
-						<div class="col-md-2 col-sm-2 col-xs-2 obo-member-flag">
-							<input type="checkbox" name="persistentToken" class="middle" [(ngModel)]="client.userOBOEnabled.value" />
-						</div>
-					</div>						
+					</div> 									
 				</div>
 			</div>		
 			<div class="row">
