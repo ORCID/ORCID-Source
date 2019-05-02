@@ -234,6 +234,10 @@ public class WorkspaceController extends BaseWorkspaceController {
                     it.remove();
                 } 
                 
+                k.setErrors(new ArrayList<String>());
+                if (k.getContent() != null && k.getContent().length() >= 100)
+                    setError(k, "Pattern.registrationForm.keywords");
+
                 //Validate visibility is not null
                 validateVisibility(k);
                 
@@ -278,9 +282,10 @@ public class WorkspaceController extends BaseWorkspaceController {
                    it.remove();
                    continue;
                 } 
-                if(form.getContent().length() > SiteConstants.MAX_LENGTH_255) {
-                    form.setContent(form.getContent().substring(0, SiteConstants.MAX_LENGTH_255));
-                }
+
+                form.setErrors(new ArrayList<String>());
+                if (form.getContent() != null && form.getContent().length() >= 255)
+                    setError(form, "Pattern.registrationForm.otherName");
                 
                 //Validate visibility is not null
                 validateVisibility(form);

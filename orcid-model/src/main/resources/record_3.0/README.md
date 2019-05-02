@@ -1,8 +1,5 @@
 # ORCID API v3.0 Guide
 
-## Current State (Release Candidate Unstable)
-v3.0 is the currently under development and it is not recommended for use.
-
 ## Endpoints
 
 - activities (read only)

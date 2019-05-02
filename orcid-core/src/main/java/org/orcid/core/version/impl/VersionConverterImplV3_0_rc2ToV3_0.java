@@ -127,8 +127,10 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
         mapperFactory.classMap(PersonExternalIdentifier.class, org.orcid.jaxb.model.v3.rc2.record.PersonExternalIdentifier.class).byDefault().register();
 
         // Emails
-        mapperFactory.classMap(Emails.class, org.orcid.jaxb.model.v3.rc2.record.Emails.class).byDefault().register();
-        mapperFactory.classMap(Email.class, org.orcid.jaxb.model.v3.rc2.record.Email.class).register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc2.record.Emails.class, Emails.class).byDefault().register();
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.rc2.record.Email.class, Email.class).field("source", "source").field("lastModifiedDate", "lastModifiedDate")
+        .field("createdDate", "createdDate").field("email", "email").field("path", "path").field("visibility", "visibility").customize(new EmailMapper())
+        .register();
 
         // WORK
         mapperFactory.classMap(WorkGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkGroup.class).byDefault().register();
@@ -233,5 +235,22 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
             b.setPath(a.getPath());
             b.setUri(orcidUrlManager.getBaseUrl() + (a.getClass().isAssignableFrom(SourceClientId.class) ? "/client/" : "/") + a.getPath());
         }
+    }
+    
+    private class EmailMapper extends CustomMapper<org.orcid.jaxb.model.v3.rc2.record.Email, Email> {
+
+        @Override
+        public void mapBtoA(Email b, org.orcid.jaxb.model.v3.rc2.record.Email a, MappingContext context) {
+            if(b.isCurrent() != null) {
+                a.setCurrent(b.isCurrent());
+            }
+            if(b.isPrimary() != null) {
+                a.setPrimary(b.isPrimary());                
+            }
+            if(b.isVerified() != null) {
+                a.setVerified(b.isVerified());
+            }
+        }
+
     }
 }

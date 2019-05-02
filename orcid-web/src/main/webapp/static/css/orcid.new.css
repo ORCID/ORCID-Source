@@ -2637,7 +2637,15 @@ span.orcid-error {
     float: left;
     clear: both;
     width: 100%;
-    margin-bottom: 15px
+    margin-bottom: 15px;
+    white-space: normal;
+    word-break: normal;
+    word-wrap: break-word;
+    font-weight: normal;
+}
+
+span.orcid-error a{
+    white-space: nowrap;
 }
 
 input.error {
@@ -2974,7 +2982,7 @@ input.error {
 
 .workspace-profile p {
     margin-bottom: 5px;
-    word-wrap: break-word
+    word-break: break-word
 }
 
 .work-title {
@@ -9279,4 +9287,28 @@ emails-ng2 h3.workspace-section-label {
 
 .affiliation-heading {
     display: flex;
+}
+
+.aka .orcid-error {
+    font-size: 14px;
+}
+
+person-ng2 .workspace-section-content {
+    word-break: break-word;
+}
+
+person-ng2 .source span {
+    word-break: break-all;
+}
+
+div#bio-section {
+    word-break: break-all;
+}
+
+.bio-content {
+    word-break: break-all;
+}
+
+.row.source-line {
+    word-break: break-all;
 }

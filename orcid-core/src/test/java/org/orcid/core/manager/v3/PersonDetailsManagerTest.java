@@ -14,6 +14,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Person;
 import org.orcid.jaxb.model.v3.release.record.Email;
@@ -46,7 +47,7 @@ public class PersonDetailsManagerTest extends DBUnitTest {
     
     @Test
     public void testGetPersonDetails() {
-        Person person = personDetailsManager.getPersonDetails(ORCID, false);
+        Person person = personDetailsManager.getPersonDetails(ORCID, !Features.HIDE_UNVERIFIED_EMAILS.isActive());
         assertNotNull(person);
         
         assertNotNull(person.getExternalIdentifiers());
@@ -71,10 +72,15 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
-        assertEquals(4, person.getEmails().getEmails().size());
-
-        for (Email email : person.getEmails().getEmails()) {
-            assertTrue(email.isVerified());
+        
+        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
+            assertEquals(4, person.getEmails().getEmails().size());
+    
+            for (Email email : person.getEmails().getEmails()) {
+                assertTrue(email.isVerified());
+            }
+        } else {
+            assertEquals(5, person.getEmails().getEmails().size());
         }
         
         assertNotNull(person.getBiography());
