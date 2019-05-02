@@ -198,6 +198,7 @@ public class ClientManagerImpl implements ClientManager {
             clientDetails.setAuthenticationProviderId(existingClient.getAuthenticationProviderId());
             // Enable persistent tokens      
             clientDetails.setPersistentTokensEnabled(existingClient.isPersistentTokensEnabled());
+            clientDetails.setUserOBOEnabled(existingClient.isUserOBOEnabled());
         }
         
         clientDetails = clientDetailsDao.merge(clientDetails);

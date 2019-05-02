@@ -14,4 +14,7 @@
     <changeSet id="SET-USER-OBO-DEFAULT-VALUE" author="George Nash">
         <sql>ALTER TABLE client_details ALTER COLUMN user_obo_enabled SET DEFAULT FALSE</sql>
     </changeSet>
+    <changeSet id="SET-USER-OBO-DEFAULT-VALUE-ON-EXISTING" author="George Nash">
+        <sql>UPDATE client_details SET user_obo_enabled = FALSE</sql>
+    </changeSet>
 </databaseChangeLog>

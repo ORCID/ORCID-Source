@@ -26,7 +26,8 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
     private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;    
     private Set<String> scopes;
-    private Checkbox allowAutoDeprecate;    
+    private Checkbox allowAutoDeprecate;  
+    private Checkbox userOBOEnabled;  
         
     public static Client fromModelObject(org.orcid.jaxb.model.v3.release.client.Client modelObject) {
         Client client = new Client();
@@ -36,6 +37,8 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
         client.setAllowAutoDeprecate(Checkbox.valueOf(modelObject.isAllowAutoDeprecate()));
         
         client.setPersistentTokenEnabled(Checkbox.valueOf(modelObject.isPersistentTokensEnabled()));
+        
+        client.setUserOBOEnabled(Checkbox.valueOf(modelObject.isUserOBOEnabled()));
         
         if (modelObject.getAuthenticationProviderId() != null) {
             client.setAuthenticationProviderId(Text.valueOf(modelObject.getAuthenticationProviderId()));
@@ -55,7 +58,7 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
         client.setMemberId(Text.valueOf(modelObject.getGroupProfileId()));
         client.setDisplayName(Text.valueOf(modelObject.getName()));
         client.setWebsite(Text.valueOf(modelObject.getWebsite()));
-
+        
         return client;
     }
     
@@ -115,6 +118,10 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
 
         if (this.getPersistentTokenEnabled() != null) {
             modelObject.setPersistentTokensEnabled(this.getPersistentTokenEnabled().getValue());
+        }
+        
+        if (this.getUserOBOEnabled() != null) {
+            modelObject.setUserOBOEnabled(this.getUserOBOEnabled().getValue());
         }
 
         if (this.getRedirectUris() != null) {
@@ -262,6 +269,14 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
 
     public void setAllowAutoDeprecate(Checkbox allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
+    }
+    
+    public Checkbox getUserOBOEnabled() {
+        return userOBOEnabled;
+    }
+
+    public void setUserOBOEnabled(Checkbox userOBOEnabled) {
+        this.userOBOEnabled = userOBOEnabled;
     }
 
     @Override
