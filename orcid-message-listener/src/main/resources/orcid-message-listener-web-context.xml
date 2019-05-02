@@ -29,6 +29,14 @@
 	<!-- enable the configuration of jms on annotations -->
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
 		<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL}" />
+		<property name="trustedPackages">
+			<list>
+				<value>java.lang</value>
+				<value>javax.security</value>
+				<value>java.util</value>
+				<value>org.orcid.utils.solr.entities</value>
+			</list>					
+		</property>
 	</bean>
 	
 	<!-- message processors -->
@@ -62,7 +70,7 @@
 		<constructor-arg ref="s3ActivitiesConsumer" />
     </bean>
 
-	<bean id="indexDisambiguatedOrgsListener" class="org.orcid.listener.BaseListener">
+	<bean id="indexDisambiguatedOrgsListener" class="org.orcid.listener.OrgIndexerListener">
 		<constructor-arg ref="solrOrgsMessageProcessor" />
     </bean>
 

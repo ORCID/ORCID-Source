@@ -448,7 +448,7 @@
         <property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
     </bean>
     <bean id="orgDisambiguatedSolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
-        <constructor-arg value="\${org.orcid.persistence.solr.url}/org" />
+        <constructor-arg value="\${org.orcid.persistence.solr.legacy.url}/org" />
         <property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
         <property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />
         <property name="allowCompression" value="\${org.orcid.persistence.solr.allowCompression}" />

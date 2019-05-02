@@ -1021,6 +1021,8 @@
 		multiValued="false" />
 	<field name="org-chosen-by-member" type="boolean" indexed="true" stored="true"
            multiValued="false" />
+	<field name="org-disambiguated-status" type="string" indexed="false" stored="false"
+           multiValued="false" />
            
 	<uniqueKey>org-disambiguated-id</uniqueKey>
 

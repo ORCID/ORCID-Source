@@ -53,7 +53,11 @@ public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDo
 
     private void process(OrgDisambiguatedSolrDocument t, Integer retryCount) {
         try {
-            solrUpdater.persist(t);
+            if("DEPRECATED".equals(t.getOrgDisambiguatedStatus()) || "OBSOLETE".equals(t.getOrgDisambiguatedStatus())) {
+                solrUpdater.delete(String.valueOf(t.getOrgDisambiguatedId()));
+            } else {
+                solrUpdater.persist(t);                
+            }                        
         } catch (Exception e) {
             LOG.error("Unable to persists org " + t.getOrgDisambiguatedId() + " in SOLR");
             LOG.error(e.getMessage(), e);

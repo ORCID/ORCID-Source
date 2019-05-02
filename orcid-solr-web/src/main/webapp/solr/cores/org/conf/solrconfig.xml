@@ -309,9 +309,11 @@
          have some sort of hard autoCommit to limit the log size.
       -->
     <autoCommit>
-      <maxTime>${solr.autoCommit.maxTime:15000}</maxTime>
-      <openSearcher>false</openSearcher>
-    </autoCommit>
+  		<maxDocs>${solr.autoCommit.orgs.maxDocs:1000}</maxDocs>
+  		<maxTime>${solr.autoCommit.orgs.maxTime:120000}</maxTime>
+  		<maxSize>${solr.autoCommit.orgs.maxSize:10m}</maxSize>
+  		<openSearcher>false</openSearcher>
+	</autoCommit>
 
     <!-- softAutoCommit is like autoCommit except it causes a
          'soft' commit which only ensures that changes are visible
@@ -320,7 +322,7 @@
       -->
 
     <autoSoftCommit>
-      <maxTime>${solr.autoSoftCommit.maxTime:-1}</maxTime>
+      <maxTime>${solr.autoSoftCommit.org.maxTime:60000}</maxTime>
     </autoSoftCommit>
 
     <!-- Update Related Event Listeners
@@ -567,7 +569,7 @@
       -->
     <useColdSearcher>false</useColdSearcher>
 
-	<maxWarmingSearchers>${solr.orcid.maxWarmingSearchers:5}</maxWarmingSearchers>
+	<maxWarmingSearchers>${solr.orcid.maxWarmingSearchers:6}</maxWarmingSearchers>
 
   </query>
 

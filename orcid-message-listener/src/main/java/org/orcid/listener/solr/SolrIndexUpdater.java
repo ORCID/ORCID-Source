@@ -18,6 +18,7 @@ import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
@@ -32,10 +33,22 @@ public class SolrIndexUpdater {
     @Resource(name = "solrOrgsClient")
     private SolrClient solrOrgsClient;
     
+    @Value("${org.orcid.persistence.messaging.solr_indexing.auto_commit:false}")
+    boolean autoCommit;
+    
+    public void delete(String orgDisambiguatedId) {
+        try {            
+            solrOrgsClient.deleteById(orgDisambiguatedId);            
+        } catch (SolrServerException se) {
+            throw new NonTransientDataAccessResourceException("Error persisting org " + orgDisambiguatedId + " to SOLR Server", se);
+        } catch (IOException ioe) {
+            throw new NonTransientDataAccessResourceException("IOException when persisting org " + orgDisambiguatedId + " to SOLR", ioe);
+        }
+    }
+    
     public void persist(OrgDisambiguatedSolrDocument orgDisambiguatedSolrDocument) {
         try {            
-            solrClient.addBean(orgDisambiguatedSolrDocument);
-            solrClient.commit();
+            solrOrgsClient.addBean(orgDisambiguatedSolrDocument);            
         } catch (SolrServerException se) {
             throw new NonTransientDataAccessResourceException("Error persisting org " + orgDisambiguatedSolrDocument.getOrgDisambiguatedId() + " to SOLR Server", se);
         } catch (IOException ioe) {
@@ -46,7 +59,9 @@ public class SolrIndexUpdater {
     public void persist(OrcidSolrDocument orcidSolrDocument) {
         try {
             solrClient.addBean(orcidSolrDocument);
-            solrClient.commit();
+            if(autoCommit) {
+                solrClient.commit();
+            }
         } catch (SolrServerException se) {
             throw new NonTransientDataAccessResourceException("Error persisting to SOLR Server", se);
         } catch (IOException ioe) {
