@@ -11,7 +11,7 @@ import java.util.List;
  */
 public enum IndexingStatus {
 
-    PENDING, DONE, REINDEX, IGNORE, FAILED, SOLR_UPDATE;
+    PENDING, DONE, REINDEX, IGNORE, FAILED, SOLR_UPDATE, DUMP_UPDATE;
 
     public static Object getNames(Collection<IndexingStatus> indexingStatuses) {
         List<String> names = new ArrayList<>();
