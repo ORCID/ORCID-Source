@@ -15,6 +15,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.NonTransientDataAccessResourceException;
@@ -27,6 +28,20 @@ public class SolrIndexUpdater {
 
     @Resource(name = "solrClient")
     private SolrClient solrClient;
+    
+    @Resource(name = "solrOrgsClient")
+    private SolrClient solrOrgsClient;
+    
+    public void persist(OrgDisambiguatedSolrDocument orgDisambiguatedSolrDocument) {
+        try {            
+            solrClient.addBean(orgDisambiguatedSolrDocument);
+            solrClient.commit();
+        } catch (SolrServerException se) {
+            throw new NonTransientDataAccessResourceException("Error persisting org " + orgDisambiguatedSolrDocument.getOrgDisambiguatedId() + " to SOLR Server", se);
+        } catch (IOException ioe) {
+            throw new NonTransientDataAccessResourceException("IOException when persisting org " + orgDisambiguatedSolrDocument.getOrgDisambiguatedId() + " to SOLR", ioe);
+        }
+    } 
     
     public void persist(OrcidSolrDocument orcidSolrDocument) {
         try {

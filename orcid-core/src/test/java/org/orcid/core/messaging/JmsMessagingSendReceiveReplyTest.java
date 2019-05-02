@@ -1,4 +1,4 @@
-package org.orcid.scheduler.messaging;
+package org.orcid.core.messaging;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,6 +6,9 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.messaging.JmsMessageSender;
+import org.orcid.core.messaging.EchoTestMessageListener2;
+import org.orcid.core.messaging.EchoTestMessageListener3;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 

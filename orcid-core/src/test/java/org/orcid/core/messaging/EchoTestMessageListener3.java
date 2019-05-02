@@ -1,8 +1,8 @@
-package org.orcid.scheduler.messaging;
+package org.orcid.core.messaging;
 
 import javax.annotation.Resource;
 
-import org.orcid.scheduler.messaging.JmsMessageSender;
+import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.utils.listener.MessageConstants;
 import org.springframework.jms.annotation.JmsListener;
 

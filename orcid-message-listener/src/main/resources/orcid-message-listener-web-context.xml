@@ -35,6 +35,7 @@
 	<bean id="solrMessageProcessor" class="org.orcid.listener.solr.SolrMessageProcessor"/>
 	<bean id="s3ActivitiesConsumer" class="org.orcid.listener.s3.S3ActivitiesConsumer"/>
 	<bean id="s3SummaryConsumer" class="org.orcid.listener.s3.S3SummaryConsumer"/>
+	<bean id="solrOrgsMessageProcessor" class="org.orcid.listener.solr.SolrOrgsMessageProcessor"/>	
 		
 	<!-- message listeners -->
     <bean id="reindexSOLRListener" class="org.orcid.listener.BaseListener">
@@ -62,7 +63,7 @@
     </bean>
 
 	<bean id="indexDisambiguatedOrgsListener" class="org.orcid.listener.BaseListener">
-		<constructor-arg ref="s3ActivitiesConsumer" />
+		<constructor-arg ref="solrOrgsMessageProcessor" />
     </bean>
 
 	<!-- listener container (routing info) -->
@@ -72,11 +73,8 @@
 	       <jms:listener ref="reindexSummaryListener" destination="${org.orcid.persistence.messaging.reindex.summary}" concurrency="${org.orcid.persistence.messaging.reindex.summary.concurrency}" />
 	       <jms:listener ref="updateSummaryListener" destination="${org.orcid.persistence.messaging.updated.summary}" concurrency="${org.orcid.persistence.messaging.updated.summary.concurrency}" />
 	       <jms:listener ref="reindexActivitiesListener" destination="${org.orcid.persistence.messaging.reindex.activity}" concurrency="${org.orcid.persistence.messaging.reindex.activity.concurrency}" />
-	       <jms:listener ref="updateActivitiesListener" destination="${org.orcid.persistence.messaging.updated.activity}" concurrency="${org.orcid.persistence.messaging.updated.activity.concurrency}" />
-	
-	       <jms:listener ref="indexDisambiguatedOrg" destination="${org.orcid.persistence.messaging.index.disambiguated_orgs}" concurrency="${org.orcid.persistence.messaging.index.disambiguated_orgs.concurrency}" />
-
-
+	       <jms:listener ref="updateActivitiesListener" destination="${org.orcid.persistence.messaging.updated.activity}" concurrency="${org.orcid.persistence.messaging.updated.activity.concurrency}" />	
+	       <jms:listener ref="indexDisambiguatedOrgsListener" destination="${org.orcid.persistence.messaging.index.disambiguated_orgs}" concurrency="${org.orcid.persistence.messaging.index.disambiguated_orgs.concurrency}" />
 	</jms:listener-container>
 	
     <!-- Jersey client -->

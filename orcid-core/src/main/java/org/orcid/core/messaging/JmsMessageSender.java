@@ -1,10 +1,12 @@
-package org.orcid.scheduler.messaging;
+package org.orcid.core.messaging;
 
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.solr.client.solrj.SolrServer;
 import org.orcid.utils.listener.LastModifiedMessage;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.JmsException;
@@ -38,14 +40,25 @@ public class JmsMessageSender {
     @Resource
     private JmsTemplate jmsTemplate;
     
+    @Resource(name = "orgDisambiguatedSolrServer")
+    private SolrServer solrServer;
+    
+    protected boolean sendObject(final Object obj, String destination) throws JmsException{
+        if (isEnabled() && !pauseForAWhile){
+            jmsTemplate.convertAndSend(destination, obj);
+            return true;
+        }
+        LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile"+pauseForAWhile);
+        return false;            
+    }
+    
     protected boolean sendText(final String text, String destination) throws JmsException{
         if (isEnabled() && !pauseForAWhile){
             jmsTemplate.convertAndSend(destination, text);
             return true;
         }
         LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile"+pauseForAWhile);
-        return false;
-            
+        return false;            
     }
     
     protected boolean sendMap(final Map<String,String> map, String destination) throws JmsException{
@@ -70,6 +83,23 @@ public class JmsMessageSender {
             //TODO: How we unflag the problem?
             //flagConnectionProblem(e);
             LOG.error("Couldnt send " + mess.getOrcid() + " to the message queue", e);
+        }
+        return false;
+    }
+    
+    /**Sends a OrgDisambiguatedSolrDocument to the selected queue
+     * 
+     * @param mess the message
+     * @param d the destination queue
+     * @return true if message sent successfully 
+     */
+    public boolean send(OrgDisambiguatedSolrDocument mess, String destination){
+        try{
+            return this.sendObject(mess, destination);                             
+        } catch(JmsException e) {
+            //TODO: How we unflag the problem?
+            //flagConnectionProblem(e);
+            LOG.error("Couldnt send message for disambiguated id " + mess.getOrgDisambiguatedId() + " to the message queue", e);
         }
         return false;
     }

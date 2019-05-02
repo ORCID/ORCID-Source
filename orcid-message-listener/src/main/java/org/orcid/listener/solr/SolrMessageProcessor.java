@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SolrMessageProcessor implements Consumer<LastModifiedMessage>{
+public class SolrMessageProcessor implements Consumer<LastModifiedMessage> {
 
     Logger LOG = LoggerFactory.getLogger(SolrMessageProcessor.class);
 
