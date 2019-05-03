@@ -27,15 +27,15 @@
 		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:30}000"/>
      	<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
         <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
+		<task:scheduled ref="orcidRecordIndexer" method="reindexRecordsForSolrUpgrade" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:60}000"/>
 		
 		<task:scheduled ref="orcidRecordIndexer" method="reindexRecordsForSolrUpgrade" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:30}000"/>        
 		
 		<task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesToFlagForIndexing" cron="${org.orcid.scheduler.web.processUnclaimedProfilesToFlagForIndexingCron:25 25 * * * *}"/>
         <task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
         
-
-
         <task:scheduled ref="publicProfileValidator" method="validatePublicRecords" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
+    
     </task:scheduled-tasks>
 
     <task:scheduler id="scheduler" pool-size="10"/>
