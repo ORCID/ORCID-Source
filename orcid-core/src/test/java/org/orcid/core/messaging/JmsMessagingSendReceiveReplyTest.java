@@ -19,7 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
  *
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JmsMessagingSendReceiveReplyTest {
 
     @Resource
@@ -28,7 +28,7 @@ public class JmsMessagingSendReceiveReplyTest {
     @Test
     public void testConfig() throws InterruptedException{
         Long time = System.currentTimeMillis();
-        messageSender.sendText("test "+time, "test");        
+        messageSender.sendText("test " + time, "test");        
         Thread.sleep(1000);
         assertEquals(EchoTestMessageListener2.lastMessage, "test "+time);
         Thread.sleep(1000);

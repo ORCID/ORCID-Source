@@ -28,8 +28,8 @@ public class SolrBeanFactory {
     private XMLResponseParser responseParser;
     
     private static final String DEFAULT_COLLECTION = "/profile";
-    
     private static final String ORGS_COLLECTION = "/org";
+    private static final String FUNDING_SUB_TYPE_COLLECTION = "/fundingSubType";
     
     @Bean(name = "solrClient")
     public SolrClient solrClient() {
@@ -44,6 +44,16 @@ public class SolrBeanFactory {
     @Bean(name = "solrOrgsClient")
     public SolrClient solrOrgsClient() {
         return new HttpSolrClient.Builder(solrUrl + ORGS_COLLECTION)
+                .withConnectionTimeout(connectionTimeout)
+                .withSocketTimeout(socketTimeout)
+                .allowCompression(allowCompression)
+                .withResponseParser(responseParser)                
+                .build();
+    }
+    
+    @Bean(name = "solrFundingSubTypeClient")
+    public SolrClient solrFundingSubTypeClient() {
+        return new HttpSolrClient.Builder(solrUrl + FUNDING_SUB_TYPE_COLLECTION)
                 .withConnectionTimeout(connectionTimeout)
                 .withSocketTimeout(socketTimeout)
                 .allowCompression(allowCompression)

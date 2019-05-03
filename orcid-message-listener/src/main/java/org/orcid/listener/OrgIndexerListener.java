@@ -33,8 +33,7 @@ public class OrgIndexerListener implements MessageListener {
     public void onMessage(Message message) {
         try {
             OrgDisambiguatedSolrDocument obj = getObjectFromMessage(message);
-            LOG.info("Recieved " + message.getJMSDestination() + " message for org disambiguated " + obj.getOrgDisambiguatedId() + " status: "
-                    + obj.getOrgDisambiguatedStatus());
+            LOG.info("Recieved " + message.getJMSDestination() + " message for org disambiguated " + obj.getOrgDisambiguatedId());
             processor.accept(obj);
         } catch (JMSException e) {
             throw new RuntimeException(e);

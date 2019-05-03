@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
+import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +22,14 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 @Component
-public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDocument> {
+public class FundingSubTypeMessageProcessor implements Consumer<OrgDefinedFundingTypeSolrDocument> {
 
-    Logger LOG = LoggerFactory.getLogger(SolrOrgsMessageProcessor.class);
+    Logger LOG = LoggerFactory.getLogger(FundingSubTypeMessageProcessor.class);
 
     private static final Integer MAX_RETRY_COUNT = 3;
 
-    @Value("${org.orcid.persistence.messaging.solr_org_indexing.enabled:true}")
-    private boolean isSolrOrgsIndexingEnabled;
+    @Value("${org.orcid.persistence.messaging.solr_funding_sub_type_indexing.enabled:true}")
+    private boolean isSolrFundingSubTypeIndexingEnabled;
 
     @Resource
     private SolrIndexUpdater solrUpdater;
@@ -42,29 +42,25 @@ public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDo
     private Client client = Client.create();
 
     @Autowired
-    public SolrOrgsMessageProcessor() throws JAXBException {
+    public FundingSubTypeMessageProcessor() throws JAXBException {
 
     }
 
     @Override
-    public void accept(OrgDisambiguatedSolrDocument t) {
-        if(isSolrOrgsIndexingEnabled) {
+    public void accept(OrgDefinedFundingTypeSolrDocument t) {
+        if (isSolrFundingSubTypeIndexingEnabled) {
             process(t, 0);
         }
     }
 
-    private void process(OrgDisambiguatedSolrDocument t, Integer retryCount) {
+    private void process(OrgDefinedFundingTypeSolrDocument t, Integer retryCount) {
         try {
-            if("DEPRECATED".equals(t.getOrgDisambiguatedStatus()) || "OBSOLETE".equals(t.getOrgDisambiguatedStatus())) {
-                solrUpdater.delete(String.valueOf(t.getOrgDisambiguatedId()));
-            } else {
-                solrUpdater.persist(t);                
-            }                        
+            solrUpdater.persist(t);
         } catch (Exception e) {
-            LOG.error("Unable to persists org " + t.getOrgDisambiguatedId() + " in SOLR");
+            LOG.error("Unable to persists fundingSubType " + t.getOrgDefinedFundingType() + " in SOLR");
             LOG.error(e.getMessage(), e);
             if (retryCount > MAX_RETRY_COUNT) {
-                sendSystemAlert("SOLR Index error: Unable to persist org with disambiguated org id = " + t.getOrgDisambiguatedId() + " and name " + t.getOrgDisambiguatedName() + " in SOLR");
+                sendSystemAlert("SOLR Index error: Unable to persist fundingSubType " + t.getOrgDefinedFundingType() + " in SOLR");
             } else {
                 process(t, retryCount + 1);
             }

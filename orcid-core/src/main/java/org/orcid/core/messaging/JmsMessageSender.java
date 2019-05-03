@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.orcid.utils.listener.LastModifiedMessage;
+import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +101,23 @@ public class JmsMessageSender {
             //TODO: How we unflag the problem?
             //flagConnectionProblem(e);
             LOG.error("Couldnt send message for disambiguated id " + mess.getOrgDisambiguatedId() + " to the message queue", e);
+        }
+        return false;
+    }
+    
+    /**Sends a OrgDefinedFundingTypeSolrDocument to the selected queue
+     * 
+     * @param mess the message
+     * @param d the destination queue
+     * @return true if message sent successfully 
+     */
+    public boolean send(OrgDefinedFundingTypeSolrDocument mess, String destination){
+        try{
+            return this.sendObject(mess, destination);                             
+        } catch(JmsException e) {
+            //TODO: How we unflag the problem?
+            //flagConnectionProblem(e);
+            LOG.error("Couldnt send message for fundingSubType " + mess.getOrgDefinedFundingType() + " to the message queue", e);
         }
         return false;
     }
