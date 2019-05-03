@@ -36,6 +36,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.CREDIT_NAME)
     private String creditName;
 
+    @Field(SolrConstants.BIOGRAPHY)
+    private String biography;
+    
     @Field(SolrConstants.OTHER_NAMES)
     private List<String> otherNames;
 
@@ -749,6 +752,14 @@ public class OrcidSolrDocument {
         setGivenAndFamilyNames(givenAndFamilyNames);
     }
 
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -758,6 +769,7 @@ public class OrcidSolrDocument {
         result = prime * result + ((asin == null) ? 0 : asin.hashCode());
         result = prime * result + ((asintld == null) ? 0 : asintld.hashCode());
         result = prime * result + ((bibcode == null) ? 0 : bibcode.hashCode());
+        result = prime * result + ((biography == null) ? 0 : biography.hashCode());
         result = prime * result + ((cba == null) ? 0 : cba.hashCode());
         result = prime * result + ((cit == null) ? 0 : cit.hashCode());
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
@@ -805,8 +817,8 @@ public class OrcidSolrDocument {
         result = prime * result + ((profileLastModifiedDate == null) ? 0 : profileLastModifiedDate.hashCode());
         result = prime * result + ((profileSubmissionDate == null) ? 0 : profileSubmissionDate.hashCode());
         result = prime * result + ((publicProfileMessage == null) ? 0 : publicProfileMessage.hashCode());
-        result = prime * result + ((researchResourceProposalTitles == null) ? 0 : researchResourceProposalTitles.hashCode());
         result = prime * result + ((researchResourceItemNames == null) ? 0 : researchResourceItemNames.hashCode());
+        result = prime * result + ((researchResourceProposalTitles == null) ? 0 : researchResourceProposalTitles.hashCode());
         result = prime * result + ((rfc == null) ? 0 : rfc.hashCode());
         result = prime * result + ((selfIds == null) ? 0 : selfIds.hashCode());
         result = prime * result + ((sourceWorkId == null) ? 0 : sourceWorkId.hashCode());
@@ -853,6 +865,11 @@ public class OrcidSolrDocument {
             if (other.bibcode != null)
                 return false;
         } else if (!bibcode.equals(other.bibcode))
+            return false;
+        if (biography == null) {
+            if (other.biography != null)
+                return false;
+        } else if (!biography.equals(other.biography))
             return false;
         if (cba == null) {
             if (other.cba != null)
@@ -1089,15 +1106,15 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!publicProfileMessage.equals(other.publicProfileMessage))
             return false;
-        if (researchResourceProposalTitles == null) {
-            if (other.researchResourceProposalTitles != null)
-                return false;
-        } else if (!researchResourceProposalTitles.equals(other.researchResourceProposalTitles))
-            return false;
         if (researchResourceItemNames == null) {
             if (other.researchResourceItemNames != null)
                 return false;
         } else if (!researchResourceItemNames.equals(other.researchResourceItemNames))
+            return false;
+        if (researchResourceProposalTitles == null) {
+            if (other.researchResourceProposalTitles != null)
+                return false;
+        } else if (!researchResourceProposalTitles.equals(other.researchResourceProposalTitles))
             return false;
         if (rfc == null) {
             if (other.rfc != null)

@@ -96,6 +96,9 @@ public class OrcidRecordToSolrDocument {
                         .setCreditName(record.getPerson().getName().getCreditName() != null ? record.getPerson().getName().getCreditName().getContent() : null);
 
             }
+            if(record.getPerson().getBiography() != null && !StringUtils.isBlank(record.getPerson().getBiography().getContent())) {
+                profileIndexDocument.setBiography(record.getPerson().getBiography().getContent());
+            }
             if (record.getPerson().getOtherNames() != null) {
                 if (record.getPerson().getOtherNames().getOtherNames() != null && !record.getPerson().getOtherNames().getOtherNames().isEmpty()) {
                     List<String> names = new ArrayList<String>();

@@ -191,7 +191,7 @@
     -->
 
     <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
-    <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" useDocValuesAsStored="false"/>
     <fieldType name="strings" class="solr.StrField" sortMissingLast="true" multiValued="true" docValues="true" />
 
     <!-- boolean type: "true" or "false" -->
@@ -1012,16 +1012,15 @@
      </similarity>
     -->
 	
+	<!-- Fields included in result doc -->
 	<field name="orcid" type="string" indexed="true" stored="true"
-		required="true" multiValued="false"/>
+		required="true" multiValued="false" />
 	<field name="email" type="string" indexed="true" stored="true"
 		multiValued="true" />
 	<field name="given-names" type="text_general" indexed="true"
 		stored="true" multiValued="false" />
 	<field name="family-name" type="text_general" indexed="true"
 		stored="true" multiValued="false" />
-	<field name="given-and-family-names" type="orcid_text_name"
-		indexed="true" stored="false" multiValued="false" />
 	<field name="current-institution-affiliation-name" type="text_general"
 		indexed="true" stored="true" multiValued="true" />
 	<field name="past-institution-affiliation-name" type="text_general"
@@ -1030,9 +1029,19 @@
 		stored="true" multiValued="false" />
 	<field name="other-names" type="text_general" indexed="true"
 		stored="true" multiValued="true" />
-	<field name="external-id-source" type="string" indexed="true"
+	<field name="profile-last-modified-date" type="pdate" indexed="true"
+		stored="true" multiValued="false" />
+	<field name="primary-record" type="string" indexed="true"
+		stored="true" multiValued="false" />
+	
+	<!-- Fields excluded from result doc -->
+	<field name="given-and-family-names" type="text_general"
+		indexed="true" stored="false" multiValued="false" />
+	<field name="biography" type="text_general"
+		indexed="true" stored="false" multiValued="false" />
+	<field name="external-id-source" type="text_general" indexed="true"
 		stored="false" multiValued="true" />
-	<field name="external-id-reference" type="string" indexed="true"
+	<field name="external-id-reference" type="text_general" indexed="true"
 		stored="false" multiValued="true" />
 	<field name="external-id-source-and-reference" type="string" indexed="true" 
 		stored="false" multiValued="true" />	
@@ -1114,11 +1123,7 @@
 	<field name="keyword" type="text_general" indexed="true" stored="false"
 		multiValued="true" />
 	<field name="profile-submission-date" type="pdate" indexed="true"
-		stored="true" multiValued="false" />
-	<field name="profile-last-modified-date" type="pdate" indexed="true"
-		stored="true" multiValued="false" />
-	<field name="primary-record" type="string" indexed="true"
-		stored="true" multiValued="false" />
+		stored="false" multiValued="false" />	
 		
 	<!-- research resources -->
 	<field name="research-resource-proposal-title" type="text_general" indexed="true"
@@ -1150,5 +1155,9 @@
 	</fieldtype>
 	<field name="public-profile-message" type="textField" indexed="false"
 		stored="false" multiValued="false" omitNorms="true"/>
+
+	<field name="text" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+	<copyField source="*" dest="text" />	
 
 </schema>

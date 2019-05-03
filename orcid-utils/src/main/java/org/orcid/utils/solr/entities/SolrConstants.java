@@ -3,6 +3,7 @@ package org.orcid.utils.solr.entities;
 public class SolrConstants {
     public static final String SCORE = "score";
     public static final String ORCID = "orcid";
+    public static final String BIOGRAPHY = "biography";
     public static final String GIVEN_NAMES = "given-names";
     public static final String FAMILY_NAME = "family-name";
     public static final String GIVEN_AND_FAMILY_NAMES = "given-and-family-names";

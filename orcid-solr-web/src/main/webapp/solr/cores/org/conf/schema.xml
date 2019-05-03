@@ -1009,15 +1009,15 @@
 		multiValued="false" />
 	<field name="org-disambiguated-type" type="string" indexed="true" stored="true"
 		multiValued="false" />
-	<field name="org-disambiguated-popularity" type="pint" indexed="true" stored="true"
+	<field name="org-disambiguated-popularity" type="pint" indexed="true" stored="false"
 		multiValued="false" />
 	<field name="org-names" type="text_general" indexed="true" stored="true"
 		multiValued="true" />
-	<field name="org-disambiguated-id-from-source" type="string" indexed="true" stored="true"
+	<field name="org-disambiguated-id-from-source" type="string" indexed="true" stored="false"
 		multiValued="false" />
-	<field name="org-disambiguated-id-source-type" type="string" indexed="true" stored="true"
+	<field name="org-disambiguated-id-source-type" type="string" indexed="true" stored="false"
 		multiValued="false" />
-	<field name="is-funding-org" type="boolean" indexed="true" stored="true"
+	<field name="is-funding-org" type="boolean" indexed="true" stored="false"
 		multiValued="false" />
 	<field name="org-chosen-by-member" type="boolean" indexed="true" stored="true"
            multiValued="false" />
@@ -1026,4 +1026,8 @@
            
 	<uniqueKey>org-disambiguated-id</uniqueKey>
 
+	<field name="text" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+	<copyField source="*" dest="text" />
+	
 </schema>

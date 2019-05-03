@@ -1002,4 +1002,8 @@
            
 	<uniqueKey>org-defined-funding-type</uniqueKey>
 
+	<field name="text" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
+	<copyField source="*" dest="text" />
+	
 </schema>
