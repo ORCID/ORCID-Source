@@ -33,7 +33,6 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
         private passwordService: PasswordService
     ) {
         this.displayError = false;
-        this.resetPasswordForm = {};
     }
 
     getResetPasswordForm(): void {
