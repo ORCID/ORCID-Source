@@ -1155,7 +1155,8 @@
     <int name="xsltCacheLifetimeSeconds">5</int>
   </queryResponseWriter>
 
-  <!-- Use the default solr.xml file to define the schema, and disable schema changes through the REST interface -->
-  <schemaFactory class="ClassicIndexSchemaFactory"/>
+  <!-- Uncomment this if for some reason we don't want to use the managed schema anymore
+	<schemaFactory class="ClassicIndexSchemaFactory"/>
+  -->
 
 </config>
