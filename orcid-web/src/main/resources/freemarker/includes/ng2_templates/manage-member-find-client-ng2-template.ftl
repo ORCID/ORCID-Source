@@ -82,7 +82,7 @@
 
 						<div class="row">
 						   <div class="col-md-12 col-sm-12 col-xs-12">
-								<input type="checkbox" name="persistentToken" class="small-element middle" [(ngModel)]="_client.oboEnabled.value" />
+								<input type="checkbox" name="oboEnabled" class="small-element middle" [(ngModel)]="_client.oboEnabled.value" />
 								<span class="middle"><@orcid.msg 'manage_member.edit_client.use_OBO'/></span>								
 								<span class="orcid-error" *ngIf="_client.oboEnabled.errors.length > 0">
 									<div *ngFor='let error of _client.oboEnabled.errors'>{{error}}</div>
@@ -93,7 +93,7 @@
 						<!-- Allow auto deprecate -->
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
-								<input type="checkbox" name="persistentToken" class="small-element middle" [(ngModel)]="_client.allowAutoDeprecate.value" />
+								<input type="checkbox" name="allowAutoDeprecate" class="small-element middle" [(ngModel)]="_client.allowAutoDeprecate.value" />
 								<span class="middle"><@orcid.msg 'manage.developer_tools.group.allow_auto_deprecate'/></span>
 							</div>
 						</div>
