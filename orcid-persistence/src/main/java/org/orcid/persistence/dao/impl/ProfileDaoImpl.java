@@ -826,4 +826,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("types", eventTypes);  
         return query.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public String getLockedReason(String orcid) {
+        Query query = entityManager.createNativeQuery("SELECT reason_locked, reason_locked_description from profile where orcid = :orcid");
+        query.setParameter("orcid", orcid); 
+        List<Object[]> result = query.getResultList();
+        String reason = (String) result.get(0)[0];
+        String description = (String) result.get(0)[1];
+        return reason != null ? reason + (description != null ? " (" + description + ")" : "") : null;
+    }
 }

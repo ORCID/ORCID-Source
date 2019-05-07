@@ -211,7 +211,9 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/password-reset.json", method = RequestMethod.GET)
     public @ResponseBody OneTimeResetPasswordForm getResetPassword() {
-        return new OneTimeResetPasswordForm();
+        OneTimeResetPasswordForm oneTimeResetPasswordForm  = new OneTimeResetPasswordForm();
+        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        return oneTimeResetPasswordForm;
     }
 
     @RequestMapping(value = "/reset-password-email.json", method = RequestMethod.POST)

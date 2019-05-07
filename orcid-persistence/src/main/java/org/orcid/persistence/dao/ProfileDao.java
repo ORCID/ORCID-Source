@@ -146,4 +146,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid);
 
     List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypeNames);
+
+    public String getLockedReason(String orcid);
 }

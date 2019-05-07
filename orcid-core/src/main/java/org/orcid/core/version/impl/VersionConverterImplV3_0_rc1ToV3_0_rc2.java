@@ -439,9 +439,15 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
 
         @Override
         public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.Email b, Email a, MappingContext context) {
-            a.setCurrent(b.isCurrent());
-            a.setPrimary(b.isPrimary());
-            a.setVerified(b.isVerified());
+            if(b.isCurrent() != null) {
+                a.setCurrent(b.isCurrent());
+            }
+            if(b.isPrimary() != null) {
+                a.setPrimary(b.isPrimary());                
+            }
+            if(b.isVerified() != null) {
+                a.setVerified(b.isVerified());
+            }
         }
 
     }

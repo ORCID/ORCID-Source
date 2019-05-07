@@ -48,11 +48,11 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
      */
     void removeAllKeywords(String orcid);
 
-    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+    List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients);
 
     void correctClientSource(List<BigInteger> ids);
 
-    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+    List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients);
 
     void correctUserSource(List<BigInteger> ids);
 }

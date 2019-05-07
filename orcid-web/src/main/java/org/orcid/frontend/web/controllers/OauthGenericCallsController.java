@@ -123,6 +123,14 @@ public class OauthGenericCallsController extends OauthControllerBase {
         return reg;
     }
 
+    
+    @RequestMapping(value = "/oauth/custom/register/validateFamilyNames.json", method = RequestMethod.POST)
+    public @ResponseBody OauthRegistrationForm validateFamilyName(@RequestBody OauthRegistrationForm reg) {
+
+        registrationController.registerFamilyNameValidate(reg);
+        return reg;
+    }
+
     @RequestMapping(value = "/oauth/custom/register/validateEmail.json", method = RequestMethod.POST)
     public @ResponseBody OauthRegistrationForm validateEmail(HttpServletRequest request, @RequestBody OauthRegistrationForm reg) {
         registrationController.regEmailValidate(request, reg, true, false);

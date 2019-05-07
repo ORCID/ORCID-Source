@@ -243,8 +243,9 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClientIds) {
+        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN :nonPublicClientIds");
+        query.setParameter("nonPublicClientIds", nonPublicClientIds);
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -259,8 +260,9 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<BigInteger> getIdsForUserSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+    public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClientIds) {
+        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN :publicClientIds");
+        query.setParameter("publicClientIds", publicClientIds);
         query.setMaxResults(limit);
         return query.getResultList();
     }

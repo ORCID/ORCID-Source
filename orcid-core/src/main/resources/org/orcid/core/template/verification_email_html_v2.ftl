@@ -27,9 +27,6 @@
 		<div  style="padding: 20px; padding-top: 10px; margin: auto;">
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
-		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C; font-weight: bold;">
-		      <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
-		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 		        <#if isPrimary?? && isPrimary>
                     <@emailMacros.msg "email.verify.primary_reminder_v2" /><@emailMacros.space />

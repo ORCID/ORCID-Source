@@ -1103,7 +1103,7 @@ function populateWorkAjaxForm(bibJson, work) {
               this.pos++;
           };
           if (this.input[this.pos] == "%" && canCommentOut == true) {
-              while (this.input[this.pos] != "\n") {
+              while ((this.input[this.pos] != ("\n" || "\r")) && this.pos < this.input.length) {
                   this.pos++;
               };
               this.skipWhitespace(canCommentOut);
