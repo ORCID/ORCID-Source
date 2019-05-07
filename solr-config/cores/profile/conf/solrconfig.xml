@@ -316,13 +316,12 @@
     <!-- softAutoCommit is like autoCommit except it causes a
          'soft' commit which only ensures that changes are visible
          but does not ensure that data is synced to disk.  This is
-         faster and more near-realtime friendly than a hard commit.
-      -->
-
+         faster and more near-realtime friendly than a hard commit.      
     <autoSoftCommit>
       <maxTime>${solr.autoSoftCommit.profile.maxTime:30000}</maxTime>
     </autoSoftCommit>
-
+    -->
+	
     <!-- Update Related Event Listeners
 
          Various IndexWriter related events can trigger Listeners to
@@ -1157,5 +1156,17 @@
   <!-- Uncomment this if for some reason we don't want to use the managed schema anymore
 	<schemaFactory class="ClassicIndexSchemaFactory"/>
   -->
-  
+  <requestHandler name="/replication" class="solr.ReplicationHandler" >
+    <lst name="master">
+      <str name="enable">${solr.enable.master:true}</str>
+      <str name="replicateAfter">startup</str>
+      <str name="replicateAfter">commit</str>
+      <str name="confFiles">schema.xml,stopwords.txt</str>
+    </lst>
+    <lst name="slave">
+      <str name="enable">${solr.enable.slave:false}</str>
+      <str name="masterUrl">${solr.master.url:http://localhost:8080/orcid-solr-web}/${solr.core.name}</str>
+      <str name="pollInterval">${solr.poll.interval:00:00:60}</str>
+    </lst>
+  </requestHandler>
 </config>
