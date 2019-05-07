@@ -311,8 +311,9 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+    public List<String> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
+        query.setParameter("nonPublicClients", nonPublicClients);
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -327,8 +328,9 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> getIdsForUserSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+    public List<String> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = source_id AND client_source_id IN :publicClients");
+        query.setParameter("publicClients", publicClients);
         query.setMaxResults(limit);
         return query.getResultList();
     }
