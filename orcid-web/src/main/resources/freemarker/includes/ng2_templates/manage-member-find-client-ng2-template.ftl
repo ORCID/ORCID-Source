@@ -89,7 +89,7 @@
 
 						<div class="row">
 						   <div class="col-md-12 col-sm-12 col-xs-12">
-								<input type="checkbox" name="persistentToken" class="small-element middle" [(ngModel)]="_client.userOBOEnabled.value" />
+								<input type="checkbox" name="userOBOEnabled" class="small-element middle" [(ngModel)]="_client.userOBOEnabled.value" />
 								<span class="middle"><@orcid.msg 'manage_member.edit_client.use_member_OBO'/></span>								
 								<span class="orcid-error" *ngIf="_client.userOBOEnabled.errors.length > 0">
 									<div *ngFor='let error of _client.userOBOEnabled.errors'>{{error}}</div>
