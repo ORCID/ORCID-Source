@@ -9289,6 +9289,16 @@ emails-ng2 h3.workspace-section-label {
     display: flex;
 }
 
+body manage-members-find-client-ng2 .ui-chkbox .ui-chkbox-box.ui-state-active {
+    background-color: white;
+    border-color: white;
+}
+
+body manage-members-find-client-ng2 .ui-chkbox .ui-chkbox-box.ui-state-active:not(.ui-state-disabled):hover {
+    border-color: white;
+    background-color:white;
+    color: black;
+}
 .aka .orcid-error {
     font-size: 14px;
 }
