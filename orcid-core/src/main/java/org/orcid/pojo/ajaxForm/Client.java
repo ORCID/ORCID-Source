@@ -26,7 +26,8 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
     private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;    
     private Set<String> scopes;
-    private Checkbox allowAutoDeprecate;    
+    private Checkbox allowAutoDeprecate; 
+    private Checkbox oboEnabled; 
         
     public static Client fromModelObject(org.orcid.jaxb.model.v3.release.client.Client modelObject) {
         Client client = new Client();
@@ -36,6 +37,8 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
         client.setAllowAutoDeprecate(Checkbox.valueOf(modelObject.isAllowAutoDeprecate()));
         
         client.setPersistentTokenEnabled(Checkbox.valueOf(modelObject.isPersistentTokensEnabled()));
+        
+        client.setOboEnabled(Checkbox.valueOf(modelObject.isOboEnabled()));
         
         if (modelObject.getAuthenticationProviderId() != null) {
             client.setAuthenticationProviderId(Text.valueOf(modelObject.getAuthenticationProviderId()));
@@ -115,6 +118,10 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
 
         if (this.getPersistentTokenEnabled() != null) {
             modelObject.setPersistentTokensEnabled(this.getPersistentTokenEnabled().getValue());
+        }
+        
+        if (this.getOboEnabled() != null) {
+            modelObject.setOboEnabled(this.getOboEnabled().getValue());
         }
 
         if (this.getRedirectUris() != null) {
@@ -262,6 +269,14 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
 
     public void setAllowAutoDeprecate(Checkbox allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
+    }
+    
+    public Checkbox getOboEnabled() {
+        return oboEnabled;
+    }
+
+    public void setOboEnabled(Checkbox oboEnabled) {
+        this.oboEnabled = oboEnabled;
     }
 
     @Override
