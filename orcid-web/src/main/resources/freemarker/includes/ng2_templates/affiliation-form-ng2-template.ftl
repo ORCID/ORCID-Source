@@ -44,7 +44,8 @@
                 <div class="col-md-6 col-sm-6 col-xs-12">
                     <div class="form-group" *ngIf="editAffiliation?.disambiguatedAffiliationSourceId">
                         <span >
-                           <label><@orcid.msg 'manual_affiliation_form_contents.labelorganization'/></label>
+                           <label  *ngIf="addAffType != 'distinction'"><@orcid.msg 'manual_affiliation_form_contents.labelorganization'/></label>
+                           <label *ngIf="addAffType == 'distinction'" ><@orcid.msg 'manual_affiliation_form_contents.labelorganizationDistinction'/></label> 
                         </span>
                         <span id="remove-disambiguated" class="pull-right">
                             <a (click)="removeDisambiguatedAffiliation()">
@@ -58,11 +59,11 @@
                             </div>
                         </div>
                     </div>
-                    
                     <!-- Institution -->
                     <div class="form-group">
                         <span>
-                           <label *ngIf="!disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labelorganization'/></label>
+                           <label *ngIf="!disambiguatedAffiliation && addAffType != 'distinction'"><@orcid.msg 'manual_affiliation_form_contents.labelorganization'/></label>
+                           <label *ngIf="!disambiguatedAffiliation && addAffType == 'distinction'" ><@orcid.msg 'manual_affiliation_form_contents.labelorganizationDistinction'/></label> 
                            <label *ngIf="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplayorganization'/></label>
                             <span class="required" [ngClass]="isValidClass(editAffiliation.affiliationName)">*</span>
                         </span>
@@ -150,8 +151,10 @@
                     </div>
                     <!-- Degree/Title -->
                     <div class="form-group">
-                        <label *ngIf="addAffType != 'education'"><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></label>
+                        <label *ngIf="addAffType != 'education' && addAffType != 'distinction' && addAffType != 'membership'"><@orcid.msg 'manual_affiliation_form_contents.labelroletitle'/></label>
                         <label *ngIf="addAffType == 'education'"><@orcid.msg 'manual_affiliation_form_contents.labeldegreetitle'/></label>
+                        <label *ngIf="addAffType == 'membership'"><@orcid.msg 'manual_affiliation_form_contents.labelmembership'/></label>
+                        <label *ngIf="addAffType == 'distinction'"><@orcid.msg 'manual_affiliation_form_contents.labelDistinctionAward'/></label>
                         <div *ngIf="editAffiliation?.roleTitle">
                             
                             <input name="roletitle" type="text" class="form-control"  [(ngModel)]="editAffiliation.roleTitle.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_title'/>" (ngModelChange)="serverValidate('affiliations/affiliation/roleTitleValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
@@ -175,7 +178,9 @@
                     </div>
                     <!--  -->
                     <div class="form-group">
-                        <label class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
+                        <label *ngIf="addAffType != 'distinction'" class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDate'/></label>
+                        <label *ngIf="addAffType == 'distinction'" class="relative" for="manualAffiliation.startDay"><@orcid.msg 'manual_affiliation_form_contents.labelStartDateDistinction'/></label>
+
                         <div>
                             <select id="startYear" name="startYear" [(ngModel)]="editAffiliation.startDate.year">
                                 <#list years?keys as key>
@@ -200,7 +205,7 @@
                                 
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" *ngIf="addAffType != 'distinction'">
                         <label class="relative" for="manualAffiliation.endDay"><@orcid.msg 'manual_affiliation_form_contents.labelEndDateLeave'/></label>
                         <div class="relative">
                             

@@ -282,4 +282,5 @@
 	<include file="/db/updates/email_schedule.xml" />
 	<include file="/db/updates/add_redir_status.xml" />
 	<include file="/db/updates/add_user_obo_flag_to_client_details_table.xml" />
+	<include file="/db/updates/uri_id_type_case_sensitive.xml" />
 </databaseChangeLog>

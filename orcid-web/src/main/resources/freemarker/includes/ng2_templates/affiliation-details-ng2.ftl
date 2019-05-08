@@ -58,7 +58,7 @@
                                 <span class="affiliation-date" *ngIf="affiliation?.startDate">
                                     <span *ngIf="affiliation?.startDate.year">{{affiliation?.startDate.year}}</span><span *ngIf="affiliation?.startDate.month">-{{affiliation?.startDate.month}}</span><span *ngIf="affiliation?.startDate.day">-{{affiliation?.startDate.day}}</span>
                                     <span *ngIf="affiliation?.endDate && affiliation?.endDate.year">&nbsp;<@orcid.msg 'workspace_affiliations.dateSeparator'/>&nbsp;</span>
-                                    <span *ngIf="(affiliation?.startDate && affiliation?.startDate.year) && !(affiliation?.endDate && affiliation?.endDate.year)">&nbsp;<@orcid.msg 'workspace_affiliations.dateSeparator'/>&nbsp;<@orcid.msg 'workspace_affiliations.present'/></span>
+                                    <span *ngIf="(affiliation?.startDate && affiliation?.startDate.year) && !(affiliation?.endDate && affiliation?.endDate.year) && affiliation?.affiliationType?.value != 'distinction'">&nbsp;<@orcid.msg 'workspace_affiliations.dateSeparator'/>&nbsp;<@orcid.msg 'workspace_affiliations.present'/></span>
                                     <span *ngIf="affiliation?.endDate">
                                         <span *ngIf="affiliation?.endDate.year">{{affiliation?.endDate.year}}</span><span *ngIf="affiliation?.endDate.month">-{{affiliation?.endDate.month}}</span><span *ngIf="affiliation?.endDate.day">-{{affiliation?.endDate.day}}</span>
                                     </span>

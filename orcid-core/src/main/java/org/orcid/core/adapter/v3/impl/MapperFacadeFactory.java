@@ -24,6 +24,7 @@ import org.orcid.core.adapter.v3.converter.FundingContributorsConverter;
 import org.orcid.core.adapter.v3.converter.GivenNamesConverter;
 import org.orcid.core.adapter.v3.converter.VisibilityConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -1016,7 +1017,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         element.setStatus(entity.getStatus().name());
                         a.getClientRedirectUris().add(element);
                     }
-                }                
+                }
+                if (b.getAuthorizedGrantTypes() != null && b.getAuthorizedGrantTypes().contains(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE)) {
+                    a.setOboEnabled(true);
+                } else {
+                    a.setOboEnabled(false);
+                }
             }
         });                  
         clientClassMap.register();                

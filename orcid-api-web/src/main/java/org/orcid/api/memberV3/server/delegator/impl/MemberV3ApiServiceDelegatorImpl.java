@@ -831,7 +831,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
                 emails = emailManagerReadOnly.getVerifiedEmails(orcid);
             } else {
-                emailManagerReadOnly.getEmails(orcid);
+                emails = emailManagerReadOnly.getEmails(orcid);
             }
             
             // Lets copy the list so we don't modify the cached collection
@@ -843,7 +843,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
                 emails = emailManagerReadOnly.getVerifiedEmails(orcid);
             } else {
-                emailManagerReadOnly.getEmails(orcid);
+                emails = emailManagerReadOnly.getEmails(orcid);
             }
             
             // Lets copy the list so we don't modify the cached collection

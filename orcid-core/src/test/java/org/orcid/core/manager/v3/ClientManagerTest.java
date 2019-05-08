@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -265,6 +266,36 @@ public class ClientManagerTest extends BaseTest {
         
         //Verify config data doesn't changed
         validateClientConfigSettings(entityClient, editTime);
+    }
+    
+    @Test
+    public void editOboEnabled() {
+        String seed = RandomStringUtils.randomAlphanumeric(15);
+        Client originalClient = getClient(seed, MEMBER_ID);
+        assertFalse(originalClient.getId().startsWith("APP-"));
+        // Create the client
+        Client client = clientManager.create(originalClient);
+        client.setOboEnabled(true);
+        
+        clientManager.edit(client, true);
+        
+        ClientDetailsEntity entityClient = clientDetailsDao.find(client.getId());
+        assertTrue(entityClient.getAuthorizedGrantTypes().contains(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE)); 
+    }
+    
+    @Test
+    public void editOboDisabled() {
+        String seed = RandomStringUtils.randomAlphanumeric(15);
+        Client originalClient = getClient(seed, MEMBER_ID);
+        assertFalse(originalClient.getId().startsWith("APP-"));
+        // Create the client
+        Client client = clientManager.create(originalClient);
+        client.setOboEnabled(false);
+        
+        clientManager.edit(client, true);
+        
+        ClientDetailsEntity entityClient = clientDetailsDao.find(client.getId());
+        assertFalse(entityClient.getAuthorizedGrantTypes().contains(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE)); 
     }
             
     @Test(expected = IllegalArgumentException.class)
