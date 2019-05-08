@@ -8,9 +8,10 @@ require("../../css/primeicons.css");
 require("../../css/primeng.min.css");
 require("../../twitter-bootstrap/3.3.6/css/bootstrap.min.css");
 require("../../css/orcid.new.css");
+require('../../css/idpselect.css');
 require("../../css/academicons.css");
 // require("../../css/jquery-ui-1.10.0.custom.min.css");
-// require("../../css/noto-font.css");
+require("../../css/noto-font.css");
 require("../../css/noto-sans-googlefonts.css");
 if (window.location.href.indexOf("/print") > 0) {
   require("../../css/orcid-print.css");
