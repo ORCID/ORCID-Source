@@ -62,11 +62,11 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
 
     List<OtherNameEntity> getPublicOtherNames(String orcid, long lastModified);
 
-    List<BigInteger> getIdsForClientSourceCorrection(int limit);
+    List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients);
 
     void correctClientSource(List<BigInteger> ids);
 
-    List<BigInteger> getIdsForUserSourceCorrection(int limit);
+    List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients);
 
     void correctUserSource(List<BigInteger> ids);
 }

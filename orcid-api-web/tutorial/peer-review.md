@@ -243,7 +243,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name.xml' -X POST 'https://api.sandbox.orcid.org/v2.1/0000-0002-9227-8514/peer-review'
 ```
 
-## Update a funding item
+## Update a peer-review item
 
 | Parameter | Value        |
 |--------------------|--------------------------|

@@ -109,8 +109,9 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
+        query.setParameter("nonPublicClients", nonPublicClients);
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -125,8 +126,9 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<BigInteger> getIdsForUserSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+    public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN :publicClients");
+        query.setParameter("publicClients", publicClients);
         query.setMaxResults(limit);
         return query.getResultList();
     }

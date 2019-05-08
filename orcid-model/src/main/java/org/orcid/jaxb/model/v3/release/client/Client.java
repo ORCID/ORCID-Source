@@ -20,6 +20,7 @@ public class Client implements Serializable {
     private boolean persistentTokensEnabled;
     private Set<ClientRedirectUri> clientRedirectUris;
     private boolean userOBOEnabled;
+    private boolean oboEnabled;
 
     public String getId() {
         return id;
@@ -123,6 +124,14 @@ public class Client implements Serializable {
 
     public void setUserOBOEnabled(boolean userOBOEnabled) {
         this.userOBOEnabled = userOBOEnabled;
+    }
+
+    public boolean isOboEnabled() {
+        return oboEnabled;
+    }
+
+    public void setOboEnabled(boolean oboEnabled) {
+        this.oboEnabled = oboEnabled;
     }
 
     @Override
