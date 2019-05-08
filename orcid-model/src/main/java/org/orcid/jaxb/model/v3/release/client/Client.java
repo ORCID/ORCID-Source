@@ -19,6 +19,7 @@ public class Client implements Serializable {
     private boolean allowAutoDeprecate;
     private boolean persistentTokensEnabled;
     private Set<ClientRedirectUri> clientRedirectUris;
+    private boolean userOBOEnabled;
     private boolean oboEnabled;
 
     public String getId() {
@@ -117,6 +118,14 @@ public class Client implements Serializable {
         this.clientRedirectUris = clientRedirectUris;
     }
     
+    public boolean isUserOBOEnabled() {
+        return userOBOEnabled;
+    }
+
+    public void setUserOBOEnabled(boolean userOBOEnabled) {
+        this.userOBOEnabled = userOBOEnabled;
+    }
+
     public boolean isOboEnabled() {
         return oboEnabled;
     }
@@ -141,6 +150,7 @@ public class Client implements Serializable {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + (persistentTokensEnabled ? 1231 : 1237);
         result = prime * result + ((website == null) ? 0 : website.hashCode());
+        result = prime * result + (userOBOEnabled ? 1223 : 1218);
         return result;
     }
 
@@ -204,6 +214,9 @@ public class Client implements Serializable {
                 return false;
         } else if (!website.equals(other.website))
             return false;
+        if (userOBOEnabled != other.userOBOEnabled)
+            return false;
+        
         return true;
     }
 }

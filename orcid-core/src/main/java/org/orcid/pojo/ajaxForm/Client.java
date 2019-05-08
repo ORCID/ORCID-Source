@@ -26,18 +26,16 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
     private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;    
     private Set<String> scopes;
-    private Checkbox allowAutoDeprecate; 
+    private Checkbox allowAutoDeprecate;  
+    private Checkbox userOBOEnabled;  
     private Checkbox oboEnabled; 
         
     public static Client fromModelObject(org.orcid.jaxb.model.v3.release.client.Client modelObject) {
         Client client = new Client();
-
         client.setClientId(Text.valueOf(modelObject.getId()));
-
         client.setAllowAutoDeprecate(Checkbox.valueOf(modelObject.isAllowAutoDeprecate()));
-        
         client.setPersistentTokenEnabled(Checkbox.valueOf(modelObject.isPersistentTokensEnabled()));
-        
+        client.setUserOBOEnabled(Checkbox.valueOf(modelObject.isUserOBOEnabled()));
         client.setOboEnabled(Checkbox.valueOf(modelObject.isOboEnabled()));
         
         if (modelObject.getAuthenticationProviderId() != null) {
@@ -58,7 +56,7 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
         client.setMemberId(Text.valueOf(modelObject.getGroupProfileId()));
         client.setDisplayName(Text.valueOf(modelObject.getName()));
         client.setWebsite(Text.valueOf(modelObject.getWebsite()));
-
+        
         return client;
     }
     
@@ -120,6 +118,10 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
             modelObject.setPersistentTokensEnabled(this.getPersistentTokenEnabled().getValue());
         }
         
+        if (this.getUserOBOEnabled() != null) {
+            modelObject.setUserOBOEnabled(this.getUserOBOEnabled().getValue());
+        }
+
         if (this.getOboEnabled() != null) {
             modelObject.setOboEnabled(this.getOboEnabled().getValue());
         }
@@ -271,6 +273,14 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
         this.allowAutoDeprecate = allowAutoDeprecate;
     }
     
+    public Checkbox getUserOBOEnabled() {
+        return userOBOEnabled;
+    }
+
+    public void setUserOBOEnabled(Checkbox userOBOEnabled) {
+        this.userOBOEnabled = userOBOEnabled;
+    }
+
     public Checkbox getOboEnabled() {
         return oboEnabled;
     }
