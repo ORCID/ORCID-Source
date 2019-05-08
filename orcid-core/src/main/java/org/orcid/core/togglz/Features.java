@@ -100,7 +100,10 @@ public enum Features implements Feature {
     ENABLE_RECORD_CREATE_ENDPOINT,
     
     @Label("Hide unverified emails")
-    HIDE_UNVERIFIED_EMAILS;
+    HIDE_UNVERIFIED_EMAILS,
+    
+    @Label("User OBO")
+    USER_OBO;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

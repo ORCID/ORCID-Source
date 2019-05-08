@@ -117,7 +117,7 @@ public class Client implements Serializable {
     public void setClientRedirectUris(Set<ClientRedirectUri> clientRedirectUris) {
         this.clientRedirectUris = clientRedirectUris;
     }
-    
+
     public boolean isUserOBOEnabled() {
         return userOBOEnabled;
     }
@@ -216,7 +216,7 @@ public class Client implements Serializable {
             return false;
         if (userOBOEnabled != other.userOBOEnabled)
             return false;
-        
+
         return true;
     }
 }
