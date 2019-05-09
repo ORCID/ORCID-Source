@@ -4,31 +4,31 @@
       <!--Warning if attempting to merge >= 20 works--> 
       <div *ngIf="showWorksMergeWarning" class="row">
           <div class="col-md-12 col-xs-12 col-sm-12">
-              <h3><@orcid.msg 'groups.merge.confirm.are_you_sure'/></h3>
-              <p><@orcid.msg 'groups.merge.confirm.you_are_attempting'/> {{mergeCount}} <@orcid.msg 'common.works.lower'/></p><p class="orcid-error"><b><@orcid.msg 'groups.merge.confirm.cannot_undo'/> <@orcid.msg 'groups.merge.confirm.do_you_really'/></b></p>
+              <h3><@orcid.msg 'groups.combine.confirm.are_you_sure'/></h3>
+              <p><@orcid.msg 'groups.combine.confirm.you_are_attempting'/> {{mergeCount}} <@orcid.msg 'common.works.lower'/></p><p class="orcid-error"><b><@orcid.msg 'groups.combine.confirm.cannot_undo'/> <@orcid.msg 'groups.combine.confirm.do_you_really'/></b></p>
               <div *ngIf="showWorksMergeError" class="orcid-error"> 
-                  <@orcid.msg 'groups.merge.error'/>
+                  <@orcid.msg 'groups.combine.error'/>
               </div>
               <div class="pull-right topBuffer">   
-                <button class="btn btn-white-no-border" (click)="cancelEdit()"><@orcid.msg 'groups.merge.confirm.cancel_dont_merge' /></button>&nbsp;&nbsp;  
+                <button class="btn btn-white-no-border" (click)="cancelEdit()"><@orcid.msg 'groups.combine.confirm.cancel_dont_merge' /></button>&nbsp;&nbsp;  
                 <button class="btn btn-primary" (click)="dismissWarning()">
-                  <@orcid.msg 'groups.merge.confirm.yes_continue' />
+                  <@orcid.msg 'groups.combine.confirm.yes_continue' />
                 </button>
               </div>
           </div>
       </div> 
       <div *ngIf="groupingSuggestion || (!groupingSuggestion && !showWorksMergeWarning)">
-        <h3><@orcid.msg 'groups.merge.confirm.review_works'/></h3>
+        <h3><@orcid.msg 'groups.combine.confirm.review_works'/></h3>
         <p *ngIf="!groupingSuggestion">
-          {{mergeCount}} <@orcid.msg 'groups.merge.choose.preferred.detail'/><br>
-          <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'groups.merge.helpPopoverMerge_2'/></a>
+          {{mergeCount}} <@orcid.msg 'groups.combine.choose.preferred.detail'/><br>
+          <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'groups.combine.helpPopover_2'/></a>
         </p>
         <p *ngIf="groupingSuggestion">
-          <@orcid.msg 'groups.merge.suggestion.we_found'/> {{checkboxFlag.length}} <@orcid.msg 'groups.merge.suggestion.sets_of_works'/><br>
-          <#--  <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'groups.merge.helpPopoverMerge_2'/></a>  -->
+          <@orcid.msg 'groups.combine.suggestion.we_found'/> {{checkboxFlag.length}} <@orcid.msg 'groups.combine.suggestion.sets_of_works'/><br>
+          <#--  <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'groups.combine.helpPopover_2'/></a>  -->
         </p>
         <p *ngIf="groupingSuggestion">
-        <@orcid.msg 'groups.merge.suggestion.merged_works'/>
+        <@orcid.msg 'groups.combine.suggestion.combined_works'/>
         </p>
       <input *ngIf="groupingSuggestion"  [(ngModel)]="selectAll" type="checkbox"  (change)="fieldChangeSelectAll($event)" />
       <hr>
@@ -70,17 +70,17 @@
       <!--Merge errors-->     
       <div class="orcid-error"> 
           <span class="glyphicon glyphicon-exclamation-sign"></span>
-          <@orcid.msg 'groups.merge.confirm.cannot_undo'/>
+          <@orcid.msg 'groups.combine.confirm.cannot_undo'/>
       </div>
       <div *ngIf="showWorksMergeError" class="orcid-error"> 
-          <@orcid.msg 'groups.merge.error'/>
+          <@orcid.msg 'groups.combine.error'/>
       </div>
       <!--Merge buttons-->  
       <div class="pull-right topBuffer bottomBuffer">   
         <button class="btn btn-white-no-border" (click)="cancelEdit()">
           <@orcid.msg 'freemarker.btncancel'/>
         </button>&nbsp;&nbsp;  
-        <button [disabled]="!atLeastOneWorksSelectForMerge() && groupingSuggestion" class="btn btn-primary" (click)="mergeConfirm()"><@orcid.msg 'freemarker.btnmerge'/></button>
+        <button [disabled]="!atLeastOneWorksSelectForMerge() && groupingSuggestion" class="btn btn-primary" (click)="mergeConfirm()"><@orcid.msg 'freemarker.btncombine'/></button>
       </div>
     </div>
   </div>        
