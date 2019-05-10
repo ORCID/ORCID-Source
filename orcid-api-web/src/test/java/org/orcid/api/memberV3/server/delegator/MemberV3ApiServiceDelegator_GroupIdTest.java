@@ -7,18 +7,28 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
+import org.orcid.core.issn.IssnData;
+import org.orcid.core.issn.client.IssnClient;
+import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecords;
 import org.orcid.jaxb.model.v3.release.record.Address;
@@ -38,10 +48,14 @@ import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.persistence.dao.GroupIdRecordDao;
+import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
@@ -170,5 +184,99 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends DBUnitTest {
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecord);
         assertEquals("issn:0000001", groupIdRecord.getGroupId());
+    }
+    
+    @Test
+    public void testFindGroupIdRecordByNonExistentIssnGroupId() {
+        GroupIdRecordManager groupIdRecordManager = (GroupIdRecordManager) ReflectionTestUtils.getField(serviceDelegator, "groupIdRecordManager");
+        GroupIdRecordDao groupIdRecordDao = (GroupIdRecordDao) ReflectionTestUtils.getField(groupIdRecordManager, "groupIdRecordDao");
+        IssnClient issnClient = (IssnClient) ReflectionTestUtils.getField(groupIdRecordManager, "issnClient");
+        
+        GroupIdRecordDao mockGroupIdDao = Mockito.mock(GroupIdRecordDao.class);
+        Mockito.doNothing().when(mockGroupIdDao).persist(Mockito.any(GroupIdRecordEntity.class));
+        Mockito.when(mockGroupIdDao.findByGroupId(Mockito.eq("issn:98765432"))).thenThrow(NoResultException.class);
+        ReflectionTestUtils.setField(groupIdRecordManager, "groupIdRecordDao", mockGroupIdDao);
+        
+        GroupIdRecord record = new GroupIdRecord();
+        record.setGroupId("issn:98765432");
+        GregorianCalendar cal = new GregorianCalendar();
+        record.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+        record.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+        record.setName("some journal");
+        record.setType("journal");
+        record.setSource(new Source()); // XXX ORCID - which client?
+        
+        IssnClient mockIssnClient = Mockito.mock(IssnClient.class);
+        IssnData issnData = new IssnData();
+        issnData.setIssn("98765432");
+        issnData.setMainTitle("some journal");
+        Mockito.when(mockIssnClient.getIssnData(Mockito.eq("98765432"))).thenReturn(issnData);
+        
+        ReflectionTestUtils.setField(groupIdRecordManager, "issnClient", mockIssnClient);
+        
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        Response response = serviceDelegator.findGroupIdRecordByGroupId("issn:98765432");
+        assertNotNull(response);
+        GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
+        assertNotNull(groupIdRecord);
+        assertEquals("issn:98765432", groupIdRecord.getGroupId());
+        
+        ArgumentCaptor<GroupIdRecordEntity> captor = ArgumentCaptor.forClass(GroupIdRecordEntity.class);
+        Mockito.verify(mockGroupIdDao).persist(captor.capture());
+        
+        GroupIdRecordEntity entity = captor.getValue();
+        assertEquals("journal", entity.getGroupType());
+        assertEquals("issn:98765432", entity.getGroupId());
+        assertEquals("some journal", entity.getGroupName());
+        
+        ReflectionTestUtils.setField(groupIdRecordManager, "issnClient", issnClient);
+        ReflectionTestUtils.setField(groupIdRecordManager, "groupIdRecordDao", groupIdRecordDao);
+    }
+    
+    @Test
+    public void testCreateGroupIdRecordWithNonExistentIssnGroupId() {
+        GroupIdRecordManager groupIdRecordManager = (GroupIdRecordManager) ReflectionTestUtils.getField(serviceDelegator, "groupIdRecordManager");
+        GroupIdRecordDao groupIdRecordDao = (GroupIdRecordDao) ReflectionTestUtils.getField(groupIdRecordManager, "groupIdRecordDao");
+        IssnClient issnClient = (IssnClient) ReflectionTestUtils.getField(groupIdRecordManager, "issnClient");
+        
+        GroupIdRecordDao mockGroupIdDao = Mockito.mock(GroupIdRecordDao.class);
+        Mockito.doNothing().when(mockGroupIdDao).persist(Mockito.any(GroupIdRecordEntity.class));
+        Mockito.when(mockGroupIdDao.findByGroupId(Mockito.eq("issn:98765432"))).thenThrow(NoResultException.class);
+        ReflectionTestUtils.setField(groupIdRecordManager, "groupIdRecordDao", mockGroupIdDao);
+        
+        GroupIdRecord record = new GroupIdRecord();
+        record.setGroupId("issn:98765432");
+        GregorianCalendar cal = new GregorianCalendar();
+        record.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+        record.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+        record.setName("some journal");
+        record.setType("journal");
+        record.setSource(new Source()); // XXX ORCID - which client?
+        
+        IssnClient mockIssnClient = Mockito.mock(IssnClient.class);
+        IssnData issnData = new IssnData();
+        issnData.setIssn("98765432");
+        issnData.setMainTitle("some journal");
+        Mockito.when(mockIssnClient.getIssnData(Mockito.eq("98765432"))).thenReturn(issnData);
+        
+        ReflectionTestUtils.setField(groupIdRecordManager, "issnClient", mockIssnClient);
+        
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        
+        try {
+            serviceDelegator.createGroupIdRecord(record);
+            fail();
+        } catch (DuplicatedGroupIdRecordException e) {
+            ArgumentCaptor<GroupIdRecordEntity> captor = ArgumentCaptor.forClass(GroupIdRecordEntity.class);
+            Mockito.verify(mockGroupIdDao).persist(captor.capture());
+            
+            GroupIdRecordEntity entity = captor.getValue();
+            assertEquals("journal", entity.getGroupType());
+            assertEquals("issn:98765432", entity.getGroupId());
+            assertEquals("some journal", entity.getGroupName());
+            
+            ReflectionTestUtils.setField(groupIdRecordManager, "issnClient", issnClient);
+            ReflectionTestUtils.setField(groupIdRecordManager, "groupIdRecordDao", groupIdRecordDao);
+        }
     }
 }
