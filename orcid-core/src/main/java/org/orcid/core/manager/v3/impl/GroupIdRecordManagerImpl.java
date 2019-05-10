@@ -1,23 +1,27 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.util.List;
+import java.util.GregorianCalendar;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.OrcidElementCantBeDeletedException;
+import org.orcid.core.issn.IssnData;
+import org.orcid.core.issn.client.IssnClient;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.GroupIdRecordManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
+import org.orcid.jaxb.model.v3.release.common.CreatedDate;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.orcid.utils.DateUtils;
 
 public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManager {
 
@@ -32,7 +36,10 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
 
     @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
-
+    
+    @Resource
+    private IssnClient issnClient;
+    
     @Override
     public GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord) {
         SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
@@ -88,6 +95,24 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
             groupIdRecordDao.remove(Long.valueOf(putCode));
         } else {
             throw new GroupIdRecordNotFoundException();
+        }
+    }
+    
+    @Override
+    public GroupIdRecord createIssnGroupIdRecord(String groupId, String issn) {
+        IssnData issnData = issnClient.getIssnData(issn);
+        if (issnData != null) {
+            GroupIdRecord record = new GroupIdRecord();
+            record.setGroupId(groupId);
+            GregorianCalendar cal = new GregorianCalendar();
+            record.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+            record.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+            record.setName(issnData.getMainTitle());
+            record.setType("journal");
+            record.setSource(new Source()); // XXX ORCID - which client?
+            return record;
+        } else {
+            return null;
         }
     }
 
