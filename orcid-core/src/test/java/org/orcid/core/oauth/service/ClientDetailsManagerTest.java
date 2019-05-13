@@ -158,28 +158,33 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         assertNotNull(clientId);
         Set<String> registeredRedirectUris = clientDetails.getRegisteredRedirectUri();
         assertNotNull(registeredRedirectUris);
-        if (clientDetails.getClientId().equals("4444-4444-4444-4445") || clientDetails.getClientId().equals("4444-4444-4444-4498"))
+        if (clientDetails.getClientId().equals("4444-4444-4444-4445") || clientDetails.getClientId().equals("4444-4444-4444-4498")) {
             assertEquals(2, registeredRedirectUris.size());
-        else
+        } else {
             assertEquals(1, registeredRedirectUris.size());
+        }
+        
         Collection<GrantedAuthority> authorities = clientDetails.getAuthorities();
         assertNotNull(authorities);
         assertEquals(1, authorities.size());
         Set<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
         assertNotNull(authorizedGrantTypes);
-        if (clientDetails.getClientId().equals("4444-4444-4444-4498"))
+        if (clientDetails.getClientId().equals("4444-4444-4444-4498")) {
             assertEquals(2, authorizedGrantTypes.size());
-        else
+        } else if (!clientDetails.getClientId().equals("APP-1234567898765432")) {
             assertEquals(3, authorizedGrantTypes.size());
+        }
+        
         String clientSecret = clientDetails.getClientSecret();
         assertNotNull(clientSecret);
         Set<String> resourceIds = clientDetails.getResourceIds();
         assertNotNull(resourceIds);
-        if (!clientDetails.getClientId().equals("4444-4444-4444-4498"))
+        if (!clientDetails.getClientId().equals("4444-4444-4444-4498") && !clientDetails.getClientId().equals("APP-1234567898765432")) {
             assertEquals(1, resourceIds.size());
+        }
         Set<String> scope = clientDetails.getScope();
         assertNotNull(scope);
-        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 22 : "4444-4444-4444-4443".equals(clientDetails.getClientId()) ? 2 : 1;
+        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 23 : "4444-4444-4444-4443".equals(clientDetails.getClientId()) ? 2 : "APP-1234567898765432".equals(clientDetails.getClientId()) ? 0 : 1;
         assertEquals(expectedNumberOfScopes, scope.size());
     }
 }
