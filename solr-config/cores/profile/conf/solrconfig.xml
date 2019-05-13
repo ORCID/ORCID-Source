@@ -310,18 +310,18 @@
       -->
 	<autoCommit>
   		<maxTime>${solr.autoCommit.profile.maxTime:60000}</maxTime>
-  		<openSearcher>true</openSearcher>
+  		<openSearcher>false</openSearcher>
 	</autoCommit>
 
     <!-- softAutoCommit is like autoCommit except it causes a
          'soft' commit which only ensures that changes are visible
          but does not ensure that data is synced to disk.  This is
          faster and more near-realtime friendly than a hard commit.      
-    <autoSoftCommit>
+    -->
+	<autoSoftCommit>
       <maxTime>${solr.autoSoftCommit.profile.maxTime:30000}</maxTime>
     </autoSoftCommit>
-    -->
-	
+    
     <!-- Update Related Event Listeners
 
          Various IndexWriter related events can trigger Listeners to
