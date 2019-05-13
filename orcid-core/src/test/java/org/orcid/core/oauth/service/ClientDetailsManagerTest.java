@@ -63,7 +63,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testLoadClientByClientId() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(9, all.size());
+        assertEquals(10, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
             assertNotNull(clientDetails);
