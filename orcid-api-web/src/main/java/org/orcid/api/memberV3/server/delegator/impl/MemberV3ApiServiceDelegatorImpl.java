@@ -709,8 +709,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Matcher matcher = issnGroupTypePattern.matcher(groupIdRecord.getGroupId());
         if (!groupIdRecordManager.exists(groupIdRecord.getGroupId()) && matcher.find()) {
             // issn group type
-            GroupIdRecord issnGroupIdRecord = groupIdRecordManager.createIssnGroupIdRecord(groupIdRecord.getGroupId(), matcher.group(1));
-            groupIdRecordManager.createGroupIdRecord(issnGroupIdRecord);
+            groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupIdRecord.getGroupId(), matcher.group(1));
             throw new DuplicatedGroupIdRecordException();
         }
         
@@ -769,8 +768,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             return Response.ok(record.get()).build();
         } else if (matcher.find()) {
             // issn group type
-            GroupIdRecord issnGroupIdRecord = groupIdRecordManager.createIssnGroupIdRecord(groupId, matcher.group(1));
-            return Response.ok(groupIdRecordManager.createGroupIdRecord(issnGroupIdRecord)).build();
+            return Response.ok(groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupId, matcher.group(1))).build();
         }
         return Response.ok(new GroupIdRecord()).build();
     }

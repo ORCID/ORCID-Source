@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
+import org.orcid.core.exception.IssnDataNotFoundException;
 import org.orcid.core.exception.OrcidElementCantBeDeletedException;
 import org.orcid.core.issn.IssnData;
 import org.orcid.core.issn.client.IssnClient;
@@ -18,10 +19,12 @@ import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManager {
 
@@ -36,6 +39,9 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
 
     @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
+    
+    @Value("${org.orcid.core.issn.source}")
+    private String orcidSourceClientDetailsId;
     
     @Resource
     private IssnClient issnClient;
@@ -53,6 +59,15 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
                 entity.setSourceId(sourceEntity.getSourceProfile().getId());
             }
         }
+        groupIdRecordDao.persist(entity);
+        return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
+    }
+    
+    @Override
+    public GroupIdRecord createOrcidSourceIssnGroupIdRecord(String groupId, String issn) {
+        GroupIdRecord issnRecord = createIssnGroupIdRecord(groupId, issn);
+        GroupIdRecordEntity entity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(issnRecord);
+        entity.setClientSourceId(orcidSourceClientDetailsId);
         groupIdRecordDao.persist(entity);
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
     }
@@ -98,24 +113,22 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
         }
     }
     
-    @Override
-    public GroupIdRecord createIssnGroupIdRecord(String groupId, String issn) {
+    private GroupIdRecord createIssnGroupIdRecord(String groupId, String issn) {
         IssnData issnData = issnClient.getIssnData(issn);
-        if (issnData != null) {
-            GroupIdRecord record = new GroupIdRecord();
-            record.setGroupId(groupId);
-            GregorianCalendar cal = new GregorianCalendar();
-            record.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
-            record.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
-            record.setName(issnData.getMainTitle());
-            record.setType("journal");
-            record.setSource(new Source()); // XXX ORCID - which client?
-            return record;
-        } else {
-            return null;
+        if (issnData == null) {
+            throw new IssnDataNotFoundException();
         }
+        
+        GroupIdRecord record = new GroupIdRecord();
+        record.setGroupId(groupId);
+        GregorianCalendar cal = new GregorianCalendar();
+        record.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+        record.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+        record.setName(issnData.getMainTitle());
+        record.setType("journal");
+        return record;
     }
-
+    
     private void validateDuplicate(GroupIdRecord newGroupIdRecord) {
         if (groupIdRecordDao.duplicateExists(newGroupIdRecord.getPutCode(), newGroupIdRecord.getGroupId())) {
             throw new DuplicatedGroupIdRecordException();

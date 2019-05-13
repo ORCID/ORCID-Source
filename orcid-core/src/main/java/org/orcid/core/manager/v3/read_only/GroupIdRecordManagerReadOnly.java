@@ -16,4 +16,5 @@ public interface GroupIdRecordManagerReadOnly {
     Optional<GroupIdRecord> findByGroupId(String groupId);
     
     Optional<GroupIdRecord> findGroupIdRecordByName(String name);
+
 }

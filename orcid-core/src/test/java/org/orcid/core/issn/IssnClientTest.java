@@ -23,6 +23,7 @@ public class IssnClientTest {
     @Before
     public void setUp() throws IOException {
         ReflectionTestUtils.setField(issnClient, "client", getMockedClient());
+        ReflectionTestUtils.setField(issnClient, "url", "anything");
     }
     
     @Test
