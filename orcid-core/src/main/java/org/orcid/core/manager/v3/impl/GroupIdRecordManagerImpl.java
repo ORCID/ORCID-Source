@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
-import org.orcid.core.exception.IssnDataNotFoundException;
+import org.orcid.core.exception.InvalidIssnException;
 import org.orcid.core.exception.OrcidElementCantBeDeletedException;
 import org.orcid.core.issn.IssnData;
 import org.orcid.core.issn.client.IssnClient;
@@ -16,10 +16,9 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.GroupIdRecordManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
+import org.orcid.core.manager.validator.IssnValidator;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.release.common.Source;
-import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -45,6 +44,9 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
     
     @Resource
     private IssnClient issnClient;
+    
+    @Resource
+    private IssnValidator issnValidator;
     
     @Override
     public GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord) {
@@ -114,9 +116,13 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
     }
     
     private GroupIdRecord createIssnGroupIdRecord(String groupId, String issn) {
+        if (!issnValidator.issnValid(issn)) {
+            throw new InvalidIssnException();
+        }
+        
         IssnData issnData = issnClient.getIssnData(issn);
         if (issnData == null) {
-            throw new IssnDataNotFoundException();
+            throw new InvalidIssnException();
         }
         
         GroupIdRecord record = new GroupIdRecord();

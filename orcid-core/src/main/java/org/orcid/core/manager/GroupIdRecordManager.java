@@ -11,5 +11,5 @@ public interface GroupIdRecordManager extends GroupIdRecordManagerReadOnly {
 
     void deleteGroupIdRecord(Long putCode);
 
-    GroupIdRecord createIssnGroupIdRecord(String groupId, String group);    
+    GroupIdRecord createOrcidSourceIssnGroupIdRecord(String groupId, String issn);    
 }
