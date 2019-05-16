@@ -119,15 +119,15 @@
                                         </a>
                                         <nav role="presentation">
                                             <ul class="inline-list" role="presentation">
-                                                <li role="presentation"><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter"><span class="social social-twitter" aria-label="twitter"></span></a></li>
-                                                <li role="presentation"><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss"><span class="social social-rss" aria-label="rss"></span></a></li>
-                                                <li role="presentation"><a class="social-button" href="https://github.com/ORCID" target="social-github"><span class="social social-github" aria-label="github"></span></a></li>
+                                                <li role="presentation"><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter" rel="noreferrer"><span class="social social-twitter" aria-label="twitter"></span></a></li>
+                                                <li role="presentation"><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss" rel="noreferrer"><span class="social social-rss" aria-label="rss"></span></a></li>
+                                                <li role="presentation"><a class="social-button" href="https://github.com/ORCID" target="social-github" rel="noreferrer"><span class="social social-github" aria-label="github"></span></a></li>
                                             </ul>
                                         </nav>
                                     </div>
 
                                     <p role="presentation">
-                                        <a rel="license" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/cc0_80x15.png'}}" style="border-style: none; margin-right: 4px;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license" target="footer.copyright_cc0" class="footer-url" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a></p>
+                                        <a rel="license noreferrer" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/" ><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/cc0_80x15.png'}}" style="border-style: none; margin-right: 4px;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license noreferrer" target="footer.copyright_cc0" class="footer-url" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a></p>
                                     <nav role="presentation">
                                         <ul class="inline-list" role="banner">
                                             <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
