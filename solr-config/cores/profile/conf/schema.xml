@@ -268,6 +268,19 @@
       </analyzer>
     </fieldType>
 
+    <fieldType name="diacritic_removed_text" class="solr.TextField">
+      <analyzer type="index">
+	    <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-FoldToASCII.txt"/>      
+	    <tokenizer class="solr.StandardTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+	    <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-FoldToASCII.txt"/>
+	    <tokenizer class="solr.StandardTokenizerFactory"/>
+	    <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
+	
     <!-- A general text field that has reasonable, generic
          cross-language defaults: it tokenizes with StandardTokenizer,
 	       removes stop words from case-insensitive "stopwords.txt"
@@ -1035,7 +1048,7 @@
 		stored="true" multiValued="false" />
 	
 	<!-- Fields excluded from result doc -->
-	<field name="given-and-family-names" type="text_general"
+	<field name="given-and-family-names" type="diacritic_removed_text"
 		indexed="true" stored="false" multiValued="false" />
 	<field name="biography" type="text_general"
 		indexed="true" stored="false" multiValued="false" />
