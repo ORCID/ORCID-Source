@@ -407,7 +407,7 @@
                             <div class="pull-right" *ngIf="groupingSuggestionPresent">
                                 
                                     <button class="btn btn-primary leftBuffer" (click)="mergeSuggestionConfirm()">
-                                        <@orcid.msg 'groups.merge.suggestion.manage_duplicates'/>
+                                        <@orcid.msg 'groups.combine.suggestion.manage_similar'/>
                                     </button>
                         
                             </div>
@@ -428,7 +428,7 @@
                                     <div class="popover top" [ngClass]="showElement['worksBulkEditMerge'] == true ? 'block' : ''">
                                         <div class="arrow"></div>
                                         <div class="popover-content">
-                                            <@orcid.msg 'groups.merge.helpPopoverMerge_1'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'common.learn_more'/></a>
+                                            <@orcid.msg 'groups.combine.helpPopover_1'/> <a href="<@orcid.msg 'common.kb_uri_default'/>360006894774" target="privacyToggle.help.more_information"> <@orcid.msg 'common.learn_more'/></a>
                                         </div>                
                                     </div>
                                 </div>
@@ -459,9 +459,9 @@
                             </li>
                         </ul>
                         <div class="notification-alert clear-fix bottomBuffer" *ngIf="showMergeWorksExtIdsError || showMergeWorksApiMissingExtIdsError">
-                            <@orcid.msg 'groups.merge.no_external_ids_1'/>&nbsp; 
-                            <span *ngIf="showMergeWorksExtIdsError"><@orcid.msg 'groups.merge.no_external_ids_2_user_source'/></span>
-                            <span *ngIf="showMergeWorksApiMissingExtIdsError"><@orcid.msg 'groups.merge.no_external_ids_2_client_source'/></span>&nbsp;<a target="groups.merge.no_external_ids_3" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.merge.no_external_ids_3'/></a>
+                            <@orcid.msg 'groups.combine.no_external_ids_1'/>&nbsp; 
+                            <span *ngIf="showMergeWorksExtIdsError"><@orcid.msg 'groups.combine.no_external_ids_2_user_source'/></span>
+                            <span *ngIf="showMergeWorksApiMissingExtIdsError"><@orcid.msg 'groups.combine.no_external_ids_2_client_source'/></span>&nbsp;<a target="groups.combine.no_external_ids_3" href="<@orcid.msg 'common.kb_uri_default'/>360006894774"><@orcid.msg 'groups.combine.no_external_ids_3'/></a>
                             <button *ngIf="showMergeWorksExtIdsError" class="btn btn-primary cancel-right pull-right topBuffer" (click)="dismissError('showMergeWorksExtIdsError')">
                                  <@orcid.msg 'common.cookies.dismiss'/>
                             </button>
