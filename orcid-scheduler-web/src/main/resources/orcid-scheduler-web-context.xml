@@ -6,36 +6,32 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd">
 
-    <import resource="classpath*:orcid-scheduler-beans-context.xml"/>
+	<import resource="classpath*:orcid-scheduler-beans-context.xml"/>
 
-    <task:scheduled-tasks scheduler="scheduler">   
-	    <task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
-        <task:scheduled ref="statisticsCronJob" method="generateStatistics" cron="${org.orcid.scheduler.web.processStatisticsGeneratorManager:0 */5 * * * *}"/>
-         <task:scheduled ref="memberChosenOrgDisambiguatedManager" method="refreshMemberChosenOrgs" cron="${org.orcid.scheduler.web.processMemberChosenOrgs:15 15 0-2 * * *}"/>
-        <task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
-        <task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>
-        <task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" cron="${org.orcid.scheduler.web.processFundingSubTypesForIndexing:15 15 * * * *}" />
-        <task:scheduled ref="clientDetailsManager" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />        
-        <task:scheduled ref="emailMessageSender" method="sendEmailMessages" cron="${org.orcid.scheduler.web.sendEmailMessages:35 */5 * * * *}" />
-        <task:scheduled ref="identityProviderManager" method="loadIdentityProviders" cron="${org.orcid.scheduler.web.loadIdentityProviders:05 05 0-2 * * *}"/>
-        <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoArchive" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
-        <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoDelete" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>
-        <task:scheduled ref="notificationManagerV3" method="processUnverifiedEmails2Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails2Days:0 10 * * * *}"/>
+	<task:scheduled-tasks scheduler="scheduler">   
+		<task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
+		<task:scheduled ref="statisticsCronJob" method="generateStatistics" cron="${org.orcid.scheduler.web.processStatisticsGeneratorManager:0 */5 * * * *}"/>
+		<task:scheduled ref="memberChosenOrgDisambiguatedManager" method="refreshMemberChosenOrgs" cron="${org.orcid.scheduler.web.processMemberChosenOrgs:15 15 0-2 * * *}"/>
+		<task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
+		<task:scheduled ref="clientDetailsManager" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />        
+		<task:scheduled ref="emailMessageSender" method="sendEmailMessages" cron="${org.orcid.scheduler.web.sendEmailMessages:35 */5 * * * *}" />
+		<task:scheduled ref="identityProviderManager" method="loadIdentityProviders" cron="${org.orcid.scheduler.web.loadIdentityProviders:05 05 0-2 * * *}"/>
+		<task:scheduled ref="notificationManager" method="processOldNotificationsToAutoArchive" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
+		<task:scheduled ref="notificationManager" method="processOldNotificationsToAutoDelete" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>
+		<task:scheduled ref="notificationManagerV3" method="processUnverifiedEmails2Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails2Days:0 10 * * * *}"/>
 		<task:scheduled ref="notificationManagerV3" method="archiveOffsetNotifications" cron="${org.orcid.scheduler.web.archiveOffsetNotifications:08 08 3 * * *}"/>
-		<task:scheduled ref="notificationManagerV3" method="deleteOffsetNotifications" cron="${org.orcid.scheduler.web.deleteOffsetNotifications:09 09 4 * * *}"/>
-	
+		<task:scheduled ref="notificationManagerV3" method="deleteOffsetNotifications" cron="${org.orcid.scheduler.web.deleteOffsetNotifications:09 09 4 * * *}"/>	
 		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:30}000"/>
-     	<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
-        <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
-		<task:scheduled ref="orcidRecordIndexer" method="reindexRecordsForSolrUpgrade" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:60}000"/>			      
-		
+		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
+		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
 		<task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesToFlagForIndexing" cron="${org.orcid.scheduler.web.processUnclaimedProfilesToFlagForIndexingCron:25 25 * * * *}"/>
-        <task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
-        
-        <task:scheduled ref="publicProfileValidator" method="validatePublicRecords" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
-    
-    </task:scheduled-tasks>
+		<task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
+		<task:scheduled ref="publicProfileValidator" method="validatePublicRecords" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
+		<task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>		       
+		<task:scheduled ref="orcidRecordIndexer" method="reindexRecordsForSolrUpgrade" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:60}000"/>			      
+		<task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" cron="${org.orcid.scheduler.web.processFundingSubTypesForIndexing:15 15 * * * *}" />		
+	</task:scheduled-tasks>
 
-    <task:scheduler id="scheduler" pool-size="10"/>
+	<task:scheduler id="scheduler" pool-size="10"/>
 
 </beans>
