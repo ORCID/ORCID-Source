@@ -133,7 +133,7 @@ import org.springframework.stereotype.Component;
 public class MemberV3ApiServiceDelegatorImpl implements
         MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> {
 
-    private static Pattern issnGroupTypePattern = Pattern.compile("issn:(\\d{4}-{0,1}\\d{4})");
+    private static Pattern issnGroupTypePattern = Pattern.compile("^issn:(\\d{4}-{0,1}\\d{3}[\\dXx])$");
     
     // Managers that goes to the primary database
     @Resource(name = "workManagerV3")

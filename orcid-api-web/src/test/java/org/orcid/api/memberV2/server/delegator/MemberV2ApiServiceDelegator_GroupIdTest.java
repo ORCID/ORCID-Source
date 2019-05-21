@@ -289,4 +289,58 @@ public class MemberV2ApiServiceDelegator_GroupIdTest extends DBUnitTest {
         }
     }
     
+    @Test
+    public void testCreateGroupIdRecordWithAnotherNonExistentIssnGroupId() {
+        GroupIdRecordManager groupIdRecordManager = (GroupIdRecordManager) ReflectionTestUtils.getField(serviceDelegator, "groupIdRecordManager");
+        GroupIdRecordDao groupIdRecordDao = (GroupIdRecordDao) ReflectionTestUtils.getField(groupIdRecordManager, "groupIdRecordDao");
+        IssnClient issnClient = (IssnClient) ReflectionTestUtils.getField(groupIdRecordManager, "issnClient");
+        
+        GroupIdRecordDao mockGroupIdDao = Mockito.mock(GroupIdRecordDao.class);
+        Mockito.doNothing().when(mockGroupIdDao).persist(Mockito.any(GroupIdRecordEntity.class));
+        Mockito.when(mockGroupIdDao.findByGroupId(Mockito.eq("issn:9876-543X"))).thenThrow(NoResultException.class);
+        ReflectionTestUtils.setField(groupIdRecordManager, "groupIdRecordDao", mockGroupIdDao);
+        ReflectionTestUtils.setField(groupIdRecordManager, "orcidSourceClientDetailsId", "APP-1234567898765432");
+        
+        IssnValidator mockIssnValidator = Mockito.mock(IssnValidator.class);
+        Mockito.when(mockIssnValidator.issnValid(Mockito.anyString())).thenReturn(true);
+        IssnValidator issnValidator = (IssnValidator) ReflectionTestUtils.getField(groupIdRecordManager, "issnValidator");
+        ReflectionTestUtils.setField(groupIdRecordManager, "issnValidator", mockIssnValidator);
+        
+        GroupIdRecord record = new GroupIdRecord();
+        record.setGroupId("issn:9876-543X");
+        GregorianCalendar cal = new GregorianCalendar();
+        record.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+        record.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+        record.setName("some journal");
+        record.setType("journal");
+        record.setSource(new Source()); // XXX ORCID - which client?
+        
+        IssnClient mockIssnClient = Mockito.mock(IssnClient.class);
+        IssnData issnData = new IssnData();
+        issnData.setIssn("9876-543X");
+        issnData.setMainTitle("some journal");
+        Mockito.when(mockIssnClient.getIssnData(Mockito.eq("9876-543X"))).thenReturn(issnData);
+        
+        ReflectionTestUtils.setField(groupIdRecordManager, "issnClient", mockIssnClient);
+        
+        SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
+        
+        try {
+            serviceDelegator.createGroupIdRecord(record);
+            fail();
+        } catch (DuplicatedGroupIdRecordException e) {
+            ArgumentCaptor<GroupIdRecordEntity> captor = ArgumentCaptor.forClass(GroupIdRecordEntity.class);
+            Mockito.verify(mockGroupIdDao).persist(captor.capture());
+            
+            GroupIdRecordEntity entity = captor.getValue();
+            assertEquals("journal", entity.getGroupType());
+            assertEquals("issn:9876-543X", entity.getGroupId());
+            assertEquals("some journal", entity.getGroupName());
+            
+            ReflectionTestUtils.setField(groupIdRecordManager, "issnClient", issnClient);
+            ReflectionTestUtils.setField(groupIdRecordManager, "groupIdRecordDao", groupIdRecordDao);
+            ReflectionTestUtils.setField(groupIdRecordManager, "issnValidator", issnValidator);
+        }
+    }
+    
 }
