@@ -327,8 +327,8 @@
                         <a (click)="group.activePutCode = researchResource.putCode">                                
                             {{researchResource?.sourceName}}
                             <#--  OBO  -->
-                            <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.sourceClientId) ||
-                            (researchResource.source.assertionOriginOrcid && researchResource.source.assertionOriginOrcid !== researchResource.source.sourceOrcid)">
+                            <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.source) ||
+                            (researchResource.assertionOriginOrcid && researchResource.assertionOriginOrcid !== researchResource.source)">
                             <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}}
                             </ng-container>
                         </a>
@@ -361,8 +361,8 @@
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <b><@orcid.msg 'groups.common.source'/>:</b> {{researchResource?.sourceName }}
                         <#--  OBO  -->
-                        <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.sourceClientId) ||
-                        (researchResource.source.assertionOriginOrcid && researchResource.source.assertionOriginOrcid !== researchResource.source.sourceOrcid)">
+                        <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.source) ||
+                        (researchResource.assertionOriginOrcid && researchResource.assertionOriginOrcid !== researchResource.source)">
                         <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}}
                         </ng-container>
                     </div>                   

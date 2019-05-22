@@ -166,8 +166,8 @@
                                                                 <div class="col-md-7 col-sm-7 col-xs-12">
                                                                     <b><@orcid.msg 'groups.common.source'/>:</b> {{peerReview.sourceName}}   
                                                                     <#--  OBO  -->
-                                                                    <ng-container *ngIf="(peerReview.assertionOriginClientId && peerReview.assertionOriginClientId !== peerReview.sourceClientId) ||
-                                                                    (peerReview.source.assertionOriginOrcid && peerReview.source.assertionOriginOrcid !== peerReview.source.sourceOrcid)">
+                                                                    <ng-container *ngIf="(peerReview.assertionOriginClientId && peerReview.assertionOriginClientId !== peerReview.source) ||
+                                                                    (peerReview.assertionOriginOrcid && peerReview.assertionOriginOrcid !== peerReview.source)">
                                                                     <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{peerReview.assertionOriginName || peerReview.assertionOriginOrcid}}
                                                                     </ng-container> 
                                                                 </div>

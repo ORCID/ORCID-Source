@@ -175,8 +175,8 @@
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.activePutCode]">
                         {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
                              <#--  OBO  -->
-                            <ng-container *ngIf="(affiliation.assertionOriginClientId && affiliation.assertionOriginClientId !== affiliation.sourceClientId) ||
-                            (affiliation.source.assertionOriginOrcid && affiliation.source.assertionOriginOrcid !== affiliation.source.sourceOrcid)">
+                            <ng-container *ngIf="(affiliation.assertionOriginClientId && affiliation.assertionOriginClientId !== affiliation.source) ||
+                            (affiliation.assertionOriginOrcid && affiliation.assertionOriginOrcid !== affiliation.source)">
                             <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{affiliation.assertionOriginName || affiliation.assertionOriginOrcid}}
                             </ng-container>
                     </div>
@@ -228,8 +228,8 @@
                         <a (click)="swapSources(group, affiliation.putCode.value)">                               
                             {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
                              <#--  OBO  -->
-                            <ng-container *ngIf="(affiliation.assertionOriginClientId && affiliation.assertionOriginClientId !== affiliation.sourceClientId) ||
-                            (affiliation.source.assertionOriginOrcid && affiliation.source.assertionOriginOrcid !== affiliation.source.sourceOrcid)">
+                            <ng-container *ngIf="(affiliation.assertionOriginClientId && affiliation.assertionOriginClientId !== affiliation.source) ||
+                            (affiliation.assertionOriginOrcid && affiliation.assertionOriginOrcid !== affiliation.source)">
                             <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{affiliation.assertionOriginName || affiliation.assertionOriginOrcid}}
                             </ng-container>
                         </a>
@@ -270,8 +270,8 @@
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <b><@orcid.msg 'groups.common.source'/>:</b> {{(affiliation.sourceName == null || affiliation.sourceName == '') ? affiliation.source : affiliation.sourceName }}
                              <#--  OBO  -->
-                            <ng-container *ngIf="(affiliation.assertionOriginClientId && affiliation.assertionOriginClientId !== affiliation.sourceClientId) ||
-                            (affiliation.source.assertionOriginOrcid && affiliation.source.assertionOriginOrcid !== affiliation.source.sourceOrcid)">
+                            <ng-container *ngIf="(affiliation.assertionOriginClientId && affiliation.assertionOriginClientId !== affiliation.source) ||
+                            (affiliation.assertionOriginOrcid && affiliation.assertionOriginOrcid !== affiliation.source)">
                             <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{affiliation.assertionOriginName || affiliation.assertionOriginOrcid}}
                             </ng-container>
                     </div>
