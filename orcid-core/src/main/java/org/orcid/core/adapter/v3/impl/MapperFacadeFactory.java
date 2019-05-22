@@ -467,12 +467,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.field("putCode", "id");
         addV3DateFields(workClassMap);
         registerSourceConverters(mapperFactory, workClassMap);
+        workClassMap.field("shortDescription", "description");
+        workClassMap.field("publicationDate", "publicationDate");        
+        workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
+        workClassMap.field("languageCode", "languageCode");
+        workClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        workClassMap.field("url.value", "workUrl");
+        workClassMap.field("country.value", "iso2Country");
         workClassMap.field("journalTitle.content", "journalTitle");
         workClassMap.field("workTitle.title.content", "title");
         workClassMap.field("workTitle.translatedTitle.content", "translatedTitle");
         workClassMap.field("workTitle.translatedTitle.languageCode", "translatedTitleLanguageCode");
         workClassMap.field("workTitle.subtitle.content", "subtitle");
-        workClassMap.field("shortDescription", "description");
         workClassMap.field("workCitation.workCitationType", "citationType");
         workClassMap.field("workCitation.citation", "citation");
         workClassMap.exclude("workType").customize(new CustomMapper<Work, WorkEntity>() {
@@ -481,7 +488,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
              */            
             @Override
             public void mapAtoB(Work a, WorkEntity b, MappingContext context) {
-                b.setWorkType(a.getWorkType().name());                               
+                b.setWorkType(a.getWorkType().name());
+                b.setWorkUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+                b.setIso2Country(a.getCountry() == null ? null : a.getCountry().getValue().toString());
+                b.setJournalTitle(a.getJournalTitle() == null ? null : a.getJournalTitle().getContent());
+                b.setTranslatedTitle((a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode((a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                b.setSubtitle((a.getWorkTitle() == null || a.getWorkTitle().getSubtitle() == null) ? null : a.getWorkTitle().getSubtitle().getContent());
+                b.setCitation(a.getWorkCitation() == null ? null : a.getWorkCitation().getCitation());
+                b.setCitationType((a.getWorkCitation() == null || a.getWorkCitation().getWorkCitationType() == null) ? null : a.getWorkCitation().getWorkCitationType().toString());
             }
             
             /**
@@ -493,13 +508,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             }
             
         });
-        workClassMap.field("publicationDate", "publicationDate");        
-        workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        workClassMap.field("url.value", "workUrl");
-        workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
-        workClassMap.field("languageCode", "languageCode");
-        workClassMap.field("country.value", "iso2Country");
-        workClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         workClassMap.byDefault();
         workClassMap.register();
 
