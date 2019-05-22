@@ -1,0 +1,121 @@
+{
+  "@graph" : [ {
+    "@id" : "http://id.loc.gov/vocabulary/countries/xxk",
+    "label" : "United Kingdom"
+  }, {
+    "@id" : "organization/ISSNCenter#_j",
+    "@type" : "http://schema.org/Organization"
+  }, {
+    "@id" : "resource/ISSN-L/0260-8774",
+    "identifiedBy" : "resource/ISSN/0260-8774#ISSN-L"
+  }, {
+    "@id" : "resource/ISSN/0260-8774",
+    "@type" : [ "http://schema.org/Periodical", "http://id.loc.gov/ontologies/bibframe/Instance", "http://id.loc.gov/ontologies/bibframe/Work" ],
+    "identifiedBy" : [ "resource/ISSN/0260-8774#KeyTitle", "resource/ISSN/0260-8774#ISSN-L", "resource/ISSN/0260-8774#ISSN" ],
+    "otherPhysicalFormat" : "resource/ISSN/1873-5770",
+    "title" : "resource/ISSN/0260-8774#KeyTitle",
+    "format" : "vocabularies/medium#Print",
+    "identifier" : "0260-8774",
+    "isFormatOf" : "resource/ISSN/1873-5770",
+    "type" : "http://marc21rdf.info/terms/formofmaterial#a",
+    "http://purl.org/ontology/bibo/issn" : "0260-8774",
+    "isPartOf" : "resource/ISSN-L/0260-8774",
+    "issn" : "0260-8774",
+    "name" : "Journal of food engineering",
+    "publication" : "resource/ISSN/0260-8774#ReferencePublicationEvent"
+  }, {
+    "@id" : "resource/ISSN/0260-8774#ISSN",
+    "@type" : "http://id.loc.gov/ontologies/bibframe/Issn",
+    "status" : "vocabularies/IdentifierStatus#Valid",
+    "value" : "0260-8774"
+  }, {
+    "@id" : "resource/ISSN/0260-8774#ISSN-L",
+    "@type" : "http://id.loc.gov/ontologies/bibframe/IssnL",
+    "status" : "vocabularies/IdentifierStatus#Valid",
+    "value" : "0260-8774"
+  }, {
+    "@id" : "resource/ISSN/0260-8774#KeyTitle",
+    "@type" : [ "http://id.loc.gov/ontologies/bibframe/Identifier", "http://id.loc.gov/ontologies/bibframe/KeyTitle" ],
+    "value" : "Journal of food engineering"
+  }, {
+    "@id" : "resource/ISSN/0260-8774#Record",
+    "@type" : "http://schema.org/CreativeWork",
+    "status" : "vocabularies/RecordStatus#Register",
+    "modified" : "20090125172700.0",
+    "mainEntity" : "resource/ISSN/0260-8774",
+    "wasAttributedTo" : "organization/ISSNCenter#_j"
+  }, {
+    "@id" : "resource/ISSN/0260-8774#ReferencePublicationEvent",
+    "@type" : "http://schema.org/PublicationEvent",
+    "location" : "http://id.loc.gov/vocabulary/countries/xxk"
+  } ],
+  "@context" : {
+    "wasAttributedTo" : {
+      "@id" : "http://www.w3.org/ns/prov#wasAttributedTo",
+      "@type" : "@id"
+    },
+    "mainEntity" : {
+      "@id" : "http://schema.org/mainEntity",
+      "@type" : "@id"
+    },
+    "status" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/status",
+      "@type" : "@id"
+    },
+    "modified" : {
+      "@id" : "http://purl.org/dc/terms/modified",
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "value" : {
+      "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"
+    },
+    "label" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "location" : {
+      "@id" : "http://schema.org/location",
+      "@type" : "@id"
+    },
+    "isPartOf" : {
+      "@id" : "http://schema.org/isPartOf",
+      "@type" : "@id"
+    },
+    "identifier" : {
+      "@id" : "http://purl.org/dc/elements/1.1/identifier"
+    },
+    "isFormatOf" : {
+      "@id" : "http://purl.org/dc/terms/isFormatOf",
+      "@type" : "@id"
+    },
+    "name" : {
+      "@id" : "http://schema.org/name"
+    },
+    "otherPhysicalFormat" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/otherPhysicalFormat",
+      "@type" : "@id"
+    },
+    "identifiedBy" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+      "@type" : "@id"
+    },
+    "issn" : {
+      "@id" : "http://schema.org/issn"
+    },
+    "format" : {
+      "@id" : "http://purl.org/dc/elements/1.1/format",
+      "@type" : "@id"
+    },
+    "publication" : {
+      "@id" : "http://schema.org/publication",
+      "@type" : "@id"
+    },
+    "type" : {
+      "@id" : "http://purl.org/dc/terms/type",
+      "@type" : "@id"
+    },
+    "title" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/title",
+      "@type" : "@id"
+    }
+  }
+}

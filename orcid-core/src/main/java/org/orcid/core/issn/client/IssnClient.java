@@ -52,6 +52,17 @@ public class IssnClient {
                 issnData.setMainTitle(jsonArray.getJSONObject(i).getString("mainTitle"));
                 issnData.setIssn(jsonArray.getJSONObject(i).getString("issn"));
                 return issnData;
+            } else if (jsonArray.getJSONObject(i).has("name")) {
+                // name and mainTitle always in same object - therefore if no mainTitle but name present, no mainTitle in data
+                issnData.setIssn(jsonArray.getJSONObject(i).getString("issn"));
+                
+                try {
+                    issnData.setMainTitle(jsonArray.getJSONObject(i).getJSONArray("name").getString(0));
+                } catch (JSONException e) {
+                    // may not be an array
+                    issnData.setMainTitle(jsonArray.getJSONObject(i).getString("name"));
+                }
+                return issnData;
             }
         }
         return null;
