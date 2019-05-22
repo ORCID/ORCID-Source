@@ -281,8 +281,8 @@
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
                         {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                         <#--  OBO  -->
-                        <ng-container *ngIf="(work.assertionOriginClientId && work.assertionOriginClientId !== work.sourceClientId) ||
-                        (work.source.assertionOriginOrcid && work.source.assertionOriginOrcid !== work.source.sourceOrcid)">
+                        <ng-container *ngIf="(work.assertionOriginClientId && work.assertionOriginClientId !== work.source) ||
+                        (work.assertionOriginOrcid && work.assertionOriginOrcid !== work.source)">
                         <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{work.assertionOriginName || work.assertionOriginOrcid}}
                         </ng-container>
                     </div>
@@ -332,8 +332,8 @@
                         <a (click)="group.activePutCode = work.putCode.value">                                
                             {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                             <#--  OBO  -->
-                            <ng-container *ngIf="(work.assertionOriginClientId && work.assertionOriginClientId !== work.sourceClientId) ||
-                            (work.source.assertionOriginOrcid && work.source.assertionOriginOrcid !== work.source.sourceOrcid)">
+                            <ng-container *ngIf="(work.assertionOriginClientId && work.assertionOriginClientId !== work.source) ||
+                            (work.assertionOriginOrcid && work.assertionOriginOrcid !== work.source)">
                             <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{work.assertionOriginName || work.assertionOriginOrcid}}
                             </ng-container>
                         </a>
@@ -374,8 +374,8 @@
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <b><@orcid.msg 'groups.common.source'/>:</b> {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                         <#--  OBO  -->
-                        <ng-container *ngIf="(work.assertionOriginClientId && work.assertionOriginClientId !== work.sourceClientId) ||
-                        (work.source.assertionOriginOrcid && work.source.assertionOriginOrcid !== work.source.sourceOrcid)">
+                        <ng-container *ngIf="(work.assertionOriginClientId && work.assertionOriginClientId !== work.source) ||
+                        (work.assertionOriginOrcid && work.assertionOriginOrcid !== work.source)">
                         <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{work.assertionOriginName || work.assertionOriginOrcid}}
                         </ng-container>
                     </div>

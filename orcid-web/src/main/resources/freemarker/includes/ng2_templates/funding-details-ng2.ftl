@@ -207,8 +207,8 @@
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
                         {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                              <#--  OBO  -->
-                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.sourceClientId) ||
-                            (funding.source.assertionOriginOrcid && funding.source.assertionOriginOrcid !== funding.source.sourceOrcid)">
+                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.source) ||
+                            (funding.assertionOriginOrcid && funding.assertionOriginOrcid !== funding.source)">
                             <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{funding.assertionOriginName || funding.assertionOriginOrcid}}
                             </ng-container>
                     </div>                          
@@ -253,8 +253,8 @@
                             <a (click)="swapSources(group, funding.putCode.value)">                                
                             {{(funding?.sourceName == null || funding?.sourceName == '') ? funding?.source : funding?.sourceName}}
                              <#--  OBO  -->
-                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.sourceClientId) ||
-                            (funding.source.assertionOriginOrcid && funding.source.assertionOriginOrcid !== funding.source.sourceOrcid)">
+                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.source) ||
+                            (funding.assertionOriginOrcid && funding.assertionOriginOrcid !== funding.source)">
                             <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{funding.assertionOriginName || funding.assertionOriginOrcid}}
                             </ng-container>
                         </a>
@@ -295,8 +295,8 @@
                     <div class="col-md-7 col-sm-7 col-xs-12">
                           <b><@orcid.msg 'groups.common.source'/>:</b> {{(funding?.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                              <#--  OBO  -->
-                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.sourceClientId) ||
-                            (funding.source.assertionOriginOrcid && funding.source.assertionOriginOrcid !== funding.source.sourceOrcid)">
+                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.source) ||
+                            (funding.assertionOriginOrcid && funding.assertionOriginOrcid !== funding.source)">
                             <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{funding.assertionOriginName || funding.assertionOriginOrcid}}
                             </ng-container>
                     </div>                          
