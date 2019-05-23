@@ -48,6 +48,24 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         assertNull(entity.getSourceId());        
         assertNull(entity.getClientSourceId());        
         assertNull(entity.getElementSourceId());    
+        
+        // Check url get removed on entity when it comes null in model object
+        PersonExternalIdentifier pei = getExternalIdentifier();
+        pei.setUrl(null);
+        
+        jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(pei, entity);
+        assertNotNull(entity);
+        assertNull(entity.getExternalIdUrl());
+        assertEquals("A-0003", entity.getExternalIdCommonName());
+        assertEquals("A-0003", entity.getExternalIdReference());
+        assertEquals(Long.valueOf(1), entity.getId());
+        assertNotNull(entity.getDateCreated());
+        assertNotNull(entity.getLastModified());        
+        
+        // Source
+        assertNull(entity.getSourceId());        
+        assertNull(entity.getClientSourceId());        
+        assertNull(entity.getElementSourceId());   
     }
 
     @Test

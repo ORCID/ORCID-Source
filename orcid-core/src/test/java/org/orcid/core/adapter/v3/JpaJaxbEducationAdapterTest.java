@@ -68,6 +68,43 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
     }
     
     @Test
+    public void clearOrgAffiliationRelationEntityFieldsTest() throws JAXBException {
+        Education e = getEducation(true);
+        assertNotNull(e);
+        OrgAffiliationRelationEntity oar = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(e);
+        assertNotNull(oar);
+        assertEquals("http://tempuri.org",oar.getUrl());
+        
+        // Clear the url
+        e.setUrl(null);
+        
+        jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(e, oar);
+        assertNotNull(oar);
+        
+        // Check url is null
+        assertNull(oar.getUrl());
+        
+        //General info
+        assertEquals(Long.valueOf(0), oar.getId());
+        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
+        assertEquals("education:department-name", oar.getDepartment());
+        assertEquals("education:role-title", oar.getTitle());
+        
+        //Dates
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
+        assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
+        assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
+        assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
+        assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
+        
+        // Source
+        assertNull(oar.getSourceId());        
+        assertNull(oar.getClientSourceId());        
+        assertNull(oar.getElementSourceId());
+    }
+    
+    @Test
     public void fromOrgAffiliationRelationEntityToEducation() {
         OrgAffiliationRelationEntity entity = getEducationEntity();
         assertNotNull(entity);

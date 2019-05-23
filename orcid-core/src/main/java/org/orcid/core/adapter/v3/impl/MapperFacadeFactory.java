@@ -1,5 +1,6 @@
 package org.orcid.core.adapter.v3.impl;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -132,12 +133,14 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomMapper;
+import ma.glasnost.orika.Mapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
+import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
 
 /**
@@ -364,6 +367,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         externalIdentifierClassMap.field("url.value", "externalIdUrl");
         externalIdentifierClassMap.fieldBToA("displayIndex", "displayIndex");
         externalIdentifierClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        externalIdentifierClassMap.customize(new CustomMapper<PersonExternalIdentifier, ExternalIdentifierEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(PersonExternalIdentifier a, ExternalIdentifierEntity b, MappingContext context) {
+                b.setExternalIdUrl(a.getUrl() == null ? null : a.getUrl().getValue());                
+            }                      
+        });
         externalIdentifierClassMap.byDefault();
         registerSourceConverters(mapperFactory, externalIdentifierClassMap);
         
@@ -647,9 +659,25 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
         fundingClassMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();
         fundingClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        fundingClassMap.customize(new CustomMapper<Funding, ProfileFundingEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(Funding a, ProfileFundingEntity b, MappingContext context) {
+                b.setOrganizationDefinedType(a.getOrganizationDefinedType() == null ? null : a.getOrganizationDefinedType().getContent());
+                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());                
+                b.setTranslatedTitle((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getLanguageCode());
+                b.setNumericAmount(a.getAmount() == null ? null : BigDecimal.valueOf(Long.valueOf(a.getAmount().getContent())));
+                b.setCurrencyCode(a.getAmount() == null ? null : a.getAmount().getCurrencyCode());
+            }                      
+        });
+        
+        
         fundingClassMap.byDefault();
         fundingClassMap.register();
-
+        
         ClassMapBuilder<FundingSummary, ProfileFundingEntity> fundingSummaryClassMap = mapperFactory.classMap(FundingSummary.class, ProfileFundingEntity.class);
         addV3CommonFields(fundingSummaryClassMap);
         registerSourceConverters(mapperFactory, fundingSummaryClassMap);
@@ -754,7 +782,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     /**
      * Configure fields for affiliations
-     * */
+     * */    
     private MapperFacade generateMapperFacadeForAffiliation(MapperFactory mapperFactory, ClassMapBuilder<? extends Affiliation, OrgAffiliationRelationEntity> classMap,
             ClassMapBuilder<? extends AffiliationSummary, OrgAffiliationRelationEntity> summaryClassMap) {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
@@ -772,14 +800,26 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         classMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
         
-        classMap.fieldAToB("url.value", "url");
-        classMap.fieldBToA("url", "url.value");
-        
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();        
         classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();        
         
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");
+        classMap.fieldAToB("url.value", "url");
+        classMap.fieldBToA("url", "url.value");
+        
+        class AffiliationUrlMapper<T, U> extends CustomMapper<Affiliation, OrgAffiliationRelationEntity> {
+            @Override
+            public void mapAtoB(Affiliation a, OrgAffiliationRelationEntity b, MappingContext context) {            
+                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+            }
+        }
+        
+        @SuppressWarnings("rawtypes")
+        AffiliationUrlMapper affiliationUrlMapper = new AffiliationUrlMapper();
+        
+        classMap.customize(affiliationUrlMapper);
+        
         classMap.byDefault();
         classMap.register();
 
@@ -839,6 +879,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
         classMap.byDefault();
         classMap.register();
+      //TODO
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
         addV3CommonFields(peerReviewSummaryClassMap);
@@ -890,6 +931,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("proposal.hosts.organization", "hosts");   
         classMap.byDefault();
         classMap.register();
+      //TODO
         //TODO: add display index to model        
                 
         ClassMapBuilder<ResearchResourceSummary, ResearchResourceEntity> summaryClassMap = mapperFactory.classMap(ResearchResourceSummary.class, ResearchResourceEntity.class);
