@@ -239,9 +239,12 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             result.setShortDescription(description);
         }
 
-        if (json.has("journal-title")) {
-            String journalTitle = json.getString("journal-title");
-            result.setJournalTitle(new Title(journalTitle));
+        if (json.has("journal-title")) {            
+            result.setJournalTitle(new Title(json.getString("journal-title")));
+        } else if (json.has("container-title")) {
+            result.setJournalTitle(new Title(json.getString("container-title")));
+        } else if (json.has("container-title-short")) {
+            result.setJournalTitle(new Title(json.getString("container-title-short")));
         }
 
         JSONObject publicationDateJson = null;
