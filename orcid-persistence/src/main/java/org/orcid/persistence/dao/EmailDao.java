@@ -93,4 +93,8 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     void correctUserSource(List<String> ids);
 
     List<EmailEntity> findPublicEmailsIncludeUnverified(String orcid);
+
+    List<String> getIdsForUserOBOUpdate(String clientDetailsId, int max);
+
+    void updateUserOBODetails(List<String> ids);
 }

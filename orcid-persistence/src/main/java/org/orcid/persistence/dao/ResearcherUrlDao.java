@@ -66,6 +66,10 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
     List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients);
 
     void correctUserSource(List<BigInteger> ids);
+
+    List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max);
+
+    void updateUserOBODetails(List<BigInteger> ids);
     
     
 }
