@@ -19,7 +19,6 @@ import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
 import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;

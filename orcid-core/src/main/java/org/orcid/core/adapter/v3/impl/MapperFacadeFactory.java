@@ -133,14 +133,12 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomMapper;
-import ma.glasnost.orika.Mapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
-import ma.glasnost.orika.metadata.Type;
 import ma.glasnost.orika.metadata.TypeFactory;
 
 /**
@@ -669,11 +667,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());                
                 b.setTranslatedTitle((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getContent());
                 b.setTranslatedTitleLanguageCode((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getLanguageCode());
-                b.setNumericAmount(a.getAmount() == null ? null : BigDecimal.valueOf(Long.valueOf(a.getAmount().getContent())));
-                b.setCurrencyCode(a.getAmount() == null ? null : a.getAmount().getCurrencyCode());
+                b.setNumericAmount((a.getAmount() == null || a.getAmount().getContent() == null) ? null : BigDecimal.valueOf(Long.valueOf(a.getAmount().getContent())));
+                b.setCurrencyCode((a.getAmount() == null || a.getAmount().getContent() == null) ? null : a.getAmount().getCurrencyCode());
             }                      
         });
-        
         
         fundingClassMap.byDefault();
         fundingClassMap.register();
@@ -868,8 +865,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         classMap.field("groupId", "groupId");
-        classMap.field("subjectType", "subjectType");
         classMap.field("subjectUrl.value", "subjectUrl");
+        classMap.field("subjectType", "subjectType");
         classMap.field("subjectName.title.content", "subjectName");
         classMap.field("subjectName.translatedTitle.content", "subjectTranslatedName");
         classMap.field("subjectName.translatedTitle.languageCode", "subjectTranslatedNameLanguageCode");
@@ -877,9 +874,22 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.fieldMap("subjectExternalIdentifier", "subjectExternalIdentifiersJson").converter("workExternalIdentifierConverterId").add();
         classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
+        classMap.customize(new CustomMapper<PeerReview, PeerReviewEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(PeerReview a, PeerReviewEntity b, MappingContext context) {
+                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+                b.setSubjectUrl(a.getSubjectUrl() == null ? null : a.getSubjectUrl().getValue());
+                b.setSubjectTranslatedName((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getContent());
+                b.setSubjectTranslatedNameLanguageCode((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getLanguageCode());
+                b.setSubjectContainerName(a.getSubjectContainerName() == null ? null : a.getSubjectContainerName().getContent());
+            }                      
+        });
+        
         classMap.byDefault();
-        classMap.register();
-      //TODO
+        classMap.register();      
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
         addV3CommonFields(peerReviewSummaryClassMap);
@@ -929,10 +939,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("proposal.startDate", "startDate");
         classMap.field("proposal.endDate", "endDate");
         classMap.field("proposal.hosts.organization", "hosts");   
+        classMap.customize(new CustomMapper<ResearchResource, ResearchResourceEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(ResearchResource a, ResearchResourceEntity b, MappingContext context) {
+                b.setTranslatedTitle((a.getProposal() == null || a.getProposal().getTitle() == null || a.getProposal().getTitle().getTranslatedTitle() == null) ? null : a.getProposal().getTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode((a.getProposal() == null || a.getProposal().getTitle() == null || a.getProposal().getTitle().getTranslatedTitle() == null) ? null : a.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+                b.setUrl((a.getProposal() == null || a.getProposal().getUrl() == null) ? null : a.getProposal().getUrl().getValue());          
+            }
+        });
         classMap.byDefault();
         classMap.register();
-      //TODO
-        //TODO: add display index to model        
                 
         ClassMapBuilder<ResearchResourceSummary, ResearchResourceEntity> summaryClassMap = mapperFactory.classMap(ResearchResourceSummary.class, ResearchResourceEntity.class);
         addV3CommonFields(summaryClassMap);
