@@ -33,17 +33,15 @@ public class CorsFilterWeb extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Pattern p = Pattern.compile("^/public/.*|^/userStatus\\.json");
         Matcher m = p.matcher(OrcidUrlManager.getPathWithoutContextPath(request));
-        // Allow CORS for all paths from Angular frontend only if we are in local dev env
-        // All other envs allow CORS only if request is userStatus.json or /public/*
-        if (baseUri.equals("https://localhost:8443/orcid-web") | baseUri.equals("https://localhost") | m.matches()) {
+        // Allow CORS for all paths from Angular frontend only if we are in
+        // local dev env
+        // All other envs allow CORS only if request is userStatus.json or
+        // /public/*
+        if (baseUri.equals("https://localhost:8443/orcid-web") || baseUri.equals("https://localhost") || m.matches()) {
             if (crossDomainWebManger.allowed(request)) {
                 String origin = request.getHeader("origin");
-                if (PojoUtil.isEmpty(origin)) {
-                    response.addHeader("Access-Control-Allow-Origin", "*");
-                } else {
-                    response.addHeader("Access-Control-Allow-Origin", origin);
-                    response.addHeader("Access-Control-Allow-Credentials", "true");
-                }
+                response.addHeader("Access-Control-Allow-Origin", origin);
+                response.addHeader("Access-Control-Allow-Credentials", "true");
 
                 if (request.getHeader("Access-Control-Request-Method") != null && "OPTIONS".equals(request.getMethod())) {
                     // CORS "pre-flight" request
