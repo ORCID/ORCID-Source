@@ -283,9 +283,6 @@
 	<include file="/db/updates/add_redir_status.xml" />
 	<include file="/db/updates/add_user_obo_flag_to_client_details_table.xml" />
 	<include file="/db/updates/uri_id_type_case_sensitive.xml" />
-<<<<<<< HEAD
 	<include file="/db/updates/invalid_issn_group_id_record_table.xml" />
-=======
 	<include file="/db/updates/add_prefix_to_issn_identifier_type.xml" />
->>>>>>> master
 </databaseChangeLog>
