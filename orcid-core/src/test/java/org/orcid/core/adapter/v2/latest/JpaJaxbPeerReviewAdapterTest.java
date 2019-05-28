@@ -89,6 +89,63 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     }
     
     @Test
+    public void clearPeerReviewEntityFieldsTest() throws JAXBException {
+        PeerReview e = getPeerReview(true);
+        assertNotNull(e);
+        PeerReviewEntity pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
+        assertNotNull(pe);
+        //General info
+        assertEquals(Long.valueOf(12345), pe.getId());
+        assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());        
+        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
+        assertEquals("REVIEWER", pe.getRole());
+        assertEquals("REVIEW", pe.getType());
+        assertEquals("peer-review:url", pe.getUrl());
+
+        // Clear fields
+        e.setUrl(null);
+        e.setSubjectUrl(null);
+        e.getSubjectName().setTranslatedTitle(null);
+        e.setSubjectContainerName(null);
+        
+        pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
+        assertNotNull(pe);
+        
+        // Check fields are null
+        assertNull(pe.getUrl());
+        assertNull(pe.getSubjectUrl());
+        assertNull(pe.getSubjectTranslatedName());
+        assertNull(pe.getSubjectTranslatedNameLanguageCode());
+        assertNull(pe.getSubjectContainerName());
+                
+        //Dates
+        assertEquals(Integer.valueOf(2), pe.getCompletionDate().getDay());        
+        assertEquals(Integer.valueOf(2), pe.getCompletionDate().getMonth());
+        assertEquals(Integer.valueOf(1948), pe.getCompletionDate().getYear());        
+        
+        // Source
+        assertNull(pe.getSourceId());        
+        assertNull(pe.getClientSourceId());        
+        assertNull(pe.getElementSourceId());
+        
+        //Check org values
+        assertEquals("common:name", pe.getOrg().getName());
+        assertEquals("common:city", pe.getOrg().getCity());
+        assertEquals("common:region", pe.getOrg().getRegion());        
+        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), pe.getOrg().getCountry());
+        assertEquals("http://dx.doi.org/10.13039/100000001", pe.getOrg().getOrgDisambiguated().getSourceId());
+        assertEquals("FUNDREF", pe.getOrg().getOrgDisambiguated().getSourceType()); 
+        
+        //Check subject        
+        assertEquals("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}", pe.getSubjectExternalIdentifiersJson());
+        assertEquals("peer-review:subject-name", pe.getSubjectName());
+        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.JOURNAL_ARTICLE.name(), pe.getSubjectType());
+        
+        //Check group id
+        assertEquals("orcid-generated:12345", pe.getGroupId());    
+    }
+    
+    @Test
     public void fromOrgAffiliationRelationEntityToEducation() {
         PeerReviewEntity entity = getPeerReviewEntity();
         assertNotNull(entity);

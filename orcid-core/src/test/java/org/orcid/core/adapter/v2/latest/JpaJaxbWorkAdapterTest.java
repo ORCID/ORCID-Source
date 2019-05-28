@@ -100,6 +100,87 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNull(workEntity.getClientSourceId());        
         assertNull(workEntity.getElementSourceId());
     }
+    
+    @Test
+    public void clearFieldsFromWorkToWorkEntityTest() {
+        WorkEntity workEntity = getWorkEntity();
+        // Verify values are not null
+        assertNotNull(workEntity.getCitation());
+        assertNotNull(workEntity.getCitationType());
+        assertNotNull(workEntity.getIso2Country());
+        assertNotNull(workEntity.getJournalTitle());
+        assertNotNull(workEntity.getTranslatedTitle());
+        assertNotNull(workEntity.getTranslatedTitleLanguageCode());
+        assertNotNull(workEntity.getSubtitle());
+        
+        Work work = jpaJaxbWorkAdapter.toWork(workEntity);
+        // Verify values are not null
+        assertNotNull(work.getWorkCitation());
+        assertNotNull(work.getWorkCitation().getCitation());
+        assertNotNull(work.getWorkCitation().getWorkCitationType());        
+        assertNotNull(work.getCountry());
+        assertNotNull(work.getCountry().getValue());
+        assertNotNull(work.getJournalTitle());
+        assertNotNull(work.getJournalTitle().getContent());
+        assertNotNull(work.getUrl());
+        assertNotNull(work.getUrl().getValue());
+        assertNotNull(work.getWorkTitle().getTranslatedTitle());
+        assertNotNull(work.getWorkTitle().getTranslatedTitle().getContent());
+        assertNotNull(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(work.getWorkTitle().getSubtitle());
+        assertNotNull(work.getWorkTitle().getSubtitle().getContent()); 
+        
+        // Now clear values on work
+        work.setWorkCitation(null);
+        work.setCountry(null);
+        work.setJournalTitle(null);
+        work.setUrl(null);
+        work.getWorkTitle().setTranslatedTitle(null);
+        work.getWorkTitle().setSubtitle(null);
+        
+        // Update work entity
+        jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
+        
+        // Verify citation, country, journal title, url, translated title and subtitle get nullified
+        assertNull(workEntity.getCitation());
+        assertNull(workEntity.getCitationType());
+        assertNull(workEntity.getIso2Country());
+        assertNull(workEntity.getJournalTitle());
+        assertNull(workEntity.getTranslatedTitle());
+        assertNull(workEntity.getTranslatedTitleLanguageCode());
+        assertNull(workEntity.getSubtitle());
+        
+        // Verify the rest of the fields haven't changed
+        WorkEntity workEntity2 = getWorkEntity();
+        
+        assertEquals(workEntity2.getAddedToProfileDate(), workEntity.getAddedToProfileDate());
+        assertEquals(workEntity2.getAssertionOriginClientSourceId(), workEntity.getAssertionOriginClientSourceId());
+        assertEquals(workEntity2.getAssertionOriginSourceId(), workEntity.getAssertionOriginSourceId());
+        assertEquals(workEntity2.getClientSourceId(), workEntity.getClientSourceId());
+        assertEquals(workEntity2.getContributorsJson(), workEntity.getContributorsJson());
+        assertEquals(workEntity2.getDateCreated(), workEntity.getDateCreated());
+        assertEquals(workEntity2.getDescription(), workEntity.getDescription());
+        assertEquals(workEntity2.getDisplayIndex(), workEntity.getDisplayIndex());
+        assertEquals(workEntity2.getElementAssertionOriginSourceId(), workEntity.getElementAssertionOriginSourceId());
+        assertEquals(workEntity2.getElementSourceId(), workEntity.getElementSourceId());
+        assertEquals(workEntity2.getId(), workEntity.getId());
+        assertEquals(workEntity2.getLanguageCode(), workEntity.getLanguageCode());
+        assertEquals(workEntity2.getLastModified(), workEntity.getLastModified());
+        assertEquals(workEntity2.getOrcid(), workEntity.getOrcid());
+        assertEquals(workEntity2.getPublicationYear(), workEntity.getPublicationYear());
+        assertEquals(workEntity2.getPublicationMonth(), workEntity.getPublicationMonth());
+        assertEquals(workEntity2.getPublicationDay(), workEntity.getPublicationDay());
+        assertEquals(workEntity2.getSourceId(), workEntity.getSourceId());
+        assertEquals(workEntity2.getTitle(), workEntity.getTitle());
+        assertEquals(workEntity2.getVisibility(), workEntity.getVisibility());
+        assertEquals(workEntity2.getWorkType(), workEntity.getWorkType());        
+    
+        String filteredExtIds = "{\"workExternalIdentifier\":["
+                + "{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"123\"}},"
+                + "{\"relationship\":\"PART_OF\",\"url\":null,\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"abc\"}}]}";
+        
+        assertEquals(filteredExtIds, workEntity.getExternalIdentifiersJson());        
+    }
 
     @Test
     public void fromProfileWorkEntityToWorkTest() {
