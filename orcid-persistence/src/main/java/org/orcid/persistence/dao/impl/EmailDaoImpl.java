@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -351,5 +352,22 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setMaxResults(batchSize);
         query.setFirstResult(offset);
         return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
+        query.setParameter("clientDetailsId", clientDetailsId);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void updateUserOBODetails(List<String> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE email SET assertion_origin_source_id = orcid where email_hash IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
     }
 }
