@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -17,6 +19,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -112,7 +115,9 @@ import org.springframework.stereotype.Component;
 @Component("orcidT2ServiceDelegator")
 public class MemberV2ApiServiceDelegatorImpl implements
         MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> {
-
+    
+    private static Pattern issnGroupTypePattern = Pattern.compile("issn:(\\d{4}-{0,1}\\d{4})");
+    
     // Managers that goes to the primary database
     @Resource
     private WorkManager workManager;
@@ -641,6 +646,14 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
         orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_UPDATE);
+        Matcher matcher = issnGroupTypePattern.matcher(groupIdRecord.getGroupId());
+        
+        if (!groupIdRecordManager.exists(groupIdRecord.getGroupId()) && matcher.find()) {
+            // issn group type
+            groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupIdRecord.getGroupId(), matcher.group(1));
+            throw new DuplicatedGroupIdRecordException();
+        }
+        
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         try {
             return Response.created(new URI(String.valueOf(newRecord.getPutCode()))).build();
@@ -690,8 +703,13 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response findGroupIdRecordByGroupId(String groupId) {
         orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_READ);
         Optional<GroupIdRecord> record = groupIdRecordManager.findByGroupId(groupId);
-        if (record.isPresent())
+        Matcher matcher = issnGroupTypePattern.matcher(groupId);
+        if (record.isPresent()) {
             return Response.ok(record.get()).build();
+        } else if (matcher.find()) {
+            // issn group type
+            return Response.ok(groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupId, matcher.group(1))).build();
+        }
         return Response.ok(new GroupIdRecord()).build();
     }
 
