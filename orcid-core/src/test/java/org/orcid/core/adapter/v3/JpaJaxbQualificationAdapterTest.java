@@ -68,6 +68,39 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
     }
     
     @Test
+    public void clearOrgAffiliationRelationEntityFieldsTest() throws JAXBException {
+        Qualification e = getQualification();
+        assertNotNull(e);
+        OrgAffiliationRelationEntity oar = adapter.toOrgAffiliationRelationEntity(e);
+        assertNotNull(oar);
+        
+        e.setUrl(null);
+        adapter.toOrgAffiliationRelationEntity(e, oar);
+        
+        assertNotNull(oar);
+        assertNull(oar.getUrl());
+        
+        //General info
+        assertEquals(Long.valueOf(0), oar.getId());
+        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
+        assertEquals("department-name", oar.getDepartment());
+        assertEquals("role-title", oar.getTitle());
+        
+        //Dates
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
+        assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
+        assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
+        assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
+        assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
+        
+        // Source
+        assertNull(oar.getSourceId());        
+        assertNull(oar.getClientSourceId());        
+        assertNull(oar.getElementSourceId());
+    }
+    
+    @Test
     public void fromOrgAffiliationRelationEntityToQualification() {
         OrgAffiliationRelationEntity entity = getEntity();
         assertNotNull(entity);

@@ -1,5 +1,6 @@
 package org.orcid.core.adapter.v3.impl;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -364,6 +365,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         externalIdentifierClassMap.field("url.value", "externalIdUrl");
         externalIdentifierClassMap.fieldBToA("displayIndex", "displayIndex");
         externalIdentifierClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        externalIdentifierClassMap.customize(new CustomMapper<PersonExternalIdentifier, ExternalIdentifierEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(PersonExternalIdentifier a, ExternalIdentifierEntity b, MappingContext context) {
+                b.setExternalIdUrl(a.getUrl() == null ? null : a.getUrl().getValue());                
+            }                      
+        });
         externalIdentifierClassMap.byDefault();
         registerSourceConverters(mapperFactory, externalIdentifierClassMap);
         
@@ -467,12 +477,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.field("putCode", "id");
         addV3DateFields(workClassMap);
         registerSourceConverters(mapperFactory, workClassMap);
+        workClassMap.field("shortDescription", "description");
+        workClassMap.field("publicationDate", "publicationDate");        
+        workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
+        workClassMap.field("languageCode", "languageCode");
+        workClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        workClassMap.field("url.value", "workUrl");
+        workClassMap.field("country.value", "iso2Country");
         workClassMap.field("journalTitle.content", "journalTitle");
         workClassMap.field("workTitle.title.content", "title");
         workClassMap.field("workTitle.translatedTitle.content", "translatedTitle");
         workClassMap.field("workTitle.translatedTitle.languageCode", "translatedTitleLanguageCode");
         workClassMap.field("workTitle.subtitle.content", "subtitle");
-        workClassMap.field("shortDescription", "description");
         workClassMap.field("workCitation.workCitationType", "citationType");
         workClassMap.field("workCitation.citation", "citation");
         workClassMap.exclude("workType").customize(new CustomMapper<Work, WorkEntity>() {
@@ -481,7 +498,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
              */            
             @Override
             public void mapAtoB(Work a, WorkEntity b, MappingContext context) {
-                b.setWorkType(a.getWorkType().name());                               
+                b.setWorkType(a.getWorkType().name());
+                b.setWorkUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+                b.setIso2Country(a.getCountry() == null ? null : a.getCountry().getValue().toString());
+                b.setJournalTitle(a.getJournalTitle() == null ? null : a.getJournalTitle().getContent());
+                b.setTranslatedTitle((a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode((a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                b.setSubtitle((a.getWorkTitle() == null || a.getWorkTitle().getSubtitle() == null) ? null : a.getWorkTitle().getSubtitle().getContent());
+                b.setCitation(a.getWorkCitation() == null ? null : a.getWorkCitation().getCitation());
+                b.setCitationType((a.getWorkCitation() == null || a.getWorkCitation().getWorkCitationType() == null) ? null : a.getWorkCitation().getWorkCitationType().toString());
             }
             
             /**
@@ -493,13 +518,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             }
             
         });
-        workClassMap.field("publicationDate", "publicationDate");        
-        workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        workClassMap.field("url.value", "workUrl");
-        workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
-        workClassMap.field("languageCode", "languageCode");
-        workClassMap.field("country.value", "iso2Country");
-        workClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         workClassMap.byDefault();
         workClassMap.register();
 
@@ -639,9 +657,24 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
         fundingClassMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();
         fundingClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        fundingClassMap.customize(new CustomMapper<Funding, ProfileFundingEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(Funding a, ProfileFundingEntity b, MappingContext context) {
+                b.setOrganizationDefinedType(a.getOrganizationDefinedType() == null ? null : a.getOrganizationDefinedType().getContent());
+                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());                
+                b.setTranslatedTitle((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getLanguageCode());
+                b.setNumericAmount((a.getAmount() == null || a.getAmount().getContent() == null) ? null : BigDecimal.valueOf(Long.valueOf(a.getAmount().getContent())));
+                b.setCurrencyCode((a.getAmount() == null || a.getAmount().getContent() == null) ? null : a.getAmount().getCurrencyCode());
+            }                      
+        });
+        
         fundingClassMap.byDefault();
         fundingClassMap.register();
-
+        
         ClassMapBuilder<FundingSummary, ProfileFundingEntity> fundingSummaryClassMap = mapperFactory.classMap(FundingSummary.class, ProfileFundingEntity.class);
         addV3CommonFields(fundingSummaryClassMap);
         registerSourceConverters(mapperFactory, fundingSummaryClassMap);
@@ -746,7 +779,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     /**
      * Configure fields for affiliations
-     * */
+     * */    
     private MapperFacade generateMapperFacadeForAffiliation(MapperFactory mapperFactory, ClassMapBuilder<? extends Affiliation, OrgAffiliationRelationEntity> classMap,
             ClassMapBuilder<? extends AffiliationSummary, OrgAffiliationRelationEntity> summaryClassMap) {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
@@ -764,14 +797,26 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         classMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
         
-        classMap.fieldAToB("url.value", "url");
-        classMap.fieldBToA("url", "url.value");
-        
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();        
         classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();        
         
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");
+        classMap.fieldAToB("url.value", "url");
+        classMap.fieldBToA("url", "url.value");
+        
+        class AffiliationUrlMapper<T, U> extends CustomMapper<Affiliation, OrgAffiliationRelationEntity> {
+            @Override
+            public void mapAtoB(Affiliation a, OrgAffiliationRelationEntity b, MappingContext context) {            
+                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+            }
+        }
+        
+        @SuppressWarnings("rawtypes")
+        AffiliationUrlMapper affiliationUrlMapper = new AffiliationUrlMapper();
+        
+        classMap.customize(affiliationUrlMapper);
+        
         classMap.byDefault();
         classMap.register();
 
@@ -820,8 +865,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         classMap.field("groupId", "groupId");
-        classMap.field("subjectType", "subjectType");
         classMap.field("subjectUrl.value", "subjectUrl");
+        classMap.field("subjectType", "subjectType");
         classMap.field("subjectName.title.content", "subjectName");
         classMap.field("subjectName.translatedTitle.content", "subjectTranslatedName");
         classMap.field("subjectName.translatedTitle.languageCode", "subjectTranslatedNameLanguageCode");
@@ -829,8 +874,22 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.fieldMap("subjectExternalIdentifier", "subjectExternalIdentifiersJson").converter("workExternalIdentifierConverterId").add();
         classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
+        classMap.customize(new CustomMapper<PeerReview, PeerReviewEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(PeerReview a, PeerReviewEntity b, MappingContext context) {
+                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+                b.setSubjectUrl(a.getSubjectUrl() == null ? null : a.getSubjectUrl().getValue());
+                b.setSubjectTranslatedName((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getContent());
+                b.setSubjectTranslatedNameLanguageCode((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getLanguageCode());
+                b.setSubjectContainerName(a.getSubjectContainerName() == null ? null : a.getSubjectContainerName().getContent());
+            }                      
+        });
+        
         classMap.byDefault();
-        classMap.register();
+        classMap.register();      
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
         addV3CommonFields(peerReviewSummaryClassMap);
@@ -880,9 +939,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("proposal.startDate", "startDate");
         classMap.field("proposal.endDate", "endDate");
         classMap.field("proposal.hosts.organization", "hosts");   
+        classMap.customize(new CustomMapper<ResearchResource, ResearchResourceEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(ResearchResource a, ResearchResourceEntity b, MappingContext context) {
+                b.setTranslatedTitle((a.getProposal() == null || a.getProposal().getTitle() == null || a.getProposal().getTitle().getTranslatedTitle() == null) ? null : a.getProposal().getTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode((a.getProposal() == null || a.getProposal().getTitle() == null || a.getProposal().getTitle().getTranslatedTitle() == null) ? null : a.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+                b.setUrl((a.getProposal() == null || a.getProposal().getUrl() == null) ? null : a.getProposal().getUrl().getValue());          
+            }
+        });
         classMap.byDefault();
         classMap.register();
-        //TODO: add display index to model        
                 
         ClassMapBuilder<ResearchResourceSummary, ResearchResourceEntity> summaryClassMap = mapperFactory.classMap(ResearchResourceSummary.class, ResearchResourceEntity.class);
         addV3CommonFields(summaryClassMap);

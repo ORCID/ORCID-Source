@@ -317,4 +317,21 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         query.executeUpdate();
         
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
+        query.setParameter("clientDetailsId", clientDetailsId);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void updateUserOBODetails(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE profile_funding SET assertion_origin_source_id = orcid where id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
 }

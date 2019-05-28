@@ -1,0 +1,7 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet author="George Nash" id="ADD_PREFIX_TO_ISSN_ID_TYPE_CASE_SENSITIVE">
+        <sql>UPDATE identifier_type SET id_resolution_prefix = 'https://portal.issn.org/resource/ISSN/' where id_name = 'ISSN'</sql>
+    </changeSet>
+</databaseChangeLog>
