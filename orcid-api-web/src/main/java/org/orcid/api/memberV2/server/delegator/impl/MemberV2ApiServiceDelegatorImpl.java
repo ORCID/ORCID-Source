@@ -116,7 +116,7 @@ import org.springframework.stereotype.Component;
 public class MemberV2ApiServiceDelegatorImpl implements
         MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> {
     
-    private static Pattern issnGroupTypePattern = Pattern.compile("issn:(\\d{4}-{0,1}\\d{4})");
+    private static Pattern issnGroupTypePattern = Pattern.compile("^issn:(\\d{4}-{0,1}\\d{3}[\\dXx])$");
     
     // Managers that goes to the primary database
     @Resource

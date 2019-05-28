@@ -1,0 +1,114 @@
+{
+  "@graph" : [ {
+    "@id" : "http://id.loc.gov/vocabulary/countries/fa",
+    "label" : "Faroe Islands"
+  }, {
+    "@id" : "organization/ISSNCenter#_h",
+    "@type" : "http://schema.org/Organization"
+  }, {
+    "@id" : "resource/ISSN-L/0906-8724",
+    "identifiedBy" : "resource/ISSN/0906-8724#ISSN-L"
+  }, {
+    "@id" : "resource/ISSN/0906-8724",
+    "@type" : [ "http://id.loc.gov/ontologies/bibframe/Instance", "http://id.loc.gov/ontologies/bibframe/Work", "http://schema.org/Periodical" ],
+    "identifiedBy" : [ "resource/ISSN/0906-8724#ISSN", "resource/ISSN/0906-8724#KeyTitle", "resource/ISSN/0906-8724#ISSN-L" ],
+    "title" : "resource/ISSN/0906-8724#KeyTitle",
+    "format" : "vocabularies/medium#Print",
+    "identifier" : "0906-8724",
+    "type" : "http://marc21rdf.info/terms/formofmaterial#a",
+    "issn" : "0906-8724",
+    "isPartOf" : "resource/ISSN-L/0906-8724",
+    "http://schema.org/issn" : "0906-8724",
+    "name" : [ "Shalom (Glyvrar)", "Shalom." ],
+    "publication" : "resource/ISSN/0906-8724#ReferencePublicationEvent"
+  }, {
+    "@id" : "resource/ISSN/0906-8724#ISSN",
+    "@type" : "http://id.loc.gov/ontologies/bibframe/Issn",
+    "status" : "vocabularies/IdentifierStatus#Valid",
+    "value" : "0906-8724"
+  }, {
+    "@id" : "resource/ISSN/0906-8724#ISSN-L",
+    "@type" : "http://id.loc.gov/ontologies/bibframe/IssnL",
+    "status" : "vocabularies/IdentifierStatus#Valid",
+    "value" : "0906-8724"
+  }, {
+    "@id" : "resource/ISSN/0906-8724#KeyTitle",
+    "@type" : [ "http://id.loc.gov/ontologies/bibframe/Identifier", "http://id.loc.gov/ontologies/bibframe/KeyTitle" ],
+    "value" : "Shalom (Glyvrar)"
+  }, {
+    "@id" : "resource/ISSN/0906-8724#Record",
+    "@type" : "http://schema.org/CreativeWork",
+    "status" : "vocabularies/RecordStatus#Register",
+    "modified" : "20040609180500.0",
+    "mainEntity" : "resource/ISSN/0906-8724",
+    "wasAttributedTo" : "organization/ISSNCenter#_h"
+  }, {
+    "@id" : "resource/ISSN/0906-8724#ReferencePublicationEvent",
+    "@type" : "http://schema.org/PublicationEvent",
+    "location" : "http://id.loc.gov/vocabulary/countries/fa"
+  } ],
+  "@context" : {
+    "value" : {
+      "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"
+    },
+    "label" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "name" : {
+      "@id" : "http://schema.org/name"
+    },
+    "identifiedBy" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+      "@type" : "@id"
+    },
+    "isPartOf" : {
+      "@id" : "http://schema.org/isPartOf",
+      "@type" : "@id"
+    },
+    "issn" : {
+      "@id" : "http://purl.org/ontology/bibo/issn"
+    },
+    "type" : {
+      "@id" : "http://purl.org/dc/terms/type",
+      "@type" : "@id"
+    },
+    "publication" : {
+      "@id" : "http://schema.org/publication",
+      "@type" : "@id"
+    },
+    "title" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/title",
+      "@type" : "@id"
+    },
+    "format" : {
+      "@id" : "http://purl.org/dc/elements/1.1/format",
+      "@type" : "@id"
+    },
+    "mainTitle" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/mainTitle"
+    },
+    "identifier" : {
+      "@id" : "http://purl.org/dc/elements/1.1/identifier"
+    },
+    "status" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/status",
+      "@type" : "@id"
+    },
+    "wasAttributedTo" : {
+      "@id" : "http://www.w3.org/ns/prov#wasAttributedTo",
+      "@type" : "@id"
+    },
+    "mainEntity" : {
+      "@id" : "http://schema.org/mainEntity",
+      "@type" : "@id"
+    },
+    "modified" : {
+      "@id" : "http://purl.org/dc/terms/modified",
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "location" : {
+      "@id" : "http://schema.org/location",
+      "@type" : "@id"
+    }
+  }
+}

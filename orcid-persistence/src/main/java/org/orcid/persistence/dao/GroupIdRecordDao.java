@@ -15,4 +15,6 @@ public interface GroupIdRecordDao extends GenericDao<GroupIdRecordEntity, Long> 
     boolean haveAnyPeerReview(String groupId);
     
     boolean duplicateExists(Long putCode, String groupId);
+    
+    List<GroupIdRecordEntity> getIssnRecordsNotSourcedBy(String clientSourceId, int pageSize);
 }
