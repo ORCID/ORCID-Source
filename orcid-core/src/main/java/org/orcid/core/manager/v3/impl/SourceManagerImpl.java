@@ -6,9 +6,11 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
@@ -46,6 +48,9 @@ public class SourceManagerImpl implements SourceManager {
     
     @Resource
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
 
     /** returns the active source, either an effective ORCID iD or Client Id.
      * 
@@ -97,10 +102,11 @@ public class SourceManagerImpl implements SourceManager {
                     ClientDetailsEntity oboClientDetails = clientDetailsManager.findByClientId(tokenDetail.getOboClientDetailsId());
                     source.setAssertionOriginClientId(new SourceClientId(oboClientDetails.getClientId()));
                     source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));  
+                } else if (clientDetails.isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                    source.setAssertionOriginOrcid(new SourceOrcid(tokenDetail.getProfile().getId()));
+                    source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(tokenDetail.getProfile().getId())));
                 }
-            }            
-            //TODO: can add OBO person here if client is always OBO person...
-            
+            }
             return source;
         }
         String userOrcid = retrieveEffectiveOrcid(authentication);

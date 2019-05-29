@@ -7,4 +7,6 @@ public interface ProfileEntityManagerReadOnly extends ManagerReadOnlyBase {
     ProfileEntity findByOrcid(String orcid);
     
     Boolean isLocked(String orcid);
+
+    String getLockedReason(String orcid);
 }

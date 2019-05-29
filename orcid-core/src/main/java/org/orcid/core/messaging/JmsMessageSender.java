@@ -82,7 +82,6 @@ public class JmsMessageSender {
             return this.sendMap(mess.getMap(), destination);                             
         } catch(JmsException e) {
             //TODO: How we unflag the problem?
-            //flagConnectionProblem(e);
             LOG.error("Couldnt send " + mess.getOrcid() + " to the message queue", e);
         }
         return false;
@@ -99,7 +98,6 @@ public class JmsMessageSender {
             return this.sendObject(mess, destination);                             
         } catch(JmsException e) {
             //TODO: How we unflag the problem?
-            //flagConnectionProblem(e);
             LOG.error("Couldnt send message for disambiguated id " + mess.getOrgDisambiguatedId() + " to the message queue", e);
         }
         return false;
@@ -116,7 +114,6 @@ public class JmsMessageSender {
             return this.sendObject(mess, destination);                             
         } catch(JmsException e) {
             //TODO: How we unflag the problem?
-            //flagConnectionProblem(e);
             LOG.error("Couldnt send message for fundingSubType " + mess.getOrgDefinedFundingType() + " to the message queue", e);
         }
         return false;

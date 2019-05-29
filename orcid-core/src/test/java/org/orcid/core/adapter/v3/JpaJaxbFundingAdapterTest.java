@@ -141,6 +141,72 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals(Visibility.PRIVATE, summary.getVisibility());
     }
     
+    @Test
+    public void clearFundingEntityFieldsTest() throws JAXBException {
+        Funding f = getFunding(true);
+        assertNotNull(f);
+        
+        ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
+        assertNotNull(pfe);
+        assertEquals("common:translated-title", pfe.getTranslatedTitle());
+        assertEquals("en", pfe.getTranslatedTitleLanguageCode());
+        assertEquals("common:organization-defined-type", pfe.getOrganizationDefinedType());
+        assertEquals("1234", pfe.getNumericAmount().toString());
+        assertEquals("ADP", pfe.getCurrencyCode());
+        assertEquals("http://tempuri.org", pfe.getUrl());
+
+        f.getTitle().setTranslatedTitle(null);
+        f.setOrganizationDefinedType(null);
+        f.setAmount(null);
+        f.setUrl(null);
+        
+        jpaJaxbFundingAdapter.toProfileFundingEntity(f, pfe);
+        
+        // Verify values where removed
+        assertNotNull(pfe);
+        assertNull(pfe.getCurrencyCode());
+        assertNull(pfe.getNumericAmount());
+        assertNull(pfe.getOrganizationDefinedType());
+        assertNull(pfe.getTranslatedTitle());
+        assertNull(pfe.getTranslatedTitleLanguageCode());
+        assertNull(pfe.getUrl());
+        // Enums
+        assertEquals(Visibility.PRIVATE.name(), pfe.getVisibility());
+        assertEquals(FundingType.GRANT.name(), pfe.getType());
+
+        // General info
+        assertEquals(Long.valueOf(0), pfe.getId());
+        assertEquals("common:title", pfe.getTitle());
+        assertEquals("funding:short-description", pfe.getDescription());
+        
+        // Dates
+        assertEquals(Integer.valueOf(2), pfe.getStartDate().getDay());
+        assertEquals(Integer.valueOf(2), pfe.getStartDate().getMonth());
+        assertEquals(Integer.valueOf(1948), pfe.getStartDate().getYear());
+        assertEquals(Integer.valueOf(2), pfe.getEndDate().getDay());
+        assertEquals(Integer.valueOf(2), pfe.getEndDate().getMonth());
+        assertEquals(Integer.valueOf(1948), pfe.getEndDate().getYear());
+
+        // Contributors
+        assertEquals(
+                "{\"contributor\":[{\"contributorOrcid\":{\"uri\":\"https://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:credit-name\"},\"contributorEmail\":{\"value\":\"funding@contributor.email\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}",
+                pfe.getContributorsJson());
+
+        // External identifiers
+        assertEquals(
+                "{\"fundingExternalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"funding:external-identifier-value\",\"url\":{\"value\":\"http://tempuri.org\"},\"relationship\":\"SELF\"},{\"type\":\"GRANT_NUMBER\",\"value\":\"funding:external-identifier-value2\",\"url\":{\"value\":\"http://tempuri.org/2\"},\"relationship\":\"SELF\"}]}",
+                pfe.getExternalIdentifiersJson());
+
+        // Check org is null
+        assertNull(pfe.getOrg()); 
+        
+        // Source
+        assertNull(pfe.getSourceId());        
+        assertNull(pfe.getClientSourceId());        
+        assertNull(pfe.getElementSourceId());
+        
+    }
+    
     private Funding getFunding(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();

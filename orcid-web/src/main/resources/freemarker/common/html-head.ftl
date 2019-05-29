@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     
+    <#if springMacroRequestContext.requestUri?contains("/reset-password-email") || 
+    springMacroRequestContext.requestUri?contains("/unsubscribe") ||
+    springMacroRequestContext.requestUri?contains("/reactivation") >
+        <meta name="referrer" content="no-referrer">
+    </#if>
+
     <#if (noIndex)??>
         <meta name="googlebot" content="noindex">
         <meta name="robots" content="noindex">

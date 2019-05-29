@@ -8,14 +8,14 @@
 		<common:subtitle>Sub title</common:subtitle>
 		<common:translated-title language-code="en">Translated-title</common:translated-title>
 	</work:title>
-	<work:journal-title>Jounral Title</work:journal-title>
+	<work:journal-title>Journal Title</work:journal-title>
 	<work:short-description>Short description</work:short-description>
 	<work:citation>
 		<work:citation-type>bibtex</work:citation-type>
 		<work:citation-value>
 			@article {ORCID2012,
 			title = "ORCID: a system to uniquely identify researchers",
-			journal = "Leanred Publishing",
+			journal = "Learned Publishing",
 			year = "2012",
 			doi = "doi:10.1087/20120404"
 			}</work:citation-value>

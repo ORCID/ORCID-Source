@@ -299,6 +299,7 @@ public class RegistrationController extends BaseController {
         reg.setErrors(new ArrayList<String>());
 
         registerGivenNameValidate(reg);
+        registerFamilyNameValidate(reg);
         registerPasswordValidate(reg);
         registerPasswordConfirmValidate(reg);
         registerActivitiesVisibilityDefaultValidate(reg);
@@ -342,6 +343,13 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerGivenNameValidate(@RequestBody Registration reg) {
         super.givenNameValidate(reg.getGivenNames());
+        return reg;
+    }
+
+    
+    @RequestMapping(value = "/registerFamilyNamesValidate.json", method = RequestMethod.POST)
+    public @ResponseBody Registration registerFamilyNameValidate(@RequestBody Registration reg) {
+        super.familyNameValidate(reg.getFamilyNames());
         return reg;
     }
     

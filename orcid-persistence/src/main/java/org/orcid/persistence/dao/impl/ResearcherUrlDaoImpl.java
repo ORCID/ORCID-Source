@@ -109,8 +109,9 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN :nonPublicClients");
+        query.setParameter("nonPublicClients", nonPublicClients);
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -125,8 +126,9 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<BigInteger> getIdsForUserSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+    public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = source_id AND client_source_id IN :publicClients");
+        query.setParameter("publicClients", publicClients);
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -135,6 +137,23 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @Transactional
     public void correctUserSource(List<BigInteger> ids) {
         Query query = entityManager.createNativeQuery("UPDATE researcher_url SET source_id = client_source_id, client_source_id = NULL where id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
+        query.setParameter("clientDetailsId", clientDetailsId);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void updateUserOBODetails(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE researcher_url SET assertion_origin_source_id = orcid where id IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
     }

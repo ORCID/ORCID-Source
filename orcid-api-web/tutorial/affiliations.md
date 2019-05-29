@@ -33,7 +33,7 @@ These calls can be used with Member API credentials on sandbox or the production
 * For invited position items (3.0+ only): ```/invited-position``` and ```/invited-positions```
 * For membership items (3.0+ only): ```/membership``` and ```/membership```
 * For qualification items (3.0+ only): ```/qualification``` and ```/qualifications```
-* For service items (3.0+ only): ```/service``` and ```/service```
+* For service items (3.0+ only): ```/service``` and ```/services```
 
 **Sample XML files:**
   * [reading the education section summary in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/educations-2.1.xml)

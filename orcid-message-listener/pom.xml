@@ -120,8 +120,8 @@
 		    <scope>test</scope>
 		</dependency>
 
-		<!-- Solr -->
-		<dependency>
+        <!-- Solr -->
+        <dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
             <version>8.0.0</version>        	

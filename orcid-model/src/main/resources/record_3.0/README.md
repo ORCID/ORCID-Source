@@ -1,8 +1,5 @@
 # ORCID API v3.0 Guide
 
-## Current State (Release Candidate Unstable)
-v3.0 is the currently under development and it is not recommended for use.
-
 ## Endpoints
 
 - activities (read only)
@@ -83,7 +80,10 @@ v3.0 is the currently under development and it is not recommended for use.
 - [Tutorials for reading and writing to ORCID records](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web/tutorial)
 
 
-## Changes from Version 3.0 RC1:
+## Changes from Version 2.1:
+
+### JSON
+- JSON enumerated types are now expressed in lowercase with dashes instead of underscores, matching the existing XML enums (ie *JOURNAL_ARTICLE* is now expressed as *journal-article*). This affects enums for visibility, locale, work types, contributor roles, citation types, external identifier relationship, funding types, peer review types, and peer review role
 
 ### Token Delegation
 - Member clients can now generating tokens that allow another client to update an ORCID record on behalf of the original client. This process is described in the [Token Delegation tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/token_delegation.md).
@@ -92,9 +92,39 @@ v3.0 is the currently under development and it is not recommended for use.
 ### Identifiers
 - Addition of new identifier relationship *version-of*, which is intended to map works to identifiers of different versions and instances of the same work. Works with the same *version-of* identifier are grouped together.
 
+### Activities external identifiers
+- Addition of *common:external-id-normalized* for work and peer-review identifiers. The common:external-id-normalized field is a transient, system generated field which expresses the identifier in a standard format that is used for grouping. In general, normalized identifiers trim extraneous text such as the identifier type or the expression of the identifier as a url. Additional normalization is done based on the rules of the identifier type and may include setting all alpha characters to lower case,  or transforming spaces, dashes, periods and other characters that can be treated as equivalent. [See the full normalization rules](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/java/org/orcid/core/utils/v3/identifiers). Identifiers which can not be normalized will return a error message when reading them.
+
+### Affiliations
+- Addition of new affiliation sections: Distinction, Invited-position, Membership, Qualification, and Service in addition to the existing Education and Employment sections. For more information see [Affiliations tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/affiliations.md)
+- Summary information now available for each section including affiliation source, role-title, department-name, dates, organization and external-ids
+- *common:start-date* is required if *common:end-date* is provided
+- Addition of optional element *common:url* for recording links about the affiliation
+- Addition of optional element *common:external-ids* for recording identifiers for the affiliation
+- Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
+- Use of common namespace for *common:department-name*, *common:role-title* and *common:organization*
+
+### Research-resources
+- This new section of the ORCID record captures information about things that researchers use for their research which require a specific proposal process or credential to access, such as collections, equipment, infrastructure, and services. For more information see the [Research-resource tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/research-resources.md).
+
 ### Works
+- *work:journal-title* field is returned with the work summary
+- Addition of *common:external-id-normalized* when reading works for normalized work identifiers
+- Addition of *software* to the list of [supported work types](https://members.orcid.org/api/resources/work-types)
+- Use of common namespace for *common:url* replacing *work:url* and this field is now returned in the work summary
 - work type *dissertation* has been migrated to *dissertation-thesis*
 
+### Fundings
+- Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
+- Use of common namespace for *common:organization*, replacing *funding:organization*
+- Use of common namespace for *common:url* replacing *funding:url* and this field is now returned in the funding summary
+- *common:start-date* is required if *common:end-date* is provided
+
+### Peer-review
+- *reviewer-role* and *review-type* are returned with the peer-review summary
+- Disambiguated organization identifier is now required and must be a valid Ringgold, FundRef, or GRID identifier
+- Addition of *common:external-id-normalized* when reading peer-reviews for normalized peer-review identifiers
+- Addition of *grant*, *contract*, *award*, *salary-award*, and *research-resource-proposal* to supported subject types
 
 ## Sample files:
 
@@ -261,7 +291,7 @@ The swagger interfaces to the API available at:
 | Qualification summary			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/qualifications'```|
 | Research-resource summary			 | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/research-resources'```|
 | Researcher URLs    | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/researcher-urls'```|
-| Service summary             | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/service'```|
+| Service summary             | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/services'```|
 | Works summary             | /read-limited or /read-public|```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/works'```|
 
 

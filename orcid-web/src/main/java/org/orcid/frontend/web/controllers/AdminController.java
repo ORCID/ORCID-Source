@@ -283,7 +283,8 @@ public class AdminController extends BaseController {
             if (!profileEntityManager.isProfileClaimed(entry.getValue())) {
                 tempObj.setStatus("Unclaimed");
             } else if (profileEntityManager.isLocked(entry.getValue())) {
-                tempObj.setStatus("Locked");
+                String reason = profileEntityManager.getLockedReason(entry.getValue());
+                tempObj.setStatus("Locked" + (reason != null ? " - " + reason : ""));
             } else if (profileEntityManager.isDeactivated(entry.getValue())) {
                 tempObj.setStatus("Deactivated");
             } else {

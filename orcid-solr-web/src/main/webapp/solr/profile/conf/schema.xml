@@ -533,7 +533,6 @@
 		<field name="external-id-orcid" type="string" indexed="true"
 			stored="false" multiValued="true" />
 		<copyField source="external-id-source" dest="external-id-orcid"/>
-		xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 		<field name="external-id-reference" type="string" indexed="true"
 			stored="false" multiValued="true" />
 		<field name="external-id-source-and-reference" type="string"

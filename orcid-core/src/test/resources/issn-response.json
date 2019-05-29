@@ -1,0 +1,136 @@
+{
+  "@graph" : [ {
+    "@id" : "GNYAX4H94K4sXWCW7E0T2019-05-09T13:14:51.090",
+    "status" : "vocabularies/IdentifierStatus#Incorrect"
+  }, {
+    "@id" : "http://id.loc.gov/vocabulary/countries/enk",
+    "label" : "England"
+  }, {
+    "@id" : "organization/ISSNCenter#_2",
+    "@type" : "http://schema.org/Organization"
+  }, {
+    "@id" : "resource/ISSN-L/1755-4330",
+    "identifiedBy" : "resource/ISSN/1755-4349#ISSN-L"
+  }, {
+    "@id" : "resource/ISSN/1755-4349",
+    "@type" : [ "http://id.loc.gov/ontologies/bibframe/Work", "http://schema.org/Periodical", "http://id.loc.gov/ontologies/bibframe/Instance" ],
+    "identifiedBy" : [ "resource/ISSN/1755-4349#ISSN", "resource/ISSN/1755-4349#KeyTitle", "resource/ISSN/1755-4349#ISSN-L" ],
+    "mainTitle" : "Nature chemistry.",
+    "otherPhysicalFormat" : "resource/ISSN/1755-4330",
+    "title" : "resource/ISSN/1755-4349#KeyTitle",
+    "hasIncorrectISSN" : "1755-4330",
+    "format" : "vocabularies/medium#Online",
+    "identifier" : "1755-4349",
+    "isFormatOf" : "resource/ISSN/1755-4330",
+    "type" : "http://marc21rdf.info/terms/formofmaterial#a",
+    "http://purl.org/ontology/bibo/issn" : "1755-4349",
+    "isPartOf" : "resource/ISSN-L/1755-4330",
+    "issn" : "1755-4349",
+    "name" : [ "Nature chemistry (Online)", "Nature chemistry." ],
+    "publication" : "resource/ISSN/1755-4349#ReferencePublicationEvent",
+    "url" : "http://www.nature.com/nchem/index.html"
+  }, {
+    "@id" : "resource/ISSN/1755-4349#ISSN",
+    "@type" : "http://id.loc.gov/ontologies/bibframe/Issn",
+    "status" : "vocabularies/IdentifierStatus#Valid",
+    "value" : "1755-4349"
+  }, {
+    "@id" : "resource/ISSN/1755-4349#ISSN-L",
+    "@type" : "http://id.loc.gov/ontologies/bibframe/IssnL",
+    "status" : "vocabularies/IdentifierStatus#Valid",
+    "value" : "1755-4330"
+  }, {
+    "@id" : "resource/ISSN/1755-4349#KeyTitle",
+    "@type" : [ "http://id.loc.gov/ontologies/bibframe/Identifier", "http://id.loc.gov/ontologies/bibframe/KeyTitle" ],
+    "value" : "Nature chemistry (Online)"
+  }, {
+    "@id" : "resource/ISSN/1755-4349#Record",
+    "@type" : "http://schema.org/CreativeWork",
+    "status" : "vocabularies/RecordStatus#Register",
+    "modified" : "20190205225700.0",
+    "mainEntity" : "resource/ISSN/1755-4349",
+    "wasAttributedTo" : "organization/ISSNCenter#_2"
+  }, {
+    "@id" : "resource/ISSN/1755-4349#ReferencePublicationEvent",
+    "@type" : "http://schema.org/PublicationEvent",
+    "location" : "http://id.loc.gov/vocabulary/countries/enk"
+  } ],
+  "@context" : {
+    "status" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/status",
+      "@type" : "@id"
+    },
+    "value" : {
+      "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"
+    },
+    "identifiedBy" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+      "@type" : "@id"
+    },
+    "label" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "wasAttributedTo" : {
+      "@id" : "http://www.w3.org/ns/prov#wasAttributedTo",
+      "@type" : "@id"
+    },
+    "mainEntity" : {
+      "@id" : "http://schema.org/mainEntity",
+      "@type" : "@id"
+    },
+    "modified" : {
+      "@id" : "http://purl.org/dc/terms/modified",
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "location" : {
+      "@id" : "http://schema.org/location",
+      "@type" : "@id"
+    },
+    "title" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/title",
+      "@type" : "@id"
+    },
+    "isPartOf" : {
+      "@id" : "http://schema.org/isPartOf",
+      "@type" : "@id"
+    },
+    "publication" : {
+      "@id" : "http://schema.org/publication",
+      "@type" : "@id"
+    },
+    "issn" : {
+      "@id" : "http://schema.org/issn"
+    },
+    "format" : {
+      "@id" : "http://purl.org/dc/elements/1.1/format",
+      "@type" : "@id"
+    },
+    "otherPhysicalFormat" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/otherPhysicalFormat",
+      "@type" : "@id"
+    },
+    "isFormatOf" : {
+      "@id" : "http://purl.org/dc/terms/isFormatOf",
+      "@type" : "@id"
+    },
+    "type" : {
+      "@id" : "http://purl.org/dc/terms/type",
+      "@type" : "@id"
+    },
+    "mainTitle" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/mainTitle"
+    },
+    "url" : {
+      "@id" : "http://schema.org/url"
+    },
+    "name" : {
+      "@id" : "http://schema.org/name"
+    },
+    "identifier" : {
+      "@id" : "http://purl.org/dc/elements/1.1/identifier"
+    },
+    "hasIncorrectISSN" : {
+      "@id" : "http://issn.org/vocabularies/properties/hasIncorrectISSN"
+    }
+  }
+}

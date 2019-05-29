@@ -1,5 +1,6 @@
 package org.orcid.core.adapter.impl;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -546,29 +547,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.field("putCode", "id");
         addV2DateFields(workClassMap);
         registerSourceConverters(mapperFactory, workClassMap);
-        workClassMap.exclude("workType").customize(new CustomMapper<Work, WorkEntity>() {
-            /**
-             * From model object to database object
-             */            
-            @Override
-            public void mapAtoB(Work a, WorkEntity b, MappingContext context) {
-                // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
-                if(WorkType.DISSERTATION.equals(a.getWorkType())) {
-                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
-                } else {
-                    b.setWorkType(a.getWorkType().name());
-                }                
-            }
-            
-            /**
-             * From database to model object
-             */
-            @Override
-            public void mapBtoA(WorkEntity b, Work a, MappingContext context) {
-                a.setWorkType(getWorkType(b.getWorkType()));
-            }
-            
-        });
         workClassMap.field("journalTitle.content", "journalTitle");
         workClassMap.field("workTitle.title.content", "title");
         workClassMap.field("workTitle.translatedTitle.content", "translatedTitle");
@@ -584,6 +562,38 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.field("languageCode", "languageCode");
         workClassMap.field("country.value", "iso2Country");
         workClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
+        workClassMap.exclude("workType").customize(new CustomMapper<Work, WorkEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(Work a, WorkEntity b, MappingContext context) {
+                // Starting with 3.0_rc2 dissertation will be migrated to dissertation-thesis
+                if(WorkType.DISSERTATION.equals(a.getWorkType())) {
+                    b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
+                } else {
+                    b.setWorkType(a.getWorkType().name());
+                }     
+                b.setWorkUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+                b.setIso2Country(a.getCountry() == null ? null : a.getCountry().getValue().toString());
+                b.setJournalTitle(a.getJournalTitle() == null ? null : a.getJournalTitle().getContent());
+                b.setTranslatedTitle((a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode((a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                b.setSubtitle((a.getWorkTitle() == null || a.getWorkTitle().getSubtitle() == null) ? null : a.getWorkTitle().getSubtitle().getContent());
+                b.setCitation(a.getWorkCitation() == null ? null : a.getWorkCitation().getCitation());
+                b.setCitationType((a.getWorkCitation() == null || a.getWorkCitation().getWorkCitationType() == null) ? null : a.getWorkCitation().getWorkCitationType().toString());
+            }
+            
+            /**
+             * From database to model object
+             */
+            @Override
+            public void mapBtoA(WorkEntity b, Work a, MappingContext context) {
+                a.setWorkType(getWorkType(b.getWorkType()));
+            }
+            
+        });
+        
         workClassMap.byDefault();
         workClassMap.register();
 
@@ -735,6 +745,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
         fundingClassMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();
         fundingClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
+        fundingClassMap.customize(new CustomMapper<Funding, ProfileFundingEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(Funding a, ProfileFundingEntity b, MappingContext context) {
+                b.setOrganizationDefinedType(a.getOrganizationDefinedType() == null ? null : a.getOrganizationDefinedType().getContent());
+                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());                
+                b.setTranslatedTitle((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getLanguageCode());
+                b.setNumericAmount((a.getAmount() == null || a.getAmount().getContent() == null) ? null : BigDecimal.valueOf(Long.valueOf(a.getAmount().getContent())));
+                b.setCurrencyCode((a.getAmount() == null || a.getAmount().getContent() == null) ? null : a.getAmount().getCurrencyCode());
+            }                      
+        });
         fundingClassMap.byDefault();
         fundingClassMap.register();
 
@@ -767,8 +791,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
         ClassMapBuilder<Education, OrgAffiliationRelationEntity> educationClassMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
         addV2CommonFields(educationClassMap);
-        registerSourceConverters(mapperFactory, educationClassMap);
-        
+        registerSourceConverters(mapperFactory, educationClassMap);        
         
         educationClassMap.fieldBToA("org.name", "organization.name");
         educationClassMap.fieldBToA("org.city", "organization.address.city");
@@ -871,6 +894,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.fieldMap("subjectExternalIdentifier", "subjectExternalIdentifiersJson").converter("workExternalIdentifierConverterId").add();
         classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add(); 
+        classMap.customize(new CustomMapper<PeerReview, PeerReviewEntity>() {
+            /**
+             * From model object to database object
+             */            
+            @Override
+            public void mapAtoB(PeerReview a, PeerReviewEntity b, MappingContext context) {
+                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+                b.setSubjectUrl(a.getSubjectUrl() == null ? null : a.getSubjectUrl().getValue());
+                b.setSubjectTranslatedName((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getContent());
+                b.setSubjectTranslatedNameLanguageCode((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getLanguageCode());
+                b.setSubjectContainerName(a.getSubjectContainerName() == null ? null : a.getSubjectContainerName().getContent());
+            }                      
+        });
+        
         registerSourceConverters(mapperFactory, classMap);
         addV2CommonFields(classMap);
         classMap.byDefault();

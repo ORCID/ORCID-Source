@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet author="George Nash" id="ADD-USER-OBO-TO-CLIENT-DETAILS">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="client_details" columnName="user_obo_enabled"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="client_details">
+            <column name="user_obo_enabled" type="boolean" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="SET-USER-OBO-DEFAULT-VALUE" author="George Nash">
+        <sql>ALTER TABLE client_details ALTER COLUMN user_obo_enabled SET DEFAULT FALSE</sql>
+    </changeSet>
+    <changeSet id="SET-USER-OBO-DEFAULT-VALUE-ON-EXISTING" author="George Nash">
+        <sql>UPDATE client_details SET user_obo_enabled = FALSE</sql>
+    </changeSet>
+</databaseChangeLog>

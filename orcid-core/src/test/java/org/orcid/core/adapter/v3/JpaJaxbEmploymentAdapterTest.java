@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
@@ -67,6 +68,39 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNull(oar.getClientSourceId());        
         assertNull(oar.getElementSourceId());
         assertEquals("http://tempuri.org",oar.getUrl());
+    }
+    
+    @Test
+    public void clearOrgAffiliationRelationEntityFieldsTest() throws JAXBException {
+        Employment e = getEmployment(true);
+        assertNotNull(e);
+        OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
+        assertNotNull(oar);
+        
+        e.setUrl(null);
+        jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e, oar);
+        
+        assertNotNull(oar);
+        assertNull(oar.getUrl());
+        
+        //General info
+        assertEquals(Long.valueOf(0), oar.getId());
+        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
+        assertEquals("employment:department-name", oar.getDepartment());
+        assertEquals("employment:role-title", oar.getTitle());
+        
+        //Dates
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
+        assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
+        assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
+        assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
+        assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
+        
+        // Source
+        assertNull(oar.getSourceId());        
+        assertNull(oar.getClientSourceId());        
+        assertNull(oar.getElementSourceId());
     }
 
     @Test

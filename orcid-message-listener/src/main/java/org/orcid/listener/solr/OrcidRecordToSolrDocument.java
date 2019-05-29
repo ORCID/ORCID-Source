@@ -170,8 +170,6 @@ public class OrcidRecordToSolrDocument {
                 for (WorkGroup wg : record.getActivitiesSummary().getWorks().getWorkGroup()) {
                     if (wg.getWorkSummary() != null) {
                         for (WorkSummary w : wg.getWorkSummary()) {
-                            // have to use summaries here as group does not
-                            // include part-of
                             if (w.getExternalIdentifiers() != null && w.getExternalIdentifiers().getExternalIdentifier() != null) {
                                 for (ExternalID id : w.getExternalIdentifiers().getExternalIdentifier()) {
                                     // old way

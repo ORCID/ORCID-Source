@@ -2,6 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.GroupIdRecordDao;
@@ -69,5 +70,13 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
         }
         Long result = query.getSingleResult();
         return (result != null && result > 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<GroupIdRecordEntity> getIssnRecordsNotSourcedBy(String clientSourceId, int pageSize) {
+        Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g LEFT OUTER JOIN invalid_issn_group_id_record p ON g.id = p.id where p.id IS NULL AND g.group_id like 'issn:%' and g.client_source_id != :clientSourceId", GroupIdRecordEntity.class);
+        query.setParameter("clientSourceId", clientSourceId);
+        return query.getResultList();
     }
 }

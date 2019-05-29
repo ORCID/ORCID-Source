@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -72,7 +74,7 @@ public class ClientManagerImpl implements ClientManager {
 
     @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
-    
+
     @Resource
     private ProfileDao profileDao;
 
@@ -87,21 +89,21 @@ public class ClientManagerImpl implements ClientManager {
     public Client createPublicClient(Client newClient) {
         return create(newClient, true);
     }
-    
+
     private Client create(Client newClient, boolean publicClient) {
         String memberId = sourceManager.retrieveActiveSourceId();
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
 
         // Verify if the member type allow him to create another client
-        if(publicClient) {
+        if (publicClient) {
             ClientDetailsEntity existingPublicClient = clientDetailsDao.getPublicClient(memberId);
-            if(existingPublicClient != null) {
+            if (existingPublicClient != null) {
                 return jpaJaxbClientAdapter.toClient(existingPublicClient);
             }
         } else {
             validateCreateClientRequest(memberId);
         }
-        
+
         ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
         Date now = new Date();
         newEntity.setDateCreated(now);
@@ -115,14 +117,14 @@ public class ClientManagerImpl implements ClientManager {
 
         // Set authentication provider id
         newEntity.setAuthenticationProviderId(newClient.getAuthenticationProviderId());
-        
+
         // Set ClientType
-        if(!publicClient) {
+        if (!publicClient) {
             newEntity.setClientType(getClientType(MemberType.valueOf(memberEntity.getGroupType())).name());
         } else {
             newEntity.setClientType(ClientType.PUBLIC_CLIENT.name());
         }
-        
+
         // Set ClientResourceIdEntity
         Set<ClientResourceIdEntity> clientResourceIdEntities = new HashSet<ClientResourceIdEntity>();
         ClientResourceIdEntity clientResourceIdEntity = new ClientResourceIdEntity();
@@ -172,7 +174,7 @@ public class ClientManagerImpl implements ClientManager {
 
         return jpaJaxbClientAdapter.toClient(newEntity);
     }
-    
+
     @Override
     @Transactional
     public Client edit(Client existingClient, boolean updateConfigValues) {
@@ -180,26 +182,28 @@ public class ClientManagerImpl implements ClientManager {
             throw new IllegalArgumentException("Invalid client id provided: " + existingClient.getId());
         }
         ClientDetailsEntity clientDetails = clientDetailsDao.find(existingClient.getId());
-        
-        if(ClientType.PUBLIC_CLIENT.name().equals(clientDetails.getClientType())) {
-            for(ClientRedirectUri rUri : existingClient.getClientRedirectUris()) {
+
+        if (ClientType.PUBLIC_CLIENT.name().equals(clientDetails.getClientType())) {
+            for (ClientRedirectUri rUri : existingClient.getClientRedirectUris()) {
                 rUri.setRedirectUriType(RedirectUriType.SSO_AUTHENTICATION.value());
                 rUri.setUriActType(null);
                 rUri.setUriGeoArea(null);
             }
         }
-        
+
         jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);
-        clientDetails.setLastModified(new Date());        
-        
-        //Check if we should update client configuration values
-        if(updateConfigValues) {
+        clientDetails.setLastModified(new Date());
+
+        // Check if we should update client configuration values
+        if (updateConfigValues) {
             // Authentication provider id
             clientDetails.setAuthenticationProviderId(existingClient.getAuthenticationProviderId());
-            // Enable persistent tokens      
+            // Enable persistent tokens
             clientDetails.setPersistentTokensEnabled(existingClient.isPersistentTokensEnabled());
+            clientDetails.setUserOBOEnabled(existingClient.isUserOBOEnabled());
+            refreshGrantTypesForObo(clientDetails, existingClient.isOboEnabled());
         }
-        
+
         clientDetails = clientDetailsDao.merge(clientDetails);
         return jpaJaxbClientAdapter.toClient(clientDetails);
     }
@@ -231,9 +235,33 @@ public class ClientManagerImpl implements ClientManager {
             }
         });
     }
-
+    
+    private void refreshGrantTypesForObo(ClientDetailsEntity clientDetails, boolean enableObo) {
+        boolean oboAlreadyEnabled = false;
+        Iterator<ClientAuthorisedGrantTypeEntity> grantTypes = clientDetails.getClientAuthorizedGrantTypes().iterator();
+        while (grantTypes.hasNext()) {
+            ClientAuthorisedGrantTypeEntity g = grantTypes.next();
+            if (OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(g.getGrantType())) {
+                oboAlreadyEnabled = true;
+                if (!enableObo) {
+                    grantTypes.remove();
+                }
+                break;
+            }
+        }
+        
+        if (!oboAlreadyEnabled && enableObo) {
+            ClientAuthorisedGrantTypeEntity obo = new ClientAuthorisedGrantTypeEntity();
+            obo.setGrantType(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);
+            obo.setClientDetailsEntity(clientDetails);
+            obo.setDateCreated(new Date());
+            obo.setLastModified(new Date());
+            clientDetails.getClientAuthorizedGrantTypes().add(obo);
+        }
+    }
+    
     private void validateCreateClientRequest(String memberId) throws IllegalArgumentException {
-        ProfileEntity member = profileEntityCacheManager.retrieve(memberId);        
+        ProfileEntity member = profileEntityCacheManager.retrieve(memberId);
         if (member == null || member.getGroupType() == null) {
             throw new IllegalArgumentException("Illegal member id: " + memberId);
         }
@@ -246,10 +274,10 @@ public class ClientManagerImpl implements ClientManager {
     }
 
     private ClientType getClientType(MemberType memberType) {
-        if(memberType == null) {
+        if (memberType == null) {
             return ClientType.PUBLIC_CLIENT;
         }
-        
+
         switch (memberType) {
         case BASIC:
             return ClientType.UPDATER;
@@ -262,5 +290,5 @@ public class ClientManagerImpl implements ClientManager {
         default:
             throw new IllegalArgumentException("Invalid member type: " + memberType);
         }
-    }    
+    }
 }

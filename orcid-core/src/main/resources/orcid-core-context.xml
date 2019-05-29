@@ -16,7 +16,7 @@
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
-		base-package="org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers" />
+		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.issn.client" />
 	<aop:aspectj-autoproxy />
 	
     <context:mbean-server />

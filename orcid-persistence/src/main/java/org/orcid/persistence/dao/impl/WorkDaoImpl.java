@@ -243,8 +243,9 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<BigInteger> getIdsForClientSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type != 'PUBLIC_CLIENT')");
+    public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClientIds) {
+        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN :nonPublicClientIds");
+        query.setParameter("nonPublicClientIds", nonPublicClientIds);
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -259,8 +260,9 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<BigInteger> getIdsForUserSourceCorrection(int limit) {
-        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN (SELECT client_details_id FROM client_details WHERE client_type = 'PUBLIC_CLIENT')");
+    public List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClientIds) {
+        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = source_id AND client_source_id IN :publicClientIds");
+        query.setParameter("publicClientIds", publicClientIds);
         query.setMaxResults(limit);
         return query.getResultList();
     }
@@ -269,6 +271,23 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Transactional
     public void correctUserSource(List<BigInteger> ids) {
         Query query = entityManager.createNativeQuery("UPDATE work SET source_id = client_source_id, client_source_id = NULL where work_id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max) {
+        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NULL");
+        query.setParameter("clientDetailsId", clientDetailsId);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void updateUserOBODetails(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET assertion_origin_source_id = orcid where work_id IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
     }

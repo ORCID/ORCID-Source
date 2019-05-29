@@ -77,7 +77,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     
     List getEmailAndHash(int iteration, int batchSize);
 
-    List<String> getIdsForClientSourceCorrection(int limit);
+    List<String> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClients);
 
     void correctClientSource(List<String> ids);
     
@@ -88,7 +88,13 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
      */
     List<EmailEntity> getMarch2019QuarterlyEmailRecipients(int offset, int batchSize);
     
-    List<String> getIdsForUserSourceCorrection(int limit);
+    List<String> getIdsForUserSourceCorrection(int limit, List<String> publicClients);
 
     void correctUserSource(List<String> ids);
+
+    List<EmailEntity> findPublicEmailsIncludeUnverified(String orcid);
+
+    List<String> getIdsForUserOBOUpdate(String clientDetailsId, int max);
+
+    void updateUserOBODetails(List<String> ids);
 }

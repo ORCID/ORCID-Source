@@ -289,6 +289,10 @@
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
     
+    <bean id="invalidIssnGroupIdRecordDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
+        <constructor-arg value="org.orcid.persistence.jpa.entities.InvalidIssnGroupIdRecordEntity" />
+    </bean>
+    
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />

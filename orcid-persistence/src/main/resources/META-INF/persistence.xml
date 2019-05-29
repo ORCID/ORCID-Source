@@ -89,7 +89,8 @@
 		<class>org.orcid.persistence.jpa.entities.ProfileHistoryEventEntity</class>
 		<class>org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity</class>
 		<class>org.orcid.persistence.jpa.entities.ValidatedPublicProfileEntity</class>
-		<class>org.orcid.persistence.jpa.entities.MemberOBOWhitelistedClientEntity</class>		
+		<class>org.orcid.persistence.jpa.entities.MemberOBOWhitelistedClientEntity</class>
+		<class>org.orcid.persistence.jpa.entities.InvalidIssnGroupIdRecordEntity</class>		
 				
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>

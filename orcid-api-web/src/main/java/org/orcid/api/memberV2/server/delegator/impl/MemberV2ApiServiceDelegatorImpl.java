@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -17,6 +19,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -54,6 +57,7 @@ import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
@@ -111,7 +115,9 @@ import org.springframework.stereotype.Component;
 @Component("orcidT2ServiceDelegator")
 public class MemberV2ApiServiceDelegatorImpl implements
         MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> {
-
+    
+    private static Pattern issnGroupTypePattern = Pattern.compile("^issn:(\\d{4}-{0,1}\\d{3}[\\dXx])$");
+    
     // Managers that goes to the primary database
     @Resource
     private WorkManager workManager;
@@ -130,7 +136,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-
+    
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
 
@@ -640,6 +646,14 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
         orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_UPDATE);
+        Matcher matcher = issnGroupTypePattern.matcher(groupIdRecord.getGroupId());
+        
+        if (!groupIdRecordManager.exists(groupIdRecord.getGroupId()) && matcher.find()) {
+            // issn group type
+            groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupIdRecord.getGroupId(), matcher.group(1));
+            throw new DuplicatedGroupIdRecordException();
+        }
+        
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         try {
             return Response.created(new URI(String.valueOf(newRecord.getPutCode()))).build();
@@ -689,8 +703,13 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response findGroupIdRecordByGroupId(String groupId) {
         orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_READ);
         Optional<GroupIdRecord> record = groupIdRecordManager.findByGroupId(groupId);
-        if (record.isPresent())
+        Matcher matcher = issnGroupTypePattern.matcher(groupId);
+        if (record.isPresent()) {
             return Response.ok(record.get()).build();
+        } else if (matcher.find()) {
+            // issn group type
+            return Response.ok(groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupId, matcher.group(1))).build();
+        }
         return Response.ok(new GroupIdRecord()).build();
     }
 
@@ -766,13 +785,25 @@ public class MemberV2ApiServiceDelegatorImpl implements
         try {
             // return all emails if client has /email/read-private scope
             orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.EMAIL_READ_PRIVATE);
-            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
+            
+            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
+                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
+            } else {
+                emails = emailManagerReadOnly.getEmails(orcid);
+            }
+            
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
             emails.setEmails(filteredList);
         } catch (OrcidAccessControlException e) {
-            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
+            
+            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
+                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
+            } else {
+                emails = emailManagerReadOnly.getEmails(orcid);
+            }
+            
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();

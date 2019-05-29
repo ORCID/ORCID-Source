@@ -4,7 +4,7 @@
             <div class="control-group">
                 <p><small>${springMacroRequestContext.getMessage("password_one_time_reset.label")}</small></p>
             </div>
-            <div class="control-group">
+            <div class="control-group" *ngIf="resetPasswordForm">
                 <label for="passwordField" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset.pleaseenternewpassword")}</label>
                 <div class="controls">
                     <input id="passwordField" type="password" name="password" class="input-xlarge" [(ngModel)]="resetPasswordForm.password.value" (ngModelChange)="validatePassword(); serverValidate()"/>
@@ -15,7 +15,7 @@
                 <div class="pattern-container">
                     <img *ngIf="resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
                     <img *ngIf="!resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
-                    <@spring.message 'Pattern.registrationForm.password.eigthCharacters'/>
+                    <@spring.message 'Pattern.registrationForm.password.eigthCharacters'/>  
                 </div>
                 <div class="pattern-container">
                     <img *ngIf="resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.letterOrSymbol')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
@@ -35,7 +35,7 @@
             </span>
             </div>
             <div class="control-group">
-                <label for="retypedPassword" class="control-label">${springMacroRequestContext.getMessage("password_one_time_reset.pleaseenternewpassword")}</label>
+                <label for="retypedPassword" class="control-label">${springMacroRequestContext.getMessage("change_password.confirmnewpassword")}</label>
                 <div class="controls">
                     <input id="retypedPassword" type="password" name="retypedPassword" value="${(oneTimeResetPasswordForm.retypedPassword)!}" class="input-xlarge" [(ngModel)]="resetPasswordForm && resetPasswordForm.password && resetPasswordForm.retypedPassword.value" (onChange)="validatePassword(); serverValidate()" />
                     <span class="required">*</span>

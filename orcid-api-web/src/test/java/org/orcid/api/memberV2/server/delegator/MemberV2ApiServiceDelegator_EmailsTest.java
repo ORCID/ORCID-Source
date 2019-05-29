@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
@@ -141,13 +142,50 @@ public class MemberV2ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals("/4444-4444-4444-4443/email", emails.getPath());
         Utils.verifyLastModified(emails.getLastModifiedDate());
         assertNotNull(emails.getEmails());
-        assertEquals(1, emails.getEmails().size());
-        Email email = emails.getEmails().get(0);
-        Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(email.getEmail(), "teddybass3private@semantico.com");
-        assertEquals(Visibility.PRIVATE, email.getVisibility());
-        assertEquals("APP-5555555555555555", email.retrieveSourcePath());
-        assertEquals(true, email.isVerified());
-        assertEquals(false, email.isPrimary());
+        
+        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
+            assertEquals(1, emails.getEmails().size());
+            Email email = emails.getEmails().get(0);
+            Utils.verifyLastModified(email.getLastModifiedDate());
+            assertEquals(email.getEmail(), "teddybass3private@semantico.com");
+            assertEquals(Visibility.PRIVATE, email.getVisibility());
+            assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+            assertEquals(true, email.isVerified());
+            assertEquals(false, email.isPrimary());
+        } else {
+            assertEquals(3, emails.getEmails().size());
+            for (Email email : emails.getEmails()) {
+                Utils.verifyLastModified(email.getLastModifiedDate());
+                assertThat(email.getEmail(), anyOf(is("teddybass2@semantico.com"), is("teddybass3public@semantico.com"), is("teddybass3private@semantico.com")));
+                switch (email.getEmail()) {
+                case "teddybass2@semantico.com":
+                    assertEquals(Visibility.LIMITED, email.getVisibility());
+                    assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
+                    assertEquals(false, email.isVerified());
+                    assertEquals(false, email.isPrimary());
+                    break;
+                case "teddybass3public@semantico.com":
+                    assertEquals(Visibility.PUBLIC, email.getVisibility());
+                    assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
+                    assertEquals(false, email.isVerified());
+                    assertEquals(false, email.isPrimary());
+                    break;
+                case "teddybass3private@semantico.com":
+                    assertEquals(Visibility.PRIVATE, email.getVisibility());
+                    assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+                    assertEquals(true, email.isVerified());
+                    assertEquals(false, email.isPrimary());
+                    break;
+                case "peter@sellers.com":
+                    assertEquals(Visibility.PRIVATE, email.getVisibility());
+                    assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+                    assertEquals(false, email.isVerified());
+                    assertEquals(true, email.isPrimary());
+                    break;
+                default:
+                    fail("Invalid email: " + email.getEmail());
+                }
+            }            
+        }
     }
 }

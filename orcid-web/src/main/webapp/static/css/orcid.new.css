@@ -2641,6 +2641,7 @@ span.orcid-error {
     white-space: normal;
     word-break: normal;
     word-wrap: break-word;
+    font-weight: normal;
 }
 
 span.orcid-error a{
@@ -8761,6 +8762,8 @@ a.footer-url {
 
 .header2 .form-group {
     display: flex;
+    margin: 0;
+    width: 100%;
 }
 
 .header2 .menu-bar {
@@ -8924,16 +8927,23 @@ a.footer-url {
     padding-top: 38px;
 }
 
+.header2 .search {
+    padding: 20px 0;
+    padding-top: 38px;
+    flex-grow: 1;
+    max-width: 500px;
+    padding-left: 20px;
+}
+
 .header2 .menu-control {
     display: none;
 }
 
 .header2 span.glyphicon.glyphicon-search {
-    padding: 0 10px;
+    padding: 0 13px;
 }
 .header2 .input-group {
     flex-grow: 1;
-    max-width: 350px;
 }
 
 .header2 .logo > a {
@@ -8944,8 +8954,6 @@ a.footer-url {
 .header2 .logo > a > img {
     height: 100%;
 }
-
-
 
 .header2 .input-group {
     height: 42px;
@@ -9012,6 +9020,12 @@ a.footer-url {
 .header2 select#language-codes:focus {
     outline: 0;
 }
+
+.header2 .search-container {
+    flex-grow: 1;
+    padding-right: 8px;
+}
+
 
 @media only screen and (max-width: 991px) {
     .header2 .menu-bar {
@@ -9098,9 +9112,11 @@ a.footer-url {
         width: 100%;
     }
     .header2 .search {
-        width: cal(100% + 30);
+        max-width: unset;
         width: calc(100% + 30px);
         background-color: #f6f6f6;
+        padding: 0;
+        padding-bottom: 15px;
     }
     
     .header2 .menu-control {
@@ -9286,4 +9302,42 @@ emails-ng2 h3.workspace-section-label {
 
 .affiliation-heading {
     display: flex;
+}
+
+body manage-members-find-client-ng2 .ui-chkbox .ui-chkbox-box.ui-state-active {
+    background-color: white;
+    border-color: white;
+}
+
+body manage-members-find-client-ng2 .ui-chkbox .ui-chkbox-box.ui-state-active:not(.ui-state-disabled):hover {
+    border-color: white;
+    background-color:white;
+    color: black;
+}
+.aka .orcid-error {
+    font-size: 14px;
+}
+
+person-ng2 .workspace-section-content {
+    word-break: break-word;
+}
+
+person-ng2 .source span {
+    word-break: break-word;
+    hyphens: auto;
+}
+
+div#bio-section {
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.bio-content {
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.row.source-line {
+    word-break: break-word;
+    hyphens: auto;
 }
