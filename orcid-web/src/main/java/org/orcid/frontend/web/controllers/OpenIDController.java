@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -58,7 +57,6 @@ public class OpenIDController {
      * @param request
      * @return
      */
-    @CrossOrigin
     @RequestMapping(value = "/oauth/jwks", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody JSONObject getJWKS(HttpServletRequest request) {
         return openIDConnectKeyService.getPublicJWK().toJSONObject();     
@@ -69,7 +67,6 @@ public class OpenIDController {
      * @return
      * @throws IOException 
      */
-    @CrossOrigin
     @RequestMapping(value = "/oauth/userinfo", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody ResponseEntity<OpenIDConnectUserInfo> getUserInfo(HttpServletRequest request) throws IOException{
         if (request.getHeader("Authorization") != null) {//look in header
@@ -119,7 +116,6 @@ public class OpenIDController {
      * @return
      * @throws JsonProcessingException 
      */
-    @CrossOrigin
     @RequestMapping(value = "/.well-known/openid-configuration", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody String getOpenIDDiscovery(HttpServletRequest request) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
