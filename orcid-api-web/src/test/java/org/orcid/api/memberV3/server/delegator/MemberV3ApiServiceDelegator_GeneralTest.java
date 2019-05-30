@@ -401,7 +401,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
             fail();
         } 
         
-        GroupIdRecord groupIdRecord = Utils.getGroupIdRecord();
+        GroupIdRecord groupIdRecord = Utils.getNonIssnGroupIdRecord();
         try {
             serviceDelegator.createGroupIdRecord(groupIdRecord);
         } catch(Exception e) {
