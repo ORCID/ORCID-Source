@@ -289,7 +289,7 @@ public class Utils {
 
     public static GroupIdRecord getGroupIdRecord() {
         GroupIdRecord newRecord = new GroupIdRecord();
-        newRecord.setGroupId("issn:0000006");
+        newRecord.setGroupId("issn:1234-5678");
         newRecord.setName("TestGroup5");
         newRecord.setDescription("TestDescription5");
         newRecord.setType("publisher");
@@ -302,5 +302,14 @@ public class Utils {
         assertTrue(map.containsKey("Location"));
         List<?> resultWithPutCode = (List<?>) map.get("Location");
         return Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+    }
+    
+    public static GroupIdRecord getNonIssnGroupIdRecord() {
+        GroupIdRecord newRecord = new GroupIdRecord();
+        newRecord.setGroupId("publons:errrmmmmm");
+        newRecord.setName("TestGroup5");
+        newRecord.setDescription("TestDescription5");
+        newRecord.setType("publisher");
+        return newRecord;
     }
 }

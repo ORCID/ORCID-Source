@@ -52,7 +52,7 @@ Returns a list of group-id-records with name "my-name".
 
 Creates a new record
 
-``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/roup-~id-record'``
+``curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer a9bae4e9-fdf4-4f18-beaa-08e7629a5ec0' -d '@/Documents/groupid2.0.xml' -X POST 'https://api.sandbox.orcid.org/v2.0/group-id-record'``
 
 ## View Group-id-record
 
