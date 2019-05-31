@@ -18,8 +18,8 @@ public class CrossDomainWebManger {
     private static final String LOCALHOST = "localhost";
 
     Pattern p = Pattern.compile("^/userStatus\\.json|^/lang\\.json|^/oauth/userinfo|^/oauth/jwks|^/\\.well-known/openid-configuration");
-
-    @Value("${org.orcid.security.cors.allowed_domains}")
+    
+    @Value("${org.orcid.security.cors.allowed_domains:localhost}")
     private String allowedDomains;
 
     private List<String> domainsRegex;
