@@ -185,7 +185,7 @@ Editing the peer-review section of a record requires a 3 step OAuth token with t
 
 - **subject-container-name** _(optional)_ The name of the journal, conference, grant review panel, or other applicable object of which the review subject was a part.
 
-- **subject-type** _(optional)_ The type of object that the review subject is (for example, a journal article, grant, etc)
+- **subject-type** _(optional)_ The type of object that was reviewed, if used this field must be selected from the list of [supported wrok types](https://members.orcid.org/api/resources/work-types).
 
 - **subject-name** _(optional)_ The name/title of the subject object that was reviewed.
 
