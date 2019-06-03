@@ -12,10 +12,11 @@ public class OrcidRequestCache extends HttpSessionRequestCache {
     @Override
     public void saveRequest(HttpServletRequest request, HttpServletResponse response) {
         String requestUrl = OrcidUrlManager.getPathWithoutContextPath(request);
-        
-        // Save the request just in case it matches the SAVED_REQUEST_PATTERN pattern
-        if(OrcidUrlManager.SAVED_REQUEST_PATTERN.matcher(requestUrl).find()) {
+
+        // Save the request just in case it matches the SAVED_REQUEST_PATTERN
+        // pattern
+        if (OrcidUrlManager.SAVED_REQUEST_PATTERN.matcher(requestUrl).find()) {
             super.saveRequest(request, response);
-        }        
+        }
     }
 }
