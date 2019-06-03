@@ -260,6 +260,7 @@
 	
 	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" authentication-manager-ref="authenticationManager" create-session="ifRequired"
 		request-matcher="regex">
+		<sec:request-cache ref="orcidRequestCache"/>
 		<sec:access-denied-handler ref="orcidAccessDeniedHandler"/>
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:headers>
