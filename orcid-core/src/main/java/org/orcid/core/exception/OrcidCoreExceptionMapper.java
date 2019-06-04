@@ -141,7 +141,7 @@ public class OrcidCoreExceptionMapper {
     public Object getOrcidError(Integer errorCode, Integer status, Throwable t, String version) {
         Object orcidError = null;
         if(V2.equals(version)) {
-        	orcidError = (org.orcid.jaxb.model.error_v2.OrcidError) getOrcidErrorV2(errorCode, status, t);
+            orcidError = (org.orcid.jaxb.model.error_v2.OrcidError) getOrcidErrorV2(errorCode, status, t);
         } else if(V2_RC4.equals(version)) {
             orcidError = (org.orcid.jaxb.model.error_rc4.OrcidError) getOrcidErrorV2Rc4(errorCode, status, t);
         } else if(V2_RC3.equals(version)) {

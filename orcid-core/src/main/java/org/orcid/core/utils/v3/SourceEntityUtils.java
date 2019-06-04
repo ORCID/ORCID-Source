@@ -183,7 +183,7 @@ public class SourceEntityUtils {
      * @return
      */
     public static String getSourceName(Source activeSource) {
-        if (activeSource.getSourceName() != null && StringUtils.isEmpty(activeSource.getSourceName().getContent()))
+        if (activeSource.getSourceName() != null && !StringUtils.isEmpty(activeSource.getSourceName().getContent()))
             return activeSource.getSourceName().getContent();
         else
             return null;
