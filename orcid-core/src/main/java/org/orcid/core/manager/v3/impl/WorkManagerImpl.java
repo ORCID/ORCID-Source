@@ -234,7 +234,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                     params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
                                     if(extIDPutCodeMap.containsKey(extId)) {
                                         params.put("pubCode", String.valueOf(extIDPutCodeMap.get(extId)));
-                                        params.put("type", "work");                                        
                                     }                                    
                                     throw new OrcidDuplicatedActivityException(params);
                                 }
