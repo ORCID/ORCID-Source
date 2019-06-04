@@ -368,7 +368,7 @@ public class WorkManagerTest extends BaseTest {
         
         assertTrue(updatedBulk.getBulk().get(1) instanceof OrcidError);
         assertEquals(Integer.valueOf(9021), ((OrcidError)updatedBulk.getBulk().get(1)).getErrorCode());
-        assertEquals("409 Conflict: You have already added this activity (matched by external identifiers.) If you are trying to edit the item, please use PUT instead of POST.", ((OrcidError)updatedBulk.getBulk().get(1)).getDeveloperMessage());
+        assertEquals("409 Conflict: You have already added this activity (matched by external identifiers), please see element with put-code ${putCode}. If you are trying to edit the item, please use PUT instead of POST.", ((OrcidError)updatedBulk.getBulk().get(1)).getDeveloperMessage());
     
         workManager.removeWorks(orcid, Arrays.asList(((Work)updatedBulk.getBulk().get(0)).getPutCode()));
     }
