@@ -182,8 +182,8 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
         if(fundings != null && isApiRequest) {
             for(Funding exstingFunding : fundings) {
-                activityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
-            			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), activeSource);
+                activityValidator.checkExternalIdentifiersForDuplicates(funding,
+            			exstingFunding, exstingFunding.getSource(), activeSource);
             }
         }
                 
@@ -247,8 +247,8 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
             for(ProfileFundingEntity existingFunding : existingFundings) {
                 Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
                 if(!existing.getPutCode().equals(funding.getPutCode())) {
-                    activityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
-                                     existing.getExternalIdentifiers(), existing.getSource(), activeSOurce);
+                    activityValidator.checkExternalIdentifiersForDuplicates(funding,
+                                     existing, existing.getSource(), activeSOurce);
                 }
             }
     	}

@@ -27,7 +27,7 @@ import io.swagger.annotations.ApiModel;
         "groupId", "subjectExternalIdentifier", "subjectContainerName", "subjectType", "subjectName", "subjectUrl", "organization" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
 @ApiModel(value = "PeerReviewV2_0")
-public class PeerReview implements Filterable, Activity, Serializable, OrganizationHolder, SourceAware {
+public class PeerReview implements Filterable, Serializable, OrganizationHolder, SourceAware, ExternalIdentifiersAwareActivity {
     private static final long serialVersionUID = -1112309604310926743L;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "reviewer-role")
     protected Role role;

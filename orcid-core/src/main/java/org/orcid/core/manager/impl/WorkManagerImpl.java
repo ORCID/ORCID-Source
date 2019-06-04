@@ -143,8 +143,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         throw new ExceedMaxNumberOfElementsException();
                     }
                     for (Work existing : existingWorks) {
-                        activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
-                                sourceEntity);
+                        activityValidator.checkExternalIdentifiersForDuplicates(existing.getPutCode(), "work", work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                                sourceEntity);                        
                     }
                 }
             }
@@ -320,7 +320,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                    activityValidator.checkExternalIdentifiersForDuplicates(existing.getPutCode(), "work", work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }
         }else{

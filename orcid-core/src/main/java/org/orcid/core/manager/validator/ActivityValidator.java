@@ -37,11 +37,13 @@ import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.jaxb.model.record_v2.Activity;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.ExternalIdentifiersAwareActivity;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.FundingTitle;
 import org.orcid.jaxb.model.record_v2.PeerReview;
@@ -51,7 +53,6 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
-import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
@@ -421,7 +422,10 @@ public class ActivityValidator {
         }
     }
 
-    public void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, SourceEntity sourceEntity) {
+    public void checkExternalIdentifiersForDuplicates(ExternalIdentifiersAwareActivity theNew, ExternalIdentifiersAwareActivity theExisting, Source existingSource, SourceEntity sourceEntity) {
+        ExternalIDs newExtIds = theNew.getExternalIdentifiers();
+        ExternalIDs existingExtIds = theExisting.getExternalIdentifiers();
+    
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
@@ -429,12 +433,14 @@ public class ActivityValidator {
                             && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
+                        params.put("putCode", String.valueOf(theExisting.getPutCode()));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
             }
         }
-    }
+        
+    }    
 
     private static boolean areRelationshipsSameButNotBothPartOf(Relationship r1, Relationship r2) {
         if (r1 == null && r2 == null)
@@ -442,21 +448,6 @@ public class ActivityValidator {
         if (r1 != null && r1.equals(r2) && !r1.equals(Relationship.PART_OF))
             return true;
         return false;
-    }
-
-    public void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, SourceEntity sourceEntity) {
-        if (existingExtIds != null && newExtIds != null) {
-            for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
-                for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && SourceEntityUtils.getSourceId(sourceEntity).equals(getExistingSource(existingSource))) {
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
-                        throw new OrcidDuplicatedActivityException(params);
-                    }
-                }
-            }
-        }
     }
 
     @SuppressWarnings("deprecation")

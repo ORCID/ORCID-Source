@@ -658,9 +658,13 @@ public class ActivityValidatorTest {
         when(source2.getSourceName()).thenReturn(new SourceName("other source name"));
         when(source2.getSourceOrcid()).thenReturn(sourceOrcid);
         ExternalIDs extIds1 = getExternalIDs();
+        Work w1 = new Work();
+        w1.setWorkExternalIdentifiers(extIds1);
         
         ExternalIDs extIds2 = getExternalIDs();
-        activityValidator.checkExternalIdentifiersForDuplicates(extIds1, extIds2, source2, source1);
+        Work w2 = new Work();
+        w2.setWorkExternalIdentifiers(extIds2);
+        activityValidator.checkExternalIdentifiersForDuplicates(w1, w2, source2, source1);
     }
     
     @SuppressWarnings("deprecation")
@@ -676,9 +680,13 @@ public class ActivityValidatorTest {
         when(source2.getSourceName()).thenReturn(new SourceName("source name"));
         when(source2.getSourceClientId()).thenReturn(sourceClientId);
         ExternalIDs extIds1 = getExternalIDs();
+        Work w1 = new Work();
+        w1.setWorkExternalIdentifiers(extIds1);
         
         ExternalIDs extIds2 = getExternalIDs();
-        activityValidator.checkExternalIdentifiersForDuplicates(extIds1, extIds2, source2, source1);
+        Work w2 = new Work();
+        w2.setWorkExternalIdentifiers(extIds2);
+        activityValidator.checkExternalIdentifiersForDuplicates(w1, w2, source2, source1);
     }
     
     /**

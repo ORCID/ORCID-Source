@@ -45,7 +45,7 @@ import io.swagger.annotations.ApiModel;
         "startDate", "endDate", "externalIdentifiers", "contributors", "organization" })
 @XmlRootElement(name = "funding", namespace = "http://www.orcid.org/ns/funding")
 @ApiModel(value = "FundingV2_0")
-public class Funding implements Filterable, Activity, Serializable, OrganizationHolder, SourceAware {
+public class Funding implements Filterable, Serializable, OrganizationHolder, SourceAware, ExternalIdentifiersAwareActivity {
 
     private final static long serialVersionUID = 1L;
 

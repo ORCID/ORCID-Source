@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiModel;
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url",
         "externalIdentifiers", "displayIndex" })
 @ApiModel(value = "AffiliationV3_0")
-public abstract class Affiliation implements OrganizationHolder, Filterable, Activity, SourceAware {
+public abstract class Affiliation implements OrganizationHolder, Filterable, SourceAware, ExternalIdentifiersAwareActivity {
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "department-name")
     protected String departmentName;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "role-title")

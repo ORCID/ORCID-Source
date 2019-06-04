@@ -548,7 +548,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
                 }
                 
                 if (incoming.getClass().isAssignableFrom(affiliation.getClass())) {
-                    activityValidator.checkFundingExternalIdentifiersForDuplicates(incoming.getExternalIDs(), affiliation.getExternalIDs(), affiliation.getSource(),
+                    activityValidator.checkExternalIdentifiersForDuplicates(incoming, affiliation, affiliation.getSource(),
                             activeSource);
                 }
             }
