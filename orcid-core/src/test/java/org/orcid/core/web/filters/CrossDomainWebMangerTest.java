@@ -24,11 +24,11 @@ public class CrossDomainWebMangerTest {
     @Resource
     CrossDomainWebManger crossDomainWebManger;
     
-    String [] allowedDomains = {"https://orcid.org", "http://orcid.org", "http://qa.orcid.org", "https://qa.orcid.org", "https://sandbox.orcid.org", "http://sandbox.orcid.org"};
+    String [] allowedDomains = {"http://localhost", "https://localhost"};
     String [] forbiddenDomains = {"http://.orcid.org", "http://www.otherorcid.org", "http://www.myorcid.org", "http://www.ihateorcid.org", "http://qa.ihateorcid.org", "https://.orcid.org", "https://www.otherorcid.org", "https://www.myorcid.org", "https://www.ihateorcid.org", "https://qa.ihateorcid.org"};
     
-    String [] allowedPaths = {"/public/other","/public/","/userStatus.json"};
-    String [] forbiddenPaths = {"/public","/whatever/public","/whatever/public/","/whatever/public/other",
+    String [] allowedPaths = {"/lang.json","/userStatus.json","/oauth/userinfo","/oauth/jwks","/.well-known/openid-configuration"};
+    String [] forbiddenPaths = {"/oauth","/whatever/oauth","/whatever/oauth/","/whatever/oauth/other",
             "/whatever/userStatus.json","/userstatus.json","/userStatus.json/","/userStatus.json/whatever",
             "/userStatus.jsonwhatever/test","/userStatus.json/whatever","/userStatus.jsonwhatever","/userStatus.jsonwhatever/test"};
     

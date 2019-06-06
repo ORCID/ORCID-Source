@@ -168,8 +168,7 @@
 	
 	<filter-mapping>
 		<filter-name>corsFilterWeb</filter-name>
-		<url-pattern>/userStatus.json</url-pattern>
-		<url-pattern>/public/*</url-pattern>
+		<url-pattern>*</url-pattern>
 	</filter-mapping>
 
 	<filter>
