@@ -1,14 +1,29 @@
 # Write, update and delete peer-review and group-id items
 
-This tutorial goes over editing information in the peer-review section of an ORCID record. The ```peer-review``` activity type is intended to allow for recognition and exchange of data about peer review services contributed by researchers.
+This tutorial is split into two sections. Part 1 deals with searching, creating, updating and deleting ```group-id``` that are required for posting peer review items and part two goes over the ```peer-review``` activity type and editing information in the peer-review section of an ORCID record. 
+
+The ```peer-review``` activity type is intended to allow for recognition and exchange of data about peer review services contributed by researchers.
 
 The ```peer-review``` activity type follows the [CASRAI Peer Review Services data profile](http://dictionary.casrai.org/Peer_Review_Services).
 
-Peer-review items can only be added and updated by API clients. Users can delete but not add or edit peer-reviews.
+**Peer-review items can only be added and updated by API clients. Users can delete but not add or edit peer-reviews.**
 
 This workflow can be used with Member API credentials on sandbox or the production servers.
 
 This tutorial also includes information on adding, searching for and updating group-id's which are required for posting peer-review items.
+
+## 1. About Group-Ids
+
+**Group Ids are required to post Peer Review Items.** The correct work flow for posting new peer review items is the following:
+* Create a read/ write token for group ID using the two step process [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Get-a-token-to-create-and-read-a-peer-review-group) 
+* Using this token to check that the group ID you would like to use exists by searching using a curl call like the [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#search-for-an-existing-peer-review-group-by-id)
+* If the ID already exists (If you are using an [ISSN](https://portal.issn.org/)  and it is valid the ID most likely will already exist)carry on to the last step, posting your Peer review.
+* If the ID does not exist or you are not using ISSN, then create the Group ID using the above token and a call like [this example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Create-a-peer-review-group-id)
+* Finally you can post a peer review item with a correct group id using you [usual token for posting to the api](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/get_id.md)
+
+ data used to identify Peer review groups has been preloaded in to the Registry, therefore there should be no need to create new peer review groups. Simply posting with the correct ISSN data should be enough. 
+
+If you have problems posting a peer review item please double check that you are using a valid ISSN by searching the [ISSN portal](https://portal.issn.org/). 
 
 ## Overview
 
@@ -96,7 +111,7 @@ curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Beare
 ```
 
 ## Create a peer-review group-id
-Peer-review items are grouped on ORCID records based on who or what the reivew was done for this can be an organization, a publication or other. We suggest searching existing peer-review groups before creating new ones to avoid duplicate entries.
+Peer-review items are grouped on ORCID records based on who or what the reivew was done for this can be an organization, a publication or other. **We suggest searching existing peer-review groups** before creating new ones to avoid duplicate entries.
 
 ### Get a token to create a peer-review group
 Tokens to create peer-review groups are issued via the [2 step token process](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#generate-a-two-step-read-public-access-token).
@@ -123,6 +138,31 @@ Example response:
 {"access_token":"1cecf036-5ced-4d04-8eeb-61fa6e3b32ee","token_type":"bearer","refresh_token":"81hbd686-7aa9-4c52-b8db-51fd8370ccf4","expires_in":631138518,"scope":"group-id-record/update","orcid":null}
 ```
 
+
+
+**Curl example to post a new group ID**
+```
+curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -d '@group.xml' -X POST 'https://api.sandbox.orcid.org/v3.0/group-id-record'
+```
+
+**Example response**
+```
+HTTP/1.1 201 Created
+...
+Location: http://api.sandbox.orcid.org/v3.0_rc1/group-id-record/1348
+```
+**Example Group-ID XML (without ISSN)**
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<group-id:group-id-record xmlns:common="http://www.orcid.org/ns/common" xmlns:group-id="http://www.orcid.org/ns/group-id" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/group-id ../group-id-2.1.xsd ">
+  <group-id:name>group-id:Funder</group-id:name>
+  <group-id:group-id>fundref:http://dx.doi.org/10.13039/501100005957</group-id:group-id>
+  <group-id:description>group-id:description</group-id:description>
+  <group-id:type>journal</group-id:type>
+</group-id:group-id-record>
+```
+
 ### Peer-review group fields
 
 See sample 2.1 [peer-review-group](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
@@ -145,23 +185,12 @@ See sample 2.1 [peer-review-group](https://github.com/ORCID/ORCID-Source/blob/ma
 
 *Peer-review groups that are referenced by existing peer-review items can not be deleted.
 
-**Curl example to post a new group**
-```
-curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -d '@group.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/group-id-record'
-```
+## 2. About Peer Review Items
 
-Example response
-```
-HTTP/1.1 201 Created
-...
-Location: http://api.sandbox.orcid.org/v3.0_rc1/group-id-record/1348
-```
-For more information on working with peer-review groups see [Group id record API](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/README.md)
-
-## Permission to edit the record
+### Permission to edit the record
 Editing the peer-review section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading peer-review activities. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
 
-## Peer-review fields
+### Peer-review fields
 
 **Describing the reviewer**
 
