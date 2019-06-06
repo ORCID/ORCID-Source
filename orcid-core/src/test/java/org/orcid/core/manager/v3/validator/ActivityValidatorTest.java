@@ -740,9 +740,13 @@ public class ActivityValidatorTest {
         when(source2.getSourceName()).thenReturn(new SourceName("other source name"));
         when(source2.getSourceOrcid()).thenReturn(sourceOrcid);
         ExternalIDs extIds1 = getExternalIDs();
+        Work w1 = new Work();
+        w1.setWorkExternalIdentifiers(extIds1);
         
         ExternalIDs extIds2 = getExternalIDs();
-        activityValidator.checkExternalIdentifiersForDuplicates(extIds1, extIds2, source2, source1);
+        Work w2 = new Work();
+        w2.setWorkExternalIdentifiers(extIds2);
+        activityValidator.checkExternalIdentifiersForDuplicates(w1, w2, source2, source1);
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)
@@ -757,9 +761,13 @@ public class ActivityValidatorTest {
         source2.setSourceName(new SourceName("source name"));
         source2.setSourceClientId(sourceClientId);
         ExternalIDs extIds1 = getExternalIDs();
+        Work w1 = new Work();
+        w1.setWorkExternalIdentifiers(extIds1);
         
         ExternalIDs extIds2 = getExternalIDs();
-        activityValidator.checkExternalIdentifiersForDuplicates(extIds1, extIds2, source2, source1);
+        Work w2 = new Work();
+        w2.setWorkExternalIdentifiers(extIds2);
+        activityValidator.checkExternalIdentifiersForDuplicates(w1, w2, source2, source1);
     }
     
     /**
@@ -829,6 +837,8 @@ public class ActivityValidatorTest {
         id1.setValue("UPPER");
         ExternalIDs ids1 = new ExternalIDs();
         ids1.getExternalIdentifier().add(id1);
+        Work w1 = new Work();
+        w1.setWorkExternalIdentifiers(ids1);
         
         ExternalID id2 = new ExternalID();
         id2.setRelationship(Relationship.SELF);
@@ -837,6 +847,8 @@ public class ActivityValidatorTest {
         id2.setNormalized(new TransientNonEmptyString("upper"));
         ExternalIDs ids2 = new ExternalIDs();
         ids2.getExternalIdentifier().add(id2);
+        Work w2 = new Work();
+        w2.setWorkExternalIdentifiers(ids2);
         
         Source source1 = new Source();
         source1.setSourceName(new SourceName("source name"));
@@ -847,6 +859,6 @@ public class ActivityValidatorTest {
         SourceClientId sourceClientId = new SourceClientId();
         sourceClientId.setPath("APP-00000000000000");
         source2.setSourceClientId(sourceClientId);
-        activityValidator.checkExternalIdentifiersForDuplicates(ids1, ids2, source2, source1);
+        activityValidator.checkExternalIdentifiersForDuplicates(w1, w2, source2, source1);
     }
 }

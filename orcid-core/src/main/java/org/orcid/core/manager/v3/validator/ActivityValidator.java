@@ -52,6 +52,7 @@ import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.ExternalIdentifiersAwareActivity;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.FundingTitle;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
@@ -433,25 +434,34 @@ public class ActivityValidator {
         }
     }
 
-    public void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, Source activeSource) {
+    public void checkExternalIdentifiersForDuplicates(ExternalIdentifiersAwareActivity theNew, ExternalIdentifiersAwareActivity theExisting, Source existingSource, Source activeSource) {
+        ExternalIDs newExtIds = theNew.getExternalIdentifiers();
+        ExternalIDs existingExtIds = theExisting.getExternalIdentifiers();
+    
+        boolean normalizeExtId = !(theNew.getClass().isAssignableFrom(Funding.class));
+        
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    // normalize the ids before checking equality
-                    newId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
-                    if (existingId.getNormalized() == null)
-                        existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));
+                    
+                    if(normalizeExtId) {
+                        // normalize the ids before checking equality
+                        newId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
+                        if (existingId.getNormalized() == null)
+                            existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));                        
+                    }
                     if (areRelationshipsSameAndSelf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
                             && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existingSource)) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
+                        params.put("putCode", String.valueOf(theExisting.getPutCode()));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
             }
         }
     }
-
+    
     private static boolean areRelationshipsSameAndSelf(Relationship r1, Relationship r2) {
         if (r1 == null && r2 == null)
             return true;
@@ -459,22 +469,7 @@ public class ActivityValidator {
             return true;
         return false;
     }
-
-    public void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, Source activeSource) {
-        if (existingExtIds != null && newExtIds != null) {
-            for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
-                for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (areRelationshipsSameAndSelf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existingSource)) {
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
-                        throw new OrcidDuplicatedActivityException(params);
-                    }
-                }
-            }
-        }
-    }   
-
+    
     private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {
         if (updatedVisibility != null) {
             if (originalVisibility == null) {

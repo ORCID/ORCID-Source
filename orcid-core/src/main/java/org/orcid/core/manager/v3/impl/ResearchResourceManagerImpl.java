@@ -69,8 +69,8 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         List<ResearchResource> rrs = jpaJaxbResearchResourceAdapter.toModels(existingRr);
         if(rrs != null && isApiRequest) {
             for(ResearchResource exstingR : rrs) {
-                activityValidator.checkExternalIdentifiersForDuplicates(rr.getProposal().getExternalIdentifiers(),
-                                exstingR.getProposal().getExternalIdentifiers(), exstingR.getSource(), activeSource);
+                activityValidator.checkExternalIdentifiersForDuplicates(rr,
+                                exstingR, exstingR.getSource(), activeSource);
             }
         }
                 
@@ -116,8 +116,8 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
             for(ResearchResourceEntity existingFunding : existingFundings) {
                 ResearchResource existing = jpaJaxbResearchResourceAdapter.toModel(existingFunding);
                 if(!existing.getPutCode().equals(rr.getPutCode())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(rr.getProposal().getExternalIdentifiers(),
-                                     rr.getProposal().getExternalIdentifiers(), existing.getSource(), activeSource);
+                    activityValidator.checkExternalIdentifiersForDuplicates(rr,
+                                     existing, existing.getSource(), activeSource);
                 }
             }
         }       

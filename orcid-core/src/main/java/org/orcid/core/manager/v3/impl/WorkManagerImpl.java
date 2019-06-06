@@ -160,7 +160,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 }
                 if (existingWorks != null) {
                     for (Work existing : existingWorks) {
-                        activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                        activityValidator.checkExternalIdentifiersForDuplicates(work, existing, existing.getSource(),
                                 activeSource);
                     }
                 }
@@ -207,6 +207,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         if(workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
             Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, activeSource);
+            Map<ExternalID, Long> extIDPutCodeMap = new HashMap<ExternalID, Long>();
             if((existingWorks.size() + bulk.size()) > this.maxNumOfActivities) {
                 throw new ExceedMaxNumberOfElementsException();
             }
@@ -231,6 +232,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 if(existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
                                     Map<String, String> params = new HashMap<String, String>();
                                     params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
+                                    if(extIDPutCodeMap.containsKey(extId)) {
+                                        params.put("pubCode", String.valueOf(extIDPutCodeMap.get(extId)));
+                                    }                                    
                                     throw new OrcidDuplicatedActivityException(params);
                                 }
                             }
@@ -253,7 +257,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         bulk.set(i, updatedWork);
                         
                         //Add the work extIds to the list of existing external identifiers
-                        addExternalIdsToExistingSet(updatedWork, existingExternalIdentifiers);
+                        addExternalIdsToExistingSet(extIDPutCodeMap, updatedWork, existingExternalIdentifiers);
                     } catch(Exception e) {
                         //Get the exception 
                         OrcidError orcidError = orcidCoreExceptionMapper.getV3OrcidError(e);
@@ -296,13 +300,15 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return existingExternalIds;
     }
     
-    private void addExternalIdsToExistingSet(Work work, Set<ExternalID> existingExternalIDs) {
+    private void addExternalIdsToExistingSet(Map<ExternalID, Long> extIDPutCodeMap, Work work, Set<ExternalID> existingExternalIDs) {
         if(work != null && work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
             for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
                 //Don't include PART_OF external ids
                 if(!Relationship.PART_OF.equals(extId.getRelationship())) {
                     existingExternalIDs.add(extId);
                 }
+                
+                extIDPutCodeMap.put(extId, work.getPutCode());
             }
         }
     }
@@ -325,7 +331,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), activeSource);
+                    activityValidator.checkExternalIdentifiersForDuplicates(work, existing, existing.getSource(), activeSource);
                 }
             }
         }else{

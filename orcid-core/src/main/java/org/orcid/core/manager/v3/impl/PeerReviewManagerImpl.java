@@ -29,7 +29,6 @@ import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,7 +77,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                        activityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                        activityValidator.checkExternalIdentifiersForDuplicates(peerReview, existing, existing.getSource(),
                                 activeSource);
                     }
                 }
@@ -128,7 +127,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             for (PeerReview existing : existingReviews) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(peerReview.getPutCode())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                    activityValidator.checkExternalIdentifiersForDuplicates(peerReview, existing, existing.getSource(),
                             activeSource);
                 }
             }

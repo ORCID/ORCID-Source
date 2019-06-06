@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiModel;
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "proposal", "resourceItems", "displayIndex" })
 @XmlRootElement(name = "research-resource", namespace = "http://www.orcid.org/ns/research-resource")
 @ApiModel(value = "ResearchResourceV3_0")
-public class ResearchResource implements Filterable, Activity, Serializable, SourceAware {
+public class ResearchResource implements Filterable, Serializable, SourceAware, ExternalIdentifiersAwareActivity {
     private static final long serialVersionUID = -3117752351151578304L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
@@ -168,6 +168,15 @@ public class ResearchResource implements Filterable, Activity, Serializable, Sou
         if (visibility != other.visibility)
             return false;
         return true;
+    }
+
+    @Override
+    public ExternalIDs getExternalIdentifiers() {
+        if(this.getProposal() == null) {
+            return null;
+        }
+        
+        return this.getProposal().getExternalIdentifiers();
     }
 
 }
