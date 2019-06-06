@@ -49,7 +49,7 @@ public class JmsMessageSender {
             jmsTemplate.convertAndSend(destination, obj);
             return true;
         }
-        LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile"+pauseForAWhile);
+        LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile="+pauseForAWhile);
         return false;            
     }
     
@@ -58,7 +58,7 @@ public class JmsMessageSender {
             jmsTemplate.convertAndSend(destination, text);
             return true;
         }
-        LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile"+pauseForAWhile);
+        LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile="+pauseForAWhile);
         return false;            
     }
     

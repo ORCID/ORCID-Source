@@ -3,6 +3,7 @@ package org.orcid.core.cli;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.orcid.core.manager.OrgDisambiguatedManager;
+import org.orcid.core.messaging.JmsMessageSender;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -38,6 +39,8 @@ public class ProcessDisambiguatedOrgsForIndexing {
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");
+        JmsMessageSender jmsMessageSender = (JmsMessageSender) context.getBean("jmsMessageSender");
+        jmsMessageSender.setEnabled(true);        
     }
 
     public void execute() {
