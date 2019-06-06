@@ -14,6 +14,7 @@
 	xmlns:distinction="http://www.orcid.org/ns/distinction" xmlns:invited-position="http://www.orcid.org/ns/invited-position" 
 	xmlns:membership="http://www.orcid.org/ns/membership" xmlns:qualification="http://www.orcid.org/ns/qualification" 
 	xmlns:service="http://www.orcid.org/ns/service" 
+	xmlns:research-resource="http://www.orcid.org/ns/research-resource"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-3.0.xsd ">
 	<common:orcid-identifier>
@@ -35,7 +36,6 @@
 				<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 				<common:path>8888-8888-8888-8880</common:path>
 				<common:host>orcid.org</common:host>
-
 			</common:source-orcid>
 			<common:source-name />
 		</common:source>
@@ -208,15 +208,15 @@
 						<common:day>02</common:day>
 					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>distinction-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-distinction</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>GRID</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</distinction:distinction-summary>
@@ -256,20 +256,20 @@
 						<common:day>02</common:day>
 					</common:start-date>
 					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
+						<common:year>2019</common:year>
+						<common:month>01</common:month>
+						<common:day>01</common:day>
 					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>education-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-education</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>GRID</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</education:education-summary>
@@ -298,7 +298,6 @@
 							<common:uri>https://orcid.org/8888-8888-8888-8880</common:uri>
 							<common:path>8888-8888-8888-8880</common:path>
 							<common:host>orcid.org</common:host>
-	
 						</common:source-orcid>
 						<common:source-name />
 					</common:source>
@@ -310,20 +309,18 @@
 						<common:day>02</common:day>
 					</common:start-date>
 					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
+						<common:year>2025</common:year>						
 					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>employment-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-employment</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>GRID</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</employment:employment-summary>
@@ -336,7 +333,7 @@
 				<common:external-ids>
 					<common:external-id>
 						<common:external-id-type>grant_number</common:external-id-type>
-						<common:external-id-value>external-id-value</common:external-id-value>
+						<common:external-id-value>external-id-value-1</common:external-id-value>
 					</common:external-id>
 				</common:external-ids>
 				<funding:funding-summary put-code="0" visibility="private">
@@ -357,7 +354,7 @@
 					<common:external-ids>
 						<common:external-id>
 							<common:external-id-type>grant_number</common:external-id-type>
-							<common:external-id-value>external-id-value</common:external-id-value>
+							<common:external-id-value>external-id-value-1</common:external-id-value>
 							<common:external-id-url>http://tempuri.org</common:external-id-url>
 							<common:external-id-relationship>self</common:external-id-relationship>
 						</common:external-id>
@@ -381,8 +378,8 @@
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-funding</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>FUNDREF</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</funding:funding-summary>
@@ -415,27 +412,27 @@
 					<common:source-name />
 				</common:source>
 				<common:department-name>invited-position:department-name</common:department-name>
-				<common:role-title>invited-position:role-title</common:role-title>
+				<common:role-title>invited-position:role-title</common:role-title>				
 				<common:start-date>
-					<common:year>1948</common:year>
-					<common:month>02</common:month>
-					<common:day>02</common:day>
+					<common:year>2019</common:year>
+					<common:month>01</common:month>
+					<common:day>01</common:day>
 				</common:start-date>
 				<common:end-date>
-					<common:year>1948</common:year>
-					<common:month>02</common:month>
-					<common:day>02</common:day>
+					<common:year>2025</common:year>
+					<common:month>01</common:month>
+					<common:day>01</common:day>
 				</common:end-date>
 				<common:organization>
-					<common:name>common:name</common:name>
+					<common:name>invited-position-org</common:name>
 					<common:address>
 						<common:city>common:city</common:city>
 						<common:region>common:region</common:region>
 						<common:country>AF</common:country>
 					</common:address>
 					<common:disambiguated-organization>
-						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-						<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+						<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-invited-position</common:disambiguated-organization-identifier>
+						<common:disambiguation-source>GRID</common:disambiguation-source>
 					</common:disambiguated-organization>
 				</common:organization>
 			</invited-position:invited-position-summary>
@@ -474,21 +471,16 @@
 						<common:month>02</common:month>
 						<common:day>02</common:day>
 					</common:start-date>
-					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
-					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>membership-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-membership</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</membership:membership-summary>
@@ -554,8 +546,8 @@
 								<common:country>AF</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-								<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+								<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-peer-review</common:disambiguated-organization-identifier>
+								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</peer-review:convening-organization>
 					</peer-review:peer-review-summary>
@@ -596,25 +588,90 @@
 						<common:day>02</common:day>
 					</common:start-date>
 					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
+						<common:year>2025</common:year>
+						<common:month>12</common:month>						
 					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>qualification-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-qualification</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</qualification:qualification-summary>
 			</activities:affiliation-group>
-		</activities:qualifications>		
+		</activities:qualifications>
+		<activities:research-resources path="/8888-8888-8888-8880/research-resources">
+			<common:last-modified-date>2017-01-18T15:06:05.147-06:00</common:last-modified-date>
+			<activities:group>
+				<common:last-modified-date>2017-01-18T15:03:56.856-06:00</common:last-modified-date>
+				<common:external-ids>
+					<common:external-id>
+						<common:external-id-type>proposal_id</common:external-id-type>
+						<common:external-id-value>123456</common:external-id-value>
+						<common:external-id-relationship>self</common:external-id-relationship>
+					</common:external-id>
+				</common:external-ids>
+				<research-resource:research-resource-summary
+					put-code="1234" path="/0000-0003-0902-4386/research-resource/1234" visibility="public">
+					<!-- common metadata -->
+					<common:created-date>2015-06-25T16:01:12.718Z</common:created-date>
+					<common:last-modified-date>2017-09-08T13:31:19.987Z
+					</common:last-modified-date>
+					<common:source>
+						<common:source-orcid>
+							<common:uri>https://orcid.org/0000-0000-0000-0000</common:uri>
+							<common:path>0000-0000-0000-0000</common:path>
+							<common:host>orcid.org</common:host>
+						</common:source-orcid>
+						<common:source-name>XSEDE ORCID integration</common:source-name>
+					</common:source>
+					<!-- proposal title and host(s) -->
+					<research-resource:proposal> <!-- proposal/award/credential section -->
+						<research-resource:title>
+							<common:title>Giant Laser Award</common:title>
+						</research-resource:title>
+						<research-resource:hosts>
+							<common:organization>
+								<common:name>XSEDE</common:name>
+								<common:address>
+									<common:city>city</common:city>
+									<common:region>region</common:region>
+									<common:country>US</common:country>
+								</common:address>
+								<common:disambiguated-organization>
+									<common:disambiguated-organization-identifier>XX</common:disambiguated-organization-identifier>
+									<common:disambiguation-source>grid</common:disambiguation-source>
+								</common:disambiguated-organization>
+							</common:organization>
+						</research-resource:hosts>
+						<common:external-ids>
+							<common:external-id>
+								<common:external-id-type>proposal_id</common:external-id-type>
+								<common:external-id-value>123456</common:external-id-value>
+								<common:external-id-relationship>self</common:external-id-relationship>
+							</common:external-id>
+						</common:external-ids>
+						<common:start-date>
+							<common:year>1999</common:year>
+							<common:month>02</common:month>
+							<common:day>02</common:day>
+						</common:start-date>
+						<common:end-date>
+							<common:year>2012</common:year>
+							<common:month>02</common:month>
+							<common:day>02</common:day>
+						</common:end-date>
+						<common:url>http://xsede.org/GiantLaserAward</common:url>
+					</research-resource:proposal>
+				</research-resource:research-resource-summary>
+			</activities:group>
+		</activities:research-resources>		
 		<activities:services path="/8888-8888-8888-8880/services">
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:affiliation-group>
@@ -648,21 +705,16 @@
 						<common:month>02</common:month>
 						<common:day>02</common:day>
 					</common:start-date>
-					<common:end-date>
-						<common:year>1948</common:year>
-						<common:month>02</common:month>
-						<common:day>02</common:day>
-					</common:end-date>
 					<common:organization>
-						<common:name>common:name</common:name>
+						<common:name>service-org</common:name>
 						<common:address>
 							<common:city>common:city</common:city>
 							<common:region>common:region</common:region>
 							<common:country>AF</common:country>
 						</common:address>
 						<common:disambiguated-organization>
-							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
-							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier-service</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
 						</common:disambiguated-organization>
 					</common:organization>
 				</service:service-summary>

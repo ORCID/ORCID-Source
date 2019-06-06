@@ -25,7 +25,7 @@
         <property name="sessionAcknowledgeMode" value="2" />
     </bean>
 	
-	<bean id="jmsMessageSender" class="org.orcid.scheduler.messaging.JmsMessageSender">
+	<bean id="jmsMessageSender" class="org.orcid.core.messaging.JmsMessageSender">
 		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>
 	</bean>
 	
@@ -42,5 +42,23 @@
 	</bean>
 	
 	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />
+
+	<!-- Legacy Solr 4.10.4 -->
+	<!--SOLR -->
+    <!-- Confusingly, the client is actually called a server -->
+    <bean id="legacySolrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
+        <constructor-arg value="${org.orcid.persistence.solr.legacy.url}/profile" />
+        <property name="soTimeout" value="${org.orcid.persistence.solr.socketTimeout}" />
+        <property name="connectionTimeout" value="${org.orcid.persistence.solr.connectionTimeout}" />
+        <property name="allowCompression" value="${org.orcid.persistence.solr.allowCompression}" />
+        <property name="maxRetries" value="${org.orcid.persistence.solr.maxRetries}" />
+        <property name="defaultMaxConnectionsPerHost" value="${org.orcid.persistence.solr.maxTotalConnections}" />
+        <property name="maxTotalConnections" value="${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
+        <property name="parser" ref="responseParser" />
+    </bean>
+
+	<bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser" />
+
+	<bean id="solrIndexer" class="org.orcid.scheduler.indexer.solr.SolrIndexer" />
 
 </beans>

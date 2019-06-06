@@ -36,6 +36,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.CREDIT_NAME)
     private String creditName;
 
+    @Field(SolrConstants.BIOGRAPHY)
+    private String biography;
+    
     @Field(SolrConstants.OTHER_NAMES)
     private List<String> otherNames;
 
@@ -43,11 +46,14 @@ public class OrcidSolrDocument {
     private List<String> externalIdSources;
 
     @Field(SolrConstants.EXTERNAL_ID_REFERENCES)
-    private List<String> externalIdReferences;
+    private List<String> externalIdReferences;    
 
-    @Field(SolrConstants.EXTERNAL_ID_SOURCE_AND_REFERENCES)
-    private List<String> externalIdSourcesAndReferences;
-
+    @Field(SolrConstants.EXTERNAL_ID_SOURCE_AND_REFERENCE)
+    private List<String> externalIdSourceReferences;
+    
+    @Field(SolrConstants.EXTERNAL_ID_TYPE_AND_VALUE)
+    private List<String> externalIdTypeAndValue;
+    
     @Field(SolrConstants.DIGITAL_OBJECT_IDS)
     private List<String> digitalObjectIds = new ArrayList<String>();;
 
@@ -159,9 +165,6 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.FUNDING_TITLES)
     private List<String> fundingTitles;
 
-    @Field(SolrConstants.PATENT_NUMBERS)
-    private List<String> patentNumbers;
-
     @Field(SolrConstants.PROFILE_SUBMISSION_DATE)
     private Date profileSubmissionDate;
 
@@ -176,6 +179,15 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.PRIMARY_RECORD)
     private String primaryRecord;
+    
+    @Field(SolrConstants.PEER_REVIEW_GROUP_ID)
+    private Set<String> peerReviewGroupId;
+    
+    @Field(SolrConstants.PEER_REVIEW_ROLE)
+    private Set<String> peerReviewRole;
+    
+    @Field(SolrConstants.PEER_REVIEW_TYPE)
+    private Set<String> peerReviewType;
 
     // e.g. doi-self
     @Field("*" + SolrConstants.DYNAMIC_SELF)
@@ -198,11 +210,17 @@ public class OrcidSolrDocument {
     private Map<String, Set<String>> organisationNames;
 
     @Field(SolrConstants.RESEARCH_RESOURCE_ITEM_NAME)
-    private List<String> researhResourceItemNames;
+    private List<String> researchResourceItemNames;
     
     @Field(SolrConstants.RESEARCH_RESOURCE_PROPOSAL_TITLES)
     private List<String> researchResourceProposalTitles;
-
+    
+    @Field(SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES)
+    private List<String> pastInstitutionAffiliationNames;
+    
+    @Field(SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME)
+    private List<String> currentInstitutionAffiliationNames;
+    
     public String getOrcid() {
         return orcid;
     }
@@ -316,14 +334,6 @@ public class OrcidSolrDocument {
         this.fundingTitles = fundingTitles;
     }
 
-    public List<String> getPatentNumbers() {
-        return patentNumbers;
-    }
-
-    public void setPatentNumbers(List<String> patentNumbers) {
-        this.patentNumbers = patentNumbers;
-    }
-
     public Date getProfileSubmissionDate() {
         return profileSubmissionDate;
     }
@@ -355,15 +365,7 @@ public class OrcidSolrDocument {
     public void setPrimaryRecord(String primaryRecord) {
         this.primaryRecord = primaryRecord;
     }
-
-    public List<String> getResearhResourceItemName() {
-        return researhResourceItemNames;
-    }
-
-    public void setResearhResourceItemName(List<String> researhResourceItemNames) {
-        this.researhResourceItemNames = researhResourceItemNames;
-    }
-
+    
     public List<String> getResearchResourceProposalTitles() {
         return researchResourceProposalTitles;
     }
@@ -540,14 +542,6 @@ public class OrcidSolrDocument {
         this.externalIdSources = externalIdSources;
     }
 
-    public List<String> getExternalIdSourcesAndReferences() {
-        return externalIdSourcesAndReferences;
-    }
-
-    public void setExternalIdSourcesAndReferences(List<String> externalIdSourcesAndReferences) {
-        this.externalIdSourcesAndReferences = externalIdSourcesAndReferences;
-    }
-
     public List<String> getAgr() {
         return agr;
     }
@@ -684,6 +678,70 @@ public class OrcidSolrDocument {
         this.organisationNames = organisationNames;
     }
 
+    public List<String> getExternalIdTypeAndValue() {
+        return externalIdTypeAndValue;
+    }
+
+    public void setExternalIdTypeAndValue(List<String> externalIdTypeAndValue) {
+        this.externalIdTypeAndValue = externalIdTypeAndValue;
+    }
+
+    public List<String> getExternalIdSourceReferences() {
+        return externalIdSourceReferences;
+    }
+
+    public void setExternalIdSourceReferences(List<String> externalIdSourceReferences) {
+        this.externalIdSourceReferences = externalIdSourceReferences;
+    }
+
+    public List<String> getResearchResourceItemNames() {
+        return researchResourceItemNames;
+    }
+
+    public void setResearchResourceItemNames(List<String> researchResourceItemNames) {
+        this.researchResourceItemNames = researchResourceItemNames;
+    }
+
+    public Set<String> getPeerReviewGroupId() {
+        return peerReviewGroupId;
+    }
+
+    public void setPeerReviewGroupId(Set<String> peerReviewGroupId) {
+        this.peerReviewGroupId = peerReviewGroupId;
+    }
+
+    public Set<String> getPeerReviewRole() {
+        return peerReviewRole;
+    }
+
+    public void setPeerReviewRole(Set<String> peerReviewRole) {
+        this.peerReviewRole = peerReviewRole;
+    }
+
+    public Set<String> getPeerReviewType() {
+        return peerReviewType;
+    }
+
+    public void setPeerReviewType(Set<String> peerReviewType) {
+        this.peerReviewType = peerReviewType;
+    }
+
+    public List<String> getPastInstitutionAffiliationNames() {
+        return pastInstitutionAffiliationNames;
+    }
+
+    public void setPastInstitutionAffiliationNames(List<String> pastInstitutionAffiliationNames) {
+        this.pastInstitutionAffiliationNames = pastInstitutionAffiliationNames;
+    }
+
+    public List<String> getCurrentInstitutionAffiliationNames() {
+        return currentInstitutionAffiliationNames;
+    }
+
+    public void setCurrentInstitutionAffiliationNames(List<String> currentInstitutionAffiliationNames) {
+        this.currentInstitutionAffiliationNames = currentInstitutionAffiliationNames;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -692,6 +750,14 @@ public class OrcidSolrDocument {
     private void generateCombinedGivenAndFamilyNames() {
         String givenAndFamilyNames = (givenNames == null) ? ((familyName == null) ? null : familyName) : (givenNames + ((familyName == null) ? "" : " " + familyName));
         setGivenAndFamilyNames(givenAndFamilyNames);
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
     }
 
     @Override
@@ -703,17 +769,20 @@ public class OrcidSolrDocument {
         result = prime * result + ((asin == null) ? 0 : asin.hashCode());
         result = prime * result + ((asintld == null) ? 0 : asintld.hashCode());
         result = prime * result + ((bibcode == null) ? 0 : bibcode.hashCode());
+        result = prime * result + ((biography == null) ? 0 : biography.hashCode());
         result = prime * result + ((cba == null) ? 0 : cba.hashCode());
         result = prime * result + ((cit == null) ? 0 : cit.hashCode());
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
         result = prime * result + ((ctx == null) ? 0 : ctx.hashCode());
+        result = prime * result + ((currentInstitutionAffiliationNames == null) ? 0 : currentInstitutionAffiliationNames.hashCode());
         result = prime * result + ((digitalObjectIds == null) ? 0 : digitalObjectIds.hashCode());
         result = prime * result + ((eid == null) ? 0 : eid.hashCode());
         result = prime * result + ((emailAddresses == null) ? 0 : emailAddresses.hashCode());
         result = prime * result + ((ethos == null) ? 0 : ethos.hashCode());
         result = prime * result + ((externalIdReferences == null) ? 0 : externalIdReferences.hashCode());
+        result = prime * result + ((externalIdSourceReferences == null) ? 0 : externalIdSourceReferences.hashCode());
         result = prime * result + ((externalIdSources == null) ? 0 : externalIdSources.hashCode());
-        result = prime * result + ((externalIdSourcesAndReferences == null) ? 0 : externalIdSourcesAndReferences.hashCode());
+        result = prime * result + ((externalIdTypeAndValue == null) ? 0 : externalIdTypeAndValue.hashCode());
         result = prime * result + ((familyName == null) ? 0 : familyName.hashCode());
         result = prime * result + ((fundingTitles == null) ? 0 : fundingTitles.hashCode());
         result = prime * result + ((givenAndFamilyNames == null) ? 0 : givenAndFamilyNames.hashCode());
@@ -737,16 +806,19 @@ public class OrcidSolrDocument {
         result = prime * result + ((otherIdentifierType == null) ? 0 : otherIdentifierType.hashCode());
         result = prime * result + ((otherNames == null) ? 0 : otherNames.hashCode());
         result = prime * result + ((partOfIds == null) ? 0 : partOfIds.hashCode());
+        result = prime * result + ((pastInstitutionAffiliationNames == null) ? 0 : pastInstitutionAffiliationNames.hashCode());
         result = prime * result + ((pat == null) ? 0 : pat.hashCode());
-        result = prime * result + ((patentNumbers == null) ? 0 : patentNumbers.hashCode());
+        result = prime * result + ((peerReviewGroupId == null) ? 0 : peerReviewGroupId.hashCode());
+        result = prime * result + ((peerReviewRole == null) ? 0 : peerReviewRole.hashCode());
+        result = prime * result + ((peerReviewType == null) ? 0 : peerReviewType.hashCode());
         result = prime * result + ((pmc == null) ? 0 : pmc.hashCode());
         result = prime * result + ((pmid == null) ? 0 : pmid.hashCode());
         result = prime * result + ((primaryRecord == null) ? 0 : primaryRecord.hashCode());
         result = prime * result + ((profileLastModifiedDate == null) ? 0 : profileLastModifiedDate.hashCode());
         result = prime * result + ((profileSubmissionDate == null) ? 0 : profileSubmissionDate.hashCode());
         result = prime * result + ((publicProfileMessage == null) ? 0 : publicProfileMessage.hashCode());
+        result = prime * result + ((researchResourceItemNames == null) ? 0 : researchResourceItemNames.hashCode());
         result = prime * result + ((researchResourceProposalTitles == null) ? 0 : researchResourceProposalTitles.hashCode());
-        result = prime * result + ((researhResourceItemNames == null) ? 0 : researhResourceItemNames.hashCode());
         result = prime * result + ((rfc == null) ? 0 : rfc.hashCode());
         result = prime * result + ((selfIds == null) ? 0 : selfIds.hashCode());
         result = prime * result + ((sourceWorkId == null) ? 0 : sourceWorkId.hashCode());
@@ -794,6 +866,11 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!bibcode.equals(other.bibcode))
             return false;
+        if (biography == null) {
+            if (other.biography != null)
+                return false;
+        } else if (!biography.equals(other.biography))
+            return false;
         if (cba == null) {
             if (other.cba != null)
                 return false;
@@ -813,6 +890,11 @@ public class OrcidSolrDocument {
             if (other.ctx != null)
                 return false;
         } else if (!ctx.equals(other.ctx))
+            return false;
+        if (currentInstitutionAffiliationNames == null) {
+            if (other.currentInstitutionAffiliationNames != null)
+                return false;
+        } else if (!currentInstitutionAffiliationNames.equals(other.currentInstitutionAffiliationNames))
             return false;
         if (digitalObjectIds == null) {
             if (other.digitalObjectIds != null)
@@ -839,15 +921,20 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!externalIdReferences.equals(other.externalIdReferences))
             return false;
+        if (externalIdSourceReferences == null) {
+            if (other.externalIdSourceReferences != null)
+                return false;
+        } else if (!externalIdSourceReferences.equals(other.externalIdSourceReferences))
+            return false;
         if (externalIdSources == null) {
             if (other.externalIdSources != null)
                 return false;
         } else if (!externalIdSources.equals(other.externalIdSources))
             return false;
-        if (externalIdSourcesAndReferences == null) {
-            if (other.externalIdSourcesAndReferences != null)
+        if (externalIdTypeAndValue == null) {
+            if (other.externalIdTypeAndValue != null)
                 return false;
-        } else if (!externalIdSourcesAndReferences.equals(other.externalIdSourcesAndReferences))
+        } else if (!externalIdTypeAndValue.equals(other.externalIdTypeAndValue))
             return false;
         if (familyName == null) {
             if (other.familyName != null)
@@ -964,15 +1051,30 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!partOfIds.equals(other.partOfIds))
             return false;
+        if (pastInstitutionAffiliationNames == null) {
+            if (other.pastInstitutionAffiliationNames != null)
+                return false;
+        } else if (!pastInstitutionAffiliationNames.equals(other.pastInstitutionAffiliationNames))
+            return false;
         if (pat == null) {
             if (other.pat != null)
                 return false;
         } else if (!pat.equals(other.pat))
             return false;
-        if (patentNumbers == null) {
-            if (other.patentNumbers != null)
+        if (peerReviewGroupId == null) {
+            if (other.peerReviewGroupId != null)
                 return false;
-        } else if (!patentNumbers.equals(other.patentNumbers))
+        } else if (!peerReviewGroupId.equals(other.peerReviewGroupId))
+            return false;
+        if (peerReviewRole == null) {
+            if (other.peerReviewRole != null)
+                return false;
+        } else if (!peerReviewRole.equals(other.peerReviewRole))
+            return false;
+        if (peerReviewType == null) {
+            if (other.peerReviewType != null)
+                return false;
+        } else if (!peerReviewType.equals(other.peerReviewType))
             return false;
         if (pmc == null) {
             if (other.pmc != null)
@@ -1004,15 +1106,15 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!publicProfileMessage.equals(other.publicProfileMessage))
             return false;
+        if (researchResourceItemNames == null) {
+            if (other.researchResourceItemNames != null)
+                return false;
+        } else if (!researchResourceItemNames.equals(other.researchResourceItemNames))
+            return false;
         if (researchResourceProposalTitles == null) {
             if (other.researchResourceProposalTitles != null)
                 return false;
         } else if (!researchResourceProposalTitles.equals(other.researchResourceProposalTitles))
-            return false;
-        if (researhResourceItemNames == null) {
-            if (other.researhResourceItemNames != null)
-                return false;
-        } else if (!researhResourceItemNames.equals(other.researhResourceItemNames))
             return false;
         if (rfc == null) {
             if (other.rfc != null)

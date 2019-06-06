@@ -16,8 +16,7 @@ public class OrcidSolrQueryBuilder {
     private SolrQueryBuilder solrQueryBuilder;
     private static final String GIVEN_NAME_SOLR_FIELD = SolrConstants.GIVEN_NAMES;
     private static final String OTHER_NAME_SOLR_FIELD = SolrConstants.OTHER_NAMES;
-    private static final String FAMILY_NAME_SOLR_FIELD = SolrConstants.FAMILY_NAME;
-    private static final String PRIMARY_INST_NAME_SOLR_FIELD = SolrConstants.AFFILIATE_PRIMARY_INSTITUTION_NAMES;
+    private static final String FAMILY_NAME_SOLR_FIELD = SolrConstants.FAMILY_NAME;   
     private static final String PAST_INST_NAME_SOLR_FIELD = SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES;
     private static final String KEYWORD_FIELD = SolrConstants.KEYWORDS;
     private static final String TEXT_FIELD = SolrConstants.TEXT;
@@ -59,23 +58,7 @@ public class OrcidSolrQueryBuilder {
     public void addFamilyNameToQueryAsLowerCaseWildcardANDOperation(String familyName) {
         solrQueryBuilder.appendLowercaseWildcardANDCondition(FAMILY_NAME_SOLR_FIELD, familyName);
     }
-
-    public void addPrimaryInstitution(String institutionName) {
-        solrQueryBuilder.appendFieldValuePair(PRIMARY_INST_NAME_SOLR_FIELD, institutionName);
-    }
-
-    public void addPrimaryInstitutionAsLowercaseWildcard(String institutionName) {
-        solrQueryBuilder.appendFieldValuePairAsLowercaseWildcard(PRIMARY_INST_NAME_SOLR_FIELD, institutionName);
-    }
-
-    public void addPrimaryInstitutionAsANDOperation(String institutionName) {
-        solrQueryBuilder.appendANDCondition(PRIMARY_INST_NAME_SOLR_FIELD, institutionName);
-    }
-
-    public void addPrimaryInstitutionAsLowercaseWildcardANDOperation(String institutionName) {
-        solrQueryBuilder.appendLowercaseWildcardANDCondition(PRIMARY_INST_NAME_SOLR_FIELD, institutionName);
-    }
-
+    
     public void addOtherNamesAsOROperation(String otherName) {
         solrQueryBuilder.appendORCondition(OTHER_NAME_SOLR_FIELD, otherName);
     }

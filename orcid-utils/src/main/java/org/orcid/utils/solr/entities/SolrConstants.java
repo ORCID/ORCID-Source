@@ -3,23 +3,23 @@ package org.orcid.utils.solr.entities;
 public class SolrConstants {
     public static final String SCORE = "score";
     public static final String ORCID = "orcid";
+    public static final String BIOGRAPHY = "biography";
     public static final String GIVEN_NAMES = "given-names";
     public static final String FAMILY_NAME = "family-name";
     public static final String GIVEN_AND_FAMILY_NAMES = "given-and-family-names";
     public static final String EMAIL_ADDRESS = "email";
     public static final String AFFILIATE_PAST_INSTITUTION_NAMES = "past-institution-affiliation-name";
-    public static final String AFFILIATE_PRIMARY_INSTITUTION_NAMES = "current-primary-institution-affiliation-name";
-    public static final String AFFILIATE_INSTITUTION_NAME = "current-institution-affiliation-name";
+    public static final String AFFILIATE_CURRENT_INSTITUTION_NAME = "current-institution-affiliation-name";
     public static final String CREDIT_NAME = "credit-name";
     public static final String OTHER_NAMES = "other-names";
+    public static final String EXTERNAL_ID_TYPE_AND_VALUE = "external-id-type-and-value";
     public static final String EXTERNAL_ID_SOURCE = "external-id-source";
-    public static final String EXTERNAL_ID_REFERENCES = "external-id-reference";
-    public static final String EXTERNAL_ID_SOURCE_AND_REFERENCES = "external-id-source-and-reference";
+    public static final String EXTERNAL_ID_SOURCE_AND_REFERENCE = "external-id-source-and-reference";
+    public static final String EXTERNAL_ID_REFERENCES = "external-id-reference";    
     public static final String DIGITAL_OBJECT_IDS = "digital-object-ids";
     public static final String WORK_TITLES = "work-titles";
     public static final String GRANT_NUMBERS = "grant-numbers";
     public static final String FUNDING_TITLES = "funding-titles";
-    public static final String PATENT_NUMBERS = "patent-numbers";
     public static final String KEYWORDS = "keyword";
     public static final String TEXT = "text";
     public static final String PROFILE_SUBMISSION_DATE = "profile-submission-date";
@@ -65,6 +65,7 @@ public class SolrConstants {
     public static final String ORG_DISAMBIGUATED_COUNTRY = "org-disambiguated-country";
     public static final String ORG_DISAMBIGUATED_ID_FROM_SOURCE = "org-disambiguated-id-from-source";
     public static final String ORG_DISAMBIGUATED_ID_SOURCE_TYPE = "org-disambiguated-id-source-type";
+    public static final String ORG_DISAMBIGUATED_STATUS = "org-disambiguated-status";    
     public static final String ORG_DISAMBIGUATED_TYPE = "org-disambiguated-type";
     public static final String ORG_DISAMBIGUATED_POPULARITY = "org-disambiguated-popularity";
     public static final String ORG_DEFINED_FUNDING_TYPE = "org-defined-funding-type";
@@ -81,6 +82,10 @@ public class SolrConstants {
     public static final String DYNAMIC_ORGANISATION_NAME = "-org-name";
     public static final String AFFILIATION_ORGANISATION_NAME = "affiliation-org-name";
     public static final String FUNDING_ORGANISATION_NAME = "funding-org-name";
+    public static final String PEER_REVIEW_ORGANISATION_NAME = "peer-review-org-name";
+    public static final String PEER_REVIEW_TYPE = "peer-review-type";
+    public static final String PEER_REVIEW_ROLE = "peer-review-role";
+    public static final String PEER_REVIEW_GROUP_ID = "peer-review-group-id";
     
     public static final String RINGGOLD_ORG_TYPE = "RINGGOLD";
     public static final String GRID_ORG_TYPE = "GRID";

@@ -41,11 +41,11 @@
 	  <property name="defaultDestination" ref="defaultJmsDestination" />
 	</bean>
 	
-	<bean id="jmsMessageSender" class="org.orcid.scheduler.messaging.JmsMessageSender">
+	<bean id="jmsMessageSender" class="org.orcid.core.messaging.JmsMessageSender">
 		<property name="enabled" value="true"/>
 	</bean>
 	
-	<bean id="echo2" class="org.orcid.scheduler.messaging.EchoTestMessageListener2"/>
-	<bean id="echo3" class="org.orcid.scheduler.messaging.EchoTestMessageListener3"/>
+	<bean id="echo2" class="org.orcid.core.messaging.EchoTestMessageListener2"/>
+	<bean id="echo3" class="org.orcid.core.messaging.EchoTestMessageListener3"/>
 
 </beans>

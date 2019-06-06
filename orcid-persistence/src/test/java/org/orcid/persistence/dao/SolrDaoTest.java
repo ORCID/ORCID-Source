@@ -69,17 +69,7 @@ public class SolrDaoTest {
         assertFalse(secondOrcid.getOrcid().equals(firstOrcidResult.getOrcid()));
         assertEquals("1234-5678", firstOrcidResult.getOrcid());
     }
-
-    @Test
-    public void queryStringSearchPatent() throws Exception {
-        OrcidSolrDocument firstOrcid = buildAndPersistFirstOrcid();
-        String patentQueryString = "patent-numbers:Elec-hammer01X%3A";
-        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(patentQueryString, null, null);
-        List<OrcidSolrResult> solrResultsList = orcidSolrResults.getResults();
-        assertTrue(solrResultsList.size() == 1);
-        assertEquals(firstOrcid.getOrcid(), solrResultsList.get(0).getOrcid());
-    }
-
+    
     @Test
     public void queryStringSearchGrant() throws Exception {
         OrcidSolrDocument secondOrcid = buildAndPersistSecondOrcid();
@@ -295,10 +285,6 @@ public class SolrDaoTest {
         solrResults = solrDao.findByDocumentCriteria(familyNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
 
-        String patentsQueryString = "text=Elec-hammer01X%3A";
-        solrResults = solrDao.findByDocumentCriteria(patentsQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
-
         String grantQueryString = "text=Grant-number02X%3A";
         solrResults = solrDao.findByDocumentCriteria(grantQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
@@ -336,8 +322,7 @@ public class SolrDaoTest {
         OrcidSolrDocument testDoc = new OrcidSolrDocument();
         testDoc.setOrcid(firstOrcid);
         testDoc.setGivenNames("Given Name of Person");
-        testDoc.setFamilyName("Smith");
-        testDoc.setPatentNumbers(Arrays.asList(new String[] { "Elec-hammer01X:" }));
+        testDoc.setFamilyName("Smith");        
         return testDoc;
     }
 

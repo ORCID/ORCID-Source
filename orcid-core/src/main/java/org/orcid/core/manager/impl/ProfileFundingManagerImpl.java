@@ -17,6 +17,7 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
+import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
@@ -31,6 +32,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl implements ProfileFundingManager {
@@ -60,6 +62,12 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     
     @Resource
     private NotificationManager notificationManager;
+    
+    @Value("${org.orcid.persistence.messaging.updated.fundingSubType.solr:indexFundingSubTypes}")
+    private String solrQueueName;    
+
+    @Resource(name = "jmsMessageSender")
+    private JmsMessageSender messaging;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -126,7 +134,13 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
                 if(!isInappropriate){
                     OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
                     document.setOrgDefinedFundingType(subtype);
-                    fundingSubTypeSolrDao.persist(document);              
+                    fundingSubTypeSolrDao.persist(document);    
+                    
+                    // Send message to the message listener
+                    if (!messaging.send(document, solrQueueName)) {
+                        LOGGER.error("Unable to send fundingSubType: " + document.getOrgDefinedFundingType() + " to the message queue " + solrQueueName);            
+                        return;
+                    }                                         
                 } else {
                     LOGGER.warn("A word have been flaged as inappropiate: " + subtype);
                 }

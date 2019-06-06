@@ -11,4 +11,5 @@ public interface OrcidRecordIndexer {
     
     void processUnclaimedProfilesForReminder();
 
+    void reindexRecordsForSolrUpgrade();
 }

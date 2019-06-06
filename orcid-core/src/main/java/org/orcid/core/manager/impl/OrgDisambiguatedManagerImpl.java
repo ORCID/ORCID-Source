@@ -13,6 +13,7 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
+import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.togglz.Features;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -27,6 +28,7 @@ import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -53,7 +55,13 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Resource
     private TransactionTemplate transactionTemplate;
+    
+    @Value("${org.orcid.persistence.messaging.updated.disambiguated_org.solr:indexDisambiguatedOrgs}")
+    private String updateSolrQueueName;    
 
+    @Resource(name = "jmsMessageSender")
+    private JmsMessageSender messaging;
+    
     @Override
     synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
@@ -85,6 +93,13 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         } else {
             orgDisambiguatedSolrDao.persist(document);
         }
+        
+        // Send message to the message listener
+        if (!messaging.send(document, updateSolrQueueName)) {
+            LOGGER.error("Unable to send orgs disambiguated message for org: " + document.getOrgDisambiguatedName() + "(" + document.getOrgDisambiguatedId() + ")");            
+            orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
+            return;
+        }        
         
         orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.DONE);
     }
@@ -118,7 +133,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         
         document.setOrgChosenByMember(entity.getMemberChosenOrgDisambiguatedEntity() != null);
-
+        document.setOrgDisambiguatedStatus(entity.getStatus());
+        
         return document;
     }
 

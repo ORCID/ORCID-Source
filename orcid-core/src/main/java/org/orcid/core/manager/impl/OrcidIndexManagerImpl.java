@@ -166,9 +166,6 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                 if (!extIdRefs.isEmpty()) {
                     profileIndexDocument.setExternalIdReferences(extIdRefs);
                 }
-                if (!extIdOrcidsAndRefs.isEmpty()) {
-                    profileIndexDocument.setExternalIdSourcesAndReferences(extIdOrcidsAndRefs);
-                }
             }
 
             OrcidActivities orcidActivities = filteredProfile.getOrcidActivities();

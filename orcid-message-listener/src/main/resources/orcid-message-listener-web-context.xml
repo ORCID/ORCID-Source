@@ -23,31 +23,28 @@
 	<context:component-scan base-package="org.orcid" />
 	<context:annotation-config />
 
-	<!--SOLR -->
-	<!-- Confusingly, the client is actually called a server -->
-	<bean id="solrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
-		<constructor-arg value="${org.orcid.persistence.solr.url}" />
-		<property name="soTimeout" value="${org.orcid.listener.persistence.solr.socketTimeout}" />
-		<property name="connectionTimeout" value="${org.orcid.persistence.solr.connectionTimeout}" />
-		<property name="allowCompression" value="${org.orcid.persistence.solr.allowCompression}" />
-		<property name="maxRetries" value="${org.orcid.persistence.solr.maxRetries}" />
-		<property name="defaultMaxConnectionsPerHost" value="${org.orcid.persistence.solr.maxTotalConnections}" />
-		<property name="maxTotalConnections" value="${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
-		<property name="parser" ref="responseParser" />
-	</bean>
-
 	<bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser"></bean>
 
 	<!-- JMS Messaging -->
 	<!-- enable the configuration of jms on annotations -->
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
 		<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL}" />
+		<property name="trustedPackages">
+			<list>
+				<value>java.lang</value>
+				<value>javax.security</value>
+				<value>java.util</value>
+				<value>org.orcid.utils.solr.entities</value>
+			</list>					
+		</property>
 	</bean>
 	
 	<!-- message processors -->
 	<bean id="solrMessageProcessor" class="org.orcid.listener.solr.SolrMessageProcessor"/>
 	<bean id="s3ActivitiesConsumer" class="org.orcid.listener.s3.S3ActivitiesConsumer"/>
 	<bean id="s3SummaryConsumer" class="org.orcid.listener.s3.S3SummaryConsumer"/>
+	<bean id="solrOrgsMessageProcessor" class="org.orcid.listener.solr.SolrOrgsMessageProcessor"/>	
+	<bean id="fundingSubTypeMessageProcessor" class="org.orcid.listener.solr.FundingSubTypeMessageProcessor"/>
 		
 	<!-- message listeners -->
     <bean id="reindexSOLRListener" class="org.orcid.listener.BaseListener">
@@ -74,6 +71,14 @@
 		<constructor-arg ref="s3ActivitiesConsumer" />
     </bean>
 
+	<bean id="indexDisambiguatedOrgsListener" class="org.orcid.listener.OrgIndexerListener">
+		<constructor-arg ref="solrOrgsMessageProcessor" />
+    </bean>
+
+	<bean id="indexFundingSubTypesListener" class="org.orcid.listener.FundingSubTypeIndexerListener">
+		<constructor-arg ref="fundingSubTypeMessageProcessor" />
+    </bean>
+
 	<!-- listener container (routing info) -->
 	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="queue">
 	       <jms:listener ref="reindexSOLRListener" destination="${org.orcid.persistence.messaging.reindex.solr}" concurrency="${org.orcid.persistence.messaging.reindex.solr.concurrency}" />
@@ -81,7 +86,9 @@
 	       <jms:listener ref="reindexSummaryListener" destination="${org.orcid.persistence.messaging.reindex.summary}" concurrency="${org.orcid.persistence.messaging.reindex.summary.concurrency}" />
 	       <jms:listener ref="updateSummaryListener" destination="${org.orcid.persistence.messaging.updated.summary}" concurrency="${org.orcid.persistence.messaging.updated.summary.concurrency}" />
 	       <jms:listener ref="reindexActivitiesListener" destination="${org.orcid.persistence.messaging.reindex.activity}" concurrency="${org.orcid.persistence.messaging.reindex.activity.concurrency}" />
-	       <jms:listener ref="updateActivitiesListener" destination="${org.orcid.persistence.messaging.updated.activity}" concurrency="${org.orcid.persistence.messaging.updated.activity.concurrency}" />
+	       <jms:listener ref="updateActivitiesListener" destination="${org.orcid.persistence.messaging.updated.activity}" concurrency="${org.orcid.persistence.messaging.updated.activity.concurrency}" />	
+	       <jms:listener ref="indexDisambiguatedOrgsListener" destination="${org.orcid.persistence.messaging.index.disambiguated_orgs}" concurrency="${org.orcid.persistence.messaging.index.disambiguated_orgs.concurrency}" />
+	       <jms:listener ref="indexFundingSubTypesListener" destination="${org.orcid.persistence.messaging.index.funding_sub_types}" concurrency="${org.orcid.persistence.messaging.index.funding_sub_types.concurrency}" />
 	</jms:listener-container>
 	
     <!-- Jersey client -->
