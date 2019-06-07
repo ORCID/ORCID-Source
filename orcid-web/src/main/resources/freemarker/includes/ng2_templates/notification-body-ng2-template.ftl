@@ -3,7 +3,7 @@
 		<div class="notifications-inner">
 			<!--AMENDED-->
 			<div *ngIf="notification.notificationType=='AMENDED'">
-			    <div *ngIf="VERBOSE_NOTIFICATIONS; else defaultNotifications">
+			    <div *ngIf="TOGGLZ_VERBOSE_NOTIFICATIONS; else defaultNotifications">
     			
 
     			    <p><strong>{{notification?.source?.sourceName?.content}}</strong> has updated your record:</p>

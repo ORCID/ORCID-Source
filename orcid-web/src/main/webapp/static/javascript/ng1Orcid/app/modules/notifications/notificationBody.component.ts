@@ -20,6 +20,9 @@ import { CommonService }
 
 import { NotificationsService } 
     from '../../shared/notifications.service';
+    
+import { FeaturesService }
+    from '../../shared/features.service';    
 
 @Component({
     selector: 'notification-body-ng2',
@@ -45,13 +48,16 @@ export class NotificationBodyComponent implements OnInit {
     addedWorksList: string;
     updatedWorksList: string;
     deletedWorksList: string;
+    TOGGLZ_VERBOSE_NOTIFICATIONS: boolean;
     
     constructor(
         private commonService: CommonService,
         private notificationsService: NotificationsService,
         private elementRef: ElementRef,
+        private featuresService: FeaturesService,
     ) {
         this.notification = elementRef.nativeElement.getAttribute('notification');
+        this.TOGGLZ_VERBOSE_NOTIFICATIONS = this.featuresService.isFeatureEnabled('HIDE_UNVERIFIED_EMAILS');
         this.educationsCount = 0;
         this.employmentsCount = 0;
         this.fundingsCount = 0;
