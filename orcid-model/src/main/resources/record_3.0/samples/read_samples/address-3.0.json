@@ -1,0 +1,97 @@
+{
+  "last-modified-date" : {
+    "value" : 1559916279502
+  },
+  "address" : [ {
+    "created-date" : {
+      "value" : 1540897314769
+    },
+    "last-modified-date" : {
+      "value" : 1540897314770
+    },
+    "source" : {
+      "source-orcid" : null,
+      "source-client-id" : {
+        "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+        "path" : "APP-OQYKBIN9CXD9U3SH",
+        "host" : "qa.orcid.org"
+      },
+      "source-name" : {
+        "value" : "Demo Org QA "
+      },
+      "assertion-origin-orcid" : null,
+      "assertion-origin-client-id" : null,
+      "assertion-origin-name" : null
+    },
+    "country" : {
+      "value" : "US"
+    },
+    "visibility" : "public",
+    "path" : "/0000-0002-7319-2192/address/2621",
+    "put-code" : 2621,
+    "display-index" : 0
+  }, {
+    "created-date" : {
+      "value" : 1545061180810
+    },
+    "last-modified-date" : {
+      "value" : 1545061180812
+    },
+    "source" : {
+      "source-orcid" : null,
+      "source-client-id" : {
+        "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+        "path" : "APP-OQYKBIN9CXD9U3SH",
+        "host" : "qa.orcid.org"
+      },
+      "source-name" : {
+        "value" : "Demo Org QA "
+      },
+      "assertion-origin-orcid" : null,
+      "assertion-origin-client-id" : null,
+      "assertion-origin-name" : null
+    },
+    "country" : {
+      "value" : "US"
+    },
+    "visibility" : "public",
+    "path" : "/0000-0002-7319-2192/address/2813",
+    "put-code" : 2813,
+    "display-index" : 0
+  }, {
+    "created-date" : {
+      "value" : 1559916278570
+    },
+    "last-modified-date" : {
+      "value" : 1559916279502
+    },
+    "source" : {
+      "source-orcid" : null,
+      "source-client-id" : {
+        "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+        "path" : "APP-OQYKBIN9CXD9U3SH",
+        "host" : "qa.orcid.org"
+      },
+      "source-name" : {
+        "value" : "Demo Org QA "
+      },
+      "assertion-origin-orcid" : {
+        "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+        "path" : "0000-0002-7319-2192",
+        "host" : "qa.orcid.org"
+      },
+      "assertion-origin-client-id" : null,
+      "assertion-origin-name" : {
+        "value" : "Three releasecandidate1"
+      }
+    },
+    "country" : {
+      "value" : "US"
+    },
+    "visibility" : "public",
+    "path" : "/0000-0002-7319-2192/address/3527",
+    "put-code" : 3527,
+    "display-index" : 0
+  } ],
+  "path" : "/0000-0002-7319-2192/address"
+}

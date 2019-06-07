@@ -1,0 +1,138 @@
+{
+  "last-modified-date" : {
+    "value" : 1559916358839
+  },
+  "affiliation-group" : [ {
+    "last-modified-date" : {
+      "value" : 1559916358839
+    },
+    "external-ids" : {
+      "external-id" : [ {
+        "external-id-type" : "grant_number",
+        "external-id-value" : "external-identifier-value2",
+        "external-id-normalized" : {
+          "value" : "external-identifier-value2",
+          "transient" : true
+        },
+        "external-id-normalized-error" : null,
+        "external-id-url" : {
+          "value" : "http://tempuri.org/2"
+        },
+        "external-id-relationship" : "self"
+      }, {
+        "external-id-type" : "grant_number",
+        "external-id-value" : "external-identifier-value",
+        "external-id-normalized" : {
+          "value" : "external-identifier-value",
+          "transient" : true
+        },
+        "external-id-normalized-error" : null,
+        "external-id-url" : {
+          "value" : "http://tempuri.org"
+        },
+        "external-id-relationship" : "self"
+      } ]
+    },
+    "summaries" : [ {
+      "employment-summary" : {
+        "created-date" : {
+          "value" : 1559916358839
+        },
+        "last-modified-date" : {
+          "value" : 1559916358839
+        },
+        "source" : {
+          "source-orcid" : null,
+          "source-client-id" : {
+            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "path" : "APP-OQYKBIN9CXD9U3SH",
+            "host" : "qa.orcid.org"
+          },
+          "source-name" : {
+            "value" : "Demo Org QA "
+          },
+          "assertion-origin-orcid" : {
+            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "path" : "0000-0002-7319-2192",
+            "host" : "qa.orcid.org"
+          },
+          "assertion-origin-client-id" : null,
+          "assertion-origin-name" : {
+            "value" : "Three releasecandidate1"
+          }
+        },
+        "put-code" : 9266,
+        "department-name" : "department-name",
+        "role-title" : "role-title",
+        "start-date" : {
+          "year" : {
+            "value" : "1948"
+          },
+          "month" : {
+            "value" : "02"
+          },
+          "day" : {
+            "value" : "02"
+          }
+        },
+        "end-date" : {
+          "year" : {
+            "value" : "1948"
+          },
+          "month" : {
+            "value" : "02"
+          },
+          "day" : {
+            "value" : "02"
+          }
+        },
+        "organization" : {
+          "name" : "common:name",
+          "address" : {
+            "city" : "common:city",
+            "region" : "common:region",
+            "country" : "AF"
+          },
+          "disambiguated-organization" : {
+            "disambiguated-organization-identifier" : "http://dx.doi.org/10.13039/100000001",
+            "disambiguation-source" : "FUNDREF"
+          }
+        },
+        "url" : {
+          "value" : "http://tempuri.org"
+        },
+        "external-ids" : {
+          "external-id" : [ {
+            "external-id-type" : "grant_number",
+            "external-id-value" : "external-identifier-value",
+            "external-id-normalized" : {
+              "value" : "external-identifier-value",
+              "transient" : true
+            },
+            "external-id-normalized-error" : null,
+            "external-id-url" : {
+              "value" : "http://tempuri.org"
+            },
+            "external-id-relationship" : "self"
+          }, {
+            "external-id-type" : "grant_number",
+            "external-id-value" : "external-identifier-value2",
+            "external-id-normalized" : {
+              "value" : "external-identifier-value2",
+              "transient" : true
+            },
+            "external-id-normalized-error" : null,
+            "external-id-url" : {
+              "value" : "http://tempuri.org/2"
+            },
+            "external-id-relationship" : "self"
+          } ]
+        },
+        "display-index" : "0",
+        "visibility" : "public",
+        "path" : "/0000-0002-7319-2192/employment/9266"
+      }
+    } ]
+  } ],
+  "path" : "/0000-0002-7319-2192/employments"
+}

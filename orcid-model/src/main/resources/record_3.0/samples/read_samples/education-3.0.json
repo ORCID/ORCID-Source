@@ -1,0 +1,288 @@
+{
+  "last-modified-date" : {
+    "value" : 1559916343689
+  },
+  "affiliation-group" : [ {
+    "last-modified-date" : {
+      "value" : 1540897446513
+    },
+    "external-ids" : {
+      "external-id" : [ {
+        "external-id-type" : "grant_number",
+        "external-id-value" : "external-identifier-value2",
+        "external-id-normalized" : {
+          "value" : "external-identifier-value2",
+          "transient" : true
+        },
+        "external-id-normalized-error" : null,
+        "external-id-url" : {
+          "value" : "http://tempuri.org/2"
+        },
+        "external-id-relationship" : "self"
+      }, {
+        "external-id-type" : "grant_number",
+        "external-id-value" : "external-identifier-value",
+        "external-id-normalized" : {
+          "value" : "external-identifier-value",
+          "transient" : true
+        },
+        "external-id-normalized-error" : null,
+        "external-id-url" : {
+          "value" : "http://tempuri.org"
+        },
+        "external-id-relationship" : "self"
+      } ]
+    },
+    "summaries" : [ {
+      "education-summary" : {
+        "created-date" : {
+          "value" : 1540897446513
+        },
+        "last-modified-date" : {
+          "value" : 1540897446513
+        },
+        "source" : {
+          "source-orcid" : null,
+          "source-client-id" : {
+            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "path" : "APP-OQYKBIN9CXD9U3SH",
+            "host" : "qa.orcid.org"
+          },
+          "source-name" : {
+            "value" : "Demo Org QA "
+          },
+          "assertion-origin-orcid" : null,
+          "assertion-origin-client-id" : null,
+          "assertion-origin-name" : null
+        },
+        "put-code" : 6455,
+        "department-name" : "department-name",
+        "role-title" : "role-title",
+        "start-date" : {
+          "year" : {
+            "value" : "1948"
+          },
+          "month" : {
+            "value" : "02"
+          },
+          "day" : {
+            "value" : "02"
+          }
+        },
+        "end-date" : {
+          "year" : {
+            "value" : "1948"
+          },
+          "month" : {
+            "value" : "02"
+          },
+          "day" : {
+            "value" : "02"
+          }
+        },
+        "organization" : {
+          "name" : "common:name",
+          "address" : {
+            "city" : "common:city",
+            "region" : "common:region",
+            "country" : "AF"
+          },
+          "disambiguated-organization" : {
+            "disambiguated-organization-identifier" : "http://dx.doi.org/10.13039/100000001",
+            "disambiguation-source" : "FUNDREF"
+          }
+        },
+        "url" : {
+          "value" : "http://tempuri.org"
+        },
+        "external-ids" : {
+          "external-id" : [ {
+            "external-id-type" : "grant_number",
+            "external-id-value" : "external-identifier-value",
+            "external-id-normalized" : {
+              "value" : "external-identifier-value",
+              "transient" : true
+            },
+            "external-id-normalized-error" : null,
+            "external-id-url" : {
+              "value" : "http://tempuri.org"
+            },
+            "external-id-relationship" : "self"
+          }, {
+            "external-id-type" : "grant_number",
+            "external-id-value" : "external-identifier-value2",
+            "external-id-normalized" : {
+              "value" : "external-identifier-value2",
+              "transient" : true
+            },
+            "external-id-normalized-error" : null,
+            "external-id-url" : {
+              "value" : "http://tempuri.org/2"
+            },
+            "external-id-relationship" : "self"
+          } ]
+        },
+        "display-index" : "0",
+        "visibility" : "public",
+        "path" : "/0000-0002-7319-2192/education/6455"
+      }
+    } ]
+  }, {
+    "last-modified-date" : {
+      "value" : 1559916343689
+    },
+    "external-ids" : {
+      "external-id" : [ ]
+    },
+    "summaries" : [ {
+      "education-summary" : {
+        "created-date" : {
+          "value" : 1559916343689
+        },
+        "last-modified-date" : {
+          "value" : 1559916343689
+        },
+        "source" : {
+          "source-orcid" : null,
+          "source-client-id" : {
+            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "path" : "APP-OQYKBIN9CXD9U3SH",
+            "host" : "qa.orcid.org"
+          },
+          "source-name" : {
+            "value" : "Demo Org QA "
+          },
+          "assertion-origin-orcid" : {
+            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "path" : "0000-0002-7319-2192",
+            "host" : "qa.orcid.org"
+          },
+          "assertion-origin-client-id" : null,
+          "assertion-origin-name" : {
+            "value" : "Three releasecandidate1"
+          }
+        },
+        "put-code" : 9265,
+        "department-name" : "!GAllows!",
+        "role-title" : "role-title",
+        "start-date" : {
+          "year" : {
+            "value" : "1948"
+          },
+          "month" : {
+            "value" : "02"
+          },
+          "day" : {
+            "value" : "02"
+          }
+        },
+        "end-date" : {
+          "year" : {
+            "value" : "1948"
+          },
+          "month" : {
+            "value" : "02"
+          },
+          "day" : {
+            "value" : "02"
+          }
+        },
+        "organization" : {
+          "name" : "common:name",
+          "address" : {
+            "city" : "common:city",
+            "region" : "common:region",
+            "country" : "AF"
+          },
+          "disambiguated-organization" : {
+            "disambiguated-organization-identifier" : "http://dx.doi.org/10.13039/100000003",
+            "disambiguation-source" : "FUNDREF"
+          }
+        },
+        "url" : {
+          "value" : "http://tempuri.org"
+        },
+        "external-ids" : null,
+        "display-index" : "0",
+        "visibility" : "public",
+        "path" : "/0000-0002-7319-2192/education/9265"
+      }
+    } ]
+  }, {
+    "last-modified-date" : {
+      "value" : 1557232664523
+    },
+    "external-ids" : {
+      "external-id" : [ ]
+    },
+    "summaries" : [ {
+      "education-summary" : {
+        "created-date" : {
+          "value" : 1557232664523
+        },
+        "last-modified-date" : {
+          "value" : 1557232664523
+        },
+        "source" : {
+          "source-orcid" : null,
+          "source-client-id" : {
+            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "path" : "APP-OQYKBIN9CXD9U3SH",
+            "host" : "qa.orcid.org"
+          },
+          "source-name" : {
+            "value" : "Demo Org QA "
+          },
+          "assertion-origin-orcid" : null,
+          "assertion-origin-client-id" : null,
+          "assertion-origin-name" : null
+        },
+        "put-code" : 8718,
+        "department-name" : "!GAllows!",
+        "role-title" : "role-title",
+        "start-date" : {
+          "year" : {
+            "value" : "1948"
+          },
+          "month" : {
+            "value" : "02"
+          },
+          "day" : {
+            "value" : "02"
+          }
+        },
+        "end-date" : {
+          "year" : {
+            "value" : "1948"
+          },
+          "month" : {
+            "value" : "02"
+          },
+          "day" : {
+            "value" : "02"
+          }
+        },
+        "organization" : {
+          "name" : "common:name",
+          "address" : {
+            "city" : "common:city",
+            "region" : "common:region",
+            "country" : "AF"
+          },
+          "disambiguated-organization" : {
+            "disambiguated-organization-identifier" : "http://dx.doi.org/10.13039/100000003",
+            "disambiguation-source" : "FUNDREF"
+          }
+        },
+        "url" : {
+          "value" : "http://tempuri.org"
+        },
+        "external-ids" : null,
+        "display-index" : "0",
+        "visibility" : "public",
+        "path" : "/0000-0002-7319-2192/education/8718"
+      }
+    } ]
+  } ],
+  "path" : "/0000-0002-7319-2192/educations"
+}
