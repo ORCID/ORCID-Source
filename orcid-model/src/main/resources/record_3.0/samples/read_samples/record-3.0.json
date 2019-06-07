@@ -1,8 +1,8 @@
 {
   "orcid-identifier" : {
-    "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+    "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
     "path" : "0000-0002-7319-2192",
-    "host" : "qa.orcid.org"
+    "host" : "sandbox.orcid.org"
   },
   "preferences" : {
     "locale" : "en"
@@ -58,9 +58,9 @@
         "source" : {
           "source-orcid" : null,
           "source-client-id" : {
-            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
             "path" : "APP-OQYKBIN9CXD9U3SH",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-name" : {
             "value" : "Demo Org QA "
@@ -83,9 +83,9 @@
         },
         "source" : {
           "source-orcid" : {
-            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
             "path" : "0000-0002-7319-2192",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-client-id" : null,
           "source-name" : {
@@ -109,9 +109,9 @@
         },
         "source" : {
           "source-orcid" : {
-            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
             "path" : "0000-0002-7319-2192",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-client-id" : null,
           "source-name" : {
@@ -136,9 +136,9 @@
         "source" : {
           "source-orcid" : null,
           "source-client-id" : {
-            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
             "path" : "APP-OQYKBIN9CXD9U3SH",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-name" : {
             "value" : "Demo Org QA "
@@ -162,17 +162,17 @@
         "source" : {
           "source-orcid" : null,
           "source-client-id" : {
-            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
             "path" : "APP-OQYKBIN9CXD9U3SH",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-name" : {
             "value" : "Demo Org QA "
           },
           "assertion-origin-orcid" : {
-            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
             "path" : "0000-0002-7319-2192",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "assertion-origin-client-id" : null,
           "assertion-origin-name" : {
@@ -202,9 +202,9 @@
         "source" : {
           "source-orcid" : null,
           "source-client-id" : {
-            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
             "path" : "APP-OQYKBIN9CXD9U3SH",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-name" : {
             "value" : "Demo Org QA "
@@ -230,9 +230,9 @@
         },
         "source" : {
           "source-orcid" : {
-            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
             "path" : "0000-0002-7319-2192",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-client-id" : null,
           "source-name" : {
@@ -272,9 +272,9 @@
         "source" : {
           "source-orcid" : null,
           "source-client-id" : {
-            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
             "path" : "APP-OQYKBIN9CXD9U3SH",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-name" : {
             "value" : "Demo Org QA "
@@ -300,9 +300,9 @@
         "source" : {
           "source-orcid" : null,
           "source-client-id" : {
-            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
             "path" : "APP-OQYKBIN9CXD9U3SH",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-name" : {
             "value" : "Demo Org QA "
@@ -328,17 +328,17 @@
         "source" : {
           "source-orcid" : null,
           "source-client-id" : {
-            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
             "path" : "APP-OQYKBIN9CXD9U3SH",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-name" : {
             "value" : "Demo Org QA "
           },
           "assertion-origin-orcid" : {
-            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
             "path" : "0000-0002-7319-2192",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "assertion-origin-client-id" : null,
           "assertion-origin-name" : {
@@ -368,9 +368,9 @@
         },
         "source" : {
           "source-orcid" : {
-            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
             "path" : "0000-0002-7319-2192",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-client-id" : null,
           "source-name" : {
@@ -395,17 +395,17 @@
         "source" : {
           "source-orcid" : null,
           "source-client-id" : {
-            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
             "path" : "APP-OQYKBIN9CXD9U3SH",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-name" : {
             "value" : "Demo Org QA "
           },
           "assertion-origin-orcid" : {
-            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
             "path" : "0000-0002-7319-2192",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "assertion-origin-client-id" : null,
           "assertion-origin-name" : {
@@ -434,17 +434,17 @@
         "source" : {
           "source-orcid" : null,
           "source-client-id" : {
-            "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+            "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
             "path" : "APP-OQYKBIN9CXD9U3SH",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "source-name" : {
             "value" : "Demo Org QA "
           },
           "assertion-origin-orcid" : {
-            "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+            "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
             "path" : "0000-0002-7319-2192",
-            "host" : "qa.orcid.org"
+            "host" : "sandbox.orcid.org"
           },
           "assertion-origin-client-id" : null,
           "assertion-origin-name" : {
@@ -516,17 +516,17 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
               },
               "assertion-origin-orcid" : {
-                "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+                "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
                 "path" : "0000-0002-7319-2192",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "assertion-origin-client-id" : null,
               "assertion-origin-name" : {
@@ -654,9 +654,9 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
@@ -755,17 +755,17 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
               },
               "assertion-origin-orcid" : {
-                "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+                "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
                 "path" : "0000-0002-7319-2192",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "assertion-origin-client-id" : null,
               "assertion-origin-name" : {
@@ -836,9 +836,9 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
@@ -942,17 +942,17 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
               },
               "assertion-origin-orcid" : {
-                "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+                "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
                 "path" : "0000-0002-7319-2192",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "assertion-origin-client-id" : null,
               "assertion-origin-name" : {
@@ -1063,9 +1063,9 @@
           },
           "source" : {
             "source-orcid" : {
-              "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+              "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
               "path" : "0000-0002-7319-2192",
-              "host" : "qa.orcid.org"
+              "host" : "sandbox.orcid.org"
             },
             "source-client-id" : null,
             "source-name" : {
@@ -1148,17 +1148,17 @@
           "source" : {
             "source-orcid" : null,
             "source-client-id" : {
-              "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+              "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
               "path" : "APP-OQYKBIN9CXD9U3SH",
-              "host" : "qa.orcid.org"
+              "host" : "sandbox.orcid.org"
             },
             "source-name" : {
               "value" : "Demo Org QA "
             },
             "assertion-origin-orcid" : {
-              "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+              "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
               "path" : "0000-0002-7319-2192",
-              "host" : "qa.orcid.org"
+              "host" : "sandbox.orcid.org"
             },
             "assertion-origin-client-id" : null,
             "assertion-origin-name" : {
@@ -1278,17 +1278,17 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
               },
               "assertion-origin-orcid" : {
-                "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+                "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
                 "path" : "0000-0002-7319-2192",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "assertion-origin-client-id" : null,
               "assertion-origin-name" : {
@@ -1416,17 +1416,17 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
               },
               "assertion-origin-orcid" : {
-                "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+                "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
                 "path" : "0000-0002-7319-2192",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "assertion-origin-client-id" : null,
               "assertion-origin-name" : {
@@ -1555,17 +1555,17 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
               },
               "assertion-origin-orcid" : {
-                "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+                "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
                 "path" : "0000-0002-7319-2192",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "assertion-origin-client-id" : null,
               "assertion-origin-name" : {
@@ -1630,9 +1630,9 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
@@ -1740,17 +1740,17 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
               },
               "assertion-origin-orcid" : {
-                "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+                "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
                 "path" : "0000-0002-7319-2192",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "assertion-origin-client-id" : null,
               "assertion-origin-name" : {
@@ -1873,17 +1873,17 @@
           "source" : {
             "source-orcid" : null,
             "source-client-id" : {
-              "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+              "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
               "path" : "APP-OQYKBIN9CXD9U3SH",
-              "host" : "qa.orcid.org"
+              "host" : "sandbox.orcid.org"
             },
             "source-name" : {
               "value" : "Demo Org QA "
             },
             "assertion-origin-orcid" : {
-              "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+              "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
               "path" : "0000-0002-7319-2192",
-              "host" : "qa.orcid.org"
+              "host" : "sandbox.orcid.org"
             },
             "assertion-origin-client-id" : null,
             "assertion-origin-name" : {
@@ -2013,9 +2013,9 @@
             },
             "source" : {
               "source-orcid" : {
-                "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+                "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
                 "path" : "0000-0002-7319-2192",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-client-id" : null,
               "source-name" : {
@@ -2107,17 +2107,17 @@
             "source" : {
               "source-orcid" : null,
               "source-client-id" : {
-                "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+                "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
                 "path" : "APP-OQYKBIN9CXD9U3SH",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "source-name" : {
                 "value" : "Demo Org QA "
               },
               "assertion-origin-orcid" : {
-                "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+                "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
                 "path" : "0000-0002-7319-2192",
-                "host" : "qa.orcid.org"
+                "host" : "sandbox.orcid.org"
               },
               "assertion-origin-client-id" : null,
               "assertion-origin-name" : {
@@ -2246,17 +2246,17 @@
           "source" : {
             "source-orcid" : null,
             "source-client-id" : {
-              "uri" : "https://qa.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
+              "uri" : "https://sandbox.orcid.org/client/APP-OQYKBIN9CXD9U3SH",
               "path" : "APP-OQYKBIN9CXD9U3SH",
-              "host" : "qa.orcid.org"
+              "host" : "sandbox.orcid.org"
             },
             "source-name" : {
               "value" : "Demo Org QA "
             },
             "assertion-origin-orcid" : {
-              "uri" : "https://qa.orcid.org/0000-0002-7319-2192",
+              "uri" : "https://sandbox.orcid.org/0000-0002-7319-2192",
               "path" : "0000-0002-7319-2192",
-              "host" : "qa.orcid.org"
+              "host" : "sandbox.orcid.org"
             },
             "assertion-origin-client-id" : null,
             "assertion-origin-name" : {
