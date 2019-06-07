@@ -9341,3 +9341,7 @@ div#bio-section {
     word-break: break-word;
     hyphens: auto;
 }
+
+.notifications-inner ul {
+	list-style: circle;
+}

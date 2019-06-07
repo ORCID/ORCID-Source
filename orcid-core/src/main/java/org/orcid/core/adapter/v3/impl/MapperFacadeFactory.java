@@ -304,7 +304,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         // Amend notification
         ClassMapBuilder<NotificationAmended, NotificationAmendedEntity> amendNotificationClassMap = mapperFactory.classMap(NotificationAmended.class, NotificationAmendedEntity.class);
         registerSourceConverters(mapperFactory, amendNotificationClassMap); 
-        amendNotificationClassMap.field("items.items", "notificationItems");        
+        amendNotificationClassMap.field("items.items", "notificationItems"); 
+        amendNotificationClassMap.customize(new CustomMapper<NotificationAmended, NotificationAmendedEntity>() {
+            @Override
+            public void mapBtoA(NotificationAmendedEntity entity, NotificationAmended item, MappingContext context) {
+                if(entity.getNotificationItems() != null) {
+                    item.setNumItemsModified(entity.getNotificationItems().size());
+                }
+            }
+        });
         mapCommonFields(amendNotificationClassMap).register();
         
         mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.type").converter("externalIdentifierIdConverter")

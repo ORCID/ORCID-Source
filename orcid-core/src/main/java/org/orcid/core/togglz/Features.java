@@ -105,7 +105,7 @@ public enum Features implements Feature {
     @Label("User OBO")
     USER_OBO,
     
-    @Label("User OBO")
+    @Label("Verbose notifications")
     VERBOSE_NOTIFICATIONS;
     
     public boolean isActive() {

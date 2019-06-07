@@ -4,31 +4,38 @@
 			<!--AMENDED-->
 			<div *ngIf="notification.notificationType=='AMENDED'">
 			    <div *ngIf="TOGGLZ_VERBOSE_NOTIFICATIONS; else defaultNotifications">
-    			
-
-    			    <p><strong>{{notification?.source?.sourceName?.content}}</strong> has updated your record:</p>
-                    
-    			    <ng-container *ngIf="addedWorksList != ''">
-    			        <p>He have added the following elements:</p>
-                        <div [innerHTML]="addedWorksList"></div>
-    			    </ng-container>
-    			    
-    			    <ng-container *ngIf="addedWorksList != ''">
-                        <p>He have updated the following elements:</p>
-                        <div [innerHTML]="updatedWorksList"></div>
-                    </ng-container>
-                
-                    <ng-container *ngIf="addedWorksList != ''">
-                        <p>He have deleted the following elements:</p>
-                        <div [innerHTML]="deletedWorksList"></div>
-                    </ng-container>
-    			    
-    			    <div class="pull-right topBuffer">
+    			    <p><strong>{{notification?.source?.sourceName?.content}}</strong> has updated your works:</p>
+    			    <div *ngIf="addedWorksList.length > 0 || updatedWorksList.length > 0 || deletedWorksList.length > 0 || unknownWorksList.length > 0">
+    			        <div *ngIf="addedWorksList.length > 0">
+                            <p>New elements added:</p>
+                            <ul *ngFor="let element of addedWorksList">
+                                <li>{{element}}</li>
+                            </ul>
+                        </div>
+                        <div *ngIf="updatedWorksList.length > 0">
+                            <p>Updated elements:</p>
+                            <ul *ngFor="let element of updatedWorksList">
+                                <li>{{element}}</li>
+                            </ul>
+                        </div>
+                        <div *ngIf="deletedWorksList.length > 0">
+                            <p>Deleted elements:</p>
+                            <ul *ngFor="let element of deletedWorksList">
+                                <li>{{element}}</li>
+                            </ul>
+                        </div>
+                        <div *ngIf="unknownWorksList.length > 0">
+                            <p>No information available:</p>
+                            <ul *ngFor="let element of unknownWorksList">
+                                <li>{{element}}</li>
+                            </ul>
+                        </div>                
+    			    </div>
+    			    <div *ngIf="worksCount > 5">Showing first 5 works out of {{worksCount}}, to see the rest please check your <a href="{{getBaseUri()}}/my-orcid" target="_blank">workspace</a></div>
+                    <div class="pull-right topBuffer">
                         <button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button> <a href="{{getBaseUri()}}/my-orcid" target="_parent" class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>
                     </div>
-			    
-			    
-    			</div>
+			    </div>
     			<ng-template #defaultNotifications>
     			    <div>
                         <p><strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.has_updated'/> {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.section_of'/></p>

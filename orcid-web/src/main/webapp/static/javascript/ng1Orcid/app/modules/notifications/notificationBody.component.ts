@@ -45,9 +45,10 @@ export class NotificationBodyComponent implements OnInit {
     fundingsList: string;
     peerReviewsList: string;
     worksList: string;
-    addedWorksList: string;
-    updatedWorksList: string;
-    deletedWorksList: string;
+    addedWorksList: string[];
+    updatedWorksList: string[];
+    deletedWorksList: string[];
+    unknownWorksList: string[];
     TOGGLZ_VERBOSE_NOTIFICATIONS: boolean;
     
     constructor(
@@ -57,7 +58,7 @@ export class NotificationBodyComponent implements OnInit {
         private featuresService: FeaturesService,
     ) {
         this.notification = elementRef.nativeElement.getAttribute('notification');
-        this.TOGGLZ_VERBOSE_NOTIFICATIONS = this.featuresService.isFeatureEnabled('HIDE_UNVERIFIED_EMAILS');
+        this.TOGGLZ_VERBOSE_NOTIFICATIONS = this.featuresService.isFeatureEnabled('VERBOSE_NOTIFICATIONS');
         this.educationsCount = 0;
         this.employmentsCount = 0;
         this.fundingsCount = 0;
@@ -68,34 +69,40 @@ export class NotificationBodyComponent implements OnInit {
         this.fundingsList = "";
         this.peerReviewsList = "";
         this.worksList = "";
-        this.addedWorksList = "";
-        this.updatedWorksList = "";
-        this.deletedWorksList = "";
+        this.addedWorksList = [];
+        this.updatedWorksList = [];
+        this.deletedWorksList = [];
+        this.unknownWorksList = [];
     }
 
     archive(putCode): void {
         this.notificationsService.notifyOther({action:'archive', putCode:putCode});
     };
 
-    ngOnInit() {
-        if(this.notification.items){
-            for (let activity of this.notification.items.items){
+    ngOnInit() {        
+        if(this.notification.items) {
+            var counter = 0;
+            for (let activity of this.notification.items.items) {
                 if(activity.itemType == "WORK"){
                     this.worksCount++;
-                    var workNameHtml = "<strong>" + activity.itemName + "</strong>";
-                    this.worksList =  this.worksList + workNameHtml;
+                    this.worksList =  this.worksList + "<strong>" + activity.itemName + "</strong>";
                     if(activity.externalIdentifier){
                         this.worksList = this.worksList + " (" + activity.externalIdentifier.type + ": " + activity.externalIdentifier.value + ")";
                     }
                     this.worksList += "<br/>";
                     
-                    if(activity.type == "CREATE") {
-                        this.addedWorksList = this.addedWorksList + workNameHtml + "<br />";
-                    } else if(activity.type == "UPDATE") {
-                        this.updatedWorksList = this.updatedWorksList + workNameHtml + "<br />";
-                    } else if(activity.type == "DELETE") {
-                        this.deletedWorksList = this.deletedWorksList + workNameHtml + "<br />";
-                    }
+                    counter++;
+                    if(counter <= 5) {
+                        if(activity.type == "CREATE") {
+                            this.addedWorksList.push(activity.itemName);
+                        } else if(activity.type == "UPDATE") {
+                            this.updatedWorksList.push(activity.itemName);
+                        } else if(activity.type == "DELETE") {
+                            this.deletedWorksList.push(activity.itemName);
+                        } else {
+                            this.unknownWorksList.push(activity.itemName);
+                        }
+                    }                    
                 }
                 if(activity.itemType == "EMPLOYMENT"){
                     this.employmentsCount++;
@@ -125,7 +132,7 @@ export class NotificationBodyComponent implements OnInit {
         }
         if (this.notification.authorizationUrl){
             this.encodedUrl = encodeURIComponent(this.notification.authorizationUrl.uri);
-        }        
+        }       
     }; 
     
     getBaseUri() : String {

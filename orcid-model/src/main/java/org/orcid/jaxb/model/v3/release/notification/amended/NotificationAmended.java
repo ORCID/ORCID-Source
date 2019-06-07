@@ -30,6 +30,8 @@ public class NotificationAmended extends Notification {
     protected Items items;
     @XmlTransient
     protected String subject;
+    @XmlTransient
+    protected Integer numItemsModified;
 
     {
         notificationType = NotificationType.AMENDED;
@@ -59,4 +61,11 @@ public class NotificationAmended extends Notification {
         this.subject = subject;
     }
 
+    public Integer getNumItemsModified() {
+        return numItemsModified;
+    }
+
+    public void setNumItemsModified(Integer numItemsModified) {
+        this.numItemsModified = numItemsModified;
+    }    
 }
