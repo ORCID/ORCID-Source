@@ -3,11 +3,42 @@
 		<div class="notifications-inner">
 			<!--AMENDED-->
 			<div *ngIf="notification.notificationType=='AMENDED'">
-				<p><strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.has_updated'/> {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.section_of'/></p>
-		    	<div class="pull-right topBuffer">
-					<button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button> <a href="{{getBaseUri()}}/my-orcid" target="_parent" class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>
-				</div>
-			</div>
+			    <div *ngIf="VERBOSE_NOTIFICATIONS; else defaultNotifications">
+    			
+
+    			    <p><strong>{{notification?.source?.sourceName?.content}}</strong> has updated your record:</p>
+                    
+    			    <ng-container *ngIf="addedWorksList != ''">
+    			        <p>He have added the following elements:</p>
+                        <div [innerHTML]="addedWorksList"></div>
+    			    </ng-container>
+    			    
+    			    <ng-container *ngIf="addedWorksList != ''">
+                        <p>He have updated the following elements:</p>
+                        <div [innerHTML]="updatedWorksList"></div>
+                    </ng-container>
+                
+                    <ng-container *ngIf="addedWorksList != ''">
+                        <p>He have deleted the following elements:</p>
+                        <div [innerHTML]="deletedWorksList"></div>
+                    </ng-container>
+    			    
+    			    <div class="pull-right topBuffer">
+                        <button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button> <a href="{{getBaseUri()}}/my-orcid" target="_parent" class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>
+                    </div>
+			    
+			    
+    			</div>
+    			<ng-template #defaultNotifications>
+    			    <div>
+                        <p><strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.has_updated'/> {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.section_of'/></p>
+                        <div class="pull-right topBuffer">
+                            <button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button> <a href="{{getBaseUri()}}/my-orcid" target="_parent" class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>
+                        </div>
+                    </div>
+                </ng-template>
+			</div>			
+			
 			<!--CUSTOM-->
 			<div *ngIf="notification.notificationType=='ADMINISTRATIVE' || notification.notificationType=='CUSTOM' || notification.notificationType=='SERVICE_ANNOUNCEMENT' || notification.notificationType=='TIP'" [innerHTML]="notification.bodyHtml | extractContentFromBody">
 		    </div>

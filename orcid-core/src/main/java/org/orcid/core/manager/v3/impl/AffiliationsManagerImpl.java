@@ -34,7 +34,6 @@ import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
 
@@ -474,11 +473,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 		} else if (isApiRequest && !profile.getClaimed() && incomingElementVisibility == null) {
 			orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
 		}
-    }
-    
-	private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity workEntity, ProfileEntity profile) {
-		setIncomingWorkPrivacy( workEntity,  profile, true);
-	}
+    }    
 
     private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity) {
         Item item = new Item();

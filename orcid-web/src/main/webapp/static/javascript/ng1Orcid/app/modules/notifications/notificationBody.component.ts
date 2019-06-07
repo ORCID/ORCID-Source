@@ -42,7 +42,10 @@ export class NotificationBodyComponent implements OnInit {
     fundingsList: string;
     peerReviewsList: string;
     worksList: string;
-
+    addedWorksList: string;
+    updatedWorksList: string;
+    deletedWorksList: string;
+    
     constructor(
         private commonService: CommonService,
         private notificationsService: NotificationsService,
@@ -59,6 +62,9 @@ export class NotificationBodyComponent implements OnInit {
         this.fundingsList = "";
         this.peerReviewsList = "";
         this.worksList = "";
+        this.addedWorksList = "";
+        this.updatedWorksList = "";
+        this.deletedWorksList = "";
     }
 
     archive(putCode): void {
@@ -70,11 +76,20 @@ export class NotificationBodyComponent implements OnInit {
             for (let activity of this.notification.items.items){
                 if(activity.itemType == "WORK"){
                     this.worksCount++;
-                    this.worksList =  this.worksList + "<strong>" + activity.itemName + "</strong>";
+                    var workNameHtml = "<strong>" + activity.itemName + "</strong>";
+                    this.worksList =  this.worksList + workNameHtml;
                     if(activity.externalIdentifier){
                         this.worksList = this.worksList + " (" + activity.externalIdentifier.type + ": " + activity.externalIdentifier.value + ")";
                     }
                     this.worksList += "<br/>";
+                    
+                    if(activity.type == "CREATE") {
+                        this.addedWorksList = this.addedWorksList + workNameHtml + "<br />";
+                    } else if(activity.type == "UPDATE") {
+                        this.updatedWorksList = this.updatedWorksList + workNameHtml + "<br />";
+                    } else if(activity.type == "DELETE") {
+                        this.deletedWorksList = this.deletedWorksList + workNameHtml + "<br />";
+                    }
                 }
                 if(activity.itemType == "EMPLOYMENT"){
                     this.employmentsCount++;

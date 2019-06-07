@@ -34,6 +34,7 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common.WorkType;
@@ -130,6 +131,7 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomMapper;
@@ -302,15 +304,27 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         // Amend notification
         ClassMapBuilder<NotificationAmended, NotificationAmendedEntity> amendNotificationClassMap = mapperFactory.classMap(NotificationAmended.class, NotificationAmendedEntity.class);
         registerSourceConverters(mapperFactory, amendNotificationClassMap); 
+        amendNotificationClassMap.field("items.items", "notificationItems");        
         mapCommonFields(amendNotificationClassMap).register();
-        mapperFactory.classMap(NotificationItemEntity.class, Item.class)
-            .fieldMap("externalIdType", "externalIdentifier.type")
-            .converter("externalIdentifierIdConverter")
-            .add()
-            .field("externalIdValue", "externalIdentifier.value")
-            .byDefault()
-            .register();                
         
+        mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.type").converter("externalIdentifierIdConverter")
+                .add().field("externalIdValue", "externalIdentifier.value").customize(new CustomMapper<NotificationItemEntity, Item>() {
+                    @Override
+                    public void mapAtoB(NotificationItemEntity entity, Item item, MappingContext context) {
+                        if (!PojoUtil.isEmpty(entity.getAdditionalInfo())) {
+                            Map map = JsonUtils.readObjectFromJsonString(entity.getAdditionalInfo(), HashMap.class);
+                            item.setAdditionalInfo(map);
+                        }
+                    }
+
+                    @Override
+                    public void mapBtoA(Item item, NotificationItemEntity entity, MappingContext context) {
+                        if (item.getAdditionalInfo() != null) {
+                            entity.setAdditionalInfo(JsonUtils.convertToJsonString(item.getAdditionalInfo()));
+                        }
+                    }
+                }).exclude("additionalInfo").byDefault().register();
+
         return mapperFactory.getMapperFacade();
     }
 

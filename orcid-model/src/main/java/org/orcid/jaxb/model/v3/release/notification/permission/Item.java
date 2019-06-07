@@ -8,14 +8,18 @@
 package org.orcid.jaxb.model.v3.release.notification.permission;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 
@@ -59,7 +63,11 @@ public class Item implements Serializable {
     protected String itemName;
     @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/common", required = true)
     protected ExternalID externalIdentifier;
-
+    @XmlTransient
+    protected ActionType type;
+    @XmlTransient
+    protected Map<String, Object> additionalInfo = new HashMap<String, Object>();
+    
     public String getPutCode() {
         return putCode;
     }
@@ -130,5 +138,23 @@ public class Item implements Serializable {
     public void setExternalIdentifier(ExternalID value) {
         this.externalIdentifier = value;
     }
+
+    public ActionType getType() {
+        return type;
+    }
+
+    public void setType(ActionType type) {
+        this.type = type;
+    }
+
+    public Map<String, Object> getAdditionalInfo() {        
+        return additionalInfo;
+    }
+
+    public void setAdditionalInfo(Map<String, Object> additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
+    
+    
 
 }
