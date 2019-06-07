@@ -1,6 +1,4 @@
 <#import "email_macros.ftl" as emailMacros />
-<@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
-
 <@emailMacros.msg "email.reset_password.sorry" />
 
 <@emailMacros.msg "email.reset_password.orcid_id" /> ${submittedEmail} <@emailMacros.msg "email.reset_password.is" /> ${baseUri}/${orcid}
