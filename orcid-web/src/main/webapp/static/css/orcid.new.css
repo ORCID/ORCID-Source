@@ -8767,7 +8767,7 @@ a.footer-url {
 }
 
 .header2 .menu-bar {
-    background-color: #2E7F9F;
+    background-color: #085c77;
     margin-bottom: 55px;
 }
 
@@ -9077,6 +9077,10 @@ a.footer-url {
         max-height: unset;
     }
 
+    .header2 .menu-bar ul > li > ul a {
+        color: #fff;
+    }
+
 
     .header2 .menu-bar ul.menu li.open > ul, .header2 .menu-bar li.active-trail.open > ul {
         display: flex;
@@ -9084,6 +9088,35 @@ a.footer-url {
         position: relative;
         padding: 9px 0;
         top: 0;
+        background-color: #2e7f9f;
+    }
+
+
+    .header2 .menu-bar ul.menu li.open > ul > li > ul.menu {
+        display: flex;
+        z-index: 5;
+        position: relative;
+        padding: 9px 0;
+        top: 0;
+        padding-left: 18px; 
+        background-color: #f5f5f5;
+    }
+
+    
+    .header2 .menu-bar ul > li > ul > li > ul a {
+        color: #1e708d;
+    }
+
+
+    .header2 .menu-bar ul.menu li.open > ul > li > ul.menu > li > ul.menu  {
+        display: flex;
+        z-index: 5;
+        position: relative;
+        padding: 9px 0;
+        top: 0;
+        background-color: #ffffff;
+        padding-left: 46px;
+        margin: 0 -18px;
     }
 
     .header2 .slogan {

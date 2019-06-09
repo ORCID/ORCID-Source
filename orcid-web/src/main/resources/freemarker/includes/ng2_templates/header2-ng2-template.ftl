@@ -56,7 +56,7 @@
         <div class="menu-bar"  [hidden]="!openMobileMenu && isMobile"  (mouseleave)="mouseLeave()" role="menu">
                 <!--  Desktop / Tablet menu -->             
                 <div class="container container-menu"  role="presentation"> 
-                <ul class="menu " resize  role="presentation">
+                <ul class="menu" resize  role="presentation">
                     <!-- FOR RESEARCHERS -->
                     <li class="first expanded" role="presentation" [ngClass]="{'open': mobileMenu.RESEARCHERS}" (mouseenter)="menuHandler('RESEARCHERS', $event)" (click)="menuHandler('RESEARCHERS', $event)" >
                         <a href="{{aboutUri}}/about/what-is-orcid/mission" title="" role="menu-item"><@orcid.msg 'public-layout.for_researchers'/></a>
@@ -115,18 +115,99 @@
 
                             <li role="presentation" class="first leaf">
                                 <a role="menu-item" href="{{aboutUri}}/organizations/funders" class="russian-fix" ><@orcid.msg 'public-layout.funders'/></a> <!-- Updated according Drupal website structure -->
+                                <ul class="menu">
+                                    <li class="first leaf">
+                                        <a href="{{aboutUri}}/organizations/funders"><@orcid.msg 'public-layout.funders'/></a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/organizations/funders/learnmore">Learn more</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/organizations/funders/outreachresources">Outreach Resources</a>
+                                    </li>
+                                    <li class="last leaf">
+                                        <a href="{{aboutUri}}/about/membership" title="">Membership</a>
+                                    </li>
+                                </ul>
                             </li>
                             <li role="presentation" class="leaf">
                                 <a role="menu-item" href="{{aboutUri}}/organizations/institutions" ><@orcid.msg 'public-layout.research_organizations'/></a> <!-- Updated according Drupal website structure -->
+                                    <ul class="menu">
+                                        <li class="first leaf">
+                                            <a href="{{aboutUri}}/organizations/institutions"><@orcid.msg 'public-layout.research_organizations'/></a>
+                                        </li>
+                                        <li class="leaf">
+                                            <a href="{{aboutUri}}/organizations/institutions/learnmore">Learn more</a>
+                                        </li>
+                                        <li class="leaf">
+                                            <a href="{{aboutUri}}/organizations/institutions/outreachresources">Outreach Resources</a>
+                                        </li>
+                                            <li class="leaf"><a href="{{aboutUri}}/about/membership" title="">Membership</a>
+                                        </li>
+                                        <li class="last leaf">
+                                            <a href="{{aboutUri}}/organizations/institutions/usecases">Use cases</a>
+                                        </li>
+                                    </ul>
                             </li>
                             <li role="presentation" class="leaf">
                                 <a role="menu-item" href="{{aboutUri}}/organizations/publishers" > <@orcid.msg 'public-layout.publishers'/></a> <!-- Updated according Drupal website structure -->
+                                <ul class="menu">
+                                    <li class="first leaf">
+                                        <a href="{{aboutUri}}/organizations/publishers"> <@orcid.msg 'public-layout.publishers'/></a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/organizations/publishers/learnmore">Learn more</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/organizations/publishers/outreachresources">Outreach Resources</a>
+                                    </li>
+                                    <li class="last leaf">
+                                        <a href="{{aboutUri}}/about/membership" title="">Membership</a>
+                                    </li>
+                                </ul>
                             </li>
                             <li role="presentation" class="leaf">
                                 <a role="menu-item" href="{{aboutUri}}/organizations/associations" ><@orcid.msg 'public-layout.associations'/></a> <!-- Updated according Drupal website structure -->
+                                <ul class="menu">
+                                    <li class="first leaf">
+                                        <a href="{{aboutUri}}/organizations/associations"><@orcid.msg 'public-layout.associations'/></a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="/organizations/associations/learnmore">Learn more</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="/organizations/associations/outreachresources">Outreach resources</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="http://orcid.org/about/membership">Membership</a>
+                                    </li>
+                                    <li class="last leaf">
+                                        <a href="/organizations/associations/usecases">Use cases</a>
+                                    </li>
+                                </ul>
                             </li>
                             <li role="presentation" class="last leaf">
                                 <a role="menu-item" href="{{aboutUri}}/organizations/integrators" ><@orcid.msg 'public-layout.integrators'/></a> <!-- Updated according Drupal website structure -->
+                                <ul class="menu">
+                                    <li class="first leaf hidden-sm hidden-md hidden-lg">
+                                        <a href="{{aboutUri}}/organizations/integrators"><@orcid.msg 'public-layout.integrators'/></a>
+                                    </li>
+                                    <li class="first leaf">
+                                        <a href="{{aboutUri}}/organizations/integrators/API">The ORCID API</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/content/register-client-application-0">Register a Client Application</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/organizations/integrators/current">Current Integrations</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/organizations/integrators/integration-chart">Integration Chart</a>
+                                    </li>
+                                    <li class="last leaf">
+                                        <a href="{{aboutUri}}/content/beta-tester-request">Beta Testers</a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     </li>
@@ -142,7 +223,42 @@
                             <!-- What is ORCID? -->
                             <li role="presentation" class="first expanded">
                                 <a role="menu-item" href="{{aboutUri}}/about/what-is-orcid"><@orcid.msg 'public-layout.what_is_orcid'/></a>
-                       
+                                <ul class="menu">
+                                        <li class="hidden-md hidden-lg hidden-sm visible-xs">
+                                            <a href="{{aboutUri}}/about/what-is-orcid"><@orcid.msg 'public-layout.what_is_orcid'/></a>
+                                        </li>
+                                        <li class="first leaf">
+                                            <a href="{{aboutUri}}/about/what-is-orcid/mission-statement" title=""><@orcid.msg 'public-layout.our_mission'/></a>
+                                        </li>
+                                        <li class="leaf">
+                                            <a href="{{aboutUri}}/about/what-is-orcid/our-principles" title=""><@orcid.msg 'public-layout.our_principles'/></a>
+                                        </li>
+                                        <li class="leaf">
+                                            <a href="{{aboutUri}}/content/our-governance">Our Governance</a>
+                                        </li>
+                                        <li class="last expanded">
+                                            <a href="{{aboutUri}}/about/what-is-orcid/policies" (click)="handleMobileMenuOption($event); toggleTertiaryMenu('policies')">Our Policies</a>
+                                            <ul class="menu" >
+                                                <li class="first leaf"><a
+                                                    href="{{aboutUri}}/orcid-dispute-procedures">Dispute
+                                                        Procedures</a></li>
+                                                <li class="leaf"><a
+                                                    href="{{aboutUri}}/footer/privacy-policy" title="">Privacy
+                                                        Policy</a></li>
+                                                <li class="leaf"><a
+                                                    href="{{aboutUri}}/content/orcid-public-client-terms-service">Public
+                                                        Client Terms of Service</a></li>
+                                                <li class="leaf"><a
+                                                    href="{{aboutUri}}/content/orcid-public-data-file-use-policy">Public
+                                                        Data File Use Policy</a></li>
+                                                <li class="leaf"><a href="{{aboutUri}}/legal">Terms
+                                                        and Conditions of Use</a></li>
+                                                <li class="last leaf"><a
+                                                    href="{{aboutUri}}/trademark-and-id-display-guidelines">Trademark
+                                                        and iD Display Guidelines</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
                             </li>
                             <!-- The ORCID Team -->
                             <li role="presentation" class="leaf"><a role="menu-item" href="{{aboutUri}}/about/team" title=""><@orcid.msg
@@ -150,16 +266,83 @@
                             <!-- The ORCID Comunity -->
                             <li role="presentation" class="expanded">
                                 <a role="menu-item" href="{{aboutUri}}/about/community"><@orcid.msg 'public-layout.the_orcid_community'/></a>
-                             
+                                <ul class="menu">
+                                    <li class="hidden-md hidden-lg hidden-sm visible-xs">
+                                        <a href="{{aboutUri}}/about/community"><@orcid.msg 'public-layout.the_orcid_community'/></a>
+                                    </li>
+                                    <li class="first leaf">
+                                        <a href="{{aboutUri}}/about/community" title=""><@orcid.msg 'public-layout.working_groups'/></a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/about/community/sponsors" title=""><@orcid.msg 'public-layout.sponsors'/></a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/about/community/members" title=""><@orcid.msg 'public-layout.members'/></a>
+                                    </li>
+                                    <li class="last">
+                                        <a href="{{aboutUri}}/about/community/launch-partners" title=""><@orcid.msg 'public-layout.launch_partners'/></a></li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/about/community/orcid-technical-community">Open Source</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/content/partners">Partners</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/content/adoption-and-integration-program">Adoption &amp; Integration Program</a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/content/orcid-ambassadors">Ambassadors</a>
+                                        <ul class="menu">
+                                            <li class="first last leaf">
+                                                <a href="{{aboutUri}}/content/orcid-ambassadors-1/outreachresources">Outreach Resources</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="last leaf">
+                                        <a href="http://www.cafepress.com/orcid" title="">ORCID Gear</a>
+                                    </li>
+                                </ul> 
                             </li>
                             <!-- Membership -->
                             <li role="presentation" class="expanded">
                                 <a role="menu-item" href="{{aboutUri}}/about/membership"><@orcid.msg 'public-layout.membership'/></a>
-        
+                                <ul class="menu">
+                                    <li class="hidden-md hidden-lg hidden-sm visible-xs">
+                                        <a href="{{aboutUri}}/about/membership"><@orcid.msg 'public-layout.membership'/></a>
+                                    </li>
+                                    <li class="first expanded">
+                                        <a href="{{aboutUri}}/about/membership" title=""><@orcid.msg 'public-layout.membership_and_subscription'/></a>
+                                        <ul class="menu">
+                                            <li class="first last leaf">
+                                                <a href="{{aboutUri}}/content/membership-comparison">Membership Comparison</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/about/membership/standard-member-agreement" title=""><@orcid.msg 'public-layout.standard_member_agreement'/></a>
+                                    </li>
+                                    <li class="leaf">
+                                        <a href="{{aboutUri}}/document/standard-creator-membership-agreement">Standard Creator Member Agreement</a>
+                                    </li>
+                                    <li class="last leaf">
+                                        <a href="{{aboutUri}}/about/community/members" title=""><@orcid.msg 'public-layout.our_members'/></a>
+                                    </li>
+                                </ul>
                             </li>
                             <!-- News -->
                             <li role="presentation" class="leaf">
                                 <a role="menu-item" href="{{aboutUri}}/about/news/news"><@orcid.msg 'public-layout.news'/></a>
+                                <ul class="menu">
+                                    <li class="hidden-md hidden-lg hidden-sm visible-xs">
+                                        <a href="{{aboutUri}}/about/news/news"><@orcid.msg 'public-layout.news'/></a>
+                                    </li>
+                                    <li class="first leaf">
+                                        <a href="{{aboutUri}}/category/newsletter/blog" title="">Blog</a>
+                                    </li>
+                                    <li class="last leaf">
+                                        <a href="{{aboutUri}}/newsletter/subscriptions" title="">Subscribe!</a>
+                                    </li>
+                                </ul>
                             </li>
                             <!-- Events -->
                             <li role="presentation" class="last expanded">
