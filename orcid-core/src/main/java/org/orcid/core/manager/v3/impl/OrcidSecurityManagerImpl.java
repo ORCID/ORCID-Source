@@ -390,6 +390,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                     checkAndFilter(orcid, duplicateGroup.getPeerReviewSummary(), READ_PEER_REVIEWS_REQUIRED_SCOPE, true);
                     if (duplicateGroup.getPeerReviewSummary().isEmpty()) {
                         groupIt.remove();
+                        break;
                     }
                 }
             }
