@@ -305,7 +305,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
         Map<String, ApplicationSummary> distinctApplications = new HashMap<>();
         for (OrcidOauth2TokenDetail token : tokenDetails) {
-            if (token.getTokenDisabled() == null || !token.getTokenDisabled()) {
+            if ((token.getTokenDisabled() == null || !token.getTokenDisabled()) && token.getOboClientDetailsId() == null) {
                 addApplicationToMap(token, distinctApplications);
             }
         }
