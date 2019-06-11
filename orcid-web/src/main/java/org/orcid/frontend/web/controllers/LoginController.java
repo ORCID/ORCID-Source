@@ -1,13 +1,27 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.impl.InstitutionalSignInManagerImpl;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
@@ -15,13 +29,21 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.UserConnectionStatus;
+import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.orcid.pojo.ajaxForm.Names;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
@@ -30,12 +52,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("loginController")
 public class LoginController extends OauthControllerBase {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
    
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -54,6 +79,21 @@ public class LoginController extends OauthControllerBase {
     
     @Resource(name = "recordNameManagerV3")
     private RecordNameManagerReadOnly recordNameManager;
+    
+    @Resource
+    protected UserConnectionDao userConnectionDao;
+    
+    private final String facebookOauthUrl;
+
+    private final String facebookTokenExchangeUrl;
+    
+    private final String facebookUserInfoEndpoint;
+    
+    public LoginController(@Value("${org.orcid.social.fb.key}") String fbKey, @Value("${org.orcid.social.fb.secret}") String fbSecret, @Value("${org.orcid.social.fb.redirectUri}") String fbRedirectUri) {
+        facebookOauthUrl = "https://www.facebook.com/v3.3/dialog/oauth?client_id=" + fbKey + "&redirect_uri=" + fbRedirectUri + "&scope=email";        
+        facebookTokenExchangeUrl = "https://graph.facebook.com/v3.3/oauth/access_token?client_id=" + fbKey + "&redirect_uri=" + fbRedirectUri + "&client_secret=" + fbSecret + "&code={code}";           
+        facebookUserInfoEndpoint = "https://graph.facebook.com/me?access_token={access-token}&fields=id,email,name,first_name,last_name";
+    }
     
     
     @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
@@ -203,5 +243,81 @@ public class LoginController extends OauthControllerBase {
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
         
         return new ModelAndView("login");
+    }
+    
+    @RequestMapping(value = { "/signin/facebook" }, method = RequestMethod.POST)
+    public RedirectView initFacebookLogin() {
+        return new RedirectView(facebookOauthUrl);
+    }
+    
+    @RequestMapping(value = { "/signin/facebook" }, method = RequestMethod.GET)
+    public void getFacebookLogin(@RequestParam("code") String code) throws UnsupportedEncodingException, IOException, JSONException {
+        // Exchange the code for an access token 
+        HttpURLConnection con = (HttpURLConnection) new URL(facebookTokenExchangeUrl.replace("{code}", code)).openConnection();
+        con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent")+ " (orcid.org)");        
+        con.setRequestMethod("GET");
+        con.setInstanceFollowRedirects(true);
+        int responseCode = con.getResponseCode();        
+        if(responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8.name()));
+            StringBuffer response = new StringBuffer();
+            in.lines().forEach(i -> response.append(i));
+            in.close();
+            // Read JSON response and print
+            JSONObject tokenJson = new JSONObject(response.toString());
+            // Get user info from Facebook
+            String accessToken = tokenJson.getString("access_token");
+            Long expiresIn = tokenJson.getLong("expires_in");
+            con = (HttpURLConnection) new URL(facebookUserInfoEndpoint.replace("{access-token}", accessToken)).openConnection();
+            con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent")+ " (orcid.org)");        
+            con.setRequestMethod("GET");
+            con.setInstanceFollowRedirects(true);
+            int userInfoResponseCode = con.getResponseCode();  
+            if(userInfoResponseCode == HttpURLConnection.HTTP_OK) {
+                in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8.name()));
+                StringBuffer userInfoResponse = new StringBuffer();
+                in.lines().forEach(i -> userInfoResponse.append(i));
+                in.close();
+                JSONObject userInfoJson = new JSONObject(userInfoResponse.toString());                
+                // Store user info
+                createOrUpdateUserConnection(userInfoJson.getString("id"), "facebook", userInfoJson.getString("email"), userInfoJson.getString("name"), accessToken, expiresIn);
+                
+            }            
+        }
+    }
+    
+    @RequestMapping(value = { "/signin/google" }, method = RequestMethod.POST)
+    public void initGoogleLogin() {
+        
+    }
+    
+    private void createOrUpdateUserConnection(String remoteUserId, String providerId, String email, String userName, String accessToken, Long expireTime) {
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(remoteUserId, providerId);        
+        if (userConnectionEntity == null) {
+            LOGGER.info("No user connection found for remoteUserId={}, displayName={}, providerId={}",
+                    new Object[] { remoteUserId, userName, providerId});
+            userConnectionEntity = new UserconnectionEntity();
+            String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
+            UserconnectionPK pk = new UserconnectionPK(randomId, providerId, remoteUserId);                                
+            userConnectionEntity.setDisplayname(userName);
+            userConnectionEntity.setRank(1);
+            userConnectionEntity.setId(pk);
+            userConnectionEntity.setLinked(false);
+            userConnectionEntity.setLastLogin(new Date());   
+            userConnectionEntity.setEmail(email);
+            userConnectionEntity.setAccesstoken(accessToken);
+            userConnectionEntity.setExpiretime(expireTime);
+            userConnectionEntity.setConnectionSatus(UserConnectionStatus.STARTED);                
+            userConnectionDao.persist(userConnectionEntity);
+        } else {
+            LOGGER.info("Found existing user connection, {}", userConnectionEntity);
+            Date now = new Date();
+            userConnectionEntity.setAccesstoken(accessToken);
+            userConnectionEntity.setLastLogin(now);
+            userConnectionEntity.setLastModified(now);
+            userConnectionEntity.setExpiretime(expireTime);
+            userConnectionDao.merge(userConnectionEntity);
+        }
+        
     }
 }

@@ -29,7 +29,6 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
-import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
@@ -109,9 +108,6 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private InternalSSOManager internalSSOManager;
-
-    @Autowired
-    private SocialContext socialContext;
 
     @Resource
     private SocialAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerSocial;
@@ -285,11 +281,17 @@ public class RegistrationController extends BaseController {
             return r;
         }
         
+        //TODO
+        //TODO
+        //TODO
+        //TODO
+        /*
         if ("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
             ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
         } else if ("shibboleth".equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
+        */
         String redirectUrl = calculateRedirectUrl(request, response, true);
         r.setUrl(redirectUrl);
         return r;

@@ -15,8 +15,6 @@ import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.frontend.spring.web.social.GoogleSignIn;
-import org.orcid.frontend.spring.web.social.config.SocialContext;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -29,9 +27,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.User;
-import org.springframework.social.google.api.oauth2.UserInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,9 +40,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/social")
 public class SocialController extends BaseController {
-
-    @Autowired
-    private SocialContext socialContext;
 
     @Resource
     private AuthenticationManager authenticationManager;
@@ -78,7 +70,8 @@ public class SocialController extends BaseController {
     
     @RequestMapping(value = { "/signinData.json" }, method = RequestMethod.GET)
     public @ResponseBody OAuthSigninData getSigninData(HttpServletRequest request, HttpServletResponse response) {
-        SocialType connectionType = socialContext.isSignedIn(request, response);
+        //TODO: get the connection type from signed in status
+        SocialType connectionType = null;
         OAuthSigninData data = new OAuthSigninData();
         if (connectionType != null) {
             Map<String, String> userMap = retrieveUserDetails(connectionType);
@@ -94,12 +87,13 @@ public class SocialController extends BaseController {
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
-        SocialType connectionType = socialContext.isSignedIn(request, response);
+        //TODO: get the connection type from signed in status
+        SocialType connectionType = null;
         if (connectionType != null) {
             Map<String, String> userMap = retrieveUserDetails(connectionType);
 
             String providerId = connectionType.value();
-            String userId = socialContext.getUserId();
+            String userId = null; //TODO: where is the user id comming from?
             UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (userConnectionEntity.isLinked()) {
@@ -131,12 +125,13 @@ public class SocialController extends BaseController {
     @RequestMapping(value = { "/2FA/submitCode.json" }, method = RequestMethod.POST)
     public @ResponseBody TwoFactorAuthenticationCodes post2FAVerificationCode(@RequestBody TwoFactorAuthenticationCodes codes, HttpServletRequest request,
             HttpServletResponse response) {
-        SocialType connectionType = socialContext.isSignedIn(request, response);
+        //TODO: get the connection type from signed in status
+        SocialType connectionType = null;
         if (connectionType != null) {
             Map<String, String> userMap = retrieveUserDetails(connectionType);
 
             String providerId = connectionType.value();
-            String userId = socialContext.getUserId();
+            String userId = null; //TODO: where is the user id comming from?
             UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (userConnectionEntity.isLinked()) {
@@ -187,26 +182,8 @@ public class SocialController extends BaseController {
     }
 
     private Map<String, String> retrieveUserDetails(SocialType connectionType) {
-
+        //TODO: look at SocialAjaxAuthenticationSuccessHandler
         Map<String, String> userMap = new HashMap<String, String>();
-        if (SocialType.FACEBOOK.equals(connectionType)) {
-            Facebook facebook = socialContext.getFacebook();
-            User user = facebook.fetchObject("me", User.class, "id", "email", "name", "first_name", "last_name");
-            userMap.put("providerUserId", user.getId());
-            userMap.put("userName", user.getName());
-            userMap.put("email", user.getEmail());
-            userMap.put("firstName", user.getFirstName());
-            userMap.put("lastName", user.getLastName());
-        } else if (SocialType.GOOGLE.equals(connectionType)) {
-            GoogleSignIn google = socialContext.getGoogle();
-            UserInfo userInfo = google.getUserInfo();
-            userMap.put("providerUserId", userInfo.getId());
-            userMap.put("userName", userInfo.getName());
-            userMap.put("email", userInfo.getEmail());
-            userMap.put("firstName", userInfo.getGivenName());
-            userMap.put("lastName", userInfo.getFamilyName());                        
-        }
-
         return userMap;
     }
 
