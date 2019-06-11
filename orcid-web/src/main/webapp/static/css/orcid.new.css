@@ -8853,7 +8853,7 @@ a.footer-url {
     padding: 12px 10px
 }
 
-.header2 .menu-bar ul > li > ul a:hover {
+.header2 .menu-bar > .container > ul > li > ul > li > a:hover {
     background-color: rgba(46, 127, 159, 0.04);
 }
 
@@ -9035,7 +9035,7 @@ a.footer-url {
     padding-right: 8px;
 }
 
-.header2 .menu-bar ul > li > ul a.active {
+.header2 .menu-bar ul > li > ul > li  a.active {
     text-decoration: underline;
     color: rgba(0, 0, 0, 0.87);
     font-weight: bold;
@@ -9149,6 +9149,11 @@ a.footer-url {
         color: #1e708d;
     }
     
+    .lang-rl .header2 .menu-bar ul.menu li.hover > ul > li > ul.menu {
+        padding-left: auto; 
+        padding-right: 18px
+    }
+    
     .header2 .menu-bar ul > li > ul > li > ul a:hover {
         color: #1e708d;
     }
@@ -9162,6 +9167,11 @@ a.footer-url {
         background-color: #ffffff;
         padding-left: 46px;
         margin: 0 -18px;
+    }
+    
+    .lang-rl .header2 .menu-bar ul.menu li.hover > ul > li > ul.menu > li > ul.menu {
+        padding-left: auto;
+        padding-right: 46px;
     }
 
     .header2 .slogan {
@@ -9243,6 +9253,11 @@ a.footer-url {
         align-items: normal;
         padding-right: 20px;
     }
+    .lang-rl .header2 .menu-bar li > a{
+        padding-right: auto;
+        padding-left: 20px; 
+
+    }
     .header2 a.settings-button {
         margin-left: 10px;
     }
@@ -9276,6 +9291,7 @@ a.footer-url {
 
     .lang-rl .header2 .menu-bar ul > li > ul a {
         padding-right: 42px;
+        padding-left: 20px;
     }
     .lang-rl .header2 .logo {
         flex-direction: row-reverse;

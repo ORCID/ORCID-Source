@@ -264,8 +264,8 @@
                             <li role="presentation" class="leaf"><a role="menu-item" href="{{aboutUri}}/about/team" title=""><@orcid.msg
                                     'public-layout.the_orcid_team'/></a></li>
                             <!-- The ORCID Comunity -->
-                            <li role="presentation" class="expanded" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('community')">
-                                <a role="menu-item" href="{{aboutUri}}/about/community"><@orcid.msg 'public-layout.the_orcid_community'/> <span class="more" [ngClass]="{'less':secondaryMenuVisible['community'] == true}"></span></a>
+                            <li role="presentation" class="expanded" >
+                                <a role="menu-item" href="{{aboutUri}}/about/community" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('community')"><@orcid.msg 'public-layout.the_orcid_community'/> <span class="more" [ngClass]="{'less':secondaryMenuVisible['community'] == true}"></span></a>
                                 <ul class="menu" *ngIf="secondaryMenuVisible['community'] == true">
                                     <li class="hidden-md hidden-lg hidden-sm visible-xs">
                                         <a href="{{aboutUri}}/about/community"><@orcid.msg 'public-layout.the_orcid_community'/></a>
