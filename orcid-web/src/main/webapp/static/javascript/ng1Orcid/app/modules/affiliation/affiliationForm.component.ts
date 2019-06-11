@@ -179,6 +179,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         $("#affiliationName").typeahead({
             name: 'affiliationName',
             limit: numOfResults,
+            valueKey: 'sourceId',
             remote: {
                 url: getBaseUri()+'/affiliations/disambiguated/name/%QUERY?limit=' + numOfResults
             },
