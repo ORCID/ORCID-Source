@@ -23,7 +23,7 @@
                         </div>
                         <div class="input-group" role="presentation">
                             <div class="input-group-addon" role="presentation">
-                                <div role="presentation" class="search-dropdown" [ngClass]="{'open': searchDropdownOpen}"  (mouseleave)="closeDropdown()">
+                                <div role="presentation" class="search-dropdown" [ngClass]="{'hover': searchDropdownOpen}"  (mouseleave)="closeDropdown()">
                                     <div  aria-label="<@orcid.msg 'aria.search-location'/>" role="menu" class="search-dropbtn"   (click)="clickDropdown()"> {{ (headerSearch.searchOption === 'website'? '<@orcid.msg 'layout.public-layout.website'/>':'<@orcid.msg 'layout.public-layout.registry'/>') | titlecase }} <span [ngClass]="{'dropdown-arrow': !searchDropdownOpen, 'dropdown-arrow-up': searchDropdownOpen}"></span> </div>
                                     <ul class="dropdown-content" role="presentation">
                                         <div (click)="clickDropdown('registry')"> {{'<@orcid.msg 'layout.public-layout.registry'/>'| titlecase }} </div>
@@ -58,8 +58,8 @@
                 <div class="container container-menu"  role="presentation"> 
                 <ul class="menu" resize  role="presentation">
                     <!-- FOR RESEARCHERS -->
-                    <li class="first expanded" role="presentation" [ngClass]="{'open': mobileMenu.RESEARCHERS}"  >
-                        <a href="{{aboutUri}}/about/what-is-orcid/mission" title="" role="menu-item" (mouseenter)="menuHandler('RESEARCHERS', $event)"  (click)="menuHandler('RESEARCHERS', $event)"><@orcid.msg 'public-layout.for_researchers'/> <span class="more" [ngClass]="{'less dark':mobileMenu.RESEARCHERS == true}"></span></a>
+                    <li class="first expanded open" role="presentation" [ngClass]="{'hover': mobileMenu.RESEARCHERS}"  >
+                        <a href="{{aboutUri}}/about/what-is-orcid/mission" title="" role="menu-item" (mouseenter)="menuHandler('RESEARCHERS', $event)"  (click)="menuHandler('RESEARCHERS', $event)"><@orcid.msg 'public-layout.for_researchers'/> <span class="more" [ngClass]="{'less':mobileMenu.RESEARCHERS == true}"></span></a>
                         <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']" aria-label="submenu">
                             <!-- Mobile view Only -->
                             <li class="leaf    " [hidden]="!isMobile"><a href="{{getBaseUri()}}" title="" role="menu-item"><@orcid.msg 'public-layout.for_researchers'/></a></li>
@@ -105,8 +105,8 @@
 
                     <!-- DRUPAL WEBSITE MENUS -->
                     <!-- FOR ORGANIZATIONS -->
-                    <li role="presentation" class="expanded" [ngClass]="{'open': mobileMenu.ORGANIZATIONS}" >
-                        <a href="{{aboutUri}}/organizations" role="menu-item" (mouseenter)="menuHandler('ORGANIZATIONS', $event)" (click)="menuHandler('ORGANIZATIONS', $event)"><@orcid.msg 'public-layout.for_organizations'/> <span class="more" [ngClass]="{'less dark':mobileMenu.ORGANIZATIONS == true}"></span></a>
+                    <li role="presentation" class="expanded" [ngClass]="{'hover': mobileMenu.ORGANIZATIONS}" >
+                        <a href="{{aboutUri}}/organizations" role="menu-item" (mouseenter)="menuHandler('ORGANIZATIONS', $event)" (click)="menuHandler('ORGANIZATIONS', $event)"><@orcid.msg 'public-layout.for_organizations'/> <span class="more" [ngClass]="{'less':mobileMenu.ORGANIZATIONS == true}"></span></a>
                         <ul class="menu lang-fixes"  aria-label="submenu">
                             <!-- Mobile view Only -->
                             <li role="presentation" class="first leaf" [hidden]="!isMobile" >
@@ -212,8 +212,8 @@
                         </ul>
                     </li>
                     <!-- ABOUT -->
-                    <li role="presentation" class="expanded" [ngClass]="{'open': mobileMenu.ABOUT}"  >
-                        <a href="{{aboutUri}}/about" role="menu-item" (mouseenter)="menuHandler('ABOUT', $event)"  (click)="menuHandler('ABOUT', $event)"><@orcid.msg 'public-layout.about'/> <span class="more" [ngClass]="{'less dark':mobileMenu.ABOUT == true}"></span></a>
+                    <li role="presentation" class="expanded" [ngClass]="{'hover': mobileMenu.ABOUT}"  >
+                        <a href="{{aboutUri}}/about" role="menu-item" (mouseenter)="menuHandler('ABOUT', $event)"  (click)="menuHandler('ABOUT', $event)"><@orcid.msg 'public-layout.about'/> <span class="more" [ngClass]="{'less':mobileMenu.ABOUT == true}"></span></a>
 
                         <ul class="menu lang-fixes"  aria-label="submenu">
                             <!-- Mobile view Only -->
@@ -351,8 +351,8 @@
                         </ul>
                     </li>
                     <!-- HELP -->
-                    <li role="presentation" class="expanded" [ngClass]="{'open': mobileMenu.HELP}"  >
-                        <a role="menu-item" href="{{aboutUri}}/help" (mouseenter)="menuHandler('HELP', $event)" (click)="menuHandler('HELP', $event)"><@orcid.msg 'public-layout.help' /> <span class="more" [ngClass]="{'less dark':mobileMenu.HELP == true}"></span></a>
+                    <li role="presentation" class="expanded" [ngClass]="{'hover': mobileMenu.HELP}"  >
+                        <a role="menu-item" href="{{aboutUri}}/help" (mouseenter)="menuHandler('HELP', $event)" (click)="menuHandler('HELP', $event)"><@orcid.msg 'public-layout.help' /> <span class="more" [ngClass]="{'less':mobileMenu.HELP == true}"></span></a>
                         <ul  [hidden]="!isMobile" class="menu lang-fixes"  aria-label="submenu">
                             <!-- Mobile view Only -->
                             <li role="presentation" class="first leaf    "  [hidden]="!isMobile">
@@ -374,7 +374,7 @@
                     </li>
                     
                     <!-- SIGN IN/OUT -->
-                    <li role="presentation" class="last leaf" [ngClass]="{'open': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
+                    <li role="presentation" class="last leaf" [ngClass]="{'hover': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
                         <a *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin" role="menu-item"><@orcid.msg 'public-layout.sign_in'/></a>                    
                         <a *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout" role="menu-item"><@orcid.msg 'public-layout.sign_out'/></a>
                     </li>                    

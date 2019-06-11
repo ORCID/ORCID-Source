@@ -152,10 +152,9 @@ export class Header2Component  {
     menuHandler (value, $event) {
 
         // Ignore first click on mobile if not is SIGNIN 
-        if (this.isMobile) {
-            if (value !== "SIGNIN") {
+        if (this.isMobile && value !== "SIGNIN") {
                 $event.preventDefault()
-            }
+            
         }
 
         // If is mobile ignore no-click events
