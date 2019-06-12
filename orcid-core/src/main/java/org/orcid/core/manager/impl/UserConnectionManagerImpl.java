@@ -111,6 +111,8 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
         data.put(OrcidOauth2Constants.PROVIDER_USER_ID, entity.getId().getProvideruserid());
         data.put(OrcidOauth2Constants.DISPLAY_NAME, entity.getDisplayname());
         data.put(OrcidOauth2Constants.EMAIL, entity.getEmail());
+        data.put(OrcidOauth2Constants.ORCID, entity.getOrcid());
+        data.put(OrcidOauth2Constants.IS_LINKED, String.valueOf(entity.isLinked()));
         return data;        
     }
 

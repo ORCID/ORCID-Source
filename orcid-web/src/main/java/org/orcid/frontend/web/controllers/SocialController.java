@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -18,10 +17,8 @@ import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.orcid.pojo.OAuthSigninData;
 import org.orcid.pojo.TwoFactorAuthenticationCodes;
@@ -91,74 +88,49 @@ public class SocialController extends BaseController {
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
-        // TODO: get the connection type from signed in status
-        SocialType connectionType = null;
-        if (connectionType != null) {
-            Map<String, String> userMap = retrieveUserDetails(connectionType);
-
-            String providerId = connectionType.value();
-            String userId = null; // TODO: where is the user id comming from?
-            UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
-            if (userConnectionEntity != null) {
-                if (userConnectionEntity.isLinked()) {
-                    ProfileEntity profile = profileEntityCacheManager.retrieve(userConnectionEntity.getOrcid());
-                    if (profile.getUsing2FA()) {
-                        return new ModelAndView("social_2FA");
-                    }
-
-                    UserconnectionPK pk = new UserconnectionPK(userId, providerId, userMap.get("providerUserId"));
-                    String aCredentials = new StringBuffer(providerId).append(":").append(userMap.get("providerUserId")).toString();
-                    PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), aCredentials);
-                    token.setDetails(getOrcidProfileUserDetails(userConnectionEntity.getOrcid()));
-                    Authentication authentication = authenticationManager.authenticate(token);
-                    userConnectionManager.updateLoginInformation(pk);
-
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
-                } else {
-                    return new ModelAndView("social_link_signin");
+        Map<String, String> signedInData = getSignedInData(request, response);
+        if (signedInData != null) {            
+            String userConnectionId = signedInData.get(OrcidOauth2Constants.USER_CONNECTION_ID);
+            String providerId = signedInData.get(OrcidOauth2Constants.PROVIDER_ID);
+            String providerUserId = signedInData.get(OrcidOauth2Constants.PROVIDER_USER_ID);
+            String orcid = signedInData.get(OrcidOauth2Constants.ORCID);
+            Boolean isLinked = Boolean.valueOf(signedInData.get(OrcidOauth2Constants.IS_LINKED));
+            if (isLinked) {
+                ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+                if (profile.getUsing2FA()) {
+                    return new ModelAndView("social_2FA");
                 }
+                updateUserConnectionLoginAndLogUserIn(userConnectionId, providerId, providerUserId, orcid);
+                return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
             } else {
-                throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
-            }
+                return new ModelAndView("social_link_signin");
+            } 
         } else {
-            throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+            throw new UsernameNotFoundException("Could not find social account");
         }
     }
 
     @RequestMapping(value = { "/2FA/submitCode.json" }, method = RequestMethod.POST)
     public @ResponseBody TwoFactorAuthenticationCodes post2FAVerificationCode(@RequestBody TwoFactorAuthenticationCodes codes, HttpServletRequest request,
             HttpServletResponse response) {
-        // TODO: get the connection type from signed in status
-        SocialType connectionType = null;
-        if (connectionType != null) {
-            Map<String, String> userMap = retrieveUserDetails(connectionType);
-
-            String providerId = connectionType.value();
-            String userId = null; // TODO: where is the user id comming from?
-            UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
-            if (userConnectionEntity != null) {
-                if (userConnectionEntity.isLinked()) {
-                    validate2FACodes(userConnectionEntity.getOrcid(), codes);
-                    if (!codes.getErrors().isEmpty()) {
-                        return codes;
-                    }
-
-                    UserconnectionPK pk = new UserconnectionPK(userId, providerId, userMap.get("providerUserId"));
-                    String aCredentials = new StringBuffer(providerId).append(":").append(userMap.get("providerUserId")).toString();
-                    PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), aCredentials);
-                    token.setDetails(getOrcidProfileUserDetails(userConnectionEntity.getOrcid()));
-                    Authentication authentication = authenticationManager.authenticate(token);
-                    userConnectionManager.updateLoginInformation(pk);
-
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    codes.setRedirectUrl(calculateRedirectUrl(request, response, false));
-                } else {
-                    codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/social/access");
+        Map<String, String> signedInData = getSignedInData(request, response);
+        if (signedInData != null) {
+            String userConnectionId = signedInData.get(OrcidOauth2Constants.USER_CONNECTION_ID);
+            String providerId = signedInData.get(OrcidOauth2Constants.PROVIDER_ID);
+            String providerUserId = signedInData.get(OrcidOauth2Constants.PROVIDER_USER_ID);
+            String orcid = signedInData.get(OrcidOauth2Constants.ORCID);
+            Boolean isLinked = Boolean.valueOf(signedInData.get(OrcidOauth2Constants.IS_LINKED));
+            if (isLinked) {
+                validate2FACodes(orcid, codes);
+                if (!codes.getErrors().isEmpty()) {
+                    return codes;
                 }
+                updateUserConnectionLoginAndLogUserIn(userConnectionId, providerId, providerUserId, orcid);
+                codes.setRedirectUrl(calculateRedirectUrl(request, response, false));
             } else {
-                throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+                codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/social/access");
             }
+            
         } else {
             throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
         }
@@ -185,12 +157,6 @@ public class SocialController extends BaseController {
         return orcidUserDetailsService.loadUserByProfile(profileEntity);
     }
 
-    private Map<String, String> retrieveUserDetails(SocialType connectionType) {
-        // TODO: look at SocialAjaxAuthenticationSuccessHandler
-        Map<String, String> userMap = new HashMap<String, String>();
-        return userMap;
-    }
-
     private String getAccountIdForDisplay(Map<String, String> userMap) {
         if (userMap.containsKey(OrcidOauth2Constants.EMAIL)) {
             return userMap.get(OrcidOauth2Constants.EMAIL);
@@ -207,16 +173,30 @@ public class SocialController extends BaseController {
         if (!StringUtils.isBlank(userConnectionId)) {
             try {
                 data = userConnectionManager.getUserConnectionInfo(userConnectionId);
+                data.put(OrcidOauth2Constants.USER_CONNECTION_ID, userConnectionId);
                 // Set first name and last name from session when available
                 String sessionStoredData = (String)request.getSession().getAttribute(OrcidOauth2Constants.SOCIAL_SESSION_ATT_NAME + data.get(OrcidOauth2Constants.PROVIDER_USER_ID));
                 JSONObject json = new JSONObject(sessionStoredData);
                 data.put("firstName", json.getString(OrcidOauth2Constants.FIRST_NAME));
-                data.put("lastName", json.getString(OrcidOauth2Constants.LAST_NAME));
+                data.put("lastName", json.getString(OrcidOauth2Constants.LAST_NAME));                
             } catch (Exception e) {
                 userCookieGenerator.removeCookie(response);
             }
         }
 
         return data;
+    }
+    
+    private void updateUserConnectionLoginAndLogUserIn(String userConnectionId, String providerId, String providerUserId, String orcid) {
+        // Update userConnection login status
+        UserconnectionPK pk = new UserconnectionPK(userConnectionId, providerId, providerUserId);
+        userConnectionManager.updateLoginInformation(pk);
+        
+        // Log user in
+        String aCredentials = providerId + ':' + providerUserId;
+        PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(orcid, aCredentials);
+        token.setDetails(getOrcidProfileUserDetails(orcid));
+        Authentication authentication = authenticationManager.authenticate(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

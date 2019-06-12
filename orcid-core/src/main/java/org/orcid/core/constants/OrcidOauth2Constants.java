@@ -59,5 +59,7 @@ public class OrcidOauth2Constants {
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
     public static final String ACCESS_TOKEN = "accessToken";  
+    public static final String USER_CONNECTION_ID = "userConnectionId";  
+    public static final String IS_LINKED = "is_linked";
     public static final String SOCIAL_SESSION_ATT_NAME = "social_data_";
 }
