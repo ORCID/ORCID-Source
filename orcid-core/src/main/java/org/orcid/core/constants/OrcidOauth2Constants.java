@@ -50,4 +50,14 @@ public class OrcidOauth2Constants {
     public static final String IETF_EXCHANGE_REQUESTED_TOKEN_TYPE = "requested_token_type";
     
     public static final String CODE_RESPONSE_TYPE = "code";
+    
+    //Social signin
+    public static final String EMAIL = "email";
+    public static final String PROVIDER_ID = "providerId";
+    public static final String PROVIDER_USER_ID = "providerUserId";
+    public static final String DISPLAY_NAME = "displayName";
+    public static final String FIRST_NAME = "firstName";
+    public static final String LAST_NAME = "lastName";
+    public static final String ACCESS_TOKEN = "accessToken";  
+    public static final String SOCIAL_SESSION_ATT_NAME = "social_data_";
 }

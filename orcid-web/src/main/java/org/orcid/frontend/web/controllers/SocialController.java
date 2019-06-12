@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
@@ -59,10 +61,10 @@ public class SocialController extends BaseController {
 
     @Resource
     private BackupCodeManager backupCodeManager;
-    
+
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
-    
+
     @Resource
     private UserCookieGenerator userCookieGenerator;
 
@@ -70,34 +72,32 @@ public class SocialController extends BaseController {
     public @ResponseBody TwoFactorAuthenticationCodes getTwoFactorCodeWrapper() {
         return new TwoFactorAuthenticationCodes();
     }
-    
-    
+
     @RequestMapping(value = { "/signinData.json" }, method = RequestMethod.GET)
     public @ResponseBody OAuthSigninData getSigninData(HttpServletRequest request, HttpServletResponse response) {
-        //TODO: get the connection type from signed in status
-        SocialType connectionType = isSignedIn(request, response);
+        Map<String, String> signedInData = getSignedInData(request, response);
         OAuthSigninData data = new OAuthSigninData();
-        if (connectionType != null) {
-            Map<String, String> userMap = retrieveUserDetails(connectionType);
-            data.setProviderId(connectionType.value());
-            data.setAccountId(getAccountIdForDisplay(userMap));
+        if (signedInData != null) {
+            data.setAccountId(getAccountIdForDisplay(signedInData));
             data.setLinkType("social");
-            data.setEmail(userMap.get("email") == null ? "" : userMap.get("email"));
-            data.setFirstName(userMap.get("firstName") == null ? "" : userMap.get("firstName"));
-            data.setLastName(userMap.get("lastName") == null ? "" : userMap.get("lastName"));
+            data.setProviderId(signedInData.get(OrcidOauth2Constants.PROVIDER_ID));            
+            data.setEmail(signedInData.containsKey(OrcidOauth2Constants.EMAIL) ? signedInData.get(OrcidOauth2Constants.EMAIL) : "");
+            data.setFirstName(signedInData.containsKey(OrcidOauth2Constants.FIRST_NAME) ?  signedInData.get(OrcidOauth2Constants.FIRST_NAME) : "");
+            data.setLastName(signedInData.containsKey(OrcidOauth2Constants.LAST_NAME) ?  signedInData.get(OrcidOauth2Constants.LAST_NAME) : "");
+            data.setAccountId(getAccountIdForDisplay(signedInData));
         }
         return data;
     }
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
-        //TODO: get the connection type from signed in status
+        // TODO: get the connection type from signed in status
         SocialType connectionType = null;
         if (connectionType != null) {
             Map<String, String> userMap = retrieveUserDetails(connectionType);
 
             String providerId = connectionType.value();
-            String userId = null; //TODO: where is the user id comming from?
+            String userId = null; // TODO: where is the user id comming from?
             UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (userConnectionEntity.isLinked()) {
@@ -129,13 +129,13 @@ public class SocialController extends BaseController {
     @RequestMapping(value = { "/2FA/submitCode.json" }, method = RequestMethod.POST)
     public @ResponseBody TwoFactorAuthenticationCodes post2FAVerificationCode(@RequestBody TwoFactorAuthenticationCodes codes, HttpServletRequest request,
             HttpServletResponse response) {
-        //TODO: get the connection type from signed in status
+        // TODO: get the connection type from signed in status
         SocialType connectionType = null;
         if (connectionType != null) {
             Map<String, String> userMap = retrieveUserDetails(connectionType);
 
             String providerId = connectionType.value();
-            String userId = null; //TODO: where is the user id comming from?
+            String userId = null; // TODO: where is the user id comming from?
             UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
             if (userConnectionEntity != null) {
                 if (userConnectionEntity.isLinked()) {
@@ -172,7 +172,7 @@ public class SocialController extends BaseController {
                 codes.getErrors().add(getMessage("2FA.recoveryCode.invalid"));
             }
             return;
-        } 
+        }
 
         if (codes.getVerificationCode() == null || codes.getVerificationCode().isEmpty()
                 || !twoFactorAuthenticationManager.verificationCodeIsValid(codes.getVerificationCode(), orcid)) {
@@ -186,38 +186,37 @@ public class SocialController extends BaseController {
     }
 
     private Map<String, String> retrieveUserDetails(SocialType connectionType) {
-        //TODO: look at SocialAjaxAuthenticationSuccessHandler
+        // TODO: look at SocialAjaxAuthenticationSuccessHandler
         Map<String, String> userMap = new HashMap<String, String>();
         return userMap;
     }
 
     private String getAccountIdForDisplay(Map<String, String> userMap) {
-        if (userMap.get("email") != null) {
-            return userMap.get("email");
+        if (userMap.containsKey(OrcidOauth2Constants.EMAIL)) {
+            return userMap.get(OrcidOauth2Constants.EMAIL);
         }
-        if (userMap.get("userName") != null) {
-            return userMap.get("userName");
+        if (userMap.containsKey(OrcidOauth2Constants.DISPLAY_NAME)) {
+            return userMap.get(OrcidOauth2Constants.DISPLAY_NAME);
         }
-        return userMap.get("providerUserId");
+        return userMap.get(OrcidOauth2Constants.PROVIDER_USER_ID);
     }
-    
-    private SocialType isSignedIn(HttpServletRequest request, HttpServletResponse response) {
-        SocialType connectionType = null;
+
+    private Map<String, String> getSignedInData(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String> data = null;
         String userConnectionId = userCookieGenerator.readCookieValue(request);
         if (!StringUtils.isBlank(userConnectionId)) {
             try {
-                UserconnectionEntity userConnectionEntity = userConnectionManager.findByUserConnectionId(userConnectionId);
-                String providerIdType = userConnectionEntity.getId().getProviderid();
-                if (SocialType.FACEBOOK.value().equals(providerIdType)) {
-                    connectionType = SocialType.FACEBOOK;
-                } else if (SocialType.GOOGLE.value().equals(providerIdType)) {
-                    connectionType = SocialType.GOOGLE;
-                }
-            } catch(Exception e) {
+                data = userConnectionManager.getUserConnectionInfo(userConnectionId);
+                // Set first name and last name from session when available
+                String sessionStoredData = (String)request.getSession().getAttribute(OrcidOauth2Constants.SOCIAL_SESSION_ATT_NAME + data.get(OrcidOauth2Constants.PROVIDER_USER_ID));
+                JSONObject json = new JSONObject(sessionStoredData);
+                data.put("firstName", json.getString(OrcidOauth2Constants.FIRST_NAME));
+                data.put("lastName", json.getString(OrcidOauth2Constants.LAST_NAME));
+            } catch (Exception e) {
                 userCookieGenerator.removeCookie(response);
             }
         }
-        
-        return connectionType;
+
+        return data;
     }
 }

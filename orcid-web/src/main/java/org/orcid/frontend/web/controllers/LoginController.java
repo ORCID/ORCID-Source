@@ -61,20 +61,6 @@ public class LoginController extends OauthControllerBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
-    private static final String EMAIL = "email";
-
-    private static final String PROVIDER_USER_ID = "providerUserId";
-
-    private static final String DISPLAY_NAME = "displayName";
-
-    private static final String FIRST_NAME = "firstName";
-
-    private static final String LAST_NAME = "lastName";
-
-    private static final String ACCESS_TOKEN = "accessToken";
-
-    private static final String EXPIRES_IN = "expiresIn";
-
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
@@ -278,10 +264,13 @@ public class LoginController extends OauthControllerBase {
     public ModelAndView getFacebookLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") String code)
             throws UnsupportedEncodingException, IOException, JSONException {
         JSONObject userData = getFacebookUserData(code);
-        String providerUserId = userData.getString(PROVIDER_USER_ID);
-        String accessToken = userData.getString(ACCESS_TOKEN);
-        Long expiresIn = Long.valueOf(userData.getString(EXPIRES_IN));
-        UserconnectionEntity userConnection = userConnectionManager.findByProviderIdAndProviderUserId(userData.getString(PROVIDER_USER_ID), SocialType.FACEBOOK.value());
+        String providerUserId = userData.getString(OrcidOauth2Constants.PROVIDER_USER_ID);
+        String accessToken = userData.getString(OrcidOauth2Constants.ACCESS_TOKEN);
+        Long expiresIn = Long.valueOf(userData.getString(OrcidOauth2Constants.EXPIRES_IN));
+        
+        request.getSession().setAttribute(OrcidOauth2Constants.SOCIAL_SESSION_ATT_NAME + providerUserId, userData.toString());
+        
+        UserconnectionEntity userConnection = userConnectionManager.findByProviderIdAndProviderUserId(userData.getString(OrcidOauth2Constants.PROVIDER_USER_ID), SocialType.FACEBOOK.value());
         if (userConnection != null && userConnection.isLinked()) {
             // If user exists and is linked update user connection info
             // and redirect to user record
@@ -289,7 +278,7 @@ public class LoginController extends OauthControllerBase {
                     accessToken, expiresIn);
         } else {
             // Store user info
-            createUserConnection(SocialType.FACEBOOK, providerUserId, userData.getString(EMAIL), userData.getString(DISPLAY_NAME), accessToken, expiresIn);
+            createUserConnection(SocialType.FACEBOOK, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL), userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Else forward to user creation
             return new ModelAndView("social_link_signin");
         }
@@ -319,8 +308,8 @@ public class LoginController extends OauthControllerBase {
             // Get user info from Facebook
             String accessToken = tokenJson.getString("access_token");
             Long expiresIn = tokenJson.getLong("expires_in");
-            userInfoJson.put(ACCESS_TOKEN, accessToken);
-            userInfoJson.put(EXPIRES_IN, expiresIn);
+            userInfoJson.put(OrcidOauth2Constants.ACCESS_TOKEN, accessToken);
+            userInfoJson.put(OrcidOauth2Constants.EXPIRES_IN, expiresIn);
             con = (HttpURLConnection) new URL(facebookUserInfoEndpoint.replace("{access-token}", accessToken)).openConnection();
             con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent") + " (orcid.org)");
             con.setRequestMethod("GET");
@@ -332,11 +321,11 @@ public class LoginController extends OauthControllerBase {
                 in.lines().forEach(i -> userInfoResponse.append(i));
                 in.close();
                 JSONObject userDetailsJson = new JSONObject(userInfoResponse.toString());
-                userInfoJson.put(PROVIDER_USER_ID, userDetailsJson.get("id"));
-                userInfoJson.put(EMAIL, userDetailsJson.get("email"));
-                userInfoJson.put(DISPLAY_NAME, userDetailsJson.get("name"));
-                userInfoJson.put(FIRST_NAME, userDetailsJson.get("first_name"));
-                userInfoJson.put(LAST_NAME, userDetailsJson.get("last_name"));
+                userInfoJson.put(OrcidOauth2Constants.PROVIDER_USER_ID, userDetailsJson.get("id"));
+                userInfoJson.put(OrcidOauth2Constants.EMAIL, userDetailsJson.get("email"));
+                userInfoJson.put(OrcidOauth2Constants.DISPLAY_NAME, userDetailsJson.get("name"));
+                userInfoJson.put(OrcidOauth2Constants.FIRST_NAME, userDetailsJson.get("first_name"));
+                userInfoJson.put(OrcidOauth2Constants.LAST_NAME, userDetailsJson.get("last_name"));
             }
         }
         return userInfoJson;

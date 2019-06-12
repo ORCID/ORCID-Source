@@ -2,11 +2,14 @@ package org.orcid.core.manager.impl;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.jaxb.model.notification_v2.Notification;
@@ -101,8 +104,14 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
     }
 
     @Override
-    public UserconnectionEntity findByUserConnectionId(String userConnectionId) {
-        return userConnectionDao.findByUserConnectionId(userConnectionId);
+    public Map<String, String> getUserConnectionInfo(String userConnectionId) {
+        UserconnectionEntity entity = userConnectionDao.findByUserConnectionId(userConnectionId);
+        Map<String, String> data = new HashMap<String, String>();
+        data.put(OrcidOauth2Constants.PROVIDER_ID, entity.getId().getProviderid());
+        data.put(OrcidOauth2Constants.PROVIDER_USER_ID, entity.getId().getProvideruserid());
+        data.put(OrcidOauth2Constants.DISPLAY_NAME, entity.getDisplayname());
+        data.put(OrcidOauth2Constants.EMAIL, entity.getEmail());
+        return data;        
     }
 
 }
