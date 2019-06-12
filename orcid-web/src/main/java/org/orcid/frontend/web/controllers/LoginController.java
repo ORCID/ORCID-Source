@@ -9,7 +9,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -21,20 +20,21 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.impl.InstitutionalSignInManagerImpl;
+import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.core.utils.JsonUtils;
+import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
@@ -45,9 +45,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,7 +85,10 @@ public class LoginController extends OauthControllerBase {
     private RecordNameManagerReadOnly recordNameManager;
     
     @Resource
-    protected UserConnectionDao userConnectionDao;
+    protected UserConnectionManager userConnectionManager;
+    
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
     
     private final String facebookOauthUrl;
 
@@ -251,7 +258,7 @@ public class LoginController extends OauthControllerBase {
     }
     
     @RequestMapping(value = { "/signin/facebook" }, method = RequestMethod.GET)
-    public void getFacebookLogin(@RequestParam("code") String code) throws UnsupportedEncodingException, IOException, JSONException {
+    public void getFacebookLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") String code) throws UnsupportedEncodingException, IOException, JSONException {
         // Exchange the code for an access token 
         HttpURLConnection con = (HttpURLConnection) new URL(facebookTokenExchangeUrl.replace("{code}", code)).openConnection();
         con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent")+ " (orcid.org)");        
@@ -260,8 +267,8 @@ public class LoginController extends OauthControllerBase {
         int responseCode = con.getResponseCode();        
         if(responseCode == HttpURLConnection.HTTP_OK) {
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8.name()));
-            StringBuffer response = new StringBuffer();
-            in.lines().forEach(i -> response.append(i));
+            StringBuffer accessTokenResponse = new StringBuffer();
+            in.lines().forEach(i -> accessTokenResponse.append(i));
             in.close();
             // Read JSON response and print
             JSONObject tokenJson = new JSONObject(response.toString());
@@ -279,6 +286,16 @@ public class LoginController extends OauthControllerBase {
                 in.lines().forEach(i -> userInfoResponse.append(i));
                 in.close();
                 JSONObject userInfoJson = new JSONObject(userInfoResponse.toString());                
+                String providerUserId = userInfoJson.getString("id");
+                
+                UserconnectionEntity userConnection = userConnectionManager.findByProviderIdAndProviderUserId(providerUserId, SocialType.FACEBOOK.value());
+                if(userConnection != null && userConnection.isLinked()) {
+                    // If user exists and is linked update user connection info and redirect to user record
+                    updateUserConnectionAndLogUserIn(request, response, SocialType.FACEBOOK, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId, 
+                } else {
+                    // Else forward to user creation
+                }
+                
                 // Store user info
                 createOrUpdateUserConnection(userInfoJson.getString("id"), "facebook", userInfoJson.getString("email"), userInfoJson.getString("name"), accessToken, expiresIn);
                 
@@ -292,7 +309,7 @@ public class LoginController extends OauthControllerBase {
     }
     
     private void createOrUpdateUserConnection(String remoteUserId, String providerId, String email, String userName, String accessToken, Long expireTime) {
-        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(remoteUserId, providerId);        
+        
         if (userConnectionEntity == null) {
             LOGGER.info("No user connection found for remoteUserId={}, displayName={}, providerId={}",
                     new Object[] { remoteUserId, userName, providerId});
@@ -311,13 +328,83 @@ public class LoginController extends OauthControllerBase {
             userConnectionDao.persist(userConnectionEntity);
         } else {
             LOGGER.info("Found existing user connection, {}", userConnectionEntity);
-            Date now = new Date();
-            userConnectionEntity.setAccesstoken(accessToken);
-            userConnectionEntity.setLastLogin(now);
-            userConnectionEntity.setLastModified(now);
-            userConnectionEntity.setExpiretime(expireTime);
-            userConnectionDao.merge(userConnectionEntity);
-        }
+            
+        }        
+    }
+    
+    
+    
+    
+    private ModelAndView updateUserConnectionAndLogUserIn(HttpServletRequest request, HttpServletResponse response, SocialType socialType, String userOrcid, String userConnectionId, String providerUserId, String accessToken, Long expiresIn) {
+        // Update user connection info 
+        userConnectionManager.update(providerUserId, socialType.value(), accessToken, expiresIn);
         
+        // Log user in
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
+        if (profileEntity.getUsing2FA()) {
+            return new ModelAndView("social_2FA");
+        }
+
+        UserconnectionPK pk = new UserconnectionPK(userConnectionId, socialType.value(), providerUserId);
+        String aCredentials = socialType.value() + ':' + providerUserId;
+        PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userOrcid, aCredentials);
+        token.setDetails(orcidUserDetailsService.loadUserByProfile(profileEntity));
+        Authentication authentication = authenticationManager.authenticate(token);
+        userConnectionManager.updateLoginInformation(pk);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
+    public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
+        //TODO: get the connection type from signed in status
+        SocialType connectionType = null;
+        if (connectionType != null) {
+            Map<String, String> userMap = retrieveUserDetails(connectionType);
+
+            String providerId = connectionType.value();
+            String userId = null; //TODO: where is the user id comming from?
+            UserconnectionEntity userConnectionEntity = userConnectionManager.findByProviderIdAndProviderUserId(userMap.get("providerUserId"), providerId);
+            if (userConnectionEntity != null) {
+                if (userConnectionEntity.isLinked()) {
+                    ProfileEntity profile = profileEntityCacheManager.retrieve(userConnectionEntity.getOrcid());
+                    if (profile.getUsing2FA()) {
+                        return new ModelAndView("social_2FA");
+                    }
+
+                    UserconnectionPK pk = new UserconnectionPK(userId, providerId, userMap.get("providerUserId"));
+                    String aCredentials = new StringBuffer(providerId).append(":").append(userMap.get("providerUserId")).toString();
+                    PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), aCredentials);
+                    token.setDetails(getOrcidProfileUserDetails(userConnectionEntity.getOrcid()));
+                    Authentication authentication = authenticationManager.authenticate(token);
+                    userConnectionManager.updateLoginInformation(pk);
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
+                } else {
+                    return new ModelAndView("social_link_signin");
+                }
+            } else {
+                throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+            }
+        } else {
+            throw new UsernameNotFoundException("Could not find an orcid account associated with the email id.");
+        }
     }
 }

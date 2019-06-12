@@ -1,5 +1,6 @@
 package org.orcid.core.manager.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -11,6 +12,7 @@ import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitu
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -62,6 +64,20 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
     @Override
     public void update(UserconnectionEntity userConnectionEntity) {
         userConnectionDao.merge( userConnectionEntity);
+    }
+
+    @Override
+    @Transactional
+    public void update(String providerUserId, String providerId, String accessToken, Long expireTime) {
+        UserconnectionEntity userConnection = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+        if(userConnection != null) {
+            Date now = new Date();
+            userConnection.setLastLogin(now);
+            userConnection.setLastModified(now);
+            userConnection.setAccesstoken(accessToken);
+            userConnection.setExpiretime(expireTime);
+            userConnectionDao.merge(userConnection);
+        }        
     }
 
 }
