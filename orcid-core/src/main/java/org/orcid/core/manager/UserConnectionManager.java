@@ -22,7 +22,7 @@ public interface UserConnectionManager {
 
     UserconnectionEntity findByProviderIdAndProviderUserIdAndIdType(String userId, String shibIdentityProvider, String idType);
 
-    void update(UserconnectionEntity userConnectionEntity);
+    void create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime);
 
     void update(String providerUserId, String providerId, String accessToken, Long expireTime);
 }
