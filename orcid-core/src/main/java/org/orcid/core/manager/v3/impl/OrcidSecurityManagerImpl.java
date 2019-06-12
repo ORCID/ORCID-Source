@@ -385,12 +385,17 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             Iterator<PeerReviewGroup> groupIt = activities.getPeerReviews().getPeerReviewGroup().iterator();
             while (groupIt.hasNext()) {
                 PeerReviewGroup group = groupIt.next();
-                for (PeerReviewDuplicateGroup duplicateGroup : group.getPeerReviewGroup()) {
+                Iterator<PeerReviewDuplicateGroup> duplicateGroupIterator = group.getPeerReviewGroup().iterator();
+                while (duplicateGroupIterator.hasNext()) {
+                    PeerReviewDuplicateGroup duplicateGroup = duplicateGroupIterator.next();
                     // Filter the list of elements
                     checkAndFilter(orcid, duplicateGroup.getPeerReviewSummary(), READ_PEER_REVIEWS_REQUIRED_SCOPE, true);
                     if (duplicateGroup.getPeerReviewSummary().isEmpty()) {
-                        groupIt.remove();
+                        duplicateGroupIterator.remove();
                     }
+                }
+                if (group.getPeerReviewGroup().isEmpty()) {
+                    groupIt.remove();
                 }
             }
         }
