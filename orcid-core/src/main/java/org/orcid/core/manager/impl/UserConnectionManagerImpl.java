@@ -50,7 +50,7 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
     }
 
     @Override
-    public UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId) {        
+    public UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId) {
         return userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
     }
 
@@ -65,21 +65,26 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
     }
 
     @Override
+    public void update(UserconnectionEntity userConnectionEntity) {
+        userConnectionDao.merge(userConnectionEntity);
+    }
+
+    @Override
     @Transactional
     public void update(String providerUserId, String providerId, String accessToken, Long expireTime) {
         UserconnectionEntity userConnection = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
-        if(userConnection != null) {
+        if (userConnection != null) {
             Date now = new Date();
             userConnection.setLastLogin(now);
             userConnection.setLastModified(now);
             userConnection.setAccesstoken(accessToken);
             userConnection.setExpiretime(expireTime);
             userConnectionDao.merge(userConnection);
-        }        
+        }
     }
 
     @Override
-    public void create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime) {        
+    public void create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime) {
         UserconnectionEntity userConnectionEntity = new UserconnectionEntity();
         String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
         UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);

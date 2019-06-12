@@ -24,5 +24,7 @@ public interface UserConnectionManager {
 
     void create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime);
 
+    void update(UserconnectionEntity entity);
+    
     void update(String providerUserId, String providerId, String accessToken, Long expireTime);
 }
