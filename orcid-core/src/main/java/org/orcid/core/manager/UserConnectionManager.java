@@ -13,6 +13,8 @@ import org.orcid.persistence.jpa.entities.UserconnectionPK;
 public interface UserConnectionManager {
 
     List<UserconnectionEntity> findByOrcid(String orcid);
+    
+    UserconnectionEntity findByUserConnectionId(String userConnectionId);
 
     void remove(String orcid, UserconnectionPK userConnectionPK);
 

@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
@@ -16,12 +17,12 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.spring.web.social.config.SocialType;
+import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.orcid.pojo.OAuthSigninData;
 import org.orcid.pojo.TwoFactorAuthenticationCodes;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,6 +62,9 @@ public class SocialController extends BaseController {
     
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
+    
+    @Resource
+    private UserCookieGenerator userCookieGenerator;
 
     @RequestMapping(value = { "/2FA/authenticationCode.json" }, method = RequestMethod.GET)
     public @ResponseBody TwoFactorAuthenticationCodes getTwoFactorCodeWrapper() {
@@ -71,7 +75,7 @@ public class SocialController extends BaseController {
     @RequestMapping(value = { "/signinData.json" }, method = RequestMethod.GET)
     public @ResponseBody OAuthSigninData getSigninData(HttpServletRequest request, HttpServletResponse response) {
         //TODO: get the connection type from signed in status
-        SocialType connectionType = null;
+        SocialType connectionType = isSignedIn(request, response);
         OAuthSigninData data = new OAuthSigninData();
         if (connectionType != null) {
             Map<String, String> userMap = retrieveUserDetails(connectionType);
@@ -195,5 +199,25 @@ public class SocialController extends BaseController {
             return userMap.get("userName");
         }
         return userMap.get("providerUserId");
+    }
+    
+    private SocialType isSignedIn(HttpServletRequest request, HttpServletResponse response) {
+        SocialType connectionType = null;
+        String userConnectionId = userCookieGenerator.readCookieValue(request);
+        if (!StringUtils.isBlank(userConnectionId)) {
+            try {
+                UserconnectionEntity userConnectionEntity = userConnectionManager.findByUserConnectionId(userConnectionId);
+                String providerIdType = userConnectionEntity.getId().getProviderid();
+                if (SocialType.FACEBOOK.value().equals(providerIdType)) {
+                    connectionType = SocialType.FACEBOOK;
+                } else if (SocialType.GOOGLE.value().equals(providerIdType)) {
+                    connectionType = SocialType.GOOGLE;
+                }
+            } catch(Exception e) {
+                userCookieGenerator.removeCookie(response);
+            }
+        }
+        
+        return connectionType;
     }
 }

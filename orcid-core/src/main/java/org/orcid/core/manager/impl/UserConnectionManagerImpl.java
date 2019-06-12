@@ -100,4 +100,9 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
         userConnectionDao.persist(userConnectionEntity);
     }
 
+    @Override
+    public UserconnectionEntity findByUserConnectionId(String userConnectionId) {
+        return userConnectionDao.findByUserConnectionId(userConnectionId);
+    }
+
 }

@@ -14,7 +14,7 @@ public final class UserCookieGenerator {
     private final CookieGenerator cookieGenerator = new CookieGenerator();
 
     public UserCookieGenerator() {
-        cookieGenerator.setCookieName("orcid");
+        cookieGenerator.setCookieName("orcidUserConnectionId");
     }
 
     public void addCookie(String userId, HttpServletResponse response) {

@@ -26,6 +26,7 @@ import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.frontend.spring.web.social.config.SocialType;
+import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Name;
@@ -60,6 +61,20 @@ public class LoginController extends OauthControllerBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
+    private static final String EMAIL = "email";
+
+    private static final String PROVIDER_USER_ID = "providerUserId";
+
+    private static final String DISPLAY_NAME = "displayName";
+
+    private static final String FIRST_NAME = "firstName";
+
+    private static final String LAST_NAME = "lastName";
+
+    private static final String ACCESS_TOKEN = "accessToken";
+
+    private static final String EXPIRES_IN = "expiresIn";
+
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
@@ -83,6 +98,9 @@ public class LoginController extends OauthControllerBase {
 
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
+    
+    @Resource
+    private UserCookieGenerator userCookieGenerator;
 
     private final String facebookOauthUrl;
 
@@ -259,6 +277,32 @@ public class LoginController extends OauthControllerBase {
     @RequestMapping(value = { "/signin/facebook" }, method = RequestMethod.GET)
     public ModelAndView getFacebookLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") String code)
             throws UnsupportedEncodingException, IOException, JSONException {
+        JSONObject userData = getFacebookUserData(code);
+        String providerUserId = userData.getString(PROVIDER_USER_ID);
+        String accessToken = userData.getString(ACCESS_TOKEN);
+        Long expiresIn = Long.valueOf(userData.getString(EXPIRES_IN));
+        UserconnectionEntity userConnection = userConnectionManager.findByProviderIdAndProviderUserId(userData.getString(PROVIDER_USER_ID), SocialType.FACEBOOK.value());
+        if (userConnection != null && userConnection.isLinked()) {
+            // If user exists and is linked update user connection info
+            // and redirect to user record
+            return updateUserConnectionAndLogUserIn(request, response, SocialType.FACEBOOK, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
+                    accessToken, expiresIn);
+        } else {
+            // Store user info
+            createUserConnection(SocialType.FACEBOOK, providerUserId, userData.getString(EMAIL), userData.getString(DISPLAY_NAME), accessToken, expiresIn);
+            // Else forward to user creation
+            return new ModelAndView("social_link_signin");
+        }
+
+    }
+
+    @RequestMapping(value = { "/signin/google" }, method = RequestMethod.POST)
+    public void initGoogleLogin() {
+
+    }
+
+    private JSONObject getFacebookUserData(String code) throws IOException, JSONException {
+        JSONObject userInfoJson = new JSONObject();
         // Exchange the code for an access token
         HttpURLConnection con = (HttpURLConnection) new URL(facebookTokenExchangeUrl.replace("{code}", code)).openConnection();
         con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent") + " (orcid.org)");
@@ -271,10 +315,12 @@ public class LoginController extends OauthControllerBase {
             in.lines().forEach(i -> accessTokenResponse.append(i));
             in.close();
             // Read JSON response and print
-            JSONObject tokenJson = new JSONObject(response.toString());
+            JSONObject tokenJson = new JSONObject(accessTokenResponse.toString());
             // Get user info from Facebook
             String accessToken = tokenJson.getString("access_token");
             Long expiresIn = tokenJson.getLong("expires_in");
+            userInfoJson.put(ACCESS_TOKEN, accessToken);
+            userInfoJson.put(EXPIRES_IN, expiresIn);
             con = (HttpURLConnection) new URL(facebookUserInfoEndpoint.replace("{access-token}", accessToken)).openConnection();
             con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent") + " (orcid.org)");
             con.setRequestMethod("GET");
@@ -285,31 +331,15 @@ public class LoginController extends OauthControllerBase {
                 StringBuffer userInfoResponse = new StringBuffer();
                 in.lines().forEach(i -> userInfoResponse.append(i));
                 in.close();
-                JSONObject userInfoJson = new JSONObject(userInfoResponse.toString());
-                String providerUserId = userInfoJson.getString("id");
-
-                UserconnectionEntity userConnection = userConnectionManager.findByProviderIdAndProviderUserId(providerUserId, SocialType.FACEBOOK.value());
-                if (userConnection != null && userConnection.isLinked()) {
-                    // If user exists and is linked update user connection info
-                    // and redirect to user record
-                    return updateUserConnectionAndLogUserIn(request, response, SocialType.FACEBOOK, userConnection.getOrcid(), userConnection.getId().getUserid(),
-                            providerUserId, accessToken, expiresIn);
-
-                } else {
-                    // Store user info
-                    createUserConnection(SocialType.FACEBOOK, providerUserId, userInfoJson.getString("email"), userInfoJson.getString("name"), accessToken, expiresIn);
-                    // Else forward to user creation
-                    return new ModelAndView("social_link_signin");
-                }
+                JSONObject userDetailsJson = new JSONObject(userInfoResponse.toString());
+                userInfoJson.put(PROVIDER_USER_ID, userDetailsJson.get("id"));
+                userInfoJson.put(EMAIL, userDetailsJson.get("email"));
+                userInfoJson.put(DISPLAY_NAME, userDetailsJson.get("name"));
+                userInfoJson.put(FIRST_NAME, userDetailsJson.get("first_name"));
+                userInfoJson.put(LAST_NAME, userDetailsJson.get("last_name"));
             }
         }
-        
-        return new ModelAndView("login");
-    }
-
-    @RequestMapping(value = { "/signin/google" }, method = RequestMethod.POST)
-    public void initGoogleLogin() {
-
+        return userInfoJson;
     }
 
     private void createUserConnection(SocialType socialType, String providerUserId, String email, String userName, String accessToken, Long expireTime) {
@@ -337,6 +367,9 @@ public class LoginController extends OauthControllerBase {
         userConnectionManager.updateLoginInformation(pk);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        
+        // Set connection id cookie
+        userCookieGenerator.addCookie(userConnectionId, response);
         return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
     }
 }
