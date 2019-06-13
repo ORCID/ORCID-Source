@@ -1,55 +1,70 @@
 <script type="text/ng-template" id="user-menu-template">
 
       <div class="form-group " role="presentation">
-                    <div class="search-container" role="search"> 
-                         
-                        <div class="top-menu-button" (click)="state = !state">  
+                    <div class="search-container" role="search" (mouseleave)="state = false">
+                         <a *ngIf="!userInfo"  class="top-menu-button" >  
+                          {{'<@orcid.msg 'public-layout.sign_in'/> '| uppercase  }}/{{'<@orcid.msg 'header.register'/> '| uppercase }}
+                         </a>
+                        <div *ngIf="userInfo"  class="top-menu-button" (click)="state = !state">  
                             <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
-                            <div class="name" *ngIf="!isMobile"> Jane Doe </div> 
-                            <div class="more blue" *ngIf="!isMobile"> </div>
+                            <div class="name" *ngIf="!isMobile"> 
+                                        <ng-container *ngIf="displayFullName()"> {{nameForm?.creditName?.value}}  </ng-container>
+                                        <ng-container *ngIf="displayPublishedName()"> {{nameForm?.givenNames?.value}} {{nameForm?.familyName?.value}}  </ng-container> 
+                            </div> 
+                            <div class="more blue"  [ngClass]="{'less' : state}"  *ngIf="!isMobile"> </div>
                             
                         </div>
 
                          <div class="top-menu" *ngIf="state">
-                            <div class="top-menu-header">   
+                            <a  class="top-menu-header">   
                                 <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
                             
                                 <div>
-                                    <div class="name"> Jane Doe </div> 
+                                    <div class="name"> 
+                                        <ng-container *ngIf="displayFullName()"> {{nameForm?.creditName?.value}}  </ng-container>
+                                        <ng-container *ngIf="displayPublishedName()"> {{nameForm?.givenNames?.value}} {{nameForm?.familyName?.value}}   </ng-container>
+                                    </div>
                                     <div class="more"> View my ORCID record </div> 
                                 </div>
-                            </div>
+                            </a>
                             <div class="division"></div>
                             <div class="top-menu-items">
-                                <div class="top-menu-item">
+                                <a  href="{{getBaseUri()}}/inbox" class="top-menu-item">
                                     <img src="{{assetsPath + '/img/svg/baseline-inbox-24px.svg'}}">
                                     
-                                    Inbox
-                                </div>
-                                <div class="top-menu-item">
+                                    {{'${springMacroRequestContext.getMessage("workspace.notifications")}' }} (4)
+                                </a>
+                                <a class="top-menu-item" href="{{getBaseUri()}}/account">
                                     <img src="{{assetsPath + '/img/svg/baseline-settings-20px.svg'}}">
-                                    Account settings
-                                </div>
-                                <div class="top-menu-item">
+                                    {{'<@orcid.msg 'public-layout.account_setting'/>  ' }}
+                                </a>
+                                <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']=='true'" href="{{getBaseUri()}}/group/developer-tools">
                                     <img src="{{assetsPath + '/img/svg/baseline-code-24px.svg'}}"> 
-                                    Developer Tools
-                                </div>
-                                <div class="top-menu-item">
+                                    {{'${springMacroRequestContext.getMessage("workspace.developer_tools")}' }}
+                                </a>
+                                <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']!='true'" href="{{getBaseUri()}}/developer-tools">
+                                    <img src="{{assetsPath + '/img/svg/baseline-code-24px.svg'}}"> 
+                                    {{'${springMacroRequestContext.getMessage("workspace.developer_tools")}' }}
+                                </a>
+                                <a  class="top-menu-item"   *ngIf="userInfo['SELF_SERVICE_MENU']"  href="{{getBaseUri()}}/manage-members">
                                     <img src="{{assetsPath + '/img/svg/baseline-build-24px.svg'}}"> 
-                                    Member tools 
-                                </div>
-                                <div class="top-menu-item">
+                                    {{'<@orcid.msg 'workspace.self_service' />  ' }}
+                                </a>
+                                <a  class="top-menu-item"*ngIf="userInfo['ADMIN_MENU']" href="{{getBaseUri()}}/manage-members" >
                                     <img src="{{assetsPath + '/img/svg/baseline-group-24px.svg'}}"> 
-                                    Manage members
-                                </div>
-                                <div class="top-menu-item">
+                                    {{'<@orcid.msg 'admin.members.workspace_link' />  ' }}
+                                </a>
+                                <a  class="top-menu-item" *ngIf="userInfo['ADMIN_MENU']" href="{{getBaseUri()}}/admin-actions">
                                     <img src="{{assetsPath + '/img/svg/baseline-verified_user-24px.svg'}}"> 
-                                    Admin page
-                                </div>
-                                <div class="top-menu-item">
+                                    {{'<@orcid.msg 'admin.workspace_link' />  ' }}
+                                </a>
+                                <a  class="top-menu-item" href="{{getBaseUri()}}/signout">
                                     <img src="{{assetsPath + '/img/svg/baseline-exit_to_app-24px.svg'}}"> 
-                                    Log out
-                                </div>
+                                    {{'<@orcid.msg 'public-layout.sign_out'/>  ' }}
+                                </a>
+
+                                
+                                 
                             </div>
                             
                    

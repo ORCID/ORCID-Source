@@ -9043,7 +9043,7 @@ a.footer-url {
 
 .header2 .dropdown-menus-container {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: flex-end;
     padding-bottom: 15px;
 }
@@ -9481,7 +9481,18 @@ user-menu .top-menu-button {
     color: #2e7f9f;
     font-size: 14px;
     font-weight: 800;
+    padding: 5px;
+    align-items: center;
+    border-radius: 4px;
 
+}
+    
+user-menu .top-menu-button:hover {
+    background-color: rgba(76, 66, 162, 0.04);
+}
+
+user-menu .top-menu-button .more,  user-menu .top-menu-button .less {
+    height: 24px;
 }
 user-menu .top-menu-button > div.name {
     margin-left: 10px;
@@ -9493,6 +9504,7 @@ user-menu .division {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 user-menu .top-menu-header {
+    color: rgba(0, 0, 0, 0.87);
     display: flex;
     padding: 19px;
     padding-bottom: 12px;
@@ -9513,6 +9525,11 @@ user-menu .top-menu-header > div .more{
 
 }
 
+user-menu a.top-menu-item {
+    display: block;
+    color: rgba(0, 0, 0, 0.87);
+}
+
 user-menu .top-menu-items{
     padding-bottom: 8px;
 }
@@ -9529,6 +9546,11 @@ user-menu  .top-menu-item:hover, user-menu .top-menu-header:hover{
     background-color: rgba(0, 0, 0, 0.04);
 }
 
+user-menu a.top-menu-button {
+    display: block;
+    height: 100%;
+    
+}
 
 @media only screen and (max-width: 840px) {
     user-menu .top-menu {
