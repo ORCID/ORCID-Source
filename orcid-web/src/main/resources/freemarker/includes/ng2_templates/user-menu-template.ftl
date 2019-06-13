@@ -24,7 +24,7 @@
                                         <ng-container *ngIf="displayFullName()"> {{nameForm?.creditName?.value}}  </ng-container>
                                         <ng-container *ngIf="displayPublishedName()"> {{nameForm?.givenNames?.value}} {{nameForm?.familyName?.value}}   </ng-container>
                                     </div>
-                                    <div class="more"> View my ORCID record </div> 
+                                    <div class="my-profile"> View my ORCID record </div> 
                                 </div>
                             </a>
                             <div class="division"></div>
@@ -32,7 +32,7 @@
                                 <a  href="{{getBaseUri()}}/inbox" class="top-menu-item">
                                     <img src="{{assetsPath + '/img/svg/baseline-inbox-24px.svg'}}">
                                     
-                                    {{'${springMacroRequestContext.getMessage("workspace.notifications")}' }} (4)
+                                    {{'${springMacroRequestContext.getMessage("workspace.notifications")}' }} <span *ngIf="getUnreadCount > 0">({{getUnreadCount}})</span>
                                 </a>
                                 <a class="top-menu-item" href="{{getBaseUri()}}/account">
                                     <img src="{{assetsPath + '/img/svg/baseline-settings-20px.svg'}}">

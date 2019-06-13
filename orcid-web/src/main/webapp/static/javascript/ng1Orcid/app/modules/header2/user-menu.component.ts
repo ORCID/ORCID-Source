@@ -12,8 +12,8 @@ import {
 } from "@angular/core";
 
 import { CommonService } from "../../shared/common.service";
-
 import { GenericService } from "../../shared/generic.service";
+import { NotificationsService } from "../../shared/notifications.service";
 
 @Component({
   selector: "user-menu",
@@ -25,15 +25,18 @@ export class UserMenuComponent {
   isMobile = false;
   userInfo: string;
   isPublicPage: boolean;
+  getUnreadCount: 0
   nameForm: {
     creditName: { value: string };
     familyName: { value: string };
     givenNames: { value: string };
   };
   constructor(
+    private notificationsSrvc: NotificationsService,
     private commonSrvc: CommonService,
     private nameService: GenericService
   ) {
+    this.retrieveUnreadCount()
     this.commonSrvc.configInfo$.subscribe(
       data => {
         this.assetsPath = data.messages["STATIC_PATH"];
@@ -126,6 +129,20 @@ export class UserMenuComponent {
   }
   @HostListener("window:resize", ["$event"])
   onResize() {
-    this.isMobile = window.innerWidth < 840;
+    this.isMobile = window.innerWidth < 840.999;
   }
+
+  retrieveUnreadCount(): any {
+    if( this.notificationsSrvc.retrieveCountCalled == false ) {
+        this.notificationsSrvc.retrieveUnreadCount()
+        .subscribe(
+            data => {
+                this.getUnreadCount = data;
+            },
+            error => {
+                //console.log('verifyEmail', error);
+            } 
+        );
+    }
+};
 }

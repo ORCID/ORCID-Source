@@ -24,7 +24,7 @@
                    
                     <div class="form-group " role="presentation">
                         <div class="search-container" role="search"> 
-                        <div class="advance-search-link" role="presentation">
+                        <div *ngIf="!isMobile" class="advance-search-link" role="presentation">
                             <a href="{{getBaseUri()}}/orcid-search/search" class="settings-button" title="<@orcid.msg 'public-layout.search.advanced'/>"><@orcid.msg 'public-layout.search.advanced'/></a>
                         </div>
                         <div class="input-group" role="presentation">

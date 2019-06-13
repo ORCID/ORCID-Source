@@ -9048,6 +9048,9 @@ a.footer-url {
     padding-bottom: 15px;
 }
 
+.lang-rl .header2 .dropdown-menus-container { 
+    justify-content: flex-start;
+}
 
 @media only screen and (max-width: 991px) {
     .header2 .menu-bar {
@@ -9510,8 +9513,19 @@ user-menu .top-menu-header {
     padding-bottom: 12px;
   
 }
+
+.lang-rl user-menu .top-menu-header{
+    flex-direction: row-reverse;
+}
+
+
 user-menu .top-menu-header > div {
     margin-left: 12px;  
+}
+
+.lang-rl user-menu .top-menu-header > div{
+    margin-left: auto;  
+    margin-right: 12px;  
 }
 
 user-menu .top-menu-header > div .name{
@@ -9519,7 +9533,7 @@ user-menu .top-menu-header > div .name{
     color: rgba(0, 0, 0, 0.87);
 
 }
-user-menu .top-menu-header > div .more{
+user-menu .top-menu-header > div .my-profile{
     font-size: 12px; 
     color: rgba(0, 0, 0, 0.87);
 
@@ -9528,6 +9542,11 @@ user-menu .top-menu-header > div .more{
 user-menu a.top-menu-item {
     display: block;
     color: rgba(0, 0, 0, 0.87);
+}
+
+.lang-rl user-menu a.top-menu-item {
+    display: flex;
+    flex-direction: row-reverse;
 }
 
 user-menu .top-menu-items{
@@ -9542,6 +9561,11 @@ user-menu .top-menu-item > img {
     margin-right: 10px;
 }
 
+.lang-rl user-menu .top-menu-item > img {
+    margin-right: 0;
+    margin-left: 10px;
+}
+
 user-menu  .top-menu-item:hover, user-menu .top-menu-header:hover{
     background-color: rgba(0, 0, 0, 0.04);
 }
@@ -9552,10 +9576,17 @@ user-menu a.top-menu-button {
     
 }
 
-@media only screen and (max-width: 840px) {
+
+
+@media only screen and (max-width: 840.999px) {
     user-menu .top-menu {
         right: 10px;
     }
+    .lang-rl user-menu .top-menu {
+        right: unset;
+        left: 10px;
+    }
+
     user-menu .top-menu-button > img {
         height: 36px;
     }

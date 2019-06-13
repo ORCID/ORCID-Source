@@ -218,13 +218,13 @@ export class Header2Component  {
 
 
     ngOnInit() {
-        this.isMobile = window.innerWidth < 840;
+        this.isMobile = window.innerWidth < 840.999;
         this.headerSearch.searchOption='registry'
         this.headerSearch.searchInput = ''
     }
 
     @HostListener('window:resize', ['$event'])
         onResize(event) {
-        this.isMobile = window.innerWidth < 840;
+        this.isMobile = window.innerWidth < 840.999;
     }
 }
