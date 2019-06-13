@@ -9,8 +9,10 @@
                     <a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" alt="ORCID logo" /></a>
                     <div class="slogan"><@orcid.msg 'public-layout.logo.tagline'/></div>
                      
-                    <div class="menu-control"> 
+                    <div class="menu-control">
+                        <@orcid.checkFeatureStatus 'ENABLE_USER_MENU'>
                         <user-menu *ngIf="isMobile && !openMobileMenu"></user-menu>
+                        </@orcid.checkFeatureStatus>
                         <language-ng2 *ngIf="openMobileMenu"></language-ng2>
                         <span [hidden]="!openMobileMenu" style="height: 35px" class="close" (click)="toggleMenu()" alt="close menu"> </span>
                         <img [hidden]="openMobileMenu" (click)="toggleMenu()" style="height: 35px" src="{{assetsPath + '/img/glyphicon-menu.svg'}}" alt="open menu"/>
@@ -18,7 +20,9 @@
                 </div>
                 <div class="search" >
                 <div class="dropdown-menus-container">
+                        <@orcid.checkFeatureStatus 'ENABLE_USER_MENU'> 
                         <user-menu *ngIf="!isMobile"></user-menu>
+                        </@orcid.checkFeatureStatus>
                         <language-ng2 *ngIf="!isMobile"></language-ng2>
                 </div>
                    

@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Enable user menu")
+    ENABLE_USER_MENU,
+
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
 	
