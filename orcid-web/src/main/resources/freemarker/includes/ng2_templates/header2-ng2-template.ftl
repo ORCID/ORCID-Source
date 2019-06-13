@@ -8,15 +8,20 @@
                 <div class="logo" aria-label="ORCID logo"> 
                     <a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" alt="ORCID logo" /></a>
                     <div class="slogan"><@orcid.msg 'public-layout.logo.tagline'/></div>
-                     <user-menu *ngIf="isMobile"></user-menu>
+                     
                     <div class="menu-control"> 
+                        <user-menu *ngIf="isMobile && !openMobileMenu"></user-menu>
+                        <language-ng2 *ngIf="openMobileMenu"></language-ng2>
                         <span [hidden]="!openMobileMenu" style="height: 35px" class="close" (click)="toggleMenu()" alt="close menu"> </span>
                         <img [hidden]="openMobileMenu" (click)="toggleMenu()" style="height: 35px" src="{{assetsPath + '/img/glyphicon-menu.svg'}}" alt="open menu"/>
                     </div>
                 </div>
                 <div class="search" >
+                <div class="dropdown-menus-container">
                         <user-menu *ngIf="!isMobile"></user-menu>
-                        <language-ng2></language-ng2>
+                        <language-ng2 *ngIf="!isMobile"></language-ng2>
+                </div>
+                   
                     <div class="form-group " role="presentation">
                         <div class="search-container" role="search"> 
                         <div class="advance-search-link" role="presentation">

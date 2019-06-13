@@ -9041,6 +9041,14 @@ a.footer-url {
     font-weight: bold;
 }
 
+.header2 .dropdown-menus-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding-bottom: 15px;
+}
+
+
 @media only screen and (max-width: 991px) {
     .header2 .menu-bar {
         margin-bottom: 75px;
@@ -9323,7 +9331,6 @@ a.footer-url {
 
 
 .header2 .close {
-    position: absolute;
     right: 26px;
     top: 32px;
     width: 32px;
@@ -9341,8 +9348,8 @@ a.footer-url {
 
 .header2 .close:before, .close:after {
     position: absolute;
-    left: 15px;
-    content: ' ';
+    margin-left: 17px;
+    margin-top: 5px;    content: ' ';
     height: 33px;
     width: 2px;
     background-color: #333;
@@ -9520,4 +9527,14 @@ user-menu .top-menu-item > img {
 
 user-menu  .top-menu-item:hover, user-menu .top-menu-header:hover{
     background-color: rgba(0, 0, 0, 0.04);
+}
+
+
+@media only screen and (max-width: 840px) {
+    user-menu .top-menu {
+        right: 10px;
+    }
+    user-menu .top-menu-button > img {
+        height: 36px;
+    }
 }

@@ -28,6 +28,7 @@ import { FeaturesService }
 export class UserMenuComponent  {
     state = false
     assetsPath = ''
+    isMobile = false 
     constructor(private commonSrvc: CommonService) {
         this.commonSrvc.configInfo$
         .subscribe(
@@ -38,7 +39,14 @@ export class UserMenuComponent  {
                 console.log('header.component.ts: unable to fetch configInfo', error);                
             } 
         );
+        this.onResize()
 
     }
+
+    @HostListener('window:resize', ['$event'])
+    onResize() {
+        this.isMobile = window.innerWidth < 840;
+    }
+
 
 }

@@ -5,8 +5,8 @@
                          
                         <div class="top-menu-button" (click)="state = !state">  
                             <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
-                            <div class="name"> Jane Doe </div> 
-                            <div class="more blue"> </div>
+                            <div class="name" *ngIf="!isMobile"> Jane Doe </div> 
+                            <div class="more blue" *ngIf="!isMobile"> </div>
                             
                         </div>
 
