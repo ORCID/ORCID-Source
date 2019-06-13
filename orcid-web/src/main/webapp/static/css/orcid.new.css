@@ -8865,7 +8865,7 @@ a.footer-url {
 .header2 .logo-search-bar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
 }
 
 .header2 .search-dropdown {
