@@ -8,16 +8,17 @@
                 <div class="logo" aria-label="ORCID logo"> 
                     <a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" alt="ORCID logo" /></a>
                     <div class="slogan"><@orcid.msg 'public-layout.logo.tagline'/></div>
+                     <user-menu *ngIf="isMobile"></user-menu>
                     <div class="menu-control"> 
                         <span [hidden]="!openMobileMenu" style="height: 35px" class="close" (click)="toggleMenu()" alt="close menu"> </span>
                         <img [hidden]="openMobileMenu" (click)="toggleMenu()" style="height: 35px" src="{{assetsPath + '/img/glyphicon-menu.svg'}}" alt="open menu"/>
                     </div>
                 </div>
                 <div class="search" >
-
-                
-                <div class="form-group " role="presentation">
-                    <div class="search-container" role="search"> 
+                        <user-menu *ngIf="!isMobile"></user-menu>
+                        <language-ng2></language-ng2>
+                    <div class="form-group " role="presentation">
+                        <div class="search-container" role="search"> 
                         <div class="advance-search-link" role="presentation">
                             <a href="{{getBaseUri()}}/orcid-search/search" class="settings-button" title="<@orcid.msg 'public-layout.search.advanced'/>"><@orcid.msg 'public-layout.search.advanced'/></a>
                         </div>
@@ -36,8 +37,7 @@
                                 <span role="button" aria-label="<@orcid.msg 'orcid_bio_search.btnsearch'/>" class="glyphicon glyphicon-search" (click)="searchSubmit()"></span> 
                             </div>
                         </div>
-                    </div>
-                    <language-ng2></language-ng2>
+                    </div>        
                 </div>
                          <#--  
                         <div class="conditions" >

@@ -14,6 +14,7 @@ import { Header2Component }
 import { CommonNg2Module }
     from './../common/common';
 
+import {UserMenuComponent} from './user-menu.component'
 // This is the Angular 1 part of the module
 export const Header2Module = angular.module(
     'Header2Module',
@@ -28,7 +29,7 @@ export const Header2Module = angular.module(
             CommonNg2Module
         ],
         declarations: [ 
-            Header2Component
+            Header2Component, UserMenuComponent
         ],
         entryComponents: [ 
             Header2Component 

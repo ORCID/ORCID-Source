@@ -9448,3 +9448,76 @@ div#bio-section {
     word-break: break-word;
     hyphens: auto;
 }
+
+.more.blue:after{
+    color: red;
+    content: url(../img/svg/outline-expand_more-24px.blue.svg);
+}
+
+.more.less.blue:after {
+    content: url(../img/svg/outline-expand_less-24px.blue.svg)
+}
+
+user-menu .top-menu {
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 8px 10px 1px rgba(0, 0, 0, 0.14);
+  background-color: #fafafa;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  min-width: 248px;
+  border-radius: 5px;
+}
+
+user-menu .top-menu-button {
+    display: flex;
+    color: #2e7f9f;
+    font-size: 14px;
+    font-weight: 800;
+
+}
+user-menu .top-menu-button > div.name {
+    margin-left: 10px;
+}
+user-menu .top-menu-button > img {
+    height: 20px;
+}
+user-menu .division {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+user-menu .top-menu-header {
+    display: flex;
+    padding: 19px;
+    padding-bottom: 12px;
+  
+}
+user-menu .top-menu-header > div {
+    margin-left: 12px;  
+}
+
+user-menu .top-menu-header > div .name{
+    font-size: 20px; 
+    color: rgba(0, 0, 0, 0.87);
+
+}
+user-menu .top-menu-header > div .more{
+    font-size: 12px; 
+    color: rgba(0, 0, 0, 0.87);
+
+}
+
+user-menu .top-menu-items{
+    padding-bottom: 8px;
+}
+
+user-menu .top-menu-item {
+    padding: 11px 19px;
+
+}
+user-menu .top-menu-item > img {
+    margin-right: 10px;
+}
+
+user-menu  .top-menu-item:hover, user-menu .top-menu-header:hover{
+    background-color: rgba(0, 0, 0, 0.04);
+}
