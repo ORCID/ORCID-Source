@@ -19,7 +19,7 @@ This tutorial also includes information on adding, searching for and updating gr
 * Using this token to check that the group ID you would like to use exists by searching using a curl call like the [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#search-for-an-existing-peer-review-group-by-id)
 * If the ID already exists (If you are using an [ISSN](https://portal.issn.org/)  and it is valid the ID most likely will already exist)carry on to the last step, posting your Peer review.
 * If the ID does not exist or you are not using ISSN, then create the Group ID using the above token and a call like [this example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Create-a-peer-review-group-id)
-* Finally you can post a peer review item with a correct group id using you [usual token for posting to the api](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/get_id.md)
+* Finally you can post a peer review item with a correct group id using a [3 Step OAuth Token](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect)
 
  data used to identify Peer review groups has been preloaded in to the Registry, therefore there should be no need to create new peer review groups. Simply posting with the correct ISSN data should be enough. 
 
