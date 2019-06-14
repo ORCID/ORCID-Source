@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.constants.OrcidOauth2Constants;
@@ -265,8 +266,16 @@ public class LoginController extends OauthControllerBase {
     }
 
     @RequestMapping(value = { "/signin/facebook" }, method = RequestMethod.GET)
-    public ModelAndView getFacebookLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") String code)
-            throws UnsupportedEncodingException, IOException, JSONException {
+    public ModelAndView getFacebookLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam(name = "code", required = false) String code,
+            @RequestParam(name = "error", required = false) String error, @RequestParam(name = "error_code", required = false) String errorCode,
+            @RequestParam(name = "error_description", required = false) String errorDescription,
+            @RequestParam(name = "error_reason", required = false) String errorReason) throws UnsupportedEncodingException, IOException, JSONException {
+        
+        if(StringUtils.isBlank(code)) {
+            LOGGER.warn("Can't login to Facebook, {}: {}", error, errorDescription);
+            return new ModelAndView("redirect:/login");
+        }
+        
         JSONObject userData = getFacebookUserData(code);
         String providerUserId = userData.getString(OrcidOauth2Constants.PROVIDER_USER_ID);
         String accessToken = userData.getString(OrcidOauth2Constants.ACCESS_TOKEN);
