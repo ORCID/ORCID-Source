@@ -48,6 +48,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidRequestExcep
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -261,7 +262,7 @@ public class LoginController extends OauthControllerBase {
     }
 
     @RequestMapping(value = { "/signin/facebook" }, method = RequestMethod.GET)
-    public ModelAndView getFacebookLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") String code)
+    public ModelAndView getFacebookLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") String code, ModelMap model)
             throws UnsupportedEncodingException, IOException, JSONException {
         JSONObject userData = getFacebookUserData(code);
         String providerUserId = userData.getString(OrcidOauth2Constants.PROVIDER_USER_ID);
@@ -280,7 +281,7 @@ public class LoginController extends OauthControllerBase {
             // Store user info
             createUserConnection(SocialType.FACEBOOK, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL), userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Else forward to user creation
-            return new ModelAndView("social_link_signin");
+            return new ModelAndView("redirect:/social/access", model);
         }
 
     }
