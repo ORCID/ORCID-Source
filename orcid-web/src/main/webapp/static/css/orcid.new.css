@@ -9323,7 +9323,11 @@ a.footer-url {
     margin-left: 6px;
     /* color: white; */
 }
-
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    .header2 .logo > a > img {
+        height: 55px;
+    }
+}
 
 .header2 .close {
     right: 26px;
