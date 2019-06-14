@@ -16,7 +16,7 @@
                         </div>
 
                          <div class="top-menu" *ngIf="state">
-                            <a  class="top-menu-header">   
+                            <a  class="top-menu-header" href="{{getBaseUri()}}/my-orcid">   
                                 <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
                             
                                 <div>
