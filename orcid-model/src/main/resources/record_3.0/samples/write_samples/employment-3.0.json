@@ -1,0 +1,62 @@
+{
+  "department-name" : "department-name",
+  "role-title" : "role-title",
+  "start-date" : {
+    "year" : {
+      "value" : "1948"
+    },
+    "month" : {
+      "value" : "02"
+    },
+    "day" : {
+      "value" : "02"
+    }
+  },
+  "end-date" : {
+    "year" : {
+      "value" : "1948"
+    },
+    "month" : {
+      "value" : "02"
+    },
+    "day" : {
+      "value" : "02"
+    }
+  },
+  "organization" : {
+    "name" : "common:name",
+    "address" : {
+      "city" : "common:city",
+      "region" : "common:region",
+      "country" : "AF"
+    },
+    "disambiguated-organization" : {
+      "disambiguated-organization-identifier" : "http://dx.doi.org/10.13039/100000001",
+      "disambiguation-source" : "FUNDREF"
+    }
+  },
+  "url" : {
+    "value" : "http://tempuri.org"
+  },
+  "external-ids" : {
+    "external-id" : [ {
+      "external-id-type" : "grant_number",
+      "external-id-value" : "external-identifier-value",
+      "external-id-normalized" : {
+        "value" : "external-identifier-value",
+        "transient" : true
+      },
+      "external-id-relationship" : "self"
+    }, {
+      "external-id-type" : "grant_number",
+      "external-id-value" : "external-identifier-value2",
+      "external-id-normalized" : {
+        "value" : "external-identifier-value2",
+        "transient" : true
+      },
+      "external-id-relationship" : "self"
+    } ]
+  },
+  "display-index" : "0",
+  "visibility" : "public"
+}

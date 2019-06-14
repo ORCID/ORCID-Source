@@ -1,0 +1,87 @@
+{
+  "title" : {
+    "title" : {
+      "value" : "Work Title"
+    },
+    "subtitle" : {
+      "value" : "Sub title"
+    },
+    "translated-title" : {
+      "value" : "Translated-title",
+      "language-code" : "en"
+    }
+  },
+  "journal-title" : {
+    "value" : "Journal Title"
+  },
+  "short-description" : "Short description",
+  "citation" : {
+    "citation-type" : "bibtex",
+    "citation-value" : "\t\t\t@article {ORCID2012,\t\t\ttitle = \"ORCID: a system to uniquely identify researchers\",\t\t\tjournal = \"Learned Publishing\",\t\t\tyear = \"2012\",\t\t\tdoi = \"doi:10.1087/20120404\"\t\t\t}"
+  },
+  "type" : "journal-article",
+  "publication-date" : {
+    "year" : {
+      "value" : "2012"
+    },
+    "month" : {
+      "value" : "10"
+    },
+    "day" : {
+      "value" : "01"
+    }
+  },
+  "external-ids" : {
+    "external-id" : [ {
+      "external-id-type" : "doi",
+      "external-id-value" : "10.1087/20120404",
+      "external-id-normalized" : {
+        "value" : "10.1087/20120404",
+        "transient" : true
+      },
+      "external-id-normalized-error" : null,
+      "external-id-url" : {
+        "value" : "https://doi.org/10.1087/20120404"
+      },
+      "external-id-relationship" : "version-of"
+    }, {
+      "external-id-type" : "doi",
+      "external-id-value" : "work:doi",
+      "external-id-normalized" : null,
+      "external-id-normalized-error" : {
+        "error-code" : "8001",
+        "error-message" : "Cannot normalize identifier value doi:work:doi",
+        "transient" : true
+      },
+      "external-id-url" : {
+        "value" : "http://orcid.org"
+      },
+      "external-id-relationship" : "self"
+    } ]
+  },
+  "url" : {
+    "value" : "http://alt-uri.org"
+  },
+  "contributors" : {
+    "contributor" : [ {
+      "contributor-orcid" : {
+        "uri" : "https://orcid.org/0000-0001-5109-3700",
+        "path" : "0000-0001-5109-3700",
+        "host" : "orcid.org"
+      },
+      "credit-name" : {
+        "value" : "Laure L. Haak"
+      },
+      "contributor-email" : null,
+      "contributor-attributes" : {
+        "contributor-sequence" : "first",
+        "contributor-role" : "author"
+      }
+    } ]
+  },
+  "language-code" : "en",
+  "country" : {
+    "value" : "US"
+  },
+  "visibility" : "public"
+}
