@@ -87,7 +87,7 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
     }
 
     @Override
-    public void create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime) {
+    public String create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime) {
         UserconnectionEntity userConnectionEntity = new UserconnectionEntity();
         String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
         UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
@@ -101,6 +101,7 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
         userConnectionEntity.setExpiretime(expireTime);
         userConnectionEntity.setConnectionSatus(UserConnectionStatus.STARTED);
         userConnectionDao.persist(userConnectionEntity);
+        return randomId;
     }
 
     @Override

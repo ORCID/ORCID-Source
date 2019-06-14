@@ -17,6 +17,7 @@ import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
@@ -65,6 +66,9 @@ public class SocialController extends BaseController {
     @Resource
     private UserCookieGenerator userCookieGenerator;
 
+    @Resource
+    private SocialSignInUtils socialSignInUtils;
+    
     @RequestMapping(value = { "/2FA/authenticationCode.json" }, method = RequestMethod.GET)
     public @ResponseBody TwoFactorAuthenticationCodes getTwoFactorCodeWrapper() {
         return new TwoFactorAuthenticationCodes();
@@ -72,7 +76,7 @@ public class SocialController extends BaseController {
 
     @RequestMapping(value = { "/signinData.json" }, method = RequestMethod.GET)
     public @ResponseBody OAuthSigninData getSigninData(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> signedInData = getSignedInData(request, response);
+        Map<String, String> signedInData = socialSignInUtils.getSignedInData(request, response);
         OAuthSigninData data = new OAuthSigninData();
         if (signedInData != null) {
             data.setAccountId(getAccountIdForDisplay(signedInData));
@@ -88,7 +92,7 @@ public class SocialController extends BaseController {
 
     @RequestMapping(value = { "/access" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> signedInData = getSignedInData(request, response);
+        Map<String, String> signedInData = socialSignInUtils.getSignedInData(request, response);
         if (signedInData != null) {            
             String userConnectionId = signedInData.get(OrcidOauth2Constants.USER_CONNECTION_ID);
             String providerId = signedInData.get(OrcidOauth2Constants.PROVIDER_ID);
@@ -113,7 +117,7 @@ public class SocialController extends BaseController {
     @RequestMapping(value = { "/2FA/submitCode.json" }, method = RequestMethod.POST)
     public @ResponseBody TwoFactorAuthenticationCodes post2FAVerificationCode(@RequestBody TwoFactorAuthenticationCodes codes, HttpServletRequest request,
             HttpServletResponse response) {
-        Map<String, String> signedInData = getSignedInData(request, response);
+        Map<String, String> signedInData = socialSignInUtils.getSignedInData(request, response);
         if (signedInData != null) {
             String userConnectionId = signedInData.get(OrcidOauth2Constants.USER_CONNECTION_ID);
             String providerId = signedInData.get(OrcidOauth2Constants.PROVIDER_ID);
@@ -165,27 +169,7 @@ public class SocialController extends BaseController {
             return userMap.get(OrcidOauth2Constants.DISPLAY_NAME);
         }
         return userMap.get(OrcidOauth2Constants.PROVIDER_USER_ID);
-    }
-
-    private Map<String, String> getSignedInData(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> data = null;
-        String userConnectionId = userCookieGenerator.readCookieValue(request);
-        if (!StringUtils.isBlank(userConnectionId)) {
-            try {
-                data = userConnectionManager.getUserConnectionInfo(userConnectionId);
-                data.put(OrcidOauth2Constants.USER_CONNECTION_ID, userConnectionId);
-                // Set first name and last name from session when available
-                String sessionStoredData = (String)request.getSession().getAttribute(OrcidOauth2Constants.SOCIAL_SESSION_ATT_NAME + data.get(OrcidOauth2Constants.PROVIDER_USER_ID));
-                JSONObject json = new JSONObject(sessionStoredData);
-                data.put("firstName", json.getString(OrcidOauth2Constants.FIRST_NAME));
-                data.put("lastName", json.getString(OrcidOauth2Constants.LAST_NAME));                
-            } catch (Exception e) {
-                userCookieGenerator.removeCookie(response);
-            }
-        }
-
-        return data;
-    }
+    }    
     
     private void updateUserConnectionLoginAndLogUserIn(String userConnectionId, String providerId, String providerUserId, String orcid) {
         // Update userConnection login status

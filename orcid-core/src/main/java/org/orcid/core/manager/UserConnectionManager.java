@@ -23,7 +23,7 @@ public interface UserConnectionManager {
 
     UserconnectionEntity findByProviderIdAndProviderUserIdAndIdType(String userId, String shibIdentityProvider, String idType);
 
-    void create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime);
+    String create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime);
 
     void update(UserconnectionEntity entity);
     

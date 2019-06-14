@@ -51,6 +51,10 @@ public class OrcidOauth2Constants {
     
     public static final String CODE_RESPONSE_TYPE = "code";
     
+    //Alternate sign in types
+    public static final String SOCIAL = "social";
+    public static final String SHIBBOLETH = "shibboleth";
+    
     //Social signin
     public static final String EMAIL = "email";
     public static final String PROVIDER_ID = "providerId";
@@ -62,4 +66,6 @@ public class OrcidOauth2Constants {
     public static final String USER_CONNECTION_ID = "userConnectionId";  
     public static final String IS_LINKED = "is_linked";
     public static final String SOCIAL_SESSION_ATT_NAME = "social_data_";
+    public static final String FACEBOOK = "facebook";
+    public static final String GOOGLE = "google";
 }

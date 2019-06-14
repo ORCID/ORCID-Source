@@ -25,6 +25,7 @@ import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -48,7 +49,6 @@ import org.springframework.security.oauth2.common.exceptions.InvalidRequestExcep
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -94,6 +94,9 @@ public class LoginController extends OauthControllerBase {
     private final String facebookTokenExchangeUrl;
 
     private final String facebookUserInfoEndpoint;
+    
+    @Resource
+    private SocialSignInUtils socialSignInUtils;
 
     public LoginController(@Value("${org.orcid.social.fb.key}") String fbKey, @Value("${org.orcid.social.fb.secret}") String fbSecret,
             @Value("${org.orcid.social.fb.redirectUri}") String fbRedirectUri) {
@@ -269,21 +272,29 @@ public class LoginController extends OauthControllerBase {
         String accessToken = userData.getString(OrcidOauth2Constants.ACCESS_TOKEN);
         Long expiresIn = Long.valueOf(userData.getString(OrcidOauth2Constants.EXPIRES_IN));
         
-        request.getSession().setAttribute(OrcidOauth2Constants.SOCIAL_SESSION_ATT_NAME + providerUserId, userData.toString());
+        // Store relevant data
+        socialSignInUtils.setSignedInData(request, userData);
         
         UserconnectionEntity userConnection = userConnectionManager.findByProviderIdAndProviderUserId(userData.getString(OrcidOauth2Constants.PROVIDER_USER_ID), SocialType.FACEBOOK.value());
+        String userConnectionId = null;
+        ModelAndView view = null;
         if (userConnection != null && userConnection.isLinked()) {
+            userConnectionId = userConnection.getId().getUserid();
             // If user exists and is linked update user connection info
             // and redirect to user record
-            return updateUserConnectionAndLogUserIn(request, response, SocialType.FACEBOOK, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
+            view = updateUserConnectionAndLogUserIn(request, response, SocialType.FACEBOOK, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
                     accessToken, expiresIn);
         } else {
             // Store user info
-            createUserConnection(SocialType.FACEBOOK, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL), userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
+            userConnectionId = createUserConnection(SocialType.FACEBOOK, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL), userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Else forward to user creation
-            return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+            view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
         }
-
+        if(userConnectionId == null) {
+            throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
+        }
+        userCookieGenerator.addCookie(userConnectionId, response);
+        return view;
     }
 
     @RequestMapping(value = { "/signin/google" }, method = RequestMethod.POST)
@@ -332,9 +343,9 @@ public class LoginController extends OauthControllerBase {
         return userInfoJson;
     }
 
-    private void createUserConnection(SocialType socialType, String providerUserId, String email, String userName, String accessToken, Long expireTime) {
+    private String createUserConnection(SocialType socialType, String providerUserId, String email, String userName, String accessToken, Long expireTime) {
         LOGGER.info("Creating userconnection for type={}, providerUserId={}, userName={}", new Object[] { socialType.value(), providerUserId, userName });
-        userConnectionManager.create(providerUserId, socialType.value(), email, userName, accessToken, expireTime);
+        return userConnectionManager.create(providerUserId, socialType.value(), email, userName, accessToken, expireTime);
     }
 
     private ModelAndView updateUserConnectionAndLogUserIn(HttpServletRequest request, HttpServletResponse response, SocialType socialType, String userOrcid,
@@ -356,10 +367,8 @@ public class LoginController extends OauthControllerBase {
         Authentication authentication = authenticationManager.authenticate(token);
         userConnectionManager.updateLoginInformation(pk);
 
+        // Update security context with user information
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        
-        // Set connection id cookie
-        userCookieGenerator.addCookie(userConnectionId, response);
         return new ModelAndView(new RedirectView(calculateRedirectUrl(request, response, false)));
     }
 }
