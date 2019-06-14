@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="affiliation-ng2-template">
-    <div>
+    <div [hidden]="publicView == 'true' && recordLocked">
         <!-- EMPLOYMENT -->
         <div id="workspace-employment" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && employments.length < 1" role="group" aria-labelledby="affiliationType.employment" aria-describedby="tooltip-helpPopoverEmployment">
             <div class="workspace-accordion-header clearfix" role="presentation">
