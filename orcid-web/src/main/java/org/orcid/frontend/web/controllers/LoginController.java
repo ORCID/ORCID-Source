@@ -262,7 +262,7 @@ public class LoginController extends OauthControllerBase {
     }
 
     @RequestMapping(value = { "/signin/facebook" }, method = RequestMethod.GET)
-    public ModelAndView getFacebookLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") String code, ModelMap model)
+    public ModelAndView getFacebookLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam("code") String code)
             throws UnsupportedEncodingException, IOException, JSONException {
         JSONObject userData = getFacebookUserData(code);
         String providerUserId = userData.getString(OrcidOauth2Constants.PROVIDER_USER_ID);
@@ -281,7 +281,7 @@ public class LoginController extends OauthControllerBase {
             // Store user info
             createUserConnection(SocialType.FACEBOOK, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL), userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Else forward to user creation
-            return new ModelAndView("redirect:/social/access", model);
+            return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
         }
 
     }
@@ -360,6 +360,6 @@ public class LoginController extends OauthControllerBase {
         
         // Set connection id cookie
         userCookieGenerator.addCookie(userConnectionId, response);
-        return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
+        return new ModelAndView(new RedirectView(calculateRedirectUrl(request, response, false)));
     }
 }
