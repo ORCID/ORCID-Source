@@ -2,7 +2,7 @@
 
       <div class="form-group " role="presentation">
                     <div class="search-container" role="search" (mouseleave)="state = false">
-                         <a *ngIf="!userInfo"  class="top-menu-button" >  
+                         <a *ngIf="!userInfo"  class="top-menu-button" href="{{getBaseUri()}}/signin">  
                           {{'<@orcid.msg 'public-layout.sign_in'/> '| uppercase  }}/{{'<@orcid.msg 'header.register'/> '| uppercase }}
                          </a>
                         <div *ngIf="userInfo"  class="top-menu-button" (click)="state = !state">  

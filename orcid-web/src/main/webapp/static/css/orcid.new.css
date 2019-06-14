@@ -9314,14 +9314,6 @@ a.footer-url {
     /* background: red; */
 }
 
-
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-    .header2 .logo > a > img {
-        height: auto;
-    }
-}
-
-
 .header2 .arrow {
     border: solid white;
     border-width: 0 2px 2px 0;
@@ -9483,7 +9475,7 @@ user-menu .top-menu-button {
     display: flex;
     color: #2e7f9f;
     font-size: 14px;
-    font-weight: 800;
+    font-weight: bold;
     padding: 5px;
     align-items: center;
     border-radius: 4px;
@@ -9533,6 +9525,11 @@ user-menu .top-menu-header > div .name{
     color: rgba(0, 0, 0, 0.87);
 
 }
+
+user-menu .top-menu-header img{
+    height: 36px;
+
+}
 user-menu .top-menu-header > div .my-profile{
     font-size: 12px; 
     color: rgba(0, 0, 0, 0.87);
@@ -9573,6 +9570,7 @@ user-menu  .top-menu-item:hover, user-menu .top-menu-header:hover{
 user-menu a.top-menu-button {
     display: block;
     height: 100%;
+    min-width: 141px;
     
 }
 
