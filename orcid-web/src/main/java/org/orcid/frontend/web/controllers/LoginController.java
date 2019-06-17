@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -14,9 +15,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hsqldb.types.Charset;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
@@ -24,6 +27,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
@@ -100,10 +104,17 @@ public class LoginController extends OauthControllerBase {
     
     private final String googleOauthUrl;
     
-    private final String googleTokenExchangeUrl;        
+    private final String googleUserInfoUrl;
+    
+    private final String googleTokenExchangeUrl;  
+    
+    private final String googleFormParams;
     
     @Resource
     private SocialSignInUtils socialSignInUtils;
+    
+    @Resource
+    private OpenIDConnectKeyService keyManager;
 
     public LoginController(@Value("${org.orcid.social.fb.key}") String fbKey, @Value("${org.orcid.social.fb.secret}") String fbSecret,
             @Value("${org.orcid.social.fb.redirectUri}") String fbRedirectUri, @Value("${org.orcid.social.gg.key}") String gKey,
@@ -116,6 +127,7 @@ public class LoginController extends OauthControllerBase {
 
         String googleRedirectUrl = baseUri + "/signin/google";
         String googleTokenEndpoint = "https://www.googleapis.com/oauth2/v4/token";
+        String googleUserInfoEndpoint = null;
         // Find google token endpoint
         HttpURLConnection con = (HttpURLConnection) new URL("https://accounts.google.com/.well-known/openid-configuration").openConnection();
         con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent") + " (orcid.org)");
@@ -134,15 +146,21 @@ public class LoginController extends OauthControllerBase {
                 // Use not recommended default token endpoint
                 LOGGER.warn("Unable to fetch google token endpoing, using default one");
             }
+            
+            if(googleConfig.has("userinfo_endpoint")) {
+                googleUserInfoEndpoint = googleConfig.getString("userinfo_endpoint");                
+            }
         } else {
             // Use not recommended default token endpoint
             LOGGER.warn("Unable to fetch google token endpoing, using default one");
         }
 
-        googleOauthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + gKey + "&response_type=code&scope=openid%20email&redirect_uri=" + googleRedirectUrl
+        googleOauthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + gKey + "&response_type=code&scope=openid%20email%20profile&redirect_uri=" + googleRedirectUrl
                 + "&state={state_param}";
-        googleTokenExchangeUrl = googleTokenEndpoint + "?code={code}&client_id=" + gKey + "&client_secret=" + gSecret + "&redirect_uri=" + googleRedirectUrl
+        googleTokenExchangeUrl = googleTokenEndpoint;
+        googleFormParams = "code={code}&client_id=" + gKey + "&client_secret=" + gSecret + "&redirect_uri=" + googleRedirectUrl
                 + "&grant_type=authorization_code";
+        googleUserInfoUrl = googleUserInfoEndpoint;
     }
 
     @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
@@ -359,11 +377,22 @@ public class LoginController extends OauthControllerBase {
             //return new ModelAndView("redirect:/login");
         }
         
-        HttpURLConnection con = (HttpURLConnection) new URL(googleTokenExchangeUrl.replace("{code}", code)).openConnection();
+        String formParamsWithCode = googleFormParams.replace("{code}", code);
+        byte[] postData = formParamsWithCode.getBytes( StandardCharsets.UTF_8 );
+        String length = String.valueOf(postData.length);
+        
+        HttpURLConnection con = (HttpURLConnection) new URL(googleTokenExchangeUrl).openConnection();
         con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent") + " (orcid.org)");
         con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");        
-        con.setInstanceFollowRedirects(true);
+        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");  
+        con.setRequestProperty("Content-Length", length);
+        con.setDoOutput( true );
+        con.setInstanceFollowRedirects( false ); 
+        con.setRequestProperty( "charset", "utf-8");
+        con.setUseCaches( false );
+        try( DataOutputStream wr = new DataOutputStream( con.getOutputStream())) {
+           wr.write( postData );
+        }
         int responseCode = con.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_OK) {
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8.name()));
@@ -373,7 +402,53 @@ public class LoginController extends OauthControllerBase {
             // Read JSON response and print
             JSONObject tokenJson = new JSONObject(accessTokenResponse.toString());
             System.out.println(tokenJson.toString());
-        }
+                        
+            String accessToken = tokenJson.getString("access_token");
+            System.out.println("Access Token: " + accessToken);
+            String idToken = tokenJson.getString("id_token");
+            Long expiresIn = tokenJson.getLong("expires_in");
+            String[] base64EncodedSegments = idToken.split("\\.");
+            
+            String base64EncodedClaims = base64EncodedSegments[1];
+            
+            String tokenClaims = new String(Base64.decodeBase64(base64EncodedClaims));
+            System.out.println("Token claims:");
+            System.out.println(tokenClaims);
+            JSONObject jsonClaims = new JSONObject(tokenClaims);
+            String userEmail = jsonClaims.getString("email");
+            String providerUserId = jsonClaims.getString("sub");
+            String userName = jsonClaims.getString("name");
+            
+            
+            JSONObject userInfoJson = new JSONObject();
+            userInfoJson.put(OrcidOauth2Constants.ACCESS_TOKEN, accessToken);
+            userInfoJson.put(OrcidOauth2Constants.EXPIRES_IN, expiresIn);
+            userInfoJson.put(OrcidOauth2Constants.PROVIDER_USER_ID, providerUserId);
+            userInfoJson.put(OrcidOauth2Constants.EMAIL, userEmail);
+            userInfoJson.put(OrcidOauth2Constants.DISPLAY_NAME, userName);                        
+            
+            // Fetch user's first and last name
+            HttpURLConnection googleUserInfoUrlConnection = (HttpURLConnection) new URL(googleUserInfoUrl).openConnection();
+            googleUserInfoUrlConnection.setRequestMethod("GET");
+            googleUserInfoUrlConnection.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent") + " (orcid.org)");
+            googleUserInfoUrlConnection.setRequestProperty("Authorization", accessToken);
+            googleUserInfoUrlConnection.setInstanceFollowRedirects(true);
+            int googleUserInfoUrlResponseCode = googleUserInfoUrlConnection.getResponseCode();
+            if (googleUserInfoUrlResponseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader googleUserInfoUrlConnectionIn = new BufferedReader(new InputStreamReader(googleUserInfoUrlConnection.getInputStream(), StandardCharsets.UTF_8.name()));
+                StringBuffer googleUserInfoResponse = new StringBuffer();
+                googleUserInfoUrlConnectionIn.lines().forEach(i -> googleUserInfoResponse.append(i));
+                googleUserInfoUrlConnectionIn.close();
+                // Read JSON response and print
+                JSONObject googleUserInfoJson = new JSONObject(googleUserInfoResponse.toString());
+                System.out.println("------------------------------------------------------------");
+                System.out.println(googleUserInfoJson.toString());
+                System.out.println("------------------------------------------------------------");
+                userInfoJson.put(OrcidOauth2Constants.FIRST_NAME, googleUserInfoJson.get("given_name"));
+                userInfoJson.put(OrcidOauth2Constants.LAST_NAME, googleUserInfoJson.get("family_name"));
+            }
+                                    
+        }               
     }
     
     private JSONObject getFacebookUserData(String code) throws IOException, JSONException {
