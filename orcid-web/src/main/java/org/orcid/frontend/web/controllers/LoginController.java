@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -96,15 +98,51 @@ public class LoginController extends OauthControllerBase {
 
     private final String facebookUserInfoEndpoint;
     
+    private final String googleOauthUrl;
+    
+    private final String googleTokenExchangeUrl;        
+    
     @Resource
     private SocialSignInUtils socialSignInUtils;
 
     public LoginController(@Value("${org.orcid.social.fb.key}") String fbKey, @Value("${org.orcid.social.fb.secret}") String fbSecret,
-            @Value("${org.orcid.social.fb.redirectUri}") String fbRedirectUri) {
+            @Value("${org.orcid.social.fb.redirectUri}") String fbRedirectUri, @Value("${org.orcid.social.gg.key}") String gKey,
+            @Value("${org.orcid.social.gg.secret}") String gSecret, @Value("${org.orcid.core.baseUri}") String baseUri)
+            throws MalformedURLException, IOException, JSONException {
         facebookOauthUrl = "https://www.facebook.com/v3.3/dialog/oauth?client_id=" + fbKey + "&redirect_uri=" + fbRedirectUri + "&scope=email";
         facebookTokenExchangeUrl = "https://graph.facebook.com/v3.3/oauth/access_token?client_id=" + fbKey + "&redirect_uri=" + fbRedirectUri + "&client_secret="
                 + fbSecret + "&code={code}";
         facebookUserInfoEndpoint = "https://graph.facebook.com/me?access_token={access-token}&fields=id,email,name,first_name,last_name";
+
+        String googleRedirectUrl = baseUri + "/signin/google";
+        String googleTokenEndpoint = "https://www.googleapis.com/oauth2/v4/token";
+        // Find google token endpoint
+        HttpURLConnection con = (HttpURLConnection) new URL("https://accounts.google.com/.well-known/openid-configuration").openConnection();
+        con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent") + " (orcid.org)");
+        con.setRequestMethod("GET");
+        int responseCode = con.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8.name()));
+            StringBuffer accessTokenResponse = new StringBuffer();
+            in.lines().forEach(i -> accessTokenResponse.append(i));
+            in.close();
+            // Read JSON response and print
+            JSONObject googleConfig = new JSONObject(accessTokenResponse.toString());
+            if (googleConfig.has("token_endpoint")) {
+                googleTokenEndpoint = googleConfig.getString("token_endpoint");
+            } else {
+                // Use not recommended default token endpoint
+                LOGGER.warn("Unable to fetch google token endpoing, using default one");
+            }
+        } else {
+            // Use not recommended default token endpoint
+            LOGGER.warn("Unable to fetch google token endpoing, using default one");
+        }
+
+        googleOauthUrl = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + gKey + "&response_type=code&scope=openid%20email&redirect_uri=" + googleRedirectUrl
+                + "&state={state_param}";
+        googleTokenExchangeUrl = googleTokenEndpoint + "?code={code}&client_id=" + gKey + "&client_secret=" + gSecret + "&redirect_uri=" + googleRedirectUrl
+                + "&grant_type=authorization_code";
     }
 
     @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
@@ -307,10 +345,37 @@ public class LoginController extends OauthControllerBase {
     }
 
     @RequestMapping(value = { "/signin/google" }, method = RequestMethod.POST)
-    public void initGoogleLogin() {
-
+    public RedirectView initGoogleLogin(HttpServletRequest request) {
+        String sessionState = UUID.randomUUID().toString();
+        request.getSession().setAttribute("g_state", sessionState);
+        return new RedirectView(googleOauthUrl.replace("{state_param}", sessionState));
     }
 
+    @RequestMapping(value = { "/signin/google" }, method = RequestMethod.GET)
+    public void getGoogleLogin(HttpServletRequest request, HttpServletResponse response, @RequestParam(name = "state") String state, @RequestParam(name = "code", required = false) String code) throws MalformedURLException, IOException, JSONException {
+        String googleSessionState = (String) request.getSession().getAttribute("g_state");
+        if(!state.equals(googleSessionState)) {
+            LOGGER.warn("Google session state doesnt match");
+            //return new ModelAndView("redirect:/login");
+        }
+        
+        HttpURLConnection con = (HttpURLConnection) new URL(googleTokenExchangeUrl.replace("{code}", code)).openConnection();
+        con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent") + " (orcid.org)");
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");        
+        con.setInstanceFollowRedirects(true);
+        int responseCode = con.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8.name()));
+            StringBuffer accessTokenResponse = new StringBuffer();
+            in.lines().forEach(i -> accessTokenResponse.append(i));
+            in.close();
+            // Read JSON response and print
+            JSONObject tokenJson = new JSONObject(accessTokenResponse.toString());
+            System.out.println(tokenJson.toString());
+        }
+    }
+    
     private JSONObject getFacebookUserData(String code) throws IOException, JSONException {
         JSONObject userInfoJson = new JSONObject();
         // Exchange the code for an access token
