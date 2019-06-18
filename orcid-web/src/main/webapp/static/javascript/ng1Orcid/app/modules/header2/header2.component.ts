@@ -152,18 +152,24 @@ export class Header2Component  {
     menuHandler (value, $event) {
 
         // Ignore first click on mobile if not is SIGNIN 
-        if (this.isMobile) {
-            if (this.mobileMenu[value] == false && value !== "SIGNIN") {
+        if (this.isMobile && value !== "SIGNIN") {
                 $event.preventDefault()
-            }
+            
         }
 
         // If is mobile ignore no-click events
         if ($event.type === "click" || !this.isMobile) {
-            Object.keys(this.mobileMenu).forEach ( item => {
-                this.mobileMenu[item] = item === value
-            })
-            this.ref.detectChanges();
+            if (!this.mobileMenu[value]){
+                Object.keys(this.mobileMenu).forEach ( item => {
+                    this.mobileMenu[item] = item === value
+                })
+                this.ref.detectChanges();
+            } else {
+                Object.keys(this.mobileMenu).forEach ( item => {
+                    this.mobileMenu[item] = false
+                })
+                this.ref.detectChanges();
+            }
         }
         
     }
@@ -180,14 +186,45 @@ export class Header2Component  {
         this.openMobileMenu = !this.openMobileMenu; 
     }
 
+    toggleSecondaryMenu(submenu): void {
+        
+        if (!this.secondaryMenuVisible[submenu]) {
+            this.secondaryMenuVisible = {}
+            this.secondaryMenuVisible[submenu] = !this.secondaryMenuVisible[submenu];
+        } else { 
+            this.secondaryMenuVisible = {}
+        }
+    };
+
+    handleMobileMenuOption( $event ): void{
+        let w = getWindowWidth();           
+        
+        $event.preventDefault();
+        
+        if( w > 840) {               
+            window.location.href = $event.target.getAttribute('href');
+        }
+    };
+
+    toggleTertiaryMenu(submenu): void {
+        
+        if (!this.tertiaryMenuVisible[submenu]) {
+            this.tertiaryMenuVisible = {}
+            this.tertiaryMenuVisible[submenu] = !this.tertiaryMenuVisible[submenu];
+        } else { 
+            this.tertiaryMenuVisible = {}
+        }
+    };
+
+
     ngOnInit() {
-        this.isMobile = window.innerWidth < 600;
+        this.isMobile = window.innerWidth < 840;
         this.headerSearch.searchOption='registry'
         this.headerSearch.searchInput = ''
     }
 
     @HostListener('window:resize', ['$event'])
         onResize(event) {
-        this.isMobile = window.innerWidth < 600;
+        this.isMobile = window.innerWidth < 840;
     }
 }
