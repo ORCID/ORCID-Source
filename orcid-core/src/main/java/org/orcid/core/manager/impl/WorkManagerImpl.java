@@ -24,6 +24,7 @@ import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
@@ -171,7 +172,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, ActionType.CREATE));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
         return updatedWork;
     }
@@ -344,7 +345,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         workDao.merge(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, ActionType.UPDATE));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
         return updatedWork;
     }
@@ -357,7 +358,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         try {            
             workDao.removeWork(orcid, workId);
             workDao.flush();
-            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, ActionType.DELETE));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);
             result = false;
@@ -375,10 +376,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
     }
 
-    private List<Item> createItemList(WorkEntity workEntity) {
+    private List<Item> createItemList(WorkEntity workEntity, ActionType type) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);
+        item.setType(type);
         item.setPutCode(String.valueOf(workEntity.getId()));
         return Arrays.asList(item);
     }

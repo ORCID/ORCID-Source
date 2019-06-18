@@ -154,7 +154,53 @@ public class Item implements Serializable {
     public void setAdditionalInfo(Map<String, Object> additionalInfo) {
         this.additionalInfo = additionalInfo;
     }
-    
-    
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((additionalInfo == null) ? 0 : additionalInfo.hashCode());
+        result = prime * result + ((externalIdentifier == null) ? 0 : externalIdentifier.hashCode());
+        result = prime * result + ((itemName == null) ? 0 : itemName.hashCode());
+        result = prime * result + ((itemType == null) ? 0 : itemType.hashCode());
+        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Item other = (Item) obj;
+        if (additionalInfo == null) {
+            if (other.additionalInfo != null)
+                return false;
+        } else if (!additionalInfo.equals(other.additionalInfo))
+            return false;
+        if (externalIdentifier == null) {
+            if (other.externalIdentifier != null)
+                return false;
+        } else if (!externalIdentifier.equals(other.externalIdentifier))
+            return false;
+        if (itemName == null) {
+            if (other.itemName != null)
+                return false;
+        } else if (!itemName.equals(other.itemName))
+            return false;
+        if (itemType != other.itemType)
+            return false;
+        if (putCode == null) {
+            if (other.putCode != null)
+                return false;
+        } else if (!putCode.equals(other.putCode))
+            return false;
+        if (type != other.type)
+            return false;
+        return true;
+    }    
 }
