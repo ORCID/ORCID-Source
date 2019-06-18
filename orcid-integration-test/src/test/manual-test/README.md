@@ -29,7 +29,7 @@
 13. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
 14. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
 15. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request and click the password reset link
-16. Reset password with [DD][month][YYYY] (No need to fill challenge question)
+16. Reset password with [DD][month][YYYY] 
 17. You will be forward to the sign in page, sign in with:
 	Email: MA_TEST_[DD][month][YYYY]@mailinator.com
 	Password: [DD][month][YYYY]
@@ -101,51 +101,21 @@
 
 56. On https://qa.orcid.org/account add [orcid id] as a trusted individual
 
-## Test Self Service
+## Accessibility Testing
 
-For this test there is a fair amount of set up. You need to have a Consortium Lead account on QA and a Consortium Member account. For the purposes of testing you can use the accounts 0000-0003-0641-4661 for the consortium lead account and 0000-0001-5870-8499 for the consortium member account.
+57. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
 
-**Check Consortium Lead Functionality**
+58. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1TPXe50YejZ9rDrd3oac3prg0x33nZGSvjPG5QFpSXyk/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
+59. Visit https://qa.orcid.org and check errors are same or less than 37 errors
+60. Visit https://qa.orcid.org/register and check errors are same or less than 62
+61. Visit https://qa.orcid.org/signin and check errors are same or less than 39 
+62.	Stay on this page and sign in with 
 
-57. Go to https://qa.orcid.org/signin and sign in with
+	```0000-0002-7361-1027```
+	```QA password```
 
-		0000-0003-0641-4661
-		Password: *QA password*. Check that there is a tab 'MEMBER TOOLS'
-		
-58. Click on the 'MEMBER TOOLS' tab, and check the page loads
+63. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  80
 
-59. Scroll to the bottom of the page to the Add a new consortium member section:
-
-			Organization Name: [DD][month][YYYY]
-			Website : http://www.[DD][month][YYYY].com
-			**Contact Information**
-			First Name : Self_service
-			Last Name: [DD][month][YYYY]
-			Email: [DD][month][YYYY]@mailinator.com
-
-**Check the Saleforce staff email to check there is a notification**
-
-60. Visit mailinator.com and enter:	
-
-			selfservicesalesforcetest@mailinator.com
-			
-61. Check that there is an email titled "Consortium member addition requested - [DD][month][YYYY]"
-
-**Check that consortium member can add a contact**
-
-62.  Visit www.qa.orcid.org/signout
-
-		Sign in with
-		0000-0001-5870-8499
-		*QA password*
-		
-63. Go to https://qa.orcid.org/self-service
-
-64.  Add a contact in the Add Member Contacts email field
-
-		Email: ma_test_[DD][month][YYYY]@mailinator.com
-
-64. Visit https://qa.orcid.org/signout
 
 ## Run the automated Independent Tests
 
@@ -175,7 +145,7 @@ For this test there is a fair amount of set up. You need to have a Consortium Le
 	* 3 qualifications
 	* 6 funding items
 	* 3 research-resource
-	* 5 works (one being a group of 2) - open one to view details
+	* 13 works (8 bulk work items and one work being a group of 2) - open one to view details
 	* 2 peer-review item (one with two reviews and one with three reviews) - open one to view details
 
 69. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
@@ -187,21 +157,71 @@ For this test there is a fair amount of set up. You need to have a Consortium Le
 
 71. Archive the first notification in the list
 	
-70. Check there is a Member Tools tab and the page loads when you go to it
+72. Check there is a Member Tools tab and the page loads when you go to it
 
-72. Use the switch user option to change to the record created during the OAuth process
+73. Use the switch user option to change to the record created during the OAuth process
 
-73. Sign in to Browserstack.com and using IE 11 visit the follow pages and make sure everything loads
+
+
+74. Sign in to Browserstack.com and using IE 11 visit the follow pages and make sure everything loads
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
 	* sign into [orcid id] account and check that it also looks as expected
 
-74. Using browserstack check the following pages on one Android and one Apple device to check load times
+75. Using browserstack check the following pages on one Android and one Apple device to check load times
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
+
+
+
+## Test Self Service
+
+For this test you need to have a Consortium Lead account on QA and a Consortium Member account. For the purposes of testing you can use the accounts 0000-0003-0641-4661 for the consortium lead account and 0000-0001-5870-8499 for the consortium member account.
+
+**Check Consortium Lead Functionality**
+
+76. Go to https://qa.orcid.org/signin and sign in with
+
+		0000-0003-0641-4661
+		Password: *QA password*. Check that there is a tab 'MEMBER TOOLS'
+		
+77. Click on the 'MEMBER TOOLS' tab, and check the page loads
+
+78. Scroll to the bottom of the page to the Add a new consortium member section:
+
+			Organization Name: [DD][month][YYYY]
+			Website : http://www.[DD][month][YYYY].com
+			**Contact Information**
+			First Name : Self_service
+			Last Name: [DD][month][YYYY]
+			Email: [DD][month][YYYY]@mailinator.com
+
+**Check the Saleforce staff email to check there is a notification**
+
+79. Visit mailinator.com and enter:	
+
+			selfservicesalesforcetest@mailinator.com
+			
+80. Check that there is an email titled "Consortium member addition requested - [DD][month][YYYY]"
+
+**Check that consortium member can add a contact**
+
+81.  Visit www.qa.orcid.org/signout
+
+		Sign in with
+		0000-0001-5870-8499
+		*QA password*
+		
+82. Go to https://qa.orcid.org/self-service
+
+83.  Add a contact in the Add Member Contacts email field
+
+		Email: ma_test_[DD][month][YYYY]@mailinator.com
+
+84. Visit https://qa.orcid.org/signout
 
 * Finally help out by improving these instructions!      
