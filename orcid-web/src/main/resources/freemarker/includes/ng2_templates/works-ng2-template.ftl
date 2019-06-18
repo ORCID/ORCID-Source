@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="works-ng2-template">
     <!--WORKS-->
-    <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" role="group" aria-labelledby="affiliationType.Works" aria-describedby="tooltip-helpPopoverWorks">
+    <div [hidden]="publicView == 'true' && recordLocked" id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" role="group" aria-labelledby="affiliationType.Works" aria-describedby="tooltip-helpPopoverWorks">
         <!--Works section header--> 
         <div class="workspace-accordion-header clearfix">
             <div class="row">

@@ -51,6 +51,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     sortAsc: boolean;
     peerReviewImportWizard: boolean = false;
     wizardDescExpanded: any = {};
+    recordLocked: boolean;
 
     constructor(
         private peerReviewService: PeerReviewService,
@@ -374,8 +375,23 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getPeerReviewGroups();
-        this.loadPeerReviewImportWizards();
+        if(this.isPublicPage) {
+            this.commonSrvc.publicUserInfo$
+            .subscribe(
+                userInfo => {
+                    this.recordLocked = !userInfo || userInfo.IS_LOCKED === 'true' || userInfo.IS_DEACTIVATED === 'true';
+                    if (!this.recordLocked) {
+                        this.getPeerReviewGroups();
+                    }
+                },
+                error => {
+                    console.log('affiliation.component.ts: unable to fetch publicUserInfo', error);                    
+                } 
+            );
+        } else {
+            this.getPeerReviewGroups();
+            this.loadPeerReviewImportWizards();
+        }
     };
     
     getBaseUri(): String {

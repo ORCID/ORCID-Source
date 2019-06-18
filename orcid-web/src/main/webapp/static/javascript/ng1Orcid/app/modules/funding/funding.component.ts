@@ -54,6 +54,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     sortKey: string;
     fundingMoreInfo: any;
     wizardDescExpanded: any;
+    recordLocked: boolean;
 
     constructor(
         private elementRef: ElementRef,
@@ -464,8 +465,23 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getFundingGroups();
-        this.loadFundingImportWizards();
+        if(this.isPublicPage) {
+            this.commonSrvc.publicUserInfo$
+            .subscribe(
+                userInfo => {
+                    this.recordLocked = !userInfo || userInfo.IS_LOCKED === 'true' || userInfo.IS_DEACTIVATED === 'true';
+                    if (!this.recordLocked) {
+                        this.getFundingGroups();
+                    }
+                },
+                error => {
+                    console.log('affiliation.component.ts: unable to fetch publicUserInfo', error);                    
+                } 
+            );
+        } else {
+            this.getFundingGroups();
+            this.loadFundingImportWizards();
+        }
     }; 
     
     getBaseUri(): String {

@@ -51,6 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * @author Angel Montenegro
@@ -722,7 +723,11 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/orgDefinedSubType/{query}", method = RequestMethod.GET)
     public @ResponseBody
     List<String> searchOrgDefinedFundingSubTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
-        return profileFundingManager.getIndexedFundingSubTypes(query, limit);
+        List<String> subtypes = profileFundingManager.getIndexedFundingSubTypes(query, limit);
+        for(int i = 0; i < subtypes.size(); i++) {
+            subtypes.set(i, HtmlUtils.htmlEscape(subtypes.get(i)));
+        }
+        return subtypes;
     }
 
     public Locale getUserLocale() {

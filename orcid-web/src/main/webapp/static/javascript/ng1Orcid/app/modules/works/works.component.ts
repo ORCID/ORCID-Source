@@ -100,6 +100,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     manualWorkGroupingEnabled: boolean;
     exIdResolverFeatureEnabled: boolean;
     groupingSuggestionFeatureEnabled: boolean;    
+    recordLocked: boolean;
     
     constructor( 
         private commonSrvc: CommonService,
@@ -1327,8 +1328,24 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         if ((<any>window).File != undefined && (<any>window).FileReader != undefined  && (<any>window).FileList != undefined  && (<any>window).Blob) {
             this.canReadFiles = true;
         };
-        this.loadMore();
-        this.loadWorkImportWizardList();
+        
+        if(this.isPublicPage) {
+            this.commonSrvc.publicUserInfo$
+            .subscribe(
+                userInfo => {
+                    this.recordLocked = !userInfo || userInfo.IS_LOCKED === 'true' || userInfo.IS_DEACTIVATED === 'true';
+                    if (!this.recordLocked) {
+                        this.loadMore();
+                    }
+                },
+                error => {
+                    console.log('affiliation.component.ts: unable to fetch publicUserInfo', error);                    
+                } 
+            );
+        } else {
+            this.loadMore();
+            this.loadWorkImportWizardList();
+        }
     };
     
     getBaseUri(): String {
