@@ -93,5 +93,9 @@
     </bean>
     
     <bean id="researchResourcePaginator" class="org.orcid.frontend.web.pagination.ResearchResourcePaginator" />
+    
+    <bean id="userCookieGenerator" class="org.orcid.frontend.spring.web.social.config.UserCookieGenerator" />
+    
+    <bean id="socialSignInUtils" class="org.orcid.frontend.spring.web.social.config.SocialSignInUtils" />
 
 </beans>

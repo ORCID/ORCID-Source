@@ -99,15 +99,7 @@
                                                 <button type="submit" class="btn btn-social-icon btn-facebook"></button>
                                                 <input type="hidden" name="scope" value="email"/>
                                             </form>
-                                        </li>
-                                        <!--TWITTER (NOT USED)
-                                        <li>
-                                            <form ngNoForm action="{{getBaseUri()}}/signin/twitter" method="POST">
-                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                <button type="submit" class="btn btn-social-icon btn-twitter"></button>
-                                            </form>
-                                        </li>
-                                        -->
+                                        </li>                                        
                                         <!--GOOGLE-->
                                         <li>
                                             <form ngNoForm action="{{getBaseUri()}}/signin/google" method="POST">
