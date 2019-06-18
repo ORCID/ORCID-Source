@@ -170,22 +170,22 @@ public class AddressManagerTest extends BaseTest {
     
     @Test
     public void testAssertionOrigin() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
         Address address = getAddress(Iso3166Country.CC);
         address = addressManager.createAddress(claimedOrcid, address, true);
         address = addressManager.getAddress(claimedOrcid, address.getPutCode());
         
         assertNotNull(address);
         assertEquals(Visibility.LIMITED, address.getVisibility());  
-        assertEquals(address.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
-        assertEquals(address.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(address.getSource().getSourceClientId().getPath(),CLIENT_1_ID);
+        assertEquals(address.getSource().getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
         assertEquals(address.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(address.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
     }
     
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
         Address address = getAddress(Iso3166Country.CD);
         address = addressManager.createAddress(claimedOrcid, address, true);
         address = addressManager.getAddress(claimedOrcid, address.getPutCode());
@@ -195,13 +195,13 @@ public class AddressManagerTest extends BaseTest {
         
         assertNotNull(address);
         assertEquals(Visibility.LIMITED, address.getVisibility());  
-        assertEquals(address.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
-        assertEquals(address.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(address.getSource().getSourceClientId().getPath(),CLIENT_1_ID);
+        assertEquals(address.getSource().getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
         assertEquals(address.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(address.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
         
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             address.setCountry(new Country(Iso3166Country.CG));
             address = addressManager.updateAddress(claimedOrcid, address.getPutCode(), address, true);
             fail();

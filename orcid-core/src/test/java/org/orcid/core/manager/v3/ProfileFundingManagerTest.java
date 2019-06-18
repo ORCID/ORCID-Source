@@ -449,15 +449,14 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
         Funding f1 = getFunding("A1");
         f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
         f1 = profileFundingManager.getFunding(claimedOrcid, f1.getPutCode());
         assertNotNull(f1);
         
-        assertEquals(f1.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
-        assertEquals(f1.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
-        //assertEquals(f1.getSource().getSourceName().getContent(),"U. Test");
+        assertEquals(f1.getSource().getSourceClientId().getPath(),CLIENT_1_ID);
+        assertEquals(f1.getSource().getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
         assertEquals(f1.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(f1.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
         assertEquals(f1.getSource().getAssertionOriginName().getContent(),"Source Client 2");
@@ -472,12 +471,12 @@ public class ProfileFundingManagerTest extends BaseTest {
         }
         
         //make a duplicate as a different assertion origin
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));                
         f2 = profileFundingManager.createFunding(claimedOrcid, f2, true);
         
         //wrong sources:
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             profileFundingManager.updateFunding(claimedOrcid, f1, true);
             fail();
         }catch(WrongSourceException e) {

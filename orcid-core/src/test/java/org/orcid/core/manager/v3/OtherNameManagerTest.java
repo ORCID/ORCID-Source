@@ -167,15 +167,15 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
         OtherName otherName = getOtherName();        
         otherName = otherNameManager.createOtherName(unclaimedOrcid, otherName, true);
         otherName = otherNameManager.getOtherName(unclaimedOrcid, otherName.getPutCode());
         assertNotNull(otherName);
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());        
         
-        assertEquals(otherName.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
-        assertEquals(otherName.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(otherName.getSource().getSourceClientId().getPath(),CLIENT_1_ID);
+        assertEquals(otherName.getSource().getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
         assertEquals(otherName.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(otherName.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
         
@@ -189,13 +189,13 @@ public class OtherNameManagerTest extends BaseTest {
         }
         
         //make a duplicate as a different assertion origin
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));                
         otherName2 = otherNameManager.createOtherName(unclaimedOrcid, otherName2, true);
         
         //wrong sources:
         otherName.setContent("x");
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             otherName = otherNameManager.updateOtherName(unclaimedOrcid, otherName.getPutCode(), otherName, true);
             fail();
         }catch(WrongSourceException e) {

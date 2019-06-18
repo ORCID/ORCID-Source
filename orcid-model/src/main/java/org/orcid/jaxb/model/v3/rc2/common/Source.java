@@ -227,32 +227,4 @@ public class Source implements Serializable {
         return true;
     }
 
-    /** Logic taken from SourceEntity constructor
-     * 
-     * @param clientId
-     * @return
-     */
-    public static Source forClient(String clientId) {
-        Source s = new Source();
-        if (clientId != null) {
-            if (clientId.startsWith("APP-")) {
-                s.setSourceClientId(new SourceClientId(clientId));
-            } else {
-                s.setSourceOrcid(new SourceOrcid(clientId));
-            }
-        }
-        return s;
-    }
-
-    public static Source forClient(String clientId, String oboId) {
-        Source s = forClient(clientId);
-        if (oboId != null) {
-            if (oboId.startsWith("APP-")) {
-                s.setAssertionOriginClientId(new SourceClientId(oboId));
-            } else {
-                s.setAssertionOriginOrcid(new SourceOrcid(oboId));
-            }
-        }
-        return s;
-    }
 }

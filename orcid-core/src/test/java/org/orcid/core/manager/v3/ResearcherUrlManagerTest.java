@@ -167,7 +167,7 @@ public class ResearcherUrlManagerTest extends BaseTest {
     
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
         ResearcherUrl rUrl = getResearcherUrl();
         
         rUrl = researcherUrlManager.createResearcherUrl(unclaimedOrcid, rUrl, true);
@@ -175,8 +175,8 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
         assertNotNull(rUrl);
         
-        assertEquals(rUrl.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
-        assertEquals(rUrl.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(rUrl.getSource().getSourceClientId().getPath(),CLIENT_1_ID);
+        assertEquals(rUrl.getSource().getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
         assertEquals(rUrl.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(rUrl.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
         
@@ -190,13 +190,13 @@ public class ResearcherUrlManagerTest extends BaseTest {
         }
         
         //make a duplicate as a different assertion origin
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));                
         rUrl2 = researcherUrlManager.createResearcherUrl(unclaimedOrcid, rUrl2, true);
         
         rUrl.setUrl(new Url("http://no.no"));
         //wrong sources:
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             researcherUrlManager.updateResearcherUrl(unclaimedOrcid, rUrl, true);
             fail();
         }catch(WrongSourceException e) {
