@@ -265,6 +265,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 NotificationAmendedEntity.class);
         
         registerSourceConverters(mapperFactory, amendNotificationClassMap);
+        amendNotificationClassMap.field("items.items", "notificationItems"); 
+        amendNotificationClassMap.customize(new CustomMapper<NotificationAmended, NotificationAmendedEntity>() {
+            @Override
+            public void mapBtoA(NotificationAmendedEntity entity, NotificationAmended item, MappingContext context) {
+                if(entity.getNotificationItems() != null) {
+                    item.setNumItemsModified(entity.getNotificationItems().size());
+                }
+            }
+        });
         
         mapCommonFields(amendNotificationClassMap.exclude("amendedSection").customize(new CustomMapper<NotificationAmended, NotificationAmendedEntity>() {
             @Override
@@ -355,22 +364,22 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         })).register();
                 
         mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.type").converter("externalIdentifierIdConverter")
-        .add().field("externalIdValue", "externalIdentifier.value").customize(new CustomMapper<NotificationItemEntity, Item>() {
-            @Override
-            public void mapAtoB(NotificationItemEntity entity, Item item, MappingContext context) {
-                if (!PojoUtil.isEmpty(entity.getAdditionalInfo())) {
-                    Map map = JsonUtils.readObjectFromJsonString(entity.getAdditionalInfo(), HashMap.class);
-                    item.setAdditionalInfo(map);
-                }
-            }
+                .add().field("externalIdValue", "externalIdentifier.value").customize(new CustomMapper<NotificationItemEntity, Item>() {
+                    @Override
+                    public void mapAtoB(NotificationItemEntity entity, Item item, MappingContext context) {
+                        if (!PojoUtil.isEmpty(entity.getAdditionalInfo())) {
+                            Map map = JsonUtils.readObjectFromJsonString(entity.getAdditionalInfo(), HashMap.class);
+                            item.setAdditionalInfo(map);
+                        }
+                    }
 
-            @Override
-            public void mapBtoA(Item item, NotificationItemEntity entity, MappingContext context) {
-                if (item.getAdditionalInfo() != null) {
-                    entity.setAdditionalInfo(JsonUtils.convertToJsonString(item.getAdditionalInfo()));
-                }
-            }
-        }).exclude("additionalInfo").byDefault().register();
+                    @Override
+                    public void mapBtoA(Item item, NotificationItemEntity entity, MappingContext context) {
+                        if (item.getAdditionalInfo() != null) {
+                            entity.setAdditionalInfo(JsonUtils.convertToJsonString(item.getAdditionalInfo()));
+                        }
+                    }
+                }).exclude("additionalInfo").byDefault().register();
 
         return mapperFactory.getMapperFacade();
     }
