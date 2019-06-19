@@ -64,7 +64,8 @@
 41. Add a biography: "Bio!"
 42. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
 43. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list)
-44. Add a work: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value '1234' click through warning about the identifier validation
+43. Add a work by DOI: enter DOI "10.1087/20120404" and save without making change on the add manually screen
+44. Add a work manually: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value '1234' click through warning about the identifier validation
 45. Set the work you just added to private
 46. Visit public page (https://qa.orcid.org/[orcid id])
     * Verify information added in the steps above is visible, but not the private work or email addresses
@@ -145,8 +146,8 @@
 	* 3 qualifications
 	* 6 funding items
 	* 3 research-resource
-	* 13 works (8 bulk work items and one work being a group of 2) - open one to view details
-	* 2 peer-review item (one with two reviews and one with three reviews) - open one to view details
+	* 14 works (8 bulk work items and one work being a group of 2) - open one to view details
+	* 2 peer-review items (one with two reviews and one with three reviews) - open one to view details
 
 69. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
 	* Check that the group of works with doi:1234 only displays the public version

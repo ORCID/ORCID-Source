@@ -65,4 +65,12 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
         query.executeUpdate();
     }
 
+    @Override
+    public UserconnectionEntity findByUserConnectionId(String userConnectionId) {
+        TypedQuery<UserconnectionEntity> query = entityManager.createQuery(
+                "from UserconnectionEntity where id.userid = :userConnectionId", UserconnectionEntity.class);
+        query.setParameter("userConnectionId", userConnectionId);
+        return query.getSingleResult();
+    }
+
 }

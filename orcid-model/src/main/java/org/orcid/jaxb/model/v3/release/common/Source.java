@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.lang3.StringUtils;
+
 import io.swagger.annotations.ApiModel;
 
 /**
@@ -227,32 +229,34 @@ public class Source implements Serializable {
         return true;
     }
 
-    /** Logic taken from SourceEntity constructor
+    /**
+     * Returns a source with populated sourceClientId. 
      * 
-     * @param clientId
-     * @return
+     * @param clientId - String representation of the clientDetailsId representing the source entity of this source.
+     * @return source with populated sourceClientId
      */
     public static Source forClient(String clientId) {
-        Source s = new Source();
-        if (clientId != null) {
-            if (clientId.startsWith("APP-")) {
-                s.setSourceClientId(new SourceClientId(clientId));
-            } else {
-                s.setSourceOrcid(new SourceOrcid(clientId));
-            }
+        if (StringUtils.isEmpty(clientId)) {
+            throw new IllegalArgumentException("Client ID cannot be null");
         }
+        Source s = new Source();
+        s.setSourceClientId(new SourceClientId(clientId));
         return s;
     }
 
-    public static Source forClient(String clientId, String oboId) {
-        Source s = forClient(clientId);
-        if (oboId != null) {
-            if (oboId.startsWith("APP-")) {
-                s.setAssertionOriginClientId(new SourceClientId(oboId));
-            } else {
-                s.setAssertionOriginOrcid(new SourceOrcid(oboId));
-            }
+    /**
+     * Returns a source with populated sourceClientId and assertionOriginClientId. 
+     * 
+     * @param clientId - String representation of the clientDetailsId representing the source entity of this source.
+     * @param oboId - String representation of the assertionOriginClientId for this source.
+     * @return source with populated sourceClientId and assertionOriginClientId
+     */
+    public static Source forClientWithClientOBO(String clientId, String oboId) {
+        if (StringUtils.isEmpty(oboId)) {
+            throw new IllegalArgumentException("Client OBO ID cannot be null");
         }
+        Source s = forClient(clientId);
+        s.setAssertionOriginClientId(new SourceClientId(oboId));
         return s;
     }
 }

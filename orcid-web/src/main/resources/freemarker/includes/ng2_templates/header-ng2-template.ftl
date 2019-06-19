@@ -329,9 +329,6 @@
                                 <li class="last">
                                     <a href="{{aboutUri}}/about/community/launch-partners" title=""><@orcid.msg 'public-layout.launch_partners'/></a></li>
                                 <li class="leaf">
-                                    <a href="{{aboutUri}}/about/community/launch-partners" title="">Launch Partners</a>
-                                </li>
-                                <li class="leaf">
                                     <a href="{{aboutUri}}/about/community/orcid-technical-community">Open Source</a>
                                 </li>
                                 <li class="leaf">

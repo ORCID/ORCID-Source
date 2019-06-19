@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
-import org.orcid.frontend.spring.web.social.config.SocialContext;
+import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
@@ -50,7 +51,6 @@ import org.orcid.utils.OrcidRequestUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -110,9 +110,6 @@ public class RegistrationController extends BaseController {
     @Resource
     private InternalSSOManager internalSSOManager;
 
-    @Autowired
-    private SocialContext socialContext;
-
     @Resource
     private SocialAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerSocial;
 
@@ -133,6 +130,9 @@ public class RegistrationController extends BaseController {
     
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
+    
+    @Resource
+    private SocialSignInUtils socialSignInUtils;
     
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -285,11 +285,18 @@ public class RegistrationController extends BaseController {
             return r;
         }
         
-        if ("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
-            ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
-        } else if ("shibboleth".equals(reg.getLinkType())) {
+        if(OrcidOauth2Constants.SOCIAL.equals(reg.getLinkType())) {
+            Map<String, String> signedInData = socialSignInUtils.getSignedInData(request, response);
+            if(signedInData != null && signedInData.containsKey(OrcidOauth2Constants.PROVIDER_ID)) {
+                String providerId = signedInData.get(OrcidOauth2Constants.PROVIDER_ID);
+                if(OrcidOauth2Constants.FACEBOOK.equals(providerId) || OrcidOauth2Constants.GOOGLE.equals(providerId)) {
+                    ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
+                }
+            }
+        } else if (OrcidOauth2Constants.SHIBBOLETH.equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
+        
         String redirectUrl = calculateRedirectUrl(request, response, true);
         r.setUrl(redirectUrl);
         return r;

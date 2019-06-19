@@ -498,10 +498,10 @@ $(function() {
                             if (signinLocked) return false;
                             disableSignin();
                             
-                            if (basePath.startsWith('/shibboleth/')) {
+                            if (basePath.startsWith('/shibboleth/') || basePath.startsWith('/orcid-web/shibboleth/')) {
                                 loginUrl = baseUrl + 'shibboleth/signin/auth.json';
                             }
-                            else if (basePath.startsWith('/social/')) {
+                            else if (basePath.startsWith('/social/') || basePath.startsWith('/orcid-web/social/')) {
                                 loginUrl = baseUrl + 'social/signin/auth.json';
                             }
 

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
@@ -27,10 +29,9 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
-import org.orcid.frontend.spring.web.social.config.SocialContext;
+import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ReactivationData;
@@ -42,7 +43,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -69,9 +69,6 @@ public class PasswordResetController extends BaseController {
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
-    @Autowired
-    private SocialContext socialContext;
-
     @Resource
     private SocialAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerSocial;
 
@@ -89,6 +86,9 @@ public class PasswordResetController extends BaseController {
 
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Resource
+    private SocialSignInUtils socialSignInUtils;
 
     private static final List<String> RESET_PASSWORD_PARAMS_WHITELIST = Arrays.asList("_");
 
@@ -329,11 +329,18 @@ public class PasswordResetController extends BaseController {
         }
 
         reactivateAndLogUserIn(request, response, reg);
-        if ("social".equals(reg.getLinkType()) && socialContext.isSignedIn(request, response) != null) {
-            ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
-        } else if ("shibboleth".equals(reg.getLinkType())) {
+        if(OrcidOauth2Constants.SOCIAL.equals(reg.getLinkType())) {
+            Map<String, String> signedInData = socialSignInUtils.getSignedInData(request, response);
+            if(signedInData != null && signedInData.containsKey(OrcidOauth2Constants.PROVIDER_ID)) {
+                String providerId = signedInData.get(OrcidOauth2Constants.PROVIDER_ID);
+                if(OrcidOauth2Constants.FACEBOOK.equals(providerId) || OrcidOauth2Constants.GOOGLE.equals(providerId)) {
+                    ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
+                }
+            }
+        } else if (OrcidOauth2Constants.SHIBBOLETH.equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
+        
         String redirectUrl = calculateRedirectUrl(request, response, false);
         r.setUrl(redirectUrl);
         return r;

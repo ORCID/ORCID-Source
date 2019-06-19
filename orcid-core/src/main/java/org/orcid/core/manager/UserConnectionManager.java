@@ -1,6 +1,7 @@
 package org.orcid.core.manager;
 
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
@@ -13,7 +14,7 @@ import org.orcid.persistence.jpa.entities.UserconnectionPK;
 public interface UserConnectionManager {
 
     List<UserconnectionEntity> findByOrcid(String orcid);
-
+    
     void remove(String orcid, UserconnectionPK userConnectionPK);
 
     UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId);
@@ -22,6 +23,11 @@ public interface UserConnectionManager {
 
     UserconnectionEntity findByProviderIdAndProviderUserIdAndIdType(String userId, String shibIdentityProvider, String idType);
 
-    void update(UserconnectionEntity userConnectionEntity);
+    String create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime);
 
+    void update(UserconnectionEntity entity);
+    
+    void update(String providerUserId, String providerId, String accessToken, Long expireTime);
+    
+    Map<String, String> getUserConnectionInfo(String userConnectionId);
 }
