@@ -19,6 +19,7 @@ import org.orcid.core.manager.v3.read_only.impl.ProfileFundingManagerReadOnlyImp
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
@@ -198,31 +199,26 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         profileFundingEntity.setProfile(profile);
-        setIncomingWorkPrivacy(profileFundingEntity, profile, isApiRequest);        
+        setIncomingPrivacy(profileFundingEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);        
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
         if(isApiRequest) {
-            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity, ActionType.CREATE));
         }        
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
     
-	private void setIncomingWorkPrivacy(ProfileFundingEntity workEntity, ProfileEntity profile) {
-		setIncomingWorkPrivacy(workEntity, profile, true);
-	}
+    private void setIncomingPrivacy(ProfileFundingEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
+        String incomingWorkVisibility = workEntity.getVisibility();
+        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
 
-	private void setIncomingWorkPrivacy(ProfileFundingEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
-		String incomingWorkVisibility = workEntity.getVisibility();
-		String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-
-		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
-			workEntity.setVisibility(defaultWorkVisibility);
-		} else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
-			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-		}
-	}
-    
+        if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
+            workEntity.setVisibility(defaultWorkVisibility);
+        } else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
+            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+        }
+    }    
     
     /**
      * Updates a funding that belongs to the given user
@@ -270,7 +266,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         pfe = profileFundingDao.merge(pfe);
         profileFundingDao.flush();
         if(!isApiRequest) {
-            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, ActionType.UPDATE));
         }
         return jpaJaxbFundingAdapter.toFunding(pfe);
     }
@@ -289,15 +285,16 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
         orcidSecurityManager.checkSourceAndThrow(pfe);        
         boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);
-        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, ActionType.DELETE));
         return result;
     }    
         
-    private List<Item> createItemList(ProfileFundingEntity profileFundingEntity) {
+    private List<Item> createItemList(ProfileFundingEntity profileFundingEntity, ActionType type) {
         Item item = new Item();
         item.setItemName(profileFundingEntity.getTitle());
         item.setItemType(ItemType.FUNDING);
         item.setPutCode(String.valueOf(profileFundingEntity.getId()));
+        item.setType(type);
         return Arrays.asList(item);
     }    
         

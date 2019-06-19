@@ -19,6 +19,7 @@ import org.orcid.core.manager.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -202,7 +203,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
         if(isApiRequest) {
-            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity, ActionType.CREATE));
         }        
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
@@ -263,7 +264,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         pfe = profileFundingDao.merge(pfe);
         profileFundingDao.flush();
         if(!isApiRequest) {
-            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, ActionType.UPDATE));
         }
         return jpaJaxbFundingAdapter.toFunding(pfe);
     }
@@ -282,15 +283,16 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
         orcidSecurityManager.checkSource(pfe);                
         boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);
-        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, ActionType.DELETE));
         return result;
     }    
         
-    private List<Item> createItemList(ProfileFundingEntity profileFundingEntity) {
+    private List<Item> createItemList(ProfileFundingEntity profileFundingEntity, ActionType type) {
         Item item = new Item();
         item.setItemName(profileFundingEntity.getTitle());
         item.setItemType(ItemType.FUNDING);
         item.setPutCode(String.valueOf(profileFundingEntity.getId()));
+        item.setType(type);
         return Arrays.asList(item);
     }    
         
