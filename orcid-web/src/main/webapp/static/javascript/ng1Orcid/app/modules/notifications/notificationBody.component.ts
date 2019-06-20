@@ -88,12 +88,10 @@ export class NotificationBodyComponent implements OnInit {
                 console.log(activity.type + ' - ' + this.elementsModifiedCount)
                 
                 var elementDescription = '';
-                if(activity.itemType == "WORK") {
+                if(activity.itemType == "WORK" || activity.itemType == "FUNDING") {
                     elementDescription = activity.itemName;
                 } else if(affiliationTypes.indexOf(activity.itemType) > 0) {
-                    
-                } else if(activity.itemType == "FUNDING") {
-                    
+                    elementDescription = activity.itemName + '(' + activity.additionalInfo['org_name'] + ')';
                 } else if(activity.itemType == "PEER_REVIEW") {
                     
                 } else if(activity.itemType == "RESEARCH_RESOURCE") {
