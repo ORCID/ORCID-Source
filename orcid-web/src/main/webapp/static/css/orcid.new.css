@@ -9062,6 +9062,7 @@ a.footer-url {
 
     .header2 .container {
         width: 100%;
+        overflow: hidden;
     }
 
     .more:after {
