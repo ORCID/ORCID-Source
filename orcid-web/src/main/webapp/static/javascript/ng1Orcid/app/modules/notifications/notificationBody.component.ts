@@ -83,19 +83,36 @@ export class NotificationBodyComponent implements OnInit {
 
     ngOnInit() {        
         if(this.notification.items) {
+            var affiliationTypes = ["DISTINCTION","EDUCATION","EMPLOYMENT","INVITED_POSITION","MEMBERSHIP","QUALIFICATION","SERVICE"];        
             for (let activity of this.notification.items.items) {
-                this.elementsModifiedCount++;
+                console.log(activity.type + ' - ' + this.elementsModifiedCount)
+                
+                var elementDescription = '';
+                if(activity.itemType == "WORK") {
+                    elementDescription = activity.itemName;
+                } else if(affiliationTypes.indexOf(activity.itemType) > 0) {
+                    
+                } else if(activity.itemType == "FUNDING") {
+                    
+                } else if(activity.itemType == "PEER_REVIEW") {
+                    
+                } else if(activity.itemType == "RESEARCH_RESOURCE") {
+                    
+                } 
+                
                 if(this.elementsModifiedCount < this.MAX_ELEMENTS_TO_SHOW) {
                     if(activity.type == "CREATE") {
-                        this.addedList.push(activity.itemName);
+                        this.addedList.push(elementDescription);
                     } else if(activity.type == "UPDATE") {
-                        this.updatedList.push(activity.itemName);
+                        this.updatedList.push(elementDescription);
                     } else if(activity.type == "DELETE") {
-                        this.deletedList.push(activity.itemName);
+                        this.deletedList.push(elementDescription);
                     } else {
-                        this.unknownList.push(activity.itemName);
+                        this.unknownList.push(elementDescription);
                     }
                 }
+                
+                this.elementsModifiedCount++;
                 
                 if(activity.itemType == "WORK"){
                     this.worksList =  this.worksList + "<strong>" + activity.itemName + "</strong>";

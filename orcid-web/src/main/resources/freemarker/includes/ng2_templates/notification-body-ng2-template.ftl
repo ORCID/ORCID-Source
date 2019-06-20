@@ -8,25 +8,25 @@
     			    
     			    
     			    
-    			        <div *ngIf="addedWorksList.length > 0">
+    			        <div *ngIf="addedList.length > 0">
                             <p><strong><@orcid.msg 'notifications.updated.added.label' /></strong></p>
                             <ul *ngFor="let element of addedList">
                                 <li>{{element}}</li>
                             </ul>
                         </div>
-                        <div *ngIf="updatedWorksList.length > 0">
+                        <div *ngIf="updatedList.length > 0">
                             <p><strong><@orcid.msg 'notifications.updated.updated.label' /></strong></p>
                             <ul *ngFor="let element of updatedList">
                                 <li>{{element}}</li>
                             </ul>
                         </div>
-                        <div *ngIf="deletedWorksList.length > 0">
+                        <div *ngIf="deletedList.length > 0">
                             <p><strong><@orcid.msg 'notifications.updated.deleted.label' /></strong></p>
                             <ul *ngFor="let element of deletedList">
                                 <li>{{element}}</li>
                             </ul>
                         </div>
-                        <div *ngIf="unknownWorksList.length > 0">
+                        <div *ngIf="unknownList.length > 0">
                             <p><strong><@orcid.msg 'notifications.updated.unknown.label' /></strong></p>
                             <ul *ngFor="let element of unknownList">
                                 <li>{{element}}</li>
@@ -35,7 +35,7 @@
     			    
                         
                         
-                    <div *ngIf="elementsModifiedCount >= MAX_ELEMENTS_TO_SHOW"><@orcid.msg 'notifications.updated.showing' /> {{MAX_ELEMENTS_TO_SHOW}} {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.updated.out_of' /> {{elementsModifiedCount}}<@orcid.msg 'notifications.updated.please_check.1' /> {{}}<@orcid.msg 'notifications.updated.please_check.2' /> <a href="{{getBaseUri()}}/my-orcid" target="_blank"><@orcid.msg 'notifications.updated.please_check.3' /></a></div>
+                    <div *ngIf="elementsModifiedCount >= MAX_ELEMENTS_TO_SHOW"><@orcid.msg 'notifications.updated.showing' /> {{MAX_ELEMENTS_TO_SHOW}} {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.updated.out_of' /> {{elementsModifiedCount}}<@orcid.msg 'notifications.updated.please_check.1' /> {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}}<@orcid.msg 'notifications.updated.please_check.2' /> <a href="{{getBaseUri()}}/my-orcid" target="_blank"><@orcid.msg 'notifications.updated.please_check.3' /></a></div>
                     <div class="pull-right topBuffer">
                         <button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button> <a href="{{getBaseUri()}}/my-orcid" target="_parent" class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>
                     </div>
