@@ -3,7 +3,7 @@
       <div class="form-group " role="presentation">
                     <div class="search-container" role="search" (mouseleave)="state = false">
                          <a *ngIf="!userInfo"  class="top-menu-button" href="{{getBaseUri()}}/signin">  
-                          {{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")}'| uppercase  }}/{{'${springMacroRequestContext.getMessage("header.register")?replace("<br />", " ")}'| uppercase }}
+                          {{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase  }}/{{'${springMacroRequestContext.getMessage("header.register")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}
                          </a>
                         <div *ngIf="userInfo"  class="top-menu-button" (click)="state = !state">  
                             <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
@@ -36,7 +36,7 @@
                                 </a>
                                 <a class="top-menu-item" href="{{getBaseUri()}}/account">
                                     <img src="{{assetsPath + '/img/svg/baseline-settings-20px.svg'}}">
-                                    {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")}' }}
+                                    {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
                                 <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']=='true'" href="{{getBaseUri()}}/group/developer-tools">
                                     <img src="{{assetsPath + '/img/svg/baseline-code-24px.svg'}}"> 
@@ -48,19 +48,19 @@
                                 </a>
                                 <a  class="top-menu-item"   *ngIf="userInfo['SELF_SERVICE_MENU']"  href="{{getBaseUri()}}/manage-members">
                                     <img src="{{assetsPath + '/img/svg/baseline-build-24px.svg'}}"> 
-                                    {{'${springMacroRequestContext.getMessage("workspace.self_service")?replace("<br />", " ")}'  }}
+                                    {{'${springMacroRequestContext.getMessage("workspace.self_service")?replace("<br />", " ")?replace("'", "\\'")}'  }}
                                 </a>
                                 <a  class="top-menu-item"*ngIf="userInfo['ADMIN_MENU']" href="{{getBaseUri()}}/manage-members" >
                                     <img src="{{assetsPath + '/img/svg/baseline-group-24px.svg'}}"> 
-                                    {{'${springMacroRequestContext.getMessage("admin.members.workspace_link")?replace("<br />", " ")}' }}
+                                    {{'${springMacroRequestContext.getMessage("admin.members.workspace_link")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
                                 <a  class="top-menu-item" *ngIf="userInfo['ADMIN_MENU']" href="{{getBaseUri()}}/admin-actions">
                                     <img src="{{assetsPath + '/img/svg/baseline-verified_user-24px.svg'}}"> 
-                                    {{'${springMacroRequestContext.getMessage("admin.workspace_link")?replace("<br />", " ")}'}}
+                                    {{'${springMacroRequestContext.getMessage("admin.workspace_link")?replace("<br />", " ")?replace("'", "\\'")}'}}
                                 </a>
                                 <a  class="top-menu-item" href="{{getBaseUri()}}/signout">
                                     <img src="{{assetsPath + '/img/svg/baseline-exit_to_app-24px.svg'}}"> 
-                                    {{'${springMacroRequestContext.getMessage("public-layout.sign_out")?replace("<br />", " ")}' }}
+                                    {{'${springMacroRequestContext.getMessage("public-layout.sign_out")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
 
                                 
