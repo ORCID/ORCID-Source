@@ -217,6 +217,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 Locale locale = localeManager.getLocale();                
                 throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxWorksToWrite}, locale));                
             }
+            
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
                                     
             for(int i = 0; i < bulk.size(); i++) {
                 if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
@@ -243,7 +245,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-                        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
                         workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
                         

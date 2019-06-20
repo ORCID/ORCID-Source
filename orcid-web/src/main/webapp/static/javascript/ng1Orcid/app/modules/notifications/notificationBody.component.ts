@@ -39,17 +39,18 @@ export class NotificationBodyComponent implements OnInit {
     encodedUrl: string;
     fundingsCount: number;
     peerReviewsCount: number;
-    worksCount: number;
+    elementsModifiedCount: number;
     educationsList: string;
     employmentsList: string;
     fundingsList: string;
     peerReviewsList: string;
     worksList: string;
-    addedWorksList: string[];
-    updatedWorksList: string[];
-    deletedWorksList: string[];
-    unknownWorksList: string[];
+    addedList: string[];
+    updatedList: string[];
+    deletedList: string[];
+    unknownList: string[];
     TOGGLZ_VERBOSE_NOTIFICATIONS: boolean;
+    MAX_ELEMENTS_TO_SHOW: number;
     
     constructor(
         private commonService: CommonService,
@@ -59,20 +60,21 @@ export class NotificationBodyComponent implements OnInit {
     ) {
         this.notification = elementRef.nativeElement.getAttribute('notification');
         this.TOGGLZ_VERBOSE_NOTIFICATIONS = this.featuresService.isFeatureEnabled('VERBOSE_NOTIFICATIONS');
+        this.MAX_ELEMENTS_TO_SHOW = 20;
         this.educationsCount = 0;
         this.employmentsCount = 0;
         this.fundingsCount = 0;
         this.peerReviewsCount = 0;
-        this.worksCount = 0;
+        this.elementsModifiedCount = 0;
         this.educationsList = "";
         this.employmentsList = "";
         this.fundingsList = "";
         this.peerReviewsList = "";
         this.worksList = "";
-        this.addedWorksList = [];
-        this.updatedWorksList = [];
-        this.deletedWorksList = [];
-        this.unknownWorksList = [];
+        this.addedList = [];
+        this.updatedList = [];
+        this.deletedList = [];
+        this.unknownList = [];
     }
 
     archive(putCode): void {
@@ -81,28 +83,26 @@ export class NotificationBodyComponent implements OnInit {
 
     ngOnInit() {        
         if(this.notification.items) {
-            var counter = 0;
             for (let activity of this.notification.items.items) {
+                this.elementsModifiedCount++;
+                if(this.elementsModifiedCount < this.MAX_ELEMENTS_TO_SHOW) {
+                    if(activity.type == "CREATE") {
+                        this.addedList.push(activity.itemName);
+                    } else if(activity.type == "UPDATE") {
+                        this.updatedList.push(activity.itemName);
+                    } else if(activity.type == "DELETE") {
+                        this.deletedList.push(activity.itemName);
+                    } else {
+                        this.unknownList.push(activity.itemName);
+                    }
+                }
+                
                 if(activity.itemType == "WORK"){
-                    this.worksCount++;
                     this.worksList =  this.worksList + "<strong>" + activity.itemName + "</strong>";
                     if(activity.externalIdentifier){
                         this.worksList = this.worksList + " (" + activity.externalIdentifier.type + ": " + activity.externalIdentifier.value + ")";
                     }
-                    this.worksList += "<br/>";
-                    
-                    counter++;
-                    if(counter <= 5) {
-                        if(activity.type == "CREATE") {
-                            this.addedWorksList.push(activity.itemName);
-                        } else if(activity.type == "UPDATE") {
-                            this.updatedWorksList.push(activity.itemName);
-                        } else if(activity.type == "DELETE") {
-                            this.deletedWorksList.push(activity.itemName);
-                        } else {
-                            this.unknownWorksList.push(activity.itemName);
-                        }
-                    }                    
+                    this.worksList += "<br/>";                                        
                 }
                 if(activity.itemType == "EMPLOYMENT"){
                     this.employmentsCount++;

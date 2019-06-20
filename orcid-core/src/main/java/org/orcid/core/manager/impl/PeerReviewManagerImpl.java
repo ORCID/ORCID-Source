@@ -20,6 +20,7 @@ import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -111,7 +112,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE));
         return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
     }
 
@@ -158,7 +159,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         updatedEntity.setOrg(updatedOrganization);
         updatedEntity = peerReviewDao.merge(updatedEntity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(updatedEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(updatedEntity, ActionType.UPDATE));
         return jpaJaxbPeerReviewAdapter.toPeerReview(updatedEntity);
     }
 
@@ -167,7 +168,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
         orcidSecurityManager.checkSource(pr);        
         boolean result = deletePeerReview(pr, orcid);
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr, ActionType.DELETE));
         return result;
     }
 
@@ -209,11 +210,12 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
     }
 
-    private List<Item> createItemList(PeerReviewEntity peerReviewEntity) {
+    private List<Item> createItemList(PeerReviewEntity peerReviewEntity, ActionType type) {
         Item item = new Item();
         item.setItemName(peerReviewEntity.getSubjectName());
         item.setItemType(ItemType.PEER_REVIEW);
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
+        item.setType(type);
         return Arrays.asList(item);
     }
 
