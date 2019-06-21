@@ -28,8 +28,10 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
+import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
@@ -126,6 +128,73 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int addActivitiesMessageCount = 0;
         int amendedMessageCount = 0;
         int activityCount = 0;
+        Map<String, Map<ActionType, List<Item>>> itemsPerClient = new HashMap<>();
+        Set<String> memberIds = new HashSet<>();
+        DigestEmail digestEmail = new DigestEmail();
+        
+        for (Notification notification : notifications) {
+            digestEmail.addNotification(notification);
+            totalMessageCount++;
+            if (notification.getSource() == null) {
+                orcidMessageCount++;
+            } else {
+                SourceClientId clientId = notification.getSource().getSourceClientId();
+                if (clientId != null) {
+                    memberIds.add(clientId.getPath());
+                }
+            }
+            if (notification instanceof NotificationPermission) {
+                addActivitiesMessageCount++;
+                NotificationPermission permissionNotification = (NotificationPermission) notification;
+                activityCount += permissionNotification.getItems().getItems().size();
+                permissionNotification.setEncryptedPutCode(encryptAndEncodePutCode(permissionNotification.getPutCode()));
+            } else if (notification instanceof NotificationInstitutionalConnection) {
+                notification.setEncryptedPutCode(encryptAndEncodePutCode(notification.getPutCode()));
+            } else if (notification instanceof NotificationAmended) {
+                NotificationAmended amend = (NotificationAmended) notification;
+                amendedMessageCount++;
+                Map<ActionType, List<Item>> itemsCollection = null;
+                if(itemsPerClient.containsKey(notification.getSource().retrieveSourcePath())) {
+                    itemsCollection = itemsPerClient.get(notification.getSource().retrieveSourcePath());
+                } else {
+                    itemsCollection = new HashMap<ActionType, List<Item>>();
+                    itemsCollection.put(ActionType.CREATE, new ArrayList<Item>());
+                    itemsCollection.put(ActionType.DELETE, new ArrayList<Item>());
+                    itemsCollection.put(ActionType.UPDATE, new ArrayList<Item>());
+                    itemsCollection.put(ActionType.UNKNOWN, new ArrayList<Item>());
+                }
+                for(Item item : amend.getItems().getItems()) {
+                    switch(item.getType()) {
+                    case CREATE:
+                        itemsCollection.get(ActionType.CREATE).add(item);
+                        break;
+                    case DELETE:
+                        itemsCollection.get(ActionType.DELETE).add(item);
+                        break;
+                    case UPDATE:
+                        itemsCollection.get(ActionType.UPDATE).add(item);
+                        break;
+                    default: 
+                        itemsCollection.get(ActionType.UNKNOWN).add(item);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        
+        return null;
+    }
+    
+    @Override
+    public EmailMessage createDigestLegacy(String orcid, Collection<Notification> notifications) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);                
+        Locale locale = getUserLocaleFromProfileEntity(record);
+        int totalMessageCount = 0;
+        int orcidMessageCount = 0;
+        int addActivitiesMessageCount = 0;
+        int amendedMessageCount = 0;
+        int activityCount = 0;
         Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
         for (Notification notification : notifications) {
@@ -169,6 +238,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 
+        System.out.println(bodyHtml);
+        
         EmailMessage emailMessage = new EmailMessage();
 
         emailMessage.setSubject(subject);
@@ -177,6 +248,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         return emailMessage;
     }
 
+    
+    
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
         String locale = profile.getLocale();
         if (locale != null) {

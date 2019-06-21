@@ -1,5 +1,5 @@
 package org.orcid.jaxb.model.common;
 
 public enum ActionType {
-    CREATE, DELETE, UPDATE;
+    CREATE, DELETE, UPDATE, UNKNOWN;
 }

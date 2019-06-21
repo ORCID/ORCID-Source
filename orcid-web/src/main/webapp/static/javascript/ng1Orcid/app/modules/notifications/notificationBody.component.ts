@@ -85,10 +85,6 @@ export class NotificationBodyComponent implements OnInit {
         if(this.notification.items) {
             var affiliationTypes = ["DISTINCTION","EDUCATION","EMPLOYMENT","INVITED_POSITION","MEMBERSHIP","QUALIFICATION","SERVICE"];        
             for (let activity of this.notification.items.items) {
-                console.log(activity.itemType + ' - ' + this.elementsModifiedCount)
-                console.log(activity.additionalInfo)
-                console.log(activity.additionalInfo['org_name'])
-                
                 var elementDescription = '';
                 if(activity.itemType == "WORK" || activity.itemType == "FUNDING") {
                     elementDescription = activity.itemName;
