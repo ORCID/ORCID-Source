@@ -4,10 +4,8 @@
 			<!--AMENDED-->
 			<div *ngIf="notification.notificationType=='AMENDED'">
 			    <div *ngIf="TOGGLZ_VERBOSE_NOTIFICATIONS; else defaultNotifications">
-    			    <p><strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.updated.label'/></p>
-    			    
-    			    
-    			    
+    			    <div *ngIf="(addedList.length > 0 || updatedList.length > 0 || deletedList.length > 0 || unknownList.length > 0); else noItemNotification">
+    			        <p><strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.updated.label.1'/> {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.updated.label.2'/></p>
     			        <div *ngIf="addedList.length > 0">
                             <p><strong><@orcid.msg 'notifications.updated.added.label' /></strong></p>
                             <ul *ngFor="let element of addedList">
@@ -32,9 +30,10 @@
                                 <li>{{element}}</li>
                             </ul>
                         </div>                
-    			    
-                        
-                        
+    			    </div>
+                    <ng-template #noItemNotification>
+                        <p><strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.has_updated'/> {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.section_of'/></p>
+                    </ng-template>
                     <div *ngIf="elementsModifiedCount >= MAX_ELEMENTS_TO_SHOW"><@orcid.msg 'notifications.updated.showing' /> {{MAX_ELEMENTS_TO_SHOW}} {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.updated.out_of' /> {{elementsModifiedCount}}<@orcid.msg 'notifications.updated.please_check.1' /> {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}}<@orcid.msg 'notifications.updated.please_check.2' /> <a href="{{getBaseUri()}}/my-orcid" target="_blank"><@orcid.msg 'notifications.updated.please_check.3' /></a></div>
                     <div class="pull-right topBuffer">
                         <button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)" class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button> <a href="{{getBaseUri()}}/my-orcid" target="_parent" class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>

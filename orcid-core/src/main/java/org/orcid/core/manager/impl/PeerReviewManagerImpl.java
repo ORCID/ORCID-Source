@@ -2,10 +2,14 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
@@ -15,6 +19,7 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.PeerReviewManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
@@ -22,6 +27,7 @@ import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
@@ -49,6 +55,9 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
+    
+    @Resource(name = "groupIdRecordManagerReadOnly")
+    private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
 
     @Resource
     private NotificationManager notificationManager;
@@ -216,6 +225,18 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         item.setItemType(ItemType.PEER_REVIEW);
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
         item.setType(type);
+        Map<String, Object> additionalInfo = new HashMap<String, Object>();
+        additionalInfo.put("subject_container_name", peerReviewEntity.getSubjectContainerName());
+        
+        Optional<GroupIdRecord> optional = groupIdRecordManagerReadOnly.findByGroupId(peerReviewEntity.getGroupId());
+        if(optional.isPresent()) {
+            GroupIdRecord groupId = optional.get();
+            if(!StringUtils.isBlank(groupId.getName())) {
+                additionalInfo.put("group_name", optional.get().getName());
+            }            
+        }
+        
+        item.setAdditionalInfo(additionalInfo);
         return Arrays.asList(item);
     }
 
