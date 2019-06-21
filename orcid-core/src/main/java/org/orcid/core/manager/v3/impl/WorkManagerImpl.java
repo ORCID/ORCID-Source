@@ -219,7 +219,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
             
             ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                                    
+                                  
+            List<Item> items = new ArrayList<Item>();
+            
             for(int i = 0; i < bulk.size(); i++) {
                 if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
                     Work work = (Work) bulk.get(i);
@@ -260,6 +262,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Add the work extIds to the list of existing external identifiers
                         addExternalIdsToExistingSet(extIDPutCodeMap, updatedWork, existingExternalIdentifiers);
+                        items.add(createItem(workEntity, ActionType.CREATE));
                     } catch(Exception e) {
                         //Get the exception 
                         OrcidError orcidError = orcidCoreExceptionMapper.getV3OrcidError(e);
@@ -268,7 +271,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 }
             }
             
-            workDao.flush();            
+            workDao.flush();   
+            
+            if(!items.isEmpty()) {
+                notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, items);
+            }
         }
         
         return workBulk;
@@ -389,12 +396,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     private List<Item> createItemList(WorkEntity workEntity, ActionType type) {
+        return Arrays.asList(createItem(workEntity, type));
+    }
+    
+    private Item createItem(WorkEntity workEntity, ActionType type) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);
         item.setPutCode(String.valueOf(workEntity.getId()));
         item.setType(type);
-        return Arrays.asList(item);
+        return item;
     }
     
     @Override

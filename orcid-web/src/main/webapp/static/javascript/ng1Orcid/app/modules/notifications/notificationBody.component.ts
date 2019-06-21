@@ -102,7 +102,7 @@ export class NotificationBodyComponent implements OnInit {
                         elementDescription = elementDescription + ' (' + activity.additionalInfo['subject_container_name'] + ')';
                     }
                 } else if(activity.itemType == "RESEARCH_RESOURCE") {
-                    
+                    elementDescription = activity.proposal.title.title.content;
                 } 
                 
                 if(this.elementsModifiedCount < this.MAX_ELEMENTS_TO_SHOW) {
