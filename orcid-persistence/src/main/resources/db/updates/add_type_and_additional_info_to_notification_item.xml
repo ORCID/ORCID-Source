@@ -11,12 +11,21 @@
         <sql>ALTER TABLE notification_item ADD COLUMN type VARCHAR(10)</sql>
     </changeSet>
 
-	<changeSet author="Angel Montenegro" id="ADD-ADDITIONAL-INFO-TO-NOTIFICATION-ITEM">	    
+	<changeSet author="Angel Montenegro" id="ADD-ADDITIONAL-INFO-TO-NOTIFICATION-ITEM" dbms="postgresql">	    
 		<preConditions onFail="MARK_RAN">
          	<not>
          		<columnExists tableName="notification_item" columnName="additional_info"/>
          	</not>
          </preConditions>
         <sql>ALTER TABLE notification_item ADD COLUMN additional_info json</sql>
+    </changeSet>
+    
+    <changeSet author="Angel Montenegro" id="ADD-ADDITIONAL-INFO-TO-NOTIFICATION-ITEM-AS-TEXT" dbms="hsqldb">	    
+		<preConditions onFail="MARK_RAN">
+         	<not>
+         		<columnExists tableName="notification_item" columnName="additional_info"/>
+         	</not>
+         </preConditions>
+        <sql>ALTER TABLE notification_item ADD COLUMN additional_info text</sql>
     </changeSet>
 </databaseChangeLog>
