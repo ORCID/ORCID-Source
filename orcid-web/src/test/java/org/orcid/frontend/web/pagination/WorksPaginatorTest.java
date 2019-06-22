@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
@@ -95,14 +94,6 @@ public class WorksPaginatorTest {
         }
     }
     
-    @Test
-    public void testGetPublicWorksCount() {
-        Mockito.when(workManagerReadOnly.getWorksSummaryList(Mockito.anyString())).thenReturn(new ArrayList<WorkSummary>());
-        Mockito.when(workManagerReadOnly.groupWorks(Mockito.anyList(), Mockito.eq(true))).thenReturn(getPageSizeOfPublicWorkGroups());
-        int count = worksPaginator.getPublicWorksCount("orcid");
-        assertEquals(WorksPaginator.PAGE_SIZE, count);
-    }
-
     @Test
     public void testTitleSortCaseInsensitive() {
         Works works = get1000PublicWorkGroups();
