@@ -5,13 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGenerator {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(WorkGroupAndGroupingSuggestionGenerator.class);
 
     private Map<String, List<ActivitiesGroup>> potentialGroupingSuggestions = new HashMap<>();
 
@@ -20,6 +25,10 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
             throw new IllegalArgumentException("Argument must be of type WorkSummary");
         }
         WorkSummary workSummary = (WorkSummary) activity;
+        
+        if (Features.WORKS_FAILURE_DEBUG.isActive()) {
+            LOG.info("Grouping work {}", workSummary.getPutCode());
+        }
 
         if (groups.isEmpty()) {
             // If it is the first activity, create a new group for it
