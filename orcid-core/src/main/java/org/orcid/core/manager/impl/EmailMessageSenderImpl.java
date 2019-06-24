@@ -24,17 +24,18 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.common.ActionType;
-import org.orcid.jaxb.model.common_v2.SourceClientId;
-import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
-import org.orcid.jaxb.model.notification.permission_v2.Item;
-import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
-import org.orcid.jaxb.model.notification_v2.Notification;
-import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.notification.Notification;
+import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.release.notification.permission.Item;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
+import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -72,7 +73,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Resource
     private NotificationDao notificationDaoReadOnly;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource
@@ -128,6 +129,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int addActivitiesMessageCount = 0;
         int amendedMessageCount = 0;
         int activityCount = 0;
+        boolean haveWorks = false;
+        boolean haveEducations = false;
+        boolean haveEmployments = false;
+        //TODO
         Map<String, Map<ActionType, List<Item>>> itemsPerClient = new HashMap<>();
         Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
@@ -253,7 +258,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
         String locale = profile.getLocale();
         if (locale != null) {
-            org.orcid.jaxb.model.common_v2.Locale loc = org.orcid.jaxb.model.common_v2.Locale.valueOf(locale);
+            AvailableLocales loc = AvailableLocales.valueOf(locale);
             return LocaleUtils.toLocale(loc.value());
         }
         

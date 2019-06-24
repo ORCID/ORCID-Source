@@ -2,7 +2,7 @@ package org.orcid.core.manager;
 
 import java.util.Collection;
 
-import org.orcid.jaxb.model.notification_v2.Notification;
+import org.orcid.jaxb.model.v3.release.notification.Notification;
 
 /**
  * 
