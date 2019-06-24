@@ -10,13 +10,18 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.pojo.grouping.WorkGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WorksPaginator {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(WorksPaginator.class);
 
     static final int PAGE_SIZE = 50;
 
@@ -32,65 +37,129 @@ public class WorksPaginator {
     @Resource
     private WorksCacheManager worksCacheManager;
     
-    public int getPublicWorksCount(String orcid) {
-        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
-        Works publicWorks = workManagerReadOnly.groupWorks(works, true);
-        return publicWorks.getWorkGroup().size();
-    }
-
     public Page<WorkGroup> getWorksPage(String orcid, int offset, boolean justPublic, String sort, boolean sortAsc) {
-        Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
-        filteredGroups = sort(filteredGroups, sort, sortAsc);
-        
-        Page<WorkGroup> worksPage = new Page<WorkGroup>();
-        worksPage.setTotalGroups(filteredGroups.size());
+        if (Features.WORKS_FAILURE_DEBUG.isActive()) {
+            try {
+                Works works = worksCacheManager.getGroupedWorks(orcid);
+                List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
+                filteredGroups = sort(filteredGroups, sort, sortAsc);
+                
+                Page<WorkGroup> worksPage = new Page<WorkGroup>();
+                worksPage.setTotalGroups(filteredGroups.size());
 
-        List<WorkGroup> workGroups = new ArrayList<>();
-        for (int i = offset; i < Math.min(offset + PAGE_SIZE, filteredGroups.size()); i++) {
-            org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = filteredGroups.get(i);
-            workGroups.add(WorkGroup.valueOf(group, i, orcid));
+                List<WorkGroup> workGroups = new ArrayList<>();
+                for (int i = offset; i < Math.min(offset + PAGE_SIZE, filteredGroups.size()); i++) {
+                    org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = filteredGroups.get(i);
+                    workGroups.add(WorkGroup.valueOf(group, i, orcid));
+                }
+                worksPage.setGroups(workGroups);
+                worksPage.setNextOffset(offset + PAGE_SIZE);
+                return worksPage;
+            } catch (Exception e) {
+                LOG.error("Failure to get works page", e);
+                throw e;
+            }
+        } else {
+            Works works = worksCacheManager.getGroupedWorks(orcid);
+            List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
+            filteredGroups = sort(filteredGroups, sort, sortAsc);
+            
+            Page<WorkGroup> worksPage = new Page<WorkGroup>();
+            worksPage.setTotalGroups(filteredGroups.size());
+    
+            List<WorkGroup> workGroups = new ArrayList<>();
+            for (int i = offset; i < Math.min(offset + PAGE_SIZE, filteredGroups.size()); i++) {
+                org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = filteredGroups.get(i);
+                workGroups.add(WorkGroup.valueOf(group, i, orcid));
+            }
+            worksPage.setGroups(workGroups);
+            worksPage.setNextOffset(offset + PAGE_SIZE);
+            return worksPage;
         }
-        worksPage.setGroups(workGroups);
-        worksPage.setNextOffset(offset + PAGE_SIZE);
-        return worksPage;
     }
 
     public Page<WorkGroup> refreshWorks(String orcid, int limit, String sort, boolean sortAsc) {
-        Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
+        if (Features.WORKS_FAILURE_DEBUG.isActive()) {
+            try {
+                Works works = worksCacheManager.getGroupedWorks(orcid);
+                List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
+        
+                Page<WorkGroup> worksPage = new Page<WorkGroup>();
+                worksPage.setTotalGroups(sortedGroups.size());
+        
+                List<WorkGroup> workGroups = new ArrayList<>();
+                for (int i = 0; i < limit && i < sortedGroups.size(); i++) {
+                    org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = sortedGroups.get(i);
+                    workGroups.add(WorkGroup.valueOf(group, i, orcid));
+                }
+        
+                worksPage.setGroups(workGroups);
+                worksPage.setNextOffset(limit);
+                return worksPage;
+            } catch (Exception e) {
+                LOG.error("Failure to refresh works page", e);
+                throw e;
+            }
+        } else {
+            Works works = worksCacheManager.getGroupedWorks(orcid);
+            List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
 
-        Page<WorkGroup> worksPage = new Page<WorkGroup>();
-        worksPage.setTotalGroups(sortedGroups.size());
+            Page<WorkGroup> worksPage = new Page<WorkGroup>();
+            worksPage.setTotalGroups(sortedGroups.size());
 
-        List<WorkGroup> workGroups = new ArrayList<>();
-        for (int i = 0; i < limit && i < sortedGroups.size(); i++) {
-            org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = sortedGroups.get(i);
-            workGroups.add(WorkGroup.valueOf(group, i, orcid));
+            List<WorkGroup> workGroups = new ArrayList<>();
+            for (int i = 0; i < limit && i < sortedGroups.size(); i++) {
+                org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = sortedGroups.get(i);
+                workGroups.add(WorkGroup.valueOf(group, i, orcid));
+            }
+
+            worksPage.setGroups(workGroups);
+            worksPage.setNextOffset(limit);
+            return worksPage;
         }
-
-        worksPage.setGroups(workGroups);
-        worksPage.setNextOffset(limit);
-        return worksPage;
     }
     
     public Page<WorkGroup> getAllWorks(String orcid, boolean justPublic, String sort, boolean sortAsc) {
-        Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
-        filteredGroups = sort(filteredGroups, sort, sortAsc);
-
-        Page<WorkGroup> worksPage = new Page<WorkGroup>();
-        worksPage.setTotalGroups(filteredGroups.size());
-
-        List<WorkGroup> workGroups = new ArrayList<>();
-        for (int i = 0; i < filteredGroups.size(); i++) {
-            org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = filteredGroups.get(i);
-            workGroups.add(WorkGroup.valueOf(group, i, orcid));
+        if (Features.WORKS_FAILURE_DEBUG.isActive()) {
+            try {
+                Works works = worksCacheManager.getGroupedWorks(orcid);
+                List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
+                filteredGroups = sort(filteredGroups, sort, sortAsc);
+        
+                Page<WorkGroup> worksPage = new Page<WorkGroup>();
+                worksPage.setTotalGroups(filteredGroups.size());
+        
+                List<WorkGroup> workGroups = new ArrayList<>();
+                for (int i = 0; i < filteredGroups.size(); i++) {
+                    org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = filteredGroups.get(i);
+                    workGroups.add(WorkGroup.valueOf(group, i, orcid));
+                }
+        
+                worksPage.setGroups(workGroups);
+                worksPage.setNextOffset(filteredGroups.size());
+                return worksPage;
+            } catch (Exception e) {
+                LOG.error("Failure to refresh works page", e);
+                throw e;
+            }
+        } else {
+            Works works = worksCacheManager.getGroupedWorks(orcid);
+            List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
+            filteredGroups = sort(filteredGroups, sort, sortAsc);
+    
+            Page<WorkGroup> worksPage = new Page<WorkGroup>();
+            worksPage.setTotalGroups(filteredGroups.size());
+    
+            List<WorkGroup> workGroups = new ArrayList<>();
+            for (int i = 0; i < filteredGroups.size(); i++) {
+                org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = filteredGroups.get(i);
+                workGroups.add(WorkGroup.valueOf(group, i, orcid));
+            }
+    
+            worksPage.setGroups(workGroups);
+            worksPage.setNextOffset(filteredGroups.size());
+            return worksPage;
         }
-
-        worksPage.setGroups(workGroups);
-        worksPage.setNextOffset(filteredGroups.size());
-        return worksPage;
     }
 
     private List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sort(List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> list, String sort, boolean sortAsc) {
