@@ -9601,6 +9601,7 @@ user-menu a.top-menu-button {
     font-stretch: normal;
     display: flex;
     flex-direction: row-reverse;
+    margin-top: 16px;
 }
 
 .result-counter-container {
