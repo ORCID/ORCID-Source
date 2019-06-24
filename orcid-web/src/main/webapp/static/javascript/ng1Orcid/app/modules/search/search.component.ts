@@ -239,4 +239,9 @@ export class SearchComponent implements OnDestroy, OnInit {
         }
     }
 
+        
+    getBaseUri(): String {
+        return getBaseUri();
+    };
+
 }

@@ -8938,7 +8938,7 @@ a.footer-url {
 
 .header2 .search {
     padding: 20px 0;
-    padding-top: 38px;
+    padding-top: 8px;
     flex-grow: 1;
     max-width: 500px;
     padding-left: 20px;
@@ -9032,7 +9032,6 @@ a.footer-url {
 
 .header2 .search-container {
     flex-grow: 1;
-    padding-right: 8px;
 }
 
 .header2 .menu-bar ul > li > ul > li  a.active {
@@ -9045,7 +9044,7 @@ a.footer-url {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding-bottom: 15px;
+    padding-bottom: 26px;
 }
 
 .lang-rl .header2 .dropdown-menus-container { 
@@ -9484,7 +9483,7 @@ user-menu .top-menu-button {
     padding: 5px;
     align-items: center;
     border-radius: 4px;
-
+    padding-right: 8px;
 }
     
 user-menu .top-menu-button:hover {
@@ -9593,4 +9592,17 @@ user-menu a.top-menu-button {
     user-menu .top-menu-button > img {
         height: 36px;
     }
+}
+
+.settings-button {
+    font-size: 14px;
+    font-weight: 800;
+    font-style: normal;
+    font-stretch: normal;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.result-counter-container {
+    margin-top: 17px;
 }
