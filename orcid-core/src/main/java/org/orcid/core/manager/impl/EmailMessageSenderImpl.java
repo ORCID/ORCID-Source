@@ -32,6 +32,7 @@ import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
+import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
@@ -129,11 +130,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int addActivitiesMessageCount = 0;
         int amendedMessageCount = 0;
         int activityCount = 0;
-        boolean haveWorks = false;
-        boolean haveEducations = false;
-        boolean haveEmployments = false;
-        //TODO
-        Map<String, Map<ActionType, List<Item>>> itemsPerClient = new HashMap<>();
+        boolean haveBio = false, haveExternalIdentifiers = false, haveWorks = false, haveEducations = false, haveEmployments = false, haveDistinctions = false, haveInvitedPositions = false, haveMemberships = false, haveServices = false, haveQualifications = false, haveFundings = false, havePeerReviews = false, haveResearchResources = false;
+        
+        Map<String, Map<ActionType, List<Item>>> itemsPerClient = new HashMap<String, Map<ActionType, List<Item>>>();
         Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
         
@@ -158,6 +157,29 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             } else if (notification instanceof NotificationAmended) {
                 NotificationAmended amend = (NotificationAmended) notification;
                 amendedMessageCount++;
+                switch (amend.getAmendedSection()) {
+                case BIO:
+                    haveBio = true;
+                    break;
+                case DISTINCTION:
+                    haveDistinctions = true;
+                    break;
+                case EDUCATION:
+                    haveEducations = true;
+                    break;
+                case EMPLOYMENT:
+                    haveEmployments = true;
+                    break;
+                case EXTERNAL_IDENTIFIERS:
+                    haveExternalIdentifiers = true;
+                    break;
+                case FUNDING:
+                    haveFundings = true;
+                    break;
+                case INVITED_POSITION:
+                    haveInvitedPositions = true;
+                    break;
+                }
                 Map<ActionType, List<Item>> itemsCollection = null;
                 if(itemsPerClient.containsKey(notification.getSource().retrieveSourcePath())) {
                     itemsCollection = itemsPerClient.get(notification.getSource().retrieveSourcePath());
@@ -169,19 +191,23 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     itemsCollection.put(ActionType.UNKNOWN, new ArrayList<Item>());
                 }
                 for(Item item : amend.getItems().getItems()) {
-                    switch(item.getType()) {
-                    case CREATE:
-                        itemsCollection.get(ActionType.CREATE).add(item);
-                        break;
-                    case DELETE:
-                        itemsCollection.get(ActionType.DELETE).add(item);
-                        break;
-                    case UPDATE:
-                        itemsCollection.get(ActionType.UPDATE).add(item);
-                        break;
-                    default: 
+                    if(item.getType() != null) {
+                        switch(item.getType()) {
+                        case CREATE:
+                            itemsCollection.get(ActionType.CREATE).add(item);
+                            break;
+                        case DELETE:
+                            itemsCollection.get(ActionType.DELETE).add(item);
+                            break;
+                        case UPDATE:
+                            itemsCollection.get(ActionType.UPDATE).add(item);
+                            break;
+                        default: 
+                            itemsCollection.get(ActionType.UNKNOWN).add(item);
+                            break;
+                        }
+                    } else {
                         itemsCollection.get(ActionType.UNKNOWN).add(item);
-                        break;
                     }
                 }
             }
@@ -296,7 +322,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 
                 if(!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                    EmailMessage digestMessage = createDigest(orcid, notifications);
+                    EmailMessage digestMessage = createDigestLegacy(orcid, notifications);
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
                     digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
@@ -445,5 +471,29 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 }                
             }
         }); 
+    }
+    
+    private class ClientUpdates {
+        String clientId;
+        
+        Map<AmendedSection, Map<ActionType, List<Item>>> updates = new HashMap<>();
+        
+        public void addBioElement(Item item) {
+            AmendedSection key = AmendedSection.BIO;
+            if(!updates.containsKey(key)) {
+                updates.put(key, new HashMap<ActionType, List<Item>>());
+            }
+            if(item.getType() == null && !updates.get(key).containsKey(ActionType.UNKNOWN)) {
+               updates.get(key).put(ActionType.UNKNOWN, new ArrayList<Item>()); 
+            } else if(!updates.get(key).containsKey(item.getType())) {
+                updates.get(key).put(item.getType(), new ArrayList<Item>()); 
+            }
+            
+            updates.get(key).get(item.getType() == null ? ActionType.UNKNOWN : item.getType()).add(item);
+        }
+        
+        private void init(AmendedSection section, ActionType type) {
+            
+        }
     }
 }
