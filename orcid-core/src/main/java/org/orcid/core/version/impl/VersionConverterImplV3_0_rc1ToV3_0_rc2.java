@@ -12,7 +12,6 @@ import org.orcid.jaxb.model.v3.rc1.common.OrcidIdBase;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.rc1.common.SourceClientId;
 import org.orcid.jaxb.model.v3.rc1.common.SourceOrcid;
-import org.orcid.jaxb.model.v3.rc1.common.Url;
 import org.orcid.jaxb.model.v3.rc1.error.OrcidError;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.rc1.groupid.GroupIdRecords;
@@ -362,20 +361,24 @@ public class VersionConverterImplV3_0_rc1ToV3_0_rc2 implements V3VersionConverte
 
                     @Override
                     public void mapAtoB(PeerReview a, org.orcid.jaxb.model.v3.rc2.record.PeerReview b, MappingContext context) {
-                        if (org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.DISSERTATION.equals(a.getSubjectType())) {
-                            b.setSubjectType(org.orcid.jaxb.model.common.PeerReviewSubjectType.DISSERTATION_THESIS);
-                        } else {
-                            b.setSubjectType(org.orcid.jaxb.model.common.PeerReviewSubjectType.fromValue(a.getSubjectType().value()));
+                        if(a.getSubjectType() != null) {
+                            if (org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.DISSERTATION.equals(a.getSubjectType())) {
+                                b.setSubjectType(org.orcid.jaxb.model.common.PeerReviewSubjectType.DISSERTATION_THESIS);
+                            } else {
+                                b.setSubjectType(org.orcid.jaxb.model.common.PeerReviewSubjectType.fromValue(a.getSubjectType().value()));
+                            }
                         }
                     }
 
                     @Override
                     public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.PeerReview b, PeerReview a, MappingContext context) {
-                        if (org.orcid.jaxb.model.common.PeerReviewSubjectType.DISSERTATION_THESIS.equals(b.getSubjectType())) {
-                            a.setSubjectType(org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.DISSERTATION);
-                        } else {
-                            a.setSubjectType(org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.fromValue(b.getSubjectType().value()));
-                        }
+                        if(b.getSubjectType() != null) {
+                            if (org.orcid.jaxb.model.common.PeerReviewSubjectType.DISSERTATION_THESIS.equals(b.getSubjectType())) {
+                                a.setSubjectType(org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.DISSERTATION);
+                            } else {
+                                a.setSubjectType(org.orcid.jaxb.model.v3.rc1.record.PeerReviewSubjectType.fromValue(b.getSubjectType().value()));
+                            }
+                        }                        
                     }
                 }).byDefault().register();
 
