@@ -2,6 +2,7 @@ package org.orcid.core.cli;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -333,15 +334,21 @@ public class CorrectBadClientSourceData {
         LOG.info("Correcting works...");
         int corrected = 0;
         
+        LOG.info("Fetching IDs of works to be corrected: {}", new Date());
         List<BigInteger> ids = workDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
+        LOG.info("Fetched {} ids: {}", ids.size(), new Date());
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
+                LOG.info("Correcting works: {}", new Date());
                 workDao.correctClientSource(subList);
+                LOG.info("Corrected {} works: {}", subList.size(), new Date());
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
+            LOG.info("Fetching IDs of works to be corrected: {}", new Date());
             ids = workDao.getIdsForClientSourceCorrection(BATCH_SIZE * 20, nonPublicClients);
+            LOG.info("Fetched {} ids", ids.size());
         }
         
         ids = workDao.getIdsForUserSourceCorrection(BATCH_SIZE * 20, publicClients);

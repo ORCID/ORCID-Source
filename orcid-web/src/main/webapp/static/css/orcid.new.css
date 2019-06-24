@@ -8854,7 +8854,7 @@ a.footer-url {
 }
 
 .header2 .menu-bar > .container > ul > li > ul > li > a:hover {
-    background-color: rgba(46, 127, 159, 0.04);
+    background-color: rgba(8,92,119, 0.04);
 }
 
 
@@ -9061,6 +9061,7 @@ a.footer-url {
 
     .header2 .container {
         width: 100%;
+        overflow: hidden;
     }
 
     .more:after {

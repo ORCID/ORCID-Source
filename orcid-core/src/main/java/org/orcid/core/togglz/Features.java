@@ -106,7 +106,10 @@ public enum Features implements Feature {
     HIDE_UNVERIFIED_EMAILS,
     
     @Label("User OBO")
-    USER_OBO;
+    USER_OBO,
+    
+    @Label("Works failure debug")
+    WORKS_FAILURE_DEBUG;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
