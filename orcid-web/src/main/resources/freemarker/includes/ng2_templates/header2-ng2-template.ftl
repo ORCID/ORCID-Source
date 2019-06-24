@@ -171,7 +171,7 @@
                                         <a href="{{aboutUri}}/organizations/publishers/outreachresources">{{'Outreach Resources'| uppercase }}</a>
                                     </li>
                                     <li class="last leaf">
-                                        <a href="{{aboutUri}}/about/membership" title="">{{'Membershi'| uppercase }}p</a>
+                                        <a href="{{aboutUri}}/about/membership" title="">{{'Membership'| uppercase }}</a>
                                     </li>
                                 </ul>
                             </li>
