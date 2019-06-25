@@ -2,7 +2,7 @@
 <#escape x as x?html>    
     <div>
         <p>${sectionName}</p>
-        <#list created>
+        <#list added??>
             <div>
                 <p><@emailMacros.msg "email.notification.client.added" /></p>
             </div>
@@ -14,7 +14,7 @@
                 </ul>                
             </div>
         </#list>
-        <#list updated>
+        <#list updated??>
             <div>
                 <p><@emailMacros.msg "email.notification.client.updated" /></p>
             </div>
@@ -26,7 +26,7 @@
                 </ul>                
             </div>
         </#list>
-        <#list deleted>
+        <#list deleted??>
             <div>
                 <p><@emailMacros.msg "email.notification.client.deleted" /></p>
             </div>
@@ -38,7 +38,7 @@
                 </ul>                
             </div>
         </#list>
-        <#list other>
+        <#list other??>
             <div>
                 <p><@emailMacros.msg "email.notification.client.other" /></p>
             </div>

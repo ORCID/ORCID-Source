@@ -30,11 +30,11 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
-import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
@@ -113,6 +113,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Value("${org.notifications.service_announcements.batchSize:60000}")
     private Integer batchSize;
     
+    protected Features feature;
+    
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
             @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
         if (maxThreads == null || maxThreads > 64 || maxThreads < 1) {
@@ -160,13 +162,15 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             } else if (notification instanceof NotificationAmended) {
                 NotificationAmended amend = (NotificationAmended) notification;
                 String clientId = amend.getSource().retrieveSourcePath();
+                String clientName = amend.getSource().getSourceName() == null ? null : amend.getSource().getSourceName().getContent();
                 String clientDescription = amend.getSourceDescription();
                 XMLGregorianCalendar createdDate = amend.getCreatedDate();
                 ClientUpdates cu = null;
                 if(!updatesByClient.containsKey(clientId)) {
                     cu = new ClientUpdates();
                     cu.setUserLocale(locale);
-                    cu.setClientName(clientId);
+                    cu.setClientId(clientId);
+                    cu.setClientName(clientName);
                     cu.setClientDescription(clientDescription);
                     updatesByClient.put(clientId, cu);
                 } else {
@@ -177,7 +181,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     cu.addElement(createdDate, item);
                 }
             }
-        }
+        } 
         
         List<String> sortedClientIds = updatesByClient.keySet().stream().sorted().collect(Collectors.toList());
         List<ClientUpdates> sortedClientUpdates = new ArrayList<ClientUpdates>();
@@ -188,6 +192,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);
+        params.put("messageArgs", new Object[0]); 
         params.put("emailName", emailName);
         params.put("digestEmail", digestEmail);        
         params.put("totalMessageCount", String.valueOf(totalMessageCount));
@@ -195,6 +200,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("baseUri", orcidUrlManager.getBaseUrl());
         params.put("subject", subject);
         params.put("clientUpdates", sortedClientUpdates);
+        params.put("verboseNotifications", true);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 
         System.out.println(bodyHtml);
@@ -306,7 +312,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 
                 if(!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                    EmailMessage digestMessage = createDigestLegacy(orcid, notifications);
+                    EmailMessage digestMessage;
+                    if(Features.VERBOSE_NOTIFICATIONS.isActive()) {
+                        digestMessage = createDigest(orcid, notifications);
+                    } else {
+                        digestMessage = createDigestLegacy(orcid, notifications);
+                    }
+                    
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
                     digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
@@ -457,16 +469,21 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }); 
     }
     
-    private class ClientUpdates {
+    public class ClientUpdates {
+        String clientId;
         String clientName;
         String clientDescription;
         Locale userLocale;
         
         Map<ItemType, Map<ActionType, List<String>>> updates = new HashMap<>();        
         
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
+        
         public void setClientName(String clientName) {
             this.clientName = clientName;
-        }        
+        }
         
         public void setClientDescription(String clientDescription) {
             this.clientDescription = clientDescription;
@@ -474,6 +491,22 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         
         public void setUserLocale(Locale locale) {
             this.userLocale = locale;
+        }
+        
+        public String getClientId() {
+            return clientId;
+        }
+
+        public String getClientName() {
+            return clientName;
+        }
+
+        public String getClientDescription() {
+            return clientDescription;
+        }
+
+        public Locale getUserLocale() {
+            return userLocale;
         }
         
         private String renderCreationDate(XMLGregorianCalendar createdDate) {
@@ -495,13 +528,18 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             case MEMBERSHIP:
             case QUALIFICATION:
             case SERVICE:
-                value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + item.getItemName() +  + '(' + renderCreationDate (createdDate) + ')';
+                value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
                 break;
             default:
-                value = item.getItemName() +  + '(' + renderCreationDate (createdDate) + ')';
+                value = item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
                 break;
             }   
-            updates.get(item.getItemType()).get(item.getActionType()).add(value);            
+            if(item.getActionType() != null) {
+                updates.get(item.getItemType()).get(item.getActionType()).add(value);
+            } else {
+                updates.get(item.getItemType()).get(ActionType.UNKNOWN).add(value);
+            }
+            
         }
 
         public String renderBio() {
@@ -555,7 +593,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         private String render(ItemType itemType) {
             if(updates.containsKey(itemType)) {
                 Map<String, Object> params = new HashMap<>();
-                params.put("sectionName", messages.getMessage("email.common.recordsection." + itemType.name(), null, userLocale));
+                params.put("sectionName", messages.getMessage("email.common.recordsection." + itemType.name(), new String [] {}, userLocale));
                 if(updates.get(itemType).containsKey(ActionType.CREATE))
                     params.put("added", updates.get(itemType).get(ActionType.CREATE));
                 
@@ -570,7 +608,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 
                 return templateManager.processTemplate("digest_email_amend_section_items_list_html.ftl", params, userLocale);
             }
-            return "";
+            return "<div></div>";
         }
 
         private void init(ItemType key, ActionType type) {
