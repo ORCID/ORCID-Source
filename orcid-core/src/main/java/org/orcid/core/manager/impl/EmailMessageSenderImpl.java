@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -132,11 +133,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int addActivitiesMessageCount = 0;
         int amendedMessageCount = 0;
         int activityCount = 0;
-        boolean haveBio = false, haveExternalIdentifiers = false, haveWorks = false, haveEducations = false, haveEmployments = false, haveDistinctions = false, haveInvitedPositions = false, haveMemberships = false, haveServices = false, haveQualifications = false, haveFundings = false, havePeerReviews = false, haveResearchResources = false;
         
-        Map<String, Map<ActionType, List<Item>>> itemsPerClient = new HashMap<String, Map<ActionType, List<Item>>>();
         Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
+        
+        Map<String, ClientUpdates> updatesByClient = new HashMap<String, ClientUpdates>();
         
         for (Notification notification : notifications) {
             digestEmail.addNotification(notification);
@@ -158,62 +159,45 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 notification.setEncryptedPutCode(encryptAndEncodePutCode(notification.getPutCode()));
             } else if (notification instanceof NotificationAmended) {
                 NotificationAmended amend = (NotificationAmended) notification;
-                amendedMessageCount++;
-                switch (amend.getAmendedSection()) {
-                case BIO:
-                    haveBio = true;
-                    break;
-                case DISTINCTION:
-                    haveDistinctions = true;
-                    break;
-                case EDUCATION:
-                    haveEducations = true;
-                    break;
-                case EMPLOYMENT:
-                    haveEmployments = true;
-                    break;
-                case EXTERNAL_IDENTIFIERS:
-                    haveExternalIdentifiers = true;
-                    break;
-                case FUNDING:
-                    haveFundings = true;
-                    break;
-                case INVITED_POSITION:
-                    haveInvitedPositions = true;
-                    break;
-                }
-                Map<ActionType, List<Item>> itemsCollection = null;
-                if(itemsPerClient.containsKey(notification.getSource().retrieveSourcePath())) {
-                    itemsCollection = itemsPerClient.get(notification.getSource().retrieveSourcePath());
+                String clientId = amend.getSource().retrieveSourcePath();
+                String clientDescription = amend.getSourceDescription();
+                XMLGregorianCalendar createdDate = amend.getCreatedDate();
+                ClientUpdates cu = null;
+                if(!updatesByClient.containsKey(clientId)) {
+                    cu = new ClientUpdates();
+                    cu.setUserLocale(locale);
+                    cu.setClientName(clientId);
+                    cu.setClientDescription(clientDescription);
+                    updatesByClient.put(clientId, cu);
                 } else {
-                    itemsCollection = new HashMap<ActionType, List<Item>>();
-                    itemsCollection.put(ActionType.CREATE, new ArrayList<Item>());
-                    itemsCollection.put(ActionType.DELETE, new ArrayList<Item>());
-                    itemsCollection.put(ActionType.UPDATE, new ArrayList<Item>());
-                    itemsCollection.put(ActionType.UNKNOWN, new ArrayList<Item>());
+                    cu = updatesByClient.get(clientId);
                 }
+                amendedMessageCount++;
                 for(Item item : amend.getItems().getItems()) {
-                    if(item.getActionType() != null) {
-                        switch(item.getActionType()) {
-                        case CREATE:
-                            itemsCollection.get(ActionType.CREATE).add(item);
-                            break;
-                        case DELETE:
-                            itemsCollection.get(ActionType.DELETE).add(item);
-                            break;
-                        case UPDATE:
-                            itemsCollection.get(ActionType.UPDATE).add(item);
-                            break;
-                        default: 
-                            itemsCollection.get(ActionType.UNKNOWN).add(item);
-                            break;
-                        }
-                    } else {
-                        itemsCollection.get(ActionType.UNKNOWN).add(item);
-                    }
+                    cu.addElement(createdDate, item);
                 }
             }
         }
+        
+        List<String> sortedClientIds = updatesByClient.keySet().stream().sorted().collect(Collectors.toList());
+        List<ClientUpdates> sortedClientUpdates = new ArrayList<ClientUpdates>();
+        sortedClientIds.stream().forEach(s -> {sortedClientUpdates.add(updatesByClient.get(s));});
+        
+        String emailName = notificationManager.deriveEmailFriendlyName(record);
+        String subject = messages.getMessage("email.subject.digest", new String[] { emailName, String.valueOf(totalMessageCount) }, locale);
+        Map<String, Object> params = new HashMap<>();
+        params.put("locale", locale);
+        params.put("messages", messages);
+        params.put("emailName", emailName);
+        params.put("digestEmail", digestEmail);        
+        params.put("totalMessageCount", String.valueOf(totalMessageCount));
+        params.put("orcidMessageCount", orcidMessageCount);
+        params.put("baseUri", orcidUrlManager.getBaseUrl());
+        params.put("subject", subject);
+        params.put("clientUpdates", sortedClientUpdates);
+        String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
+
+        System.out.println(bodyHtml);
         
         
         return null;
@@ -280,8 +264,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         emailMessage.setBodyHtml(bodyHtml);
         return emailMessage;
     }
-
-    
     
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
         String locale = profile.getLocale();
@@ -477,12 +459,22 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     private class ClientUpdates {
         String clientName;
-
+        String clientDescription;
+        Locale userLocale;
+        
         Map<ItemType, Map<ActionType, List<String>>> updates = new HashMap<>();        
         
         public void setClientName(String clientName) {
             this.clientName = clientName;
         }        
+        
+        public void setClientDescription(String clientDescription) {
+            this.clientDescription = clientDescription;
+        }
+        
+        public void setUserLocale(Locale locale) {
+            this.userLocale = locale;
+        }
         
         private String renderCreationDate(XMLGregorianCalendar createdDate) {
             String result = new String();
@@ -512,34 +504,83 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             updates.get(item.getItemType()).get(item.getActionType()).add(value);            
         }
 
-        public boolean haveWorks() {
-            return updates.containsKey(ItemType.WORK);
+        public String renderBio() {
+            return render(ItemType.BIO);
+        }
+
+        public String renderDistinction() {
+            return render(ItemType.DISTINCTION);
+        }
+
+        public String renderEmployment() {
+            return render(ItemType.EMPLOYMENT);
+        }
+
+        public String renderExternalIndentifier() {
+            return render(ItemType.EXTERNAL_IDENTIFIER);
         }
         
-        public boolean createdWorks() {
-            return updates.containsKey(ItemType.WORK) && updates.get(ItemType.WORK).containsKey(ActionType.CREATE);
+        public String renderInvitedPosition() {
+            return render(ItemType.INVITED_POSITION);
+        }
+
+        public String renderFunding() {
+            return render(ItemType.FUNDING);
+        }
+
+        public String renderMembership() {
+            return render(ItemType.MEMBERSHIP);
+        }
+
+        public String renderPeerReview() {
+            return render(ItemType.PEER_REVIEW);
+        }
+
+        public String renderQualification() {
+            return render(ItemType.QUALIFICATION);
+        }
+
+        public String renderService() {
+            return render(ItemType.SERVICE);
+        }
+
+        public String renderWorks() {
+            return render(ItemType.WORK);
+        }
+
+        public String renderResearchResources() {
+            return render(ItemType.RESEARCH_RESOURCE);
         }
         
-        public boolean updatedWorks() {
-            return updates.containsKey(ItemType.WORK) && updates.get(ItemType.WORK).containsKey(ActionType.UPDATE);
+        private String render(ItemType itemType) {
+            if(updates.containsKey(itemType)) {
+                Map<String, Object> params = new HashMap<>();
+                params.put("sectionName", messages.getMessage("email.common.recordsection." + itemType.name(), null, userLocale));
+                if(updates.get(itemType).containsKey(ActionType.CREATE))
+                    params.put("added", updates.get(itemType).get(ActionType.CREATE));
+                
+                if(updates.get(itemType).containsKey(ActionType.UPDATE))
+                    params.put("updated", updates.get(itemType).get(ActionType.UPDATE));
+                
+                if(updates.get(itemType).containsKey(ActionType.DELETE))
+                    params.put("deleted", updates.get(itemType).get(ActionType.DELETE));
+                
+                if(updates.get(itemType).containsKey(ActionType.UNKNOWN))
+                    params.put("other", updates.get(itemType).get(ActionType.UNKNOWN));
+                
+                return templateManager.processTemplate("digest_email_amend_section_items_list_html.ftl", params, userLocale);
+            }
+            return "";
         }
-        
-        public boolean deletedWorks() {
-            return updates.containsKey(ItemType.WORK) && updates.get(ItemType.WORK).containsKey(ActionType.DELETE);
-        }
-        
-        public boolean otherWorks() {
-            return updates.containsKey(ItemType.WORK) && updates.get(ItemType.WORK).containsKey(ActionType.UNKNOWN);
-        }
-        
+
         private void init(ItemType key, ActionType type) {
             if (!updates.containsKey(key)) {
-                updates.put(key, new HashMap<ActionType, List<Item>>());
+                updates.put(key, new HashMap<ActionType, List<String>>());
             }
             if (type == null && !updates.get(key).containsKey(ActionType.UNKNOWN)) {
-                updates.get(key).put(ActionType.UNKNOWN, new ArrayList<Item>());
+                updates.get(key).put(ActionType.UNKNOWN, new ArrayList<String>());
             } else if (!updates.get(key).containsKey(type)) {
-                updates.get(key).put(type, new ArrayList<Item>());
+                updates.get(key).put(type, new ArrayList<String>());
             }
         }
     }

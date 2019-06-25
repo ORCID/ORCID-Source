@@ -68,6 +68,9 @@
             </p>
 			<#elseif notificationType == 'AMENDED'>
             <p>
+            
+                
+            
                 <#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
                 <div>
                     <img src="https://orcid.org/sites/all/themes/orcid/img/update.png">&nbsp;<@emailMacros.msg "email.digest.hasupdated_1" />

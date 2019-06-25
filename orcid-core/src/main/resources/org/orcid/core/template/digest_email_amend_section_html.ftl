@@ -5,15 +5,19 @@
             <div>
                 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.space /><@emailMacros.msg "email.notification.client.have_name" />
             </div>
-            <#if clientUpdate.haveWorks??>
-                ${clientUpdate.renderWorks}
-            </#if>
-            <#if clientUpdate.haveEducations??>
-                ${clientUpdate.renderWorks}
-            </#if>
-            
-                
-            
+            ${clientUpdate.renderBio}
+            ${clientUpdate.renderDistinction}
+            ${clientUpdate.renderWorks}
+            ${clientUpdate.renderEmployment}
+            ${clientUpdate.renderExternalIdentifier}
+            ${clientUpdate.renderInvitedPosition}
+            ${clientUpdate.renderFunding}
+            ${clientUpdate.renderMembership}
+            ${clientUpdate.renderPeerReview}
+            ${clientUpdate.renderQualification}
+            ${clientUpdate.renderService}
+            ${clientUpdate.renderWorks}
+            ${clientUpdate.renderResearchResources}            
         </p>
     </#list>
 </#escape>

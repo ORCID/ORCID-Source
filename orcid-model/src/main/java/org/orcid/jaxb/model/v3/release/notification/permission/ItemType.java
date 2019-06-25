@@ -18,6 +18,7 @@ public enum ItemType {
     @XmlEnumValue("distinction") DISTINCTION,
     @XmlEnumValue("education") EDUCATION,
     @XmlEnumValue("employment") EMPLOYMENT,
+    @XmlEnumValue("external-identifier") EXTERNAL_IDENTIFIER,
     @XmlEnumValue("invited-position") INVITED_POSITION,
     @XmlEnumValue("funding") FUNDING,
     @XmlEnumValue("membership") MEMBERSHIP,
