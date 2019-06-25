@@ -180,7 +180,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         item.setItemName(researchResourceEntity.getTitle());
         item.setItemType(ItemType.RESEARCH_RESOURCE);
         item.setPutCode(String.valueOf(researchResourceEntity.getId()));
-        item.setType(type);
+        item.setActionType(type);
         return Arrays.asList(item);
     }
 

@@ -224,7 +224,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         item.setItemName(peerReviewEntity.getSubjectName());
         item.setItemType(ItemType.PEER_REVIEW);
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
-        item.setType(type);
+        item.setActionType(type);
         Map<String, Object> additionalInfo = new HashMap<String, Object>();
         additionalInfo.put("subject_container_name", peerReviewEntity.getSubjectContainerName());
         

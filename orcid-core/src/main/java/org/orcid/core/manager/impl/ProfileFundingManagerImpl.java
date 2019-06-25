@@ -292,7 +292,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         item.setItemName(profileFundingEntity.getTitle());
         item.setItemType(ItemType.FUNDING);
         item.setPutCode(String.valueOf(profileFundingEntity.getId()));
-        item.setType(type);
+        item.setActionType(type);
         return Arrays.asList(item);
     }    
         

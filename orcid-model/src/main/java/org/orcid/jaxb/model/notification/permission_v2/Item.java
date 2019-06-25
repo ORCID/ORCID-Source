@@ -63,7 +63,7 @@ public class Item implements Serializable {
     @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/common", required = true)
     protected ExternalID externalIdentifier;
     @XmlTransient
-    protected ActionType type;
+    protected ActionType actionType;
     @XmlTransient
     protected Map<String, Object> additionalInfo = new HashMap<String, Object>();
 
@@ -138,12 +138,12 @@ public class Item implements Serializable {
         this.externalIdentifier = value;
     }
 
-    public ActionType getType() {
-        return type;
+    public ActionType getActionType() {
+        return actionType;
     }
 
-    public void setType(ActionType type) {
-        this.type = type;
+    public void setActionType(ActionType type) {
+        this.actionType = type;
     }
 
     public Map<String, Object> getAdditionalInfo() {        
@@ -163,7 +163,7 @@ public class Item implements Serializable {
         result = prime * result + ((itemName == null) ? 0 : itemName.hashCode());
         result = prime * result + ((itemType == null) ? 0 : itemType.hashCode());
         result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((actionType == null) ? 0 : actionType.hashCode());
         return result;
     }
 
@@ -198,7 +198,7 @@ public class Item implements Serializable {
                 return false;
         } else if (!putCode.equals(other.putCode))
             return false;
-        if (type != other.type)
+        if (actionType != other.actionType)
             return false;
         return true;
     }        

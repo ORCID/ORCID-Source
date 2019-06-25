@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
@@ -35,6 +36,7 @@ import org.orcid.jaxb.model.v3.release.notification.Notification;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
+import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
@@ -191,8 +193,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     itemsCollection.put(ActionType.UNKNOWN, new ArrayList<Item>());
                 }
                 for(Item item : amend.getItems().getItems()) {
-                    if(item.getType() != null) {
-                        switch(item.getType()) {
+                    if(item.getActionType() != null) {
+                        switch(item.getActionType()) {
                         case CREATE:
                             itemsCollection.get(ActionType.CREATE).add(item);
                             break;
@@ -474,26 +476,71 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     }
     
     private class ClientUpdates {
-        String clientId;
+        String clientName;
+
+        Map<ItemType, Map<ActionType, List<String>>> updates = new HashMap<>();        
         
-        Map<AmendedSection, Map<ActionType, List<Item>>> updates = new HashMap<>();
+        public void setClientName(String clientName) {
+            this.clientName = clientName;
+        }        
         
-        public void addBioElement(Item item) {
-            AmendedSection key = AmendedSection.BIO;
-            if(!updates.containsKey(key)) {
-                updates.put(key, new HashMap<ActionType, List<Item>>());
-            }
-            if(item.getType() == null && !updates.get(key).containsKey(ActionType.UNKNOWN)) {
-               updates.get(key).put(ActionType.UNKNOWN, new ArrayList<Item>()); 
-            } else if(!updates.get(key).containsKey(item.getType())) {
-                updates.get(key).put(item.getType(), new ArrayList<Item>()); 
-            }
-            
-            updates.get(key).get(item.getType() == null ? ActionType.UNKNOWN : item.getType()).add(item);
+        private String renderCreationDate(XMLGregorianCalendar createdDate) {
+            String result = new String();
+            result += createdDate.getYear();
+            result += '-' + (createdDate.getMonth() < 10 ? '0' + createdDate.getMonth() : createdDate.getMonth());               
+            result += '-' + (createdDate.getDay() < 10 ? '0' + createdDate.getDay() : createdDate.getDay());
+            return result;
+        }       
+        
+        public void addElement(XMLGregorianCalendar createdDate, Item item) {
+            init(item.getItemType(), item.getActionType());
+            String value = null;
+            switch(item.getItemType()) {
+            case DISTINCTION:
+            case EDUCATION:
+            case EMPLOYMENT:
+            case INVITED_POSITION:
+            case MEMBERSHIP:
+            case QUALIFICATION:
+            case SERVICE:
+                value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + item.getItemName() +  + '(' + renderCreationDate (createdDate) + ')';
+                break;
+            default:
+                value = item.getItemName() +  + '(' + renderCreationDate (createdDate) + ')';
+                break;
+            }   
+            updates.get(item.getItemType()).get(item.getActionType()).add(value);            
+        }
+
+        public boolean haveWorks() {
+            return updates.containsKey(ItemType.WORK);
         }
         
-        private void init(AmendedSection section, ActionType type) {
-            
+        public boolean createdWorks() {
+            return updates.containsKey(ItemType.WORK) && updates.get(ItemType.WORK).containsKey(ActionType.CREATE);
+        }
+        
+        public boolean updatedWorks() {
+            return updates.containsKey(ItemType.WORK) && updates.get(ItemType.WORK).containsKey(ActionType.UPDATE);
+        }
+        
+        public boolean deletedWorks() {
+            return updates.containsKey(ItemType.WORK) && updates.get(ItemType.WORK).containsKey(ActionType.DELETE);
+        }
+        
+        public boolean otherWorks() {
+            return updates.containsKey(ItemType.WORK) && updates.get(ItemType.WORK).containsKey(ActionType.UNKNOWN);
+        }
+        
+        private void init(ItemType key, ActionType type) {
+            if (!updates.containsKey(key)) {
+                updates.put(key, new HashMap<ActionType, List<Item>>());
+            }
+            if (type == null && !updates.get(key).containsKey(ActionType.UNKNOWN)) {
+                updates.get(key).put(ActionType.UNKNOWN, new ArrayList<Item>());
+            } else if (!updates.get(key).containsKey(type)) {
+                updates.get(key).put(type, new ArrayList<Item>());
+            }
         }
     }
 }

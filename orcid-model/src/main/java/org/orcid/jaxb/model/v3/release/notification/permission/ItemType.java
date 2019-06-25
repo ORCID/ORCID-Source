@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiModel;
 @ApiModel(value = "ItemTypeV3_0")
 public enum ItemType {
     //@formatter:off
+    @XmlEnumValue("bio") BIO,
     @XmlEnumValue("distinction") DISTINCTION,
     @XmlEnumValue("education") EDUCATION,
     @XmlEnumValue("employment") EMPLOYMENT,

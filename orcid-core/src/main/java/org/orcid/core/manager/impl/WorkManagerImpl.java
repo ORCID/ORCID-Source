@@ -391,7 +391,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);
         item.setPutCode(String.valueOf(workEntity.getId()));
-        item.setType(type);
+        item.setActionType(type);
         return item;
     }
 }
