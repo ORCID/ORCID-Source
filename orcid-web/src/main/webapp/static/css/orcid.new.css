@@ -8974,6 +8974,7 @@ a.footer-url {
 
 .header2 select#language-codes {
     height: 42px;
+    cursor: pointer;
 }
 
 .header2  .advance-search-link {
