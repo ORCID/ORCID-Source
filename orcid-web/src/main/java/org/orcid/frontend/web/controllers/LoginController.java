@@ -290,24 +290,30 @@ public class LoginController extends OauthControllerBase {
         String accessToken = userData.getString(OrcidOauth2Constants.ACCESS_TOKEN);
         Long expiresIn = Long.valueOf(userData.getString(OrcidOauth2Constants.EXPIRES_IN));
 
-        // Store relevant data
-        socialSignInUtils.setSignedInData(request, userData);
-
         UserconnectionEntity userConnection = userConnectionManager.findByProviderIdAndProviderUserId(userData.getString(OrcidOauth2Constants.PROVIDER_USER_ID),
                 socialType.value());
         String userConnectionId = null;
         ModelAndView view = null;
-        if (userConnection != null && userConnection.isLinked()) {
+        if (userConnection != null) {
             userConnectionId = userConnection.getId().getUserid();
-            // If user exists and is linked update user connection info
-            // and redirect to user record
-            view = updateUserConnectionAndLogUserIn(request, response, socialType, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
-                    accessToken, expiresIn);
+            if(userConnection.isLinked()) {                
+                // If user exists and is linked update user connection info
+                // and redirect to user record
+                view = updateUserConnectionAndLogUserIn(request, response, socialType, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
+                        accessToken, expiresIn);
+            } else {
+                // Store relevant data in the session
+                socialSignInUtils.setSignedInData(request, userData);
+                // Forward to account link page
+                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+            }   
         } else {
+            // Store relevant data in the session
+            socialSignInUtils.setSignedInData(request, userData);
             // Store user info
             userConnectionId = createUserConnection(socialType, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL),
                     userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
-            // And forward to user creation
+            // Forward to account link page
             view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
         }
         if (userConnectionId == null) {

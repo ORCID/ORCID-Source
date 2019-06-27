@@ -1,5 +1,6 @@
 <div class="row col-md-12">
-    <p *ngIf="areResults()">${springMacroRequestContext.getMessage("search_results.showing")} {{resultsShowing}} ${springMacroRequestContext.getMessage("search_results.of")} {{numFound}} <span *ngIf="numFound==1">${springMacroRequestContext.getMessage("search_results.result")}</span><span *ngIf="numFound>1">${springMacroRequestContext.getMessage("search_results.results")}</span></p>
+    <a href="{{getBaseUri()}}/orcid-search/search" class="settings-button" title="${springMacroRequestContext.getMessage("public-layout.search.advanced")?replace("<br />", " ")?replace("'", "\\'")}">${springMacroRequestContext.getMessage("public-layout.search.advanced")?replace("<br />", " ")?replace("'", "\\'")}</a>
+    <p class="result-counter-container" *ngIf="areResults()">${springMacroRequestContext.getMessage("search_results.showing")} {{resultsShowing}} ${springMacroRequestContext.getMessage("search_results.of")} {{numFound}} <span *ngIf="numFound==1">${springMacroRequestContext.getMessage("search_results.result")}</span><span *ngIf="numFound>1">${springMacroRequestContext.getMessage("search_results.results")}</span></p>
     <table class="table table-striped" *ngIf="areResults()">
         <thead>
             <tr>

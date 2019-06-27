@@ -109,7 +109,10 @@ public enum Features implements Feature {
     USER_OBO,
     
     @Label("Verbose notifications")
-    VERBOSE_NOTIFICATIONS;
+    VERBOSE_NOTIFICATIONS,
+
+    @Label("Works failure debug")
+    WORKS_FAILURE_DEBUG;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

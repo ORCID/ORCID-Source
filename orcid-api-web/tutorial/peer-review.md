@@ -91,7 +91,7 @@ Peer-review items are grouped on ORCID records based on who or what the reivew w
 **Example request in curl**
 
 ```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -X GET 'https://api.orcid.org/v3.0/group-id-record/?group-id=issn:0962-1105' -L -i -k
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -X GET 'https://api.sandbox.orcid.org/v3.0/group-id-record/?group-id=issn:0962-1105' -L -i -k
 ```
 
 ### Search for an existing peer review group by paging
