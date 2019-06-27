@@ -37,7 +37,6 @@ import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
-import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
@@ -113,6 +112,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Value("${org.notifications.service_announcements.batchSize:60000}")
     private Integer batchSize;
     
+    @Value("${org.notifications.max_elements_to_show:20}")
+    private Integer maxNotificationsToShowPerClient;
+    
     protected Features feature;
     
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
@@ -177,8 +179,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     cu = updatesByClient.get(clientId);
                 }
                 amendedMessageCount++;
-                for(Item item : amend.getItems().getItems()) {
-                    cu.addElement(createdDate, item);
+                if(amend.getItems() != null && amend.getItems().getItems() != null) {
+                    for(Item item : amend.getItems().getItems()) {
+                        cu.addElement(createdDate, item);
+                    }
                 }
             }
         } 
@@ -201,6 +205,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("subject", subject);
         params.put("clientUpdates", sortedClientUpdates);
         params.put("verboseNotifications", true);
+        params.put("maxPerClient", maxNotificationsToShowPerClient);
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 
@@ -474,6 +479,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String clientId;
         String clientName;
         String clientDescription;
+        Integer counter = 0;
         Locale userLocale;
         
         Map<String, Map<String, Set<String>>> updates = new HashMap<>();        
@@ -513,6 +519,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         public Map<String, Map<String, Set<String>>> getUpdates() {
             return updates;
         }
+        
+        public Integer getCounter() {
+            return counter;
+        }
 
         private String renderCreationDate(XMLGregorianCalendar createdDate) {
             String result = new String();
@@ -523,27 +533,30 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }       
         
         public void addElement(XMLGregorianCalendar createdDate, Item item) {
-            init(item.getItemType().name(), item.getActionType() == null ? null : item.getActionType().name());
-            String value = null;
-            switch(item.getItemType()) {
-            case DISTINCTION:
-            case EDUCATION:
-            case EMPLOYMENT:
-            case INVITED_POSITION:
-            case MEMBERSHIP:
-            case QUALIFICATION:
-            case SERVICE:
-                value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
-                break;
-            default:
-                value = item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
-                break;
-            }   
-            if(item.getActionType() != null) {
-                updates.get(item.getItemType().name()).get(item.getActionType().name()).add(value);
-            } else {
-                updates.get(item.getItemType().name()).get(ActionType.UNKNOWN.name()).add(value);
-            }            
+            if(counter < maxNotificationsToShowPerClient) {
+                init(item.getItemType().name(), item.getActionType() == null ? null : item.getActionType().name());
+                String value = null;
+                switch(item.getItemType()) {
+                case DISTINCTION:
+                case EDUCATION:
+                case EMPLOYMENT:
+                case INVITED_POSITION:
+                case MEMBERSHIP:
+                case QUALIFICATION:
+                case SERVICE:
+                    value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
+                    break;
+                default:
+                    value = item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
+                    break;
+                }   
+                if(item.getActionType() != null) {
+                    updates.get(item.getItemType().name()).get(item.getActionType().name()).add(value);
+                } else {
+                    updates.get(item.getItemType().name()).get(ActionType.UNKNOWN.name()).add(value);
+                }
+            }
+            counter += 1;
         }        
 
         private void init(String itemType, String actionType) {
