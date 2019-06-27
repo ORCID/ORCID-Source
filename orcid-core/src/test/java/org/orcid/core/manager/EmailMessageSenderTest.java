@@ -93,7 +93,6 @@ public class EmailMessageSenderTest extends BaseTest {
     @Test
     public void testCreateDigest() throws IOException {        
         EmailMessage emailMessage = emailMessageSender.createDigest("0000-0000-0000-0000", generateNotifications());
-
         assertNotNull(emailMessage);
         String html = emailMessage.getBodyHtml();
         String text = emailMessage.getBodyText();
