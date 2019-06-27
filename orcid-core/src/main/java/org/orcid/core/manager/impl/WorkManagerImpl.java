@@ -33,6 +33,7 @@ import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
@@ -173,7 +174,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, ActionType.CREATE));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
         return updatedWork;
     }
@@ -255,7 +256,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Add the work extIds to the list of existing external identifiers
                         addExternalIdsToExistingSet(extIDPutCodeMap, updatedWork, existingExternalIdentifiers);
-                        items.add(createItem(workEntity, ActionType.CREATE));
+                        items.add(createItem(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
                     } catch(Exception e) {
                         //Get the exception 
                         OrcidError orcidError = orcidCoreExceptionMapper.getOrcidError(e);
@@ -351,7 +352,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         workDao.merge(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, ActionType.UPDATE));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
         return updatedWork;
     }
@@ -364,7 +365,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         try {            
             workDao.removeWork(orcid, workId);
             workDao.flush();
-            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, ActionType.DELETE));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, null, ActionType.DELETE));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);
             result = false;
@@ -382,16 +383,24 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
     }
 
-    private List<Item> createItemList(WorkEntity workEntity, ActionType type) {
-        return Arrays.asList(createItem(workEntity, type));
+    private List<Item> createItemList(WorkEntity workEntity, ExternalIDs extIds, ActionType type) {
+        return Arrays.asList(createItem(workEntity, extIds, type));
     }
     
-    private Item createItem(WorkEntity workEntity, ActionType type) {
+    private Item createItem(WorkEntity workEntity, ExternalIDs extIds, ActionType type) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);
         item.setPutCode(String.valueOf(workEntity.getId()));
         item.setActionType(type);
+        item.setPutCode(String.valueOf(workEntity.getId()));
+        
+        if(extIds != null) {
+            Map<String, Object> additionalInfo = new HashMap<String, Object>();
+            additionalInfo.put("external_identifiers", extIds);        
+            item.setAdditionalInfo(additionalInfo);            
+        }
+        
         return item;
     }
 }

@@ -266,14 +266,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         registerSourceConverters(mapperFactory, amendNotificationClassMap);
         amendNotificationClassMap.field("items.items", "notificationItems"); 
-        amendNotificationClassMap.customize(new CustomMapper<NotificationAmended, NotificationAmendedEntity>() {
-            @Override
-            public void mapBtoA(NotificationAmendedEntity entity, NotificationAmended item, MappingContext context) {
-                if(entity.getNotificationItems() != null) {
-                    item.setNumItemsModified(entity.getNotificationItems().size());
-                }
-            }
-        });
         
         mapCommonFields(amendNotificationClassMap.exclude("amendedSection").customize(new CustomMapper<NotificationAmended, NotificationAmendedEntity>() {
             @Override
@@ -324,10 +316,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
              * From database to model object, map amended sections for new affiliation types as AFFILIATION
              */
             @Override
-            public void mapBtoA(NotificationAmendedEntity b, NotificationAmended a, MappingContext context) {
-                if(b.getNotificationItems() != null) {
-                    a.setNumItemsModified(b.getNotificationItems().size());
-                }
+            public void mapBtoA(NotificationAmendedEntity b, NotificationAmended a, MappingContext context) {                
                 if (b.getAmendedSection() != null) {
                     if (AmendedSection.AFFILIATION.name().equals(b.getAmendedSection()) 
                             || AmendedSection.DISTINCTION.name().equals(b.getAmendedSection())

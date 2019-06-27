@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -547,7 +548,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
                     break;
                 default:
-                    value = item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
+                    value = item.getItemName();
+                    if(item.getExternalIdentifier() != null) {
+                        value += " " + item.getExternalIdentifier().getType() + ": " + item.getExternalIdentifier().getValue();
+                    }
+                    value += " (" + renderCreationDate (createdDate) + ')';
                     break;
                 }   
                 if(item.getActionType() != null) {
@@ -564,9 +569,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 updates.put(itemType, new HashMap<String, Set<String>>());
             }
             if (actionType == null && !updates.get(itemType).containsKey(ActionType.UNKNOWN.name())) {
-                updates.get(itemType).put(ActionType.UNKNOWN.name(), new HashSet<String>());
+                updates.get(itemType).put(ActionType.UNKNOWN.name(), new TreeSet<String>());
             } else if (!updates.get(itemType).containsKey(actionType)) {
-                updates.get(itemType).put(actionType, new HashSet<String>());
+                updates.get(itemType).put(actionType, new TreeSet<String>());
             }
         }
     }

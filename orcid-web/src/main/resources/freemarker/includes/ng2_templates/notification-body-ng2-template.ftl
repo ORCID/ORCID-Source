@@ -7,27 +7,59 @@
     			    <div *ngIf="(addedList.length > 0 || updatedList.length > 0 || deletedList.length > 0 || unknownList.length > 0); else noItemNotification">
     			        <p><strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.updated.label.1'/> {{notification?.amendedSection | replaceSeparatorWithSpace | titlecase}} <@orcid.msg 'notifications.updated.label.2'/></p>
     			        <div *ngIf="addedList.length > 0">
-                            <p><strong><@orcid.msg 'notifications.updated.added.label' /></strong></p>
+                            <p><strong><@orcid.msg 'notifications.updated.created.label' /></strong></p>
                             <ul *ngFor="let element of addedList">
-                                <li>{{element}}</li>
+                                <li>
+                                    <ng-container *ngIf="element.additionalInfo && element.additionalInfo['org_name'] != undefined"><i>{{element.additionalInfo['org_name']}}</i></ng-container> {{element.itemName}}
+                                    <div *ngIf="element.additionalInfo && element.additionalInfo['external_identifiers'] != undefined">
+                                        <p><@orcid.msg 'notifications.other_ids'/> </p>
+                                        <ul *ngFor="let otherId of element.additionalInfo['external_identifiers']['externalIdentifier']">
+                                            <li>{{otherId.type}}: {{otherId.value}}</li>
+                                        </ul>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                         <div *ngIf="updatedList.length > 0">
                             <p><strong><@orcid.msg 'notifications.updated.updated.label' /></strong></p>
                             <ul *ngFor="let element of updatedList">
-                                <li>{{element}}</li>
+                                <li>
+                                    <ng-container *ngIf="element.additionalInfo && element.additionalInfo['org_name'] != undefined"><i>{{element.additionalInfo['org_name']}}</i></ng-container> {{element.itemName}}
+                                    <div *ngIf="element.additionalInfo && element.additionalInfo['external_identifiers'] != undefined">
+                                        <p><@orcid.msg 'notifications.other_ids'/> </p>
+                                        <ul *ngFor="let otherId of element.additionalInfo['external_identifiers']['externalIdentifier']">
+                                            <li>{{otherId.type}}: {{otherId.value}}</li>
+                                        </ul>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                         <div *ngIf="deletedList.length > 0">
                             <p><strong><@orcid.msg 'notifications.updated.deleted.label' /></strong></p>
                             <ul *ngFor="let element of deletedList">
-                                <li>{{element}}</li>
+                                <li>
+                                    <ng-container *ngIf="element.additionalInfo && element.additionalInfo['org_name'] != undefined"><i>{{element.additionalInfo['org_name']}}</i></ng-container> {{element.itemName}}
+                                    <div *ngIf="element.additionalInfo && element.additionalInfo['external_identifiers'] != undefined">
+                                        <p><@orcid.msg 'notifications.other_ids'/> </p>
+                                        <ul *ngFor="let otherId of element.additionalInfo['external_identifiers']['externalIdentifier']">
+                                            <li>{{otherId.type}}: {{otherId.value}}</li>
+                                        </ul>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                         <div *ngIf="unknownList.length > 0">
                             <p><strong><@orcid.msg 'notifications.updated.unknown.label' /></strong></p>
                             <ul *ngFor="let element of unknownList">
-                                <li>{{element}}</li>
+                                <li>
+                                    <ng-container *ngIf="element.additionalInfo && element.additionalInfo['org_name'] != undefined"><i>{{element.additionalInfo['org_name']}}</i></ng-container> {{element.itemName}}
+                                    <div *ngIf="element.additionalInfo && element.additionalInfo['external_identifiers'] != undefined">
+                                        <p><@orcid.msg 'notifications.other_ids'/> </p>
+                                        <ul *ngFor="let otherId of element.additionalInfo['external_identifiers']['externalIdentifier']">
+                                            <li>{{otherId.type}}: {{otherId.value}}</li>
+                                        </ul>
+                                    </div>
+                                </li>
                             </ul>
                         </div>                
     			    </div>

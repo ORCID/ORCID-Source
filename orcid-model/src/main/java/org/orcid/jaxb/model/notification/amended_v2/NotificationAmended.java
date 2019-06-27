@@ -29,9 +29,7 @@ public class NotificationAmended extends Notification {
     @XmlElement(namespace = "http://www.orcid.org/ns/notification", required = false)
     protected Items items;
     @XmlTransient
-    protected String subject;
-    @XmlTransient
-    protected Integer numItemsModified;
+    protected String subject;    
     
     {
         notificationType = NotificationType.AMENDED;
@@ -60,12 +58,4 @@ public class NotificationAmended extends Notification {
     public void setSubject(String subject) {
         this.subject = subject;
     }
-
-    public Integer getNumItemsModified() {
-        return numItemsModified;
-    }
-
-    public void setNumItemsModified(Integer numItemsModified) {
-        this.numItemsModified = numItemsModified;
-    }   
 }

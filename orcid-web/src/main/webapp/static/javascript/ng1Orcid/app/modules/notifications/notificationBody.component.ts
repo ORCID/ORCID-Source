@@ -85,31 +85,16 @@ export class NotificationBodyComponent implements OnInit {
         if(this.notification.items) {
             var affiliationTypes = ["DISTINCTION","EDUCATION","EMPLOYMENT","INVITED_POSITION","MEMBERSHIP","QUALIFICATION","SERVICE"];        
             for (let activity of this.notification.items.items) {
-                var elementDescription = '';
-                if(activity.itemType == "WORK" || activity.itemType == "FUNDING") {
-                    elementDescription = activity.itemName;
-                } else if(affiliationTypes.indexOf(activity.itemType) > 0) {
-                    elementDescription = activity.itemName + ' (' + activity.additionalInfo['org_name'] + ')';
-                } else if(activity.itemType == "PEER_REVIEW") {
-                    elementDescription = activity.itemName;
-                    if(activity.additionalInfo['group_name'] != undefined) {
-                        elementDescription = elementDescription + ' (' + activity.additionalInfo['group_name'] + ')';
-                    } else if(activity.additionalInfo['subject_container_name'] != undefined) {
-                        elementDescription = elementDescription + ' (' + activity.additionalInfo['subject_container_name'] + ')';
-                    }
-                } else if(activity.itemType == "RESEARCH_RESOURCE") {
-                    elementDescription = activity.proposal.title.title.content;
-                } 
-                
+                console.log("Activity type: " + activity.actionType)
                 if(this.elementsModifiedCount < this.MAX_ELEMENTS_TO_SHOW) {
-                    if(activity.type == "CREATE") {
-                        this.addedList.push(elementDescription);
-                    } else if(activity.type == "UPDATE") {
-                        this.updatedList.push(elementDescription);
-                    } else if(activity.type == "DELETE") {
-                        this.deletedList.push(elementDescription);
+                    if(activity.actionType == "CREATE") {
+                        this.addedList.push(activity);
+                    } else if(activity.actionType == "UPDATE") {
+                        this.updatedList.push(activity);
+                    } else if(activity.actionType == "DELETE") {
+                        this.deletedList.push(activity);
                     } else {
-                        this.unknownList.push(elementDescription);
+                        this.unknownList.push(activity);
                     }
                 }
                 

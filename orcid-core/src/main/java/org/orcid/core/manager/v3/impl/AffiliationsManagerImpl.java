@@ -502,6 +502,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         } else if (AffiliationType.SERVICE.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.SERVICE;
         }
+        item.setActionType(type);
         item.setItemType(itemType);
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
         Map<String, Object> additionalInfo = new HashMap<String, Object>();
