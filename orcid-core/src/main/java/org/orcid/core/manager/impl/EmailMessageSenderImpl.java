@@ -201,12 +201,15 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("subject", subject);
         params.put("clientUpdates", sortedClientUpdates);
         params.put("verboseNotifications", true);
+        String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 
-        System.out.println(bodyHtml);
-        
-        
-        return null;
+        EmailMessage emailMessage = new EmailMessage();
+
+        emailMessage.setSubject(subject);
+        emailMessage.setBodyText(bodyText);
+        emailMessage.setBodyHtml(bodyHtml);
+        return emailMessage;
     }
     
     @Override
@@ -261,8 +264,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 
-        System.out.println(bodyHtml);
-        
         EmailMessage emailMessage = new EmailMessage();
 
         emailMessage.setSubject(subject);
@@ -475,7 +476,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String clientDescription;
         Locale userLocale;
         
-        Map<ItemType, Map<ActionType, List<String>>> updates = new HashMap<>();        
+        Map<String, Map<String, Set<String>>> updates = new HashMap<>();        
         
         public void setClientId(String clientId) {
             this.clientId = clientId;
@@ -509,16 +510,20 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             return userLocale;
         }
         
+        public Map<String, Map<String, Set<String>>> getUpdates() {
+            return updates;
+        }
+
         private String renderCreationDate(XMLGregorianCalendar createdDate) {
             String result = new String();
             result += createdDate.getYear();
-            result += '-' + (createdDate.getMonth() < 10 ? '0' + createdDate.getMonth() : createdDate.getMonth());               
-            result += '-' + (createdDate.getDay() < 10 ? '0' + createdDate.getDay() : createdDate.getDay());
+            result += "-" + (createdDate.getMonth() < 10 ? "0" + createdDate.getMonth() : createdDate.getMonth());               
+            result += "-" + (createdDate.getDay() < 10 ? "0" + createdDate.getDay() : createdDate.getDay());            
             return result;
         }       
         
         public void addElement(XMLGregorianCalendar createdDate, Item item) {
-            init(item.getItemType(), item.getActionType());
+            init(item.getItemType().name(), item.getActionType() == null ? null : item.getActionType().name());
             String value = null;
             switch(item.getItemType()) {
             case DISTINCTION:
@@ -535,90 +540,20 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 break;
             }   
             if(item.getActionType() != null) {
-                updates.get(item.getItemType()).get(item.getActionType()).add(value);
+                updates.get(item.getItemType().name()).get(item.getActionType().name()).add(value);
             } else {
-                updates.get(item.getItemType()).get(ActionType.UNKNOWN).add(value);
+                updates.get(item.getItemType().name()).get(ActionType.UNKNOWN.name()).add(value);
+            }            
+        }        
+
+        private void init(String itemType, String actionType) {
+            if (!updates.containsKey(itemType)) {
+                updates.put(itemType, new HashMap<String, Set<String>>());
             }
-            
-        }
-
-        public String renderBio() {
-            return render(ItemType.BIO);
-        }
-
-        public String renderDistinction() {
-            return render(ItemType.DISTINCTION);
-        }
-
-        public String renderEmployment() {
-            return render(ItemType.EMPLOYMENT);
-        }
-
-        public String renderExternalIndentifier() {
-            return render(ItemType.EXTERNAL_IDENTIFIER);
-        }
-        
-        public String renderInvitedPosition() {
-            return render(ItemType.INVITED_POSITION);
-        }
-
-        public String renderFunding() {
-            return render(ItemType.FUNDING);
-        }
-
-        public String renderMembership() {
-            return render(ItemType.MEMBERSHIP);
-        }
-
-        public String renderPeerReview() {
-            return render(ItemType.PEER_REVIEW);
-        }
-
-        public String renderQualification() {
-            return render(ItemType.QUALIFICATION);
-        }
-
-        public String renderService() {
-            return render(ItemType.SERVICE);
-        }
-
-        public String renderWorks() {
-            return render(ItemType.WORK);
-        }
-
-        public String renderResearchResources() {
-            return render(ItemType.RESEARCH_RESOURCE);
-        }
-        
-        private String render(ItemType itemType) {
-            if(updates.containsKey(itemType)) {
-                Map<String, Object> params = new HashMap<>();
-                params.put("sectionName", messages.getMessage("email.common.recordsection." + itemType.name(), new String [] {}, userLocale));
-                if(updates.get(itemType).containsKey(ActionType.CREATE))
-                    params.put("added", updates.get(itemType).get(ActionType.CREATE));
-                
-                if(updates.get(itemType).containsKey(ActionType.UPDATE))
-                    params.put("updated", updates.get(itemType).get(ActionType.UPDATE));
-                
-                if(updates.get(itemType).containsKey(ActionType.DELETE))
-                    params.put("deleted", updates.get(itemType).get(ActionType.DELETE));
-                
-                if(updates.get(itemType).containsKey(ActionType.UNKNOWN))
-                    params.put("other", updates.get(itemType).get(ActionType.UNKNOWN));
-                
-                return templateManager.processTemplate("digest_email_amend_section_items_list_html.ftl", params, userLocale);
-            }
-            return "<div></div>";
-        }
-
-        private void init(ItemType key, ActionType type) {
-            if (!updates.containsKey(key)) {
-                updates.put(key, new HashMap<ActionType, List<String>>());
-            }
-            if (type == null && !updates.get(key).containsKey(ActionType.UNKNOWN)) {
-                updates.get(key).put(ActionType.UNKNOWN, new ArrayList<String>());
-            } else if (!updates.get(key).containsKey(type)) {
-                updates.get(key).put(type, new ArrayList<String>());
+            if (actionType == null && !updates.get(itemType).containsKey(ActionType.UNKNOWN.name())) {
+                updates.get(itemType).put(ActionType.UNKNOWN.name(), new HashSet<String>());
+            } else if (!updates.get(itemType).containsKey(actionType)) {
+                updates.get(itemType).put(actionType, new HashSet<String>());
             }
         }
     }

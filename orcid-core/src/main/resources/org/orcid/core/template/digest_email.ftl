@@ -29,18 +29,9 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 <@emailMacros.msg "email.digest.plaintext.addnow" /><@emailMacros.space />${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action
 <@emailMacros.msg "email.digest.plaintext.moreinfo" /><@emailMacros.space />${baseUri}/inbox#${notification.putCode}
 </#list>
-<#elseif notificationType == 'AMENDED'>
-<#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
-<@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.space /><@emailMacros.msg "email.digest.hasupdated_2" /><@emailMacros.space />${amendedSection?lower_case}<@emailMacros.space /><@emailMacros.msg "email.digest.hasupdated_3" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
-<#if notification.items??>
-
-<#list notification.items.items as item>
-     ${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if>
-</#list>
-</#if>
 <#elseif notificationType == 'INSTITUTIONAL_CONNECTION'>
 <@emailMacros.msg 'email.institutional_connection.1' /><@emailMacros.space />${(notification.idpName)!}<@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.2' /><@emailMacros.msg 'email.institutional_connection.here' /><@emailMacros.msg 'email.institutional_connection.3' /><@emailMacros.space />${(notification.source.sourceName.content)!sourceId}<@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.4' /><@emailMacros.space />${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
-<#else>
+<#elseif notificationType != 'AMENDED'>
 ${(notification.subject)}           
 </#if>
 
@@ -48,6 +39,8 @@ ${(notification.subject)}
 </#list>
 </#if>
 </#list>
+
+<#include "digest_email_amend_section.ftl"/>
 
 <#if ((totalMessageCount?number) > 1)>
 </#if>
