@@ -267,6 +267,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("memberIdsCount", memberIds.size());
         params.put("baseUri", orcidUrlManager.getBaseUrl());
         params.put("subject", subject);
+        params.put("verboseNotifications", false);
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 

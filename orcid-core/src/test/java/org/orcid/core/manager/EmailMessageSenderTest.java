@@ -7,7 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -18,7 +20,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
@@ -33,6 +37,7 @@ import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
 import org.orcid.jaxb.model.v3.release.notification.permission.Items;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -68,19 +73,46 @@ public class EmailMessageSenderTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManagerMock);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", encryptionManagerMock);  
         
-        when(encryptionManagerMock.encryptForExternalUse(Mockito.anyString())).thenReturn("encrypted");
+        when(encryptionManagerMock.encryptForExternalUse(Mockito.anyString())).thenReturn("encrypted");        
     }
     
     @Test
-    public void testCreateDigest() throws IOException {
+    public void testCreateDigestLegacy() throws IOException {
+        EmailMessage emailMessage = emailMessageSender.createDigestLegacy("0000-0000-0000-0000", generateNotifications());
+
+        assertNotNull(emailMessage);
+        String html = emailMessage.getBodyHtml();
+        String text = emailMessage.getBodyText();
+        String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body_legacy.txt"));
+        String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body_legacy.html"));
+        assertEquals("[ORCID] John Watson you have 6 new notifications", emailMessage.getSubject());
+        assertEquals(expectedBodyHtml, html);
+        assertEquals(expectedBodyText, text);
+    }
+    
+    @Test
+    public void testCreateDigest() throws IOException {        
+        EmailMessage emailMessage = emailMessageSender.createDigest("0000-0000-0000-0000", generateNotifications());
+
+        assertNotNull(emailMessage);
+        String html = emailMessage.getBodyHtml();
+        String text = emailMessage.getBodyText();
+        String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
+        String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.html"));
+        assertEquals("[ORCID] John Watson you have 6 new notifications", emailMessage.getSubject());
+        assertEquals(expectedBodyHtml, html);
+        assertEquals(expectedBodyText, text);
+    }
+
+    private List<Notification> generateNotifications() {
         List<Notification> notifications = new ArrayList<>();
 
         NotificationPermission notification1 = new NotificationPermission();
         notification1.setPutCode(1L);
         Items activities1 = new Items();
         notification1.setItems(activities1);
-        activities1.getItems().add(createActivity(ItemType.WORK, "Work 1", "123446/67654"));
-        activities1.getItems().add(createActivity(ItemType.WORK, "Work 2", "http://dx.doi.org/123446/67655"));
+        activities1.getItems().add(createActivity(ItemType.WORK, "Work 1", "123446/67654", "issn1", null, null));
+        activities1.getItems().add(createActivity(ItemType.WORK, "Work 2", "http://dx.doi.org/123446/67655", "issn2", null, null));
         notification1.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T13:39:31"));
         notification1.setAuthorizationUrl(new AuthorizationUrl("https://thirdparty.com/add-to-orcid/12345"));
         Source source1 = new Source();
@@ -93,7 +125,7 @@ public class EmailMessageSenderTest extends BaseTest {
         notification2.setPutCode(2L);
         Items activities2 = new Items();
         notification2.setItems(activities2);
-        activities2.getItems().add(createActivity(ItemType.EMPLOYMENT, "Employment 1 ", "12345/abc"));
+        activities2.getItems().add(createActivity(ItemType.EMPLOYMENT, "Employment 1 ", "12345/abc", null, "dept", "org"));
         notification2.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-08-17T10:22:15"));
         notification2.setAuthorizationUrl(new AuthorizationUrl("https://thirdparty.com/add-to-orcid/abc"));
         Source source2 = new Source();
@@ -106,8 +138,8 @@ public class EmailMessageSenderTest extends BaseTest {
         notification3.setPutCode(3L);
         Items activities3 = new Items();
         notification3.setItems(activities3);
-        activities3.getItems().add(createActivity(ItemType.WORK, "Work 3", "12345/def"));
-        activities3.getItems().add(createActivity(ItemType.WORK, "Work 4", "12345/ghi"));
+        activities3.getItems().add(createActivity(ItemType.WORK, "Work 3", "12345/def", "doi01", null, null));
+        activities3.getItems().add(createActivity(ItemType.WORK, "Work 4", "12345/ghi", "doi01", null, null));
         notification3.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-10T08:53:56"));
         notification3.setAuthorizationUrl(new AuthorizationUrl("https://thirdparty.com/add-to-orcid/def"));
         Source source3 = new Source();
@@ -134,29 +166,52 @@ public class EmailMessageSenderTest extends BaseTest {
         notification6.setAmendedSection(AmendedSection.FUNDING);
         notification6.setCreatedDate(DateUtils.convertToXMLGregorianCalendar("2014-07-12T18:44:36"));
         notification6.setSource(source3);
+        Items items = new Items();
+        items.getItems().add(createActivity(ItemType.WORK, "work-1", "doi01", "issn01", null, null));
+        items.getItems().add(createActivity(ItemType.EDUCATION, "education-1", null, null, "department", "org name"));
+        notification6.setItems(items);
         notifications.add(notification6);
-
-        EmailMessage emailMessage = emailMessageSender.createDigest("0000-0000-0000-0000", notifications);
-
-        assertNotNull(emailMessage);
-        String html = emailMessage.getBodyHtml();
-        String text = emailMessage.getBodyText();
-        String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
-        String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.html"));
-        assertEquals("[ORCID] John Watson you have 6 new notifications", emailMessage.getSubject());
-        assertEquals(expectedBodyHtml, html);
-        assertEquals(expectedBodyText, text);
+        
+        return notifications;
     }
-
-    private Item createActivity(ItemType actType, String actName, String doi) {
-        Item act = new Item();
-        act.setItemType(actType);
-        act.setItemName(actName);
-        ExternalID extId = new ExternalID();
-        extId.setType("doi");
-        extId.setValue(doi);
-        act.setExternalIdentifier(extId);
-        return act;
+    
+    private Item createActivity(ItemType actType, String actName, String doi1, String issn1, String dept, String org) {
+        Item item = new Item();
+        item.setItemType(actType);
+        item.setItemName(actName);
+        if(doi1 != null) {
+            ExternalID extId = new ExternalID();
+            extId.setType("doi");
+            extId.setValue(doi1);
+            item.setExternalIdentifier(extId);
+        }
+        item.setActionType(ActionType.CREATE);
+        Map<String, Object> additionalInfo = new HashMap<String, Object>();
+        if(doi1 != null && issn1 != null) {
+            ExternalIDs extIds = new ExternalIDs();
+            ExternalID extId1 = new ExternalID();
+            extId1.setRelationship(Relationship.SELF);
+            extId1.setType("doi");
+            extId1.setValue(doi1);
+            extIds.getExternalIdentifier().add(extId1);
+            
+            ExternalID extId2 = new ExternalID();
+            extId2.setRelationship(Relationship.SELF);
+            extId2.setType("issn");
+            extId2.setValue(issn1);
+            extIds.getExternalIdentifier().add(extId2);
+            
+            additionalInfo.put("external_identifiers", extIds);              
+        } else if (dept != null && org != null) {
+            additionalInfo.put("department", dept);
+            additionalInfo.put("org_name", org);
+        }
+        
+        if(!additionalInfo.isEmpty()) {
+            item.setAdditionalInfo(additionalInfo);
+        }
+        
+        return item;
     }
 
 }

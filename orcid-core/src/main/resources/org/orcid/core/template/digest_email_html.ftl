@@ -65,9 +65,24 @@
                     </tbody>					                      
 	        	</table>
 	        	</#list> 
-            </p>			
+            </p>
+            <#elseif notificationType == 'AMENDED' && !verboseNotifications>
+            <p>
+                <#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
+                <div>
+                    <img src="https://orcid.org/sites/all/themes/orcid/img/update.png">&nbsp;<@emailMacros.msg "email.digest.hasupdated_1" />
+                    ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.space /><@emailMacros.msg "email.digest.hasupdated_2" /><@emailMacros.space />${amendedSection?lower_case}<@emailMacros.space /><@emailMacros.msg "email.digest.hasupdated_3" /><#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
+                </div>
+                <#if notification.items??>
+                <ul>
+                <#list notification.items.items as item>
+                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if></li>
+                </#list>
+                </ul>
+                </#if>
+            </p>
             <#elseif notificationType == 'INSTITUTIONAL_CONNECTION'>
-            <p> 
+            <p>
             	<div><img src="https://orcid.org/sites/all/themes/orcid/img/request.png">&nbsp;<@emailMacros.msg 'email.institutional_connection.1' /><@emailMacros.space />${(notification.idpName)!}<@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.2' /><a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"><@emailMacros.msg "email.institutional_connection.here" /></a><@emailMacros.msg 'email.institutional_connection.3' /><@emailMacros.space />${(notification.source.sourceName.content)!sourceId}<@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.4' /><@emailMacros.space /><#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></div>
             </p>
             <#elseif notificationType != 'AMENDED'>
@@ -78,12 +93,12 @@
 			</#list>
 			</#list>
 			</#if>
-            </#list>
-                        
-            <p>            
-                <#include "digest_email_amend_section_html.ftl"/>                                               
-            </p>
-            
+            </#list>                     
+            <#if verboseNotifications>
+                <p>            
+                    <#include "digest_email_amend_section_html.ftl"/>                                               
+                </p>
+            </#if>            
             <p style="text-align: center;">
                 <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; color: #2E7F9F;">                    
                      <!-- Use assign to prevent strange whitespace formatting in output -->
