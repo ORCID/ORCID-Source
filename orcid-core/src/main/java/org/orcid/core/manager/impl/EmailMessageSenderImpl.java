@@ -131,19 +131,16 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);                
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
         Locale locale = getUserLocaleFromProfileEntity(record);
         int totalMessageCount = 0;
         int orcidMessageCount = 0;
-        int addActivitiesMessageCount = 0;
-        int amendedMessageCount = 0;
-        int activityCount = 0;
         
         Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
-        
+
         Map<String, ClientUpdates> updatesByClient = new HashMap<String, ClientUpdates>();
-        
+
         for (Notification notification : notifications) {
             digestEmail.addNotification(notification);
             totalMessageCount++;
@@ -156,9 +153,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 }
             }
             if (notification instanceof NotificationPermission) {
-                addActivitiesMessageCount++;
                 NotificationPermission permissionNotification = (NotificationPermission) notification;
-                activityCount += permissionNotification.getItems().getItems().size();
                 permissionNotification.setEncryptedPutCode(encryptAndEncodePutCode(permissionNotification.getPutCode()));
             } else if (notification instanceof NotificationInstitutionalConnection) {
                 notification.setEncryptedPutCode(encryptAndEncodePutCode(notification.getPutCode()));
@@ -169,7 +164,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 String clientDescription = amend.getSourceDescription();
                 XMLGregorianCalendar createdDate = amend.getCreatedDate();
                 ClientUpdates cu = null;
-                if(!updatesByClient.containsKey(clientId)) {
+                if (!updatesByClient.containsKey(clientId)) {
                     cu = new ClientUpdates();
                     cu.setUserLocale(locale);
                     cu.setClientId(clientId);
@@ -179,14 +174,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 } else {
                     cu = updatesByClient.get(clientId);
                 }
-                amendedMessageCount++;
-                if(amend.getItems() != null && amend.getItems().getItems() != null) {
-                    for(Item item : amend.getItems().getItems()) {
+                if (amend.getItems() != null && amend.getItems().getItems() != null) {
+                    for (Item item : amend.getItems().getItems()) {
                         cu.addElement(createdDate, item);
                     }
                 }
             }
-        } 
+        }
         
         List<String> sortedClientIds = updatesByClient.keySet().stream().sorted().collect(Collectors.toList());
         List<ClientUpdates> sortedClientUpdates = new ArrayList<ClientUpdates>();
