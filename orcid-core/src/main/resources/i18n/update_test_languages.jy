@@ -82,7 +82,7 @@ def tidy_license_header(path):
 
 # Start of script
 
-for prefix in ('about', 'messages', 'javascript', 'email'):
+for prefix in ('about', 'messages', 'javascript', 'email', 'ng_orcid'):
     info("Checking i18n resources with prefix " + prefix)
     
     en_filename = prefix + EN_SUFFIX
