@@ -36,6 +36,7 @@
                         <i class="icon-orcid-search"></i>
                     </button>
                     <a href="{{getBaseUri()}}/orcid-search/search"
+                    style="margin-top: auto;"
                     class="settings-button" title="<@orcid.msg
                     'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
                 </div>
