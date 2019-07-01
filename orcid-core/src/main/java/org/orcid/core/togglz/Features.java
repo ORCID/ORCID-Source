@@ -11,6 +11,9 @@ public enum Features implements Feature {
 
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
+
+    @Label("Wider grid")
+    WIDE_GRID,
 	
     @Label("Add works based on ArXiv, DOI or PubMed id metadata")
     ADD_WORKS_WITH_EXTERNAL_ID,
