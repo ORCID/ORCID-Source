@@ -20,6 +20,7 @@ In most cases, only en, xx, lr, and rl files should be edited directly. We use t
 - [Update existing string(s) - English only OR English + other languages](#update-existing-strings-english-only)
 - [Update existing string(s) - non-English only](#update-existing-strings-non-english-only)
 - [Add new language](#add-new-language)
+- [Add a resource](#add-resource)
 - [Remove a resource](#remove-resource)
 
 ## <a id="add-new-strings"></a>Add new strings
@@ -174,6 +175,21 @@ When translation status for each resource in the new language reaches 100%, the 
 2. When the language picker changes have been release to QA, contact community translators for this language and ask them to review the translation
 3. After translators have reviewed the language, move the card to Launchpad and notify the appropriate developer, who will unhide the new language in the language picker so that it becomes visible in Prod.
 
+## <a id="add-resource"></a>Add a Resource
+1. Add an entry for the resource to [.tx/config](https://github.com/ORCID/ORCID-Source/blob/master/.tx/config)
+2. Add a properties files for the resource (language codes en, xx, lr and rl)  to [orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n)
+        
+        touch [resource name]_en.properties
+        touch [resource name]_xx.properties
+        touch [resource name]_lr.properties
+        touch [resource name]_rl.properties
+        
+4. Add the file name prefix for the new resource to [update_test_languages.jy](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/i18n/update_test_languages.jy#L85)
+3. Add the resource to Transifex (requires [installing Transifex CLI](#install-tx))
+
+        tx push -s -r registry.[resource name]
+(or [upload via Transifex UI](https://docs.transifex.com/projects/uploading-content#if-a-project-already-has-a-resource))
+
 ## <a id="remove-resource"></a>Remove a Resource
 1. Remove the entry for the resource from [.tx/config](https://github.com/ORCID/ORCID-Source/blob/master/.tx/config)
 2. Remove properties files for the resource from [orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n)
@@ -191,7 +207,7 @@ When translation status for each resource in the new language reaches 100%, the 
 ## Push/Pull to/from Transifex manually
 If automatic push/pull between Transifex and Github via TXGH fails, files can be transferred manually, via the Transifex client or the Transifex API.
 
-### Install/configure Transifex client
+### <a id="install-tx"></a>Install/configure Transifex client
 1. [Install the Transifex client](http://docs.transifex.com/client/)
 2. [Configure the Transifex client](http://docs.transifex.com/client/config/) to use your Transifex credentials. Complete the [.transifexrc](http://docs.transifex.com/client/config/#transifexrc) step only - do not edit .tx/config or language mappings.
 
