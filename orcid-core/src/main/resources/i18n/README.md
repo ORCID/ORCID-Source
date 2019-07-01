@@ -184,11 +184,10 @@ When translation status for each resource in the new language reaches 100%, the 
         touch [resource name]_lr.properties
         touch [resource name]_rl.properties
         
-4. Add the file name prefix for the new resource to [update_test_languages.jy](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/i18n/update_test_languages.jy#L85)
-3. Add the resource to Transifex (requires [installing Transifex CLI](#install-tx))
+4. Add the file name prefix for the new resource to [update_test_languages.jy](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/i18n/update_test_languages.jy#L85) (this script should be run and the results commited after adding properties to the file)
+3. Add the resource to Transifex (requires [installing Transifex CLI](#install-tx); if you don't want to install the CLI you can [upload via Transifex UI](https://docs.transifex.com/projects/uploading-content#if-a-project-already-has-a-resource))
 
         tx push -s -r registry.[resource name]
-(or [upload via Transifex UI](https://docs.transifex.com/projects/uploading-content#if-a-project-already-has-a-resource))
 
 ## <a id="remove-resource"></a>Remove a Resource
 1. Remove the entry for the resource from [.tx/config](https://github.com/ORCID/ORCID-Source/blob/master/.tx/config)
