@@ -3,8 +3,8 @@ package org.orcid.pojo;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.orcid.jaxb.model.common_v2.Source;
-import org.orcid.jaxb.model.notification_v2.Notification;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.notification.Notification;
 
 /**
  * 

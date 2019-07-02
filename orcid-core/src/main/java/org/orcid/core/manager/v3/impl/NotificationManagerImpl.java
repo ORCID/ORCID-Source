@@ -1133,7 +1133,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
-        return notificationAdapter.toNotification(notificationDaoReadOnly.findNotificationsToSendLegacy(new Date(), orcid, emailFrequencyDays, recordActiveDate));
+        List<NotificationEntity> notifications = new ArrayList<NotificationEntity>();
+        notifications = notificationDao.findNotificationsToSend(new Date(), orcid, recordActiveDate);          
+        return notificationAdapter.toNotification(notifications);
     }
     
     @Override

@@ -8255,6 +8255,9 @@ ul.comma li:last-child:after {
     .container {
         max-width: 960px
     }
+    .wide-grid .container {
+        max-width: 1304px
+    }
 }
 
 .popover-ng2-bck {
@@ -8974,6 +8977,7 @@ a.footer-url {
 
 .header2 select#language-codes {
     height: 42px;
+    cursor: pointer;
 }
 
 .header2  .advance-search-link {
@@ -9455,6 +9459,10 @@ div#bio-section {
     hyphens: auto;
 }
 
+.notifications-inner ul {
+	list-style: disc;
+}
+
 .more.blue:after{
     color: red;
     content: url(../img/svg/outline-expand_more-24px.blue.svg);
@@ -9507,13 +9515,11 @@ user-menu .top-menu-header {
     display: flex;
     padding: 19px;
     padding-bottom: 12px;
-  
 }
 
 .lang-rl user-menu .top-menu-header{
     flex-direction: row-reverse;
 }
-
 
 user-menu .top-menu-header > div {
     margin-left: 12px;  
@@ -9577,8 +9583,6 @@ user-menu a.top-menu-button {
     min-width: 141px;
     
 }
-
-
 
 @media only screen and (max-width: 840.999px) {
     user-menu .top-menu {

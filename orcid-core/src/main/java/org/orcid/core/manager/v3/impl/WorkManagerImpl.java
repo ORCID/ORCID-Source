@@ -30,6 +30,7 @@ import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Source;
@@ -182,7 +183,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
@@ -216,7 +217,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 Locale locale = localeManager.getLocale();                
                 throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxWorksToWrite}, locale));                
             }
-                                    
+            
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+                                  
+            List<Item> items = new ArrayList<Item>();
+            
             for(int i = 0; i < bulk.size(); i++) {
                 if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
                     Work work = (Work) bulk.get(i);
@@ -242,7 +247,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-                        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
                         workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
                         
@@ -258,6 +262,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Add the work extIds to the list of existing external identifiers
                         addExternalIdsToExistingSet(extIDPutCodeMap, updatedWork, existingExternalIdentifiers);
+                        items.add(createItem(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
                     } catch(Exception e) {
                         //Get the exception 
                         OrcidError orcidError = orcidCoreExceptionMapper.getV3OrcidError(e);
@@ -266,7 +271,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 }
             }
             
-            workDao.flush();            
+            workDao.flush();   
+            
+            if(!items.isEmpty()) {
+                notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, items);
+            }
         }
         
         return workBulk;
@@ -351,7 +360,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         workDao.merge(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
@@ -363,7 +372,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         try {
             workDao.removeWork(orcid, workId);
             workDao.flush();
-            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, null, ActionType.DELETE));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);
             result = false;
@@ -371,27 +380,40 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return result;
     }
     
-	private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
-		setIncomingWorkPrivacy(workEntity, profile, true);
-	}
+    private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile) {
+        setIncomingWorkPrivacy(workEntity, profile, true);
+    }
 
-	private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
-		String incomingWorkVisibility = workEntity.getVisibility();
-		String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
+    private void setIncomingWorkPrivacy(WorkEntity workEntity, ProfileEntity profile, boolean isApiRequest) {
+        String incomingWorkVisibility = workEntity.getVisibility();
+        String defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
 
-		if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
-			workEntity.setVisibility(defaultWorkVisibility);
-		} else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
-			workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-		}
-	}
+        if ((isApiRequest && profile.getClaimed()) || (incomingWorkVisibility == null && !isApiRequest)) {
+            workEntity.setVisibility(defaultWorkVisibility);
+        } else if (isApiRequest && !profile.getClaimed() && incomingWorkVisibility == null) {
+            workEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+        }
+    }
 
-    private List<Item> createItemList(WorkEntity workEntity) {
+    private List<Item> createItemList(WorkEntity workEntity, ExternalIDs extIds, ActionType type) {
+        return Arrays.asList(createItem(workEntity, extIds, type));
+    }
+    
+    private Item createItem(WorkEntity workEntity, ExternalIDs extIds, ActionType type) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);
         item.setPutCode(String.valueOf(workEntity.getId()));
-        return Arrays.asList(item);
+        item.setActionType(type);
+        item.setPutCode(String.valueOf(workEntity.getId()));
+        
+        if(extIds != null) {
+            Map<String, Object> additionalInfo = new HashMap<String, Object>();
+            additionalInfo.put("external_identifiers", extIds);        
+            item.setAdditionalInfo(additionalInfo);            
+        }
+        
+        return item;
     }
     
     @Override

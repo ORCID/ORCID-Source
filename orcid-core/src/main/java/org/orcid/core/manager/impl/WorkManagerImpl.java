@@ -1,5 +1,6 @@
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
@@ -31,6 +33,7 @@ import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
@@ -171,7 +174,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
         return updatedWork;
     }
@@ -206,7 +209,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 Locale locale = localeManager.getLocale();                
                 throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxWorksToWrite}, locale));                
             }
-                                    
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+            List<Item> items = new ArrayList<Item>();
             for(int i = 0; i < bulk.size(); i++) {
                 if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
                     Work work = (Work) bulk.get(i);
@@ -230,7 +234,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-                        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
                         workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
                         
@@ -253,6 +256,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         //Add the work extIds to the list of existing external identifiers
                         addExternalIdsToExistingSet(extIDPutCodeMap, updatedWork, existingExternalIdentifiers);
+                        items.add(createItem(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
                     } catch(Exception e) {
                         //Get the exception 
                         OrcidError orcidError = orcidCoreExceptionMapper.getOrcidError(e);
@@ -261,7 +265,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 }
             }
             
-            workDao.flush();            
+            workDao.flush(); 
+            
+            if(!items.isEmpty()) {
+                notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, items);
+            }
         }
         
         return workBulk;
@@ -344,7 +352,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         workDao.merge(workEntity);
         workDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
         Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
         return updatedWork;
     }
@@ -357,7 +365,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         try {            
             workDao.removeWork(orcid, workId);
             workDao.flush();
-            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, null, ActionType.DELETE));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);
             result = false;
@@ -375,11 +383,24 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
     }
 
-    private List<Item> createItemList(WorkEntity workEntity) {
+    private List<Item> createItemList(WorkEntity workEntity, ExternalIDs extIds, ActionType type) {
+        return Arrays.asList(createItem(workEntity, extIds, type));
+    }
+    
+    private Item createItem(WorkEntity workEntity, ExternalIDs extIds, ActionType type) {
         Item item = new Item();
         item.setItemName(workEntity.getTitle());
         item.setItemType(ItemType.WORK);
         item.setPutCode(String.valueOf(workEntity.getId()));
-        return Arrays.asList(item);
+        item.setActionType(type);
+        item.setPutCode(String.valueOf(workEntity.getId()));
+        
+        if(extIds != null) {
+            Map<String, Object> additionalInfo = new HashMap<String, Object>();
+            additionalInfo.put("external_identifiers", extIds);        
+            item.setAdditionalInfo(additionalInfo);            
+        }
+        
+        return item;
     }
 }

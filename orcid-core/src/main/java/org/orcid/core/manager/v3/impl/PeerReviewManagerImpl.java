@@ -2,10 +2,14 @@ package org.orcid.core.manager.v3.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -15,13 +19,16 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.manager.v3.PeerReviewManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.PeerReviewManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
@@ -49,6 +56,9 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     @Resource(name = "groupIdRecordManagerV3")
     private GroupIdRecordManager groupIdRecordManager;
 
+    @Resource(name = "groupIdRecordManagerReadOnlyV3")
+    private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
+    
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
@@ -106,7 +116,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE));
         return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
     }
 
@@ -151,7 +161,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         updatedEntity.setOrg(updatedOrganization);
         updatedEntity = peerReviewDao.merge(updatedEntity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(updatedEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(updatedEntity, ActionType.UPDATE));
         return jpaJaxbPeerReviewAdapter.toPeerReview(updatedEntity);
     }
 
@@ -160,7 +170,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
         orcidSecurityManager.checkSourceAndThrow(pr);
         boolean result = deletePeerReview(pr, orcid);
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr, ActionType.DELETE));
         return result;
     }
 
@@ -202,11 +212,24 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
     }
 
-    private List<Item> createItemList(PeerReviewEntity peerReviewEntity) {
+    private List<Item> createItemList(PeerReviewEntity peerReviewEntity, ActionType type) {
         Item item = new Item();
         item.setItemName(peerReviewEntity.getSubjectName());
         item.setItemType(ItemType.PEER_REVIEW);
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
+        item.setActionType(type);
+        Map<String, Object> additionalInfo = new HashMap<String, Object>();
+        additionalInfo.put("subject_container_name", peerReviewEntity.getSubjectContainerName());
+        
+        Optional<GroupIdRecord> optional = groupIdRecordManagerReadOnly.findByGroupId(peerReviewEntity.getGroupId());
+        if(optional.isPresent()) {
+            GroupIdRecord groupId = optional.get();
+            if(!StringUtils.isBlank(groupId.getName())) {
+                additionalInfo.put("group_name", optional.get().getName());
+            }            
+        }
+        
+        item.setAdditionalInfo(additionalInfo);
         return Arrays.asList(item);
     }
 

@@ -24,6 +24,8 @@ public class NotificationItemEntity extends BaseEntity<Long> {
     private String itemName;
     private String externalIdType;
     private String externalIdValue;
+    private String actionType;
+    private String additionalInfo;
     
     @Override
     @Id
@@ -71,5 +73,23 @@ public class NotificationItemEntity extends BaseEntity<Long> {
 
     public void setExternalIdValue(String externalIdValue) {
         this.externalIdValue = externalIdValue;
-    }   
+    }
+
+    @Column(name = "action_type")
+    public String getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(String actionType) {
+        this.actionType = actionType;
+    }
+
+    @Column(name = "additional_info")
+    public String getAdditionalInfo() {
+        return additionalInfo;
+    }
+
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }           
 }

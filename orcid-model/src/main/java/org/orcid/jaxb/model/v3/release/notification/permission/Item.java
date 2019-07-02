@@ -8,14 +8,18 @@
 package org.orcid.jaxb.model.v3.release.notification.permission;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 
@@ -59,7 +63,11 @@ public class Item implements Serializable {
     protected String itemName;
     @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/common", required = true)
     protected ExternalID externalIdentifier;
-
+    @XmlTransient
+    protected ActionType actionType;
+    @XmlTransient
+    protected Map<String, Object> additionalInfo = new HashMap<String, Object>();
+    
     public String getPutCode() {
         return putCode;
     }
@@ -131,4 +139,68 @@ public class Item implements Serializable {
         this.externalIdentifier = value;
     }
 
+    public ActionType getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(ActionType type) {
+        this.actionType = type;
+    }
+
+    public Map<String, Object> getAdditionalInfo() {        
+        return additionalInfo;
+    }
+
+    public void setAdditionalInfo(Map<String, Object> additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((additionalInfo == null) ? 0 : additionalInfo.hashCode());
+        result = prime * result + ((externalIdentifier == null) ? 0 : externalIdentifier.hashCode());
+        result = prime * result + ((itemName == null) ? 0 : itemName.hashCode());
+        result = prime * result + ((itemType == null) ? 0 : itemType.hashCode());
+        result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
+        result = prime * result + ((actionType == null) ? 0 : actionType.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Item other = (Item) obj;
+        if (additionalInfo == null) {
+            if (other.additionalInfo != null)
+                return false;
+        } else if (!additionalInfo.equals(other.additionalInfo))
+            return false;
+        if (externalIdentifier == null) {
+            if (other.externalIdentifier != null)
+                return false;
+        } else if (!externalIdentifier.equals(other.externalIdentifier))
+            return false;
+        if (itemName == null) {
+            if (other.itemName != null)
+                return false;
+        } else if (!itemName.equals(other.itemName))
+            return false;
+        if (itemType != other.itemType)
+            return false;
+        if (putCode == null) {
+            if (other.putCode != null)
+                return false;
+        } else if (!putCode.equals(other.putCode))
+            return false;
+        if (actionType != other.actionType)
+            return false;
+        return true;
+    }    
 }

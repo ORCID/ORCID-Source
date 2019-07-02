@@ -2,11 +2,16 @@ package org.orcid.core.manager.v3.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -17,6 +22,7 @@ import org.orcid.core.manager.v3.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
@@ -34,7 +40,6 @@ import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
 
@@ -305,31 +310,31 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         Affiliation result = null;
         switch(type) {
         case DISTINCTION:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.DISTINCTION, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.DISTINCTION, createItemList(entity, ActionType.CREATE));
             result = jpaJaxbDistinctionAdapter.toDistinction(entity);
             break;
         case EDUCATION:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(entity, ActionType.CREATE));
             result = jpaJaxbEducationAdapter.toEducation(entity);
             break;
         case EMPLOYMENT:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(entity, ActionType.CREATE));
             result = jpaJaxbEmploymentAdapter.toEmployment(entity);
             break;
         case INVITED_POSITION:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.INVITED_POSITION, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.INVITED_POSITION, createItemList(entity, ActionType.CREATE));
             result = jpaJaxbInvitedPositionAdapter.toInvitedPosition(entity);
             break;
         case MEMBERSHIP:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.MEMBERSHIP, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.MEMBERSHIP, createItemList(entity, ActionType.CREATE));
             result = jpaJaxbMembershipAdapter.toMembership(entity);
             break;
         case QUALIFICATION:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.QUALIFICATION, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.QUALIFICATION, createItemList(entity, ActionType.CREATE));
             result = jpaJaxbQualificationAdapter.toQualification(entity);
             break;
         case SERVICE:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.SERVICE, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.SERVICE, createItemList(entity, ActionType.CREATE));
             result = jpaJaxbServiceAdapter.toService(entity);
             break;
         }
@@ -399,31 +404,31 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         Affiliation result = null;
         switch (type) {
         case DISTINCTION:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.DISTINCTION, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.DISTINCTION, createItemList(entity, ActionType.UPDATE));
             result = jpaJaxbDistinctionAdapter.toDistinction(entity);
             break;
         case EDUCATION:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(entity, ActionType.UPDATE));
             result = jpaJaxbEducationAdapter.toEducation(entity);
             break;
         case EMPLOYMENT:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(entity, ActionType.UPDATE));
             result = jpaJaxbEmploymentAdapter.toEmployment(entity);
             break;
         case INVITED_POSITION:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.INVITED_POSITION, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.INVITED_POSITION, createItemList(entity, ActionType.UPDATE));
             result = jpaJaxbInvitedPositionAdapter.toInvitedPosition(entity);
             break;
         case MEMBERSHIP:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.MEMBERSHIP, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.MEMBERSHIP, createItemList(entity, ActionType.UPDATE));
             result = jpaJaxbMembershipAdapter.toMembership(entity);
             break;
         case QUALIFICATION:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.QUALIFICATION, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.QUALIFICATION, createItemList(entity, ActionType.UPDATE));
             result = jpaJaxbQualificationAdapter.toQualification(entity);
             break;
         case SERVICE:
-            notificationManager.sendAmendEmail(orcid, AmendedSection.SERVICE, createItemList(entity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.SERVICE, createItemList(entity, ActionType.UPDATE));
             result = jpaJaxbServiceAdapter.toService(entity);
             break;
         }
@@ -447,19 +452,19 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         boolean result = orgAffiliationRelationDao.removeOrgAffiliationRelation(orcid, affiliationId);
         if (result) {
             if (AffiliationType.DISTINCTION.name().equals(affiliationEntity.getAffiliationType())) {
-                notificationManager.sendAmendEmail(orcid, AmendedSection.DISTINCTION, createItemList(affiliationEntity));
+                notificationManager.sendAmendEmail(orcid, AmendedSection.DISTINCTION, createItemList(affiliationEntity, ActionType.DELETE));
             } else if (AffiliationType.EDUCATION.name().equals(affiliationEntity.getAffiliationType())) {
-                notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(affiliationEntity));
+                notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(affiliationEntity, ActionType.DELETE));
             } else if (AffiliationType.EMPLOYMENT.name().equals(affiliationEntity.getAffiliationType())) {
-                notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(affiliationEntity));
+                notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(affiliationEntity, ActionType.DELETE));
             } else if (AffiliationType.INVITED_POSITION.name().equals(affiliationEntity.getAffiliationType())) {
-                notificationManager.sendAmendEmail(orcid, AmendedSection.INVITED_POSITION, createItemList(affiliationEntity));
+                notificationManager.sendAmendEmail(orcid, AmendedSection.INVITED_POSITION, createItemList(affiliationEntity, ActionType.DELETE));
             } else if (AffiliationType.MEMBERSHIP.name().equals(affiliationEntity.getAffiliationType())) {
-                notificationManager.sendAmendEmail(orcid, AmendedSection.MEMBERSHIP, createItemList(affiliationEntity));
+                notificationManager.sendAmendEmail(orcid, AmendedSection.MEMBERSHIP, createItemList(affiliationEntity, ActionType.DELETE));
             } else if (AffiliationType.QUALIFICATION.name().equals(affiliationEntity.getAffiliationType())) {
-                notificationManager.sendAmendEmail(orcid, AmendedSection.QUALIFICATION, createItemList(affiliationEntity));
+                notificationManager.sendAmendEmail(orcid, AmendedSection.QUALIFICATION, createItemList(affiliationEntity, ActionType.DELETE));
             } else if (AffiliationType.SERVICE.name().equals(affiliationEntity.getAffiliationType())) {
-                notificationManager.sendAmendEmail(orcid, AmendedSection.SERVICE, createItemList(affiliationEntity));
+                notificationManager.sendAmendEmail(orcid, AmendedSection.SERVICE, createItemList(affiliationEntity, ActionType.DELETE));
             }            
         }
         return result;
@@ -474,15 +479,13 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 		} else if (isApiRequest && !profile.getClaimed() && incomingElementVisibility == null) {
 			orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
 		}
-    }
-    
-	private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity workEntity, ProfileEntity profile) {
-		setIncomingWorkPrivacy( workEntity,  profile, true);
-	}
+    }    
 
-    private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity) {
+    private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity, ActionType type) {
         Item item = new Item();
-        item.setItemName(orgAffiliationEntity.getOrg().getName());
+        if(!StringUtils.isBlank(orgAffiliationEntity.getTitle())) {
+            item.setItemName(orgAffiliationEntity.getTitle());
+        }
         ItemType itemType = null;
         if (AffiliationType.DISTINCTION.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.DISTINCTION;
@@ -499,8 +502,13 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         } else if (AffiliationType.SERVICE.name().equals(orgAffiliationEntity.getAffiliationType())) {
             itemType = ItemType.SERVICE;
         }
+        item.setActionType(type);
         item.setItemType(itemType);
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
+        Map<String, Object> additionalInfo = new HashMap<String, Object>();
+        additionalInfo.put("department", orgAffiliationEntity.getDepartment());
+        additionalInfo.put("org_name", orgAffiliationEntity.getOrg().getName());
+        item.setAdditionalInfo(additionalInfo);
         return Arrays.asList(item);
     }
     
