@@ -1,10 +1,11 @@
-package org.orcid.persistence.dao;
+package org.orcid.core.solr;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,68 +14,66 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.junit.After;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 /**
- * Integration tests for Solr Daos. 
- * In particular these are used to test that query strings return the Orcids that are expected from SOLR.
- * You may need to compare the queries given in the test methods below with those of the SearchOrcidFormToQueryMapperTest. 
+ * Integration tests for Solr Daos. In particular these are used to test that
+ * query strings return the Orcids that are expected from SOLR. You may need to
+ * compare the queries given in the test methods below with those of the
+ * SearchOrcidFormToQueryMapperTest.
  * 
  * @author jamesb
  * @See SearchOrcidFormToQueryMapperTest
  *
  */
-public class SolrDaoTest {
+public class OrcidSolrClientTest {
+
+    @Resource(name = "solrClientTest")
+    private SolrClient solrClientTest;
 
     @Resource
-    private SolrDao solrDao;
+    private OrcidSolrClient orcidSolrClient;
 
     private String firstOrcid = "1234-5678";
     private String secondOrcid = "5677-1235";
     private List<String> orcidsToDelete;
 
     @Before
-    public void initOrcid() {
-
-        orcidsToDelete = new ArrayList<String>();
-        orcidsToDelete.add(firstOrcid);
-        orcidsToDelete.add(secondOrcid);
-    }
-
-    @After
-    public void deleteOrcid() {
-        solrDao.removeOrcids(orcidsToDelete);
+    public void before() {
+        TargetProxyHelper.injectIntoProxy(orcidSolrClient, "solrReadOnlyRecordClient", solrClientTest);
     }
 
     @Test
     public void searchByOrcid() throws Exception {
 
-        OrcidSolrResult firstOrcidResult = solrDao.findByOrcid(firstOrcid);
+        OrcidSolrResult firstOrcidResult = orcidSolrClient.findByOrcid(firstOrcid);
         assertNull(firstOrcidResult);
 
         OrcidSolrDocument secondOrcid = buildAndPersistSecondOrcid();
         OrcidSolrDocument firstOrcid = buildAndPersistFirstOrcid();
 
-        firstOrcidResult = solrDao.findByOrcid(firstOrcid.getOrcid());
+        firstOrcidResult = orcidSolrClient.findByOrcid(firstOrcid.getOrcid());
         assertFalse(secondOrcid.getOrcid().equals(firstOrcidResult.getOrcid()));
         assertEquals("1234-5678", firstOrcidResult.getOrcid());
     }
-    
+
     @Test
     public void queryStringSearchGrant() throws Exception {
         OrcidSolrDocument secondOrcid = buildAndPersistSecondOrcid();
         String patentQueryString = "grant-numbers:grant-number02X%3A";
-        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(patentQueryString, null, null);
+        OrcidSolrResults orcidSolrResults = orcidSolrClient.findByDocumentCriteria(patentQueryString, null, null);
         List<OrcidSolrResult> solrResultsList = orcidSolrResults.getResults();
         assertTrue(solrResultsList.size() == 1);
         assertEquals(secondOrcid.getOrcid(), solrResultsList.get(0).getOrcid());
@@ -83,10 +82,10 @@ public class SolrDaoTest {
     @Test
     public void queryStringSearchFamilyNameGivenName() throws Exception {
 
-        OrcidSolrResult orcidSolrDocument = solrDao.findByOrcid(firstOrcid);
+        OrcidSolrResult orcidSolrDocument = orcidSolrClient.findByOrcid(firstOrcid);
         assertNull(orcidSolrDocument);
 
-        orcidSolrDocument = solrDao.findByOrcid(secondOrcid);
+        orcidSolrDocument = orcidSolrClient.findByOrcid(secondOrcid);
         assertNull(orcidSolrDocument);
 
         OrcidSolrDocument profile1 = new OrcidSolrDocument();
@@ -99,18 +98,19 @@ public class SolrDaoTest {
         profile2.setFamilyName("Bass");
         profile2.setGivenNames("Terry");
 
-        solrDao.persist(profile1);
-        solrDao.persist(profile2);
+        solrClientTest.addBean(profile1);
+        solrClientTest.addBean(profile2);
+        solrClientTest.commit();
 
         String familyNameGivenNameQuery = "given-names:teddy AND family-name:bass";
 
-        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQuery, null, null);
+        OrcidSolrResults orcidSolrResults = orcidSolrClient.findByDocumentCriteria(familyNameGivenNameQuery, null, null);
         List<OrcidSolrResult> solrResultsList = orcidSolrResults.getResults();
         assertTrue(solrResultsList.size() == 1);
         assertEquals(firstOrcid, solrResultsList.get(0).getOrcid());
 
         String familyNameQueryRelaxed = "given-names:te* AND family-name:Bass";
-        solrResultsList = solrDao.findByDocumentCriteria(familyNameQueryRelaxed, null, null).getResults();
+        solrResultsList = orcidSolrClient.findByDocumentCriteria(familyNameQueryRelaxed, null, null).getResults();
         assertTrue(solrResultsList.size() == 2);
         assertEquals(firstOrcid, solrResultsList.get(0).getOrcid());
         assertEquals(secondOrcid, solrResultsList.get(1).getOrcid());
@@ -123,11 +123,11 @@ public class SolrDaoTest {
         buildAndPersistSecondOrcid();
 
         String givenNameQueryString = "given-names:Given";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(givenNameQueryString, null, null).getResults();
+        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(givenNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 2);
 
         String givenNameWithExclusionsQueryString = MessageFormat.format("given-names:Given -orcid: {0}", new Object[] { secondOrcid });
-        solrResults = solrDao.findByDocumentCriteria(givenNameWithExclusionsQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(givenNameWithExclusionsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
     }
 
@@ -142,17 +142,16 @@ public class SolrDaoTest {
         persistOrcid(secondDoc);
 
         String familyNameKeywordsQueryString = "given-names:given AND keyword:basic";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
+        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
         OrcidSolrResult result = solrResults.get(0);
         assertEquals(secondOrcid, result.getOrcid());
 
         familyNameKeywordsQueryString = "given-names:given AND keyword:advanced";
-        solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
         result = solrResults.get(0);
         assertEquals(secondOrcid, result.getOrcid());
-
     }
 
     @Test
@@ -166,13 +165,13 @@ public class SolrDaoTest {
         persistOrcid(secondDoc);
 
         String familyNameKeywordsQueryString = "given-names:given AND keyword:basic";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
+        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
         OrcidSolrResult result = solrResults.get(0);
         assertEquals(secondOrcid, result.getOrcid());
 
         familyNameKeywordsQueryString = "given-names:given AND keyword:advanced";
-        solrResults = solrDao.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
         result = solrResults.get(0);
         assertEquals(secondOrcid, result.getOrcid());
@@ -199,7 +198,7 @@ public class SolrDaoTest {
 
         String familyNameGivenNameQuery = "{!edismax qf='family-name^1.0 given-names^2.0'}James";
 
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQuery, null, null).getResults();
+        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameGivenNameQuery, null, null).getResults();
 
         assertTrue(solrResults.size() == 3);
         OrcidSolrResult givenNameMatch = solrResults.get(0);
@@ -210,7 +209,7 @@ public class SolrDaoTest {
         assertTrue(familyNameMatch2.getRelevancyScore() < 1.0);
 
         String familyNameGivenNameQueryWithExclude = familyNameGivenNameQuery + " -orcid:" + thirdOrcidDoc.getOrcid();
-        solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQueryWithExclude, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameGivenNameQueryWithExclude, null, null).getResults();
         assertTrue(solrResults.size() == 2);
         givenNameMatch = solrResults.get(0);
         assertTrue(givenNameMatch.getOrcid().equals(secondOrcid));
@@ -222,7 +221,6 @@ public class SolrDaoTest {
 
     @Test
     public void queryFieldWithBoost() throws Exception {
-
         OrcidSolrDocument firstOrcidDoc = buildFirstOrcid();
         firstOrcidDoc.setOrcid(firstOrcid);
         firstOrcidDoc.setFamilyName("James");
@@ -231,12 +229,13 @@ public class SolrDaoTest {
         secondOrcidDoc.setOrcid(secondOrcid);
         secondOrcidDoc.setGivenNames("James");
 
-        solrDao.persist(firstOrcidDoc);
-        solrDao.persist(secondOrcidDoc);
+        solrClientTest.addBean(firstOrcidDoc);
+        solrClientTest.addBean(secondOrcidDoc);
+        solrClientTest.commit();
 
         String familyNameGivenNameQuery = "{!edismax qf='family-name^1.0 given-names^2.0'}James";
 
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameGivenNameQuery, null, null).getResults();
+        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameGivenNameQuery, null, null).getResults();
 
         assertTrue(solrResults.size() == 2);
         assertTrue(solrResults.get(0).getOrcid().equals(secondOrcid));
@@ -245,7 +244,6 @@ public class SolrDaoTest {
 
     @Test
     public void queryStringSearchFamilyNameGivenNameTenRows() throws Exception {
-
         int numRecordsToCreate = 10;
         List<String> orcidsToGetStored = new ArrayList<String>();
         for (int i = 0; i < numRecordsToCreate; i++) {
@@ -259,13 +257,12 @@ public class SolrDaoTest {
         }
 
         String familyNameOnlyQuery = "family-name:Family Name";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(familyNameOnlyQuery, null, null).getResults();
+        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameOnlyQuery, null, null).getResults();
         assertTrue(solrResults.size() == 10);
 
         familyNameOnlyQuery = "{!start=0 rows=5} family-name:Family Name";
-        solrResults = solrDao.findByDocumentCriteria(familyNameOnlyQuery, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameOnlyQuery, null, null).getResults();
         assertTrue(solrResults.size() == 5);
-
     }
 
     @Test
@@ -274,44 +271,43 @@ public class SolrDaoTest {
         buildAndPersistSecondOrcid();
 
         String orcidQueryString = "text=1234\\-5678";
-        List<OrcidSolrResult> solrResults = solrDao.findByDocumentCriteria(orcidQueryString, null, null).getResults();
+        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(orcidQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1);
 
         String givenNameQueryString = "text=Given";
-        solrResults = solrDao.findByDocumentCriteria(givenNameQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(givenNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 2);
 
         String familyNameQueryString = "text=Smith";
-        solrResults = solrDao.findByDocumentCriteria(familyNameQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
 
         String grantQueryString = "text=Grant-number02X%3A";
-        solrResults = solrDao.findByDocumentCriteria(grantQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(grantQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String creditNameQueryString = "text=Credit";
-        solrResults = solrDao.findByDocumentCriteria(creditNameQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(creditNameQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String otherNamesQueryString = "text=Other";
-        solrResults = solrDao.findByDocumentCriteria(otherNamesQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(otherNamesQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String doiQueryString = "text=id2";
-        solrResults = solrDao.findByDocumentCriteria(doiQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(doiQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String worksTitlesQueryString = "text=Work Title 1";
-        solrResults = solrDao.findByDocumentCriteria(worksTitlesQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(worksTitlesQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
 
         String emailQueryString = "text=stan@ficitional.co.uk";
-        solrResults = solrDao.findByDocumentCriteria(emailQueryString, null, null).getResults();
+        solrResults = orcidSolrClient.findByDocumentCriteria(emailQueryString, null, null).getResults();
         assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
-
     }
 
-    private OrcidSolrDocument buildAndPersistFirstOrcid() {
+    private OrcidSolrDocument buildAndPersistFirstOrcid() throws IOException, SolrServerException {
         OrcidSolrDocument firstDocument = buildFirstOrcid();
         firstDocument.setOrcid(firstOrcid);
         persistOrcid(firstDocument);
@@ -322,12 +318,11 @@ public class SolrDaoTest {
         OrcidSolrDocument testDoc = new OrcidSolrDocument();
         testDoc.setOrcid(firstOrcid);
         testDoc.setGivenNames("Given Name of Person");
-        testDoc.setFamilyName("Smith");        
+        testDoc.setFamilyName("Smith");
         return testDoc;
     }
 
-    private OrcidSolrDocument buildAndPersistSecondOrcid() {
-
+    private OrcidSolrDocument buildAndPersistSecondOrcid() throws IOException, SolrServerException {
         OrcidSolrDocument secondDoc = buildSupplementaryOrcid();
         secondDoc.setOrcid(secondOrcid);
         persistOrcid(secondDoc);
@@ -336,7 +331,6 @@ public class SolrDaoTest {
     }
 
     private OrcidSolrDocument buildSupplementaryOrcid() {
-
         OrcidSolrDocument secondOrcidDoc = new OrcidSolrDocument();
         secondOrcidDoc.setCreditName("Credit Name");
         secondOrcidDoc.addEmailAddress("stan@ficitional.co.uk");
@@ -349,10 +343,10 @@ public class SolrDaoTest {
         return secondOrcidDoc;
     }
 
-    private void persistOrcid(OrcidSolrDocument orcidSolrDocument) {
+    private void persistOrcid(OrcidSolrDocument orcidSolrDocument) throws IOException, SolrServerException {
         orcidsToDelete.add(orcidSolrDocument.getOrcid());
-        solrDao.persist(orcidSolrDocument);
-
+        solrClientTest.addBean(orcidSolrDocument);
+        solrClientTest.commit();
     }
 
 }

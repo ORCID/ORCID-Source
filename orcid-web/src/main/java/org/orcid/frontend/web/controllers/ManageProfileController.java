@@ -19,7 +19,6 @@ import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.OrcidSocialManager;
 import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
@@ -107,9 +106,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private UserConnectionManager userConnectionManager;
-
-    @Resource
-    private OrcidSocialManager orcidSocialManager;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -721,39 +717,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         }
         return bf;
-    }
-
-    /**
-     * Check if the user have twitter enabled
-     */
-    @RequestMapping(value = { "/twitter/check-twitter-status" }, method = RequestMethod.GET)
-    public @ResponseBody boolean isTwitterEnabled() {
-        return orcidSocialManager.isTwitterEnabled(getEffectiveUserOrcid());
-    }
-
-    /**
-     * Get a user request to authorize twitter and return the authorization URL
-     */
-    @RequestMapping(value = { "/twitter" }, method = RequestMethod.POST)
-    public @ResponseBody String goToTwitterAuthPage() throws Exception {
-        return orcidSocialManager.getTwitterAuthorizationUrl(getEffectiveUserOrcid());        
-    }
-
-    /**
-     * Get the twitter credentials and enable it on the user profile
-     */
-    @RequestMapping(value = { "/twitter" }, method = RequestMethod.GET)
-    public ModelAndView setTwitterKeyToProfileGET(@RequestParam("oauth_token") String token, @RequestParam("oauth_verifier") String verifier) throws Exception {      
-        return new ModelAndView("manage");
-    }
-
-    /**
-     * Disable twitter access
-     */
-    @RequestMapping(value = { "/disable-twitter" }, method = RequestMethod.POST)
-    public @ResponseBody boolean disableTwitter() throws Exception {
-        orcidSocialManager.disableTwitter(getEffectiveUserOrcid());
-        return true;
     }
 
     /**

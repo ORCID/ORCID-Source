@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
@@ -15,7 +15,6 @@ import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
-import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocumentLegacy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +26,8 @@ public class SolrIndexer {
 
     Logger LOG = LoggerFactory.getLogger(SolrIndexer.class);
 
-    @Resource(name = "legacySolrServer")
-    private SolrServer legacySolrServer;
+    @Resource(name = "legacyRecordSolrClient")
+    private SolrClient legacyRecordSolrClient;
     
     @Resource
     private RecordManagerReadOnly recordManagerReadOnly;
@@ -67,8 +66,8 @@ public class SolrIndexer {
     
     private void persist(OrcidSolrDocumentLegacy orcidSolrDocument) {
         try {
-            legacySolrServer.addBean(orcidSolrDocument);
-            legacySolrServer.commit();
+            legacyRecordSolrClient.addBean(orcidSolrDocument);
+            legacyRecordSolrClient.commit();
         } catch (SolrServerException se) {
             throw new NonTransientDataAccessResourceException("Error persisting to SOLR Server", se);
         } catch (IOException ioe) {

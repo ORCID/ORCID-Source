@@ -205,6 +205,12 @@
             <groupId>com.github.slugify</groupId>
             <artifactId>slugify</artifactId>
         </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.10.2</version>
+        </dependency>
+        
         <!-- openIDConnect -->
         <dependency>
 		    <groupId>com.nimbusds</groupId>
@@ -216,12 +222,6 @@
 		    <artifactId>oauth2-oidc-sdk</artifactId>
 		    <version>5.36</version>
 		</dependency>
-        <!-- Twitter -->
-         <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-core</artifactId>
-            <version>4.0.2</version>
-        </dependency>
         
         <!-- Messaging -->
         <dependency>
