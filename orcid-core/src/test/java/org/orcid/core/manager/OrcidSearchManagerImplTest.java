@@ -18,9 +18,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.core.solr.OrcidSolrClient;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.search_v2.Search;
-import org.orcid.persistence.dao.SolrDao;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
@@ -44,13 +44,13 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     private OrcidSearchManager orcidSearchManager;
 
     @Mock
-    private SolrDao mockSolrDao;
+    private OrcidSolrClient mockOrcidSolrClient;
 
     @Mock
     private OrcidSecurityManager mockOrcidSecurityManager;
 
     @Resource
-    private SolrDao solrDao;
+    private OrcidSolrClient orcidSolrClient;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -58,19 +58,19 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "solrDao", mockSolrDao);
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSolrClient", mockOrcidSolrClient);
         TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSecurityManager", mockOrcidSecurityManager);
     }
 
     @After
     public void after() {
-        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "solrDao", solrDao);
+        TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSolrClient", orcidSolrClient);
         TargetProxyHelper.injectIntoProxy(orcidSearchManager, "orcidSecurityManager", orcidSecurityManager);
     }
 
     @Test
     public void testFindOrcidIds() {
-        when(mockSolrDao.findByDocumentCriteria(any())).thenReturn(multipleResultsForQuery());
+        when(mockOrcidSolrClient.findByDocumentCriteria(any())).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
         assertEquals(2, search.getResults().size());
@@ -81,7 +81,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
 
     @Test
     public void testFindOrcidIdsNoResults() {
-        when(mockSolrDao.findByDocumentCriteria(any())).thenReturn(new OrcidSolrResults());
+        when(mockOrcidSolrClient.findByDocumentCriteria(any())).thenReturn(new OrcidSolrResults());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
         assertEquals(Long.valueOf(0), search.getNumFound());

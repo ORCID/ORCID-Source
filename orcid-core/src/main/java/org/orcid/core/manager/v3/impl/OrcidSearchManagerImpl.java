@@ -9,9 +9,9 @@ import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
+import org.orcid.core.solr.OrcidSolrClient;
 import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
-import org.orcid.persistence.dao.SolrDao;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +27,12 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private SolrDao solrDao;
+    private OrcidSolrClient orcidSolrClient;
     
     @Override
     public Search findOrcidIds(Map<String, List<String>> queryParameters) {
         Search search = new Search();
-        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(queryParameters);
+        OrcidSolrResults orcidSolrResults = orcidSolrClient.findByDocumentCriteria(queryParameters);
         setSearchResults(orcidSolrResults, search);
         return search;
     }
@@ -40,7 +40,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     @Override
     public Search findOrcidsByQuery(String query, Integer start, Integer rows) {
         Search search = new Search();
-        OrcidSolrResults orcidSolrResults = solrDao.findByDocumentCriteria(query, start, rows);
+        OrcidSolrResults orcidSolrResults = orcidSolrClient.findByDocumentCriteria(query, start, rows);
         setSearchResults(orcidSolrResults, search);
         return search;
     }
