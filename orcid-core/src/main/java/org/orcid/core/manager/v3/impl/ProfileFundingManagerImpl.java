@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.solr.client.solrj.SolrClient;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -17,6 +18,7 @@ import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
+import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.common.ActionType;
@@ -33,6 +35,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
@@ -63,6 +66,15 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
+    
+    @Value("${org.orcid.persistence.messaging.updated.fundingSubType.solr:indexFundingSubTypes}")
+    private String solrQueueName; 
+    
+    @Resource(name = "jmsMessageSender")
+    private JmsMessageSender messaging;
+    
+    @Resource(name = "legacyFundingSubTypeSolrClient")
+    private SolrClient legacyFundingSubTypeSolrClient;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -147,7 +159,16 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
                 if(!isInappropriate){
                     OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
                     document.setOrgDefinedFundingType(subtype);
-                    fundingSubTypeSolrDao.persist(document);              
+                    //TODO: Remove after solr migration is done
+                    legacyFundingSubTypeSolrClient.addBean(document);
+                    legacyFundingSubTypeSolrClient.commit();
+                    
+                    // Send message to the message listener
+                    if (!messaging.send(document, solrQueueName)) {
+                        LOGGER.error("Unable to send fundingSubType: " + document.getOrgDefinedFundingType() + " to the message queue " + solrQueueName);            
+                        return;
+                    }
+                    
                 } else {
                     LOGGER.warn("A word have been flaged as inappropiate: " + subtype);
                 }

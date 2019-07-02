@@ -243,9 +243,7 @@
 	
 	<bean id="fundingSubTypeToIndexDaoReadOnly" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
-	</bean>          
-	
-	<bean id="FundingSubTypeSolrDao" class="org.orcid.persistence.dao.impl.FundingSubtypeSolrDaoImpl" />
+	</bean>
 	
 	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />
 	

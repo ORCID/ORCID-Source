@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.solr.client.solrj.SolrClient;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
@@ -70,6 +71,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
+    
+    @Resource(name = "legacyFundingSubTypeSolrClient")
+    private SolrClient legacyFundingSubTypeSolrClient;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -136,7 +140,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
                 if(!isInappropriate){
                     OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
                     document.setOrgDefinedFundingType(subtype);
-                    fundingSubTypeSolrDao.persist(document);    
+                    //TODO: Remove after solr migration is done
+                    legacyFundingSubTypeSolrClient.addBean(document);
+                    legacyFundingSubTypeSolrClient.commit();
                     
                     // Send message to the message listener
                     if (!messaging.send(document, solrQueueName)) {

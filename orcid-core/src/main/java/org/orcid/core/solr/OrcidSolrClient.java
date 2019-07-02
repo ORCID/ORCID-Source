@@ -21,6 +21,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
+import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
@@ -98,6 +99,20 @@ public class OrcidSolrClient {
         }
     }
 
+    public List<OrgDefinedFundingTypeSolrDocument> getFundingTypes(String searchTerm, int firstResult, int maxResult) {
+        SolrQuery query = new SolrQuery();
+        query.setQuery(
+                "{!edismax qf='org-defined-funding-type^50.0 text^1.0' pf='org-defined-funding-type^50.0' mm=1 sort='score desc'}"
+                        + searchTerm + "*").setFields("*");
+        try {
+            QueryResponse queryResponse = solrReadOnlyFundingSubTypeClient.query(query);
+            return queryResponse.getBeans(OrgDefinedFundingTypeSolrDocument.class);
+        } catch (SolrServerException | IOException se) {
+            String errorMessage = MessageFormat.format("Error when attempting to search for orgs, with search term {0}", new Object[] { searchTerm });
+            throw new NonTransientDataAccessResourceException(errorMessage, se);
+        }
+    }
+    
     private OrcidSolrResults querySolr(SolrQuery query) {
         OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
         List<OrcidSolrResult> orcidSolrResultsList = new ArrayList<>();
@@ -118,4 +133,6 @@ public class OrcidSolrClient {
         }
         return orcidSolrResults;
     }
+    
+    
 }
