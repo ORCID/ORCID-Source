@@ -177,27 +177,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         }
         Works works = processGroupedWorks(groupGenerator.getGroups());
         
-        if (Features.WORKS_FAILURE_DEBUG.isActive()) {
-            LOG.info("{} work groups generated for orcid {}", works.getWorkGroup().size(), orcid);
-        }
-        
         if (Features.GROUPING_SUGGESTIONS.isActive()) {
-            if (Features.WORKS_FAILURE_DEBUG.isActive()) {
-                LOG.info("Generating grouping suggestions");
-                try {
-                    List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
-                    LOG.info("{} grouping suggestions generated for {}", suggestions.size(), orcid);
-                    LOG.info("Caching grouping suggestions");
-                    groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
-                    LOG.info("Cached {} grouping suggestions for {}", suggestions.size(), orcid);
-                } catch (Exception e) {
-                    LOG.error("Error generating grouping suggestions", e);
-                    throw e;
-                }
-            } else {
-                List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
-                groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
-            }
+            List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+            groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
         }
         return works;
     }
