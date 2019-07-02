@@ -75,7 +75,7 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
                     for (GroupableActivity activity : group.getActivities()) {
                         WorkSummary workSummary = (WorkSummary) activity;
                         putCodes.add(workSummary.getPutCode());
-                        if (!groupableExternalIdFound) {
+                        if (!groupableExternalIdFound && workSummary.getExternalIdentifiers() != null) {
                             for (ExternalID externalId : workSummary.getExternalIdentifiers().getExternalIdentifier()) {
                                 if (externalId.isGroupAble()) {
                                     groupableExternalIdFound = true;
