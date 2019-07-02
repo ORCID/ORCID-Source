@@ -8255,6 +8255,9 @@ ul.comma li:last-child:after {
     .container {
         max-width: 960px
     }
+    .wide-grid .container {
+        max-width: 1304px
+    }
 }
 
 .popover-ng2-bck {
