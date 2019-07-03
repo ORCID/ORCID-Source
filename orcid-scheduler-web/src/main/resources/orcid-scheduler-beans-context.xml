@@ -41,8 +41,6 @@
 	   <property name="trickleManager" ref="trickleManager" />
 	</bean>
 	
-	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />
-
-	<bean id="solrIndexer" class="org.orcid.scheduler.indexer.solr.SolrIndexer" />
+	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />	
 
 </beans>

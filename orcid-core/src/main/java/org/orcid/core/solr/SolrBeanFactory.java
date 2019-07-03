@@ -32,37 +32,7 @@ public class SolrBeanFactory {
     
     private static final String DEFAULT_COLLECTION = "/profile";
     private static final String ORGS_COLLECTION = "/org";
-    private static final String FUNDING_SUB_TYPE_COLLECTION = "/fundingSubType";
-    
-    @Bean(name = "legacyRecordSolrClient")
-    public SolrClient legacyRecordSolrClient() {
-        return new HttpSolrClient.Builder(legacySolrMasterUrl + DEFAULT_COLLECTION)
-                .withConnectionTimeout(connectionTimeout)
-                .withSocketTimeout(socketTimeout)
-                .allowCompression(allowCompression)
-                .withResponseParser(responseParser)                
-                .build();
-    }
-    
-    @Bean(name = "legacyOrgsSolrClient")
-    public SolrClient legacyOrgsSolrClient() {
-        return new HttpSolrClient.Builder(legacySolrMasterUrl + ORGS_COLLECTION)
-                .withConnectionTimeout(connectionTimeout)
-                .withSocketTimeout(socketTimeout)
-                .allowCompression(allowCompression)
-                .withResponseParser(responseParser)                
-                .build();
-    }
-    
-    @Bean(name = "legacyFundingSubTypeSolrClient")
-    public SolrClient legacyFundingSubTypeSolrClient() {
-        return new HttpSolrClient.Builder(legacySolrMasterUrl + FUNDING_SUB_TYPE_COLLECTION)
-                .withConnectionTimeout(connectionTimeout)
-                .withSocketTimeout(socketTimeout)
-                .allowCompression(allowCompression)
-                .withResponseParser(responseParser)                
-                .build();
-    }
+    private static final String FUNDING_SUB_TYPE_COLLECTION = "/fundingSubType";       
     
     @Bean(name = "solrReadOnlyProfileClient")
     public SolrClient solrClient() {

@@ -73,7 +73,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     private EmailManagerReadOnly emailManagerReadOnly;
     
     @Resource
-    private OrcidSolrLegacyIndexer solrIndexer;
+    private OrcidSolrLegacyIndexer OrcidSolrLegacyIndexer;
     
     private int claimReminderAfterDays = 8;
     
@@ -171,7 +171,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         // Feed the old SOLR instance, just don't feed it for all records, just for the ones that are created/modified by users
         if(!IndexingStatus.SOLR_UPDATE.equals(status) && feedLegacySolr) {
             try {
-                solrIndexer.persist(mess.getOrcid());
+                OrcidSolrLegacyIndexer.persist(mess.getOrcid());
             } catch (IOException e) {
                 LOG.warn("Unable to feed old solr instance", e); 
             }            

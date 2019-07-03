@@ -1616,6 +1616,8 @@
         <property name="jmsTemplate" ref="jmsTemplate" />
     </bean>
     
+    <bean id="orcidSolrLegacyIndexer" class="org.orcid.core.solr.OrcidSolrLegacyIndexer" />
+    
     <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser" />
     
 </beans>

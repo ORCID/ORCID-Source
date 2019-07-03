@@ -13,11 +13,10 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.solr.OrcidSolrLegacyIndexer;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.core.togglz.Features;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -65,8 +64,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
     
-    @Resource(name = "legacyOrgsSolrClient")
-    private SolrClient legacyOrgsSolrClient;
+    @Resource
+    private OrcidSolrLegacyIndexer orcidSolrLegacyIndexer;
     
     @Override
     synchronized public void processOrgsForIndexing() {
@@ -96,10 +95,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         try {
             OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
             if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus()) || OrganizationStatus.OBSOLETE.name().equals(entity.getStatus())) {
-                legacyOrgsSolrClient.deleteById(String.valueOf(document.getOrgDisambiguatedId()));
+                orcidSolrLegacyIndexer.deleteOrgDisambiguated(String.valueOf(document.getOrgDisambiguatedId()));
             } else {
-                legacyOrgsSolrClient.addBean(document);
-                legacyOrgsSolrClient.commit();
+                orcidSolrLegacyIndexer.persistOrgDisambiguated(document);
             }
             
             // Send message to the message listener
@@ -108,7 +106,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
                 orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
                 return;
             }    
-        } catch(SolrServerException | IOException e) {
+        } catch(IOException e) {
             LOGGER.error("Unable to process disambiguatd org with id " + entity.getId());
             LOGGER.error(e.getMessage());
             orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);

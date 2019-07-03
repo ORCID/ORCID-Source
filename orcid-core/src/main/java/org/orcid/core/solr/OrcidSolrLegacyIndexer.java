@@ -1,6 +1,8 @@
 package org.orcid.core.solr;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
@@ -8,6 +10,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
@@ -18,6 +21,7 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.utils.solr.entities.OrcidSolrDocumentLegacy;
 import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,12 +82,45 @@ public class OrcidSolrLegacyIndexer {
         persist(url, document, document.getOrgDefinedFundingType());
     }
     
+    public void persistOrgDisambiguated(OrgDisambiguatedSolrDocument document) throws IOException {
+        String url = legacySolrMasterUrl + "/org/update?commit=true";
+        persist(url, document, String.valueOf(document.getOrgDisambiguatedId()));
+    }
+    
     private void persist(String url, Object document, String id) throws IOException {
         DocumentObjectBinder b = new DocumentObjectBinder();
         String xmlDocument = ClientUtils.toXML(b.toSolrInputDocument(document));
         
         // Surround document with <add></add> tags
         xmlDocument = "<add>" + xmlDocument + "</add>";
+        
+        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent")+ " (orcid.org)");
+        con.addRequestProperty("Content-Type", "text/xml");
+        con.setRequestMethod("GET");
+        con.setInstanceFollowRedirects(true);
+        con.setDoOutput(true);
+        con.getOutputStream().write(xmlDocument.getBytes("UTF-8"));
+        int responseCode = con.getResponseCode(); 
+        if(responseCode != HttpURLConnection.HTTP_OK) { 
+            String responseMessage = con.getResponseMessage();
+            InputStream is = con.getErrorStream();
+            StringWriter writer = new StringWriter();
+            IOUtils.copy(is, writer, "UTF-8");
+            String theString = writer.toString();
+            System.out.println(theString);
+            Object obj = con.getContent();
+            
+            LOG.error("Error persisting " + id + " to " + url);
+            LOG.error(responseMessage);
+            throw new NonTransientDataAccessResourceException("Error persisting to SOLR Server " + responseMessage);
+        }
+    }
+    
+    public void deleteOrgDisambiguated(String id) throws IOException {
+        String url = legacySolrMasterUrl + "/org/update?commit=true";
+        
+        String xmlDocument = "<delete><id>" + id + "</id></delete>";
         
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
         con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent")+ " (orcid.org)");
@@ -100,5 +137,4 @@ public class OrcidSolrLegacyIndexer {
             throw new NonTransientDataAccessResourceException("Error persisting to SOLR Server " + responseMessage);
         }
     }
-    
 }
