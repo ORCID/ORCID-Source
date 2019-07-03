@@ -42,7 +42,7 @@ public class OrcidSolrOrgsClientTest {
     @Test
     public void testPesistAndFindById() throws IOException, SolrServerException {
         OrgDisambiguatedSolrDocument doc = new OrgDisambiguatedSolrDocument();
-        doc.setOrgDisambiguatedId(1L);
+        doc.setOrgDisambiguatedId("1");
         doc.setOrgDisambiguatedName("Test org name");
         doc.setOrgDisambiguatedCity("Haywards Heath");
         doc.setOrgDisambiguatedRegion("West Sussex");
@@ -57,7 +57,7 @@ public class OrcidSolrOrgsClientTest {
 
         OrgDisambiguatedSolrDocument result = orcidSolrOrgsClient.findById(1L);
         assertNotNull(result);
-        assertEquals(1L, result.getOrgDisambiguatedId().longValue());
+        assertEquals("1", result.getOrgDisambiguatedId());
         assertEquals("Test org name", result.getOrgDisambiguatedName());                
     }    
 }

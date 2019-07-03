@@ -15,7 +15,7 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
     private static final long serialVersionUID = -3668075852578170180L;
 
     @Field(SolrConstants.ORG_DISAMBIGUATED_ID)
-    private Long orgDisambiguatedId;
+    private String orgDisambiguatedId;
 
     @Field(SolrConstants.ORG_DISAMBIGUATED_NAME)
     private String orgDisambiguatedName;
@@ -53,11 +53,11 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
     @Field(SolrConstants.ORG_CHOSEN_BY_MEMBER)
     private boolean isOrgChosenByMember;
 
-    public Long getOrgDisambiguatedId() {
+    public String getOrgDisambiguatedId() {
         return orgDisambiguatedId;
     }
 
-    public void setOrgDisambiguatedId(Long orgDisambiguatedId) {
+    public void setOrgDisambiguatedId(String orgDisambiguatedId) {
         this.orgDisambiguatedId = orgDisambiguatedId;
     }
 

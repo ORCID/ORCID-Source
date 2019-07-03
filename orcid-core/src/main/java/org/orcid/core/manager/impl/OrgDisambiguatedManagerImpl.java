@@ -117,7 +117,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     private OrgDisambiguatedSolrDocument convertEntityToDocument(OrgDisambiguatedEntity entity) {
         OrgDisambiguatedSolrDocument document = new OrgDisambiguatedSolrDocument();
-        document.setOrgDisambiguatedId(entity.getId());
+        document.setOrgDisambiguatedId(String.valueOf(entity.getId()));
         document.setOrgDisambiguatedName(entity.getName());
         document.setOrgDisambiguatedCity(entity.getCity());
         document.setOrgDisambiguatedRegion(entity.getRegion());
@@ -192,7 +192,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setRegion(doc.getOrgDisambiguatedRegion());
         org.setCountry(doc.getOrgDisambiguatedCountry());
         org.setOrgType(doc.getOrgDisambiguatedType());
-        org.setDisambiguatedAffiliationIdentifier(Long.toString(doc.getOrgDisambiguatedId()));
+        org.setDisambiguatedAffiliationIdentifier(doc.getOrgDisambiguatedId());
         org.setSourceType(doc.getOrgDisambiguatedIdSourceType());
         org.setSourceId(doc.getOrgDisambiguatedIdFromSource());
         return org;
