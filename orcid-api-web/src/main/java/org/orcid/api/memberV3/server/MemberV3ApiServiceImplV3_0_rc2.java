@@ -283,7 +283,7 @@ public class MemberV3ApiServiceImplV3_0_rc2 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS)
-    @ApiOperation( nickname="createWorksv3Rc2", value = "Create a listo of Work", response = URI.class, authorizations = {
+    @ApiOperation( nickname="createWorksv3Rc2", value = "Create a list of Works", response = URI.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.ACTIVITIES_UPDATE, description = "you need this") }) })
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "At least one of the works was created", responseHeaders = @ResponseHeader(name = "Location", description = "The created Work resource", response = URI.class)),

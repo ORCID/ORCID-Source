@@ -52,6 +52,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     showResourceItemDetails: any;
     sortAsc: boolean;
     sortKey: any;
+    recordLocked: boolean;
 
     constructor(
         private researchResourceService: ResearchResourceService,
@@ -361,6 +362,21 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
     };
 
     ngOnInit() {
-        this.getResearchResourceGroups();
+        if(this.isPublicPage) {
+            this.commonSrvc.publicUserInfo$
+            .subscribe(
+                userInfo => {
+                    this.recordLocked = !userInfo || userInfo.IS_LOCKED === 'true' || userInfo.IS_DEACTIVATED === 'true';
+                    if (!this.recordLocked) {
+                        this.getResearchResourceGroups();
+                    }
+                },
+                error => {
+                    console.log('affiliation.component.ts: unable to fetch publicUserInfo', error);                    
+                } 
+            );
+        } else {
+            this.getResearchResourceGroups();
+        }
     };
 }

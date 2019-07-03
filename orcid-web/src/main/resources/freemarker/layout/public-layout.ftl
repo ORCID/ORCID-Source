@@ -2,7 +2,9 @@
     <!DOCTYPE html>
     <html class="no-js oldie" lang="en">
     <#include "/common/html-head.ftl" />
-    <body role="presentation">
+    <body role="presentation"
+    <@orcid.checkFeatureStatus 'WIDE_GRID'> class="wide-grid" </@orcid.checkFeatureStatus> 
+    >
     <root-cmp role="presentation">
         <style type="text/css">
             body, html {
@@ -76,11 +78,14 @@
         <#if !(RequestParameters['oauth'])??>  
             <#include "/includes/ng2_templates/language-ng2-template.ftl">
             <@orcid.checkFeatureStatus 'ENABLE_HEADER2'>
+                <#include "/includes/ng2_templates/user-menu-template.ftl">
                 <#include "/includes/ng2_templates/header2-ng2-template.ftl">
                 <header2-ng2></header2-ng2>
             </@orcid.checkFeatureStatus>
          
-            <div class="container">
+            <div class="container"
+             <@orcid.checkFeatureStatus 'NEW_FOOTER'> style="min-height: calc(100% - 118px);" </@orcid.checkFeatureStatus> 
+             >
                 <@orcid.checkFeatureStatus featureName='ENABLE_HEADER2' enabled=false>
                     <#include "/includes/ng2_templates/header-ng2-template.ftl">
                     <div class="header center">

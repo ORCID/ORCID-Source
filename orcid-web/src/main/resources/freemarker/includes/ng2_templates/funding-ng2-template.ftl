@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="funding-ng2-template">
-    <div>
+    <div [hidden]="publicView == 'true' && recordLocked">
         <!-- Funding -->
         <div id="workspace-fundings" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && groups.length < 1" role="group" aria-labelledby="affiliationType.Funding" aria-describedby="tooltip-helpPopoverFunding">
             <div class="workspace-accordion-header clearfix">

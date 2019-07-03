@@ -1,0 +1,46 @@
+Hi John Watson,
+
+You have 6 new notifications in your ORCID inbox - see summary below. Please visit your ORCID Inbox (https://testserver.orcid.org/inbox) to take action or see more details.
+
+ORCID would like to let you know
+
+    We have release a new messaging feature
+    The ORCID registry is now available in Orc
+
+
+Super Institution 1: Request to add items (2014-07-10)
+Works (2)
+    Work 1 (doi: 123446/67654)
+    Work 2 (doi: http://dx.doi.org/123446/67655)
+
+ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
+MORE INFO: https://testserver.orcid.org/inbox#1
+
+Super Institution 1: Request to add items (2014-08-17)
+Employment (1)
+    Employment 1 (doi: 12345/abc)
+
+ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
+MORE INFO: https://testserver.orcid.org/inbox#2
+
+        Lovely Publisher 1 has updated recent funding on your ORCID record.(2014-07-12)
+            *work-1 (doi: doi01)
+            *education-1 
+
+Lovely Publisher 1: Request to add items (2014-07-10)
+Works (2)
+    Work 3 (doi: 12345/def)
+    Work 4 (doi: 12345/ghi)
+
+ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
+MORE INFO: https://testserver.orcid.org/inbox#3
+VIEW YOUR ORCID INBOX: https://testserver.orcid.org/inbox
+You have received this message because you opted in to receive inbox notifications about your ORCID record. Learn more about how the Inbox works (https://support.orcid.org/hc/articles/360006972953).
+You may adjust your email frequency and subscription preferences in your account settings (https://testserver.orcid.org/account).
+
+---
+email preferences (https://testserver.orcid.org/account)
+privacy policy (https://testserver.orcid.org/privacy-policy)
+ORCID, Inc.
+10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA
+https://testserver.orcid.org

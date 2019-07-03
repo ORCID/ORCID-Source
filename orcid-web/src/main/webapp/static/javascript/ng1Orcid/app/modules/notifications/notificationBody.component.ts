@@ -20,6 +20,9 @@ import { CommonService }
 
 import { NotificationsService } 
     from '../../shared/notifications.service';
+    
+import { FeaturesService }
+    from '../../shared/features.service';    
 
 @Component({
     selector: 'notification-body-ng2',
@@ -36,45 +39,73 @@ export class NotificationBodyComponent implements OnInit {
     encodedUrl: string;
     fundingsCount: number;
     peerReviewsCount: number;
-    worksCount: number;
+    elementsModifiedCount: number;
     educationsList: string;
     employmentsList: string;
     fundingsList: string;
     peerReviewsList: string;
     worksList: string;
-
+    addedList: string[];
+    updatedList: string[];
+    deletedList: string[];
+    unknownList: string[];
+    TOGGLZ_VERBOSE_NOTIFICATIONS: boolean;
+    MAX_ELEMENTS_TO_SHOW: number;
+    
     constructor(
         private commonService: CommonService,
         private notificationsService: NotificationsService,
         private elementRef: ElementRef,
+        private featuresService: FeaturesService,
     ) {
         this.notification = elementRef.nativeElement.getAttribute('notification');
+        this.TOGGLZ_VERBOSE_NOTIFICATIONS = this.featuresService.isFeatureEnabled('VERBOSE_NOTIFICATIONS');
+        this.MAX_ELEMENTS_TO_SHOW = 20;
         this.educationsCount = 0;
         this.employmentsCount = 0;
         this.fundingsCount = 0;
         this.peerReviewsCount = 0;
-        this.worksCount = 0;
+        this.elementsModifiedCount = 0;
         this.educationsList = "";
         this.employmentsList = "";
         this.fundingsList = "";
         this.peerReviewsList = "";
         this.worksList = "";
+        this.addedList = [];
+        this.updatedList = [];
+        this.deletedList = [];
+        this.unknownList = [];
     }
 
     archive(putCode): void {
         this.notificationsService.notifyOther({action:'archive', putCode:putCode});
     };
 
-    ngOnInit() {
-        if(this.notification.items){
-            for (let activity of this.notification.items.items){
+    ngOnInit() {        
+        if(this.notification.items) {
+            var affiliationTypes = ["DISTINCTION","EDUCATION","EMPLOYMENT","INVITED_POSITION","MEMBERSHIP","QUALIFICATION","SERVICE"];        
+            for (let activity of this.notification.items.items) {
+                console.log("Activity type: " + activity.actionType)
+                if(this.elementsModifiedCount < this.MAX_ELEMENTS_TO_SHOW) {
+                    if(activity.actionType == "CREATE") {
+                        this.addedList.push(activity);
+                    } else if(activity.actionType == "UPDATE") {
+                        this.updatedList.push(activity);
+                    } else if(activity.actionType == "DELETE") {
+                        this.deletedList.push(activity);
+                    } else {
+                        this.unknownList.push(activity);
+                    }
+                }
+                
+                this.elementsModifiedCount++;
+                
                 if(activity.itemType == "WORK"){
-                    this.worksCount++;
                     this.worksList =  this.worksList + "<strong>" + activity.itemName + "</strong>";
                     if(activity.externalIdentifier){
                         this.worksList = this.worksList + " (" + activity.externalIdentifier.type + ": " + activity.externalIdentifier.value + ")";
                     }
-                    this.worksList += "<br/>";
+                    this.worksList += "<br/>";                                        
                 }
                 if(activity.itemType == "EMPLOYMENT"){
                     this.employmentsCount++;
@@ -104,7 +135,7 @@ export class NotificationBodyComponent implements OnInit {
         }
         if (this.notification.authorizationUrl){
             this.encodedUrl = encodeURIComponent(this.notification.authorizationUrl.uri);
-        }        
+        }       
     }; 
     
     getBaseUri() : String {

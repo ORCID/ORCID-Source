@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="peer-review-ng2-template">
-    <div>
+    <div [hidden]="publicView == 'true' && recordLocked">
         <!-- PEER REVIEW -->
         <div id="workspace-peer-review" class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && peerReviewService.groups.length < 1" *ngIf="noLinkFlag || peerReviewService?.groups?.length > 0" role="group" aria-labelledby="affiliationType.peerReview" aria-describedby="tooltip-helpPopoverPeerReview">
             <div class="workspace-accordion-header clearfix">

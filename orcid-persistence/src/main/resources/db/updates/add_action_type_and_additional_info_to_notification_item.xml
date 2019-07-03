@@ -1,0 +1,31 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="ADD-ACTION-TYPE-TO-NOTIFICATION-ITEM">	    
+		<preConditions onFail="MARK_RAN">
+         	<not>
+         		<columnExists tableName="notification_item" columnName="action_type"/>
+         	</not>
+         </preConditions>
+        <sql>ALTER TABLE notification_item ADD COLUMN action_type VARCHAR(10)</sql>
+    </changeSet>
+
+	<changeSet author="Angel Montenegro" id="ADD-ADDITIONAL-INFO-TO-NOTIFICATION-ITEM" dbms="postgresql">	    
+		<preConditions onFail="MARK_RAN">
+         	<not>
+         		<columnExists tableName="notification_item" columnName="additional_info"/>
+         	</not>
+         </preConditions>
+        <sql>ALTER TABLE notification_item ADD COLUMN additional_info json</sql>
+    </changeSet>
+    
+    <changeSet author="Angel Montenegro" id="ADD-ADDITIONAL-INFO-TO-NOTIFICATION-ITEM-AS-TEXT" dbms="hsqldb">	    
+		<preConditions onFail="MARK_RAN">
+         	<not>
+         		<columnExists tableName="notification_item" columnName="additional_info"/>
+         	</not>
+         </preConditions>
+        <sql>ALTER TABLE notification_item ADD COLUMN additional_info text</sql>
+    </changeSet>
+</databaseChangeLog>

@@ -36,6 +36,7 @@
                         <i class="icon-orcid-search"></i>
                     </button>
                     <a href="{{getBaseUri()}}/orcid-search/search"
+                    style="margin-top: auto;"
                     class="settings-button" title="<@orcid.msg
                     'public-layout.search.advanced'/>"><i class="glyphicon glyphicon-cog"></i></a>
                 </div>
@@ -328,9 +329,6 @@
                                 </li>
                                 <li class="last">
                                     <a href="{{aboutUri}}/about/community/launch-partners" title=""><@orcid.msg 'public-layout.launch_partners'/></a></li>
-                                <li class="leaf">
-                                    <a href="{{aboutUri}}/about/community/launch-partners" title="">Launch Partners</a>
-                                </li>
                                 <li class="leaf">
                                     <a href="{{aboutUri}}/about/community/orcid-technical-community">Open Source</a>
                                 </li>

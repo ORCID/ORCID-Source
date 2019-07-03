@@ -203,7 +203,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
         PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
@@ -226,13 +226,13 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         }
         
         //make a duplicate as a different assertion origin
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));                
         extId2 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId2, true);
         
         //wrong sources:
         extId1.setType(extId.getType()+"x");
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             externalIdentifierManager.updateExternalIdentifier(claimedOrcid, extId1, true);
             fail();
         }catch(WrongSourceException e) {

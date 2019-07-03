@@ -282,11 +282,11 @@ public class ResearchResourceManagerTest extends BaseTest {
     
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
         ResearchResource r1 = researchResourceManager.createResearchResource(USER_ORCID,generateResearchResourceWithItems("title7","id67"),true);
         
-        assertEquals(r1.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
-        assertEquals(r1.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(r1.getSource().getSourceClientId().getPath(),CLIENT_1_ID);
+        assertEquals(r1.getSource().getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
         //assertEquals(r1.getSource().getSourceName().getContent(),"U. Test");
         assertEquals(r1.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(r1.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
@@ -302,13 +302,13 @@ public class ResearchResourceManagerTest extends BaseTest {
         }
         
         //make a duplicate as a different assertion origin
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));                
         r2 = researchResourceManager.createResearchResource(USER_ORCID,r2,true);
         
         //wrong sources:
         r1.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).setValue("x");
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             researchResourceManager.updateResearchResource(USER_ORCID, r1, true);
             fail();
         }catch(WrongSourceException e) {

@@ -1,16 +1,24 @@
 package org.orcid.core.manager.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.UserConnectionDao;
+import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -45,7 +53,7 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
     }
 
     @Override
-    public UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId) {        
+    public UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId) {
         return userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
     }
 
@@ -61,7 +69,52 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
 
     @Override
     public void update(UserconnectionEntity userConnectionEntity) {
-        userConnectionDao.merge( userConnectionEntity);
+        userConnectionDao.merge(userConnectionEntity);
+    }
+
+    @Override
+    @Transactional
+    public void update(String providerUserId, String providerId, String accessToken, Long expireTime) {
+        UserconnectionEntity userConnection = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+        if (userConnection != null) {
+            Date now = new Date();
+            userConnection.setLastLogin(now);
+            userConnection.setLastModified(now);
+            userConnection.setAccesstoken(accessToken);
+            userConnection.setExpiretime(expireTime);
+            userConnectionDao.merge(userConnection);
+        }
+    }
+
+    @Override
+    public String create(String providerUserId, String providerId, String email, String userName, String accessToken, Long expireTime) {
+        UserconnectionEntity userConnectionEntity = new UserconnectionEntity();
+        String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
+        UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
+        userConnectionEntity.setDisplayname(userName);
+        userConnectionEntity.setRank(1);
+        userConnectionEntity.setId(pk);
+        userConnectionEntity.setLinked(false);
+        userConnectionEntity.setLastLogin(new Date());
+        userConnectionEntity.setEmail(email);
+        userConnectionEntity.setAccesstoken(accessToken);
+        userConnectionEntity.setExpiretime(expireTime);
+        userConnectionEntity.setConnectionSatus(UserConnectionStatus.STARTED);
+        userConnectionDao.persist(userConnectionEntity);
+        return randomId;
+    }
+
+    @Override
+    public Map<String, String> getUserConnectionInfo(String userConnectionId) {
+        UserconnectionEntity entity = userConnectionDao.findByUserConnectionId(userConnectionId);
+        Map<String, String> data = new HashMap<String, String>();
+        data.put(OrcidOauth2Constants.PROVIDER_ID, entity.getId().getProviderid());
+        data.put(OrcidOauth2Constants.PROVIDER_USER_ID, entity.getId().getProvideruserid());
+        data.put(OrcidOauth2Constants.DISPLAY_NAME, entity.getDisplayname());
+        data.put(OrcidOauth2Constants.EMAIL, entity.getEmail());
+        data.put(OrcidOauth2Constants.ORCID, entity.getOrcid());
+        data.put(OrcidOauth2Constants.IS_LINKED, String.valueOf(entity.isLinked()));
+        return data;        
     }
 
 }

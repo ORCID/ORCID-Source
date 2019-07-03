@@ -11,31 +11,31 @@ import org.springframework.web.util.CookieGenerator;
  */
 public final class UserCookieGenerator {
 
-	private final CookieGenerator cookieGenerator = new CookieGenerator();
+    private final CookieGenerator cookieGenerator = new CookieGenerator();
 
-	public UserCookieGenerator() {
-		cookieGenerator.setCookieName("orcid");
-	}
+    public UserCookieGenerator() {
+        cookieGenerator.setCookieName("orcidUserConnectionId");
+    }
 
-	public void addCookie(String userId, HttpServletResponse response) {
-		cookieGenerator.addCookie(response, userId);
-	}
+    public void addCookie(String userId, HttpServletResponse response) {
+        cookieGenerator.addCookie(response, userId);
+    }
 
-	public void removeCookie(HttpServletResponse response) {
-		cookieGenerator.addCookie(response, "");
-	}
+    public void removeCookie(HttpServletResponse response) {
+        cookieGenerator.addCookie(response, "");
+    }
 
-	public String readCookieValue(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		if (cookies == null) {
-			return null;
-		}
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals(cookieGenerator.getCookieName())) {
-				return cookie.getValue();
-			}
-		}
-		return null;
-	}
+    public String readCookieValue(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(cookieGenerator.getCookieName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
 
 }

@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="research-resource-ng2-template">
-    <div *ngIf="researchResourceService.groups?.length > 0">
+    <div *ngIf="researchResourceService.groups?.length > 0 && !(publicView == 'true' && recordLocked)">
         <!-- RESEARCH RESOURCE -->
         <div class="workspace-accordion-item workspace-accordion-active" [hidden]="publicView == 'true' && researchResourceService.groups.length < 1">
             <div class="workspace-accordion-header clearfix">

@@ -1296,7 +1296,7 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));
         Work work = getWork(null);
         work = workManager.createWork(claimedOrcid, work, true);
         work = workManager.getWork(claimedOrcid, work.getPutCode());
@@ -1306,8 +1306,8 @@ public class WorkManagerTest extends BaseTest {
 
         assertNotNull(work);
         assertEquals("updated", work.getWorkTitle().getTitle().getContent());
-        assertEquals(work.getSource().getSourceOrcid().getPath(), CLIENT_1_ID);
-        assertEquals(work.getSource().getSourceOrcid().getUri(), "https://testserver.orcid.org/" + CLIENT_1_ID);
+        assertEquals(work.getSource().getSourceClientId().getPath(), CLIENT_1_ID);
+        assertEquals(work.getSource().getSourceClientId().getUri(), "https://testserver.orcid.org/client/" + CLIENT_1_ID);
         assertEquals(work.getSource().getAssertionOriginClientId().getPath(), CLIENT_2_ID);
         assertEquals(work.getSource().getAssertionOriginClientId().getUri(), "https://testserver.orcid.org/client/" + CLIENT_2_ID);
 
@@ -1321,13 +1321,13 @@ public class WorkManagerTest extends BaseTest {
         }
 
         // make a duplicate as a different assertion origin
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
         workManager.createWork(claimedOrcid, work2, true);
 
         // wrong sources:
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("x");
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             workManager.updateWork(claimedOrcid, work, true);
             fail();
         } catch (WrongSourceException e) {

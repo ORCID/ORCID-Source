@@ -1,7 +1,9 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -13,6 +15,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -79,7 +82,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         educationEntity.setAffiliationType(AffiliationType.EDUCATION.name());
         orgAffiliationRelationDao.persist(educationEntity);
         orgAffiliationRelationDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(educationEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(educationEntity, ActionType.CREATE));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
 
@@ -120,7 +123,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         educationEntity.setAffiliationType(AffiliationType.EDUCATION.name());
         educationEntity = orgAffiliationRelationDao.merge(educationEntity);
         orgAffiliationRelationDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(educationEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.EDUCATION, createItemList(educationEntity, ActionType.UPDATE));
         return jpaJaxbEducationAdapter.toEducation(educationEntity);
     }
 
@@ -159,7 +162,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT.name());
         orgAffiliationRelationDao.persist(employmentEntity);
         orgAffiliationRelationDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(employmentEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(employmentEntity, ActionType.CREATE));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
 
@@ -201,7 +204,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT.name());
         employmentEntity = orgAffiliationRelationDao.merge(employmentEntity);
         orgAffiliationRelationDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(employmentEntity));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(employmentEntity, ActionType.UPDATE));
         return jpaJaxbEmploymentAdapter.toEmployment(employmentEntity);
     }
 
@@ -221,7 +224,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orcidSecurityManager.checkSource(affiliationEntity);
         boolean result = orgAffiliationRelationDao.removeOrgAffiliationRelation(orcid, affiliationId);
         if(result)
-            notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(affiliationEntity));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItemList(affiliationEntity, ActionType.DELETE));
         return result; 
     }
 
@@ -235,11 +238,16 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         }
     }    
 
-    private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity) {
+    private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity, ActionType type) {
         Item item = new Item();
         item.setItemName(orgAffiliationEntity.getOrg().getName());
         item.setItemType(AffiliationType.EDUCATION.value().equals(orgAffiliationEntity.getAffiliationType()) ? ItemType.EDUCATION : ItemType.EMPLOYMENT);
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
+        item.setItemType(ItemType.WORK);
+        Map<String, Object> additionalInfo = new HashMap<String, Object>();
+        additionalInfo.put("department", orgAffiliationEntity.getDepartment());
+        additionalInfo.put("org_name", orgAffiliationEntity.getOrg().getName());
+        item.setAdditionalInfo(additionalInfo);
         return Arrays.asList(item);
     }        
 

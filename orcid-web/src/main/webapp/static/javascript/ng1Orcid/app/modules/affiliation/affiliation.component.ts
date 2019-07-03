@@ -68,6 +68,7 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     sortKeyEducations: any;
     sortKeyEmployments: any;
     sortKeyMemberships: any;
+    recordLocked: boolean;
 
     constructor(
         private affiliationService: AffiliationService,
@@ -564,6 +565,21 @@ export class AffiliationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     ngOnInit() {
-        this.getAffiliationGroups();
+        if(this.isPublicPage) {
+            this.commonSrvc.publicUserInfo$
+            .subscribe(
+                userInfo => {
+                    this.recordLocked = !userInfo || userInfo.IS_LOCKED === 'true' || userInfo.IS_DEACTIVATED === 'true';
+                    if (!this.recordLocked) {
+                        this.getAffiliationGroups();
+                    }
+                },
+                error => {
+                    console.log('affiliation.component.ts: unable to fetch publicUserInfo', error);                    
+                } 
+            );
+        } else {
+            this.getAffiliationGroups();
+        }
     };
 }

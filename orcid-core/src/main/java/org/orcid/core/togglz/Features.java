@@ -6,8 +6,14 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Enable user menu")
+    ENABLE_USER_MENU,
+
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
+
+    @Label("Wider grid")
+    WIDE_GRID,
 	
     @Label("Add works based on ArXiv, DOI or PubMed id metadata")
     ADD_WORKS_WITH_EXTERNAL_ID,
@@ -103,7 +109,13 @@ public enum Features implements Feature {
     HIDE_UNVERIFIED_EMAILS,
     
     @Label("User OBO")
-    USER_OBO;
+    USER_OBO,
+    
+    @Label("Verbose notifications")
+    VERBOSE_NOTIFICATIONS,
+
+    @Label("Works failure debug")
+    WORKS_FAILURE_DEBUG;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

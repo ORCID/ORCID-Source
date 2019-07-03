@@ -879,7 +879,7 @@ public class AffiliationsManagerTest extends BaseTest {
      */
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
         
         Service element = getService();
         element = affiliationsManager.createServiceAffiliation(claimedOrcid, element, true);
@@ -890,13 +890,13 @@ public class AffiliationsManagerTest extends BaseTest {
         assertNotNull(element);
         assertEquals(Visibility.LIMITED, element.getVisibility());
         Source s = element.getSource();
-        assertEquals(s.getSourceOrcid().getPath(),CLIENT_1_ID);
-        assertEquals(s.getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(s.getSourceClientId().getPath(),CLIENT_1_ID);
+        assertEquals(s.getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
         assertEquals(s.getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(s.getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
 
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             element = affiliationsManager.updateServiceAffiliation(claimedOrcid, element, true);
             fail();
         }catch(WrongSourceException e) {

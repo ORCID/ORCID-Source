@@ -458,14 +458,14 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
         
         PeerReview p1 = getPeerReview("extId1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
         
         PeerReview pr = peerReviewManager.getPeerReview(claimedOrcid, p1.getPutCode());        
-        assertEquals(pr.getSource().getSourceOrcid().getPath(),CLIENT_1_ID);
-        assertEquals(pr.getSource().getSourceOrcid().getUri(),"https://testserver.orcid.org/"+CLIENT_1_ID);
+        assertEquals(pr.getSource().getSourceClientId().getPath(),CLIENT_1_ID);
+        assertEquals(pr.getSource().getSourceClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_1_ID);
         assertEquals(pr.getSource().getAssertionOriginClientId().getPath(),CLIENT_2_ID);
         assertEquals(pr.getSource().getAssertionOriginClientId().getUri(),"https://testserver.orcid.org/client/"+CLIENT_2_ID);
         
@@ -479,13 +479,13 @@ public class PeerReviewManagerTest extends BaseTest {
         }
         
         //make a duplicate as a different assertion origin
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));                
         p2 = peerReviewManager.createPeerReview(claimedOrcid, p2, true);
         
         p1.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("xxx");
         //wrong sources:
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID, CLIENT_3_ID));
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             peerReviewManager.updatePeerReview(claimedOrcid, p1, true);
             fail();
         }catch(WrongSourceException e) {

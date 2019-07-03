@@ -1,6 +1,6 @@
 # Write, update and delete peer-review and group-id items
 
-This tutorial is split into two sections. Part 1 deals with searching, creating, updating and deleting ```group-id``` that are required for posting peer review items and part two goes over the ```peer-review``` activity type and editing information in the peer-review section of an ORCID record. 
+This tutorial is split into two sections. Part one deals with searching, creating, updating and deleting group-id's that are required for posting peer review items and part two goes over the ```peer-review``` activity type and editing information in the peer-review section of an ORCID record. 
 
 The ```peer-review``` activity type is intended to allow for recognition and exchange of data about peer review services contributed by researchers.
 
@@ -10,20 +10,7 @@ The ```peer-review``` activity type follows the [CASRAI Peer Review Services dat
 
 This workflow can be used with Member API credentials on sandbox or the production servers.
 
-This tutorial also includes information on adding, searching for and updating group-id's which are required for posting peer-review items.
 
-## 1. About Group-Ids
-
-**Group Ids are required to post Peer Review Items.** The correct work flow for posting new peer review items is the following:
-* Create a read/ write token for group ID using the two step process [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Get-a-token-to-create-and-read-a-peer-review-group) 
-* Using this token to check that the group ID you would like to use exists by searching using a curl call like the [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#search-for-an-existing-peer-review-group-by-id)
-* If the ID already exists (If you are using an [ISSN](https://portal.issn.org/)  and it is valid the ID most likely will already exist)carry on to the last step, posting your Peer review.
-* If the ID does not exist or you are not using ISSN, then create the Group ID using the above token and a call like [this example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Create-a-peer-review-group-id)
-* Finally you can post a peer review item with a correct group id using a [3 Step OAuth Token](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect)
-
- data used to identify Peer review groups has been preloaded in to the Registry, therefore there should be no need to create new peer review groups. Simply posting with the correct ISSN data should be enough. 
-
-If you have problems posting a peer review item please double check that you are using a valid ISSN by searching the [ISSN portal](https://portal.issn.org/). 
 
 ## Overview
 
@@ -40,14 +27,27 @@ If you have problems posting a peer review item please double check that you are
 * [writing a peer-review item with the minimal information in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-simple-2.1.xml)
 * [reading a detailed peer-review item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/peer-review-full-2.1.xml)
 * [writing a peer-review item with the detailed information in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/peer-review-full-2.1.xml)
-* [reading a basic peer-review item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/peer-review-3.0_rc1.xml)
-* [reading the peer-review section summary in 3.0  ](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/peer-reviews-3.0_rc1.xml)  
-* [reading a detailed peer-review item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/peer-review-full-3.0_rc1.xml)
-* [writing a peer-review item with the minimal information in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/peer-review-simple-3.0_rc1.xml)
-* [writing a peer-reivew item with the detailed information in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/peer-review-full-3.0_rc1.xml)
+* [reading a basic peer-review item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/peer-review-3.0.xml)
+* [reading the peer-review section summary in 3.0  ](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/peer-reviews-3.0.xml)  
+* [reading a detailed peer-review item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/peer-review-full-3.0.xml)
+* [writing a peer-review item with the minimal information in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/peer-review-simple-3.0.xml)
+* [writing a peer-reivew item with the detailed information in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/peer-review-full-3.0.xml)
 * [peer-review group id in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-2.1/samples/group-id-2.1.xml)
-* [peer-review group id in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-3.0_rc1/samples/group-id-3.0_rc1.xml)
+* [peer-review group id in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/group-id-3.0/samples/group-id-3.0.xml)
 
+
+## 1. About Group-Ids
+
+**Group Ids are required to post Peer Review Items.** The correct work flow for posting new peer review items is the following:
+* Create a read/ write token for group ID using the two step process [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Get-a-token-to-create-and-read-a-peer-review-group) 
+* Using this token to check that the group ID you would like to use exists by searching using a curl call like the [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#search-for-an-existing-peer-review-group-by-id)
+* If the ID already exists (If you are using an [ISSN](https://portal.issn.org/)  and it is valid the ID most likely will already exist)carry on to the last step, posting your Peer review.
+* If the ID does not exist or you are not using ISSN, then create the Group ID using the above token and a call like [this example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Create-a-peer-review-group-id)
+* Finally you can post a peer review item with a correct group id using a [3 Step OAuth Token](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect)
+
+ data used to identify Peer review groups has been preloaded in to the Registry, therefore there should be no need to create new peer review groups. Simply posting with the correct ISSN data should be enough. 
+
+If you have problems posting a peer review item please double check that you are using a valid ISSN by searching the [ISSN portal](https://portal.issn.org/). 
 
 ### Get a token to create and read a peer-review group
 Tokens to create peer-review groups are issued via the [2 step token process](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#generate-a-two-step-read-public-access-token).
@@ -80,40 +80,40 @@ Peer-review items are grouped on ORCID records based on who or what the reivew w
 
 ### Search for an existing peer review group by ID
 
-| Item              |Parameter               |
-|-------------------|--------------------------|
-| URL 				| https://sandbox.orcid.org/v2.0/group-id-record/?group-id=|
-| client\_id 		| *Your client ID*|
-| client\_secret	| *Your client secret*|
-| grant\_type		| client\_credentials|
-| scope				| /group-id-record/read|
+| Parameter | Value        |
+|--------------------|--------------------------|
+| URL 				| https://api.[host]/[version]/[ORCID iD]/group-id-record/?group-id=[issn:0962-1105] |
+| Method    | GET |
+| header      | Authorization: Bearer [Your authorization code] |
+| header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
 **Example request in curl**
 
 ```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -X GET 'https://api.orcid.org/v2.0/group-id-record/?group-id=issn:10000000' -L -i -k
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -X GET 'https://api.sandbox.orcid.org/v3.0/group-id-record/?group-id=issn:0962-1105' -L -i -k
 ```
 
 ### Search for an existing peer review group by paging
 
-| Item              |Parameter               |
-|-------------------|--------------------------|
-| URL 				| https://sandbox.orcid.org/v3.0_rc1/group-id-record?page-size=10&page=1|
-| client\_id 		| *Your client ID*|
-| client\_secret	| *Your client secret*|
-| grant\_type		| client\_credentials|
-| scope				| /group-id-record/read|
+| Parameter | Value        |
+|--------------------|--------------------------|
+| URL 				| https://api.[host]/[version]/[ORCID iD]/group-id-record/?group-id=[issn:0962-1105] |
+| Method    | GET |
+| header      | Authorization: Bearer [Your authorization code] |
+| header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 **Example request in curl**
 ```
-curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -X GET 'https://sandbox.orcid.org/v3.0_rc1/group-id-record?page-size=10&page=1'
+curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cecf036-5ced-4d04-8eeb-61fa6e3b32ee' -X GET 'https://sandbox.orcid.org/v3.0/group-id-record?page-size=10&page=1'
 ```
 
 ## Create a peer-review group-id
-Peer-review items are grouped on ORCID records based on who or what the reivew was done for this can be an organization, a publication or other. **We suggest searching existing peer-review groups** before creating new ones to avoid duplicate entries.
+Peer-review items are grouped on ORCID records based on who or what the review was done for this can be an organization, a publication or other. 
 
-### Get a token to create a peer-review group
+**We strongly suggest searching existing peer-review groups before creating new ones**. You *do not* need to create a new group-id if you are using an ISSN. Search first to check it is there, then post your peer review with the ISSN in the `<peer-review:review-group-id>` field  as in the example [here.](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/peer-review-full-3.0.xml) 
+
+### Get a token to create a peer-review group (Only if you are not using ISSN)
 Tokens to create peer-review groups are issued via the [2 step token process](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#generate-a-two-step-read-public-access-token).
 
 Send a request to the ORCID API for a two step token
@@ -149,7 +149,7 @@ curl -H 'Content-Type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1cec
 ```
 HTTP/1.1 201 Created
 ...
-Location: http://api.sandbox.orcid.org/v3.0_rc1/group-id-record/1348
+Location: http://api.sandbox.orcid.org/v3.0/group-id-record/1348
 ```
 **Example Group-ID XML (without ISSN)**
 
@@ -176,12 +176,12 @@ See sample 2.1 [peer-review-group](https://github.com/ORCID/ORCID-Source/blob/ma
 
 | Action             | HTTP method | Scope                    | URL                                                                      |
 |--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
-| Read all peer-review groups   | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record/?page-size=10&page=1 |
-| Read one peer-review group   | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record/[PUT-CODE] |
-| Add new peer-review group    | POST        | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record            |
-| Update peer-review group | PUT         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record/[PUT-CODE] |
-| Delete peer-review group | DELETE*      | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/group-id-record/[PUT-CODE] |
-| Search for a peer-review group by name | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0_rc1/?name=Name+you+are+searching+for&page-size=10&page=1 |
+| Read all peer-review groups   | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0/group-id-record/?page-size=10&page=1 |
+| Read one peer-review group   | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0/group-id-record/[PUT-CODE] |
+| Add new peer-review group    | POST        | /group-id-record/update| https://api.sandbox.orcid.org/v3.0/group-id-record            |
+| Update peer-review group | PUT         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0/group-id-record/[PUT-CODE] |
+| Delete peer-review group | DELETE*      | /group-id-record/update| https://api.sandbox.orcid.org/v3.0/group-id-record/[PUT-CODE] |
+| Search for a peer-review group by name | GET         | /group-id-record/update| https://api.sandbox.orcid.org/v3.0/?name=Name+you+are+searching+for&page-size=10&page=1 |
 
 *Peer-review groups that are referenced by existing peer-review items can not be deleted.
 
@@ -206,7 +206,7 @@ Editing the peer-review section of a record requires a 3 step OAuth token with t
 
 - **review-completion-date** _(required)_ The date on which the review was completed (formatted to ISO 8601). Allowable values: yyyy; yyyy-mm; yyyy-mm-dd.
 
-- **review-group-id** _(required)_ Identifier for the group that this review should be a part of for aggregation purposes. The Group ID must be pre-registered before use. (see [Create a peer-review group]() above for more information.)
+- **review-group-id** _(required)_ Identifier for the group that this review should be a part of for aggregation purposes. The Group ID should usually be a valid ISSN. Should you need to assign something other than an ISSN you will need to create it using the method above (see [Create a peer-review group-id](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#create-a-peer-review-group-id) 
 
 **Describing the subject of the reivew**
 
@@ -231,7 +231,7 @@ Editing the peer-review section of a record requires a 3 step OAuth token with t
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/peer-reviews |
 | Method    | GET |
-| Header      | Authorication: Bearer [Your authorization code] |
+| Header      | Authorization: Bearer [Your authorization code] |
 | Header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -247,7 +247,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/peer-review/[put-code] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -263,7 +263,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/peer-review |
 | Method    | POST |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the work you are posting in json or xml format |
 
@@ -278,7 +278,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/peer-review/[put-code] |
 | Method    | PUT |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the updated work in json or xml format |
 
@@ -293,12 +293,12 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/funding/[put-code] |
 | Method    | DELETE |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 
 **Example request in curl**
 ```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/peer-review/1374'
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/peer-review/1374'
 ```
 
 Example response

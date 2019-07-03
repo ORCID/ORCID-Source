@@ -16,16 +16,12 @@ Works (2)
 ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
 MORE INFO: https://testserver.orcid.org/inbox#1
 
-
 Super Institution 1: Request to add items (2014-08-17)
 Employment (1)
     Employment 1 (doi: 12345/abc)
 
 ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
 MORE INFO: https://testserver.orcid.org/inbox#2
-
-
-Lovely Publisher 1 has updated recent funding on your ORCID record. (2014-07-12)
 
 
 Lovely Publisher 1: Request to add items (2014-07-10)
@@ -35,7 +31,10 @@ Works (2)
 
 ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
 MORE INFO: https://testserver.orcid.org/inbox#3
+    Lovely Publisher 1 have made the following changes to your ORCID record:
+EducationNew items added:                            * <i>org name</i> education-1 (2014-07-12)
 
+WorksNew items added:                            * work-1 doi: doi01 (2014-07-12)
 
 VIEW YOUR ORCID INBOX: https://testserver.orcid.org/inbox
 You have received this message because you opted in to receive inbox notifications about your ORCID record. Learn more about how the Inbox works (https://support.orcid.org/hc/articles/360006972953).
