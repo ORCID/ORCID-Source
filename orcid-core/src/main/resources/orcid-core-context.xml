@@ -16,7 +16,9 @@
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
-		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.issn.client" />
+		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, 
+		org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, 
+		org.orcid.core.issn.client, org.orcid.core.solr" />
 	<aop:aspectj-autoproxy />
 	
     <context:mbean-server />
@@ -902,8 +904,6 @@
 	
 	<bean id="sourceManager" class="org.orcid.core.manager.impl.SourceManagerImpl" />
 	
-	<bean id="orcidSocialManager" class="org.orcid.core.manager.impl.OrcidSocialManagerImpl" />
-	
 	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />	
 	
 	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />			
@@ -1615,5 +1615,7 @@
     <bean id="emailQueueProducer" class="org.orcid.core.email.trickle.producer.EmailQueueProducer" >
         <property name="jmsTemplate" ref="jmsTemplate" />
     </bean>
+    
+    <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser" />
     
 </beans>

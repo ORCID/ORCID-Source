@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
-import org.orcid.core.solr.OrcidSolrClient;
+import org.orcid.core.solr.OrcidSolrFundingSubtypeClient;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.activities.GroupableActivityComparator;
@@ -32,7 +32,7 @@ public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl i
     protected ProfileFundingDao profileFundingDao;      
     
     @Resource
-    protected OrcidSolrClient orcidSolrClient;
+    protected OrcidSolrFundingSubtypeClient orcidSolrFundingSubtypeClient;
     
     public void setProfileFundingDao(ProfileFundingDao profileFundingDao) {
         this.profileFundingDao = profileFundingDao;
@@ -45,7 +45,7 @@ public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl i
      * @return a list of all org defined funding subtypes that matches the given pattern
      * */
     public List<String> getIndexedFundingSubTypes(String subtype, int limit) {
-        List<OrgDefinedFundingTypeSolrDocument> types = orcidSolrClient.getFundingTypes(subtype, 0, 100); 
+        List<OrgDefinedFundingTypeSolrDocument> types = orcidSolrFundingSubtypeClient.getFundingTypes(subtype, 0, 100); 
         List<String> result = new ArrayList<String>();
         for (OrgDefinedFundingTypeSolrDocument type : types) {
             result.add(type.getOrgDefinedFundingType());

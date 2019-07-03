@@ -21,28 +21,21 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
-import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrcidSolrClient {
-    
-    @Resource(name = "solrReadOnlyRecordClient")
-    private SolrClient solrReadOnlyRecordClient;
-    
-    @Resource(name = "solrReadOnlyOrgsClient")
-    private SolrClient solrReadOnlyOrgsClient;
-    
-    @Resource(name = "solrReadOnlyFundingSubTypeClient")
-    private SolrClient solrReadOnlyFundingSubTypeClient;
-    
+public class OrcidSolrProfileClient {
+
+    @Resource(name = "solrReadOnlyProfileClient")
+    private SolrClient solrReadOnlyProfileClient;
+
     public OrcidSolrResult findByOrcid(String orcid) {
         OrcidSolrResult orcidSolrResult = null;
         SolrQuery query = new SolrQuery();
         query.setQuery(ORCID + ":\"" + orcid + "\"").setFields(SCORE, ORCID, PUBLIC_PROFILE);
         try {
-            QueryResponse queryResponse = solrReadOnlyRecordClient.query(query);
+            QueryResponse queryResponse = solrReadOnlyProfileClient.query(query);
             if (!queryResponse.getResults().isEmpty()) {
                 SolrDocument solrDocument = queryResponse.getResults().get(0);
                 orcidSolrResult = new OrcidSolrResult();
@@ -57,7 +50,25 @@ public class OrcidSolrClient {
 
         return orcidSolrResult;
     }
-       
+
+    public Date retrieveLastModified(String orcid) {
+        SolrQuery query = new SolrQuery();
+        query.setQuery(ORCID + ":\"" + orcid + "\"");
+        query.setFields(PROFILE_LAST_MODIFIED_DATE);
+        try {
+            QueryResponse response = solrReadOnlyProfileClient.query(query);
+            List<SolrDocument> results = response.getResults();
+            if (results.isEmpty()) {
+                return null;
+            } else {
+                return (Date) results.get(0).getFieldValue(PROFILE_LAST_MODIFIED_DATE);
+            }
+
+        } catch (SolrServerException | IOException e) {
+            throw new NonTransientDataAccessResourceException("Error retrieving last modified date from SOLR Server", e);
+        }
+    }
+
     public OrcidSolrResults findByDocumentCriteria(String queryString, Integer start, Integer rows) {
         SolrQuery query = new SolrQuery(queryString).setFields(SCORE, ORCID, PUBLIC_PROFILE);
         if (start != null)
@@ -80,45 +91,13 @@ public class OrcidSolrClient {
         solrQuery.setFields(SCORE, ORCID);
         return querySolr(solrQuery);
     }
-    
-    public Date retrieveLastModified(String orcid) {
-        SolrQuery query = new SolrQuery();
-        query.setQuery(ORCID + ":\"" + orcid + "\"");
-        query.setFields(PROFILE_LAST_MODIFIED_DATE);
-        try {
-            QueryResponse response = solrReadOnlyRecordClient.query(query);
-            List<SolrDocument> results = response.getResults();
-            if (results.isEmpty()) {
-                return null;
-            } else {
-                return (Date) results.get(0).getFieldValue(PROFILE_LAST_MODIFIED_DATE);
-            }
 
-        } catch (SolrServerException | IOException e) {
-            throw new NonTransientDataAccessResourceException("Error retrieving last modified date from SOLR Server", e);
-        }
-    }
-
-    public List<OrgDefinedFundingTypeSolrDocument> getFundingTypes(String searchTerm, int firstResult, int maxResult) {
-        SolrQuery query = new SolrQuery();
-        query.setQuery(
-                "{!edismax qf='org-defined-funding-type^50.0 text^1.0' pf='org-defined-funding-type^50.0' mm=1 sort='score desc'}"
-                        + searchTerm + "*").setFields("*");
-        try {
-            QueryResponse queryResponse = solrReadOnlyFundingSubTypeClient.query(query);
-            return queryResponse.getBeans(OrgDefinedFundingTypeSolrDocument.class);
-        } catch (SolrServerException | IOException se) {
-            String errorMessage = MessageFormat.format("Error when attempting to search for orgs, with search term {0}", new Object[] { searchTerm });
-            throw new NonTransientDataAccessResourceException(errorMessage, se);
-        }
-    }
-    
     private OrcidSolrResults querySolr(SolrQuery query) {
         OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
         List<OrcidSolrResult> orcidSolrResultsList = new ArrayList<>();
         orcidSolrResults.setResults(orcidSolrResultsList);
         try {
-            QueryResponse queryResponse = solrReadOnlyRecordClient.query(query);
+            QueryResponse queryResponse = solrReadOnlyProfileClient.query(query);
             for (SolrDocument solrDocument : queryResponse.getResults()) {
                 OrcidSolrResult orcidSolrResult = new OrcidSolrResult();
                 orcidSolrResult.setRelevancyScore((Float) solrDocument.getFieldValue(SCORE));
@@ -133,6 +112,4 @@ public class OrcidSolrClient {
         }
         return orcidSolrResults;
     }
-    
-    
 }

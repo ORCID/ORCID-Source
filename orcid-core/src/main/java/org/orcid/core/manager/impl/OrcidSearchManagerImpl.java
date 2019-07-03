@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
-import org.orcid.core.solr.OrcidSolrClient;
+import org.orcid.core.solr.OrcidSolrProfileClient;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
@@ -28,7 +28,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private OrcidSolrClient orcidSolrClient;
+    private OrcidSolrProfileClient orcidSolrClient;
     
     @Override
     public Search findOrcidIds(Map<String, List<String>> queryParameters) {

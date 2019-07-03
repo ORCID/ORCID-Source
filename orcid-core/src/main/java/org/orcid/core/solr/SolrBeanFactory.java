@@ -18,13 +18,13 @@ public class SolrBeanFactory {
     @Value("${org.orcid.persistence.solr.read.only.url}") 
     private String solrReadOnlyUrl;
     
-    @Value("${org.orcid.persistence.solr.connectionTimeout}")
+    @Value("${org.orcid.persistence.solr.connectionTimeout:1000}")
     private Integer connectionTimeout;
     
-    @Value("${org.orcid.listener.persistence.solr.socketTimeout}")
+    @Value("${org.orcid.listener.persistence.solr.socketTimeout:2000}")
     private Integer socketTimeout;
     
-    @Value("${org.orcid.persistence.solr.allowCompression}")
+    @Value("${org.orcid.persistence.solr.allowCompression:true}")
     private Boolean allowCompression;
     
     @Resource(name = "responseParser")
@@ -64,7 +64,7 @@ public class SolrBeanFactory {
                 .build();
     }
     
-    @Bean(name = "solrReadOnlyRecordClient")
+    @Bean(name = "solrReadOnlyProfileClient")
     public SolrClient solrClient() {
         return new HttpSolrClient.Builder(solrReadOnlyUrl + DEFAULT_COLLECTION)
                 .withConnectionTimeout(connectionTimeout)

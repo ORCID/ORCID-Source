@@ -9,6 +9,8 @@ import javax.annotation.Resource;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
@@ -66,6 +68,9 @@ public class SolrIndexer {
     
     private void persist(OrcidSolrDocumentLegacy orcidSolrDocument) {
         try {
+            DocumentObjectBinder b = new DocumentObjectBinder();
+            String xmlString = ClientUtils.toXML(b.toSolrInputDocument(orcidSolrDocument));
+            System.out.println(xmlString);
             legacyRecordSolrClient.addBean(orcidSolrDocument);
             legacyRecordSolrClient.commit();
         } catch (SolrServerException se) {

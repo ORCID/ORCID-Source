@@ -38,13 +38,13 @@ import org.springframework.test.context.ContextConfiguration;
  * @See SearchOrcidFormToQueryMapperTest
  *
  */
-public class OrcidSolrClientTest {
+public class OrcidSolrProfileClientTest {
 
     @Resource(name = "solrClientTest")
     private SolrClient solrClientTest;
 
     @Resource
-    private OrcidSolrClient orcidSolrClient;
+    private OrcidSolrProfileClient orcidSolrClient;
 
     private String firstOrcid = "1234-5678";
     private String secondOrcid = "5677-1235";
@@ -52,7 +52,7 @@ public class OrcidSolrClientTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(orcidSolrClient, "solrReadOnlyRecordClient", solrClientTest);
+        TargetProxyHelper.injectIntoProxy(orcidSolrClient, "solrReadOnlyProfileClient", solrClientTest);
     }
 
     @Test

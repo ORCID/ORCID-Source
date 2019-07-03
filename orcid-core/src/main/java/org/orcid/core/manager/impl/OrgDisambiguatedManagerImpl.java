@@ -1,5 +1,6 @@
 package org.orcid.core.manager.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,13 +13,15 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.core.togglz.Features;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
-import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
@@ -51,7 +54,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     private OrgDisambiguatedDao orgDisambiguatedDaoReadOnly;
     
     @Resource
-    private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
+    private OrcidSolrOrgsClient orcidSolrOrgsClient;
 
     @Resource
     private TransactionTemplate transactionTemplate;
@@ -61,6 +64,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
+    
+    @Resource(name = "legacyOrgsSolrClient")
+    private SolrClient legacyOrgsSolrClient;
     
     @Override
     synchronized public void processOrgsForIndexing() {
@@ -85,21 +91,28 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         });
     }
 
-    private void processDisambiguatedOrg(OrgDisambiguatedEntity entity) {
+    private void processDisambiguatedOrg(OrgDisambiguatedEntity entity)  {
         LOGGER.info("About to index disambiguated org, id={}", entity.getId());
-        OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
-        if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus()) || OrganizationStatus.OBSOLETE.name().equals(entity.getStatus())) {
-            orgDisambiguatedSolrDao.remove(document.getOrgDisambiguatedId());            
-        } else {
-            orgDisambiguatedSolrDao.persist(document);
-        }
-        
-        // Send message to the message listener
-        if (!messaging.send(document, updateSolrQueueName)) {
-            LOGGER.error("Unable to send orgs disambiguated message for org: " + document.getOrgDisambiguatedName() + "(" + document.getOrgDisambiguatedId() + ")");            
+        try {
+            OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
+            if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus()) || OrganizationStatus.OBSOLETE.name().equals(entity.getStatus())) {
+                legacyOrgsSolrClient.deleteById(String.valueOf(document.getOrgDisambiguatedId()));
+            } else {
+                legacyOrgsSolrClient.addBean(document);
+                legacyOrgsSolrClient.commit();
+            }
+            
+            // Send message to the message listener
+            if (!messaging.send(document, updateSolrQueueName)) {
+                LOGGER.error("Unable to send orgs disambiguated message for org: " + document.getOrgDisambiguatedName() + "(" + document.getOrgDisambiguatedId() + ")");            
+                orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
+                return;
+            }    
+        } catch(SolrServerException | IOException e) {
+            LOGGER.error("Unable to process disambiguatd org with id " + entity.getId());
+            LOGGER.error(e.getMessage());
             orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
-            return;
-        }        
+        }
         
         orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.DONE);
     }
@@ -154,7 +167,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Override
     public List<OrgDisambiguated> searchOrgsFromSolr(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
-        List<OrgDisambiguatedSolrDocument> docs = orgDisambiguatedSolrDao.getOrgs(searchTerm, firstResult, maxResult, fundersOnly, Features.ENABLE_PROMOTION_OF_CHOSEN_ORGS.isActive());
+        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgs(searchTerm, firstResult, maxResult, fundersOnly, Features.ENABLE_PROMOTION_OF_CHOSEN_ORGS.isActive());
         List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
         for (OrgDisambiguatedSolrDocument doc: docs){
             OrgDisambiguated org = convertSolrDocument(doc);
@@ -165,7 +178,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     
     @Override
     public List<OrgDisambiguated> searchOrgsFromSolrForSelfService(String searchTerm, int firstResult, int maxResult) {
-        List<OrgDisambiguatedSolrDocument> docs = orgDisambiguatedSolrDao.getOrgsForSelfService(searchTerm, firstResult, maxResult);
+        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgsForSelfService(searchTerm, firstResult, maxResult);
         List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
         for (OrgDisambiguatedSolrDocument doc: docs){
             OrgDisambiguated org = convertSolrDocument(doc);
