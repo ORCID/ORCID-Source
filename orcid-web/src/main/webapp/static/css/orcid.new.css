@@ -8256,7 +8256,8 @@ ul.comma li:last-child:after {
         max-width: 960px
     }
     .wide-grid .container {
-        max-width: 1304px
+        max-width: 1320px;
+        width: 100%;
     }
 }
 
@@ -8802,12 +8803,16 @@ a.footer-url {
 }
 
 .header2  .menu-bar a {
-    padding:0 20px;
+    padding:0 17px;
     color:#fff;
     font-size:18px;
     text-decoration:none;
     display: flex;
     align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 1.3px;
 }
 
 .header2  .menu-bar menu > ul > li > a {
@@ -8818,13 +8823,13 @@ a.footer-url {
     color:#494a4c;
     background-color:#e3e3e3;
     transition: all .3s ease;
-    text-shadow: 1px 0 0 currentColor;
+    /* text-shadow: 1px 0 0 currentColor; */
 }
 
 .header2 .menu-bar li.hover > a {
     background-color: #085c77;
     transition: all .3s ease;
-    text-shadow: 1px 0 0 currentColor;
+    /* text-shadow: 1px 0 0 currentColor; */
 }
 
 .header2 .menu-bar ul.menu ul {
@@ -8853,7 +8858,8 @@ a.footer-url {
 .header2 .menu-bar ul > li > ul a {
     color: #2e7f9f ;
     font-size: 14px;
-    padding: 12px 10px
+    padding: 12px 10px;
+    height: 37px;
 }
 
 .header2 .menu-bar > .container > ul > li > ul > li > a:hover {
@@ -8862,13 +8868,18 @@ a.footer-url {
 
 
 .header2 .logo-search-bar .slogan {
-    font-size: 18px;
+    font-size: 14px;
+    font: 400 16px/1.75 "Noto Sans", sans-serif;
+    color: rgba(0, 0, 0, 0.6);
+    line-height: 16px;
+    padding-top: 3px;
 }
 
 .header2 .logo-search-bar {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    height: 130px;
 }
 
 .header2 .search-dropdown {
@@ -8878,7 +8889,7 @@ a.footer-url {
 
 
 .header2 .search-dropbtn {
-    padding: 0 12px;
+    padding: 0px 20px;
     font-size: 16px;
     border: none;
     line-height: 28px;
@@ -8929,14 +8940,10 @@ a.footer-url {
     cursor: pointer;
 }
 
-.header2 .logo-search-bar .slogan {
-    font-size: 14px;
-    color: #333333;
-}
-
 .header2  .logo {
     padding: 20px 0;
     padding-top: 38px;
+    padding-left: 13px;
 }
 
 .header2 .search {
@@ -8959,8 +8966,10 @@ a.footer-url {
 }
 
 .header2 .logo > a {
-    height: 55px;
+    height: 67px;
     display: block;
+    font: 400 16px/1.75 "Noto Sans", sans-serif;
+    color: rgba(0, 0, 0, 0.6);
 }
 
 .header2 .logo > a > img {
@@ -9047,7 +9056,7 @@ a.footer-url {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding-bottom: 26px;
+    padding-bottom: 14px;
 }
 
 .lang-rl .header2 .dropdown-menus-container { 
@@ -9061,6 +9070,10 @@ a.footer-url {
 }
 
 @media only screen and (max-width: 840px) {
+
+    .header2 .logo-search-bar {
+        height: 150px;
+    }
 
     .header2 .container {
         width: 100%;
@@ -9085,7 +9098,6 @@ a.footer-url {
     }
 
     .header2 .header2-see-more {
-        text-align: center;
         padding: 10px;
     }
 
@@ -9328,7 +9340,7 @@ a.footer-url {
 }
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     .header2 .logo > a > img {
-        height: 55px;
+        height: 67px;
     }
 }
 
