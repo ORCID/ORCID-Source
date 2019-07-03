@@ -13,11 +13,11 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.messaging.JmsMessageSender;
+import org.orcid.core.solr.OrcidSolrLegacyIndexer;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.scheduler.indexer.OrcidRecordIndexer;
-import org.orcid.scheduler.indexer.solr.SolrIndexer;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     private EmailManagerReadOnly emailManagerReadOnly;
     
     @Resource
-    private SolrIndexer solrIndexer;
+    private OrcidSolrLegacyIndexer solrIndexer;
     
     private int claimReminderAfterDays = 8;
     
@@ -99,7 +99,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     }
     
     @Override
-    public void reindexRecordsForSolrUpgrade() {
+    public void reindexRecordsOnSolr() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.SOLR_UPDATE, updateSolrQueueName, updateSummaryQueueName, updateActivitiesQueueName);
     }
     

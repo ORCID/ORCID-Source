@@ -28,7 +28,7 @@
 		<task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
 		<task:scheduled ref="publicProfileValidator" method="validatePublicRecords" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
 		<task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>		       
-		<task:scheduled ref="orcidRecordIndexer" method="reindexRecordsForSolrUpgrade" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:60}000"/>			      
+		<task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:60}000"/>			      
 		<task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" cron="${org.orcid.scheduler.web.processFundingSubTypesForIndexing:15 15 * * * *}" />		
 	</task:scheduled-tasks>
 

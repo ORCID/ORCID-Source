@@ -1,4 +1,4 @@
-package org.orcid.scheduler.indexer.solr;
+package org.orcid.core.solr;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -29,12 +29,12 @@ import org.orcid.jaxb.model.v3.release.record.ResearchResourceItem;
 import org.orcid.jaxb.model.v3.release.record.ResearchResourceProposal;
 import org.orcid.jaxb.model.v3.release.record.ResearchResourceTitle;
 import org.orcid.utils.NullUtils;
-import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocumentLegacy;
 import org.orcid.utils.solr.entities.SolrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class OrcidRecordToSolrDocument {
     
     Logger LOG = LoggerFactory.getLogger(OrcidRecordToSolrDocument.class);
