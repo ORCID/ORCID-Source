@@ -1,14 +1,13 @@
 package org.orcid.scheduler.indexer.solr;
 
 import java.io.IOException;
-import java.util.Date;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
@@ -20,6 +19,7 @@ import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.utils.solr.entities.OrcidSolrDocumentLegacy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +28,8 @@ public class SolrIndexer {
 
     Logger LOG = LoggerFactory.getLogger(SolrIndexer.class);
 
-    @Resource(name = "legacyRecordSolrClient")
-    private SolrClient legacyRecordSolrClient;
+    @Value("${org.orcid.persistence.solr.legacy.url}")
+    private String legacySolrMasterUrl;
     
     @Resource
     private RecordManagerReadOnly recordManagerReadOnly;
@@ -41,7 +41,7 @@ public class SolrIndexer {
     
     private OrcidRecordToSolrDocument converter = new OrcidRecordToSolrDocument(true);
     
-    public void persist(String orcid) {
+    public void persist(String orcid) throws IOException {
         Record publicRecord = recordManagerReadOnly.getPublicRecord(orcid);
         List<Funding> allFundings = profileFundingManagerReadOnly.getFundingList(orcid);
         // We MUST keep only public fundings
@@ -66,24 +66,27 @@ public class SolrIndexer {
         persist(converter.convert(publicRecord, allFundings, allResearchResources));
     }
     
-    private void persist(OrcidSolrDocumentLegacy orcidSolrDocument) {
-        try {
+    private void persist(OrcidSolrDocumentLegacy orcidSolrDocument) throws IOException {
+            String url = legacySolrMasterUrl + "/profile/update?commit=true";
             DocumentObjectBinder b = new DocumentObjectBinder();
-            String xmlString = ClientUtils.toXML(b.toSolrInputDocument(orcidSolrDocument));
-            System.out.println(xmlString);
-            legacyRecordSolrClient.addBean(orcidSolrDocument);
-            legacyRecordSolrClient.commit();
-        } catch (SolrServerException se) {
-            throw new NonTransientDataAccessResourceException("Error persisting to SOLR Server", se);
-        } catch (IOException ioe) {
-            throw new NonTransientDataAccessResourceException("IOException when persisting to SOLR", ioe);
-        }
-    } 
-
-    public void processInvalidRecord(String orcid, Date lastModified) {
-        OrcidSolrDocumentLegacy doc = new OrcidSolrDocumentLegacy();
-        doc.setOrcid(orcid);
-        doc.setProfileLastModifiedDate(lastModified);
-        this.persist(doc);
-    }
+            String xmlDocument = ClientUtils.toXML(b.toSolrInputDocument(orcidSolrDocument));
+            
+            // Surround document with <add></add> tags
+            xmlDocument = "<add>" + xmlDocument + "</add>";
+            
+            HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+            con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent")+ " (orcid.org)");
+            con.addRequestProperty("Content-Type", "text/xml");
+            con.setRequestMethod("GET");
+            con.setInstanceFollowRedirects(true);
+            con.setDoOutput(true);
+            con.getOutputStream().write(xmlDocument.getBytes());
+            int responseCode = con.getResponseCode(); 
+            if(responseCode != HttpURLConnection.HTTP_OK) { 
+                String responseMessage = con.getResponseMessage();
+                LOG.error("Error persisting " + orcidSolrDocument.getOrcid());
+                LOG.error(responseMessage);
+                throw new NonTransientDataAccessResourceException("Error persisting to SOLR Server " + responseMessage);
+            }                                
+    }     
 }

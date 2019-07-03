@@ -1,5 +1,6 @@
 package org.orcid.scheduler.indexer.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -169,7 +170,11 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     private boolean indexSolr(LastModifiedMessage mess, String solrQueue, IndexingStatus status) {
         // Feed the old SOLR instance, just don't feed it for all records, just for the ones that are created/modified by users
         if(!IndexingStatus.SOLR_UPDATE.equals(status) && feedLegacySolr) {
-            solrIndexer.persist(mess.getOrcid());
+            try {
+                solrIndexer.persist(mess.getOrcid());
+            } catch (IOException e) {
+                LOG.warn("Unable to feed old solr instance", e); 
+            }            
         }
         // Send message to solr queue
         if (!messaging.send(mess, solrQueue)) {
