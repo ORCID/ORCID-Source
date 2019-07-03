@@ -6863,6 +6863,7 @@ ul.comma li:last-child:after {
 .footer-main p {
     margin: 0 0 6px;
     text-align: center;
+    font: 400 12px/16px "Noto Sans", sans-serif;
 }
 
 .footer-main .social {
@@ -8261,6 +8262,14 @@ ul.comma li:last-child:after {
     }
 }
 
+@media (min-width: 768px) {
+    .wide-grid .container {
+        max-width: 1320px;
+        width: 100%;
+    }
+}
+
+
 .popover-ng2-bck {
     background: #ddd;
     height: 100%;
@@ -8707,6 +8716,10 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     margin-right: 2px;
 }
 
+.footer-row-icons-container > img {
+    height: 41px;
+}
+
 .footer-row-text-container {
     display: flex;
     flex-direction: column;
@@ -8715,6 +8728,11 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
 
 .footer-row-text-container > nav a {
     margin-right: 15px;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.3px !important;
+    text-align: center;
 }
 
 .footer-row-text-container > nav {
@@ -8722,7 +8740,7 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
 }
 
 
-@media (max-width:630px) { 
+@media (max-width:840px) { 
     .footer-row-text-container > nav ul {
         align-items: center;
         justify-content: space-around;
@@ -9621,4 +9639,21 @@ user-menu a.top-menu-button {
 
 .result-counter-container {
     margin-top: 17px;
+}
+
+footer .social-button .social:before {
+    color: #A5CD39;
+    font-size: 20px
+}
+
+footer .social-button .social:hover:before {
+    color: #A5CD39;
+}
+footer-ng2 footer{
+    background-color: #f5f5f5;
+}
+
+footer-ng2 .footer-main {
+    border-top: 0;
+    padding-bottom: 23px;
 }

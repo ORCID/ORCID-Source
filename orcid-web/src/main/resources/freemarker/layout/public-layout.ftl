@@ -118,17 +118,19 @@
                             <div class="row footer-row-container" role="presentation">
 
                                 <div class="footer-row-text-container" role="presentation">
-                                    <div class="footer-row-icons-container" role="presentation">
-                                        <a href="{{aboutUri}}" alt="ORCID logo">
-                                            <img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" width="110px" alt="ORCID logo">
-                                        </a>
-                                        <nav role="presentation">
-                                            <ul class="inline-list" role="presentation">
-                                                <li role="presentation"><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter" rel="noreferrer"><span class="social social-twitter" aria-label="twitter"></span></a></li>
-                                                <li role="presentation"><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss" rel="noreferrer"><span class="social social-rss" aria-label="rss"></span></a></li>
-                                                <li role="presentation"><a class="social-button" href="https://github.com/ORCID" target="social-github" rel="noreferrer"><span class="social social-github" aria-label="github"></span></a></li>
-                                            </ul>
-                                        </nav>
+                                    <div>
+                                        <div class="footer-row-icons-container" role="presentation">
+                                            <a href="{{aboutUri}}" alt="ORCID logo">
+                                                <img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" width="110px" alt="ORCID logo">
+                                            </a>
+                                            <nav role="presentation">
+                                                <ul class="inline-list" role="presentation">
+                                                    <li role="presentation"><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter" rel="noreferrer"><span class="social social-twitter" aria-label="twitter"></span></a></li>
+                                                    <li role="presentation"><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss" rel="noreferrer"><span class="social social-rss" aria-label="rss"></span></a></li>
+                                                    <li role="presentation"><a class="social-button" href="https://github.com/ORCID" target="social-github" rel="noreferrer"><span class="social social-github" aria-label="github"></span></a></li>
+                                                </ul>
+                                            </nav>
+                                        </div>
                                     </div>
 
                                     <p role="presentation">
