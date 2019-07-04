@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -16,18 +17,24 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.SolrParams;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 /**
  * Integration tests for Solr Daos. In particular these are used to test that
  * query strings return the Orcids that are expected from SOLR. You may need to
@@ -38,315 +45,38 @@ import org.springframework.test.context.ContextConfiguration;
  * @See SearchOrcidFormToQueryMapperTest
  *
  */
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidSolrProfileClientTest {
 
-    @Resource(name = "solrClientTest")
-    private SolrClient solrClientTest;
+    private final String ORCID = "0000-0000-0000-0000";
+
+    @Mock
+    private SolrClient mockSolrClient;
 
     @Resource
-    private OrcidSolrProfileClient orcidSolrClient;
-
-    private String firstOrcid = "1234-5678";
-    private String secondOrcid = "5677-1235";
-    private List<String> orcidsToDelete;
+    private OrcidSolrProfileClient orcidSolrProfileClient;
 
     @Before
-    public void before() {
-        TargetProxyHelper.injectIntoProxy(orcidSolrClient, "solrReadOnlyProfileClient", solrClientTest);
+    public void before() throws SolrServerException, IOException {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(orcidSolrProfileClient, "solrReadOnlyProfileClient", mockSolrClient);
+
+        SolrDocumentList solrDocumentList = new SolrDocumentList();
+        SolrDocument solrDocument = new SolrDocument();
+        solrDocument.setField("score", 0.0f);
+        solrDocument.setField("orcid", ORCID);
+        solrDocumentList.add(solrDocument);
+
+        QueryResponse mockResponse = Mockito.mock(QueryResponse.class);
+        when(mockResponse.getResults()).thenReturn(solrDocumentList);
+        when(mockSolrClient.query(Mockito.any(SolrParams.class))).thenReturn(mockResponse);
     }
 
     @Test
     public void searchByOrcid() throws Exception {
-
-        OrcidSolrResult firstOrcidResult = orcidSolrClient.findByOrcid(firstOrcid);
-        assertNull(firstOrcidResult);
-
-        OrcidSolrDocument secondOrcid = buildAndPersistSecondOrcid();
-        OrcidSolrDocument firstOrcid = buildAndPersistFirstOrcid();
-
-        firstOrcidResult = orcidSolrClient.findByOrcid(firstOrcid.getOrcid());
-        assertFalse(secondOrcid.getOrcid().equals(firstOrcidResult.getOrcid()));
-        assertEquals("1234-5678", firstOrcidResult.getOrcid());
+        OrcidSolrResult result = orcidSolrProfileClient.findByOrcid(ORCID);
+        assertEquals(ORCID, result.getOrcid());
+        assertTrue(0.0f == result.getRelevancyScore());
     }
-
-    @Test
-    public void queryStringSearchGrant() throws Exception {
-        OrcidSolrDocument secondOrcid = buildAndPersistSecondOrcid();
-        String patentQueryString = "grant-numbers:grant-number02X%3A";
-        OrcidSolrResults orcidSolrResults = orcidSolrClient.findByDocumentCriteria(patentQueryString, null, null);
-        List<OrcidSolrResult> solrResultsList = orcidSolrResults.getResults();
-        assertTrue(solrResultsList.size() == 1);
-        assertEquals(secondOrcid.getOrcid(), solrResultsList.get(0).getOrcid());
-    }
-
-    @Test
-    public void queryStringSearchFamilyNameGivenName() throws Exception {
-
-        OrcidSolrResult orcidSolrDocument = orcidSolrClient.findByOrcid(firstOrcid);
-        assertNull(orcidSolrDocument);
-
-        orcidSolrDocument = orcidSolrClient.findByOrcid(secondOrcid);
-        assertNull(orcidSolrDocument);
-
-        OrcidSolrDocument profile1 = new OrcidSolrDocument();
-        profile1.setOrcid(firstOrcid);
-        profile1.setFamilyName("Bass");
-        profile1.setGivenNames("Teddy");
-
-        OrcidSolrDocument profile2 = new OrcidSolrDocument();
-        profile2.setOrcid(secondOrcid);
-        profile2.setFamilyName("Bass");
-        profile2.setGivenNames("Terry");
-
-        solrClientTest.addBean(profile1);
-        solrClientTest.addBean(profile2);
-        solrClientTest.commit();
-
-        String familyNameGivenNameQuery = "given-names:teddy AND family-name:bass";
-
-        OrcidSolrResults orcidSolrResults = orcidSolrClient.findByDocumentCriteria(familyNameGivenNameQuery, null, null);
-        List<OrcidSolrResult> solrResultsList = orcidSolrResults.getResults();
-        assertTrue(solrResultsList.size() == 1);
-        assertEquals(firstOrcid, solrResultsList.get(0).getOrcid());
-
-        String familyNameQueryRelaxed = "given-names:te* AND family-name:Bass";
-        solrResultsList = orcidSolrClient.findByDocumentCriteria(familyNameQueryRelaxed, null, null).getResults();
-        assertTrue(solrResultsList.size() == 2);
-        assertEquals(firstOrcid, solrResultsList.get(0).getOrcid());
-        assertEquals(secondOrcid, solrResultsList.get(1).getOrcid());
-
-    }
-
-    @Test
-    public void queryFieldWithExclusions() throws Exception {
-        buildAndPersistFirstOrcid();
-        buildAndPersistSecondOrcid();
-
-        String givenNameQueryString = "given-names:Given";
-        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(givenNameQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 2);
-
-        String givenNameWithExclusionsQueryString = MessageFormat.format("given-names:Given -orcid: {0}", new Object[] { secondOrcid });
-        solrResults = orcidSolrClient.findByDocumentCriteria(givenNameWithExclusionsQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
-    }
-
-    @Test
-    public void queryFieldWithKeyword() throws Exception {
-        buildAndPersistFirstOrcid();
-        OrcidSolrDocument secondDoc = buildSupplementaryOrcid();
-        String subjectKeyword1 = "Advanced Muppetry";
-        String subjectKeyword2 = "Basic Muppetry";
-        secondDoc.setOrcid(secondOrcid);
-        secondDoc.setKeywords(Arrays.asList(subjectKeyword1, subjectKeyword2));
-        persistOrcid(secondDoc);
-
-        String familyNameKeywordsQueryString = "given-names:given AND keyword:basic";
-        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1);
-        OrcidSolrResult result = solrResults.get(0);
-        assertEquals(secondOrcid, result.getOrcid());
-
-        familyNameKeywordsQueryString = "given-names:given AND keyword:advanced";
-        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1);
-        result = solrResults.get(0);
-        assertEquals(secondOrcid, result.getOrcid());
-    }
-
-    @Test
-    public void queryFieldWeyword() throws Exception {
-        buildAndPersistFirstOrcid();
-        OrcidSolrDocument secondDoc = buildSupplementaryOrcid();
-        String subjectKeyword1 = "Advanced Muppetry";
-        String subjectKeyword2 = "Basic Muppetry";
-        secondDoc.setOrcid(secondOrcid);
-        secondDoc.setKeywords(Arrays.asList(subjectKeyword1, subjectKeyword2));
-        persistOrcid(secondDoc);
-
-        String familyNameKeywordsQueryString = "given-names:given AND keyword:basic";
-        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1);
-        OrcidSolrResult result = solrResults.get(0);
-        assertEquals(secondOrcid, result.getOrcid());
-
-        familyNameKeywordsQueryString = "given-names:given AND keyword:advanced";
-        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameKeywordsQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1);
-        result = solrResults.get(0);
-        assertEquals(secondOrcid, result.getOrcid());
-
-    }
-
-    @Test
-    public void queryFieldWithBoostAndExclusions() throws Exception {
-        OrcidSolrDocument firstOrcidDoc = buildFirstOrcid();
-        firstOrcidDoc.setOrcid(firstOrcid);
-        firstOrcidDoc.setFamilyName("James");
-
-        OrcidSolrDocument secondOrcidDoc = buildSupplementaryOrcid();
-        secondOrcidDoc.setOrcid(secondOrcid);
-        secondOrcidDoc.setGivenNames("James");
-
-        OrcidSolrDocument thirdOrcidDoc = buildSupplementaryOrcid();
-        thirdOrcidDoc.setFamilyName("James");
-        thirdOrcidDoc.setOrcid(RandomStringUtils.randomAlphabetic(9));
-
-        persistOrcid(firstOrcidDoc);
-        persistOrcid(secondOrcidDoc);
-        persistOrcid(thirdOrcidDoc);
-
-        String familyNameGivenNameQuery = "{!edismax qf='family-name^1.0 given-names^2.0'}James";
-
-        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameGivenNameQuery, null, null).getResults();
-
-        assertTrue(solrResults.size() == 3);
-        OrcidSolrResult givenNameMatch = solrResults.get(0);
-        assertTrue(secondOrcid.equals(givenNameMatch.getOrcid()) && givenNameMatch.getRelevancyScore() > 1);
-        OrcidSolrResult familyNameMatch1 = solrResults.get(1);
-        OrcidSolrResult familyNameMatch2 = solrResults.get(2);
-        assertTrue(familyNameMatch1.getRelevancyScore() < 1.0);
-        assertTrue(familyNameMatch2.getRelevancyScore() < 1.0);
-
-        String familyNameGivenNameQueryWithExclude = familyNameGivenNameQuery + " -orcid:" + thirdOrcidDoc.getOrcid();
-        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameGivenNameQueryWithExclude, null, null).getResults();
-        assertTrue(solrResults.size() == 2);
-        givenNameMatch = solrResults.get(0);
-        assertTrue(givenNameMatch.getOrcid().equals(secondOrcid));
-        assertTrue(givenNameMatch.getRelevancyScore() > 1);
-        familyNameMatch1 = solrResults.get(1);
-        assertTrue(familyNameMatch1.getOrcid().equals(firstOrcid));
-        assertTrue(familyNameMatch1.getRelevancyScore() < 1);
-    }
-
-    @Test
-    public void queryFieldWithBoost() throws Exception {
-        OrcidSolrDocument firstOrcidDoc = buildFirstOrcid();
-        firstOrcidDoc.setOrcid(firstOrcid);
-        firstOrcidDoc.setFamilyName("James");
-
-        OrcidSolrDocument secondOrcidDoc = buildSupplementaryOrcid();
-        secondOrcidDoc.setOrcid(secondOrcid);
-        secondOrcidDoc.setGivenNames("James");
-
-        solrClientTest.addBean(firstOrcidDoc);
-        solrClientTest.addBean(secondOrcidDoc);
-        solrClientTest.commit();
-
-        String familyNameGivenNameQuery = "{!edismax qf='family-name^1.0 given-names^2.0'}James";
-
-        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameGivenNameQuery, null, null).getResults();
-
-        assertTrue(solrResults.size() == 2);
-        assertTrue(solrResults.get(0).getOrcid().equals(secondOrcid));
-        assertTrue(solrResults.get(1).getOrcid().equals(firstOrcid));
-    }
-
-    @Test
-    public void queryStringSearchFamilyNameGivenNameTenRows() throws Exception {
-        int numRecordsToCreate = 10;
-        List<String> orcidsToGetStored = new ArrayList<String>();
-        for (int i = 0; i < numRecordsToCreate; i++) {
-            OrcidSolrDocument orcidSolrDocument = buildSupplementaryOrcid();
-            orcidSolrDocument.setGivenNames(RandomStringUtils.randomAscii(20));
-            // format of orcid irrelevant to solr - just need to make them
-            // different
-            orcidSolrDocument.setOrcid(RandomStringUtils.randomAscii(20));
-            orcidsToGetStored.add(orcidSolrDocument.getOrcid());
-            persistOrcid(orcidSolrDocument);
-        }
-
-        String familyNameOnlyQuery = "family-name:Family Name";
-        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(familyNameOnlyQuery, null, null).getResults();
-        assertTrue(solrResults.size() == 10);
-
-        familyNameOnlyQuery = "{!start=0 rows=5} family-name:Family Name";
-        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameOnlyQuery, null, null).getResults();
-        assertTrue(solrResults.size() == 5);
-    }
-
-    @Test
-    public void queryStringWithTextFieldSpansAllFields() throws Exception {
-        buildAndPersistFirstOrcid();
-        buildAndPersistSecondOrcid();
-
-        String orcidQueryString = "text=1234\\-5678";
-        List<OrcidSolrResult> solrResults = orcidSolrClient.findByDocumentCriteria(orcidQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1);
-
-        String givenNameQueryString = "text=Given";
-        solrResults = orcidSolrClient.findByDocumentCriteria(givenNameQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 2);
-
-        String familyNameQueryString = "text=Smith";
-        solrResults = orcidSolrClient.findByDocumentCriteria(familyNameQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(firstOrcid));
-
-        String grantQueryString = "text=Grant-number02X%3A";
-        solrResults = orcidSolrClient.findByDocumentCriteria(grantQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
-
-        String creditNameQueryString = "text=Credit";
-        solrResults = orcidSolrClient.findByDocumentCriteria(creditNameQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
-
-        String otherNamesQueryString = "text=Other";
-        solrResults = orcidSolrClient.findByDocumentCriteria(otherNamesQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
-
-        String doiQueryString = "text=id2";
-        solrResults = orcidSolrClient.findByDocumentCriteria(doiQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
-
-        String worksTitlesQueryString = "text=Work Title 1";
-        solrResults = orcidSolrClient.findByDocumentCriteria(worksTitlesQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
-
-        String emailQueryString = "text=stan@ficitional.co.uk";
-        solrResults = orcidSolrClient.findByDocumentCriteria(emailQueryString, null, null).getResults();
-        assertTrue(solrResults.size() == 1 && solrResults.get(0).getOrcid().equals(secondOrcid));
-    }
-
-    private OrcidSolrDocument buildAndPersistFirstOrcid() throws IOException, SolrServerException {
-        OrcidSolrDocument firstDocument = buildFirstOrcid();
-        firstDocument.setOrcid(firstOrcid);
-        persistOrcid(firstDocument);
-        return firstDocument;
-    }
-
-    private OrcidSolrDocument buildFirstOrcid() {
-        OrcidSolrDocument testDoc = new OrcidSolrDocument();
-        testDoc.setOrcid(firstOrcid);
-        testDoc.setGivenNames("Given Name of Person");
-        testDoc.setFamilyName("Smith");
-        return testDoc;
-    }
-
-    private OrcidSolrDocument buildAndPersistSecondOrcid() throws IOException, SolrServerException {
-        OrcidSolrDocument secondDoc = buildSupplementaryOrcid();
-        secondDoc.setOrcid(secondOrcid);
-        persistOrcid(secondDoc);
-        return secondDoc;
-
-    }
-
-    private OrcidSolrDocument buildSupplementaryOrcid() {
-        OrcidSolrDocument secondOrcidDoc = new OrcidSolrDocument();
-        secondOrcidDoc.setCreditName("Credit Name");
-        secondOrcidDoc.addEmailAddress("stan@ficitional.co.uk");
-        secondOrcidDoc.setFamilyName("Family Name");
-        secondOrcidDoc.setGivenNames("Given Names");
-        secondOrcidDoc.setDigitalObjectIds(Arrays.asList(new String[] { "id1", "id2" }));
-        secondOrcidDoc.setOtherNames(Arrays.asList(new String[] { "Other Name 1", "Other Name 2" }));
-        secondOrcidDoc.setWorkTitles(Arrays.asList(new String[] { "Work Title 1", "Work Title 2" }));
-        secondOrcidDoc.setGrantNumbers(Arrays.asList(new String[] { "Grant-number02X:" }));
-        return secondOrcidDoc;
-    }
-
-    private void persistOrcid(OrcidSolrDocument orcidSolrDocument) throws IOException, SolrServerException {
-        orcidsToDelete.add(orcidSolrDocument.getOrcid());
-        solrClientTest.addBean(orcidSolrDocument);
-        solrClientTest.commit();
-    }
-
 }

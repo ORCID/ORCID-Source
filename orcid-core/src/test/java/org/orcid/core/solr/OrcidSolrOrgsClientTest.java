@@ -2,18 +2,25 @@ package org.orcid.core.solr;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import javax.annotation.Resource;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.SolrParams;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
@@ -23,33 +30,35 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidSolrOrgsClientTest {
     
-    @Resource(name = "solrClientTest")
-    private SolrClient solrClientTest;
-    
     @Resource
     private OrcidSolrOrgsClient orcidSolrOrgsClient;
     
-    @Before
-    public void before() {
-        TargetProxyHelper.injectIntoProxy(orcidSolrOrgsClient, "solrReadOnlyOrgsClient", solrClientTest);
-    }
+    @Mock
+    private SolrClient mockSolrClient;
     
-    @Test
-    public void testPesistAndFindById() throws IOException, SolrServerException {
+    @Before
+    public void before() throws SolrServerException, IOException {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(orcidSolrOrgsClient, "solrReadOnlyOrgsClient", mockSolrClient);
+    
         OrgDisambiguatedSolrDocument doc = new OrgDisambiguatedSolrDocument();
         doc.setOrgDisambiguatedId("1");
         doc.setOrgDisambiguatedName("Test org name");
         doc.setOrgDisambiguatedCity("Haywards Heath");
         doc.setOrgDisambiguatedRegion("West Sussex");
         doc.setOrgDisambiguatedCountry("GB");
-        List<String> orgNames = new ArrayList<>();
-        orgNames.add("Test org name");
-        orgNames.add("Test organisation name");
-        doc.setOrgNames(orgNames);
-
-        solrClientTest.addBean(doc);
-        solrClientTest.commit();
-
+        
+        SolrDocumentList solrDocumentList = new SolrDocumentList();
+        solrDocumentList.add(new SolrDocument());
+        
+        QueryResponse mockResponse = Mockito.mock(QueryResponse.class);
+        when(mockResponse.getBeans(OrgDisambiguatedSolrDocument.class)).thenReturn(Arrays.asList(doc));
+        when(mockResponse.getResults()).thenReturn(solrDocumentList);
+        when(mockSolrClient.query(Mockito.any(SolrParams.class))).thenReturn(mockResponse);
+    }       
+    
+    @Test
+    public void testPesistAndFindById() throws IOException, SolrServerException {
         OrgDisambiguatedSolrDocument result = orcidSolrOrgsClient.findById(1L);
         assertNotNull(result);
         assertEquals("1", result.getOrgDisambiguatedId());

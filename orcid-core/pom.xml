@@ -287,14 +287,7 @@
 		    <artifactId>commons-validator</artifactId>
 		    <version>1.6</version>
 		</dependency>
-        <!-- Test dependencies -->
-        <!-- Solr -->
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-core</artifactId>
-            <version>${solr.version}</version>
-            <scope>test</scope>	
-        </dependency>
+        <!-- Test dependencies -->        
         
     </dependencies>
 </project>
