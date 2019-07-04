@@ -27,12 +27,12 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private OrcidSolrProfileClient orcidSolrClient;
+    private OrcidSolrProfileClient orcidSolrProfileClient;
     
     @Override
     public Search findOrcidIds(Map<String, List<String>> queryParameters) {
         Search search = new Search();
-        OrcidSolrResults orcidSolrResults = orcidSolrClient.findByDocumentCriteria(queryParameters);
+        OrcidSolrResults orcidSolrResults = orcidSolrProfileClient.findByDocumentCriteria(queryParameters);
         setSearchResults(orcidSolrResults, search);
         return search;
     }
@@ -40,7 +40,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     @Override
     public Search findOrcidsByQuery(String query, Integer start, Integer rows) {
         Search search = new Search();
-        OrcidSolrResults orcidSolrResults = orcidSolrClient.findByDocumentCriteria(query, start, rows);
+        OrcidSolrResults orcidSolrResults = orcidSolrProfileClient.findByDocumentCriteria(query, start, rows);
         setSearchResults(orcidSolrResults, search);
         return search;
     }

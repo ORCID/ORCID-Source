@@ -37,6 +37,7 @@ the software.
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
         <aws.version>1.11.32</aws.version>
+        <solr.version>8.0.0</solr.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>

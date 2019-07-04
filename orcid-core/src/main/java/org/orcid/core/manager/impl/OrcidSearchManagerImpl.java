@@ -28,12 +28,12 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private OrcidSolrProfileClient orcidSolrClient;
+    private OrcidSolrProfileClient orcidSolrProfileClient;
     
     @Override
     public Search findOrcidIds(Map<String, List<String>> queryParameters) {
         Search search = new Search();
-        OrcidSolrResults orcidSolrResults = orcidSolrClient.findByDocumentCriteria(queryParameters);
+        OrcidSolrResults orcidSolrResults = orcidSolrProfileClient.findByDocumentCriteria(queryParameters);
         if (orcidSolrResults != null && orcidSolrResults.getResults() != null) {
             List<Result> orcidIdList = orcidSolrResults.getResults().stream().map(r -> {
                 try {

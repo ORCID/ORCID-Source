@@ -10,22 +10,17 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidSolrOrgsClientTest {
     
     @Resource(name = "solrClientTest")
