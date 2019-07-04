@@ -16,6 +16,7 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
@@ -88,6 +89,9 @@ public class OrcidSolrLegacyIndexer {
     }
     
     private void persist(String url, Object document, String id) throws IOException {
+        if(Features.DISABLE_LEGACY_SOLR.isActive()) {
+            LOG.info("DISABLE_LEGACY_SOLR is active, not feeding old SOLR");
+        }
         DocumentObjectBinder b = new DocumentObjectBinder();
         String xmlDocument = ClientUtils.toXML(b.toSolrInputDocument(document));
         
@@ -107,9 +111,6 @@ public class OrcidSolrLegacyIndexer {
             InputStream is = con.getErrorStream();
             StringWriter writer = new StringWriter();
             IOUtils.copy(is, writer, "UTF-8");
-            String theString = writer.toString();
-            System.out.println(theString);
-            Object obj = con.getContent();
             
             LOG.error("Error persisting " + id + " to " + url);
             LOG.error(responseMessage);
