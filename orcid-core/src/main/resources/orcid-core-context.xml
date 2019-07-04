@@ -17,6 +17,7 @@
 
 	<context:component-scan
 		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.issn.client, org.orcid.core.solr" />
+	
 	<aop:aspectj-autoproxy />
 	
     <context:mbean-server />
@@ -1410,7 +1411,7 @@
     </bean>
     
     <!-- v3 adapters -->
-    <bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" />
+    <bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" depends-on="PIDNormalizationService" />
     <bean id="mapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getObject"/>
     <bean id="jpaJaxbNotificationAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl">
         <property name="mapperFacade" ref="mapperFacadeV3" />

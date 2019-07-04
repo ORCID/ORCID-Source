@@ -1,7 +1,6 @@
 package org.orcid.core.utils.v3.identifiers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +22,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
-@Component
+@Component("PIDNormalizationService")
 public class PIDNormalizationService {
 
     @Resource

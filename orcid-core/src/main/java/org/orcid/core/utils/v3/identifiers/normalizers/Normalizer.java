@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.springframework.core.Ordered;
 
-public interface Normalizer extends Ordered{
+public interface Normalizer extends Ordered {
 
     public static final List<String> CAN_HANDLE_EVERYTHING = Lists.newArrayList();
     
