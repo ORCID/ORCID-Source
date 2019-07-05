@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
@@ -26,10 +25,6 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
         }
         WorkSummary workSummary = (WorkSummary) activity;
         
-        if (Features.WORKS_FAILURE_DEBUG.isActive()) {
-            LOG.info("Grouping work {}", workSummary.getPutCode());
-        }
-
         if (groups.isEmpty()) {
             // If it is the first activity, create a new group for it
             ActivitiesGroup newGroup = createNewGroup(activity);
@@ -75,7 +70,7 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
                     for (GroupableActivity activity : group.getActivities()) {
                         WorkSummary workSummary = (WorkSummary) activity;
                         putCodes.add(workSummary.getPutCode());
-                        if (!groupableExternalIdFound) {
+                        if (!groupableExternalIdFound && workSummary.getExternalIdentifiers() != null) {
                             for (ExternalID externalId : workSummary.getExternalIdentifiers().getExternalIdentifier()) {
                                 if (externalId.isGroupAble()) {
                                     groupableExternalIdFound = true;

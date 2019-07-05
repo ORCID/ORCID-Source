@@ -49,7 +49,7 @@ public class WorkGroup extends ActivityGroup {
                 group.setActiveVisibility(workSummary.getVisibility().name());
             }
 
-            if (workSummary.getSource().retrieveSourcePath().equals(orcid)) {
+            if (orcid.equals(workSummary.getSource().retrieveSourcePath())) {
                 group.setUserVersionPresent(true);
             }
 
