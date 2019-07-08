@@ -46,8 +46,8 @@ export class Header2Component  {
         HELP: false,
         ABOUT: false, 
         ORGANIZATIONS: false,
-        RESEARCHERS: true, 
-        SIGNIN: false
+        RESEARCHERS: location.href.indexOf('signin') == -1, 
+        SIGNIN: location.href.indexOf('signin') >= 0
     }
     openMobileMenu = false
     isMobile = false
@@ -176,8 +176,9 @@ export class Header2Component  {
 
     mouseLeave( ){
         if (!this.isMobile) {
+            const hoverOn = location.href.indexOf('signin') == -1?  "RESEARCHERS" : "SIGNIN"
             Object.keys(this.mobileMenu).forEach ( item => {
-                this.mobileMenu[item] = item === "RESEARCHERS"
+                this.mobileMenu[item] = item === hoverOn
             })
         }
     }
