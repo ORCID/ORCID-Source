@@ -99,7 +99,7 @@ export class Header2Component  {
                     HELP: false,
                     ABOUT: false, 
                     ORGANIZATIONS: false,
-                    RESEARCHERS: location.href.indexOf('signin') == -1 || this.userMenu === "true", 
+                    RESEARCHERS: false,
                     SIGNIN: location.href.indexOf('signin') >= 0
                 }
 
@@ -183,9 +183,8 @@ export class Header2Component  {
 
     mouseLeave( ){
         if (!this.isMobile) {
-            const hoverOn = location.href.indexOf('signin') == -1 || this.userMenu === "true"?  "RESEARCHERS" : "SIGNIN"
             Object.keys(this.mobileMenu).forEach ( item => {
-                this.mobileMenu[item] = item === hoverOn
+                this.mobileMenu[item] = item === "SIGNIN" && location.href.indexOf('signin') != -1
             })
         }
     }
