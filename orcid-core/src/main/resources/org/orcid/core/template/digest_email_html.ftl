@@ -66,7 +66,7 @@
 	        	</table>
 	        	</#list> 
             </p>
-			<#elseif notificationType == 'AMENDED'>
+            <#elseif notificationType == 'AMENDED' && !verboseNotifications>
             <p>
                 <#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
                 <div>
@@ -82,10 +82,10 @@
                 </#if>
             </p>
             <#elseif notificationType == 'INSTITUTIONAL_CONNECTION'>
-            <p> 
+            <p>
             	<div><img src="https://orcid.org/sites/all/themes/orcid/img/request.png">&nbsp;<@emailMacros.msg 'email.institutional_connection.1' /><@emailMacros.space />${(notification.idpName)!}<@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.2' /><a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"><@emailMacros.msg "email.institutional_connection.here" /></a><@emailMacros.msg 'email.institutional_connection.3' /><@emailMacros.space />${(notification.source.sourceName.content)!sourceId}<@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.4' /><@emailMacros.space /><#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></div>
             </p>
-            <#else>
+            <#elseif notificationType != 'AMENDED'>
             <p>
             	<div><img src="https://orcid.org/sites/all/themes/orcid/img/request.png">&nbsp;${(notification.subject)}</div>
             </p>
@@ -93,7 +93,12 @@
 			</#list>
 			</#list>
 			</#if>
-            </#list>
+            </#list>                     
+            <#if verboseNotifications>
+                <p>            
+                    <#include "digest_email_amend_section_html.ftl"/>                                               
+                </p>
+            </#if>            
             <p style="text-align: center;">
                 <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; color: #2E7F9F;">                    
                      <!-- Use assign to prevent strange whitespace formatting in output -->

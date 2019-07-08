@@ -11,11 +11,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
@@ -24,15 +27,19 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EmailMessageSender;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.jaxb.model.common_v2.SourceClientId;
-import org.orcid.jaxb.model.notification.amended_v2.NotificationAmended;
-import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
-import org.orcid.jaxb.model.notification_v2.Notification;
-import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
+import org.orcid.core.togglz.Features;
+import org.orcid.jaxb.model.common.ActionType;
+import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.notification.Notification;
+import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.release.notification.permission.Item;
+import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
+import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -70,7 +77,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Resource
     private NotificationDao notificationDaoReadOnly;
 
-    @Resource
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource
@@ -106,6 +113,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Value("${org.notifications.service_announcements.batchSize:60000}")
     private Integer batchSize;
     
+    @Value("${org.notifications.max_elements_to_show:20}")
+    private Integer maxNotificationsToShowPerClient;
+    
+    protected Features feature;
+    
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
             @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
         if (maxThreads == null || maxThreads > 64 || maxThreads < 1) {
@@ -119,6 +131,89 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
+        Locale locale = getUserLocaleFromProfileEntity(record);
+        int totalMessageCount = 0;
+        int orcidMessageCount = 0;
+        
+        Set<String> memberIds = new HashSet<>();
+        DigestEmail digestEmail = new DigestEmail();
+
+        Map<String, ClientUpdates> updatesByClient = new HashMap<String, ClientUpdates>();
+
+        for (Notification notification : notifications) {
+            digestEmail.addNotification(notification);
+            totalMessageCount++;
+            if (notification.getSource() == null) {
+                orcidMessageCount++;
+            } else {
+                SourceClientId clientId = notification.getSource().getSourceClientId();
+                if (clientId != null) {
+                    memberIds.add(clientId.getPath());
+                }
+            }
+            if (notification instanceof NotificationPermission) {
+                NotificationPermission permissionNotification = (NotificationPermission) notification;
+                permissionNotification.setEncryptedPutCode(encryptAndEncodePutCode(permissionNotification.getPutCode()));
+            } else if (notification instanceof NotificationInstitutionalConnection) {
+                notification.setEncryptedPutCode(encryptAndEncodePutCode(notification.getPutCode()));
+            } else if (notification instanceof NotificationAmended) {
+                NotificationAmended amend = (NotificationAmended) notification;
+                String clientId = amend.getSource().retrieveSourcePath();
+                String clientName = amend.getSource().getSourceName() == null ? null : amend.getSource().getSourceName().getContent();
+                String clientDescription = amend.getSourceDescription();
+                XMLGregorianCalendar createdDate = amend.getCreatedDate();
+                ClientUpdates cu = null;
+                if (!updatesByClient.containsKey(clientId)) {
+                    cu = new ClientUpdates();
+                    cu.setUserLocale(locale);
+                    cu.setClientId(clientId);
+                    cu.setClientName(clientName);
+                    cu.setClientDescription(clientDescription);
+                    updatesByClient.put(clientId, cu);
+                } else {
+                    cu = updatesByClient.get(clientId);
+                }
+                if (amend.getItems() != null && amend.getItems().getItems() != null) {
+                    for (Item item : amend.getItems().getItems()) {
+                        cu.addElement(createdDate, item);
+                    }
+                }
+            }
+        }
+        
+        List<String> sortedClientIds = updatesByClient.keySet().stream().sorted().collect(Collectors.toList());
+        List<ClientUpdates> sortedClientUpdates = new ArrayList<ClientUpdates>();
+        sortedClientIds.stream().forEach(s -> {sortedClientUpdates.add(updatesByClient.get(s));});
+        
+        String emailName = notificationManager.deriveEmailFriendlyName(record);
+        String subject = messages.getMessage("email.subject.digest", new String[] { emailName, String.valueOf(totalMessageCount) }, locale);
+        Map<String, Object> params = new HashMap<>();
+        params.put("locale", locale);
+        params.put("messages", messages);
+        params.put("messageArgs", new Object[0]); 
+        params.put("emailName", emailName);
+        params.put("digestEmail", digestEmail);        
+        params.put("totalMessageCount", String.valueOf(totalMessageCount));
+        params.put("orcidMessageCount", orcidMessageCount);
+        params.put("baseUri", orcidUrlManager.getBaseUrl());
+        params.put("subject", subject);
+        params.put("clientUpdates", sortedClientUpdates);
+        params.put("verboseNotifications", true);
+        params.put("maxPerClient", maxNotificationsToShowPerClient);
+        String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
+        String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
+
+        EmailMessage emailMessage = new EmailMessage();
+
+        emailMessage.setSubject(subject);
+        emailMessage.setBodyText(bodyText);
+        emailMessage.setBodyHtml(bodyHtml);
+        return emailMessage;
+    }
+    
+    @Override
+    public EmailMessage createDigestLegacy(String orcid, Collection<Notification> notifications) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);                
         Locale locale = getUserLocaleFromProfileEntity(record);
         int totalMessageCount = 0;
@@ -166,6 +261,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("memberIdsCount", memberIds.size());
         params.put("baseUri", orcidUrlManager.getBaseUrl());
         params.put("subject", subject);
+        params.put("verboseNotifications", false);
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 
@@ -176,11 +272,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         emailMessage.setBodyHtml(bodyHtml);
         return emailMessage;
     }
-
+    
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
         String locale = profile.getLocale();
         if (locale != null) {
-            org.orcid.jaxb.model.common_v2.Locale loc = org.orcid.jaxb.model.common_v2.Locale.valueOf(locale);
+            AvailableLocales loc = AvailableLocales.valueOf(locale);
             return LocaleUtils.toLocale(loc.value());
         }
         
@@ -218,7 +314,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 
                 if(!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                    EmailMessage digestMessage = createDigest(orcid, notifications);
+                    EmailMessage digestMessage;
+                    if(Features.VERBOSE_NOTIFICATIONS.isActive()) {
+                        digestMessage = createDigest(orcid, notifications);
+                    } else {
+                        digestMessage = createDigestLegacy(orcid, notifications);
+                    }
+                    
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
                     digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
@@ -367,5 +469,105 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 }                
             }
         }); 
+    }
+    
+    public class ClientUpdates {
+        String clientId;
+        String clientName;
+        String clientDescription;
+        Integer counter = 0;
+        Locale userLocale;
+        
+        Map<String, Map<String, Set<String>>> updates = new HashMap<>();        
+        
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
+        
+        public void setClientName(String clientName) {
+            this.clientName = clientName;
+        }
+        
+        public void setClientDescription(String clientDescription) {
+            this.clientDescription = clientDescription;
+        }
+        
+        public void setUserLocale(Locale locale) {
+            this.userLocale = locale;
+        }
+        
+        public String getClientId() {
+            return clientId;
+        }
+
+        public String getClientName() {
+            return clientName;
+        }
+
+        public String getClientDescription() {
+            return clientDescription;
+        }
+
+        public Locale getUserLocale() {
+            return userLocale;
+        }
+        
+        public Map<String, Map<String, Set<String>>> getUpdates() {
+            return updates;
+        }
+        
+        public Integer getCounter() {
+            return counter;
+        }
+
+        private String renderCreationDate(XMLGregorianCalendar createdDate) {
+            String result = new String();
+            result += createdDate.getYear();
+            result += "-" + (createdDate.getMonth() < 10 ? "0" + createdDate.getMonth() : createdDate.getMonth());               
+            result += "-" + (createdDate.getDay() < 10 ? "0" + createdDate.getDay() : createdDate.getDay());            
+            return result;
+        }       
+        
+        public void addElement(XMLGregorianCalendar createdDate, Item item) {
+            if(counter < maxNotificationsToShowPerClient) {
+                init(item.getItemType().name(), item.getActionType() == null ? null : item.getActionType().name());
+                String value = null;
+                switch(item.getItemType()) {
+                case DISTINCTION:
+                case EDUCATION:
+                case EMPLOYMENT:
+                case INVITED_POSITION:
+                case MEMBERSHIP:
+                case QUALIFICATION:
+                case SERVICE:
+                    value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
+                    break;
+                default:
+                    value = item.getItemName();
+                    if(item.getExternalIdentifier() != null) {
+                        value += " " + item.getExternalIdentifier().getType() + ": " + item.getExternalIdentifier().getValue();
+                    }
+                    value += " (" + renderCreationDate (createdDate) + ')';
+                    break;
+                }   
+                if(item.getActionType() != null) {
+                    updates.get(item.getItemType().name()).get(item.getActionType().name()).add(value);
+                } else {
+                    updates.get(item.getItemType().name()).get(ActionType.UNKNOWN.name()).add(value);
+                }
+            }
+            counter += 1;
+        }        
+
+        private void init(String itemType, String actionType) {
+            if (!updates.containsKey(itemType)) {
+                updates.put(itemType, new HashMap<String, Set<String>>());
+            }
+            if (actionType == null && !updates.get(itemType).containsKey(ActionType.UNKNOWN.name())) {
+                updates.get(itemType).put(ActionType.UNKNOWN.name(), new TreeSet<String>());
+            } else if (!updates.get(itemType).containsKey(actionType)) {
+                updates.get(itemType).put(actionType, new TreeSet<String>());
+            }
+        }
     }
 }
