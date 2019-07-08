@@ -115,7 +115,7 @@
                     <footer class="footer-main" aria-label="<@orcid.msg 'aria.footer'/>">
                         <div class="container" role="presentation">
             	            <span id="noop" role="presentation"><!-- For automated tests --> </span>
-                            <div class="row footer-row-container" role="presentation">
+                            <div class="row footer-row-container" role="presentation"> 
 
                                 <div class="footer-row-text-container" role="presentation">
                                     <div>
