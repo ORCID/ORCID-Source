@@ -95,11 +95,6 @@ export class Header2Component  {
                 this.liveIds = data.messages['LIVE_IDS'];
                 this.userMenu = data.messages['ENABLE_USER_MENU']     
                 
-                console.log (1, this.currentUrl)
-                console.log (2, getBaseUri())
-                console.log (3, this.currentUrl.indexOf('signin'))
-
-                
                 this.mobileMenu = {
                     HELP: false,
                     ABOUT: false, 
@@ -171,12 +166,14 @@ export class Header2Component  {
 
         // If is mobile ignore no-click events
         if ($event.type === "click" || !this.isMobile) {
+            // The new value is marked as selected
             if (!this.mobileMenu[value]){
                 Object.keys(this.mobileMenu).forEach ( item => {
                     this.mobileMenu[item] = item === value
                 })
                 this.ref.detectChanges();
-            } else {
+            // close on second click only on mobile
+            } else if (this.isMobile) {
                 Object.keys(this.mobileMenu).forEach ( item => {
                     this.mobileMenu[item] = false
                 })
@@ -189,7 +186,6 @@ export class Header2Component  {
     mouseLeave( ){
         if (!this.isMobile) {
             Object.keys(this.mobileMenu).forEach ( item => {
-                console.log ( this.currentUrl.slice(0, -1), getBaseUri()  )
                 this.mobileMenu[item] = (item === "RESEARCHERS" && this.currentUrl.slice(0, -1) !==  getBaseUri() && this.currentUrl.indexOf('signin') == -1)
             })
         }
