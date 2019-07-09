@@ -135,21 +135,21 @@
                                 </ul>
                             </li>
                             <li role="presentation" class="leaf">
-                                <a role="menu-item" href="{{aboutUri}}/organizations/institutions" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('institutions')">{{'${springMacroRequestContext.getMessage("public-layout.research_organizations")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }} <span class="more" [ngClass]="{'less':secondaryMenuVisible['institutions'] == true}"></span></a> <!-- Updated according Drupal website structure -->
+                                <a role="menu-item" href="{{aboutUri}}/organizations/institutions" (click)="handleMobileMenuOption($event); toggleSecondaryMenu('institutions')">{{'${springMacroRequestContext.getMessage("public-layout.research_organizations")?replace("<br />", " ")?replace("'", "\\'")}' | uppercase }} <span class="more" [ngClass]="{'less':secondaryMenuVisible['institutions'] == true}"></span></a> <!-- Updated according Drupal website structure -->
                                     <ul class="menu" *ngIf="secondaryMenuVisible['institutions'] == true">
                                         <li class="first leaf">
-                                            <a href="{{aboutUri}}/organizations/institutions">{{'${springMacroRequestContext.getMessage("public-layout.research_organizations")?replace("<br />", " ")?replace("'", "\\'")}</a>
+                                            <a href="{{aboutUri}}/organizations/institutions">{{'${springMacroRequestContext.getMessage("public-layout.research_organizations")?replace("<br />", " ")?replace("'", "\\'")}' | uppercase }}</a>
                                         </li>
                                         <li class="leaf">
-                                            <a href="{{aboutUri}}/organizations/institutions/learnmore">Learn more</a>
+                                            <a href="{{aboutUri}}/organizations/institutions/learnmore">{{'Learn more'| uppercase }}</a>
                                         </li>
                                         <li class="leaf">
-                                            <a href="{{aboutUri}}/organizations/institutions/outreachresources">Outreach Resources</a>
+                                            <a href="{{aboutUri}}/organizations/institutions/outreachresources">{{'Outreach Resources'| uppercase }}</a>
                                         </li>
-                                            <li class="leaf"><a href="{{aboutUri}}/about/membership" title="">Membership</a>
+                                            <li class="leaf"><a href="{{aboutUri}}/about/membership" title="">{{'Membership'| uppercase }}</a>
                                         </li>
                                         <li class="last leaf">
-                                            <a href="{{aboutUri}}/organizations/institutions/usecases">Use cases</a>
+                                            <a href="{{aboutUri}}/organizations/institutions/usecases">{{'Use cases'| uppercase }}</a>
                                         </li>
                                     </ul>
                             </li>
