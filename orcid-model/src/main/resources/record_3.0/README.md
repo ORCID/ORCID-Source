@@ -19,6 +19,7 @@
 - person (read only)
 - personal-details (read only)
 - qualification/qualifications
+- record (read only)
 - research-resource/research-resources
 - researcher-urls
 - service/services
