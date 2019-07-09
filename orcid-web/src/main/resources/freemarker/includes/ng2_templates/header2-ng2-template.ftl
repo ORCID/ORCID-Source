@@ -61,13 +61,8 @@
                 <div class="container container-menu"  role="presentation"> 
                 <ul class="menu" resize  role="presentation">
                     <!-- FOR RESEARCHERS -->
-                    <li class="first expanded 
-                    <#--  Open when the current nagication is at the root  -->
-                    ${(nav="")?then('open', '')}
-                    <#--  Always open when user menu is enable   -->
-                     <@orcid.checkFeatureStatus 'ENABLE_USER_MENU'> open  </@orcid.checkFeatureStatus>
-                    " role="presentation"
-                     [ngClass]="{'hover': mobileMenu.RESEARCHERS}"  >
+                    <li class="first expanded" role="presentation"
+                     [ngClass]="{'hover': mobileMenu.RESEARCHERS, 'open':  this.currentUrl.indexOf('signin') == -1}"  >
                         <a href="{{aboutUri}}/about/what-is-orcid/mission" title="" role="menu-item" (mouseenter)="menuHandler('RESEARCHERS', $event)"  (click)="menuHandler('RESEARCHERS', $event)">{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")}' | uppercase }} <span class="more" [ngClass]="{'less':mobileMenu.RESEARCHERS == true}"></span></a>
                         <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']" aria-label="submenu">
                             <!-- Mobile view Only -->

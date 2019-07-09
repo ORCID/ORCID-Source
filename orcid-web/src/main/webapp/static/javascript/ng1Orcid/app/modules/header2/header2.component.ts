@@ -46,6 +46,7 @@ export class Header2Component  {
     mobileMenu: {} = null
     openMobileMenu = false
     isMobile = false
+    currentUrl = location.href
 
     constructor(
         private notificationsSrvc: NotificationsService,
@@ -94,13 +95,17 @@ export class Header2Component  {
                 this.liveIds = data.messages['LIVE_IDS'];
                 this.userMenu = data.messages['ENABLE_USER_MENU']     
                 
+                console.log (1, this.currentUrl)
+                console.log (2, getBaseUri())
+                console.log (3, this.currentUrl.indexOf('signin'))
+
                 
                 this.mobileMenu = {
                     HELP: false,
                     ABOUT: false, 
                     ORGANIZATIONS: false,
-                    RESEARCHERS: false,
-                    SIGNIN: location.href.indexOf('signin') >= 0
+                    RESEARCHERS: this.currentUrl.slice(0, -1) !==  getBaseUri() && this.currentUrl.indexOf('signin') == -1,
+                    SIGNIN: this.currentUrl.indexOf('signin') >= 0
                 }
 
             },
@@ -184,7 +189,8 @@ export class Header2Component  {
     mouseLeave( ){
         if (!this.isMobile) {
             Object.keys(this.mobileMenu).forEach ( item => {
-                this.mobileMenu[item] = item === "SIGNIN" && location.href.indexOf('signin') != -1
+                console.log ( this.currentUrl.slice(0, -1), getBaseUri()  )
+                this.mobileMenu[item] = (item === "RESEARCHERS" && this.currentUrl.slice(0, -1) !==  getBaseUri() && this.currentUrl.indexOf('signin') == -1)
             })
         }
     }
