@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="header2-ng2-template">
 
 <div class="header2" >
-    <div  *ngIf="!isOauth"> 
+    <div  *ngIf="!isOauth && mobileMenu"> 
 
         <div class="container" role="banner">
             <div class="logo-search-bar">
@@ -61,7 +61,13 @@
                 <div class="container container-menu"  role="presentation"> 
                 <ul class="menu" resize  role="presentation">
                     <!-- FOR RESEARCHERS -->
-                    <li class="first expanded open" role="presentation" [ngClass]="{'hover': mobileMenu.RESEARCHERS}"  >
+                    <li class="first expanded 
+                    <#--  Open when the current nagication is at the root  -->
+                    ${(nav="")?then('open', '')}
+                    <#--  Always open when user menu is enable   -->
+                     <@orcid.checkFeatureStatus 'ENABLE_USER_MENU'> open  </@orcid.checkFeatureStatus>
+                    " role="presentation"
+                     [ngClass]="{'hover': mobileMenu.RESEARCHERS}"  >
                         <a href="{{aboutUri}}/about/what-is-orcid/mission" title="" role="menu-item" (mouseenter)="menuHandler('RESEARCHERS', $event)"  (click)="menuHandler('RESEARCHERS', $event)">{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")}' | uppercase }} <span class="more" [ngClass]="{'less':mobileMenu.RESEARCHERS == true}"></span></a>
                         <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']" aria-label="submenu">
                             <!-- Mobile view Only -->
@@ -375,10 +381,12 @@
                     </li>
                     
                     <!-- SIGN IN/OUT -->
-                    <li role="presentation" class="last leaf" [ngClass]="{'hover': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
-                        <a *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin" role="menu-item">{{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>                    
-                        <a *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout" role="menu-item">{{'${springMacroRequestContext.getMessage("public-layout.sign_out")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
-                    </li>                    
+                    <@orcid.checkFeatureStatus featureName='ENABLE_USER_MENU' enabled=false>
+                        <li role="presentation" class="last leaf ${(nav=="signin")?then('open', '')}" [ngClass]="{'hover': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
+                            <a  *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin" role="menu-item">{{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>                    
+                            <a *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout" role="menu-item">{{'${springMacroRequestContext.getMessage("public-layout.sign_out")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
+                        </li>    
+                    </@orcid.checkFeatureStatus>                
 
                 </ul>  
                 </div>

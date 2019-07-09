@@ -41,14 +41,9 @@ export class Header2Component  {
     assetsPath: String;
     aboutUri: String;
     liveIds: String;    
+    userMenu: String;
     searchDropdownOpen = false; 
-    mobileMenu = {
-        HELP: false,
-        ABOUT: false, 
-        ORGANIZATIONS: false,
-        RESEARCHERS: true, 
-        SIGNIN: false
-    }
+    mobileMenu: {} = null
     openMobileMenu = false
     isMobile = false
 
@@ -96,12 +91,24 @@ export class Header2Component  {
             data => {
                 this.assetsPath = data.messages['STATIC_PATH'];
                 this.aboutUri = data.messages['ABOUT_URI'];
-                this.liveIds = data.messages['LIVE_IDS'];                
+                this.liveIds = data.messages['LIVE_IDS'];
+                this.userMenu = data.messages['ENABLE_USER_MENU']     
+                
+                
+                this.mobileMenu = {
+                    HELP: false,
+                    ABOUT: false, 
+                    ORGANIZATIONS: false,
+                    RESEARCHERS: location.href.indexOf('signin') == -1 || this.userMenu === "true", 
+                    SIGNIN: location.href.indexOf('signin') >= 0
+                }
+
             },
             error => {
                 console.log('header.component.ts: unable to fetch configInfo', error);                
             } 
         );
+
     }
     
     filterChange(): void {
@@ -176,8 +183,9 @@ export class Header2Component  {
 
     mouseLeave( ){
         if (!this.isMobile) {
+            const hoverOn = location.href.indexOf('signin') == -1 || this.userMenu === "true"?  "RESEARCHERS" : "SIGNIN"
             Object.keys(this.mobileMenu).forEach ( item => {
-                this.mobileMenu[item] = item === "RESEARCHERS"
+                this.mobileMenu[item] = item === hoverOn
             })
         }
     }
