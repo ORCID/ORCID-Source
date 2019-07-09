@@ -219,7 +219,12 @@ If automatic push/pull between Transifex and Github via TXGH fails, files can be
 
         tx push -s
 
-```-s``` pushes only source (en) files; to push translation files as well, add ``-t``. For additional options/usage http://docs.transifex.com/client/push 
+ - ```-s``` pushes only source (en) files
+ - add ``-t`` to push translation files as well
+ - add ``-l [lang code]`` to push a specific language only (defaults to all)
+ - add ``-r [resource name]`` to push a specific resource only (defaults to all)
+ 
+ For additional options/usage http://docs.transifex.com/client/push 
 
 ### Pull from Transifex
 1. Change to the directory containing the properties files
