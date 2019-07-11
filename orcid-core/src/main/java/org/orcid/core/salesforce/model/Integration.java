@@ -1,7 +1,6 @@
 package org.orcid.core.salesforce.model;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,6 @@ public class Integration implements Serializable {
     private String description;
     private String level;
     private String stage;
-    private URL resourceUrl;
     private List<Achievement> achievements = new ArrayList<>();
 
     public String getId() {
@@ -71,14 +69,6 @@ public class Integration implements Serializable {
         this.stage = stage;
     }
 
-    public URL getResourceUrl() {
-        return resourceUrl;
-    }
-
-    public void setResourceUrl(URL resourceUrl) {
-        this.resourceUrl = resourceUrl;
-    }
-
     public List<Achievement> getAchievements() {
         return achievements;
     }
@@ -90,7 +80,7 @@ public class Integration implements Serializable {
     @Override
     public String toString() {
         return "Integration [id=" + id + ", name=" + name + ", badgeAwarded=" + badgeAwarded + ", description=" + description + ", level=" + level + ", stage=" + stage
-                + ", resourceUrl=" + resourceUrl + ", achievements=" + achievements + "]";
+                + ", achievements=" + achievements + "]";
     }
 
 }

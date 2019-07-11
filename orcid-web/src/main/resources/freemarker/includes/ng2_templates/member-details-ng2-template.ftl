@@ -138,13 +138,7 @@
 	                            </div>
 	                        </div>
 		                </div>
-		                <ul class="clearfix">
-		                    <li [innerHtml]="integration.description" *ngIf="integration.description">
-		                    </li>
-		                    <li *ngIf="integration.resourceUrl" >
-		                        <a [href]="integration.resourceUrl" target="Learn more about this integration"><@orcid.msg 'member_details.learn_more_about'/></a>
-		                    </li>
-		                </ul>
+		                <p [innerHtml]="integration.description" *ngIf="integration.description"></p>
 		            </div>
 		        </div>
 	            <div *ngIf="!currentMemberDetails.integrations.length"> 
