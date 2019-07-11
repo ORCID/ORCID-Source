@@ -439,6 +439,7 @@ $(function() {
         });        
     }
 
+    var uaParser = new UAParser()
     var uaResult = uaParser.getResult()
     
     var oldBrowserFlag = false;
