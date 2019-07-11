@@ -463,8 +463,7 @@ $(function() {
     }
 
     if (oldBrowserFlag && location == parent.location) {
-        var cookieName = "oldBrowserAlert";
-        if (!OrcidCookie.getCookie(cookieName)) {
+
             messagesPromise.then(function() {
                 var wHtml = '<div class="alert alert-banner" id="browser-warn-div">';
                 wHtml = wHtml + '<p>';
@@ -472,19 +471,11 @@ $(function() {
                 wHtml = wHtml + om.get('common.old_browser_2');
                 wHtml = wHtml + ' <a href="' + om.get('common.kb_uri_default') + '360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
                 wHtml = wHtml + '</p>';
-                wHtml = wHtml
-                        + ' <button class="btn btn-primary" id="browser-warn-dismiss">'
-                wHtml = wHtml + om.get('common.cookies.click_dismiss');
-                wHtml = wHtml + '</button>';
                 wHtml = wHtml + '</div>';
                 $('body').prepend(wHtml);
-                $("#browser-warn-dismiss").click(function() {
-                    $("#browser-warn-div").remove();
-                    OrcidCookie.setCookie(cookieName, "dont show message", 7);
-                    return false;
-                });                
+                       
             });            
-        }
+        
     }
     
     $(document)
