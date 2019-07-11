@@ -4,7 +4,7 @@
         <label for="givenNames" class="control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
         <div class="bottomBuffer">
             <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>                             
-            <div class="popover-help-container">
+            <div class="popover-help-container leftBuffer">
                 <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="name-help" class="popover bottom">
                     <div class="arrow"></div>

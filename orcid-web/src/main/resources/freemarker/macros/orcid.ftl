@@ -216,7 +216,7 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro passwordHelpPopup>
-    <div class="popover-help-container" style="display: inline; position: relative;">
+    <div class="popover-help-container leftBuffer" style="display: inline; position: relative;">
         <i class="glyphicon glyphicon-question-sign"></i>
         <div id="name-help" class="popover bottom">
             <div class="arrow"></div>
