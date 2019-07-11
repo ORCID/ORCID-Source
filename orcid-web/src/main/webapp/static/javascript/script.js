@@ -439,27 +439,26 @@ $(function() {
         });        
     }
 
-    // jquery browser is deprecated, when you upgrade
-    // to 1.9 or higher you will need to use the pluggin
+    var uaResult = uaParser.getResult()
+    
     var oldBrowserFlag = false;
-    //IE 11
-    if (!!navigator.userAgent.match(/Trident\/7\./)) {
-        // IE 11
-        oldBrowserFlag = false;
-    } else if ($.browser.msie && parseInt($.browser.version, 10) < 11) {
+    // IE 10
+    if(uaResult.browser.name.toLowerCase()=="ie" && parseInt(uaResult.browser.version, 10) < 11){
         oldBrowserFlag = true;
-    } else if (/edge/.test(navigator.userAgent.toLowerCase())
-            && parseInt($.browser.version, 10) < 14) {
+    // edge
+    } else if(uaResult.browser.name.toLowerCase()=="edge" && parseInt(uaResult.browser.version, 10) < 14){
         oldBrowserFlag = true;
-    } else if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())
-            && parseInt($.browser.version, 10) < 55) {
+    // chrome 55
+    } else if((uaResult.browser.name.toLowerCase().indexOf("chrom") >= 0) && parseInt(uaResult.browser.version, 10) < 55){
         oldBrowserFlag = true;
-    } else if ($.browser.mozilla && parseInt($.browser.version, 10) < 50) {
+    // firefox 50
+    } else if((uaResult.browser.name.toLowerCase()=="mozilla" || uaResult.browser.name.toLowerCase()=="firefox") && parseInt(uaResult.browser.version, 10) < 50){
         oldBrowserFlag = true;
-    } else if ($.browser.opera && parseInt($.browser.version, 10) < 42) {
+    // opera 42
+    } else if(uaResult.browser.name.toLowerCase()=="opera" && parseInt(uaResult.browser.version, 10) < 42){
         oldBrowserFlag = true;
-    //safari 10
-    } else if ($.browser.safari && parseInt($.browser.version, 10) < 602) {
+    // safari 10
+    } else if((uaResult.browser.name.toLowerCase().indexOf("safari") >= 0) && parseInt(uaResult.browser.version, 10) < 9){
         oldBrowserFlag = true;
     }
 
