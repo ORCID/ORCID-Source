@@ -24,7 +24,7 @@
                     <div class="bottomBuffer form-group clear-fix">
                         <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" class="input-xlarge" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>
                         <span class="required" [ngClass]="isValidClass(registrationForm.givenNames)">*</span> 
-                        <div class="popover-help-container">
+                        <div class="popover-help-container  leftBuffer">
                             <i class="glyphicon glyphicon-question-sign"></i>
                             <div id="name-help" class="popover bottom">
                                 <div class="arrow"></div>
@@ -152,7 +152,7 @@
                         </div>
                         <div class="visibilityHelp">
                             <span class="required" [ngClass]="isValidClass(registrationForm.activitiesDefaultVisibility)">*</span>
-                            <div class="popover-help-container">
+                            <div class="popover-help-container leftBuffer">
                                 <i class="glyphicon glyphicon-question-sign"></i>
                                 <div id="name-help" class="popover bottom">
                                     <div class="arrow"></div>
