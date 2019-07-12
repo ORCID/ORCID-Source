@@ -9658,3 +9658,15 @@ footer-ng2 .footer-main {
     border-top: 0;
     padding-bottom: 23px;
 }
+
+@media (max-width:650px) { 
+    .personal-login .btn-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    } 
+
+    .personal-login .btn-group .btn {
+        width: 100%;
+    }
+}
