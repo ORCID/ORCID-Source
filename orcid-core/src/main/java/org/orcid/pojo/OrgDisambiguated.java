@@ -19,6 +19,7 @@ public class OrgDisambiguated implements Serializable {
     public String sourceType;
     public String url;
     public String disambiguatedAffiliationIdentifier;
+
     private List<OrgDisambiguatedExternalIdentifiers> orgDisambiguatedExternalIdentifiers;
 
     public String getDisambiguatedAffiliationIdentifier() {
@@ -105,6 +106,10 @@ public class OrgDisambiguated implements Serializable {
         this.orgDisambiguatedExternalIdentifiers = orgDisambiguatedExternalIdentifiers;
     }
 
+    public String getAffiliationKey() {
+        return (value != null ? value : "") + (city != null ? city : "") + (region != null ? region : "") + (country != null ? country : "");
+    }
+
     public Map<String, String> toMap() {
         HashMap<String, String> datum = new HashMap<String, String>();
         datum.put("value", this.getValue());
@@ -117,6 +122,7 @@ public class OrgDisambiguated implements Serializable {
         datum.put("url", this.getUrl());
         datum.put("countryForDisplay", this.getCountryForDisplay());
         datum.put("disambiguatedAffiliationIdentifier", this.getDisambiguatedAffiliationIdentifier());
+        datum.put("affiliationKey", this.getAffiliationKey());
         return datum;
     }
 

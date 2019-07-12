@@ -668,7 +668,7 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
     public void setAffiliationExternalIdentifiers(List<ActivityExternalIdentifier> affiliationExternalIdentifiers) {
         this.affiliationExternalIdentifiers = affiliationExternalIdentifiers;
     }
-
+    
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -869,4 +869,5 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         date.setYear(new String());
         return date;
     }
+
 }
