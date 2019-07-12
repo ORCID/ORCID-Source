@@ -558,9 +558,9 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         String query = new String();
         
         if(Features.NEW_BADGES.isActive()) {
-            query = "SELECT Integration__c.Id, Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c, (Select Id, Name, Status__c, Badge__c from Achievements__r Where Status__c = 'Awarded') from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
+            query = "SELECT Integration__c.Id, Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, (Select Id, Name, Status__c, Badge__c from Achievements__r Where Status__c = 'Awarded') from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
         } else {
-            query = "SELECT Integration__c.Id, Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, Integration__c.Integration_URL__c from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
+            query = "SELECT Integration__c.Id, Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
         }
         
         WebResource resource = createQueryResource(query, memberId);

@@ -212,7 +212,6 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("description", "Description__c");
         classMap.field("level", "Level__c");
         classMap.field("stage", "Integration_Stage__c");
-        classMap.field("resourceUrl", "Integration_URL__c");
         classMap.customize(new CustomMapper<Integration, JSONObject>() {
             @Override
             public void mapBtoA(JSONObject b, Integration a, MappingContext context) {

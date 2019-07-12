@@ -11,7 +11,6 @@
     "Integration_Stage__c" : "Complete",
     "Level__c" : null,
     "BadgeAwarded__c" : false,
-    "Integration_URL__c" : null,
     "Achievements__r" : {
       "totalSize" : 2,
       "done" : true,
@@ -45,7 +44,6 @@
     "Integration_Stage__c" : "Complete",
     "Level__c" : null,
     "BadgeAwarded__c" : false,
-    "Integration_URL__c" : null,
     "Achievements__r" : null
   }, {
     "attributes" : {
@@ -57,7 +55,6 @@
     "Integration_Stage__c" : "Complete",
     "Level__c" : "Connect",
     "BadgeAwarded__c" : true,
-    "Integration_URL__c" : null,
     "Achievements__r" : null
   } ]
 }
