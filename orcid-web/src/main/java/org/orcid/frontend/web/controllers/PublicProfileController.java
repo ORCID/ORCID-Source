@@ -505,6 +505,19 @@ public class PublicProfileController extends BaseWorkspaceController {
                 List<AffiliationGroupForm> elementsFormList = new ArrayList<AffiliationGroupForm>();
                 IntStream.range(0, elementsList.size()).forEach(idx -> {
                     AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), type.name() + '_' + idx, orcid);
+                    // Fill country on the default affiliation
+                    AffiliationForm defaultAffiliation = groupForm.getDefaultAffiliation();
+                    if (defaultAffiliation != null) {
+                        // Set country name
+                        defaultAffiliation.setCountryForDisplay(groupForm.getDefaultAffiliation().getCountry().getValue());
+                    }
+
+                    // Fill country for each affiliation
+                    for (AffiliationForm aff : groupForm.getAffiliations()) {
+                        // Set country name
+                        aff.setCountryForDisplay(aff.getCountry().getValue());
+                    }
+
                     elementsFormList.add(groupForm);
                 });
                 result.getAffiliationGroups().put(type, elementsFormList);
