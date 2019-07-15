@@ -228,6 +228,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 	```QA password```
 
 86. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  80
+87. Visit https://qa.orcid.org/signout
 
 
 
