@@ -51,6 +51,7 @@ export class NotificationBodyComponent implements OnInit {
     unknownList: string[];
     TOGGLZ_VERBOSE_NOTIFICATIONS: boolean;
     MAX_ELEMENTS_TO_SHOW: number;
+    showClientDescription: boolean;
     
     constructor(
         private commonService: CommonService,
@@ -75,10 +76,15 @@ export class NotificationBodyComponent implements OnInit {
         this.updatedList = [];
         this.deletedList = [];
         this.unknownList = [];
+        this.showClientDescription = false;
     }
 
     archive(putCode): void {
         this.notificationsService.notifyOther({action:'archive', putCode:putCode});
+    };
+    
+    toggleClientDescription(): void {
+        this.showClientDescription = !this.showClientDescription;
     };
 
     ngOnInit() {        
