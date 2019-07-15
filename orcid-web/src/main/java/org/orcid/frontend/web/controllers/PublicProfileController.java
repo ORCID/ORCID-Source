@@ -42,9 +42,7 @@ import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
@@ -79,7 +77,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
@@ -170,7 +167,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             mav = new ModelAndView("public_profile_v3");
         }
         
-        if (!domainsAllowingRobots.contains(baseDomain)) {
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
             mav.addObject("noIndex", true);
         }
         
@@ -201,7 +198,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             if (!orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)) {
                 mav.addObject("noIndex", true);
             }
-        } 
+        }
         return mav;
     }
 
