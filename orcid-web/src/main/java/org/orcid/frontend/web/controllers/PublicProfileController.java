@@ -79,6 +79,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
@@ -168,6 +169,11 @@ public class PublicProfileController extends BaseWorkspaceController {
         } else {
             mav = new ModelAndView("public_profile_v3");
         }
+        
+        if (!domainsAllowingRobots.contains(baseDomain)) {
+            mav.addObject("noIndex", true);
+        }
+        
         mav.addObject("isPublicProfile", true);
         mav.addObject("effectiveUserOrcid", orcid);
         mav.addObject("lastModifiedTime",  new java.util.Date(lastModifiedTime));

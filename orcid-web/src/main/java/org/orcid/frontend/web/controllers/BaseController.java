@@ -195,7 +195,7 @@ public class BaseController {
         return map;
     }
 
-    @Value("${org.orcid.frontend.web.domainsAllowingRobotsAsWhiteSpaceSeparatedList:orcid.org}")
+    @Value("${org.orcid.frontend.web.domainsAllowingRobotsAsWhiteSpaceSeparatedList}")
     public void setDomainsAllowingRobots(String whitespaceSeparatedDomains) {
         domainsAllowingRobots = Arrays.asList(whitespaceSeparatedDomains.split("\\s"));
     }
