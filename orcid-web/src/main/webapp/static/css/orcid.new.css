@@ -9669,3 +9669,10 @@ footer-ng2 .footer-main {
         width: 100%;
     }
 }
+
+
+@media (min-width: 992px) {
+    oauth-authorization-ng2 > .col-md-offset-3 {
+        margin-left: 29.16%;
+    }
+}

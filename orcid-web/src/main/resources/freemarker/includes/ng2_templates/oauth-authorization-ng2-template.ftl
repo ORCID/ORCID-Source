@@ -54,7 +54,7 @@
     </#if>
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/login.ftl -->
     <#if springMacroRequestContext.requestUri?contains("/signin") || springMacroRequestContext.requestUri?contains("/login") >
-        <div class="col-md-5 col-md-offset-3" style="margin-left: 29.16%;">
+        <div class="col-md-5 col-md-offset-3">
 
             <div *ngIf="!this.isLoggedIn <#if (RequestParameters['oauth'])??>|| true</#if>" class="login">         
                 <p class="title" *ngIf="!showRegisterForm" >${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a id="switch-to-register-form" (click)="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
