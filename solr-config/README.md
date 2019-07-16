@@ -8,29 +8,37 @@ This project contains the Solr cores configuration used by the ORCID registry.
 
 1. Download Solr 8.0.0 from http://archive.apache.org/dist/lucene/solr/8.0.0/
 2. Uncompress it into the home folder /opt/
+
         unzip /Users/username/Downloads/solr-8.0.0.zip /opt
 
 3. Create the folder /opt/solr/solr_data
+
         mkdir -p /opt/solr/solr_data
 
 4. Create the folder /opt/solr/solr_conf/data
+
         mkdir -p /opt/solr/solr_conf/data
 
 ## Download the code
 
 1. Download a copy of the ORCID-Source repository: git clone git@github.com:ORCID/ORCID-Source.git to your /tmp folder
 2. Move the content of folder /tmp/ORCID-Source/solr-config/cores to /opt/solr/solr_conf/data
+
         mv /tmp/ORCID-Source/solr-config/cores/* /opt/solr/solr_conf/data/
 
-You should end up with 
-   - /opt/solr/solr_conf/data/fundingSubype  
-   - /opt/solr/solr_conf/data/org  
-   - /opt/solr/solr_conf/data/profile  
-   - /opt/solr/solr_conf/data/solr.xml
+You should end up with
+
+        /opt/solr/solr_conf/data/fundingSubype  
+        /opt/solr/solr_conf/data/org  
+        /opt/solr/solr_conf/data/profile  
+        /opt/solr/solr_conf/data/solr.xml
 
 3. cd into /opt/solr-8.0.0/bin
 4. Start solr server: 
-   ./solr -p <port> -s /opt/solr/solr_conf/data start  (Where the port should not collide with any of the ports already in use, if you dont specify the -p param, the default port will be 8983)
+
+        ./solr -p <port> -s /opt/solr/solr_conf/data start  
+
+   (Where the port should not collide with any of the ports already in use, if you dont specify the -p param, the default port will be 8983)
 5. Confirm solr is up and cores have been created by going to http://localhost:<SOLR_PORT>/solr/#/
 
 ## Configure the ORCID-Solr project to use the new solr instance
