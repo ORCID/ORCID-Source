@@ -2,27 +2,36 @@
 
 This project contains the Solr cores configuration used by the ORCID registry.
 
-# Sorl Development Environment Setup
+# Solr Development Environment Setup
 
 ## Download Solr
 
 1. Download Solr 8.0.0 from http://archive.apache.org/dist/lucene/solr/8.0.0/
-2. Uncompress it in the home folder /opt/
+2. Uncompress it into the home folder /opt/
+        unzip /Users/username/Downloads/solr-8.0.0.zip /opt
+
 3. Create the folder /opt/solr/solr_data
+        mkdir -p /opt/solr/solr_data
+
 4. Create the folder /opt/solr/solr_conf/data
+        mkdir -p /opt/solr/solr_conf/data
 
 ## Download the code
 
-1. Download the full ORCID-Source repository: git clone git@github.com:ORCID/ORCID-Source.git to /tmp folder
-2. Move the content of folder /tmp/ORCID-Source/solr-config/cores to /opt/solr/solr_conf/data, you should end up with 
-   - /opt/solr/solr_conf/data/fundingSubType  
+1. Download a copy of the ORCID-Source repository: git clone git@github.com:ORCID/ORCID-Source.git to your /tmp folder
+2. Move the content of folder /tmp/ORCID-Source/solr-config/cores to /opt/solr/solr_conf/data
+        mv /tmp/ORCID-Source/solr-config/cores/* /opt/solr/solr_conf/data/
+
+You should end up with 
+   - /opt/solr/solr_conf/data/fundingSubype  
    - /opt/solr/solr_conf/data/org  
    - /opt/solr/solr_conf/data/profile  
    - /opt/solr/solr_conf/data/solr.xml
+
 3. cd into /opt/solr-8.0.0/bin
 4. Start solr server: 
-   - ./solr -p <SOLR_PORT> (Where the port should not collide with any of the ports already in use, if you dont specify the -p param, the default port will be 8983)
-5. Confirm solr is up by going to http://localhost:<SOLR_PORT>/solr/#/
+   ./solr -p <port> -s /opt/solr/solr_conf/data start  (Where the port should not collide with any of the ports already in use, if you dont specify the -p param, the default port will be 8983)
+5. Confirm solr is up and cores have been created by going to http://localhost:<SOLR_PORT>/solr/#/
 
 ## Configure the ORCID-Solr project to use the new solr instance
 
@@ -49,6 +58,7 @@ Modify the file staging-persistence.properties, by changing the following variab
 ```
 org.orcid.persistence.solr.url=http://localhost:<SOLR_PORT>/solr
 org.orcid.persistence.solr.read.only.url=http://localhost:<SOLR_PORT>/solr
+org.orcid.persistence.solr.legacy.on=false
 ```
 
 ## Feed Solr
@@ -64,7 +74,8 @@ update profile set indexing_status='REINDEX';
 2. Start the message listener server
 3. Start the web, pub and api server
 4. Start the scheduler server
-5. Wait for all records to be indexed by the message listener: to confirm this, login into the psql db and execute the following queries: 
+5. Go to https://localhost:8443/orcid-web/togglz/edit?f=DISABLE_LEGACY_SOLR and set to enabled
+6. Wait for all records to be indexed by the message listener: to confirm this, login into the psql db and execute the following queries: 
 
 ```sql
 \c message_listener
