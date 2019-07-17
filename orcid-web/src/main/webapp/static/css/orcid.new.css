@@ -9676,3 +9676,10 @@ footer-ng2 .footer-main {
         margin-left: 29.16%;
     }
 }
+
+@media (max-width: 650px) {
+	oauth-authorization-ng2 .btn-group 	> a {
+			border-radius: 4px !important;
+			margin-bottom: 5px;
+	}
+}
