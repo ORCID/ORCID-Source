@@ -45,18 +45,15 @@ import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DeactivationDate;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingContributors;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
@@ -101,7 +98,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -516,13 +512,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     private void setPersonalDetails(ProfileEntity profileEntity, PersonalDetails personalDetails) {
         if (personalDetails != null) {
-            if(profileEntity.getRecordNameEntity() == null) {
-                profileEntity.setRecordNameEntity(new RecordNameEntity());
-            }
-            profileEntity.getRecordNameEntity().setProfile(profileEntity);
-            setCreditNameDetails(profileEntity, personalDetails.getCreditName());
-            setFamilyName(profileEntity, personalDetails.getFamilyName());
-            setGivenNames(profileEntity, personalDetails.getGivenNames());            
             setOtherNames(profileEntity, personalDetails.getOtherNames());
         }
     }
@@ -608,46 +597,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 }                
             }
         }
-    }   
+    } 
     
-    private void setGivenNames(ProfileEntity profileEntity, GivenNames givenNames) {
-        if (givenNames != null && StringUtils.isNotBlank(givenNames.getContent())) {
-            if(profileEntity.getRecordNameEntity() == null) {
-                profileEntity.setRecordNameEntity(new RecordNameEntity());
-                profileEntity.getRecordNameEntity().setProfile(profileEntity);
-            }
-            profileEntity.getRecordNameEntity().setGivenNames(givenNames.getContent());            
-        }
-    }
-
-    private void setFamilyName(ProfileEntity profileEntity, FamilyName familyName) {
-        if (familyName != null && StringUtils.isNotBlank(familyName.getContent())) {
-            if(profileEntity.getRecordNameEntity() == null) {
-                profileEntity.setRecordNameEntity(new RecordNameEntity());
-                profileEntity.getRecordNameEntity().setProfile(profileEntity);
-            }
-            profileEntity.getRecordNameEntity().setFamilyName(familyName.getContent());                        
-        }
-    }
-
-    private void setCreditNameDetails(ProfileEntity profileEntity, CreditName creditName) {
-        if (creditName != null) {
-            if(profileEntity.getRecordNameEntity() == null) {
-                profileEntity.setRecordNameEntity(new RecordNameEntity());
-                profileEntity.getRecordNameEntity().setProfile(profileEntity);
-            }
-            
-            RecordNameEntity recordName = profileEntity.getRecordNameEntity();                        
-            //Save the record name entity
-            if(creditName.getVisibility() != null) {
-                recordName.setVisibility(creditName.getVisibility().name());
-            } else {
-                recordName.setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().name());
-            }            
-            recordName.setCreditName(creditName.getContent());            
-        }
-    }
-
     private void setKeywords(ProfileEntity profileEntity, Keywords keywords) {
         String sourceId = getSourceId();
         

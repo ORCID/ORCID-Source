@@ -294,7 +294,7 @@ public class SendBadOrgsEmail {
         LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}, claimed={}, deactivated={}, deprecated={}, locked={}",
                 new Object[] { profile.getId(), badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
                         profile.getDeprecatedDate() != null, profile.getRecordLocked() });
-        String emailName = notificationManager.deriveEmailFriendlyName(profile);
+        String emailName = notificationManager.deriveEmailFriendlyName(profile.getId());
         Map<String, Object> templateParams = createTemplateParams(profile.getId(), emailName, locale, orgDescriptions);
         // Generate body from template
         String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);

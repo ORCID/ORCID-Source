@@ -383,9 +383,8 @@ public class WorksController extends BaseWorkspaceController {
                         String contributorOrcid = contributor.getOrcid().getValue();
                         if (profileEntityManager.orcidExists(contributorOrcid)) {
                             // contributor is an ORCID user - visibility of
-                            // user's name in record must be taken into account
-                            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
-                            String publicContributorCreditName = activityManager.getPublicCreditName(profileEntity);
+                            // user's name in record must be taken into account                            
+                            String publicContributorCreditName = activityManager.getPublicCreditName(contributorOrcid);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));
                         }
                     }

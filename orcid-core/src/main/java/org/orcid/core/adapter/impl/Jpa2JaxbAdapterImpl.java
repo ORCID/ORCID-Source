@@ -24,6 +24,7 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
+import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -39,6 +40,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.*;
 import org.orcid.persistence.constants.SendEmailFrequency;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -81,7 +83,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author Declan Newman (declan)
  */
 
-public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
+public class Jpa2JaxbAdapterImpl extends ManagerReadOnlyBaseImpl implements Jpa2JaxbAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Jpa2JaxbAdapterImpl.class);
 
@@ -111,6 +113,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
+    
+    @Resource(name = "recordNameDaoReadOnly")
+    private RecordNameDao recordNameDaoReadOnly;
     
     public void setWorkEntityCacheManager(WorkEntityCacheManager workEntityCacheManager) {
         this.workEntityCacheManager = workEntityCacheManager;
@@ -734,7 +739,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         SourceEntity sourceEntity = profileEntity.getSource();
         if (sourceEntity != null) {
             Source sponsor = new Source();
-            SourceName sponsorName = new SourceName(SourceEntityUtils.getSourceName(sourceEntity));
+            RecordNameEntity recordName = null;
+            if(sourceEntity.getSourceProfile() != null) {
+                ProfileEntity entity = sourceEntity.getSourceProfile();
+                String orcid = entity.getId();
+                recordName = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));
+            }
+            SourceName sponsorName = new SourceName(SourceEntityUtils.getSourceName(sourceEntity, recordName));
             sponsor.setSourceName(sponsorName);
             ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
             if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
@@ -908,7 +919,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private GivenNames getGivenNames(ProfileEntity profileEntity) {
-        RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(profileEntity.getId(), getLastModified(profileEntity.getId()));
         if(recordName != null) {
             if (StringUtils.isNotBlank(recordName.getGivenNames())) {
                 GivenNames names = new GivenNames();
@@ -921,7 +932,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private FamilyName getFamilyName(ProfileEntity profileEntity) {
-        RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(profileEntity.getId(), getLastModified(profileEntity.getId()));
         if(recordName != null) {
             if (StringUtils.isNotBlank(recordName.getFamilyName())) {
                 FamilyName name = new FamilyName();
@@ -934,7 +945,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private CreditName getCreditName(ProfileEntity profileEntity) {
-        RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(profileEntity.getId(), getLastModified(profileEntity.getId()));
         if(recordName != null) {
             if (StringUtils.isNotBlank(recordName.getCreditName())) {
                 CreditName name = new CreditName();

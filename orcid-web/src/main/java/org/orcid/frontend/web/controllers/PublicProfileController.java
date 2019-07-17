@@ -42,9 +42,7 @@ import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
@@ -398,9 +396,8 @@ public class PublicProfileController extends BaseWorkspaceController {
                 for (Contributor contributor : work.getContributors()) {
                     if (!PojoUtil.isEmpty(contributor.getOrcid())) {
                         String contributorOrcid = contributor.getOrcid().getValue();
-                        if (profileEntityManager.orcidExists(contributorOrcid)) {
-                            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
-                            String publicContributorCreditName = activityManager.getPublicCreditName(profileEntity);
+                        if (profileEntityManager.orcidExists(contributorOrcid)) {                            
+                            String publicContributorCreditName = activityManager.getPublicCreditName(contributorOrcid);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));
                         }
                     }

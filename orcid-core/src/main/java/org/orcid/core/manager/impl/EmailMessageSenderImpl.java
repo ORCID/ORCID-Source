@@ -186,7 +186,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         List<ClientUpdates> sortedClientUpdates = new ArrayList<ClientUpdates>();
         sortedClientIds.stream().forEach(s -> {sortedClientUpdates.add(updatesByClient.get(s));});
         
-        String emailName = notificationManager.deriveEmailFriendlyName(record);
+        String emailName = notificationManager.deriveEmailFriendlyName(record.getId());
         String subject = messages.getMessage("email.subject.digest", new String[] { emailName, String.valueOf(totalMessageCount) }, locale);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
@@ -245,7 +245,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 amendedMessageCount++;
             }
         }
-        String emailName = notificationManager.deriveEmailFriendlyName(record);
+        String emailName = notificationManager.deriveEmailFriendlyName(record.getId());
         String subject = messages.getMessage("email.subject.digest", new String[] { emailName, String.valueOf(totalMessageCount) }, locale);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);

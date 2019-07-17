@@ -144,7 +144,7 @@ public class EmailFrequencyServiceAnnouncement2018 {
             }
             Locale locale = getUserLocale(profileEntity.getLocale());
             Map<String, Object> templateParams = new HashMap<String, Object>();
-            String emailName = notificationManager.deriveEmailFriendlyName(profileEntity);
+            String emailName = notificationManager.deriveEmailFriendlyName(profileEntity.getId());
             templateParams.put("emailName", emailName);
             templateParams.put("messages", this.messages);
             templateParams.put("messageArgs", new Object[0]);

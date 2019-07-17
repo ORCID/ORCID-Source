@@ -30,5 +30,5 @@ public class ApplicationException extends RuntimeException {
 
     public Map<String, String> getParams() {
         return params;
-    }
+    }       
 }

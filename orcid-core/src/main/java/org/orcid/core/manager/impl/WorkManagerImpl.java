@@ -19,6 +19,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
@@ -76,6 +77,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
     
     private Integer maxWorksToWrite;
     
@@ -223,7 +227,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 // If the external id exists and is a SELF identifier, then mark it as duplicated
                                 if(existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
                                     Map<String, String> params = new HashMap<String, String>();
-                                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
+                                    params.put("clientName", sourceNameCacheManager.retrieve(SourceEntityUtils.getSourceId(sourceEntity)));
                                     if(extIDPutCodeMap.containsKey(extId)) {
                                         params.put("pubCode", String.valueOf(extIDPutCodeMap.get(extId)));
                                     }  

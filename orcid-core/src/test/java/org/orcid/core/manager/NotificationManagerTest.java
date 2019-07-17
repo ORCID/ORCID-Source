@@ -232,8 +232,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(Visibility.PUBLIC.name());
-        profile.setRecordNameEntity(recordName);
+        recordName.setVisibility(Visibility.PUBLIC.name());        
         
         Email email = new Email();
         email.setEmail("test@email.com");
@@ -275,8 +274,7 @@ public class NotificationManagerTest extends DBUnitTest {
         ProfileEntity profile = new ProfileEntity(orcid);
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("My credit name");
-        recordName.setVisibility(Visibility.PUBLIC.name());
-        profile.setRecordNameEntity(recordName);
+        recordName.setVisibility(Visibility.PUBLIC.name());        
         
         Email email = new Email();
         email.setEmail("test@email.com");
@@ -310,21 +308,7 @@ public class NotificationManagerTest extends DBUnitTest {
         for (Locale locale : Locale.values()) {            
             notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");
         }
-    }    
-
-    @Test
-    public void deriveEmailFriendlyNameTest() {
-        ProfileEntity testProfile = new ProfileEntity("0000-0000-0000-0003");
-        assertEquals("ORCID Registry User", notificationManager.deriveEmailFriendlyName(testProfile));
-        testProfile.setRecordNameEntity(new RecordNameEntity());
-        assertEquals("ORCID Registry User", notificationManager.deriveEmailFriendlyName(testProfile));
-        testProfile.getRecordNameEntity().setGivenNames("Given Name");
-        assertEquals("Given Name", notificationManager.deriveEmailFriendlyName(testProfile));
-        testProfile.getRecordNameEntity().setFamilyName("Family Name");
-        assertEquals("Given Name Family Name", notificationManager.deriveEmailFriendlyName(testProfile));
-        testProfile.getRecordNameEntity().setCreditName("Credit Name");
-        assertEquals("Credit Name", notificationManager.deriveEmailFriendlyName(testProfile));
-    }
+    } 
 
     /**
      * 0000-0000-0000-0003 Must have notifications enabled

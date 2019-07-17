@@ -12,5 +12,14 @@ public interface RecordNameManagerReadOnly {
     
     Name getRecordName(String orcid);
 
-    Name findByCreditName(String creditName);    
+    Name findByCreditName(String creditName); 
+    
+    String fetchDisplayableCreditName(String orcid);
+    
+    String fetchDisplayableUserName(String orcid);
+    
+    String fetchDisplayablePublicName(String orcid);
+    
+    String fetchDisplayableDisplayName(String orcid);
+    
 }

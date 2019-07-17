@@ -21,10 +21,11 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.LockAccounts;
@@ -66,6 +67,9 @@ public class AdminController extends BaseController {
 
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_STRING_SEPARATOR = "		";
@@ -197,19 +201,19 @@ public class AdminController extends BaseController {
             } else if (profile.getDeactivationDate() != null) {
                 details.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated", orcid));
             } else {
-                RecordNameEntity recordName = profile.getRecordNameEntity();
+                Name recordName = recordNameManagerReadOnly.getRecordName(orcid);
                 if (recordName != null) {
                     boolean hasName = false;
-                    if (!PojoUtil.isEmpty(recordName.getFamilyName())) {
-                        details.setFamilyName(recordName.getFamilyName());
+                    if (recordName.getFamilyName() != null && !PojoUtil.isEmpty(recordName.getFamilyName().getContent())) {
+                        details.setFamilyName(recordName.getFamilyName().getContent());
                         hasName = true;
                     }
-                    if (!PojoUtil.isEmpty(recordName.getGivenNames())) {
-                        details.setGivenNames(recordName.getGivenNames());
+                    if (recordName.getGivenNames() != null && !PojoUtil.isEmpty(recordName.getGivenNames().getContent())) {
+                        details.setGivenNames(recordName.getGivenNames().getContent());
                         hasName = true;
                     }
                     if (!hasName) {
-                        details.setGivenNames(recordName.getCreditName());
+                        details.setGivenNames(recordName.getCreditName() == null ? "" : recordName.getCreditName().getContent());
                     }
                 }
                 Email primary = emailManager.findPrimaryEmail(orcid);

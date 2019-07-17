@@ -89,7 +89,7 @@ public class ContributorUtilsTest {
             }
             
         });
-        when(cacheManager.getPublicCreditName(any(RecordNameEntity.class))).thenReturn(null);        
+        when(cacheManager.getPublicCreditName(any(String.class))).thenReturn(null);        
         
         Work work = getWorkWithOrcidContributor();
         contributorUtils.filterContributorPrivateData(work);
@@ -102,7 +102,7 @@ public class ContributorUtilsTest {
     @Test
     public void testFilterContributorPrivateDataForWorkWithPublicName() {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
-        when(cacheManager.getPublicCreditName(any(RecordNameEntity.class))).thenReturn("a public name");
+        when(cacheManager.getPublicCreditName(any(String.class))).thenReturn("a public name");
         when(recordNameDao.getRecordNames(any(List.class))).then(new Answer<List<RecordNameEntity>>(){
 
             @Override
@@ -154,7 +154,7 @@ public class ContributorUtilsTest {
     @Test
     public void testFilterContributorPrivateDataForBulkWork() {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
-        when(cacheManager.getPublicCreditName(any(RecordNameEntity.class))).then(new Answer<String>(){
+        when(cacheManager.getPublicCreditName(any(String.class))).then(new Answer<String>(){
 
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
@@ -197,7 +197,7 @@ public class ContributorUtilsTest {
     public void testFilterContributorPrivateDataForFundingWithPrivateName() {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
         when(profileEntityCacheManager.retrieve(anyString())).thenReturn(new ProfileEntity());
-        when(cacheManager.getPublicCreditName(any(ProfileEntity.class))).thenReturn(null);
+        when(cacheManager.getPublicCreditName(any(String.class))).thenReturn(null);
         
         Funding funding = getFundingWithOrcidContributor();
         contributorUtils.filterContributorPrivateData(funding);
@@ -211,7 +211,7 @@ public class ContributorUtilsTest {
     public void testFilterContributorPrivateDataForFundingWithPublicName() {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
         when(profileEntityCacheManager.retrieve(anyString())).thenReturn(new ProfileEntity());
-        when(cacheManager.getPublicCreditName(any(ProfileEntity.class))).thenReturn("a public name");
+        when(cacheManager.getPublicCreditName(any(String.class))).thenReturn("a public name");
         
         Funding funding = getFundingWithOrcidContributor();
         contributorUtils.filterContributorPrivateData(funding);

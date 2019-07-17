@@ -72,6 +72,9 @@ public class ActivityValidator {
 
     @Resource
     private PIDNormalizationService norm;
+    
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
 
     public void validateWork(Work work, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
@@ -421,7 +424,7 @@ public class ActivityValidator {
             if (groupIdRecord.getPutCode() != null) {
                 Map<String, String> params = new HashMap<String, String>();
                 if (sourceEntity != null) {
-                    params.put("clientName", SourceEntityUtils.getSourceName(sourceEntity));
+                    params.put("clientName", sourceEntityUtils.getSourceName(sourceEntity));
                 }
                 throw new InvalidPutCodeException(params);
             }

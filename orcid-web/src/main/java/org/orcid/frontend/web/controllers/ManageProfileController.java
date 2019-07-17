@@ -41,6 +41,7 @@ import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -85,8 +86,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private static final String FOUND = "found";   
     
-    private static final Logger LOG = LoggerFactory.getLogger(ManageProfileController.class);
-
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -131,6 +130,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
+    
+    @Resource(name = "recordNameDaoReadOnly")
+    private RecordNameDao recordNameDaoReadOnly;
     
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -309,8 +311,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         Emails deprecatingEmails = emailManager.getEmails(deprecatingEntity.getId());
         Emails primaryEmails = emailManager.getEmails(primaryEntity.getId());
                 
-        String primaryAccountName = RecordNameUtils.getPublicName(primaryEntity.getRecordNameEntity());
-        String deprecatingAccountName = RecordNameUtils.getPublicName(deprecatingEntity.getRecordNameEntity());
+        String primaryOrcid = primaryEntity.getId();
+        String deprecatingOrcid = deprecatingEntity.getId();
+        
+        String primaryAccountName = RecordNameUtils.getPublicName(recordNameDaoReadOnly.getRecordName(primaryOrcid, getLastModified(primaryOrcid)));
+        String deprecatingAccountName = RecordNameUtils.getPublicName(recordNameDaoReadOnly.getRecordName(deprecatingOrcid, getLastModified(deprecatingOrcid)));
         deprecateProfile.setPrimaryAccountName(primaryAccountName);
         deprecateProfile.setPrimaryOrcid(currentUserOrcid);
         deprecateProfile.setDeprecatingAccountName(deprecatingAccountName);

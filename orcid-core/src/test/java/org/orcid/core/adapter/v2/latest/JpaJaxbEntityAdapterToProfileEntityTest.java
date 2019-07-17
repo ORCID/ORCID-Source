@@ -29,6 +29,7 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -64,6 +65,9 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
     
     @Resource
     private WorkDao workDao;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -116,7 +120,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         
         ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(retrievedProfileEntity);
-        assertEquals("Josiah", retrievedProfileEntity.getRecordNameEntity().getGivenNames());
+        assertEquals("Josiah", recordNameDao.getRecordName(retrievedProfileEntity.getId(), System.currentTimeMillis()).getGivenNames());
 
         // Check all email visibility and values
         Set<EmailEntity> emails = profileEntity.getEmails();
@@ -165,7 +169,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
         ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(retrievedProfileEntity);
-        assertEquals("Josiah", retrievedProfileEntity.getRecordNameEntity().getGivenNames());
+        assertEquals("Josiah", recordNameDao.getRecordName(retrievedProfileEntity.getId(), System.currentTimeMillis()).getGivenNames());
         assertEquals("abc123", retrievedProfileEntity.getEncryptedPassword());
     }
 

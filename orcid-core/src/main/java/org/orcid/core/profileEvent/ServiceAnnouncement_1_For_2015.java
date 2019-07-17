@@ -108,7 +108,7 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
     }
     
     public boolean sendServiceAnnouncement_1_For_2015(String orcid, String email, String localeString) {
-        String emailFriendlyName = notificationManager.deriveEmailFriendlyName(profileDaoReadOnly.find(orcid));
+        String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcid);
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = notificationManager.createVerificationUrl(email, orcidUrlManager.getBaseUrl());

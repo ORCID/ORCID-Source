@@ -96,7 +96,7 @@ public class SendMarch2019Newsletter {
     
     private EmailMessage getEmailMessage(EmailEntity email) {
         Locale locale = getUserLocaleFromProfileEntity(email.getProfile());
-        String emailName = notificationManager.deriveEmailFriendlyName(email.getProfile());
+        String emailName = notificationManager.deriveEmailFriendlyName(email.getProfile().getId());
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);

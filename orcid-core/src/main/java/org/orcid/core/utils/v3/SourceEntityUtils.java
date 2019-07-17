@@ -1,19 +1,32 @@
 package org.orcid.core.utils.v3;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
 import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SourceEntityUtils {
 
-    public static String getSourceName(SourceEntity sourceEntity) {
+    @Resource
+    private RecordNameDao recordNameDaoReadOnly;
+    
+    @Resource
+    private ProfileLastModifiedAspect profileLastModifiedAspect;
+    
+    public String getSourceName(SourceEntity sourceEntity) {
         if (sourceEntity.getCachedSourceName() != null) {
             return sourceEntity.getCachedSourceName();
         }
@@ -21,10 +34,9 @@ public class SourceEntityUtils {
             return sourceEntity.getSourceClient().getClientName();
         }
         if (sourceEntity.getSourceProfile() != null) {
+            String orcid = sourceEntity.getSourceProfile().getId();
             // Set the source name
-            if (sourceEntity.getSourceProfile().getRecordNameEntity() != null) {
-                return RecordNameUtils.getPublicName(sourceEntity.getSourceProfile().getRecordNameEntity());
-            } 
+            return RecordNameUtils.getPublicName(recordNameDaoReadOnly.getRecordName(orcid, profileLastModifiedAspect.retrieveLastModifiedDate(orcid).getTime())); 
         }
         return null;
     }
@@ -49,7 +61,7 @@ public class SourceEntityUtils {
      * WARNING: The entity must be detached (using DAO) so that the source is
      * not made null in DB.
      */
-    public static void prepareForCache(SourceEntity sourceEntity) {
+    public void prepareForCache(SourceEntity sourceEntity) {
         if (!sourceEntity.isDetached()) {
             throw new IllegalStateException("Must not prepare source entity for cache, unless it is detached");
         }

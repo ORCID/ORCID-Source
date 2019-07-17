@@ -37,8 +37,10 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common.AvailableLocales;
@@ -59,6 +61,7 @@ import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -89,7 +92,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * @author Will Simpson
  */
-public class NotificationManagerImpl implements NotificationManager {
+public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements NotificationManager {
 
     private static final String UPDATE_NOTIFY_ORCID_ORG = "ORCID <update@notify.orcid.org>";
 
@@ -202,6 +205,12 @@ public class NotificationManagerImpl implements NotificationManager {
     
     @Resource
     FindMyStuffManager findMyStuffManager;
+    
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+    
+    @Resource(name = "recordNameDaoReadOnly")
+    private RecordNameDao recordNameDaoReadOnly;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -251,7 +260,7 @@ public class NotificationManagerImpl implements NotificationManager {
         
         String subject = messages.getMessage("email.subject.register.welcome", null, userLocale);
         
-        String emailName = deriveEmailFriendlyName(profileEntity);
+        String emailName = deriveEmailFriendlyName(userOrcid);
         String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
         String orcidId = userOrcid;
         String baseUri = orcidUrlManager.getBaseUrl();
@@ -267,7 +276,7 @@ public class NotificationManagerImpl implements NotificationManager {
         SourceEntity source = sourceManager.retrieveActiveSourceEntity();
         if (source != null) {
             String sourceId = SourceEntityUtils.getSourceId(source);
-            String sourceName = SourceEntityUtils.getSourceName(source);
+            String sourceName = sourceEntityUtils.getSourceName(source);
             // If the source is not the user itself
             if (sourceId != null && !sourceId.equals(orcidId)) {
                 if (!PojoUtil.isEmpty(sourceName)) {
@@ -306,7 +315,7 @@ public class NotificationManagerImpl implements NotificationManager {
         String base64EncodedEmail = Base64.encodeBase64URLSafeString(encryptedEmail.getBytes());
         String deactivateUrlEndpointPath = "/account/confirm-deactivate-orcid";
 
-        String emailFriendlyName = deriveEmailFriendlyName(profile);
+        String emailFriendlyName = deriveEmailFriendlyName(userOrcid);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("orcid", userOrcid);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -332,7 +341,7 @@ public class NotificationManagerImpl implements NotificationManager {
         
         String subject = getSubject("email.subject.locked", userLocale);
         String email = emailManager.findPrimaryEmail(orcidToLock).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(profile);
+        String emailFriendlyName = deriveEmailFriendlyName(orcidToLock);
         
         Map<String, Object> templateParams = new HashMap<String, Object>();                
         templateParams.put("emailName", emailFriendlyName);
@@ -375,7 +384,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Locale locale = getUserLocaleFromProfileEntity(profile);
         
         String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(profile);
+        String emailFriendlyName = deriveEmailFriendlyName(userOrcid);
         String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
         Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
         templateParams.put("isReminder", isVerificationReminder);
@@ -431,19 +440,12 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
+    public String deriveEmailFriendlyName(String orcid) {
         String result = null;
-        if (profileEntity != null && profileEntity.getRecordNameEntity() != null) {
-            RecordNameEntity recordName = profileEntity.getRecordNameEntity();
-            if (!PojoUtil.isEmpty(recordName.getCreditName())) {
-                result = recordName.getCreditName();
-            } else {
-                if (!PojoUtil.isEmpty(recordName.getGivenNames()))
-                    result = recordName.getGivenNames();
-                if (!PojoUtil.isEmpty(recordName.getFamilyName()))
-                    result += " " + recordName.getFamilyName();
-            }
-        }
+        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));        
+        if (recordName != null) {
+            result = RecordNameUtils.getUserName(recordName);
+        }        
         if (PojoUtil.isEmpty(result)) {
             result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
         }
@@ -498,7 +500,7 @@ public class NotificationManagerImpl implements NotificationManager {
         
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(record));
+        templateParams.put("emailName", deriveEmailFriendlyName(userOrcid));
         templateParams.put("orcid", userOrcid);
         templateParams.put("subject", getSubject("email.subject.reactivation", locale));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -573,12 +575,12 @@ public class NotificationManagerImpl implements NotificationManager {
         
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
-        String emailNameForDelegate = deriveEmailFriendlyName(delegateProfileEntity);
+        String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
         String assetsUrl = getAssetsUrl();
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("grantingOrcidValue", userGrantingPermission);
-        templateParams.put("grantingOrcidName", deriveEmailFriendlyName(profile));
+        templateParams.put("grantingOrcidName", deriveEmailFriendlyName(userGrantingPermission));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
@@ -609,7 +611,7 @@ public class NotificationManagerImpl implements NotificationManager {
         Map<String, Object> templateParams = new HashMap<String, Object>();        
         
         String subject = getSubject("email.subject.email_removed", userLocale);
-        String emailFriendlyName = deriveEmailFriendlyName(profile);
+        String emailFriendlyName = deriveEmailFriendlyName(currentUserOrcid);
         templateParams.put("emailName", emailFriendlyName);
         String verificationUrl = createVerificationUrl(newEmail, orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
@@ -634,11 +636,11 @@ public class NotificationManagerImpl implements NotificationManager {
     @Transactional
     public void sendApiRecordCreationEmail(String toEmail, String orcid) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
-        String creatorName = record.getSource() == null ? null : SourceEntityUtils.getSourceName(record.getSource());
+        String creatorName = record.getSource() == null ? null : sourceEntityUtils.getSourceName(record.getSource());
         Locale userLocale = getUserLocaleFromProfileEntity(record);
         
         String email = toEmail != null ? toEmail : emailManager.findPrimaryEmail(orcid).getEmail();
-        String emailName = deriveEmailFriendlyName(record);
+        String emailName = deriveEmailFriendlyName(orcid);
         String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());        
 
         String subject = null;
@@ -677,14 +679,15 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(record));        
+        templateParams.put("emailName", deriveEmailFriendlyName(userOrcid));        
         templateParams.put("orcid", userOrcid);
         templateParams.put("subject", getSubject("email.subject.claim_reminder", locale));
         SourceEntity source = record.getSource();
         String creatorName = "";
         if (source != null) {
-            if (!PojoUtil.isEmpty(SourceEntityUtils.getSourceName(source))) {
-                creatorName = SourceEntityUtils.getSourceName(source);
+            String sourceName = sourceEntityUtils.getSourceName(source);
+            if (!PojoUtil.isEmpty(sourceName)) {
+                creatorName = sourceName;
             } else {
                 creatorName = SourceEntityUtils.getSourceId(source);
             }
@@ -784,10 +787,9 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("link", link);
 
         ProfileEntity managedEntity = profileEntityCacheManager.retrieve(managedOrcid);
-        ProfileEntity trustedEntity = profileEntityCacheManager.retrieve(trustedOrcid);
         
-        String emailNameForDelegate = deriveEmailFriendlyName(managedEntity);
-        String trustedOrcidName = deriveEmailFriendlyName(trustedEntity);
+        String emailNameForDelegate = deriveEmailFriendlyName(managedOrcid);
+        String trustedOrcidName = deriveEmailFriendlyName(trustedOrcid);
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("trustedOrcidName", trustedOrcidName);
         templateParams.put("trustedOrcidValue", trustedOrcid);
@@ -1089,7 +1091,7 @@ public class NotificationManagerImpl implements NotificationManager {
 
         // Create map of template params
         templateParams.put("primaryId", primaryOrcid);
-        templateParams.put("name", deriveEmailFriendlyName(primaryProfileEntity));
+        templateParams.put("name", deriveEmailFriendlyName(primaryOrcid));
         templateParams.put("assetsUrl", assetsUrl);
         templateParams.put("subject", subject);
         templateParams.put("clientName", clientDetails.getClientName());

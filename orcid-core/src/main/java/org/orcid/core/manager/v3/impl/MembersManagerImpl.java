@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -20,6 +21,7 @@ import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.security.OrcidWebRole;
@@ -27,6 +29,8 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.client.Client;
+import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientScopeDao;
@@ -91,6 +95,9 @@ public class MembersManagerImpl implements MembersManager {
     
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
+    
+    @Resource(name = "recordNameManagerV3")
+    private RecordNameManager recordNameManager;
 
     @Override
     public Member createMember(Member member) throws IllegalArgumentException {
@@ -98,76 +105,78 @@ public class MembersManagerImpl implements MembersManager {
             throw new IllegalArgumentException("Email already exists");
         }
 
-        Date now = new Date();
-        String orcid = orcidGenerationManager.createNewOrcid();
-        ProfileEntity newRecord = new ProfileEntity();
-        newRecord.setId(orcid);
-        newRecord.setOrcidType(org.orcid.jaxb.model.common_v2.OrcidType.GROUP.name());
-        
-        try {
-            newRecord.setHashedOrcid(encryptionManager.sha256Hash(orcid));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                Date now = new Date();
+                String orcid = orcidGenerationManager.createNewOrcid();
+                ProfileEntity newRecord = new ProfileEntity();
+                newRecord.setId(orcid);
+                newRecord.setOrcidType(org.orcid.jaxb.model.common_v2.OrcidType.GROUP.name());
+                
+                try {
+                    newRecord.setHashedOrcid(encryptionManager.sha256Hash(orcid));
+                } catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
 
-        newRecord.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        newRecord.setClaimed(true);
-        newRecord.setCreationMethod(CreationMethod.DIRECT.value());
-        newRecord.setDateCreated(now);
-        newRecord.setEnableDeveloperTools(false);       
-        newRecord.setEncryptedPassword(null);
-        newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()).name());
-        newRecord.setLastModified(now);
-        newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN.name());
-        newRecord.setRecordLocked(false);
-        newRecord.setReviewed(false);
-        newRecord.setSalesforeId(PojoUtil.isEmpty(member.getSalesforceId()) ? null : member.getSalesforceId().getValue());
-        newRecord.setSubmissionDate(now);
-        newRecord.setUsedRecaptchaOnRegistration(false);
-        
-        // Set primary email
-        EmailEntity emailEntity = new EmailEntity();
-        String email = member.getEmail().getValue().trim();
-        emailEntity.setEmail(email);
-        emailEntity.setId(encryptionManager.getEmailHash(email));
-        emailEntity.setProfile(newRecord);
-        emailEntity.setPrimary(true);
-        emailEntity.setCurrent(true);
-        emailEntity.setVerified(true);
-        // Email is private by default
-        emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-        
-        SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
-        String sourceId = sourceEntity.getSourceProfile().getId();
-        emailEntity.setSourceId(sourceId);
-        Set<EmailEntity> emails = new HashSet<>();
-        emails.add(emailEntity);
-        // Add all emails to record
-        newRecord.setEmails(emails);
+                newRecord.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+                newRecord.setClaimed(true);
+                newRecord.setCreationMethod(CreationMethod.DIRECT.value());
+                newRecord.setDateCreated(now);
+                newRecord.setEnableDeveloperTools(false);       
+                newRecord.setEncryptedPassword(null);
+                newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()).name());
+                newRecord.setLastModified(now);
+                newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN.name());
+                newRecord.setRecordLocked(false);
+                newRecord.setReviewed(false);
+                newRecord.setSalesforeId(PojoUtil.isEmpty(member.getSalesforceId()) ? null : member.getSalesforceId().getValue());
+                newRecord.setSubmissionDate(now);
+                newRecord.setUsedRecaptchaOnRegistration(false);
+                
+                // Set primary email
+                EmailEntity emailEntity = new EmailEntity();
+                String email = member.getEmail().getValue().trim();
+                emailEntity.setEmail(email);
+                emailEntity.setId(encryptionManager.getEmailHash(email));
+                emailEntity.setProfile(newRecord);
+                emailEntity.setPrimary(true);
+                emailEntity.setCurrent(true);
+                emailEntity.setVerified(true);
+                // Email is private by default
+                emailEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+                
+                SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
+                String sourceId = sourceEntity.getSourceProfile().getId();
+                emailEntity.setSourceId(sourceId);
+                Set<EmailEntity> emails = new HashSet<>();
+                emails.add(emailEntity);
+                // Add all emails to record
+                newRecord.setEmails(emails);
 
-        // Set the name
-        RecordNameEntity recordNameEntity = new RecordNameEntity();
-        recordNameEntity.setDateCreated(now);
-        recordNameEntity.setLastModified(now);
-        recordNameEntity.setProfile(newRecord);
-        recordNameEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
-        recordNameEntity.setCreditName(member.getGroupName().getValue());
-        newRecord.setRecordNameEntity(recordNameEntity);
+                // Set authority
+                OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
+                authority.setProfileEntity(newRecord);
+                authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
+                Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
+                authorities.add(authority);
+                newRecord.setAuthorities(authorities);
 
-        // Set authority
-        OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
-        authority.setProfileEntity(newRecord);
-        authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
-        Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
-        authorities.add(authority);
-        newRecord.setAuthorities(authorities);
-
-        profileDao.persist(newRecord);
-        profileDao.flush();         
+                profileDao.persist(newRecord);
+                profileDao.flush();         
+                
+                // Set the name
+                Name name = new Name();
+                name.setCreditName(new CreditName(member.getGroupName().getValue()));
+                name.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
+                recordNameManager.createRecordName(orcid, name);
+                
+                emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, false);
+                
+                member.setGroupOrcid(Text.valueOf(orcid));
+            }
+        });
         
-        emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, false);
-        
-        member.setGroupOrcid(Text.valueOf(orcid));
         return member;
     }
 
@@ -182,10 +191,18 @@ public class MembersManagerImpl implements MembersManager {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 boolean memberChangedType = false;
+                
+                // Update member name
+                Name recordName = recordNameManager.getRecordName(member.getGroupOrcid().getValue());
+                if(recordName == null || recordName.getCreditName() == null || !StringUtils.equals(recordName.getCreditName().getContent(), name)) {
+                    recordName.setCreditName(new CreditName(name));
+                    recordNameManager.updateRecordName(member.getGroupOrcid().getValue(), recordName);
+                }
+                
+                // Update member info
                 ProfileEntity memberEntity = profileDao.find(member.getGroupOrcid().getValue());
                 memberEntity.setLastModified(new Date());
-                memberEntity.setIndexingStatus(IndexingStatus.PENDING);
-                memberEntity.getRecordNameEntity().setCreditName(name);
+                memberEntity.setIndexingStatus(IndexingStatus.PENDING);                
                 memberEntity.setSalesforeId(salesForceId);
 
                 if (!memberType.equals(memberEntity.getGroupType())) {
@@ -250,7 +267,8 @@ public class MembersManagerImpl implements MembersManager {
                 MemberType groupType = profileEntityManager.getGroupType(orcid);
                 if (groupType != null) {
                     ProfileEntity memberProfile = profileDao.find(orcid);
-                    member = Member.fromProfileEntity(memberProfile);
+                    Name recordName = recordNameManager.getRecordName(orcid);
+                    member = Member.fromProfileEntity(memberProfile, ((recordName == null || recordName.getCreditName() == null) ? null : recordName.getCreditName().getContent()));
                     Set<Client> clients = clientManagerReadOnly.getClients(orcid);
                     List<org.orcid.pojo.ajaxForm.Client> clientsList = new ArrayList<org.orcid.pojo.ajaxForm.Client>();
                     clients.forEach(c -> {

@@ -82,7 +82,6 @@ import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -316,10 +315,6 @@ public class NotificationManagerTest extends DBUnitTest {
         String delegateOrcid = "1234-5678-1234-5678";
 
         ProfileEntity profile = new ProfileEntity();
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
-        profile.setRecordNameEntity(recordName);
         EmailEntity emailEntity = new EmailEntity();
         emailEntity.setEmail("test@email.com");
         emailEntity.setPrimary(true);
@@ -373,10 +368,6 @@ public class NotificationManagerTest extends DBUnitTest {
         final String orcid = "0000-0000-0000-0003";
 
         ProfileEntity profile = new ProfileEntity(orcid);
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
-        profile.setRecordNameEntity(recordName);
 
         Email email = new Email();
         email.setEmail("test@email.com");
@@ -417,10 +408,6 @@ public class NotificationManagerTest extends DBUnitTest {
         String userOrcid = "0000-0000-0000-0003";
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
         ProfileEntity profile = new ProfileEntity(userOrcid);
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
-        profile.setRecordNameEntity(recordName);
         when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
         String primaryEmail = "limited_0000-0000-0000-0003@test.orcid.org";
         for (AvailableLocales locale : AvailableLocales.values()) {
@@ -434,11 +421,7 @@ public class NotificationManagerTest extends DBUnitTest {
         resetMocks();
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
         String userOrcid = "0000-0000-0000-0003";
-        RecordNameEntity name = new RecordNameEntity();
-        name.setCreditName("Credit Name");
-        name.setGivenNames("Given Name");
         ProfileEntity profile = new ProfileEntity(userOrcid);
-        profile.setRecordNameEntity(name);
         for (AvailableLocales locale : AvailableLocales.values()) {
             profile.setLocale(locale.name());
             when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
@@ -453,11 +436,6 @@ public class NotificationManagerTest extends DBUnitTest {
         final String orcid = "0000-0000-0000-0003";
 
         ProfileEntity profile = new ProfileEntity(orcid);
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setCreditName("My credit name");
-        recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
-        profile.setRecordNameEntity(recordName);
-
         Email email = new Email();
         email.setEmail("test@email.com");
 
@@ -492,20 +470,6 @@ public class NotificationManagerTest extends DBUnitTest {
         when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
 
         notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");
-    }
-
-    @Test
-    public void deriveEmailFriendlyNameTest() {
-        ProfileEntity testProfile = new ProfileEntity("0000-0000-0000-0003");
-        assertEquals("ORCID Registry User", notificationManager.deriveEmailFriendlyName(testProfile));
-        testProfile.setRecordNameEntity(new RecordNameEntity());
-        assertEquals("ORCID Registry User", notificationManager.deriveEmailFriendlyName(testProfile));
-        testProfile.getRecordNameEntity().setGivenNames("Given Name");
-        assertEquals("Given Name", notificationManager.deriveEmailFriendlyName(testProfile));
-        testProfile.getRecordNameEntity().setFamilyName("Family Name");
-        assertEquals("Given Name Family Name", notificationManager.deriveEmailFriendlyName(testProfile));
-        testProfile.getRecordNameEntity().setCreditName("Credit Name");
-        assertEquals("Credit Name", notificationManager.deriveEmailFriendlyName(testProfile));
     }
 
     /**

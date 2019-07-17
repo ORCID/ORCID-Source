@@ -6,23 +6,28 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
-import org.orcid.core.utils.v3.RecordNameUtils;
 import org.orcid.persistence.dao.GivenPermissionToDao;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.springframework.cache.annotation.Cacheable;
 
-public class GivenPermissionToManagerReadOnlyImpl implements GivenPermissionToManagerReadOnly {
+public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements GivenPermissionToManagerReadOnly {
 
     @Resource
     private OrcidIdentifierUtils orcidIdentifierUtils;
     
     @Resource
     private GivenPermissionToDao givenPermissionToDaoReadOnly;
+    
+    @Resource(name = "recordNameDaoReadOnly")
+    private RecordNameDao recordNameDaoReadOnly;
     
     @Override
     @Cacheable(value = "delegates-by-giver", key = "#giverOrcid.concat('-').concat(#lastModified)")
@@ -34,8 +39,11 @@ public class GivenPermissionToManagerReadOnlyImpl implements GivenPermissionToMa
             DelegateForm form = new DelegateForm();
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(element.getApprovalDate()));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getGiver()));
-            form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getReceiver().getId()));
-            form.setReceiverName(Text.valueOf(RecordNameUtils.getDisplayName(element.getReceiver().getRecordNameEntity())));
+            
+            String orcid = element.getReceiver().getId();
+            form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(orcid));
+            RecordNameEntity name = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));            
+            form.setReceiverName(Text.valueOf(RecordNameUtils.getDisplayName(name)));
             delegates.add(form);
         }
         

@@ -21,7 +21,6 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.RecordNameDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,9 +63,8 @@ public class ContributorUtils {
                     String contributorOrcid = contributor.getContributorOrcid().getPath();
                     if (profileEntityManager.orcidExists(contributorOrcid)) {
                         // contributor is an ORCID user - visibility of user's
-                        // name in record must be taken into account
-                        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
-                        String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
+                        // name in record must be taken into account                        
+                        String publicContributorCreditName = cacheManager.getPublicCreditName(contributorOrcid);
                         CreditName creditName = new CreditName(publicContributorCreditName != null ? publicContributorCreditName : "");
                         contributor.setCreditName(creditName);
                     }
@@ -129,7 +127,7 @@ public class ContributorUtils {
             if(entities != null) {
                 for(RecordNameEntity entity : entities) {
                     String orcid = entity.getOrcid();
-                    String publicCreditName = cacheManager.getPublicCreditName(entity);
+                    String publicCreditName = cacheManager.getPublicCreditName(orcid);
                     contributorNames.put(orcid, (publicCreditName == null ? "" : publicCreditName));
                     // Store in the request, to use as a cache
                     ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

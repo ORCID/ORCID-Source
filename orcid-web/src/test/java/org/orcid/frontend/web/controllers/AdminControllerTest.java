@@ -57,8 +57,10 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
@@ -118,6 +120,9 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
     
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
     
@@ -269,8 +274,9 @@ public class AdminControllerTest extends BaseControllerTest {
 
         ProfileEntity deactivated = profileDao.find("4444-4444-4444-4445");
         assertNotNull(deactivated.getDeactivationDate());
-        assertEquals(deactivated.getRecordNameEntity().getFamilyName(), "Family Name Deactivated");
-        assertEquals(deactivated.getRecordNameEntity().getGivenNames(), "Given Names Deactivated");
+        RecordNameEntity name = recordNameDao.getRecordName("4444-4444-4444-4445", System.currentTimeMillis());
+        assertEquals("Family Name Deactivated", name.getFamilyName());
+        assertEquals("Given Names Deactivated", name.getGivenNames());
 
         // Test try to deactivate an already deactive account
         result = adminController.deactivateOrcidRecords(mockRequest, mockResponse, "4444-4444-4444-4445");
