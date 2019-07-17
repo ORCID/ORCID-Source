@@ -444,6 +444,9 @@ public class RegistrationController extends BaseController {
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView register(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mav = new ModelAndView("register");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         LOGGER.debug("Saved url before registration is: " + (savedRequest != null ? savedRequest.getRedirectUrl() : " no saved request"));
         return mav;

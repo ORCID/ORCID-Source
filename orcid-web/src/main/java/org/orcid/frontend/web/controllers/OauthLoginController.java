@@ -89,7 +89,7 @@ public class OauthLoginController extends OauthControllerBase {
                 return error;
             }
         }
-        
+        mav.addObject("noIndex", true);
         mav.addObject("hideSupportWidget", true);
         mav.setViewName("oauth_login");
         return mav;

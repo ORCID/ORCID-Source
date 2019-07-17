@@ -17,6 +17,7 @@ public class PlaygroundController extends BaseController {
     public ModelAndView playgroundHandler() {
         ModelAndView mav = new ModelAndView();
         mav.setViewName("playground");
+        mav.addObject("noIndex", true);
         return mav;
     }
 

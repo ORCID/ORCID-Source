@@ -87,7 +87,11 @@ public class HomeController extends BaseController {
     
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
-        return new ModelAndView("home");
+        ModelAndView mav = new ModelAndView("home");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
+        return mav;
     }
     
     @RequestMapping(value = "/home")
