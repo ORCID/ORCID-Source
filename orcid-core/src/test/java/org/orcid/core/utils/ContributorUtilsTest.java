@@ -160,7 +160,7 @@ public class ContributorUtilsTest {
             public String answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 RecordNameEntity e = (RecordNameEntity) args[0];
-                return (e.getProfile().getId() + "_name");
+                return (e.getOrcid() + "_name");
             }
             
         });
@@ -354,7 +354,7 @@ public class ContributorUtilsTest {
         List<RecordNameEntity> records = new ArrayList<RecordNameEntity>();
         for(String orcid : orcidIds) {
             RecordNameEntity e = new RecordNameEntity();
-            e.setProfile(new ProfileEntity(orcid));
+            e.setOrcid(orcid);
             records.add(e);
         }
         return records;

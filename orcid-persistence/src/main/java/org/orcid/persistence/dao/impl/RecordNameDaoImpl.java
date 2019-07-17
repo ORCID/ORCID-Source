@@ -3,7 +3,6 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -55,7 +54,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
         query.setParameter("givenNames", recordName.getGivenNames());
         query.setParameter("familyName", recordName.getFamilyName());
         query.setParameter("visibility", StringUtils.upperCase(recordName.getVisibility()));
-        query.setParameter("orcid", recordName.getProfile().getId());
+        query.setParameter("orcid", recordName.getOrcid());
         return query.executeUpdate() > 0;
     }
     

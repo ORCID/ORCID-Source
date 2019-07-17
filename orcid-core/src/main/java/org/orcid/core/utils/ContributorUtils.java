@@ -124,7 +124,7 @@ public class ContributorUtils {
             List<RecordNameEntity> entities = recordNameDao.getRecordNames(idsList);
             if(entities != null) {
                 for(RecordNameEntity entity : entities) {
-                    String orcid = entity.getProfile().getId();
+                    String orcid = entity.getOrcid();
                     String publicCreditName = cacheManager.getPublicCreditName(entity);
                     publicCreditName = (publicCreditName == null ? "" : publicCreditName);
                     contributorNames.put(orcid, publicCreditName);

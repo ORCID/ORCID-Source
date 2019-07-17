@@ -11,16 +11,17 @@ import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
-public class ActivityManagerImpl extends Object implements ActivityManager {
+public class ActivityManagerImpl extends ManagerReadOnlyBaseImpl implements ActivityManager {
     
     @Resource
     private PeerReviewManager peerReviewManager;
@@ -33,6 +34,9 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
     
     @Resource
     private AffiliationsManager affiliationsManager;
+    
+    @Resource(name = "recordNameDaoReadOnly")
+    private RecordNameDao recordNameDaoReadOnly;
 
     public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid) {
         List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid);
@@ -72,35 +76,25 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
         return affiliationMap;
     }
 
-    public String getCreditName(ProfileEntity profile) {
-        String creditName = null;
-        if (profile != null) {
-            if(profile.getRecordNameEntity() != null) {
-                if (StringUtils.isNotBlank(profile.getRecordNameEntity().getCreditName())) {
-                    creditName = profile.getRecordNameEntity().getCreditName();
-                } else {
-                    String givenName = profile.getRecordNameEntity().getGivenNames();
-                    String familyName = profile.getRecordNameEntity().getFamilyName();
-                    String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
-                    creditName = composedCreditName;
-                }
-            }                        
+    @Override
+    public String getCreditName(String orcid) {
+        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));
+        if(recordName != null) {
+            if (StringUtils.isNotBlank(recordName.getCreditName())) {
+                return recordName.getCreditName();
+            } else {
+                String givenName = recordName.getGivenNames();
+                String familyName = recordName.getFamilyName();
+                String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
+                return composedCreditName;
+            }
         }
-                                          
-        return creditName;
+        return null;
     }
     
-    public String getPublicCreditName(ProfileEntity profile) {
-        String publicCreditName = null;
-        if(profile != null && profile.getRecordNameEntity() != null) {
-            publicCreditName = RecordNameUtils.getPublicName(profile.getRecordNameEntity());        
-        }
-        
-        return publicCreditName;
-    }
-
     @Override
-    public String getPublicCreditName(RecordNameEntity recordName) {
+    public String getPublicCreditName(String orcid) {
+        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));
         return RecordNameUtils.getPublicName(recordName);
     }
     
