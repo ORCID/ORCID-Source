@@ -423,6 +423,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
+                this.getformData();
             },
             error => {
                 ////console.log('setEmailsKnownAs', error);
@@ -541,16 +542,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         this.getEmailFrequencyOptions();
         this.getPrivacyPreferences();
-        this.getformData();          
         this.getEmailFrequencies(); 
-
-        //Subscribe to emailChange event and 
-        //update data when emails changed by another component
-        this.emailService.emailsChange.subscribe(emailListUpdated => {
-            if (emailListUpdated == true){
-                this.getformData(); 
+        this.modalService.notifyObservable$.subscribe(data => {
+            if (data && data['moduleId'] === 'modalEmails' && data['action']==='open') {
+               this.getformData() 
             }
-        });       
+        })
+      
     };
+
+
 
 }
