@@ -543,6 +543,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getEmailFrequencyOptions();
         this.getPrivacyPreferences();
         this.getEmailFrequencies(); 
+        this.getformData();
         this.modalService.notifyObservable$.subscribe(data => {
             if (data && data['moduleId'] === 'modalEmails' && data['action']==='open') {
                this.getformData() 
