@@ -28,7 +28,7 @@ import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.Relationship;

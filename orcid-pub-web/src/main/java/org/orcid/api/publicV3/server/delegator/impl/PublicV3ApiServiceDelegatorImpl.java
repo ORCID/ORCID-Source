@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.common.writer.citeproc.V3WorkToCiteprocTranslator;
@@ -43,6 +42,7 @@ import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
@@ -108,7 +108,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -208,6 +207,9 @@ public class PublicV3ApiServiceDelegatorImpl
     
     @Resource
     private StatusManager statusManager;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -299,22 +301,7 @@ public class PublicV3ApiServiceDelegatorImpl
     public Response viewWorkCitation(String orcid, Long putCode) {
         checkProfileStatus(orcid);
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
-        ProfileEntity entity = profileEntityManagerReadOnly.findByOrcid(orcid);
-        String creditName = null;
-        RecordNameEntity recordNameEntity = entity.getRecordNameEntity();
-        if (recordNameEntity != null) {
-            if (!Visibility.valueOf(recordNameEntity.getVisibility()).isMoreRestrictiveThan(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
-                creditName = recordNameEntity.getCreditName();
-                if (StringUtils.isBlank(creditName)) {
-                    creditName = recordNameEntity.getGivenNames();
-                    String familyName = recordNameEntity.getFamilyName();
-                    if (StringUtils.isNotBlank(familyName)) {
-                        creditName += " " + familyName;
-                    }
-                }
-            }
-        }
-
+        String creditName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
         V3WorkToCiteprocTranslator tran = new V3WorkToCiteprocTranslator();
         CSLItemData item = tran.toCiteproc(w, creditName, true);
         return Response.ok(item).build();

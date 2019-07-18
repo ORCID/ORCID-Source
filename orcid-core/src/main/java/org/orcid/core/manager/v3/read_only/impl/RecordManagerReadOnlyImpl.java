@@ -10,7 +10,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.CreationMethod;

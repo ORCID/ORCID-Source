@@ -11,9 +11,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.ContactPermission;
@@ -23,8 +24,8 @@ import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.ContactsForm;
 import org.orcid.pojo.ajaxForm.MemberDetailsForm;
@@ -58,6 +59,9 @@ public class SelfServiceController extends BaseController {
     
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
     @ModelAttribute("contactRoleTypes")
     public Map<String, String> retrieveContactRoleTypesAsMap() {
@@ -223,10 +227,10 @@ public class SelfServiceController extends BaseController {
         checkFullAccess(contact.getAccountId());
         EmailEntity emailEntity = emailManager.find(contact.getEmail());
         contact.setOrcid(emailEntity.getProfile().getId());
-        RecordNameEntity recordNameEntity = emailEntity.getProfile().getRecordNameEntity();
-        if (Visibility.PUBLIC.name().equals(recordNameEntity.getVisibility())) {
-            contact.setFirstName(recordNameEntity.getGivenNames());
-            contact.setLastName(recordNameEntity.getFamilyName());
+        Name recordName = recordNameManagerReadOnlyV3.getRecordName(emailEntity.getProfile().getId());
+        if (Visibility.PUBLIC.equals(recordName.getVisibility())) {
+            contact.setFirstName(recordName.getGivenNames() == null ? null : recordName.getGivenNames().getContent());
+            contact.setLastName(recordName.getFamilyName() == null ? null : recordName.getFamilyName().getContent());
         } else {
             contact.setFirstName(NOT_PUBLIC);
             contact.setLastName(NOT_PUBLIC);
