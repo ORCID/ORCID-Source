@@ -34,6 +34,7 @@ import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
@@ -210,8 +211,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
     
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+    @Resource(name = "recordNameManagerV3")
+    private RecordNameManager recordNameManagerV3;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -442,7 +443,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public String deriveEmailFriendlyName(String orcid) {
-        String result = recordNameManagerReadOnlyV3.fetchDisplayableCreditName(orcid);
+        String result = recordNameManagerV3.fetchDisplayableCreditName(orcid);
         if (PojoUtil.isEmpty(result)) {
             result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
         }

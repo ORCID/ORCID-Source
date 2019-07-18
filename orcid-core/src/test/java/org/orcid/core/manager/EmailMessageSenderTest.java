@@ -23,7 +23,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.Relationship;
@@ -46,6 +45,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
+import org.orcid.core.manager.v3.RecordNameManager;
 
 /**
  * 
@@ -57,8 +57,8 @@ public class EmailMessageSenderTest extends BaseTest {
     @Resource
     private EmailMessageSender emailMessageSender;
     
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+    @Resource(name = "recordNameManagerV3")
+    private RecordNameManager recordNameManagerV3;
   
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -99,14 +99,14 @@ public class EmailMessageSenderTest extends BaseTest {
         
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", mockEncryptionManager);  
-        TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", mockRecordNameDao);          
+        TargetProxyHelper.injectIntoProxy(recordNameManagerV3, "recordNameDao", mockRecordNameDao);          
     }
     
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", encryptionManager);  
-        TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", recordNameDao);
+        TargetProxyHelper.injectIntoProxy(recordNameManagerV3, "recordNameDao", recordNameDao);
     }
     
     @Test

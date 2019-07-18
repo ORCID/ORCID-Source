@@ -21,11 +21,11 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.BaseTest;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -52,6 +52,9 @@ public class SourceNameCacheManagerTest extends BaseTest {
     @Resource
     private ClientDetailsDao clientDetailsDao;
              
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+    
     private static final String OLD_FORMAT_CLIENT_ID = "9999"; 
     private static final String INVALID_USER = "0000";
     private static final String USER_PUBLIC_NAME = "0001";
@@ -128,19 +131,26 @@ public class SourceNameCacheManagerTest extends BaseTest {
             }            
         });                        
         
+        when(mock_recordNameDao.exists(INVALID_USER)).thenReturn(false);
+        when(mock_recordNameDao.exists(USER_PUBLIC_NAME)).thenReturn(true);
+        when(mock_recordNameDao.exists(USER_LIMITED_NAME)).thenReturn(true);
+        when(mock_recordNameDao.exists(USER_PRIVATE_NAME)).thenReturn(true);
+        
         assertNotNull(sourceNameCacheManager);
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", mock_recordNameDao);        
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "clientDetailsDao", mock_clientDetailsDao);
+        TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", mock_recordNameDao);
         
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }      
-    
+
     @After
     public void after() {
-      //Restore the original beans
-        TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", recordNameDao);        
+        // Restore the original beans
+        TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", recordNameDao);
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "clientDetailsDao", clientDetailsDao);
+        TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", recordNameDao);
     }
  
     @Test    

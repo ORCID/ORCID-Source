@@ -14,7 +14,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "record_name")
-public class RecordNameEntity extends BaseEntity<Long> {
+public class RecordNameEntity extends BaseEntity<Long> implements OrcidAware {
     private static final long serialVersionUID = -219497844494612167L;
     private Long id;
     private String creditName;

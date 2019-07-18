@@ -111,10 +111,8 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     }
 
     private String getProfileSourceNameFromDb(String orcid) {
-        RecordNameEntity recordName = null;
         try {
-            recordName = recordNameDao.getRecordName(orcid, profileEntityManager.getLastModified(orcid));
-            if (recordName == null) {
+            if (!recordNameDao.exists(orcid)) {
                 throw new IllegalArgumentException("Unable to find source name for: " + orcid);
             }
         } catch (Exception e) {

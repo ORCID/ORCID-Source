@@ -30,6 +30,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
@@ -171,8 +172,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
 
-    @Resource(name = "recordNameManagerReadOnly")
-    private RecordNameManagerReadOnly recordNameManagerReadOnly;
+    @Resource(name = "recordNameManager")
+    private RecordNameManager recordNameManager;
         
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -320,7 +321,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     
     @Override
     public String deriveEmailFriendlyName(String orcid) {
-        String result = recordNameManagerReadOnly.fetchDisplayableCreditName(orcid);
+        String result = recordNameManager.fetchDisplayableCreditName(orcid);
         if (PojoUtil.isEmpty(result)) {
             result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
         }

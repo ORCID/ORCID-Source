@@ -159,8 +159,7 @@ public class ContributorUtilsTest {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                RecordNameEntity e = (RecordNameEntity) args[0];
-                return (e.getOrcid() + "_name");
+                return (args[0] + "_name");
             }
             
         });

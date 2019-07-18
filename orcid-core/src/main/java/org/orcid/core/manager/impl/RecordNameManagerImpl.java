@@ -32,10 +32,10 @@ public class RecordNameManagerImpl extends RecordNameManagerReadOnlyImpl impleme
             entity.setOrcid(orcid);
         }
         entity.setLastModified(new Date());
-        recordNameDao.updateRecordName(entity);
+        Boolean result = recordNameDao.updateRecordName(entity);
         // Evict the name in the source name manager
         sourceNameCacheManager.remove(orcid);
-        return true;
+        return result;
     }
 
     @Override
