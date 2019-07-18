@@ -213,8 +213,7 @@ public class ManageProfileControllerTest {
                 emails.add(email1);
                 emails.add(email2);
                 entity.setEmails(emails);
-
-                entity.setRecordNameEntity(getRecordName(invocation.getArgument(0)));
+                
                 entity.setEncryptedPassword("password");
                 return entity;
             }
@@ -249,8 +248,7 @@ public class ManageProfileControllerTest {
                 email.setEmail(emailString);
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
-                entity.setEncryptedPassword("password");
-                entity.setRecordNameEntity(getRecordName(orcidString));
+                entity.setEncryptedPassword("password");                
                 email.setProfile(entity);
                 return email;
             }
@@ -300,7 +298,6 @@ public class ManageProfileControllerTest {
                 emails.add(email1);
                 entity.setEmails(emails);
 
-                entity.setRecordNameEntity(getRecordName(invocation.getArgument(0)));
                 // Mark it as deprecated
                 entity.setDeprecatedDate(new Date());
                 entity.setEncryptedPassword("password");
@@ -319,7 +316,6 @@ public class ManageProfileControllerTest {
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
-                entity.setRecordNameEntity(getRecordName(orcidString));
                 // Mark it as deprecated
                 entity.setDeprecatedDate(new Date());
                 email.setProfile(entity);
@@ -348,7 +344,6 @@ public class ManageProfileControllerTest {
                 emails.add(email1);
                 entity.setEmails(emails);
 
-                entity.setRecordNameEntity(getRecordName(invocation.getArgument(0)));
                 // Mark it as deactivated
                 entity.setDeactivationDate(new Date());
                 entity.setEncryptedPassword("password");
@@ -367,7 +362,6 @@ public class ManageProfileControllerTest {
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
-                entity.setRecordNameEntity(getRecordName(orcidString));
                 // Mark it as deactivated
                 entity.setDeactivationDate(new Date());
                 email.setProfile(entity);
@@ -726,7 +720,6 @@ public class ManageProfileControllerTest {
                 emails.add(email1);
                 entity.setEmails(emails);
 
-                entity.setRecordNameEntity(getRecordName(invocation.getArgument(0)));
                 // Mark it as deactivated
                 entity.setDeactivationDate(new Date());
                 entity.setEncryptedPassword("password");

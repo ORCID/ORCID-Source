@@ -77,6 +77,5 @@ public class RecordNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
         RecordNameEntity recordName = recordNameDao.getRecordName(orcid, getLastModified(orcid));
         return RecordNameUtils.getDisplayNameXXX(recordName);
     }
-    
-    
+        
 }

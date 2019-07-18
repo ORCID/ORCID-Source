@@ -20,7 +20,6 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
 
@@ -59,7 +58,7 @@ public class MockSourceNameCache {
                 RecordNameEntity recordName = new RecordNameEntity();
                 recordName.setLastModified(new Date());
                 recordName.setCreditName("Credit name");
-                recordName.setProfile(new ProfileEntity(id));
+                recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.PUBLIC.name());
                 return recordName;
             }

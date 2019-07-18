@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
@@ -25,9 +26,9 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Locale;
@@ -43,7 +44,6 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -117,6 +117,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource
     private RecordNameManager recordNameManager;
+    
+    @Resource
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
     
     @Resource
     private TransactionTemplate transactionTemplate;
@@ -229,24 +232,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public String retrivePublicDisplayName(String orcid) {
-        String publicName = "";
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        if (profile != null) {
-            RecordNameEntity recordName = profile.getRecordNameEntity();
-            if (recordName != null) {
-                Visibility namesVisibility = (recordName.getVisibility() != null) ? Visibility.valueOf(recordName.getVisibility())
-                        : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-                if (Visibility.PUBLIC.equals(namesVisibility)) {
-                    if (!PojoUtil.isEmpty(recordName.getCreditName())) {
-                        publicName = recordName.getCreditName();
-                    } else {
-                        publicName = PojoUtil.isEmpty(recordName.getGivenNames()) ? "" : recordName.getGivenNames();
-                        publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
-                    }
-                }
-            }
-        }
-        return publicName;
+        String publicName = recordNameManagerReadOnly.fetchDisplayablePublicName(orcid);
+        return PojoUtil.isEmpty(publicName) ? StringUtils.EMPTY : publicName;
     }
 
     @Override

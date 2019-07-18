@@ -70,7 +70,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
                 RecordNameEntity recordName = new RecordNameEntity();
                 recordName.setLastModified(new Date());
                 recordName.setCreditName("Credit name for " + id);
-                recordName.setProfile(new ProfileEntity(id));
+                recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.PUBLIC.name());
                 return recordName;
             }            
@@ -83,7 +83,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
                 RecordNameEntity recordName = new RecordNameEntity();
                 recordName.setLastModified(new Date());
                 recordName.setCreditName("Credit name for " + id);
-                recordName.setProfile(new ProfileEntity(id));
+                recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.LIMITED.name());
                 return recordName;
             }            
@@ -96,7 +96,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
                 RecordNameEntity recordName = new RecordNameEntity();
                 recordName.setLastModified(new Date());
                 recordName.setCreditName("Credit name for " + id);
-                recordName.setProfile(new ProfileEntity(id));
+                recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.PRIVATE.name());
                 return recordName;
             }            
@@ -111,7 +111,7 @@ public class SourceNameCacheManagerTest extends BaseTest {
                 RecordNameEntity recordName = new RecordNameEntity();
                 recordName.setLastModified(new Date());
                 recordName.setCreditName("Am a USER!!!!");
-                recordName.setProfile(new ProfileEntity(id));
+                recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.PUBLIC.name());
                 return recordName;
             }            

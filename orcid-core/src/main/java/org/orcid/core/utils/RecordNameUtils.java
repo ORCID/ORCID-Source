@@ -7,6 +7,9 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 public class RecordNameUtils {
 
     public static String getPublicNameXXX(RecordNameEntity recordName) {
+        if(recordName == null) {
+            return null;
+        }
         if (Visibility.PUBLIC.name().equals(recordName.getVisibility())) {
             if (!StringUtils.isBlank(recordName.getCreditName())) {
                 return recordName.getCreditName();

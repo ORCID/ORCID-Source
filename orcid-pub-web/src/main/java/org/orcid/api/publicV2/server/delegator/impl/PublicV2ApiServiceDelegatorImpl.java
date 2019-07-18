@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
@@ -38,6 +37,7 @@ import org.orcid.core.manager.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
+import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
@@ -82,7 +82,6 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -186,6 +185,9 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
     
+    @Resource
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
+    
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -241,22 +243,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     public Response viewWorkCitation(String orcid, Long putCode) {
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
-        ProfileEntity entity = profileEntityManagerReadOnly.findByOrcid(orcid);
-        String creditName = null;
-        RecordNameEntity recordNameEntity = entity.getRecordNameEntity();
-        if (recordNameEntity != null) {
-            if (!Visibility.valueOf(recordNameEntity.getVisibility()).isMoreRestrictiveThan(Visibility.PUBLIC)) {
-                creditName = recordNameEntity.getCreditName();
-                if (StringUtils.isBlank(creditName)) {
-                    creditName = recordNameEntity.getGivenNames();
-                    String familyName = recordNameEntity.getFamilyName();
-                    if (StringUtils.isNotBlank(familyName)) {
-                        creditName += " " + familyName;
-                    }
-                }
-            }
-        }
-
+        String creditName = recordNameManagerReadOnly.fetchDisplayablePublicName(orcid);
         WorkToCiteprocTranslator tran = new WorkToCiteprocTranslator();
         CSLItemData item = tran.toCiteproc(w, creditName, true);
         return Response.ok(item).build();

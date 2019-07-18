@@ -26,7 +26,6 @@ import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
-import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
@@ -39,7 +38,6 @@ import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermi
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 
@@ -63,12 +61,7 @@ public class EmailMessageSenderTest extends BaseTest {
     public void beforeClass() {
         MockitoAnnotations.initMocks(this);
         ProfileEntity entity = new ProfileEntity();
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setGivenNames("John");
-        recordName.setFamilyName("Watson");
-        recordName.setVisibility(Visibility.LIMITED.name());
         entity.setLocale(AvailableLocales.EN.name());
-        entity.setRecordNameEntity(recordName);
         when(profileEntityCacheManagerMock.retrieve(anyString())).thenReturn(entity);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManagerMock);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", encryptionManagerMock);  

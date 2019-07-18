@@ -33,6 +33,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -167,12 +168,12 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
 
-    @Resource(name = "recordNameDaoReadOnly")
-    private RecordNameDao recordNameDaoReadOnly;
-    
     @Resource
     private SourceEntityUtils sourceEntityUtils;
-    
+
+    @Resource(name = "recordNameManagerReadOnly")
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
+        
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
     public boolean isApiRecordCreationEmailEnabled() {
@@ -319,12 +320,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     
     @Override
     public String deriveEmailFriendlyName(String orcid) {
-        String result = null;
-        
-        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));        
-        if (recordName != null) {
-            result = RecordNameUtils.getUserName(recordName);
-        }
+        String result = recordNameManagerReadOnly.fetchDisplayableCreditName(orcid);
         if (PojoUtil.isEmpty(result)) {
             result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
         }

@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ehcache.Cache;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.core.utils.RecordNameUtils;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -37,6 +37,9 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     private ClientDetailsDao clientDetailsDao;
     
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
     public void setRecordNameDao(RecordNameDao recordNameDao) {
         this.recordNameDao = recordNameDao;
@@ -118,7 +121,7 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
             LOGGER.warn("Cannot find source name from profile matching " + orcid, e);
             throw new IllegalArgumentException("Unable to find source name for: " + orcid);
         }
-        String name = RecordNameUtils.getPublicName(recordName);
+        String name = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null) {
             sra.setAttribute(getProfileNameSRAKey(orcid), name != null ? name : StringUtils.EMPTY, ServletRequestAttributes.SCOPE_REQUEST);

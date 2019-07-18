@@ -5,21 +5,17 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
-import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.persistence.dao.RecordNameDao;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityManagerImpl extends ManagerReadOnlyBaseImpl implements ActivityManager {
     
@@ -35,8 +31,8 @@ public class ActivityManagerImpl extends ManagerReadOnlyBaseImpl implements Acti
     @Resource
     private AffiliationsManager affiliationsManager;
     
-    @Resource(name = "recordNameDaoReadOnly")
-    private RecordNameDao recordNameDaoReadOnly;
+    @Resource(name = "recordNameManagerReadOnly")
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
     public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid) {
         List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid);
@@ -78,24 +74,12 @@ public class ActivityManagerImpl extends ManagerReadOnlyBaseImpl implements Acti
 
     @Override
     public String getCreditName(String orcid) {
-        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));
-        if(recordName != null) {
-            if (StringUtils.isNotBlank(recordName.getCreditName())) {
-                return recordName.getCreditName();
-            } else {
-                String givenName = recordName.getGivenNames();
-                String familyName = recordName.getFamilyName();
-                String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
-                return composedCreditName;
-            }
-        }
-        return null;
+        return recordNameManagerReadOnly.fetchDisplayableCreditName(orcid);        
     }
     
     @Override
     public String getPublicCreditName(String orcid) {
-        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));
-        return RecordNameUtils.getPublicName(recordName);
+        return recordNameManagerReadOnly.fetchDisplayablePublicName(orcid);
     }
     
 }

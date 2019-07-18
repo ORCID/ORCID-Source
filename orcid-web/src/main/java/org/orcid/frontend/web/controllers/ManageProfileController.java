@@ -32,8 +32,8 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -41,7 +41,6 @@ import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -61,8 +60,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.OrcidStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -122,6 +119,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
     
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+    
     @Resource
     private PreferenceManager preferenceManager;
     
@@ -130,9 +130,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
-    
-    @Resource(name = "recordNameDaoReadOnly")
-    private RecordNameDao recordNameDaoReadOnly;
     
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -314,8 +311,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         String primaryOrcid = primaryEntity.getId();
         String deprecatingOrcid = deprecatingEntity.getId();
         
-        String primaryAccountName = RecordNameUtils.getPublicName(recordNameDaoReadOnly.getRecordName(primaryOrcid, getLastModified(primaryOrcid)));
-        String deprecatingAccountName = RecordNameUtils.getPublicName(recordNameDaoReadOnly.getRecordName(deprecatingOrcid, getLastModified(deprecatingOrcid)));
+        String primaryAccountName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(primaryOrcid);
+        String deprecatingAccountName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(deprecatingOrcid);
         deprecateProfile.setPrimaryAccountName(primaryAccountName);
         deprecateProfile.setPrimaryOrcid(currentUserOrcid);
         deprecateProfile.setDeprecatingAccountName(deprecatingAccountName);

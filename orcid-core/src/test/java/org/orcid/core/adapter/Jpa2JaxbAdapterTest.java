@@ -215,14 +215,6 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         // Set default visibility
         profile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
 
-        // Set name
-        RecordNameEntity name = new RecordNameEntity();
-        name.setCreditName("My credit name");
-        name.setFamilyName("My family name");
-        name.setGivenNames("My given names");
-        name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
-        profile.setRecordNameEntity(name);
-
         // Set biography
         BiographyEntity bio = new BiographyEntity();
         bio.setBiography("This is my biography");
