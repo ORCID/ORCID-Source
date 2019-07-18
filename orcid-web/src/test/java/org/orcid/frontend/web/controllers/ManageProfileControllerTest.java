@@ -55,7 +55,6 @@ import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
@@ -175,19 +174,18 @@ public class ManageProfileControllerTest {
                     e1.setApprovalDate(now);
                     e1.setDateCreated(now);
                     e1.setGiver(invocation.getArgument(0));
-                    ProfileSummaryEntity ps = new ProfileSummaryEntity();
+                    String receiver = null;
                     RecordNameEntity recordName = new RecordNameEntity();
                     recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                     if (i == 0) {
-                        ps.setId("0000-0000-0000-0004");
+                        receiver = "0000-0000-0000-0004";
                         recordName.setCreditName("Credit Name");
                     } else {
-                        ps.setId("0000-0000-0000-0005");
+                        receiver = "0000-0000-0000-0005";
                         recordName.setFamilyName("Family Name");
                         recordName.setGivenNames("Given Names");
                     }
-                    ps.setRecordNameEntity(recordName);
-                    e1.setReceiver(ps);
+                    e1.setReceiver(receiver);
                     givenPermissionTo.add(e1);
                 });
                 entity.setGivenPermissionTo(givenPermissionTo);

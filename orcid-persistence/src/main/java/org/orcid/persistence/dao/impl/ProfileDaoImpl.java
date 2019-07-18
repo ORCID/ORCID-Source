@@ -319,7 +319,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             if (profileEntity.getGivenPermissionTo() != null) {
                 Set<GivenPermissionToEntity> filtered = new HashSet<GivenPermissionToEntity>();
                 for (GivenPermissionToEntity givenPermissionToEntity : profileEntity.getGivenPermissionTo()) {
-                    if (!receiverOrcid.equals(givenPermissionToEntity.getReceiver().getId())) {
+                    if (!receiverOrcid.equals(givenPermissionToEntity.getReceiver())) {
                         filtered.add(givenPermissionToEntity);
                     }
                 }

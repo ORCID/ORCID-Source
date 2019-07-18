@@ -2,14 +2,11 @@ package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -27,7 +24,7 @@ public class GivenPermissionToEntity extends BaseEntity<Long> implements Profile
 
     private Long id;
     private String giver;
-    private ProfileSummaryEntity receiver;
+    private String receiver;
     private Date approvalDate;
 
     @Override
@@ -52,13 +49,12 @@ public class GivenPermissionToEntity extends BaseEntity<Long> implements Profile
         this.giver = giver;
     }
 
-    @ManyToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH })
-    @JoinColumn(name = "receiver_orcid")
-    public ProfileSummaryEntity getReceiver() {
+    @Column(name = "receiver_orcid")
+    public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(ProfileSummaryEntity receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 

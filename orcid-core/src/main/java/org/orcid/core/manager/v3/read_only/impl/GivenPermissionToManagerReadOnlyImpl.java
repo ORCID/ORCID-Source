@@ -38,7 +38,7 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(element.getApprovalDate()));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getGiver()));
             
-            String orcid = element.getReceiver().getId();
+            String orcid = element.getReceiver();
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(orcid));
             form.setReceiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(orcid)));
             delegates.add(form);
@@ -55,10 +55,10 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
         for(GivenPermissionByEntity element : list) {
             DelegateForm form = new DelegateForm();
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(element.getApprovalDate()));
-            form.setLastModifiedDate(DateUtils.convertToXMLGregorianCalendar(element.getGiver().getLastModified()));
+            form.setLastModifiedDate(DateUtils.convertToXMLGregorianCalendar(getLastModifiedDate(element.getGiver())));
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getReceiver()));            
             
-            String giverOrcid = element.getGiver().getId();
+            String giverOrcid = element.getGiver();
             form.setGiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(giverOrcid)));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(giverOrcid));
             delegates.add(form);

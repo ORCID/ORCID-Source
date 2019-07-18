@@ -642,11 +642,11 @@ public class Jpa2JaxbAdapterImpl extends ManagerReadOnlyBaseImpl implements Jpa2
             delegation.setGivenPermissionTo(givenPermissionTo);
             for (GivenPermissionToEntity givenPermissionToEntity : givenPermissionToEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
-                DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase(givenPermissionToEntity.getReceiver().getId())));
+                DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase(givenPermissionToEntity.getReceiver())));
                 delegateSummary
-                        .setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionToEntity.getReceiver().getLastModified())));
+                        .setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(getLastModifiedDate(givenPermissionToEntity.getReceiver()))));
                                 
-                String receiverCreditName = recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(givenPermissionToEntity.getReceiver().getId());
+                String receiverCreditName = recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(givenPermissionToEntity.getReceiver());
                 delegateSummary.setCreditName(StringUtils.isNotBlank(receiverCreditName) ? new CreditName(receiverCreditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
                 delegationDetails.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionToEntity.getApprovalDate())));
@@ -661,9 +661,9 @@ public class Jpa2JaxbAdapterImpl extends ManagerReadOnlyBaseImpl implements Jpa2
             delegation.setGivenPermissionBy(givenPermissionBy);
             for (GivenPermissionByEntity givenPermissionByEntity : givenPermissionByEntities) {
                 DelegationDetails delegationDetails = new DelegationDetails();
-                DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase((givenPermissionByEntity.getGiver().getId()))));
-                delegateSummary.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionByEntity.getGiver().getLastModified())));
-                String creditName = recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(givenPermissionByEntity.getGiver().getId());
+                DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase((givenPermissionByEntity.getGiver()))));
+                delegateSummary.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(getLastModifiedDate(givenPermissionByEntity.getGiver()))));
+                String creditName = recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(givenPermissionByEntity.getGiver());
                 delegateSummary.setCreditName(StringUtils.isNotBlank(creditName) ? new CreditName(creditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
                 delegationDetails.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionByEntity.getApprovalDate())));
