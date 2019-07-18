@@ -10,22 +10,20 @@ import javax.transaction.Transactional;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.AddressManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.utils.v3.SourceEntityUtils;
-import org.orcid.jaxb.model.common.Iso3166Country;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements AddressManager {

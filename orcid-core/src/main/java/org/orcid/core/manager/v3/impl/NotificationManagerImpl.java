@@ -37,11 +37,12 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.RecordNameUtils;
-import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -209,8 +210,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
     
-    @Resource(name = "recordNameDaoReadOnly")
-    private RecordNameDao recordNameDaoReadOnly;
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -441,11 +442,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public String deriveEmailFriendlyName(String orcid) {
-        String result = null;
-        RecordNameEntity recordName = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));        
-        if (recordName != null) {
-            result = RecordNameUtils.getUserName(recordName);
-        }        
+        String result = recordNameManagerReadOnlyV3.fetchDisplayableCreditName(orcid);
         if (PojoUtil.isEmpty(result)) {
             result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
         }

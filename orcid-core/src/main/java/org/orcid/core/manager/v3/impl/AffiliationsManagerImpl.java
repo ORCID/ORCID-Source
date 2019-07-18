@@ -10,8 +10,6 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -21,7 +19,7 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;

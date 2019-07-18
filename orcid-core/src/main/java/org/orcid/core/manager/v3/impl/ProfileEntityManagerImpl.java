@@ -37,10 +37,10 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -63,7 +63,6 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -149,8 +148,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     private LocaleManager localeManager;
 
     @Resource(name = "recordNameManagerV3")
-    private RecordNameManager recordNameManager;
+    private RecordNameManager recordNameManagerV3;
 
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+    
     @Resource
     private TransactionTemplate transactionTemplate;
 
@@ -183,7 +185,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public String findByCreditName(String creditName) {
-        Name name = recordNameManager.findByCreditName(creditName);
+        Name name = recordNameManagerV3.findByCreditName(creditName);
         if (name == null) {
             return null;
         }
@@ -359,31 +361,20 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     private String getMemberDisplayName(ProfileEntity member) {
-        RecordNameEntity recordName = member.getRecordNameEntity();
+        Name recordName = recordNameManagerReadOnlyV3.getRecordName(member.getId());
+        
         if (recordName == null) {
             return StringUtils.EMPTY;
         }
 
         // If it is a member, return the credit name
         if (OrcidType.GROUP.name().equals(member.getOrcidType())) {
-            return recordName.getCreditName();
+            return recordName.getCreditName().getContent();
         }
 
-        Visibility namesVisibilty = Visibility.fromValue(recordName.getVisibility());
-        if (Visibility.PUBLIC.equals(namesVisibilty)) {
-            if (!PojoUtil.isEmpty(recordName.getCreditName())) {
-                return recordName.getCreditName();
-            } else {
-                String displayName = recordName.getGivenNames();
-                String familyName = recordName.getFamilyName();
-                if (StringUtils.isNotBlank(familyName)) {
-                    displayName += " " + familyName;
-                }
-                return displayName;
-            }
-        }
-
-        return StringUtils.EMPTY;
+        String memberDisplayName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(member.getId());
+        
+        return PojoUtil.isEmpty(memberDisplayName) ? StringUtils.EMPTY : memberDisplayName;
     }
 
     @Override
@@ -400,24 +391,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public String retrivePublicDisplayName(String orcid) {
-        String publicName = "";
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        if (profile != null) {
-            RecordNameEntity recordName = profile.getRecordNameEntity();
-            if (recordName != null) {
-                Visibility namesVisibility = (recordName.getVisibility() != null) ? Visibility.fromValue(recordName.getVisibility())
-                        : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-                if (Visibility.PUBLIC.equals(namesVisibility)) {
-                    if (!PojoUtil.isEmpty(recordName.getCreditName())) {
-                        publicName = recordName.getCreditName();
-                    } else {
-                        publicName = PojoUtil.isEmpty(recordName.getGivenNames()) ? "" : recordName.getGivenNames();
-                        publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
-                    }
-                }
-            }
-        }
-        return publicName;
+        String publicDisplayName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);        
+        return PojoUtil.isEmpty(publicDisplayName) ? StringUtils.EMPTY : publicDisplayName;
     }
 
     @Override
@@ -554,12 +529,17 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 profileEntity.setClaimed(true);
                 if (reactivation != null) {
                     profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(reactivation.getPassword().getValue()));
-                    profileEntity.setActivitiesVisibilityDefault(reactivation.getActivitiesVisibilityDefault().getVisibility().name());
-                    RecordNameEntity recordNameEntity = profileEntity.getRecordNameEntity();
-                    recordNameEntity.setGivenNames(reactivation.getGivenNames().getValue());
-                    recordNameEntity.setFamilyName(reactivation.getFamilyNames().getValue());
+                    profileEntity.setActivitiesVisibilityDefault(reactivation.getActivitiesVisibilityDefault().getVisibility().name());                    
                 }
                 profileDao.merge(profileEntity);
+                
+                Name name = recordNameManagerReadOnlyV3.getRecordName(orcid);
+                if(reactivation.getGivenNames() != null)
+                    name.setGivenNames(new GivenNames(reactivation.getGivenNames().getValue()));
+                if(reactivation.getFamilyNames() != null)
+                    name.setFamilyName(new FamilyName(reactivation.getFamilyNames().getValue()));
+                recordNameManagerV3.updateRecordName(orcid, name);
+                
                 LOGGER.info("Record orcid={} successfully reactivated", orcid);
                 return true;
             }
@@ -696,14 +676,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         }
 
         // Set the deactivated names
-        if (recordNameManager.exists(orcid)) {
+        if (recordNameManagerV3.exists(orcid)) {
             Name name = new Name();
             name.setCreditName(new CreditName());
             name.setGivenNames(new GivenNames("Given Names Deactivated"));
             name.setFamilyName(new FamilyName("Family Name Deactivated"));
             name.setVisibility(Visibility.PUBLIC);
             name.setPath(orcid);
-            recordNameManager.updateRecordName(orcid, name);
+            recordNameManagerV3.updateRecordName(orcid, name);
         }
 
         //

@@ -35,7 +35,7 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.ScopePathType;

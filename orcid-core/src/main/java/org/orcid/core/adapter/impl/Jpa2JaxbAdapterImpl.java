@@ -25,6 +25,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -114,8 +115,14 @@ public class Jpa2JaxbAdapterImpl extends ManagerReadOnlyBaseImpl implements Jpa2
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
     
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+    
     @Resource(name = "recordNameDaoReadOnly")
     private RecordNameDao recordNameDaoReadOnly;
+    
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
     
     public void setWorkEntityCacheManager(WorkEntityCacheManager workEntityCacheManager) {
         this.workEntityCacheManager = workEntityCacheManager;
@@ -638,7 +645,8 @@ public class Jpa2JaxbAdapterImpl extends ManagerReadOnlyBaseImpl implements Jpa2
                 DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase(givenPermissionToEntity.getReceiver().getId())));
                 delegateSummary
                         .setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionToEntity.getReceiver().getLastModified())));
-                String receiverCreditName = RecordNameUtils.getDisplayName(givenPermissionToEntity.getReceiver().getRecordNameEntity());
+                                
+                String receiverCreditName = recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(givenPermissionToEntity.getReceiver().getId());
                 delegateSummary.setCreditName(StringUtils.isNotBlank(receiverCreditName) ? new CreditName(receiverCreditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
                 delegationDetails.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionToEntity.getApprovalDate())));
@@ -655,7 +663,7 @@ public class Jpa2JaxbAdapterImpl extends ManagerReadOnlyBaseImpl implements Jpa2
                 DelegationDetails delegationDetails = new DelegationDetails();
                 DelegateSummary delegateSummary = new DelegateSummary(new OrcidIdentifier(getOrcidIdBase((givenPermissionByEntity.getGiver().getId()))));
                 delegateSummary.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionByEntity.getGiver().getLastModified())));
-                String creditName = RecordNameUtils.getDisplayName(givenPermissionByEntity.getGiver().getRecordNameEntity());
+                String creditName = recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(givenPermissionByEntity.getGiver().getId());
                 delegateSummary.setCreditName(StringUtils.isNotBlank(creditName) ? new CreditName(creditName) : null);
                 delegationDetails.setDelegateSummary(delegateSummary);
                 delegationDetails.setApprovalDate(new ApprovalDate(DateUtils.convertToXMLGregorianCalendar(givenPermissionByEntity.getApprovalDate())));
@@ -739,13 +747,8 @@ public class Jpa2JaxbAdapterImpl extends ManagerReadOnlyBaseImpl implements Jpa2
         SourceEntity sourceEntity = profileEntity.getSource();
         if (sourceEntity != null) {
             Source sponsor = new Source();
-            RecordNameEntity recordName = null;
-            if(sourceEntity.getSourceProfile() != null) {
-                ProfileEntity entity = sourceEntity.getSourceProfile();
-                String orcid = entity.getId();
-                recordName = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));
-            }
-            SourceName sponsorName = new SourceName(SourceEntityUtils.getSourceName(sourceEntity, recordName));
+            
+            SourceName sponsorName = new SourceName(sourceEntityUtils.getSourceName(sourceEntity));
             sponsor.setSourceName(sponsorName);
             ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
             if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {

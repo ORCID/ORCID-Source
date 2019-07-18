@@ -37,7 +37,7 @@ public class RecordNameUtils {
         }
         
         return buildName(recordNameEntity.getGivenNames(), recordNameEntity.getFamilyName());
-    }
+    }        
     
     private static String buildName(String givenNames, String familyName) {
         StringBuilder builder = new StringBuilder();

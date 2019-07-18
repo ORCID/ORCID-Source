@@ -6,13 +6,11 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
-import org.orcid.core.utils.RecordNameUtils;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.persistence.dao.GivenPermissionToDao;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
@@ -26,8 +24,8 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
     @Resource
     private GivenPermissionToDao givenPermissionToDaoReadOnly;
     
-    @Resource(name = "recordNameDaoReadOnly")
-    private RecordNameDao recordNameDaoReadOnly;
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
     
     @Override
     @Cacheable(value = "delegates-by-giver", key = "#giverOrcid.concat('-').concat(#lastModified)")
@@ -42,8 +40,7 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
             
             String orcid = element.getReceiver().getId();
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(orcid));
-            RecordNameEntity name = recordNameDaoReadOnly.getRecordName(orcid, getLastModified(orcid));            
-            form.setReceiverName(Text.valueOf(RecordNameUtils.getDisplayName(name)));
+            form.setReceiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(orcid)));
             delegates.add(form);
         }
         
@@ -59,9 +56,11 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
             DelegateForm form = new DelegateForm();
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(element.getApprovalDate()));
             form.setLastModifiedDate(DateUtils.convertToXMLGregorianCalendar(element.getGiver().getLastModified()));
-            form.setGiverName(Text.valueOf(RecordNameUtils.getDisplayName(element.getGiver().getRecordNameEntity())));
-            form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getGiver().getId()));
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getReceiver()));            
+            
+            String giverOrcid = element.getGiver().getId();
+            form.setGiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(giverOrcid)));
+            form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(giverOrcid));
             delegates.add(form);
         }
         return delegates;
@@ -74,8 +73,8 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
             DelegateForm form = new DelegateForm();
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(entity.getApprovalDate()));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(entity.getGiver()));
-            form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(entity.getReceiver().getId()));
-            form.setReceiverName(Text.valueOf(RecordNameUtils.getDisplayName(entity.getReceiver().getRecordNameEntity())));
+            form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(receiverOrcid));
+            form.setReceiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(receiverOrcid)));
             return form;
         }
         return null;

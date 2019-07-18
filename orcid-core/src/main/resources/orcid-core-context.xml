@@ -1618,4 +1618,6 @@
         <property name="jmsTemplate" ref="jmsTemplate" />
     </bean>
     
+    <bean id="sourceEntityUtils" class="org.orcid.core.utils.SourceEntityUtils" />
+        
 </beans>

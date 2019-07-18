@@ -3,7 +3,7 @@ package org.orcid.core.exception;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Source;
 
 /**
