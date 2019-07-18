@@ -1124,7 +1124,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         nameClassMap.fieldMap("creditName", "creditName").converter("creditNameConverter").add();;
         nameClassMap.fieldMap("givenNames", "givenNames").converter("givenNamesConverter").add();;
         nameClassMap.fieldMap("familyName", "familyName").converter("familyNameConverter").add();;
-        nameClassMap.field("path", "profile.id");
+        nameClassMap.field("path", "orcid");
         nameClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         
         nameClassMap.byDefault();

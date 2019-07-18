@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.RecordNameDao;
@@ -40,6 +41,9 @@ public class MockSourceNameCache {
     
     @Resource
     private ClientDetailsDao clientDetailsDao;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
     
     @Mock
     protected RecordNameDao mockedRecordNameDao;
@@ -78,6 +82,7 @@ public class MockSourceNameCache {
         assertNotNull(sourceNameCacheManager);
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", mockedRecordNameDao);        
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "clientDetailsDao", mockedClientDetailsDao);
+        TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", mockedRecordNameDao);
     }
     
     @After
@@ -85,5 +90,6 @@ public class MockSourceNameCache {
         //Restore the original beans
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", recordNameDao);        
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "clientDetailsDao", clientDetailsDao);
+        TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", recordNameDao);
     }
 }

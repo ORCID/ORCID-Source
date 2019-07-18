@@ -2,11 +2,13 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +16,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.Relationship;
@@ -37,7 +41,9 @@ import org.orcid.jaxb.model.v3.release.notification.permission.Items;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 
@@ -50,23 +56,57 @@ public class EmailMessageSenderTest extends BaseTest {
 
     @Resource
     private EmailMessageSender emailMessageSender;
-
-    @Mock
-    private ProfileEntityCacheManager profileEntityCacheManagerMock;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+  
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
     
     @Mock
-    private EncryptionManager encryptionManagerMock;
+    private ProfileEntityCacheManager mockProfileEntityCacheManager;
+    
+    @Mock
+    private EncryptionManager mockEncryptionManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
     
     @Before
     public void beforeClass() {
         MockitoAnnotations.initMocks(this);
+        String orcid = "0000-0000-0000-0000";
         ProfileEntity entity = new ProfileEntity();
+        entity.setId(orcid);
         entity.setLocale(AvailableLocales.EN.name());
-        when(profileEntityCacheManagerMock.retrieve(anyString())).thenReturn(entity);
-        TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManagerMock);
-        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", encryptionManagerMock);  
+        entity.setLastModified(new Date());
+        when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(entity);
         
-        when(encryptionManagerMock.encryptForExternalUse(Mockito.anyString())).thenReturn("encrypted");        
+        RecordNameEntity recordName = new RecordNameEntity();
+        recordName.setCreditName("John Watson");
+        recordName.setGivenNames("Watson");
+        recordName.setFamilyName("John");        
+        recordName.setOrcid(orcid);
+        
+        when(mockEncryptionManager.encryptForExternalUse(Mockito.anyString())).thenReturn("encrypted");
+        when(mockRecordNameDao.getRecordName(anyString(), anyLong())).thenReturn(recordName);
+        
+        TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", mockEncryptionManager);  
+        TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", mockRecordNameDao);          
+    }
+    
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", encryptionManager);  
+        TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", recordNameDao);
     }
     
     @Test

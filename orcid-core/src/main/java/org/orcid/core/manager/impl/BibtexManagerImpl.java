@@ -5,15 +5,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.BibtexManager;
 import org.orcid.core.manager.DOIManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
@@ -22,9 +20,6 @@ import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.persistence.dao.RecordNameDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
