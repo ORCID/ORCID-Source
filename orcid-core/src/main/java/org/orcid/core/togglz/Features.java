@@ -33,6 +33,9 @@ public enum Features implements Feature {
     @Label("New style badges on member details")
     NEW_BADGES,
     
+    @Label("Enable Hotjar tracking")
+    HOTJAR,
+    
     @Label("Https for links to iDs")
     HTTPS_IDS,
 
