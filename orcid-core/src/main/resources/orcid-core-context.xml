@@ -1320,17 +1320,6 @@
 		<constructor-arg value="cdn_active_url.txt"/>
 	</bean>
 	
-	<bean id="jpaJaxbEntityAdapter" class="org.orcid.core.adapter.impl.JpaJaxbEntityAdapterImpl">
-        <constructor-arg ref="jpa2JaxbAdapter" />
-        <constructor-arg ref="jaxb2JpaAdapter" />
-    </bean>
-
-    <bean id="jpa2JaxbAdapter" class="org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl">
-    	<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
-    </bean>
-    
-    <bean id="jaxb2JpaAdapter" class="org.orcid.core.adapter.impl.Jaxb2JpaAdapterImpl" />
-	
 	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory">
 	   <constructor-arg value="${org.orcid.core.orika.debug:false}" />
 	</bean>
