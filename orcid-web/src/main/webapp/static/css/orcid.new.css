@@ -9669,3 +9669,7 @@ footer-ng2 .footer-main {
         width: 100%;
     }
 }
+
+.workspace-profile i.glyphicon.glyphicon-question-sign {
+    margin-left: 4px;
+}
