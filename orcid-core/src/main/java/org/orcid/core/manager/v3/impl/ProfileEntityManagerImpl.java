@@ -532,13 +532,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                     profileEntity.setActivitiesVisibilityDefault(reactivation.getActivitiesVisibilityDefault().getVisibility().name());                    
                 }
                 profileDao.merge(profileEntity);
-                
-                Name name = recordNameManagerReadOnlyV3.getRecordName(orcid);
-                if(reactivation.getGivenNames() != null)
-                    name.setGivenNames(new GivenNames(reactivation.getGivenNames().getValue()));
-                if(reactivation.getFamilyNames() != null)
-                    name.setFamilyName(new FamilyName(reactivation.getFamilyNames().getValue()));
-                recordNameManagerV3.updateRecordName(orcid, name);
+                if(reactivation != null) {
+                    Name name = recordNameManagerReadOnlyV3.getRecordName(orcid);
+                    if(reactivation.getGivenNames() != null)
+                        name.setGivenNames(new GivenNames(reactivation.getGivenNames().getValue()));
+                    if(reactivation.getFamilyNames() != null)
+                        name.setFamilyName(new FamilyName(reactivation.getFamilyNames().getValue()));
+                    recordNameManagerV3.updateRecordName(orcid, name);
+                    LOGGER.info("Name for orcid={} successfully set", orcid);                    
+                }
                 
                 LOGGER.info("Record orcid={} successfully reactivated", orcid);
                 return true;

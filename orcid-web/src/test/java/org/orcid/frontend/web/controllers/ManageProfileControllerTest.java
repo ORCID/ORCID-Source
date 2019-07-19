@@ -39,6 +39,7 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
@@ -109,6 +110,9 @@ public class ManageProfileControllerTest {
     @Mock
     private ProfileLastModifiedAspect profileLastModifiedAspect;
 
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManagerReadOnlyV3;
+    
     private RecordNameEntity getRecordName(String orcidId) {
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
@@ -132,6 +136,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);  
         TargetProxyHelper.injectIntoProxy(controller, "orcidIdentifierUtils", mockOrcidIdentifierUtils);
         TargetProxyHelper.injectIntoProxy(controller, "profileLastModifiedAspect", profileLastModifiedAspect);
+        TargetProxyHelper.injectIntoProxy(controller, "recordNameManagerReadOnlyV3", mockRecordNameManagerReadOnlyV3);
                 
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
@@ -271,6 +276,15 @@ public class ManageProfileControllerTest {
                 two.setApprovalDate(now);
                 list.add(two);
                 return list;
+            }
+            
+        });
+        
+        when(mockRecordNameManagerReadOnlyV3.fetchDisplayablePublicName(anyString())).thenAnswer(new Answer<String>() {
+
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArgument(0) + " Given Names " + invocation.getArgument(0) + " Family Name";
             }
             
         });
