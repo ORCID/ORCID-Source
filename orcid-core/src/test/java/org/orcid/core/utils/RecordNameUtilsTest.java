@@ -16,7 +16,7 @@ public class RecordNameUtilsTest {
         recordName.setVisibility(Visibility.PUBLIC.name());
         recordName.setCreditName("credit name");
         
-        String publicName = RecordNameUtils.getPublicNameXXX(recordName);
+        String publicName = RecordNameUtils.getPublicName(recordName);
         assertNotNull(recordName);
         assertEquals(recordName.getCreditName(), publicName);
     }
@@ -28,7 +28,7 @@ public class RecordNameUtilsTest {
         recordName.setGivenNames("given name");
         recordName.setFamilyName("family name");
         
-        String publicName = RecordNameUtils.getPublicNameXXX(recordName);
+        String publicName = RecordNameUtils.getPublicName(recordName);
         assertNotNull(recordName);
         assertEquals(recordName.getGivenNames() + " " + recordName.getFamilyName(), publicName);
     }
@@ -39,7 +39,7 @@ public class RecordNameUtilsTest {
         recordName.setVisibility(Visibility.PUBLIC.name());
         recordName.setGivenNames("given name");
         
-        String publicName = RecordNameUtils.getPublicNameXXX(recordName);
+        String publicName = RecordNameUtils.getPublicName(recordName);
         assertNotNull(recordName);
         assertEquals(recordName.getGivenNames(), publicName);
     }
@@ -52,7 +52,7 @@ public class RecordNameUtilsTest {
         recordName.setGivenNames("given name");
         recordName.setFamilyName("family name");
         
-        String publicName = RecordNameUtils.getPublicNameXXX(recordName);
+        String publicName = RecordNameUtils.getPublicName(recordName);
         assertNotNull(recordName);
         assertNull(publicName);
     }

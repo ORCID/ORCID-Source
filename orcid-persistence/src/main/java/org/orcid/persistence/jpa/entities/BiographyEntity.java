@@ -16,15 +16,15 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "biography")
-public class BiographyEntity extends BaseEntity<Long> implements ProfileAware {
+public class BiographyEntity extends BaseEntity<Long> implements OrcidAware {
     /**
      * 
      */
     private static final long serialVersionUID = -7348260374645942620L;
     private Long id;
-    private String biography;
-    private ProfileEntity profile;
+    private String biography;   
     private String visibility;
+    private String orcid;
     
     /**
      * @return the id of the name
@@ -45,19 +45,18 @@ public class BiographyEntity extends BaseEntity<Long> implements ProfileAware {
     }
 
     /**
-     * @return the profile
+     * @return the orcid
      */
-    @OneToOne 
-    @JoinColumn(name = "orcid")
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid")
+    public String getOrcid() {
+        return orcid;
     }
 
     /**
-     * @param profile the profile to set
+     * @param orcid the orcid to set
      */
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
     
     @Column(name = "biography")    

@@ -209,10 +209,7 @@ public class OauthControllerBase extends BaseController {
         if(!PojoUtil.isEmpty(loggedUserOrcid)) {
             infoForm.setUserOrcid(loggedUserOrcid);
             
-            ProfileEntity profile = profileEntityCacheManager.retrieve(loggedUserOrcid);
-            String creditName = "";
-                       
-            creditName = recordNameManagerReadOnly.fetchDisplayableCreditName(orcid);
+            String creditName =  recordNameManagerReadOnly.fetchDisplayableCreditName(loggedUserOrcid);
             
             if(!PojoUtil.isEmpty(creditName)) {
                 infoForm.setUserName(URLDecoder.decode(creditName, "UTF-8").trim());

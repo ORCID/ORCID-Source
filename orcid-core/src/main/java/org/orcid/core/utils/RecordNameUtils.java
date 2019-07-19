@@ -6,7 +6,7 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 public class RecordNameUtils {
 
-    public static String getPublicNameXXX(RecordNameEntity recordName) {
+    public static String getPublicName(RecordNameEntity recordName) {
         if(recordName == null) {
             return null;
         }
@@ -20,7 +20,7 @@ public class RecordNameUtils {
         return null;
     }
     
-    public static String getDisplayNameXXX(RecordNameEntity recordNameEntity) {
+    public static String getDisplayName(RecordNameEntity recordNameEntity) {
         if(recordNameEntity == null) {
             return null;
         }
@@ -31,7 +31,7 @@ public class RecordNameUtils {
         return buildName(recordNameEntity.getGivenNames(), recordNameEntity.getFamilyName());
     }
     
-    public static String getCreditNameXXX(RecordNameEntity recordNameEntity) {
+    public static String getCreditName(RecordNameEntity recordNameEntity) {
         if(recordNameEntity == null) {
             return null;
         }

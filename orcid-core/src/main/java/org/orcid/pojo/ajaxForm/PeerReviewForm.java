@@ -291,11 +291,12 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         
         peerReviewForm.setCompletionDate(getCompletionDate(peerReviewSummary.getCompletionDate()));
         peerReviewForm.setCreatedDate(getCreatedDate(peerReviewSummary.getCreatedDate().getValue()));
-
-        peerReviewForm.setSource(peerReviewSummary.getSource().getSourceName().getContent());
         
         peerReviewForm.setSource(peerReviewSummary.getSource().retrieveSourcePath());
-        peerReviewForm.setSourceName(peerReviewSummary.getSource().getSourceName().getContent());
+        
+        if(peerReviewSummary.getSource().getSourceName() != null) {
+            peerReviewForm.setSourceName(peerReviewSummary.getSource().getSourceName().getContent());
+        }
         
         if (peerReviewSummary.getSource().getAssertionOriginClientId() != null) {
             peerReviewForm.setAssertionOriginClientId(peerReviewSummary.getSource().getAssertionOriginClientId().getPath());

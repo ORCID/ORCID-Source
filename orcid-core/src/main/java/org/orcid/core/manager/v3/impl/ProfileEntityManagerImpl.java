@@ -423,9 +423,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         // Update the bio
         org.orcid.jaxb.model.common_v2.Visibility defaultVisibility = org.orcid.jaxb.model.common_v2.Visibility
                 .fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
-        if (profile.getBiographyEntity() != null) {
-            profile.getBiographyEntity().setVisibility(defaultVisibility.name());
-        }
+        
         // Update address
         if (profile.getAddresses() != null) {
             for (AddressEntity a : profile.getAddresses()) {
@@ -463,6 +461,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profileDao.merge(profile);
         profileDao.flush();
 
+        // Update the biography
+        if (biographyManager.exists(orcid)) {
+            Biography bio = biographyManager.getBiography(orcid);
+            bio.setVisibility(Visibility.fromValue(defaultVisibility.value()));
+            biographyManager.updateBiography(orcid, bio);
+        }
+        
         if (!emailFrequencyManager.emailFrequencyExists(orcid)) {
             if (claim.getSendOrcidNews() == null) {
                 emailFrequencyManager.createOnClaim(orcid, false);
