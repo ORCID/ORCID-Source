@@ -30,6 +30,8 @@ import org.orcid.test.TargetProxyHelper;
  * 
  */
 public class MockSourceNameCache {
+    protected static String CLIENT_SOURCE_ID = "APP-0000000000000001";
+    
     @Resource
     private JpaJaxbAddressAdapter adapter;        
     
@@ -54,6 +56,8 @@ public class MockSourceNameCache {
     @Before
     public void init() throws Exception {         
         MockitoAnnotations.initMocks(this);
+                
+        when(mockedClientDetailsDao.existsAndIsNotPublicClient(CLIENT_SOURCE_ID)).thenReturn(true);
         
         when(mockedRecordNameDao.getRecordName(Mockito.anyString(), Mockito.anyLong())).thenAnswer(new Answer<RecordNameEntity>(){
             @Override
@@ -75,11 +79,13 @@ public class MockSourceNameCache {
                 String id = (String)invocation.getArguments()[0];
                 ClientDetailsEntity client = new ClientDetailsEntity(id);
                 client.setLastModified(new Date());
+                client.setClientName("Client name");
                 return client;
             }            
         });
         
         assertNotNull(sourceNameCacheManager);
+        assertNotNull(recordNameManagerReadOnlyV3);
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", mockedRecordNameDao);        
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "clientDetailsDao", mockedClientDetailsDao);
         TargetProxyHelper.injectIntoProxy(recordNameManagerReadOnlyV3, "recordNameDao", mockedRecordNameDao);

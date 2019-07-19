@@ -65,7 +65,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         assertEquals("http://myurl.com", extId.getUrl().getValue());        
         assertEquals(Long.valueOf(123), extId.getPutCode());
         assertNotNull(extId.getSource());
-        assertEquals("APP-0000000000000000", extId.getSource().retrieveSourcePath());        
+        assertEquals(CLIENT_SOURCE_ID, extId.getSource().retrieveSourcePath());        
         assertEquals(Visibility.LIMITED.value(), extId.getVisibility().value());       
         assertNotNull(extId.getCreatedDate());
         assertNotNull(extId.getLastModifiedDate());
@@ -87,7 +87,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         entity.setExternalIdReference("id-reference");        
         entity.setExternalIdUrl("http://myurl.com");
         entity.setId(123L);        
-        entity.setClientSourceId("APP-0000000000000000");
+        entity.setClientSourceId(CLIENT_SOURCE_ID);
         entity.setVisibility(Visibility.LIMITED.name());
         return entity;
     }

@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -28,13 +29,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EmailManager;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
-import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.core.profileEvent.ProfileEventManager;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -81,8 +81,14 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @Resource
     private ProfileHistoryEventManager profileHistoryEventManager;
     
+    @Mock
+    private NotificationManager mockNotificationManager; 
+    
     @Resource
     ProfileDao profileDao;
+    
+    @Resource
+    NotificationManager notificationManager;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -94,6 +100,9 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(registrationManager, "emailFrequencyManager", mockEmailFrequencyManager);        
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
+        
+        ReflectionTestUtils.setField(registrationManager, "notificationManager", mockNotificationManager);
+        doNothing().when(mockNotificationManager).sendAutoDeprecateNotification(Mockito.anyString(), Mockito.anyString());
         
         ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
         Mockito.doNothing().when(mockProfileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
@@ -107,6 +116,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @After
     public void after() {
         ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        ReflectionTestUtils.setField(registrationManager, "notificationManager", notificationManager);
     }
     
     @Test

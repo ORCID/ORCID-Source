@@ -64,7 +64,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         assertEquals("Orcid URL", r.getUrlName());
         assertEquals(Visibility.LIMITED, r.getVisibility());
         //Source
-        assertEquals("APP-0001", r.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, r.getSource().retrieveSourcePath());
     }      
     
     private ResearcherUrls getResearcherUrls() throws JAXBException {
@@ -78,7 +78,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
     private ResearcherUrlEntity getResearcherUrlEntity() {
         ResearcherUrlEntity entity = new ResearcherUrlEntity();
         entity.setId(13579L);
-        entity.setClientSourceId("APP-0001");
+        entity.setClientSourceId(CLIENT_SOURCE_ID);
         entity.setUrl("http://orcid.org");
         entity.setUrlName("Orcid URL");
         entity.setVisibility(Visibility.LIMITED.name());

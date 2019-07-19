@@ -58,7 +58,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         assertNotNull(address.getLastModifiedDate());
         assertEquals(Long.valueOf(1), address.getPutCode());
         assertNotNull(address.getSource());
-        assertEquals("APP-000000001", address.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, address.getSource().retrieveSourcePath());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
     }
     
@@ -78,7 +78,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         result.setIso2Country(Iso3166Country.US.name());
         result.setUser(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(Visibility.PUBLIC.name());
-        result.setClientSourceId("APP-000000001");
+        result.setClientSourceId(CLIENT_SOURCE_ID);
         return result;
     }
 }
