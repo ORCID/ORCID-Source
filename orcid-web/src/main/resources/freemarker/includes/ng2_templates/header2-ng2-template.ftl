@@ -5,7 +5,7 @@
 
         <div class="container" role="banner">
             <div class="logo-search-bar">
-                <div class="logo" aria-label="ORCID logo"> 
+                <div class="logo" aria-label="ORCID logo" role="banner" aria-label="orcid logo"> 
                     <a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" alt="ORCID logo" /></a>
                     <div class="slogan">${springMacroRequestContext.getMessage("public-layout.logo.tagline")?replace("<br />", " ")?replace("'", "\\'")}</div>
                      
@@ -23,24 +23,24 @@
                         <@orcid.checkFeatureStatus 'ENABLE_USER_MENU'> 
                         <user-menu *ngIf="!isMobile"></user-menu>
                         </@orcid.checkFeatureStatus>
-                        <language-ng2 *ngIf="!isMobile"></language-ng2>
+                        <language-ng2 *ngIf="!isMobile" role="navigation"></language-ng2>
                 </div>
                    
                     <div class="form-group " role="presentation">
                         <div class="search-container" role="search"> 
                         <div class="input-group" role="presentation">
-                            <div class="input-group-addon" role="presentation">
+                            <div class="input-group-addon"   >
                                 <div role="presentation" class="search-dropdown" [ngClass]="{'hover': searchDropdownOpen}"  (mouseleave)="closeDropdown()">
-                                    <div  aria-label="{{'${springMacroRequestContext.getMessage("aria.search-location")?replace("<br />", " ")?replace("'", "\\'")}" role="menu" class="search-dropbtn"   (click)="clickDropdown()"> {{ (headerSearch.searchOption === 'website'? '${springMacroRequestContext.getMessage("layout.public-layout.website")?replace("<br />", " ")?replace("'", "\\'")}':'${springMacroRequestContext.getMessage("layout.public-layout.registry")?replace("<br />", " ")?replace("'", "\\'")}') | titlecase }} <span [ngClass]="{'dropdown-arrow': !searchDropdownOpen, 'dropdown-arrow-up': searchDropdownOpen}"></span> </div>
+                                    <div tabindex="0"  role="combobox" aria-label="{{'${springMacroRequestContext.getMessage("aria.search-location")?replace("<br />", " ")?replace("'", "\\'")}" role="menu" class="search-dropbtn"   (click)="clickDropdown()"  (keyup.enter)="clickDropdown()"> {{ (headerSearch.searchOption === 'website'? '${springMacroRequestContext.getMessage("layout.public-layout.website")?replace("<br />", " ")?replace("'", "\\'")}':'${springMacroRequestContext.getMessage("layout.public-layout.registry")?replace("<br />", " ")?replace("'", "\\'")}') | titlecase }} <span [ngClass]="{'dropdown-arrow': !searchDropdownOpen, 'dropdown-arrow-up': searchDropdownOpen}"></span> </div>
                                     <ul class="dropdown-content" role="presentation">
-                                        <div (click)="clickDropdown('registry')"> {{'${springMacroRequestContext.getMessage("layout.public-layout.registry")?replace("<br />", " ")?replace("'", "\\'")}'| titlecase }} </div>
-                                        <div (click)="clickDropdown('website')"> {{'${springMacroRequestContext.getMessage("layout.public-layout.website")?replace("<br />", " ")?replace("'", "\\'")}'| titlecase  }} </div>
+                                        <div  tabindex="0" role="menuitem"  (keyup.enter)="clickDropdown('registry')" (click)="clickDropdown('registry')"> {{'${springMacroRequestContext.getMessage("layout.public-layout.registry")?replace("<br />", " ")?replace("'", "\\'")}'| titlecase }} </div>
+                                        <div tabindex="0"  role="menuitem"  (keyup.enter)="clickDropdown('website')" (click)="clickDropdown('website')"> {{'${springMacroRequestContext.getMessage("layout.public-layout.website")?replace("<br />", " ")?replace("'", "\\'")}'| titlecase  }} </div>
                                     </ul>
                                 </div>  
                             </div>
                             <input (keyup.enter)="searchSubmit()" [(ngModel)]="headerSearch.searchInput" class="form-control" name="search" type="text" placeholder="${springMacroRequestContext.getMessage("public-layout.search")?replace("<br />", " ")?replace("'", "\\'")}"/>
                             <div aria-label="${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")?replace("<br />", " ")?replace("'", "\\'")}" class="input-group-addon" role="presentation">
-                                <span role="button" aria-label="${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")?replace("<br />", " ")?replace("'", "\\'")}" class="glyphicon glyphicon-search" (click)="searchSubmit()"></span> 
+                                <span tabindex="0" role="button" aria-label="${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")?replace("<br />", " ")?replace("'", "\\'")}" class="glyphicon glyphicon-search" (keyup.enter)="searchSubmit()" (click)="searchSubmit()"></span> 
                             </div>
                         </div>
                     </div>        
@@ -56,14 +56,14 @@
             </div>
         </div>
 
-        <div class="menu-bar"  [hidden]="!openMobileMenu && isMobile"  (mouseleave)="mouseLeave()" role="menu">
+        <div class="menu-bar"  [hidden]="!openMobileMenu && isMobile"  (mouseleave)="mouseLeave()" role="navigation" aria-label="main menu">
                 <!--  Desktop / Tablet menu -->             
                 <div class="container container-menu"  role="presentation"> 
                 <ul class="menu" resize  role="presentation">
                     <!-- FOR RESEARCHERS -->
                     <li class="first expanded" role="presentation"
                      [ngClass]="{'hover': mobileMenu.RESEARCHERS, 'open':  this.currentUrl.indexOf('signin') == -1}"  >
-                        <a href="{{aboutUri}}/about/what-is-orcid/mission" title="" role="menu-item" (mouseenter)="menuHandler('RESEARCHERS', $event)"  (click)="menuHandler('RESEARCHERS', $event)">{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")}' | uppercase }} <span class="more" [ngClass]="{'less':mobileMenu.RESEARCHERS == true}"></span></a>
+                        <a href="{{aboutUri}}/about/what-is-orcid/mission" title="" role="menu-item" (mouseenter)="menuHandler('RESEARCHERS', $event)" (focus)="menuHandler('RESEARCHERS', $event)" (click)="menuHandler('RESEARCHERS', $event)">{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")}' | uppercase }} <span class="more" [ngClass]="{'less':mobileMenu.RESEARCHERS == true}"></span></a>
                         <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']" aria-label="submenu">
                             <!-- Mobile view Only -->
                             <li class="leaf    " [hidden]="!isMobile"><a href="{{getBaseUri()}}" title="" role="menu-item">{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}</a></li>
@@ -110,7 +110,7 @@
                     <!-- DRUPAL WEBSITE MENUS -->
                     <!-- FOR ORGANIZATIONS -->
                     <li role="presentation" class="expanded" [ngClass]="{'hover': mobileMenu.ORGANIZATIONS}" >
-                        <a href="{{aboutUri}}/organizations" role="menu-item" (mouseenter)="menuHandler('ORGANIZATIONS', $event)" (click)="menuHandler('ORGANIZATIONS', $event)">{{'${springMacroRequestContext.getMessage("public-layout.for_organizations")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}<span class="more" [ngClass]="{'less':mobileMenu.ORGANIZATIONS == true}"></span></a>
+                        <a href="{{aboutUri}}/organizations" role="menu-item" (mouseenter)="menuHandler('ORGANIZATIONS', $event)" (focus)="menuHandler('ORGANIZATIONS', $event)" (click)="menuHandler('ORGANIZATIONS', $event)">{{'${springMacroRequestContext.getMessage("public-layout.for_organizations")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}<span class="more" [ngClass]="{'less':mobileMenu.ORGANIZATIONS == true}"></span></a>
                         <ul class="menu lang-fixes"  aria-label="submenu">
                             <!-- Mobile view Only -->
                             <li role="presentation" class="first leaf" [hidden]="!isMobile" >
@@ -217,7 +217,7 @@
                     </li>
                     <!-- ABOUT -->
                     <li role="presentation" class="expanded" [ngClass]="{'hover': mobileMenu.ABOUT}"  >
-                        <a href="{{aboutUri}}/about" role="menu-item" (mouseenter)="menuHandler('ABOUT', $event)"  (click)="menuHandler('ABOUT', $event)">{{'${springMacroRequestContext.getMessage("public-layout.about")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} <span class="more" [ngClass]="{'less':mobileMenu.ABOUT == true}"></span></a>
+                        <a href="{{aboutUri}}/about" role="menu-item" (mouseenter)="menuHandler('ABOUT', $event)" (focus)="menuHandler('ABOUT', $event)" (click)="menuHandler('ABOUT', $event)">{{'${springMacroRequestContext.getMessage("public-layout.about")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} <span class="more" [ngClass]="{'less':mobileMenu.ABOUT == true}"></span></a>
 
                         <ul class="menu lang-fixes"  aria-label="submenu">
                             <!-- Mobile view Only -->
@@ -354,7 +354,7 @@
                     </li>
                     <!-- HELP -->
                     <li role="presentation" class="expanded" [ngClass]="{'hover': mobileMenu.HELP}"  >
-                        <a role="menu-item" href="{{aboutUri}}/help" (mouseenter)="menuHandler('HELP', $event)" (click)="menuHandler('HELP', $event)">{{'${springMacroRequestContext.getMessage("public-layout.help")?replace("<br />", " ")?replace("'", "\\'")}   '| uppercase }}<span class="more" [ngClass]="{'less':mobileMenu.HELP == true}"></span></a>
+                        <a role="menu-item" href="{{aboutUri}}/help" (mouseenter)="menuHandler('HELP', $event)" (focus)="menuHandler('HELP', $event)" (click)="menuHandler('HELP', $event)">{{'${springMacroRequestContext.getMessage("public-layout.help")?replace("<br />", " ")?replace("'", "\\'")}   '| uppercase }}<span class="more" [ngClass]="{'less':mobileMenu.HELP == true}"></span></a>
                         <ul  [hidden]="!isMobile" class="menu lang-fixes"  aria-label="submenu">
                             <!-- Mobile view Only -->
                             <li role="presentation" class="first leaf    "  [hidden]="!isMobile">
@@ -377,7 +377,7 @@
                     
                     <!-- SIGN IN/OUT -->
                     <@orcid.checkFeatureStatus featureName='ENABLE_USER_MENU' enabled=false>
-                        <li role="presentation" class="last leaf ${(nav=="signin")?then('open', '')}" [ngClass]="{'hover': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
+                        <li role="presentation" class="last leaf ${(nav=="signin")?then('open', '')}" [ngClass]="{'hover': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (focus)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
                             <a  *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin" role="menu-item">{{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>                    
                             <a *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout" role="menu-item">{{'${springMacroRequestContext.getMessage("public-layout.sign_out")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
                         </li>    

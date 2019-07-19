@@ -1,11 +1,11 @@
 <script type="text/ng-template" id="user-menu-template">
 
       <div class="form-group " role="presentation">
-                    <div class="search-container" role="search" (mouseleave)="state = false">
+                    <div class="search-container" role="navigation" aria-label="user menu" (mouseleave)="state = false">
                          <a *ngIf="!userInfo"  class="top-menu-button" href="{{getBaseUri()}}/signin">  
                           {{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase  }}/{{'${springMacroRequestContext.getMessage("header.register")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}
                          </a>
-                        <div *ngIf="userInfo && nameForm"  class="top-menu-button" (click)="state = !state"  >  
+                        <div *ngIf="userInfo && nameForm"  class="top-menu-button" (click)="state = !state" (keyup.enter)="state = !state" tabindex="0" >  
                             <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
                             <div class="name" *ngIf="!isMobile"> 
                                         <ng-container *ngIf="displayFullName()"> {{nameForm?.creditName?.value}}  </ng-container>

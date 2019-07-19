@@ -1,7 +1,6 @@
 <script type="text/ng-template" id="language-ng2-template"> 
-    <form id="language-form" action="#" role="presentation">
+    <form id="language-form" action="#" role="navigation"  aria-label="language menu">
         <select
-            aria-label="<@orcid.msg 'aria.language'/>"
             *ngIf="languages"
             name="language-codes" id="language-codes"
             [(ngModel)]="language" 
