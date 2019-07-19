@@ -3,7 +3,7 @@
 <div class="header2" >
     <div  *ngIf="!isOauth && mobileMenu"> 
 
-        <div class="container" role="banner">
+        <div class="container">
             <div class="logo-search-bar">
                 <div class="logo" aria-label="ORCID logo" role="banner" aria-label="orcid logo"> 
                     <a href="{{aboutUri}}"><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" alt="ORCID logo" /></a>

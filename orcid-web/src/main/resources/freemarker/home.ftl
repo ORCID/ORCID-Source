@@ -40,7 +40,7 @@
 	</div>
 	
 	<!--Latest News Column-->
-	<div id="home-blog-list" class="aside col-md-2">
+	<div id="home-blog-list" class="aside col-md-2" role="complementary" aria-label="LATEST NEWS">
 		<div class="inner-box">
 			<h3><@orcid.msg 'home.latest_news'/></h3>
 			<div class="item-list">
