@@ -92,7 +92,7 @@ public class MockSourceNameCache {
     }
     
     @After
-    public void after() {
+    public void restoreMocks() {
         //Restore the original beans
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", recordNameDao);        
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "clientDetailsDao", clientDetailsDao);

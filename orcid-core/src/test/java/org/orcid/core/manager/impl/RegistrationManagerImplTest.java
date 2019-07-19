@@ -48,7 +48,6 @@ import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
@@ -101,10 +100,10 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationManager, "emailFrequencyManager", mockEmailFrequencyManager);        
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
         
-        ReflectionTestUtils.setField(registrationManager, "notificationManager", mockNotificationManager);
+        TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", mockNotificationManager);
         doNothing().when(mockNotificationManager).sendAutoDeprecateNotification(Mockito.anyString(), Mockito.anyString());
         
-        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
+        TargetProxyHelper.injectIntoProxy(profileEntityManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
         Mockito.doNothing().when(mockProfileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
     }
     
@@ -115,8 +114,8 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @After
     public void after() {
-        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
-        ReflectionTestUtils.setField(registrationManager, "notificationManager", notificationManager);
+        TargetProxyHelper.injectIntoProxy(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", notificationManager);
     }
     
     @Test
