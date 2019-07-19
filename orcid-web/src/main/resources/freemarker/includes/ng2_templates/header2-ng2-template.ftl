@@ -14,8 +14,8 @@
                         <user-menu *ngIf="isMobile && !openMobileMenu"></user-menu>
                         </@orcid.checkFeatureStatus>
                         <language-ng2 *ngIf="openMobileMenu"></language-ng2>
-                        <span [hidden]="!openMobileMenu" style="height: 35px" class="close" (click)="toggleMenu()" alt="close menu"> </span>
-                        <img [hidden]="openMobileMenu" (click)="toggleMenu()" style="height: 35px" src="{{assetsPath + '/img/glyphicon-menu.svg'}}" alt="open menu"/>
+                        <span (click)="toggleMenu()" role="navigation"  tabindex="0" aria-label="main menu" [hidden]="!openMobileMenu" style="height: 35px" class="close" alt="close menu"> </span>
+                        <img (click)="toggleMenu()" role="navigation"  tabindex="0" aria-label="main menu" [hidden]="openMobileMenu" style="height: 35px" src="{{assetsPath + '/img/glyphicon-menu.svg'}}" alt="open menu"/>
                     </div>
                 </div>
                 <div class="search" >
