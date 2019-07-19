@@ -312,7 +312,7 @@ public class NotificationManagerTest extends DBUnitTest {
     @Test
     public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
         final String orcid = "0000-0000-0000-0003";
-        String delegateOrcid = "1234-5678-1234-5678";
+        String delegateOrcid = "0000-0000-0000-0002";
 
         ProfileEntity profile = new ProfileEntity();
         EmailEntity emailEntity = new EmailEntity();
