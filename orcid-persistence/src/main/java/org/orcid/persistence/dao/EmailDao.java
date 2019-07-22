@@ -97,4 +97,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     List<String> getIdsForUserOBOUpdate(String clientDetailsId, int max);
 
     void updateUserOBODetails(List<String> ids);
+
+    List<EmailEntity> get2019VisibilityEmailRecipients(int offset, int batchSize);
 }

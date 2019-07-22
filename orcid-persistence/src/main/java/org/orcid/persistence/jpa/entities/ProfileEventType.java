@@ -30,5 +30,8 @@ public enum ProfileEventType {
     JULY_2018_SKIPPED, JULY_2018_CREATED, JULY_2018_FAIL,
     
     // March 2019 quarterly notification
-    MARCH_2019_SENT, MARCH_2019_SKIPPED, MARCH_2019_FAILED;
+    MARCH_2019_SENT, MARCH_2019_SKIPPED, MARCH_2019_FAILED,
+    
+    // 2019 Visibility settings quarterly notification
+    EMAIL_VIS_2019_SENT, EMAIL_VIS_2019_SKIPPED, EMAIL_VIS_2019_FAILED,
 }
