@@ -61,6 +61,20 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         return results.isEmpty() ? null : results.get(0);
     }
     
+    @Override
+    public OrgEntity findByNameCityRegionCountryAndType(String name, String city, String region, String country, String orgType) {
+        TypedQuery<OrgEntity> query = entityManager.createQuery(
+                "from OrgEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and orgDisambiguated.orgType = :orgType",
+                OrgEntity.class);
+        query.setParameter("name", name);
+        query.setParameter("city", city);
+        query.setParameter("region", region);
+        query.setParameter("country", country);
+        query.setParameter("orgType", orgType);
+        List<OrgEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
+    }
+    
     /**
      * Deletes all orgs where the source matches the give app id
      * @param clientSourceId the app id
@@ -119,6 +133,63 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         Query query = entityManager.createNativeQuery("UPDATE org SET source_id = client_source_id, client_source_id = NULL where id IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Object[]> findConstraintViolatingDuplicateOrgDetails() {
+        Query query = entityManager.createNativeQuery("SELECT name, CASE WHEN city IS NULL OR city = '' THEN 'nocity' ELSE city END AS citygroup, CASE WHEN region IS NULL OR region = '' THEN 'noregion' ELSE region END AS regiongroup, CASE WHEN country IS NULL OR country = '' THEN 'nocountry' ELSE country END AS countrygroup, org_disambiguated_id FROM org WHERE org_disambiguated_id IS NOT NULL GROUP BY name, citygroup, regiongroup, countrygroup, org_disambiguated_id HAVING COUNT(*) > 1");
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getOrgIdsForDuplicateOrgDetails(String name, String city, String region, String country, Long orgDisambiguatedId) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM org WHERE COALESCE(name, '') = :name AND COALESCE(city, '') = :city AND COALESCE(region, '') = :region AND COALESCE(country, '') = :country AND COALESCE(org_disambiguated_id, 0) = :orgDisambiguatedId");
+        query.setParameter("name", name != null ? name : "");
+        query.setParameter("city", city.equals("nocity") ? "" : city);
+        query.setParameter("region", region.equals("noregion") ? "" : region);
+        query.setParameter("country", country.equals("nocountry") ? "" : country);
+        query.setParameter("orgDisambiguatedId", orgDisambiguatedId != null ? orgDisambiguatedId : 0L);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transactional
+    @Override
+    public int convertNullCountriesToEmptyStrings(int batchSize) {
+        Query query = entityManager.createNativeQuery("select id from org where country IS NULL");
+        query.setMaxResults(batchSize);
+        List<BigInteger> nullCountryIds = query.getResultList();
+        
+        query = entityManager.createNativeQuery("UPDATE org SET country = '' where id IN (:ids)");
+        query.setParameter("ids", nullCountryIds);
+        return query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transactional
+    @Override
+    public int convertNullCitiesToEmptyStrings(int batchSize) {
+        Query query = entityManager.createNativeQuery("select id from org where city IS NULL");
+        query.setMaxResults(batchSize);
+        List<BigInteger> nullCityIds = query.getResultList();
+        
+        query = entityManager.createNativeQuery("UPDATE org SET city = '' where id IN (:ids)");
+        query.setParameter("ids", nullCityIds);
+        return query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Transactional
+    @Override
+    public int convertNullRegionsToEmptyStrings(int batchSize) {
+        Query query = entityManager.createNativeQuery("select id from org where region IS NULL");
+        query.setMaxResults(batchSize);
+        List<BigInteger> nullRegionIds = query.getResultList();
+        query = entityManager.createNativeQuery("UPDATE org SET region = '' where id IN (:ids)");
+        query.setParameter("ids", nullRegionIds);
+        return query.executeUpdate();
     }
 
 }

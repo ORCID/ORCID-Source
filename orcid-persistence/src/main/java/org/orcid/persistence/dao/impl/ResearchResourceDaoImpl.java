@@ -88,5 +88,14 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
         query.setParameter("orcid", orcid);
         Long result = ((BigInteger)query.getSingleResult()).longValue();
         return (result != null && result > 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ResearchResourceEntity> getResearchResourcesReferencingOrgs(List<Long> orgIds) {
+        Query query = entityManager.createQuery("from ResearchResourceEntity r join r.hosts r_host join r.resourceItems items join items.hosts items_host where r_host.id in (:orgIds) or items_host.id in (:orgIds)");
+        query.setParameter("orgIds", orgIds);
+        return query.getResultList();
     }        
+
 }

@@ -22,6 +22,8 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
 
     OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, String country);
     
+    OrgEntity findByNameCityRegionCountryAndType(String name, String city, String region, String country, String orgType);
+    
     void removeOrgsByClientSourceId(String clientSourceId);
 
     OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, String country, OrgDisambiguatedEntity orgDisambiguated);
@@ -33,5 +35,15 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
     List<BigInteger> getIdsForUserSourceCorrection(int limit, List<String> publicClients);
 
     void correctUserSource(List<BigInteger> ids);
+
+    List<Object[]> findConstraintViolatingDuplicateOrgDetails();
+
+    List<BigInteger> getOrgIdsForDuplicateOrgDetails(String name, String city, String region, String country, Long orgDisambiguatedId);
+
+    int convertNullCountriesToEmptyStrings(int batchSize);
+
+    int convertNullCitiesToEmptyStrings(int batchSize);
+
+    int convertNullRegionsToEmptyStrings(int batchSize);
 
 }

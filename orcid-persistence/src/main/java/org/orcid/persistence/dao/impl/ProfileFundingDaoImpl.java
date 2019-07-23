@@ -334,4 +334,12 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         query.setParameter("ids", ids);
         query.executeUpdate();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<ProfileFundingEntity> getFundingsReferencingOrgs(List<Long> orgIds) {
+        Query query = entityManager.createQuery("from ProfileFundingEntity where org.id in (:orgIds)");
+        query.setParameter("orgIds", orgIds);
+        return query.getResultList();
+    }
 }
