@@ -32,7 +32,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     MAX_CLIENT_COUNT_BASIC: number = 1;
     MAX_CLIENT_COUNT_PREMIUM: number = 5;
 
-
+    isAdminDelegate
     authorizeURL: any;
     authorizeUrlBase: any;
     authorizeURLTemplate: any;
@@ -73,6 +73,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         private clientService: ClientService,
         private commonService: CommonService
     ) {
+        this.isAdminDelegate = false
         this.authorizeURL = null;
         this.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
         this.authorizeURLTemplate = this.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scope=[SCOPES]';
@@ -126,6 +127,10 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
                     if(this.userInfo.MEMBER_TYPE=='PREMIUM' || this.userInfo.MEMBER_TYPE=='PREMIUM_INSTITUTION'){
                         this.isPremium = true;
                         this.maxClients = this.MAX_CLIENT_COUNT_PREMIUM;
+                        
+                    }
+                    if (this.userInfo.DELEGATED_BY_ADMIN === "true") {
+                        this.isAdminDelegate = true;
                     }
                 },
                 error => {
@@ -342,7 +347,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     showAddClient(): void {
-        if(this.clients.length < this.maxClients){
+        if((this.clients.length < this.maxClients) || (this.isAdminDelegate &&  this.isPremium)){
             this.clientService.showAddClient()
             .pipe(    
                 takeUntil(this.ngUnsubscribe)
