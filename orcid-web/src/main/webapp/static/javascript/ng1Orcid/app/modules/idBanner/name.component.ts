@@ -50,9 +50,7 @@ export class NameComponent implements AfterViewInit, OnDestroy, OnInit {
 
     if (
       !(
-        this.nameForm != null &&
-        (this.nameForm.creditName == null ||
-          this.nameForm.givenNames.value.length == 0)
+        this.nameForm != null && (this.nameForm.creditName == null || !this.nameForm.givenNames.value || this.nameForm.givenNames.value.length == 0)
       )
     ) {
       display = true;
