@@ -70,12 +70,6 @@
                                                 <a name="delete-email-inline" class="glyphicon glyphicon-trash grey"
                                                     *ngIf="email.primary == false"
                                                     (click)="confirmDeleteEmailInline(email, $event)" >
-                                                    <div class="popover small-popover popover-tooltip top">
-                                                        <div class="arrow"></div>
-                                                        <div class="popover-content">
-                                                            <span><@spring.message "common.modals.delete"/></span>
-                                                        </div>
-                                                    </div>
                                                 </a>
                                             </td>
                                             <td width="100" style="padding-top: 0; position: static">

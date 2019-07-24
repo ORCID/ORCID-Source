@@ -7,12 +7,6 @@
                     <div class="workspace-section-title">
                         <div class="edit-name edit-option" *ngIf="!showEdit" id="open-edit-names">
                             <div class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'common.edit' />">
-                                <div class="popover popover-tooltip top">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <span><@orcid.msg 'manage_bio_settings.editName'/></span>
-                                    </div>                
-                                </div>
                             </div>
                         </div>
                     </div>

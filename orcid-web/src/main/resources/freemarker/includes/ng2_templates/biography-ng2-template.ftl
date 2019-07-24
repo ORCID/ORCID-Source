@@ -25,12 +25,6 @@
                     <li>
                         <div (click)="toggleEdit()" *ngIf="!showEdit" class="edit-biography edit-option" role="Button" aria-label="<@orcid.msg 'common.edit'/>" describedby="tooltip-editBio">
                             <span class="glyphicon glyphicon-pencil"  role="presentation"></span>
-                            <div class="popover popover-tooltip top"  role="presentation">
-                                <div class="arrow"  role="presentation"></div>
-                                <div class="popover-content"  role="presentation">
-                                    <span role="tooltip" id="tooltip-editBio"><@orcid.msg 'manage_bio_settings.editBio' /></span>
-                                </div>                
-                            </div>
                         </div>
                     </li>
                     <li>

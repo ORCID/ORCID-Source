@@ -38,13 +38,7 @@
                             <a
                             *ngIf="!(realUserOrcid === delegationDetails.receiverOrcid.value || isPasswordConfirmationRequired)"
                             (click)="confirmRevoke(delegationDetails.receiverName.value, delegationDetails.receiverOrcid.path)"
-                            class="glyphicon glyphicon-trash grey">
-                                <div class="popover popover-tooltip top">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <span><@spring.message "manage.revokeaccess"/></span>
-                                    </div>
-                                </div>                            
+                            class="glyphicon glyphicon-trash grey">                       
                             </a>
                             <span *ngIf="realUserOrcid === delegationDetails.receiverOrcid.path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
                         </td>
