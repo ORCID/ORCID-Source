@@ -9670,6 +9670,10 @@ footer-ng2 .footer-main {
     }
 }
 
+.workspace-profile i.glyphicon.glyphicon-question-sign {
+    margin-left: 4px;
+}
+
 
 @media (min-width: 992px) {
     oauth-authorization-ng2 > .col-md-offset-3 {
