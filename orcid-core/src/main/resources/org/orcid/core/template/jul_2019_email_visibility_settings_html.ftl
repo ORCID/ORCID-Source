@@ -19,7 +19,7 @@
                 <@emailMacros.msg "email.2019.vis_settings.as_an_orcid_user" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings" target="email.2019.vis_settings.visibility_settings"><@emailMacros.msg "email.2019.vis_settings.visibility_settings" /></a><@emailMacros.space /><@emailMacros.msg "email.2019.vis_settings.for_more_information" />
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.2019.vis_settings.when_we_first_launched" /><@emailMacros.space /><a href="${baseUri}/account" target="email.2019.vis_settings.account_settings"><@emailMacros.msg "email.2019.vis_settings.account_settings" /></a><@emailMacros.msg "email.common.period" />
+                <@emailMacros.msg "email.2019.vis_settings.when_we_first_launched" /><@emailMacros.space /><a href="https://orcid.org/blog/2013/01/18/orcid-tech-update-default-privacy-settings" target="email.2019.vis_settings.we_later_changed"><@emailMacros.msg "email.2019.vis_settings.we_later_changed" /></a><@emailMacros.space /><@emailMacros.msg "email.2019.vis_settings.except_your_email" /><@emailMacros.space /><a href="${baseUri}/account" target="email.2019.vis_settings.account_settings"><@emailMacros.msg "email.2019.vis_settings.account_settings" /></a><@emailMacros.msg "email.common.period" />
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.2019.vis_settings.we_are_contacting_you_to_thank" />
