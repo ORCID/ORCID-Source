@@ -28,15 +28,15 @@
                 <@emailMacros.msg "email.2019.vis_settings.changing_who_you_share" />
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.2019.vis_settings.for_more_information" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings" target="email.2019.vis_settings.visibility_settings"><@emailMacros.msg "email.2019.vis_settings.visibility_settings" /></a><@emailMacros.space /><@emailMacros.msg "email.2019.vis_settings.if_you_have" /> 
+                <@emailMacros.msg "email.2019.vis_settings.for_more_information_please" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings" target="email.2019.vis_settings.visibility_settings"><@emailMacros.msg "email.2019.vis_settings.visibility_settings" /></a><@emailMacros.space /><@emailMacros.msg "email.2019.vis_settings.if_you_have" /> 
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.2019.vis_settings.thanks_for_your" />
             </p>
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C; white-space: pre;">
-                <@emailMacros.msg "email.common.cheers" /><@emailMacros.msg "email.common.dear.comma" />
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+                <@emailMacros.msg "email.2019.vis_settings.cheers" /><@emailMacros.msg "email.common.dear.comma" />
             </p>
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C; white-space: pre;">
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.march_2019.director_name" /><@emailMacros.msg "email.common.dear.comma" /><@emailMacros.space /><@emailMacros.msg "email.march_2019.director_title" />
             </p>
             <#include "tips_disclaimer_html.ftl"/>
