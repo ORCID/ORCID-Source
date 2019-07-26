@@ -39,6 +39,7 @@ export class NotificationBodyComponent implements OnInit {
     encodedUrl: string;
     fundingsCount: number;
     peerReviewsCount: number;
+    worksCount: number;
     elementsModifiedCount: number;
     educationsList: string;
     employmentsList: string;
@@ -65,6 +66,7 @@ export class NotificationBodyComponent implements OnInit {
         this.employmentsCount = 0;
         this.fundingsCount = 0;
         this.peerReviewsCount = 0;
+        this.worksCount = 0;
         this.elementsModifiedCount = 0;
         this.educationsList = "";
         this.employmentsList = "";
@@ -101,6 +103,7 @@ export class NotificationBodyComponent implements OnInit {
                 this.elementsModifiedCount++;
                 
                 if(activity.itemType == "WORK"){
+                    this.worksCount++;
                     this.worksList =  this.worksList + "<strong>" + activity.itemName + "</strong>";
                     if(activity.externalIdentifier){
                         this.worksList = this.worksList + " (" + activity.externalIdentifier.type + ": " + activity.externalIdentifier.value + ")";
