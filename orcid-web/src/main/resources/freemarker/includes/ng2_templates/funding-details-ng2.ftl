@@ -205,12 +205,13 @@
                 <!-- active row source display -->
                 <div class="row source-line" *ngIf="group.activePutCode == funding.putCode.value">
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
+                        <#--  OBO  -->
+                        <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.source) ||
+                        (funding.assertionOriginOrcid && funding.assertionOriginOrcid !== funding.source)">
+                        {{funding.assertionOriginName || funding.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> 
+                        </ng-container>
                         {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
-                             <#--  OBO  -->
-                            <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.source) ||
-                            (funding.assertionOriginOrcid && funding.assertionOriginOrcid !== funding.source)">
-                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{funding.assertionOriginName || funding.assertionOriginOrcid}}
-                            </ng-container>
+
                     </div>                          
                     <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="editSources[group.groupId]">
                         <span class="glyphicon glyphicon-star" *ngIf="funding?.putCode.value == group?.defaultPutCode"></span><span *ngIf="funding?.putCode.value == group?.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
@@ -250,13 +251,14 @@
                 <!-- not active row && edit sources -->
                 <div *ngIf="group?.activePutCode != funding?.putCode.value" class="row source-line">
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                            <a (click)="swapSources(group, funding.putCode.value)">                                
-                            {{(funding?.sourceName == null || funding?.sourceName == '') ? funding?.source : funding?.sourceName}}
-                             <#--  OBO  -->
+                            <a (click)="swapSources(group, funding.putCode.value)">
+                            <#--  OBO  -->
                             <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.source) ||
                             (funding.assertionOriginOrcid && funding.assertionOriginOrcid !== funding.source)">
-                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{funding.assertionOriginName || funding.assertionOriginOrcid}}
-                            </ng-container>
+                             {{funding.assertionOriginName || funding.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                            </ng-container>                                
+                            {{(funding?.sourceName == null || funding?.sourceName == '') ? funding?.source : funding?.sourceName}}
+         
                         </a>
                     </div>                        
                     <div class="col-md-3 col-sm-3 col-xs-6">
@@ -293,12 +295,13 @@
                 <!-- Bottom row -->
                 <div class="row source-line" *ngIf="editSources[group.groupId] != true">
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                          <b><@orcid.msg 'groups.common.source'/>:</b> {{(funding?.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
+                          <b><@orcid.msg 'groups.common.source'/>:</b> 
                              <#--  OBO  -->
                             <ng-container *ngIf="(funding.assertionOriginClientId && funding.assertionOriginClientId !== funding.source) ||
                             (funding.assertionOriginOrcid && funding.assertionOriginOrcid !== funding.source)">
-                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{funding.assertionOriginName || funding.assertionOriginOrcid}}
+                             {{funding.assertionOriginName || funding.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                             </ng-container>
+                            {{(funding?.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                     </div>                          
                     <div class="col-md-3 col-sm-3 col-xs-6" *ngIf="group?.activePutCode == funding?.putCode.value">
                         <span class="glyphicon glyphicon-star"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span>&nbsp;<span *ngIf="!(group.fundings.length == 1)">(</span><a (click)="showSources(group, $event)" *ngIf="!(group.fundings.length == 1)" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.fundings.length}}</a><span *ngIf="!(group.fundings.length == 1)">)</span>

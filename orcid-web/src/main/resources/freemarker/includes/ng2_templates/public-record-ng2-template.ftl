@@ -30,11 +30,12 @@
                                     <ng-container  *ngFor="let otherNameSource of personData.publicGroupedOtherNames[otherName]; let lastSource = last;">
 
                                         <ng-container>
-                                            {{otherNameSource?.source?.sourceName?.content || otherNameSource?.source?.sourceOrcid?.path}}
-                                             <#--  OBO  -->
+                                            <#--  OBO  -->
                                              <ng-container *ngIf="(otherNameSource.source.assertionOriginClientId && otherNameSource.source.assertionOriginClientId.path !== otherNameSource.source.sourceClientId.path) || (otherNameSource.source.assertionOriginOrcid && otherNameSource.source.assertionOriginOrcid.path !== otherNameSource.source.sourceOrcid.path)">
-                                                <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{otherNameSource?.source?.assertionOriginName?.content || otherNameSource?.source?.assertionOriginOrcid?.path}}
+                                                 {{otherNameSource?.source?.assertionOriginName?.content || otherNameSource?.source?.assertionOriginOrcid?.path}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
+                                            {{otherNameSource?.source?.sourceName?.content || otherNameSource?.source?.sourceOrcid?.path}}
+                          
                                         </ng-container>
 
                                          <ng-container  *ngIf="otherNameSource.createdDate">
@@ -78,12 +79,12 @@
                                 <p><b>${springMacroRequestContext.getMessage("public_record.sources")}:</b><br />
                                     <ng-container  *ngFor="let urlSource of personData.publicGroupedResearcherUrls[url]; let lastSource = last;">
                                         <ng-container>
-                                            {{urlSource?.source?.sourceName?.content || urlSource?.source?.sourceOrcid?.path}}
-                                            <#--  OBO  -->
+                                             <#--  OBO  -->
                                              <ng-container *ngIf="(urlSource.source.assertionOriginClientId && urlSource.source.assertionOriginClientId.path !== urlSource.source.sourceClientId.path) ||
                                                                 (urlSource.source.assertionOriginOrcid && urlSource.source.assertionOriginOrcid.path !== urlSource.source.sourceOrcid.path)">
-                                                <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{urlSource?.source?.assertionOriginName?.content || urlSource?.source?.assertionOriginOrcid?.path}}
-                                             </ng-container>
+                                                 {{urlSource?.source?.assertionOriginName?.content || urlSource?.source?.assertionOriginOrcid?.path}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             </ng-container>    
+                                            {{urlSource?.source?.sourceName?.content || urlSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
                                         <ng-container *ngIf="urlSource.createdDate">
                                             {{urlSource.createdDate.value | ajaxTickDateToISO8601 }}
@@ -130,12 +131,13 @@
                                     <ng-container  *ngFor="let addressSource of personData.publicGroupedAddresses[address]; let lastSource = last;">
 
                                         <ng-container>
-                                            {{addressSource?.source?.sourceName?.content || addressSource?.source?.sourceOrcid?.path}}
                                             <#--  OBO  -->
                                              <ng-container *ngIf="(addressSource.source.assertionOriginClientId && addressSource.source.assertionOriginClientId.path !== addressSource.source.sourceClientId.path) ||
                                                                 (addressSource.source.assertionOriginOrcid && addressSource.source.assertionOriginOrcid.path !== addressSource.source.sourceOrcid.path)">
-                                                <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{addressSource.source.assertionOriginName.content || addressSource.source.assertionOriginOrcid?.path}}
+                                                 {{addressSource.source.assertionOriginName.content || addressSource.source.assertionOriginOrcid?.path}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
+                                            {{addressSource?.source?.sourceName?.content || addressSource?.source?.sourceOrcid?.path}}
+
                                         </ng-container>
 
                                          <ng-container  *ngIf="addressSource.createdDate">
@@ -180,12 +182,12 @@
                                     <ng-container  *ngFor="let keywordSource of personData.publicGroupedKeywords[keyword]; let lastSource = last;">
 
                                         <ng-container>
-                                            {{keywordSource?.source?.sourceName?.content || keywordSource?.source?.sourceOrcid?.path}}
                                             <#--  OBO  -->
                                              <ng-container *ngIf="(keywordSource.source.assertionOriginClientId && keywordSource.source.assertionOriginClientId.path !== keywordSource.source.sourceClientId.path) ||
                                                                 (keywordSource.source.assertionOriginOrcid && keywordSource.source.assertionOriginOrcid.path !== keywordSource.source.sourceOrcid.path)">
-                                                <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{keywordSource.source.assertionOriginName.content || keywordSource.source.assertionOriginOrcid?.path}}
+                                                 {{keywordSource.source.assertionOriginName.content || keywordSource.source.assertionOriginOrcid?.path}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
+                                             {{keywordSource?.source?.sourceName?.content || keywordSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
 
                                          <ng-container  *ngIf="keywordSource.createdDate">
@@ -234,12 +236,13 @@
 
                                     <div *ngIf="showSources['external-identifiers']" class="source-line separator">                                                                                                                            
                                         <p><b>${springMacroRequestContext.getMessage("public_record.sources")}:</b><br />
-                                            {{externalIdentifier?.source?.sourceName?.content }}
+                                            
                                             
                                              <#--  OBO  -->
                                              <ng-container *ngIf="externalIdentifier.source.assertionOriginClientId && externalIdentifier.source.assertionOriginClientId.path !== externalIdentifier.source.sourceClientId.path">
-                                                <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{externalIdentifier.source.assertionOriginName.content}}
+                                                 {{externalIdentifier.source.assertionOriginName.content}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
+                                             {{externalIdentifier?.source?.sourceName?.content }}
 
                                             {{externalIdentifier.createdDate.value | ajaxTickDateToISO8601 }}
                                         </p>

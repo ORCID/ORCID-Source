@@ -325,12 +325,13 @@
                 <div *ngIf="group.activePutCode != researchResource.putCode" class="row source-line">
                     <div class="col-md-7 col-sm-7 col-xs-12">
                         <a (click)="group.activePutCode = researchResource.putCode">                                
-                            {{researchResource?.sourceName}}
+                            
                             <#--  OBO  -->
                             <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.source) ||
                             (researchResource.assertionOriginOrcid && researchResource.assertionOriginOrcid !== researchResource.source)">
-                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}}
+                            {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> 
                             </ng-container>
+                            {{researchResource?.sourceName}}
                         </a>
                     </div>                                        
                     <div class="col-md-3 col-sm-3 col-xs-10">
@@ -359,12 +360,13 @@
                 </div> 
                 <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                        <b><@orcid.msg 'groups.common.source'/>:</b> {{researchResource?.sourceName }}
+                        <b><@orcid.msg 'groups.common.source'/>:</b>
                         <#--  OBO  -->
                         <ng-container *ngIf="(researchResource.assertionOriginClientId && researchResource.assertionOriginClientId !== researchResource.source) ||
                         (researchResource.assertionOriginOrcid && researchResource.assertionOriginOrcid !== researchResource.source)">
-                        <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}}
+                         {{researchResource.assertionOriginName || researchResource.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                         </ng-container>
+                         {{researchResource?.sourceName }}
                     </div>                   
                     <div class="col-md-3 col-sm-3 col-xs-9">
                         <span class="glyphicon glyphicon-star"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span *ngIf="group?.researchResources?.length != 1"> (</span><a (click)="showSources(group, $event)" *ngIf="group?.researchResources?.length != 1" (mouseenter)="showTooltip(group.groupId+'-sources')" (mouseleave)="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.researchResources.length}}</a><span *ngIf="group?.researchResources?.length != 1">)</span>
