@@ -22,7 +22,7 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
 
     OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, String country);
     
-    OrgEntity findByNameCityRegionCountryAndType(String name, String city, String region, String country, String orgType);
+    OrgEntity findByNameCityRegionCountryAndType(String name, String city, String region, String country, String sourceType);
     
     void removeOrgsByClientSourceId(String clientSourceId);
 
