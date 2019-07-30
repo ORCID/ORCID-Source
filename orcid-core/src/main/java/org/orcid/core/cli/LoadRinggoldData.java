@@ -474,7 +474,7 @@ public class LoadRinggoldData {
             LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
             String city = altName.get("city").asText();
             Iso3166Country country = Iso3166Country.fromValue(altName.get("country").asText());
-            OrgEntity existingOrg = orgDao.findByNameCityRegionCountryAndType(name, city, null, country.name(), "RINGGOLD");
+            OrgEntity existingOrg = orgDao.findByNameCityRegionCountryAndType(name, city, "", country.name(), "RINGGOLD");
             if (existingOrg != null) {
                 if (existingOrg.getOrgDisambiguated() == null) {
                     existingOrg.setOrgDisambiguated(disambiguatedEntity);
