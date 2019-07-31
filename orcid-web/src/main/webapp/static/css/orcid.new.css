@@ -9684,7 +9684,7 @@ footer-ng2 .footer-main {
 	}
 }
 
-@media (max-width: 1358px) and (min-width: 992px) {
+@media (max-width: 1358px) and (min-width: 768px) {
 	.row.public-profile {
 		margin: 0;
 	}
