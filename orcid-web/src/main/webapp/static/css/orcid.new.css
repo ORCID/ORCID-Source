@@ -8222,7 +8222,6 @@ ul.comma li:last-child:after {
     #loginForm #ajax-loader {
         text-align: center;
         width: auto;
-        margin-top: 0
     }
 
     #old-login #login-error-mess {
