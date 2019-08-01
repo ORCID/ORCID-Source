@@ -8222,7 +8222,6 @@ ul.comma li:last-child:after {
     #loginForm #ajax-loader {
         text-align: center;
         width: auto;
-        margin-top: 0
     }
 
     #old-login #login-error-mess {
@@ -9688,7 +9687,7 @@ footer-ng2 .footer-main {
 	}
 }
 
-@media (max-width: 1358px) and (min-width: 992px) {
+@media (max-width: 1358px) and (min-width: 768px) {
 	.row.public-profile {
 		margin: 0;
 	}
