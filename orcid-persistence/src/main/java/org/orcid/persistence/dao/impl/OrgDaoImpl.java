@@ -51,7 +51,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     @Override
     public OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, String country) {
         TypedQuery<OrgEntity> query = entityManager.createQuery(
-                "from OrgEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country",
+                "from OrgEntity where name = :name and city = :city and region = :region and country = :country",
                 OrgEntity.class);
         query.setParameter("name", name);
         query.setParameter("city", city);

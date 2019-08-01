@@ -500,7 +500,7 @@ public class LoadRinggoldDataTest {
         assertEquals(Iso3166Country.CR.name(), entity.getCountry());
         assertEquals("Testing Org", entity.getName());
         assertEquals(Long.valueOf(3000), entity.getOrgDisambiguated().getId());
-        assertEquals(null, entity.getRegion());               
+        assertEquals("", entity.getRegion());               
     }
 
     
@@ -683,12 +683,12 @@ public class LoadRinggoldDataTest {
                         entity.setRegion(region);
                         entity.setCountry(country.name());
 
-                        if ("1. Alt Name".equals(name) && "AltCity#1".equals(city) && region == null && Iso3166Country.MX.equals(country)) {
+                        if ("1. Alt Name".equals(name) && "AltCity#1".equals(city) &&  region.equals("") && Iso3166Country.MX.equals(country)) {
                             OrgDisambiguatedEntity od = new OrgDisambiguatedEntity();
                             // ringgold_id * 1000
                             od.setId(Long.valueOf(1000));
                             entity.setOrgDisambiguated(od);
-                        } else if ("2. Alt Name".equals(name) && "AltCity#2".equals(city) && region == null && Iso3166Country.BR.equals(country)) {
+                        } else if ("2. Alt Name".equals(name) && "AltCity#2".equals(city) &&  region.equals("") && Iso3166Country.BR.equals(country)) {
                             OrgDisambiguatedEntity od = new OrgDisambiguatedEntity();
                             // ringgold_id * 1000
                             od.setId(Long.valueOf(2000));
