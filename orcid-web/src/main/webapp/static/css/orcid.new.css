@@ -9061,10 +9061,6 @@ a.footer-url {
     flex-direction: row-reverse;
 }
 
-.header2 select#language-codes:focus {
-    outline: 0;
-}
-
 .header2 .search-container {
     flex-grow: 1;
 }

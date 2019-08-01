@@ -29,9 +29,9 @@
                     <div class="form-group " role="presentation">
                         <div class="search-container" role="search"> 
                         <div class="input-group" role="presentation">
-                            <div class="input-group-addon"   >
+                            <div class="input-group-addon"   (click)="clickDropdown()"  (keyup.enter)="clickDropdown()"  tabindex="0" >
                                 <div role="presentation" class="search-dropdown" [ngClass]="{'hover': searchDropdownOpen}"  (mouseleave)="closeDropdown()">
-                                    <div tabindex="0"  role="combobox" aria-label="'${springMacroRequestContext.getMessage("aria.search-location")?replace("<br />", " ")?replace("'", "\\'")}" role="listbox" class="search-dropbtn"   (click)="clickDropdown()"  (keyup.enter)="clickDropdown()"> {{ (headerSearch.searchOption === 'website'? '${springMacroRequestContext.getMessage("layout.public-layout.website")?replace("<br />", " ")?replace("'", "\\'")}':'${springMacroRequestContext.getMessage("layout.public-layout.registry")?replace("<br />", " ")?replace("'", "\\'")}') | titlecase }} <span [ngClass]="{'dropdown-arrow': !searchDropdownOpen, 'dropdown-arrow-up': searchDropdownOpen}"></span> </div>
+                                    <div  role="combobox" aria-label="'${springMacroRequestContext.getMessage("aria.search-location")?replace("<br />", " ")?replace("'", "\\'")}" role="listbox" class="search-dropbtn"  > {{ (headerSearch.searchOption === 'website'? '${springMacroRequestContext.getMessage("layout.public-layout.website")?replace("<br />", " ")?replace("'", "\\'")}':'${springMacroRequestContext.getMessage("layout.public-layout.registry")?replace("<br />", " ")?replace("'", "\\'")}') | titlecase }} <span [ngClass]="{'dropdown-arrow': !searchDropdownOpen, 'dropdown-arrow-up': searchDropdownOpen}"></span> </div>
                                     <ul class="dropdown-content" role="presentation">
                                         <div  tabindex="0" role="menuitem"  (keyup.enter)="clickDropdown('registry')" (click)="clickDropdown('registry')"> {{'${springMacroRequestContext.getMessage("layout.public-layout.registry")?replace("<br />", " ")?replace("'", "\\'")}'| titlecase }} </div>
                                         <div tabindex="0"  role="menuitem"  (keyup.enter)="clickDropdown('website')" (click)="clickDropdown('website')"> {{'${springMacroRequestContext.getMessage("layout.public-layout.website")?replace("<br />", " ")?replace("'", "\\'")}'| titlecase  }} </div>
@@ -39,8 +39,8 @@
                                 </div>  
                             </div>
                             <input (keyup.enter)="searchSubmit()" [(ngModel)]="headerSearch.searchInput" aria-label="search"  class="form-control" name="search" type="text" placeholder="${springMacroRequestContext.getMessage("public-layout.search")?replace("<br />", " ")?replace("'", "\\'")}"/>
-                            <div aria-label="${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")?replace("<br />", " ")?replace("'", "\\'")}" class="input-group-addon" role="presentation">
-                                <span tabindex="0" role="button" aria-label="${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")?replace("<br />", " ")?replace("'", "\\'")}" class="glyphicon glyphicon-search" (keyup.enter)="searchSubmit()" (click)="searchSubmit()"></span> 
+                            <div tabindex="0" role="button" (keyup.enter)="searchSubmit()" (click)="searchSubmit()" aria-label="${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")?replace("<br />", " ")?replace("'", "\\'")}" aria-label="${springMacroRequestContext.getMessage("orcid_bio_search.btnsearch")?replace("<br />", " ")?replace("'", "\\'")}" class="input-group-addon" role="presentation">
+                                <span class="glyphicon glyphicon-search" ></span> 
                             </div>
                         </div>
                     </div>        
