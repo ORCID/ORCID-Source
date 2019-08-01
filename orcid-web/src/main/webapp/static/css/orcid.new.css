@@ -9524,6 +9524,7 @@ user-menu .top-menu-button {
     
 user-menu .top-menu-button:hover {
     background-color: rgba(76, 66, 162, 0.04);
+    color: #2e7f9f;
 }
 
 user-menu .top-menu-button .more,  user-menu .top-menu-button .less {
