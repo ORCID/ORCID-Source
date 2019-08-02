@@ -23,9 +23,7 @@ Employment (1)
 ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
 MORE INFO: https://testserver.orcid.org/inbox#2
 
-        Lovely Publisher 1 has updated recent funding on your ORCID record.(2014-07-12)
-            *work-1 (doi: doi01)
-            *education-1 
+Lovely Publisher 1 has updated recent funding on your ORCID record. (2014-07-12)
 
 Lovely Publisher 1: Request to add items (2014-07-10)
 Works (2)
