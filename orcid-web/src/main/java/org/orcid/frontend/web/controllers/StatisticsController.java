@@ -34,6 +34,9 @@ public class StatisticsController extends BaseController {
     @RequestMapping
     public ModelAndView getStatistics() {        
         ModelAndView mav = new ModelAndView("statistics");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
         return mav;
     }
     

@@ -6,7 +6,7 @@
                 <h2><@orcid.msg 'manage.developer_tools.group.title'/></h2>
             </div>
             
-            <div *ngIf="clients.length < maxClients" class="col-md-3 col-sm-2 col-xs-2">                
+            <div *ngIf="(clients.length < maxClients) || (isAdminDelegate &&  isPremium)" class="col-md-3 col-sm-2 col-xs-2">                
                 <button class="pull-right btn btn-primary" (click)="showAddClient()"><@orcid.msg 'manage.developer_tools.group.add'/></button>
             </div>              
         </div>

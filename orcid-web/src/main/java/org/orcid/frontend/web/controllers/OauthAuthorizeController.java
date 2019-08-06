@@ -186,7 +186,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
                 return error;
             }
         }
-        
+        mav.addObject("noIndex", true);
         mav.addObject("hideSupportWidget", true);        
         mav.setViewName("confirm-oauth-access");        
         return mav;

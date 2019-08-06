@@ -21,12 +21,20 @@ public class SearchOrcidController extends BaseController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ModelAndView buildSearchView() {
-        return new ModelAndView("advanced_search");
+        ModelAndView mav = new ModelAndView("advanced_search");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
+        return mav;
     }
 
     @RequestMapping(value = "/quick-search")
     public ModelAndView quickSearch() {
-        return new ModelAndView("quick_search");
+        ModelAndView mav = new ModelAndView("quick_search");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
+        return mav;
     }
 
 }

@@ -118,13 +118,15 @@
                                                             <span *ngIf="otherName.source != orcidId && otherName.source != null">{{otherName.content}}</span>                                           
                                                         </div>                                      
                                                         <div class="source" *ngIf="otherName.sourceName || otherName.sourceName == null">
-                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="otherName.sourceName">{{otherName.sourceName}}
-
-                                                             <#--  OBO  -->
+                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="otherName.sourceName">
+                                                                                                                        
+                                                            <#--  OBO  -->
                                                             <ng-container *ngIf="(otherName.assertionOriginClientId && otherName.assertionOriginClientId !== otherName.source) ||
                                                             (otherName.assertionOriginOrcid && otherName.assertionOriginOrcid !== otherName.source.source)">
-                                                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{otherName.assertionOriginName || otherName.assertionOriginOrcid}}
-                                                            </ng-container>
+                                                            {{otherName.assertionOriginName || otherName.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> 
+                                                            </ng-container> 
+                                                            {{otherName.sourceName}}
+
                                                             </span><span *ngIf="otherName.sourceName == null">{{orcidId}}</span>
                                                         </div>
                                                     </div>                          

@@ -2,6 +2,11 @@
 <head>
     <meta charset="utf-8"/>
     <title>${springMacroRequestContext.getMessage("playground.titleORCIDPlayground")}</title>
+    <#if (noIndex)??>
+        <meta name="googlebot" content="noindex">
+        <meta name="robots" content="noindex">
+        <meta name="BaiduSpider" content="noindex">
+    </#if>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
     <script type="text/javascript">
         if (typeof jQuery == 'undefined') {

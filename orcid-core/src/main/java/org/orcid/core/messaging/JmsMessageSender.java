@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.solr.client.solrj.SolrServer;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
@@ -40,10 +39,7 @@ public class JmsMessageSender {
     
     @Resource
     private JmsTemplate jmsTemplate;
-    
-    @Resource(name = "orgDisambiguatedSolrServer")
-    private SolrServer solrServer;
-    
+        
     protected boolean sendObject(final Object obj, String destination) throws JmsException{
         if (isEnabled() && !pauseForAWhile){
             jmsTemplate.convertAndSend(destination, obj);

@@ -94,7 +94,11 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
     public ModelAndView resetPassword() {
-        return new ModelAndView("reset_password");
+        ModelAndView mav = new ModelAndView("reset_password");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
+        return mav;
     }
 
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.GET)
@@ -284,7 +288,9 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/reactivation/{resetParams}", method = RequestMethod.GET)
     public ModelAndView reactivation(HttpServletRequest request, @PathVariable("resetParams") String resetParams, RedirectAttributes redirectAttributes) {
-        return new ModelAndView("reactivation");
+        ModelAndView mav = new ModelAndView("reactivation");
+        mav.addObject("noIndex", true);
+        return mav;
     }
 
     @RequestMapping(value = "/reactivationData.json", method = RequestMethod.GET)

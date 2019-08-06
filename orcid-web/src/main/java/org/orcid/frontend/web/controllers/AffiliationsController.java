@@ -442,7 +442,7 @@ public class AffiliationsController extends BaseWorkspaceController {
 
         if (!PojoUtil.isEmpty(affiliationForm.getEndDate()))
             affiliationForm.getEndDate().setErrors(new ArrayList<String>());
-        
+
         if (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !validDate(affiliationForm.getStartDate())) {
             primaryValidation = false;
             setError(affiliationForm.getStartDate(), "common.dates.invalid");
@@ -452,11 +452,11 @@ public class AffiliationsController extends BaseWorkspaceController {
             primaryValidation = false;
             setError(affiliationForm.getEndDate(), "common.dates.invalid");
         }
-        
+
         if (primaryValidation && (PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
             setError(affiliationForm.getStartDate(), "common.dates.start_date_required");
         }
-        
+
         if (primaryValidation && (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
             if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
                 setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
@@ -480,8 +480,10 @@ public class AffiliationsController extends BaseWorkspaceController {
                     // affiliation
                     AffiliationForm defaultAffiliation = groupForm.getDefaultAffiliation();
                     if (defaultAffiliation != null) {
-                        // Set country name
-                        defaultAffiliation.setCountryForDisplay(groupForm.getDefaultAffiliation().getCountry().getValue());
+                        if (!PojoUtil.isEmpty(groupForm.getDefaultAffiliation().getCountry())) {
+                            // Set country name
+                            defaultAffiliation.setCountryForDisplay(groupForm.getDefaultAffiliation().getCountry().getValue());
+                        }
                         // Set org disambiguated data
                         if (!PojoUtil.isEmpty(defaultAffiliation.getOrgDisambiguatedId())) {
                             OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(defaultAffiliation.getOrgDisambiguatedId().getValue()));
@@ -499,8 +501,10 @@ public class AffiliationsController extends BaseWorkspaceController {
                     // Fill country and org disambiguated data for each
                     // affiliation
                     for (AffiliationForm aff : groupForm.getAffiliations()) {
-                        // Set country name
-                        aff.setCountryForDisplay(aff.getCountry().getValue());
+                        if (!PojoUtil.isEmpty(aff.getCountry())) {
+                            // Set country name
+                            aff.setCountryForDisplay(aff.getCountry().getValue());
+                        }
                         // Set org disambiguated data
                         if (!PojoUtil.isEmpty(aff.getOrgDisambiguatedId())) {
                             if (!PojoUtil.isEmpty(aff.getOrgDisambiguatedId())) {

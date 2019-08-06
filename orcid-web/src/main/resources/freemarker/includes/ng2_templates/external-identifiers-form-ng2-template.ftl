@@ -117,14 +117,14 @@
                                                             </p> 
                                                         </div>
                                                         <div class="source">
-                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="externalIdentifier.sourceName">{{externalIdentifier.sourceName}}
-                                                        
-
-                                                             <#--  OBO  -->
+                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="externalIdentifier.sourceName">
+                                                            
+                                                                                                                         <#--  OBO  -->
                                                             <ng-container *ngIf="(externalIdentifier.assertionOriginClientId && externalIdentifier.assertionOriginClientId !== externalIdentifier.source) ||
                                                             (externalIdentifier.assertionOriginOrcid && externalIdentifier.assertionOriginOrcid !== externalIdentifier.source.source)">
-                                                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{externalIdentifier.assertionOriginName || externalIdentifier.assertionOriginOrcid}}
+                                                             {{externalIdentifier.assertionOriginName || externalIdentifier.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                                             </ng-container>
+                                                            {{externalIdentifier.sourceName}}
                                                             </span>
                                                             
                                                             <span *ngIf="externalIdentifier.sourceName == null">{{orcidId}}</span></div>                                
