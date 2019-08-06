@@ -1,5 +1,6 @@
 package org.orcid.scheduler.indexer.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -12,11 +13,11 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.messaging.JmsMessageSender;
+import org.orcid.core.solr.OrcidSolrLegacyIndexer;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.scheduler.indexer.OrcidRecordIndexer;
-import org.orcid.scheduler.indexer.solr.SolrIndexer;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     private EmailManagerReadOnly emailManagerReadOnly;
     
     @Resource
-    private SolrIndexer solrIndexer;
+    private OrcidSolrLegacyIndexer OrcidSolrLegacyIndexer;
     
     private int claimReminderAfterDays = 8;
     
@@ -98,7 +99,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     }
     
     @Override
-    public void reindexRecordsForSolrUpgrade() {
+    public void reindexRecordsOnSolr() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.SOLR_UPDATE, updateSolrQueueName, updateSummaryQueueName, updateActivitiesQueueName);
     }
     
@@ -169,7 +170,11 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     private boolean indexSolr(LastModifiedMessage mess, String solrQueue, IndexingStatus status) {
         // Feed the old SOLR instance, just don't feed it for all records, just for the ones that are created/modified by users
         if(!IndexingStatus.SOLR_UPDATE.equals(status) && feedLegacySolr) {
-            solrIndexer.persist(mess.getOrcid());
+            try {
+                OrcidSolrLegacyIndexer.persist(mess.getOrcid());
+            } catch (IOException e) {
+                LOG.warn("Unable to feed old solr instance", e); 
+            }            
         }
         // Send message to solr queue
         if (!messaging.send(mess, solrQueue)) {
