@@ -342,7 +342,16 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         Query query = entityManager.createNativeQuery("UPDATE email SET source_id = client_source_id, client_source_id = NULL where email_hash IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
-    }       
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<EmailEntity> get2019VisibilityEmailRecipients(int offset, int batchSize) {
+        Query query = entityManager.createNativeQuery("SELECT * from email WHERE is_verified IS TRUE AND is_primary IS TRUE AND orcid in (SELECT email.orcid FROM email INNER JOIN profile ON email.orcid = profile.orcid INNER JOIN email_frequency ON email.orcid = email_frequency.orcid WHERE email.is_current IS TRUE AND profile.record_locked IS FALSE AND profile.deprecated_date IS NULL AND profile.profile_deactivation_date IS NULL AND profile.activities_visibility_default='PRIVATE' AND email_frequency.send_quarterly_tips IS TRUE)", EmailEntity.class);
+        query.setMaxResults(batchSize);
+        query.setFirstResult(offset);
+        return query.getResultList();
+    }
     
     
     @SuppressWarnings("unchecked")
