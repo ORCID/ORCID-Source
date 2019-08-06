@@ -1216,7 +1216,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private WorkType getWorkType(String name) {
-        if(org.orcid.jaxb.model.common.WorkType.SOFTWARE.name().equals(name) || org.orcid.jaxb.model.common.WorkType.PREPRINT.name().equals(name)) {
+        if(org.orcid.jaxb.model.common.WorkType.SOFTWARE.name().equals(name) || org.orcid.jaxb.model.common.WorkType.PREPRINT.name().equals(name) || org.orcid.jaxb.model.common.WorkType.ANNOTATION.name().equals(name)) {
             return WorkType.OTHER;
         }
         
