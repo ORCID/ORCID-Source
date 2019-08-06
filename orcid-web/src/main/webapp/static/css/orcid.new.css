@@ -8949,7 +8949,7 @@ a.footer-url {
 
 .header2 .input-group-addon {
     padding: 0;
-    background-color: #808083;
+    background-color: #747476;
     color: white;
 }
 
@@ -9692,4 +9692,8 @@ footer-ng2 .footer-main {
 	.row.public-profile {
 		margin: 0;
 	}
+}
+
+footer-ng2 .footer-row-container nav a {
+    color: rgba(0,0,0,0.87);
 }
