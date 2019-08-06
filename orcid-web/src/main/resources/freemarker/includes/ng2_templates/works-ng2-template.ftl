@@ -256,15 +256,9 @@
                         </ul>
                         <div class="bulk-edit-delete">
                             <div class="centered">
-                                <a (click)="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" (mouseenter)="showTooltip('Bulk-Edit')" (mouseleave)="hideTooltip('Bulk-Edit')">
+                                <a (click)="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button">
                                     <span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
                                 </a>
-                                <div class="popover popover-tooltip top bulk-edit-popover" *ngIf="showElement['Bulk-Edit']">
-                                    <div class="arrow"></div>
-                                    <div class="popover-content">
-                                        <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>              
