@@ -21,6 +21,7 @@ import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
+import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
@@ -61,6 +62,7 @@ import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
+import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -82,6 +84,9 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
 
+    @Resource(name = "membersManagerV3")
+    MembersManager membersManager;
+    
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
 
@@ -246,6 +251,18 @@ public class PublicProfileController extends BaseWorkspaceController {
             publicRecordPersonDetails.setPublicGroupedResearcherUrls(null);
             publicRecordPersonDetails.setPublicGroupedPersonExternalIdentifiers(null);
         }
+        
+        // If the id belongs to a member the name field is removed
+        Member member = null;
+        try {
+        	member  = membersManager.getMember(orcid);
+        } catch (RuntimeException e) {
+        	
+        }
+	    if (member != null) {
+	    	publicRecordPersonDetails.setDisplayName(null);
+	    }
+	     
         return publicRecordPersonDetails;
     }
 
