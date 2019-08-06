@@ -104,6 +104,8 @@ public class BaseController {
     private String aboutUri;    
 
     private String googleAnalyticsTrackingId;
+    
+    private String hotjarTrackingId;
 
     protected List<String> domainsAllowingRobots;
 
@@ -184,6 +186,16 @@ public class BaseController {
     @Value("${org.orcid.frontend.web.googleAnalyticsTrackingId:}")
     public void setGoogleAnalyticsTrackingId(String googleAnalyticsTrackingId) {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
+    }
+    
+    @ModelAttribute("hotjarTrackingId")
+    public String getHotjarTrackingId() {
+        return hotjarTrackingId;
+    }
+
+    @Value("${org.orcid.frontend.web.hotjarTrackingId:}")
+    public void setHotjarTrackingId(String hotjarTrackingId) {
+        this.hotjarTrackingId = hotjarTrackingId;
     }
 
     @ModelAttribute("sendEmailFrequencies")

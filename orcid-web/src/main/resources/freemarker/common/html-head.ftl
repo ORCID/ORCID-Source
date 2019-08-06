@@ -19,6 +19,10 @@
     </#if>
     
     <#include "/layout/google_analytics.ftl">
+
+    <@orcid.checkFeatureStatus 'HOTJAR'>
+        <#include "/layout/hotjar.ftl">
+    </@orcid.checkFeatureStatus> 
     
     <script type="text/javascript">
         window.resourceBasePath = "${staticCdn}"
