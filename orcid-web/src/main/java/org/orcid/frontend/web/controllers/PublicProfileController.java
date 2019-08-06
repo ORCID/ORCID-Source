@@ -42,9 +42,7 @@ import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
@@ -168,6 +166,11 @@ public class PublicProfileController extends BaseWorkspaceController {
         } else {
             mav = new ModelAndView("public_profile_v3");
         }
+        
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
+        
         mav.addObject("isPublicProfile", true);
         mav.addObject("effectiveUserOrcid", orcid);
         mav.addObject("lastModifiedTime", new java.util.Date(lastModifiedTime));

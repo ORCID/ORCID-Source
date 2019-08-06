@@ -104,8 +104,11 @@ public class LoginController extends OauthControllerBase {
                 return handleOauthSignIn(request, response);
             }
         }
-
-        return new ModelAndView("login");
+        ModelAndView mav = new ModelAndView("login");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
+        return mav;
     }
 
     // We should go back to regular spring sign out with CSRF protection
@@ -140,6 +143,7 @@ public class LoginController extends OauthControllerBase {
             // convert to a 400
             ModelAndView mav = new ModelAndView("oauth-error");
             mav.setStatus(HttpStatus.BAD_REQUEST);
+            mav.addObject("noIndex", true);
             return mav;
         }
 
@@ -230,8 +234,9 @@ public class LoginController extends OauthControllerBase {
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
         // Save a flag to indicate this is a request from the new
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
-
-        return new ModelAndView("login");
+        ModelAndView mav = new ModelAndView("login");
+        mav.addObject("noIndex", true);
+        return mav;
     }
 
     @RequestMapping(value = { "/signin/facebook" }, method = RequestMethod.POST)
