@@ -279,12 +279,12 @@
                 <div class="row source-line" *ngIf="group.activePutCode == work.putCode.value">
                     <!--Edit sources-->
                     <div class="col-md-7 col-sm-7 col-xs-12" *ngIf="editSources[group.groupId]">
-                        {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                         <#--  OBO  -->
                         <ng-container *ngIf="(work.assertionOriginClientId && work.assertionOriginClientId !== work.source) ||
                         (work.assertionOriginOrcid && work.assertionOriginOrcid !== work.source)">
-                        <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{work.assertionOriginName || work.assertionOriginOrcid}}
+                         {{work.assertionOriginName || work.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                         </ng-container>
+                        {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-10" *ngIf="editSources[group.groupId]">
                         <div *ngIf="editSources[group.groupId]">
@@ -329,13 +329,13 @@
                 </div>
                 <div *ngIf="group.activePutCode != work.putCode.value" class="row source-line">
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                        <a (click)="group.activePutCode = work.putCode.value">                                
-                            {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
+                        <a (click)="group.activePutCode = work.putCode.value">
                             <#--  OBO  -->
                             <ng-container *ngIf="(work.assertionOriginClientId && work.assertionOriginClientId !== work.source) ||
                             (work.assertionOriginOrcid && work.assertionOriginOrcid !== work.source)">
-                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{work.assertionOriginName || work.assertionOriginOrcid}}
+                             {{work.assertionOriginName || work.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                             </ng-container>
+                            {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                         </a>
                     </div>                                        
                     <div class="col-md-3 col-sm-3 col-xs-10">
@@ -372,12 +372,13 @@
                 </div> 
                 <div class="row source-line" *ngIf="!editSources[group.groupId]">                        
                     <div class="col-md-7 col-sm-7 col-xs-12">
-                        <b><@orcid.msg 'groups.common.source'/>:</b> {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
+                        <b><@orcid.msg 'groups.common.source'/>:</b> 
                         <#--  OBO  -->
                         <ng-container *ngIf="(work.assertionOriginClientId && work.assertionOriginClientId !== work.source) ||
                         (work.assertionOriginOrcid && work.assertionOriginOrcid !== work.source)">
-                        <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{work.assertionOriginName || work.assertionOriginOrcid}}
+                         {{work.assertionOriginName || work.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                         </ng-container>
+                        {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                     </div>
                     
                     <div class="col-md-3 col-sm-3 col-xs-9">
