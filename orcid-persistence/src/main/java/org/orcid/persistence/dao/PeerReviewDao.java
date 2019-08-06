@@ -70,4 +70,6 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      * @param orcid
      * */
     Boolean hasPublicPeerReviews(String orcid);
+
+    List<PeerReviewEntity> getPeerReviewsReferencingOrgs(List<Long> orgIds);
 }

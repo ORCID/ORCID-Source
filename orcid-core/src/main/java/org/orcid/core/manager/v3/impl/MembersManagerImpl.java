@@ -120,7 +120,7 @@ public class MembersManagerImpl implements MembersManager {
         newRecord.setLastModified(now);
         newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN.name());
         newRecord.setRecordLocked(false);
-        newRecord.setReviewed(false);
+        newRecord.setReviewed(true);
         newRecord.setSalesforeId(PojoUtil.isEmpty(member.getSalesforceId()) ? null : member.getSalesforceId().getValue());
         newRecord.setSubmissionDate(now);
         newRecord.setUsedRecaptchaOnRegistration(false);

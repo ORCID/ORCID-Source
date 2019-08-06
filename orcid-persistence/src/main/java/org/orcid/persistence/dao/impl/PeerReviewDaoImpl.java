@@ -99,4 +99,12 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
         Long result = ((BigInteger)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PeerReviewEntity> getPeerReviewsReferencingOrgs(List<Long> orgIds) {
+        Query query = entityManager.createQuery("from PeerReviewEntity where org.id in (:orgIds)");
+        query.setParameter("orgIds", orgIds);
+        return query.getResultList();
+    }
 }

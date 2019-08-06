@@ -21,24 +21,28 @@ public class ErrorController extends BaseController {
     public ModelAndView error500Page(ModelAndView mav) {
         mav.setViewName("error-500");
         mav.addObject("aboutUri", aboutUri);
+        mav.addObject("noIndex", true);
         return mav;
     }
 
     @RequestMapping(value = "/not-found")
     public ModelAndView error404Page(ModelAndView mav) {
         mav.setViewName("error-404");
+        mav.addObject("noIndex", true);
         return mav;
     }
 
     @RequestMapping(value = "/oauth/error/redirect-uri-mismatch")
     public ModelAndView oauthErrorInvalidRedirectUri(ModelAndView mav) {
-        mav.setViewName("oauth-error-mismatch");      
+        mav.setViewName("oauth-error-mismatch");  
+        mav.addObject("noIndex", true);
         return mav;
     }
     
     @RequestMapping(value = "/oauth/error")
     public ModelAndView oauthError(ModelAndView mav) {
-        mav.setViewName("oauth-error");      
+        mav.setViewName("oauth-error");  
+        mav.addObject("noIndex", true);
         return mav;
     }
     

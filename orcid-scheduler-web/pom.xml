@@ -26,21 +26,13 @@
            <groupId>${project.groupId}</groupId>
            <artifactId>orcid-core</artifactId>
            <version>${project.version}</version>
-        </dependency>
-
-		<!-- External dependencies -->
-		<!-- Twitter -->
-         <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-core</artifactId>
-            <version>4.0.2</version>
-        </dependency>
+        </dependency>		
 
 		<!-- Solr -->
 		<dependency>
             <groupId>org.apache.solr</groupId>
             <artifactId>solr-solrj</artifactId>
-            <version>4.10.4</version>        	
+            <version>${solr.version}</version>        	
         </dependency>
 
 		<!-- Test dependencies -->

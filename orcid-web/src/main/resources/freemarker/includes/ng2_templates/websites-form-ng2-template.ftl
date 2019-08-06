@@ -116,14 +116,15 @@
                                                             <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow" *ngIf="website.source != orcidId" >{{website.urlName != null? website.urlName : website.url.value}}</a>
                                                         </div>
                                                         <div class="source" *ngIf="website.sourceName || website.sourceName == null">
-                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="website.sourceName">{{website.sourceName}}
+                                                            <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="website.sourceName">
                                                             
 
                                                              <#--  OBO  -->
                                                             <ng-container *ngIf="(website.assertionOriginClientId && website.assertionOriginClientId !== website.source) ||
                                                             (website.assertionOriginOrcid && website.assertionOriginOrcid !== website.source.source)">
-                                                            <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> {{website.assertionOriginName || website.assertionOriginOrcid}}
+                                                            {{website.assertionOriginName || website.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> 
                                                             </ng-container>
+                                                            {{website.sourceName}}
                                                             
                                                             </span><span *ngIf="website.sourceName == null">{{orcidId}}</span>
                                                         </div>                                                                            

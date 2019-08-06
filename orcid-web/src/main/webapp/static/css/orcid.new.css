@@ -8222,7 +8222,6 @@ ul.comma li:last-child:after {
     #loginForm #ajax-loader {
         text-align: center;
         width: auto;
-        margin-top: 0
     }
 
     #old-login #login-error-mess {
@@ -8923,7 +8922,7 @@ a.footer-url {
     display: none;
     position: absolute;
     background-color: #f1f1f1;
-    min-width: 100px;
+    min-width: 117px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
@@ -8953,7 +8952,7 @@ a.footer-url {
 
 .header2 .input-group-addon {
     padding: 0;
-    background-color: #808083;
+    background-color: #747476;
     color: white;
 }
 
@@ -8971,7 +8970,7 @@ a.footer-url {
     padding: 20px 0;
     padding-top: 8px;
     flex-grow: 1;
-    max-width: 500px;
+    max-width: 400px;
     padding-left: 20px;
 }
 
@@ -9526,6 +9525,7 @@ user-menu .top-menu-button {
     
 user-menu .top-menu-button:hover, user-menu .top-menu-button:focus{
     background-color: rgba(76, 66, 162, 0.04);
+    color: #2e7f9f;
 }
 
 user-menu .top-menu-button .more,  user-menu .top-menu-button .less {
@@ -9671,6 +9671,10 @@ footer-ng2 .footer-main {
     }
 }
 
+.workspace-profile i.glyphicon.glyphicon-question-sign {
+    margin-left: 4px;
+}
+
 
 @media (min-width: 992px) {
     oauth-authorization-ng2 > .col-md-offset-3 {
@@ -9683,4 +9687,14 @@ footer-ng2 .footer-main {
 			border-radius: 4px !important;
 			margin-bottom: 5px;
 	}
+}
+
+@media (max-width: 1358px) and (min-width: 768px) {
+	.row.public-profile {
+		margin: 0;
+	}
+}
+
+footer-ng2 .footer-row-container nav a {
+    color: rgba(0,0,0,0.87);
 }

@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl;
@@ -170,6 +171,9 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEventDao", profileEventDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "orcidOauth2TokenDetailService", mockOrcidOauth2TokenDetailService);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "mailGunManager", mockMailGunManager);
+        
+        when(mockMailGunManager.sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(mockOrcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true);        
     }
     
@@ -180,6 +184,7 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", profileDao);        
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);        
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", notificationAdapter);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "mailGunManager", mailGunManager);
     }
 
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {

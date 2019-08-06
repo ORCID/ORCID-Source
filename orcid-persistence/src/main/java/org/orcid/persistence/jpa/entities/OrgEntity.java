@@ -26,9 +26,11 @@ public class OrgEntity extends BaseEntity<Long> implements Serializable {
 
     private Long id;
     private String name;
-    private String city;
-    private String region;
-    private String country;
+    
+    // location fields default to empty string due to impending not null constraint to avoid duplicates
+    private String city = "";
+    private String region = "";
+    private String country = "";
     private String url;
     private SourceEntity source;
     private OrgDisambiguatedEntity orgDisambiguated;
