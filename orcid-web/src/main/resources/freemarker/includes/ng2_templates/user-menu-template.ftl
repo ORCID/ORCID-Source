@@ -5,7 +5,7 @@
                          <a *ngIf="!userInfo"  class="top-menu-button" href="{{getBaseUri()}}/signin">  
                           {{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase  }}/{{'${springMacroRequestContext.getMessage("header.register")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}
                          </a>
-                        <div *ngIf="userInfo"  class="top-menu-button" (click)="state = !state">  
+                        <div *ngIf="userInfo && nameForm"  class="top-menu-button" (click)="state = !state"  >  
                             <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
                             <div class="name" *ngIf="!isMobile"> 
                                         <ng-container *ngIf="displayFullName()"> {{nameForm?.creditName?.value}}  </ng-container>
@@ -15,7 +15,7 @@
                             
                         </div>
 
-                         <div class="top-menu" *ngIf="state">
+                         <div class="top-menu" *ngIf="state && userInfo && nameForm">
                             <a  class="top-menu-header" href="{{getBaseUri()}}/my-orcid">   
                                 <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
                             
