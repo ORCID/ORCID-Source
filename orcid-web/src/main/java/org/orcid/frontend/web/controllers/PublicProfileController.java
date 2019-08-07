@@ -21,6 +21,7 @@ import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
+import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
@@ -37,6 +38,7 @@ import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
@@ -82,6 +84,9 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
 
+    @Resource(name = "membersManagerV3")
+    MembersManager membersManager;
+    
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
 
@@ -246,6 +251,13 @@ public class PublicProfileController extends BaseWorkspaceController {
             publicRecordPersonDetails.setPublicGroupedResearcherUrls(null);
             publicRecordPersonDetails.setPublicGroupedPersonExternalIdentifiers(null);
         }
+        
+        // If the id belongs to a group the name field is removed
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+	    if (OrcidType.GROUP.name().equals(profile.getOrcidType())) {
+	    	publicRecordPersonDetails.setDisplayName(null);
+	    }
+	     
         return publicRecordPersonDetails;
     }
 
