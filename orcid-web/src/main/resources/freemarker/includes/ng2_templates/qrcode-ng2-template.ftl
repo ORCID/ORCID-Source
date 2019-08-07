@@ -1,7 +1,6 @@
 <script type="text/ng-template" id="qrcode-ng2-template">
       <div class="qrcode-container">
-          <a href="{{getBaseUri()}}/qr-code" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
-          </a>
+          <a href="{{getBaseUri()}}/qr-code" target="<@orcid.msg 'workspace.qrcode.link.text'/>"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/></a>
           <div class="popover-help-container">
               <i class="glyphicon glyphicon-question-sign"></i>
               <div id="qrcode-help" class="popover bottom">

@@ -16,25 +16,32 @@
 
 ## Active XSD versions and base URLs
 
-#### XSD release version
+### Current Version
+**[ORCID Message 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/README.md)**
+
+    * API Base URLs - PRODUCTION
+        * Public API:   https://pub.orcid.org/v3.0/
+        * Member API:   https://api.orcid.org/v3.0/
+    * API Base URLs - SANDBOX
+        * Public API:   https://pub.sandbox.orcid.org/v3.0/
+        * Member API:   https://api.sandbox.orcid.org/v3.0/
+
+#### XSD old versions
+
+These versions are still supported, but integrations should start planning to move to version 3.0
 
 * **[ORCID Message 2.1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1)** - [Documentation](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/README.md)
-    * API Base URLs - PRODUCTION
-        * Public API:   https://pub.orcid.org/v2.1/
-        * Member API:   https://api.orcid.org/v2.1/
-    * API Base URLs - SANDBOX
-        * Public API:   https://pub.sandbox.orcid.org/v2.1/
-        * Member API:   https://api.sandbox.orcid.org/v2.1/
 
 * **[ORCID Message 2.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0)** - [Documentation](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0/README.md), [Change log from 1.2](https://members.orcid.org/api/news/xsd-20-update)
-    * API Base URLs - PRODUCTION
-        * Public API:   https://pub.orcid.org/v2.0/
-        * Member API:   https://api.orcid.org/v2.0/
-    * API Base URLs - SANDBOX
-        * Public API:   https://pub.sandbox.orcid.org/v2.0/
-        * Member API:   https://api.sandbox.orcid.org/v2.0/
 
 #### XSD release candidate(s)
+
+If using these release candidates please migrate to the current stable version 3.0
+
+* **[ORCID Message 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1)** - 
+
+* **[ORCID Message 3.0_rc2](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc2)** - 
+ 
 
 #### XSD deprecated versions
 
@@ -42,20 +49,8 @@
 * **[ORCID Message 2.0_rc3](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc3)** - _Contains: bulk works, activities section endpoints_ <br/>
 * **[ORCID Message 2.0_rc2](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc2)** - _Contains: Person section, migrates all identifiers to external-identifier_ <br/>
 * **[ORCID Message 2.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc1)** - _Contains: Peer-review, new format XSD for activities_ <br/><br/>
-    * API Base URLs - PRODUCTION (replace 'X' in the URL with the rc version)
-        * Public API:   https://pub.orcid.org/v2.0_rcX/
-        * Member API:   https://api.orcid.org/v2.0_rcX/
-    * API Base URLs - SANDBOX
-        * Public API:   https://pub.sandbox.orcid.org/v2.0_rcX/
-        * Member API:   https://api.sandbox.orcid.org/v2.0_rcX/
 
 * **[ORCID Message 1.2](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.2.xsd)**
-    * API Base URLs - PRODUCTION
-        * Public API:   https://pub.orcid.org/v1.2/
-        * Member API:   https://api.orcid.org/v1.2/
-    * API Base URLs - SANDBOX
-        * Public API:   https://pub.sandbox.orcid.org/v1.2/
-        * Member API:   https://api.sandbox.orcid.org/v1.2/
 
 
 #### Sunset versions (unavailable, unsupported, should not be used)

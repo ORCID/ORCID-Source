@@ -31,7 +31,11 @@ public class RecordCorrectionsController extends BaseController {
 
     @RequestMapping(value = { "/about/trust/integrity/record-corrections", "/record-corrections" })
     public ModelAndView recordCorrections() {
-        return new ModelAndView("record-corrections");
+        ModelAndView mav = new ModelAndView("record-corrections");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
+        return mav;
     }
 
     @RequestMapping(value = { "/record-corrections/next", "/record-corrections/next/{id}" }, method = RequestMethod.GET)
@@ -70,7 +74,11 @@ public class RecordCorrectionsController extends BaseController {
     public ModelAndView evictCache() {
         if(securityMgr.isAdmin()) {
             manager.cacheEvict();
-        }        
-        return new ModelAndView("record-corrections");
+        }   
+        ModelAndView mav = new ModelAndView("record-corrections");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
+        return mav;
     }
 }

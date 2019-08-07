@@ -41,7 +41,6 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -118,7 +117,6 @@ public class MembersManagerImpl implements MembersManager {
                 } catch (NoSuchAlgorithmException e) {
                     throw new RuntimeException(e);
                 }
-
                 newRecord.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
                 newRecord.setClaimed(true);
                 newRecord.setCreationMethod(CreationMethod.DIRECT.value());

@@ -33,6 +33,9 @@ public enum Features implements Feature {
     @Label("New style badges on member details")
     NEW_BADGES,
     
+    @Label("Enable Hotjar tracking")
+    HOTJAR,
+    
     @Label("Https for links to iDs")
     HTTPS_IDS,
 
@@ -115,7 +118,10 @@ public enum Features implements Feature {
     VERBOSE_NOTIFICATIONS,
 
     @Label("Works failure debug")
-    WORKS_FAILURE_DEBUG;
+    WORKS_FAILURE_DEBUG,
+    
+    @Label("Stop feeding legacy solr version 4.10")
+    DISABLE_LEGACY_SOLR;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

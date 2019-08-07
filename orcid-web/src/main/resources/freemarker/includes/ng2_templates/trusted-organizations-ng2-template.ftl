@@ -42,12 +42,6 @@
                             </td>
                             <td width="5%" class="tooltip-container">
                                 <a id="revokeAppBtn" name="{{applicationSummary.orcidPath}}" (click)="confirmRevoke(applicationSummary)" class="glyphicon glyphicon-trash grey" *ngIf="!isPasswordConfirmationRequired">
-                                    <div class="popover popover-tooltip top">
-                                        <div class="arrow"></div>
-                                        <div class="popover-content">
-                                            <span><@spring.message "manage.revokeaccess"/></span>
-                                        </div>
-                                    </div>
                                 </a>
                             </td>
                         </tr>

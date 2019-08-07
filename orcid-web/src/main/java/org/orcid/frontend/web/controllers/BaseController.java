@@ -104,6 +104,8 @@ public class BaseController {
     private String aboutUri;    
 
     private String googleAnalyticsTrackingId;
+    
+    private String hotjarTrackingId;
 
     protected List<String> domainsAllowingRobots;
 
@@ -185,6 +187,16 @@ public class BaseController {
     public void setGoogleAnalyticsTrackingId(String googleAnalyticsTrackingId) {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
     }
+    
+    @ModelAttribute("hotjarTrackingId")
+    public String getHotjarTrackingId() {
+        return hotjarTrackingId;
+    }
+
+    @Value("${org.orcid.frontend.web.hotjarTrackingId:}")
+    public void setHotjarTrackingId(String hotjarTrackingId) {
+        this.hotjarTrackingId = hotjarTrackingId;
+    }
 
     @ModelAttribute("sendEmailFrequencies")
     public Map<String, String> retrieveEmailFrequenciesAsMap() {
@@ -195,7 +207,7 @@ public class BaseController {
         return map;
     }
 
-    @Value("${org.orcid.frontend.web.domainsAllowingRobotsAsWhiteSpaceSeparatedList:orcid.org}")
+    @Value("${org.orcid.frontend.web.domainsAllowingRobotsAsWhiteSpaceSeparatedList}")
     public void setDomainsAllowingRobots(String whitespaceSeparatedDomains) {
         domainsAllowingRobots = Arrays.asList(whitespaceSeparatedDomains.split("\\s"));
     }

@@ -102,12 +102,16 @@ public class SocialController extends BaseController {
             if (isLinked) {
                 ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
                 if (profile.getUsing2FA()) {
-                    return new ModelAndView("social_2FA");
+                    ModelAndView mav = new ModelAndView("social_2FA");
+                    mav.addObject("noIndex", true);
+                    return mav;
                 }
                 updateUserConnectionLoginAndLogUserIn(userConnectionId, providerId, providerUserId, orcid);
                 return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
             } else {
-                return new ModelAndView("social_link_signin");
+                ModelAndView mav = new ModelAndView("social_link_signin");
+                mav.addObject("noIndex", true);
+                return mav;
             } 
         } else {
             throw new UsernameNotFoundException("Could not find social account");

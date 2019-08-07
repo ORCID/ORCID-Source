@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.solr.client.solrj.SolrClient;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
@@ -18,6 +19,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.messaging.JmsMessageSender;
+import org.orcid.core.solr.OrcidSolrLegacyIndexer;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -71,6 +73,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
     
+    @Resource
+    private OrcidSolrLegacyIndexer orcidSolrLegacyIndexer;
+    
     /**
      * Removes the relationship that exists between a funding and a profile.
      * 
@@ -111,49 +116,54 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     }        
     
     /**
-     * A process that will process all funding subtypes, filter and index them. 
-     * */
+     * A process that will process all funding subtypes, filter and index them.
+     */
     public void indexFundingSubTypes() {
         LOGGER.info("Indexing funding subtypes");
         List<String> subtypes = fundingSubTypeToIndexDaoReadOnly.getSubTypes();
+        LOGGER.info("Number of funding subtypes to index: " + subtypes.size());
         List<String> wordsToFilter = new ArrayList<String>();
         try {
             wordsToFilter = IOUtils.readLines(getClass().getResourceAsStream("words_to_filter.txt"));
         } catch (IOException e) {
             throw new RuntimeException("Problem reading words_to_filter.txt from classpath", e);
         }
-        for(String subtype : subtypes) {                   
+        for (String subtype : subtypes) {
+            LOGGER.info("Indexing funding sub type: " + subtype);
             try {
                 boolean isInappropriate = false;
-                //All filter words are in lower case, so, lowercase the subtype before comparing
-                for(String wordToFilter : wordsToFilter) {
-                    if(wordToFilter.matches(".*\\b" + Pattern.quote(subtype) + "\\b.*")) {
+                // All filter words are in lower case, so, lowercase the subtype
+                // before comparing
+                for (String wordToFilter : wordsToFilter) {
+                    if (wordToFilter.matches(".*\\b" + Pattern.quote(subtype) + "\\b.*")) {
                         isInappropriate = true;
                         break;
                     }
                 }
-                
-                if(!isInappropriate){
+
+                if (!isInappropriate) {
                     OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
                     document.setOrgDefinedFundingType(subtype);
-                    fundingSubTypeSolrDao.persist(document);    
-                    
+                    // TODO: Remove after solr migration is done
+                    orcidSolrLegacyIndexer.persistFundingSubType(document);
+
                     // Send message to the message listener
                     if (!messaging.send(document, solrQueueName)) {
-                        LOGGER.error("Unable to send fundingSubType: " + document.getOrgDefinedFundingType() + " to the message queue " + solrQueueName);            
+                        LOGGER.error("Unable to send fundingSubType: " + document.getOrgDefinedFundingType() + " to the message queue " + solrQueueName);
                         return;
-                    }                                         
+                    }
                 } else {
                     LOGGER.warn("A word have been flaged as inappropiate: " + subtype);
                 }
                 fundingSubTypeToIndexDao.removeSubTypes(subtype);
             } catch (Exception e) {
-                //If any exception happens, log the error and continue with the next one
-                LOGGER.warn("Unable to process subtype " + subtype, e);                
-            }                        
+                // If any exception happens, log the error and continue with the
+                // next one
+                LOGGER.warn("Unable to process subtype " + subtype, e);
+            }
         }
         LOGGER.info("Funding subtypes have been correcly indexed");
-    }              
+    }             
     
     public boolean updateToMaxDisplay(String orcid, Long fundingId) {
         return profileFundingDao.updateToMaxDisplay(orcid, fundingId);

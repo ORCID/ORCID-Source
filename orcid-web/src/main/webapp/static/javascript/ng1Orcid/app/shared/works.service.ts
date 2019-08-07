@@ -216,6 +216,11 @@ export class WorksService {
                     "other_output": {
                         types: [
                             {
+                                type: "annotation",
+                                titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitleAnnotation"),
+                                titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleAnnotationPlaceholders")
+                            },
+                            {
                                 type: "artistic-performance",
                                 titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
                                 titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisherPlaceholder")
@@ -265,6 +270,11 @@ export class WorksService {
                                 type: "other",
                                 titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
                                 titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleOtherPlaceholder")
+                            },
+                            {
+                                type: "physical-object",
+                                titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelPhysicalObjectContainer"),
+                                titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelPhysicalObjectContainerPlaceholder")
                             }
                         ]
                     }

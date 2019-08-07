@@ -161,4 +161,6 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
     List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max);
 
     void updateUserOBODetails(List<BigInteger> ids);
+
+    List<ProfileFundingEntity> getFundingsReferencingOrgs(List<Long> orgIds);
 }

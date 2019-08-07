@@ -5,6 +5,7 @@
             name="An Institution"
             city="London"
             country="GB"
+            region=""
             source_id="abc456"
             source_type="WDB"
             popularity="1"
@@ -15,6 +16,7 @@
             name="Test Institution"
             city="London"
             country="GB"
+            region=""
             source_id="def456"
             source_type="WDB"
             popularity="0"
@@ -25,6 +27,7 @@
             name="An institution"
             city="London"
             country="GB"
+            region=""
             org_disambiguated_id="1"
             />
             
@@ -32,6 +35,7 @@
             id="2"
             name="Another Institution"
             city="Glasgow"
+            region=""
             country="GB"
             />
             
@@ -39,6 +43,7 @@
             id="3"
             name="Eine Institution"
             city="Berlin"
+            region=""
             country="DE"
             />
             
@@ -47,6 +52,7 @@
             name="Yet Another Institution"
             city="Slough"
             country="GB"
+            region=""
             org_disambiguated_id="1"
             />
             
@@ -55,6 +61,7 @@
             name="Kleine Institution"
             city="Berlin"
             country="DE"
+            region=""
             org_disambiguated_id="2"
             />
 </dataset>            

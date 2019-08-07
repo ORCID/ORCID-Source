@@ -99,14 +99,7 @@
                                                                     <span class="glyphicons collapse_top"></span>       <span class="hidden-xs"><@orcid.msg 'common.details.hide_details_lc' /></span>
                                                                 </a> | 
                                                                 <a href="{{peerReview.url?.value}}" *ngIf="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span *ngIf="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
-                                                                <div *ngIf="!isPublicPage" (click)="deletePeerReviewConfirm(peerReview)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
-                                                                    <div class="popover popover-tooltip top">
-                                                                        <div class="arrow"></div>
-                                                                        <div class="popover-content">
-                                                                            <span><@orcid.msg 'groups.common.delete_this_source'/></span>
-                                                                        </div>               
-                                                                    </div>
-                                                                                                            
+                                                                <div *ngIf="!isPublicPage" (click)="deletePeerReviewConfirm(peerReview)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>                           
                                                                 </div>
                                                             </span>
                                                         </div>
@@ -172,13 +165,7 @@
                                                                     </ng-container> 
                                                                 </div>
                                                                 <div class="col-md-3 col-sm-3 col-xs-9" *ngIf="editSources[peerReviewDuplicateGroup.id] != true">
-                                                                      <span class="glyphicon glyphicon-star"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span>&nbsp;<span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">(</span><a (click)="showSources(peerReviewDuplicateGroup.id,$event)" *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1" (mouseenter)="showTooltip(peerReview.putCode.value+'-sources')" (mouseleave)="hideTooltip(peerReview.putCode.value+'-sources')"><@orcid.msg 'groups.common.of'/> {{peerReviewDuplicateGroup.peerReviews.length}}</a><span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">)</span>
-                                                                      <div class="popover popover-tooltip top sources-popover" *ngIf="showElement[peerReview.putCode.value+'-sources']">
-                                                                           <div class="arrow"></div>
-                                                                           <div class="popover-content">
-                                                                               <@orcid.msg 'groups.common.sources.show_other_sources' />
-                                                                           </div>
-                                                                      </div>
+                                                                      <span class="glyphicon glyphicon-star"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span>&nbsp;<span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">(</span><a (click)="showSources(peerReviewDuplicateGroup.id,$event)" *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1"><@orcid.msg 'groups.common.of'/> {{peerReviewDuplicateGroup.peerReviews.length}}</a><span *ngIf="peerReviewDuplicateGroup.peerReviews.length != 1">)</span>
                                                                 </div>              
                                                                 <div class="col-md-3 col-sm-3 col-xs-9" *ngIf="editSources[peerReviewDuplicateGroup.id]">
                                                                     <span class="glyphicon glyphicon-star" *ngIf="peerReview.putCode.value == peerReviewDuplicateGroup.activePutCode"></span><span *ngIf="peerReview.putCode.value == peerReviewDuplicateGroup.activePutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>

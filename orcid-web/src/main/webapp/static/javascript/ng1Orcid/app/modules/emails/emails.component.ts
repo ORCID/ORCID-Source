@@ -65,26 +65,7 @@ export class EmailsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     openEditModal(): void{
-        console.log('openEditModal emails'); 
-        this.emailService.getEmails()
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.emails = data;
-                this.modalService.notifyOther({action:'open', moduleId: 'modalEmails'});
-                /*
-                if( this.emailService.getEmailPrimary().verified ){
-                }else{
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
-                }
-                */
-            },
-            error => {
-                //console.log('getEmails', error);
-            } 
-        );
+        this.modalService.notifyOther({action:'open', moduleId: 'modalEmails'});
     };
 
     //Default init functions provided by Angular Core

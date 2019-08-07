@@ -102,20 +102,22 @@
 
 56. On https://qa.orcid.org/account add [orcid id] as a trusted individual
 
+57. Visit https://qa.orcid.org/signout
+
 ## Test Self Service
 
-For this test you need to have a Consortium Lead account on QA and a Consortium Member account. For the purposes of testing you can use the accounts 0000-0003-0641-4661 for the consortium lead account and 0000-0001-5870-8499 for the consortium member account.
+For this test you need to have a Consortium Lead account on QA and a Consortium Member account. For the purposes of testing you can use the accounts 0000-0002-3646-4021 for the consortium lead account and 00000-0002-0517-4718 for the consortium member account.
 
 **Check Consortium Lead Functionality**
 
-57. Go to https://qa.orcid.org/signin and sign in with
+58. Go to https://qa.orcid.org/signin and sign in with
 
 		0000-0002-3646-4021
 		Password: *QA password*. Check that there is a tab 'MEMBER TOOLS'
 		
-58. Click on the 'MEMBER TOOLS' tab, and check the page loads
+59. Click on the 'MEMBER TOOLS' tab, and check the page loads
 
-59. Scroll to the bottom of the page to the Add a new consortium member section:
+60. Scroll to the bottom of the page to the Add a new consortium member section:
 
 			Organization Name: [DD][month][YYYY]
 			Website : http://www.[DD][month][YYYY].com
@@ -126,54 +128,54 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 **Check the Salesforce staff email to check there is a notification**
 
-60. Visit mailinator.com and enter:	
+61. Visit mailinator.com and enter:	
 
 			sfqaselfservicetest@mailinator.com
 			
-61. Check that there is an email titled "Consortium member addition requested - [DD][month][YYYY]"
+62. Check that there is an email titled "Consortium member addition requested - [DD][month][YYYY]"
 
 **Check that consortium member can add a contact**
 
-62.  Visit www.qa.orcid.org/signout
+63.  Visit www.qa.orcid.org/signout
 
 		Sign in with
 		0000-0002-0517-4718
 		*QA password*
 		
-63. Go to https://qa.orcid.org/self-service
+64. Go to https://qa.orcid.org/self-service
 
-64.  Add a contact in the Add Member Contacts email field
+65.  Add a contact in the Add Member Contacts email field
 
 		Email: ma_test_[DD][month][YYYY]@mailinator.com
 
-65. Visit https://qa.orcid.org/signout
+66. Visit https://qa.orcid.org/signout
 
 
 
 
 ## Run the automated Independent Tests
 
-66. Go to the CI server (https://ci.orcid.org/) and select ORCID-independent-tests-step2
+67. Go to the CI server (https://ci.orcid.org/) and select ORCID-independent-tests-step2
 
-67. Build the ORCID Independent Tests 2 with the following parameters
+68. Build the ORCID Independent Tests 2 with the following parameters
 	* user_login: ma_test_[DD][month][YYYY]
  	* user_pass: [DD][month][YYYY]
  	* orcid_id: [orcid id]
  	* search_value: [DD][month][YYYY]
 	
-68. Go back to CI Server Dashboard (https://ci.orcid.org/) and select ORCID-independent-tests-step1
+69. Go back to CI Server Dashboard (https://ci.orcid.org/) and select ORCID-independent-tests-step1
 
-69. Build the Step 1 tests
+70. Build the Step 1 tests
 
 ## Post ORCID Independent Tests
 
-70. Visit https://qa.orcid.org/signin
+71. Visit https://qa.orcid.org/signin
 
-71. Sign into the account created earlier
+72. Sign into the account created earlier
 	* ORCID: [orcid id]
 	* Password: [DD][month][YYYY]
 
-72. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
+73. Check that the information you entered earlier is present and items have been added by the Manual Testing Client
 	* 6 other names
 	* 6 countries
 	* 6 keywords
@@ -186,29 +188,29 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 	* 14 works (8 bulk work items and one work being a group of 2) - open one to view details
 	* 2 peer-review items (one with two reviews and one with three reviews) - open one to view details
 
-73. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
+74. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
 	* Check that the group of works with doi:1234 only displays the public version
 
-74. Go to http://qa.orcid.org/inbox check for:
+75. Go to http://qa.orcid.org/inbox check for:
 	* the request for access notification
 	* notifications of updates to the record
 
-75. Archive the first notification in the list
+76. Archive the first notification in the list
 	
-76. Check there is a Member Tools tab and the page loads when you go to it
+77. Check there is a Member Tools tab and the page loads when you go to it
 
-77. Use the switch user option to change to the record created during the OAuth process
+78. Use the switch user option to change to the record created during the OAuth process
 
 
 
-78. Sign in to Browserstack.com and using IE 11 visit the follow pages and make sure everything loads
+79. Sign in to Browserstack.com and using IE 11 visit the follow pages and make sure everything loads
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
 	* sign into [orcid id] account and check that it also looks as expected
 
-79. Using browserstack check the following pages on one Android and one Apple device to check load times
+80. Using browserstack check the following pages on one Android and one Apple device to check load times
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
@@ -216,19 +218,19 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 ## Accessibility Testing
 
-80. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
+81. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
 
-81. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1TPXe50YejZ9rDrd3oac3prg0x33nZGSvjPG5QFpSXyk/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
-82. Visit https://qa.orcid.org and check errors are same or less than 37 errors
-83. Visit https://qa.orcid.org/register and check errors are same or less than 62
-84. Visit https://qa.orcid.org/signin and check errors are same or less than 39 
-85.	Stay on this page and sign in with 
+82. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1TPXe50YejZ9rDrd3oac3prg0x33nZGSvjPG5QFpSXyk/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
+83. Visit https://qa.orcid.org and check errors are same or less than 37 errors
+84. Visit https://qa.orcid.org/register and check errors are same or less than 62
+85. Visit https://qa.orcid.org/signin and check errors are same or less than 39 
+86.	Stay on this page and sign in with 
 
 	```0000-0002-7361-1027```
 	```QA password```
 
-86. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  80
-87. Visit https://qa.orcid.org/signout
+87. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  80
+88. Visit https://qa.orcid.org/signout
 
 
 
