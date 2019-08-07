@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="switch-user-ng2-template">
-    <#if springMacroRequestContext.requestUri?contains("/my-orcid")>
+    <#if !springMacroRequestContext.requestUri?contains("/oauth/authorize")>
         <div class="dropdown id-banner-container" *ngIf="(me || unfilteredLength > 0)">
             <a (click)="openMenu($event)" class="id-banner-switch"><@orcid.msg 'public-layout.manage_proxy_account'/><span class="glyphicon glyphicon-chevron-right"></span></a>
             <ul class="dropdown-menu id-banner-dropdown" *ngIf="isDroppedDown">
@@ -25,8 +25,7 @@
                 <li *ngIf="delegators.length > 10"><a href="{{getBaseUri()}}/delegators?delegates"><@orcid.msg 'id_banner.more'/></a></li>
             </ul>
         </div> 
-    </#if>
-    <#if springMacroRequestContext.requestUri?contains("/oauth/authorize")>
+    <#else>
         <div>
             <div class="dropdown id-banner-container" *ngIf="(me || unfilteredLength > 0)">
                 <a (click)="openMenu($event)" class="id-banner-switch">
