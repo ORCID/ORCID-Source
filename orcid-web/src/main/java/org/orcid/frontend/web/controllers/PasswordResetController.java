@@ -32,6 +32,7 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ReactivationData;
@@ -199,9 +200,14 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)
     public @ResponseBody OneTimeResetPasswordForm resetPasswordConfirmValidate(@RequestBody OneTimeResetPasswordForm resetPasswordForm) {
-        resetPasswordForm.setErrors(new ArrayList<String>());
+        
+    	PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getEncryptedEmail());
+    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+    	Emails emails = emailManager.getEmails(orcid);
+    	
+    	resetPasswordForm.setErrors(new ArrayList<String>());
 
-        passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword());
+        passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword(), emails);
 
         if (resetPasswordForm.getRetypedPassword() != null && !resetPasswordForm.getRetypedPassword().equals(resetPasswordForm.getPassword())) {
             setError(resetPasswordForm, "FieldMatch.registrationForm");
@@ -215,6 +221,7 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/password-reset.json", method = RequestMethod.GET)
     public @ResponseBody OneTimeResetPasswordForm getResetPassword() {
+    	
         OneTimeResetPasswordForm oneTimeResetPasswordForm  = new OneTimeResetPasswordForm();
         passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
         return oneTimeResetPasswordForm;

@@ -612,10 +612,15 @@ public class BaseController {
     }
     
     protected void passwordChecklistValidate(Text passwordConfirm, Text password) {
-    	passwordChecklistValidate (passwordConfirm, password, null, null);
+    	passwordChecklistValidate (passwordConfirm, password, new ArrayList<String>());
     }
+    
+    protected void passwordChecklistValidate(Text passwordConfirm, Text password, Emails emails) {
+    	passwordChecklistValidate (passwordConfirm, password, emails.getEmails().stream().map(email-> email.getEmail()).collect(Collectors.toList()));
+    }
+    
 
-    protected void passwordChecklistValidate(Text passwordConfirm, Text password, Text email, List<Text> additionalEmails) {
+    protected void passwordChecklistValidate(Text passwordConfirm, Text password, List<String> userEmails) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
@@ -629,14 +634,11 @@ public class BaseController {
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_NUMBER)) {
             password.getErrors().add("Pattern.registrationForm.password.oneNumber");
         }
-        
-    	if (password.getValue() != null &&  email != null &&   email.getValue() != null && !email.getValue().isEmpty() && password.getValue().contains(email.getValue())) {
-    		password.getErrors().add("Pattern.registrationForm.password.containsEmail");
-    	}
+
     	
-        if (additionalEmails != null) {
-	        additionalEmails.forEach(additionalEmail->{
-	        if (password.getValue() != null  && additionalEmail.getValue() != null && !additionalEmail.getValue().isEmpty() && password.getValue().contains(additionalEmail.getValue())) {
+        if (userEmails != null) {
+        	userEmails.forEach(additionalEmail->{
+	        if (password.getValue() != null  && additionalEmail != null && !additionalEmail.isEmpty() && password.getValue().contains(additionalEmail)) {
 	        	password.getErrors().add("Pattern.registrationForm.password.containsEmail");
 	        }
 	        });

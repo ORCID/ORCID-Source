@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -337,7 +338,9 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerPasswordValidate(@RequestBody Registration reg) {
-        passwordChecklistValidate(reg.getPasswordConfirm(), reg.getPassword(), reg.getEmail(), reg.getEmailsAdditional());
+    	List<Text> emails = reg.getEmailsAdditional();
+    	emails.add(reg.getEmail());
+        passwordChecklistValidate(reg.getPasswordConfirm(), reg.getPassword(), emails.stream().map(email -> email.getValue()).collect(Collectors.toList()));
         return reg;
     }    
 
