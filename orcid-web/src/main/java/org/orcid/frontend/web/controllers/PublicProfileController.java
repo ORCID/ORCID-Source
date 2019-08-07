@@ -63,7 +63,6 @@ import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
-import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
