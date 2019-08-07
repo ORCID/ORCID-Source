@@ -3,6 +3,7 @@ package org.orcid.jaxb.model.common;
 import java.io.Serializable;
 
 public enum WorkType implements Serializable {
+    ANNOTATION("annotation"),
     ARTISTIC_PERFORMANCE("artistic-performance"),
     BOOK_CHAPTER("book-chapter"),
     BOOK_REVIEW("book-review"),
