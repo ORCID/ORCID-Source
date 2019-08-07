@@ -266,6 +266,15 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), profile.getEncryptedPassword())) {
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
+        if (cp.getPassword() != null && !cp.getPassword().isEmpty()) {
+        	final String newPassword  = cp.getPassword();
+        	 emailManager.getEmails(getCurrentUserOrcid()).getEmails().forEach(email -> {
+	        	if (!email.getEmail().isEmpty()  && newPassword.contains(email.getEmail())) {
+	        		errors.add(getMessage("Pattern.registrationForm.password.containsEmail"));
+	        	}
+	        	
+	        });
+        }
 
         if (errors.size() == 0) {            
             profileEntityManager.updatePassword(getCurrentUserOrcid(), cp.getPassword());
