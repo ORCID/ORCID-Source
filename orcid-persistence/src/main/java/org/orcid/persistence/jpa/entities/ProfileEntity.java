@@ -19,7 +19,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -131,10 +130,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private boolean reviewed = Boolean.FALSE;
 
     private String activitiesVisibilityDefault = DEFAULT_ACTIVITIES_VISIBILITY_DEFAULT;   
-    
-    private RecordNameEntity recordNameEntity;
-    
-    private BiographyEntity biographyEntity;    
     
     private String hashedOrcid;
     
@@ -875,25 +870,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         Date lastModified = this.getLastModified() == null ? new Date() : this.getLastModified();
         String lastModifiedString = DateUtils.convertToXMLGregorianCalendar(lastModified).toXMLFormat();
         return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
-    }
-
-    @OneToOne(mappedBy = "profile", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})    
-    public RecordNameEntity getRecordNameEntity() {
-        return recordNameEntity;
-    }
-
-    public void setRecordNameEntity(RecordNameEntity recordNameEntity) {
-        this.recordNameEntity = recordNameEntity;
-    }
-
-    @OneToOne(mappedBy = "profile", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})        
-    public BiographyEntity getBiographyEntity() {
-        return biographyEntity; 
-    }
-
-    public void setBiographyEntity(BiographyEntity biographyEntity) {
-        this.biographyEntity = biographyEntity;
-    }
+    }   
 
     @Column(name="last_login")
     public Date getLastLogin() {

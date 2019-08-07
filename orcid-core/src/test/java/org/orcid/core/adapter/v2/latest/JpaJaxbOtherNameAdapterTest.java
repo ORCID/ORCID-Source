@@ -58,7 +58,7 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         assertNotNull(otherName.getLastModifiedDate());
         assertEquals(Long.valueOf(1), otherName.getPutCode());
         assertNotNull(otherName.getSource());
-        assertEquals("APP-000000001", otherName.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, otherName.getSource().retrieveSourcePath());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
     }
     
@@ -78,7 +78,7 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         result.setDisplayName("display-name");
         result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(Visibility.PUBLIC.name());
-        result.setClientSourceId("APP-000000001");
+        result.setClientSourceId(CLIENT_SOURCE_ID);
         return result;
     }
 }

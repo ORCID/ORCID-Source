@@ -23,7 +23,7 @@ public interface NotificationManager {
 
     public String createVerificationUrl(String email, String baseUri);
 
-    public String deriveEmailFriendlyName(ProfileEntity profileEntity);    
+    public String deriveEmailFriendlyName(String orcid);    
 
     Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
 

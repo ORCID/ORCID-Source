@@ -18,12 +18,17 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.record.FamilyName;
+import org.orcid.jaxb.model.v3.release.record.GivenNames;
+import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -78,6 +83,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
     
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
+    
+    @Resource(name = "recordNameManagerV3")
+    private RecordNameManager recordNameManager;
     
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
@@ -271,21 +279,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         //Add all emails to record
         newRecord.setEmails(emails);
 
-        // Set the name
-        RecordNameEntity recordNameEntity = new RecordNameEntity();
-        recordNameEntity.setDateCreated(now);
-        recordNameEntity.setLastModified(now);
-        recordNameEntity.setProfile(newRecord);
-        // Name is public by default
-        recordNameEntity.setVisibility(Visibility.PUBLIC.name());
-        if (!PojoUtil.isEmpty(registration.getFamilyNames())) {
-            recordNameEntity.setFamilyName(registration.getFamilyNames().getValue().trim());
-        }
-        if (!PojoUtil.isEmpty(registration.getGivenNames())) {
-            recordNameEntity.setGivenNames(registration.getGivenNames().getValue().trim());
-        }        
-        newRecord.setRecordNameEntity(recordNameEntity);
-
         // Set authority
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setProfileEntity(newRecord);
@@ -297,6 +290,17 @@ public class RegistrationManagerImpl implements RegistrationManager {
         profileDao.persist(newRecord);
         profileDao.flush();
         
+        // Save the record name
+        Name name = new Name();
+        name.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
+        if (!PojoUtil.isEmpty(registration.getFamilyNames())) {            
+            name.setFamilyName(new FamilyName(registration.getFamilyNames().getValue()));
+        }
+        if (!PojoUtil.isEmpty(registration.getGivenNames())) {
+            name.setGivenNames(new GivenNames(registration.getGivenNames().getValue()));
+        }
+        recordNameManager.createRecordName(orcid, name);
+                
         // Create email frequency entity
         boolean sendQuarterlyTips = (registration.getSendOrcidNews() == null) ? false : registration.getSendOrcidNews().getValue();
         emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);

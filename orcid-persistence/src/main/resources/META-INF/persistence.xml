@@ -39,7 +39,6 @@
         <class>org.orcid.persistence.jpa.entities.EmailEventEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileFundingEntity</class>
         <class>org.orcid.persistence.jpa.entities.ProfileKeywordEntity</class>
-        <class>org.orcid.persistence.jpa.entities.ProfileSummaryEntity</class>
         <class>org.orcid.persistence.jpa.entities.RefDataEntity</class>
         <class>org.orcid.persistence.jpa.entities.ResearcherUrlEntity</class>
         <class>org.orcid.persistence.jpa.entities.SalesForceConnectionEntity</class>

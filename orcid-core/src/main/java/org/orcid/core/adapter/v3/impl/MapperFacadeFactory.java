@@ -35,7 +35,7 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.core.utils.v3.SourceEntityUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -1124,7 +1124,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         nameClassMap.fieldMap("creditName", "creditName").converter("creditNameConverter").add();;
         nameClassMap.fieldMap("givenNames", "givenNames").converter("givenNamesConverter").add();;
         nameClassMap.fieldMap("familyName", "familyName").converter("familyNameConverter").add();;
-        nameClassMap.field("path", "profile.id");
+        nameClassMap.field("path", "orcid");
         nameClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         
         nameClassMap.byDefault();

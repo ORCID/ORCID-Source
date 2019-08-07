@@ -4,8 +4,10 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbNameAdapter;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,5 +52,29 @@ public class RecordNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
     @Override
     public boolean exists(String orcid) {        
         return recordNameDao.exists(orcid);
-    }        
+    }
+
+    @Override
+    public String fetchDisplayableCreditName(String orcid) {
+        RecordNameEntity recordName = recordNameDao.getRecordName(orcid, getLastModified(orcid));
+        return RecordNameUtils.getCreditName(recordName);
+    } 
+    
+    @Override
+    public String fetchDisplayableUserName(String orcid) {
+        RecordNameEntity recordName = recordNameDao.getRecordName(orcid, getLastModified(orcid));
+        return RecordNameUtils.getCreditName(recordName);
+    }
+
+    @Override
+    public String fetchDisplayablePublicName(String orcid) {
+        RecordNameEntity recordName = recordNameDao.getRecordName(orcid, getLastModified(orcid));
+        return RecordNameUtils.getPublicName(recordName);
+    }
+
+    @Override
+    public String fetchDisplayableDisplayName(String orcid) {
+        RecordNameEntity recordName = recordNameDao.getRecordName(orcid, getLastModified(orcid));
+        return RecordNameUtils.getDisplayName(recordName);
+    }
 }

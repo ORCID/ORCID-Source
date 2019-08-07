@@ -29,13 +29,11 @@ public class Member implements ErrorsInterface, Serializable {
         this.errors = errors;
     }
 
-    public static Member fromProfileEntity(ProfileEntity profile){
+    public static Member fromProfileEntity(ProfileEntity profile, String creditName){
     	Member group = new Member();
     	group.setEmail(Text.valueOf(profile.getPrimaryEmail().getEmail()));
     	
-    	if(profile.getRecordNameEntity() != null) {
-    	    group.setGroupName(Text.valueOf(profile.getRecordNameEntity().getCreditName()));
-    	} 
+    	group.setGroupName(Text.valueOf(creditName));
     	
     	group.setGroupOrcid(Text.valueOf(profile.getId()));
     	MemberType memberType = MemberType.valueOf(profile.getGroupType());

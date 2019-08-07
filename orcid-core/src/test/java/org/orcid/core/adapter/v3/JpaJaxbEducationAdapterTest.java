@@ -129,7 +129,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
         assertNotNull(education.getSource());        
         assertNotNull(education.getSource().retrieveSourcePath());
-        assertEquals("APP-000000001", education.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, education.getSource().retrieveSourcePath());
         assertEquals("http://tempuri.org",education.getUrl().getValue());
     }
     
@@ -152,7 +152,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals("02", educationSummary.getEndDate().getDay().getValue());        
         assertNotNull(educationSummary.getSource());
         assertNotNull(educationSummary.getSource().retrieveSourcePath());
-        assertEquals("APP-000000001", educationSummary.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, educationSummary.getSource().retrieveSourcePath());
         assertEquals("http://tempuri.org",educationSummary.getUrl().getValue());
     }
 
@@ -176,7 +176,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         orgEntity.setUrl("org:url");
         
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
-        clientDetailsEntity.setId("APP-000000001");
+        clientDetailsEntity.setId(CLIENT_SOURCE_ID);
 
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetailsEntity);
@@ -192,7 +192,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("education:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
-        result.setClientSourceId("APP-000000001");
+        result.setClientSourceId(CLIENT_SOURCE_ID);
         result.setUrl("http://tempuri.org");
         return result;
     }

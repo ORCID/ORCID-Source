@@ -74,7 +74,7 @@ public class MigrateNamesAndBioToTheirOwnTables {
                         if(!recordNameDao.exists(orcid)) {
                             ProfileEntity profile = new ProfileEntity(orcid);
                             RecordNameEntity recordName = new RecordNameEntity();
-                            recordName.setProfile(profile);
+                            recordName.setOrcid(orcid);
                             recordName.setCreditName(creditName);
                             recordName.setFamilyName(familyName);
                             recordName.setGivenNames(givenNames);

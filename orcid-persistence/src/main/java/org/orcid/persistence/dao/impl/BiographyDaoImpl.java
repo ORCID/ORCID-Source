@@ -25,7 +25,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     @Override
     @Cacheable(value = "biography", key = "#orcid.concat('-').concat(#lastModified)")
     public BiographyEntity getBiography(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM BiographyEntity WHERE profile.id = :orcid");
+        Query query = entityManager.createQuery("FROM BiographyEntity WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
         return (BiographyEntity) query.getSingleResult();
     }
@@ -47,7 +47,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
         BiographyEntity bio = new BiographyEntity();
         bio.setVisibility(visibility);
         bio.setBiography(biography);
-        bio.setProfile(new ProfileEntity(orcid));
+        bio.setOrcid(orcid);
         bio.setDateCreated(new Date());
         bio.setLastModified(new Date());
         entityManager.persist(bio);
@@ -64,7 +64,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     @Override
     @Transactional
     public boolean removeForId(String orcid) {
-        Query query = entityManager.createQuery("DELETE FROM BiographyEntity WHERE profile.id = :orcid");
+        Query query = entityManager.createQuery("DELETE FROM BiographyEntity WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
     }   

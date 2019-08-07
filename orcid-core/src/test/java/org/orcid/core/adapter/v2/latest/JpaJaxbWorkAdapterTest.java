@@ -226,9 +226,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         String sourcePath = w.getSource().retrieveSourcePath();
         assertNotNull(sourcePath);
-        assertEquals("APP-5555555555555555", sourcePath);
+        assertEquals(CLIENT_SOURCE_ID, sourcePath);
         // Identifier URIs should always be http, event if base url is https
-        assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", w.getSource().retriveSourceUri());
+        assertEquals("http://testserver.orcid.org/client/APP-0000000000000001", w.getSource().retriveSourceUri());
     }
 
     @Test
@@ -325,7 +325,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         work.setOrcid("0000-0000-0000-0001");
         work.setVisibility(Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
-        work.setClientSourceId("APP-5555555555555555");        
+        work.setClientSourceId(CLIENT_SOURCE_ID);        
         work.setCitation("work:citation");
         work.setCitationType(CitationType.BIBTEX.name());
         work.setDateCreated(date);

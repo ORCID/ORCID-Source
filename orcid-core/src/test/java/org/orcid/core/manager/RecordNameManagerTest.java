@@ -118,16 +118,18 @@ public class RecordNameManagerTest extends BaseTest {
         name.getGivenNames().setContent("Updated Given Names " + now);
         name.setVisibility(Visibility.PRIVATE);
         
-        recordNameManager.updateRecordName(orcid, name);
+        Boolean updated = recordNameManager.updateRecordName(orcid, name);
+        assertTrue(updated);
         Name updatedName = recordNameManager.getRecordName(orcid);
+        
+        LastModifiedDate updatedLastModified = updatedName.getLastModifiedDate();
+        assertNotNull(updatedLastModified);
+        assertFalse(updatedLastModified.equals(lastModified));
+        
         assertNotNull(updatedName);
         assertEquals("Updated Given Names " + now, updatedName.getGivenNames().getContent());
         assertEquals("Updated Family Name " + now, updatedName.getFamilyName().getContent());
         assertEquals("Updated Credit Name " + now, updatedName.getCreditName().getContent());
-        assertEquals(Visibility.PRIVATE, updatedName.getVisibility());
-        LastModifiedDate updatedLastModified = updatedName.getLastModifiedDate();
-        assertNotNull(updatedLastModified);
-        
-        assertFalse(updatedLastModified.equals(lastModified));
+        assertEquals(Visibility.PRIVATE, updatedName.getVisibility());        
     }        
 }

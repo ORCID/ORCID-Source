@@ -16,7 +16,6 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.FamilyName;
 import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,8 +47,7 @@ public class JpaJaxbNameAdapterTest extends MockSourceNameCache {
         assertEquals("Family Name", entity.getFamilyName());
         assertEquals("Given Names", entity.getGivenNames());
         assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());
-        assertNotNull(entity.getProfile());
-        assertEquals("0000-0000-0000-0000", entity.getProfile().getId());        
+        assertEquals("0000-0000-0000-0000", entity.getOrcid());        
     }
         
     @Test
@@ -59,7 +57,7 @@ public class JpaJaxbNameAdapterTest extends MockSourceNameCache {
         entity.setFamilyName("Family Name");
         entity.setGivenNames("Given Names");
         entity.setVisibility(Visibility.PUBLIC.name());
-        entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
+        entity.setOrcid("0000-0000-0000-0000");
         
         Name name = adapter.toName(entity);
         assertNotNull(name);

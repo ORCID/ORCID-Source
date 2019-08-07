@@ -36,7 +36,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
     @Override
     @Transactional
     public void remove(String giverOrcid, String receiverOrcid) {
-        Query query = entityManager.createQuery("delete from GivenPermissionToEntity g where g.giver = :giverOrcid and g.receiver.id = :receiverOrcid");
+        Query query = entityManager.createQuery("delete from GivenPermissionToEntity g where g.giver = :giverOrcid and g.receiver = :receiverOrcid");
         query.setParameter("giverOrcid", giverOrcid);
         query.setParameter("receiverOrcid", receiverOrcid);
         query.executeUpdate();

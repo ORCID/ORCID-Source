@@ -5,21 +5,18 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.PeerReviewManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
-import org.orcid.core.utils.RecordNameUtils;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 
-public class ActivityManagerImpl extends Object implements ActivityManager {
+public class ActivityManagerImpl extends ManagerReadOnlyBaseImpl implements ActivityManager {
     
     @Resource(name = "peerReviewManagerV3")
     private PeerReviewManager peerReviewManager;
@@ -29,6 +26,9 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
     
     @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
     public LinkedHashMap<Long, PeerReview> pubPeerReviewsMap(String orcid) {
         List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid);
@@ -57,46 +57,24 @@ public class ActivityManagerImpl extends Object implements ActivityManager {
         return fundingMap;
     }
 
-	public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid) {
-		LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
-		List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcid);
-		for (Affiliation affiliation : affiliations) {
-			if (Visibility.PUBLIC.equals(affiliation.getVisibility())) {
-				affiliationMap.put(affiliation.getPutCode(), affiliation);
-			}
-		}
-		return affiliationMap;
-	}
-
-    public String getCreditName(ProfileEntity profile) {
-        String creditName = null;
-        if (profile != null) {
-            if(profile.getRecordNameEntity() != null) {
-                if (StringUtils.isNotBlank(profile.getRecordNameEntity().getCreditName())) {
-                    creditName = profile.getRecordNameEntity().getCreditName();
-                } else {
-                    String givenName = profile.getRecordNameEntity().getGivenNames();
-                    String familyName = profile.getRecordNameEntity().getFamilyName();
-                    String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
-                    creditName = composedCreditName;
-                }
-            }                        
+    public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid) {
+        LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
+        List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcid);
+        for (Affiliation affiliation : affiliations) {
+            if (Visibility.PUBLIC.equals(affiliation.getVisibility())) {
+                affiliationMap.put(affiliation.getPutCode(), affiliation);
+            }
         }
-                                          
-        return creditName;
+        return affiliationMap;
     }
-    
-    public String getPublicCreditName(ProfileEntity profile) {
-        String publicCreditName = null;
-        if(profile != null && profile.getRecordNameEntity() != null) {
-            publicCreditName = RecordNameUtils.getPublicName(profile.getRecordNameEntity());        
-        }
-        
-        return publicCreditName;
+
+    @Override
+    public String getCreditName(String orcid) {
+        return recordNameManagerReadOnlyV3.fetchDisplayableCreditName(orcid);        
     }
     
     @Override
-    public String getPublicCreditName(RecordNameEntity recordName) {
-        return RecordNameUtils.getPublicName(recordName);
+    public String getPublicCreditName(String orcid) {
+        return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
     }
 }

@@ -32,6 +32,7 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -113,10 +114,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         String harrysOrcid = "4444-4444-4444-4444";
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(harrysOrcid);
         assertNotNull(profileEntity);
-        if(profileEntity.getRecordNameEntity() != null) {
-            assertEquals("Harry", profileEntity.getRecordNameEntity().getGivenNames());
-            assertEquals("Secombe", profileEntity.getRecordNameEntity().getFamilyName());
-        } 
         assertEquals(harrysOrcid, profileEntity.getId());
     }
 
@@ -220,8 +217,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertTrue(profileEntityManager.claimProfileAndUpdatePreferences("0000-0000-0000-0001", "public_0000-0000-0000-0001@test.orcid.org", AvailableLocales.EN, claim));
         ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0001");
         assertNotNull(profile);
-        assertNotNull(profile.getBiographyEntity());
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), profile.getBiographyEntity().getVisibility());
         assertNotNull(profile.getAddresses());
         assertEquals(3, profile.getAddresses().size());
         for(AddressEntity a : profile.getAddresses()) {
@@ -249,7 +244,10 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(3, profile.getResearcherUrls().size());
         for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
             assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), r.getVisibility());
-        }        
+        }
+        
+        Biography bio = biographyManager.getBiography("0000-0000-0000-0001");
+        assertEquals(org.orcid.jaxb.model.v3.release.common.Visibility.PRIVATE, bio.getVisibility());
     }
     
     @Test

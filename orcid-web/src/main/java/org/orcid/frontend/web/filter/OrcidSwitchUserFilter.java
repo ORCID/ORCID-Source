@@ -108,7 +108,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         
         List<GivenPermissionByEntity> givenPermissionBy = givenPermissionToDao.findByReceiver(profileEntity.getId());
         for (GivenPermissionByEntity gpbe : givenPermissionBy) {
-            if (gpbe.getGiver().getId().equals(targetUserOrcid)) {
+            if (gpbe.getGiver().equals(targetUserOrcid)) {
                 return switchUser(request);
             }
         }        

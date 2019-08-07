@@ -60,7 +60,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals("org:city",m.getProposal().getHosts().getOrganization().get(0).getAddress().getCity());
         //assertEquals("https://orcid.org/0000-0001-0002-0003/research-resource/1234",m.getPath());
         assertEquals(Long.valueOf(12345l),m.getPutCode());
-        assertEquals("APP-000000001",m.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID,m.getSource().retrieveSourcePath());
         assertEquals(Visibility.PUBLIC,m.getVisibility());
         
         assertEquals(1,m.getResourceItems().size());
@@ -161,7 +161,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals("org:city",m.getProposal().getHosts().getOrganization().get(0).getAddress().getCity());
         //assertEquals("https://orcid.org/0000-0001-0002-0003/research-resource/1234",m.getPath());
         assertEquals(Long.valueOf(12345l),m.getPutCode());
-        assertEquals("APP-000000001",m.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID,m.getSource().retrieveSourcePath());
         assertEquals(Visibility.PUBLIC,m.getVisibility());
     }
 
@@ -184,7 +184,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         rre.setDateCreated(createdDate);
         rre.setLastModified(createdDate);
         rre.setDisplayIndex(1l);
-        rre.setClientSourceId("APP-000000001");
+        rre.setClientSourceId(CLIENT_SOURCE_ID);
         rre.setUrl("http://blah.com");
         rre.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"id\"}}]}");
         rre.setId(12345L);

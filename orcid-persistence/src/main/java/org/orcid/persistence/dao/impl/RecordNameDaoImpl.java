@@ -3,7 +3,6 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -28,7 +27,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     @Override
     @Cacheable(value = "record-name", key = "#orcid.concat('-').concat(#lastModified)")
     public RecordNameEntity getRecordName(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM RecordNameEntity WHERE profile.id = :orcid");
+        Query query = entityManager.createQuery("FROM RecordNameEntity WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
         return (RecordNameEntity) query.getSingleResult();
     }
@@ -55,7 +54,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
         query.setParameter("givenNames", recordName.getGivenNames());
         query.setParameter("familyName", recordName.getFamilyName());
         query.setParameter("visibility", StringUtils.upperCase(recordName.getVisibility()));
-        query.setParameter("orcid", recordName.getProfile().getId());
+        query.setParameter("orcid", recordName.getOrcid());
         return query.executeUpdate() > 0;
     }
     
@@ -75,14 +74,14 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     
     @Override
     public Date getLastModified(String orcid) {
-        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM RecordNameEntity WHERE profile.id = :orcid", Date.class);
+        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM RecordNameEntity WHERE orcid = :orcid", Date.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }
 
     @Override
     public List<RecordNameEntity> getRecordNames(List<String> orcids) {
-        TypedQuery<RecordNameEntity> query = entityManager.createQuery("FROM RecordNameEntity WHERE profile.id in :ids", RecordNameEntity.class);
+        TypedQuery<RecordNameEntity> query = entityManager.createQuery("FROM RecordNameEntity WHERE orcid in :ids", RecordNameEntity.class);
         query.setParameter("ids", orcids);
         return query.getResultList();
     }

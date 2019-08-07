@@ -72,7 +72,6 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ajaxForm.Registration;
@@ -824,9 +823,7 @@ public class SetUpClientsAndUsers {
     public void setUpDelegates(String giver, String receiver) {
         GivenPermissionToEntity permission = new GivenPermissionToEntity();
         permission.setGiver(giver);
-        ProfileSummaryEntity r = new ProfileSummaryEntity(receiver);
-        r.setLastModified(new Date());
-        permission.setReceiver(r);
+        permission.setReceiver(receiver);
         permission.setApprovalDate(new Date());
         givenPermissionToDao.merge(permission);
         givenPermissionToDao.flush();

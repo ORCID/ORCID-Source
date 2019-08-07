@@ -2,10 +2,11 @@ package org.orcid.core.oauth;
 
 import java.util.Collection;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +23,9 @@ public class OrcidOauth2UserAuthentication implements Authentication {
     private static final long serialVersionUID = 2499121955477502667L;
     private ProfileEntity profileEntity;
     private boolean authenticated = false;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
     public OrcidOauth2UserAuthentication(ProfileEntity profileEntity, boolean authenticated) {
         Assert.notNull(profileEntity, "Cannot instantiate an OrcidOauth2UserAuthentication will a null profile");
@@ -148,20 +152,8 @@ public class OrcidOauth2UserAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        RecordNameEntity recordName = profileEntity.getRecordNameEntity();
-        if(recordName == null) {
-            return StringUtils.EMPTY;
-        }
+        String name = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(profileEntity.getId());
         
-        if(Visibility.PUBLIC.value().equals(recordName.getVisibility())) {
-            if(!PojoUtil.isEmpty(recordName.getCreditName())) {
-                return recordName.getCreditName();
-            } else {
-                if(!PojoUtil.isEmpty(recordName.getFamilyName())) {
-                    return recordName.getGivenNames() + " " + recordName.getFamilyName();
-                }
-            }
-        }
-        return StringUtils.EMPTY;
+        return PojoUtil.isEmpty(name) ? StringUtils.EMPTY : name;
     }
 }

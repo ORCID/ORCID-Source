@@ -39,6 +39,7 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
@@ -55,7 +56,6 @@ import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
@@ -110,6 +110,9 @@ public class ManageProfileControllerTest {
     @Mock
     private ProfileLastModifiedAspect profileLastModifiedAspect;
 
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManagerReadOnlyV3;
+    
     private RecordNameEntity getRecordName(String orcidId) {
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
@@ -133,6 +136,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "orcidSecurityManager", mockOrcidSecurityManager);  
         TargetProxyHelper.injectIntoProxy(controller, "orcidIdentifierUtils", mockOrcidIdentifierUtils);
         TargetProxyHelper.injectIntoProxy(controller, "profileLastModifiedAspect", profileLastModifiedAspect);
+        TargetProxyHelper.injectIntoProxy(controller, "recordNameManagerReadOnlyV3", mockRecordNameManagerReadOnlyV3);
                 
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
@@ -175,19 +179,18 @@ public class ManageProfileControllerTest {
                     e1.setApprovalDate(now);
                     e1.setDateCreated(now);
                     e1.setGiver(invocation.getArgument(0));
-                    ProfileSummaryEntity ps = new ProfileSummaryEntity();
+                    String receiver = null;
                     RecordNameEntity recordName = new RecordNameEntity();
                     recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                     if (i == 0) {
-                        ps.setId("0000-0000-0000-0004");
+                        receiver = "0000-0000-0000-0004";
                         recordName.setCreditName("Credit Name");
                     } else {
-                        ps.setId("0000-0000-0000-0005");
+                        receiver = "0000-0000-0000-0005";
                         recordName.setFamilyName("Family Name");
                         recordName.setGivenNames("Given Names");
                     }
-                    ps.setRecordNameEntity(recordName);
-                    e1.setReceiver(ps);
+                    e1.setReceiver(receiver);
                     givenPermissionTo.add(e1);
                 });
                 entity.setGivenPermissionTo(givenPermissionTo);
@@ -213,8 +216,7 @@ public class ManageProfileControllerTest {
                 emails.add(email1);
                 emails.add(email2);
                 entity.setEmails(emails);
-
-                entity.setRecordNameEntity(getRecordName(invocation.getArgument(0)));
+                
                 entity.setEncryptedPassword("password");
                 return entity;
             }
@@ -249,8 +251,7 @@ public class ManageProfileControllerTest {
                 email.setEmail(emailString);
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
-                entity.setEncryptedPassword("password");
-                entity.setRecordNameEntity(getRecordName(orcidString));
+                entity.setEncryptedPassword("password");                
                 email.setProfile(entity);
                 return email;
             }
@@ -278,6 +279,15 @@ public class ManageProfileControllerTest {
             }
             
         });
+        
+        when(mockRecordNameManagerReadOnlyV3.fetchDisplayablePublicName(anyString())).thenAnswer(new Answer<String>() {
+
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return invocation.getArgument(0) + " Given Names " + invocation.getArgument(0) + " Family Name";
+            }
+            
+        });
     }
 
     private void mocksForDeprecatedAccounts() {
@@ -300,7 +310,6 @@ public class ManageProfileControllerTest {
                 emails.add(email1);
                 entity.setEmails(emails);
 
-                entity.setRecordNameEntity(getRecordName(invocation.getArgument(0)));
                 // Mark it as deprecated
                 entity.setDeprecatedDate(new Date());
                 entity.setEncryptedPassword("password");
@@ -319,7 +328,6 @@ public class ManageProfileControllerTest {
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
-                entity.setRecordNameEntity(getRecordName(orcidString));
                 // Mark it as deprecated
                 entity.setDeprecatedDate(new Date());
                 email.setProfile(entity);
@@ -348,7 +356,6 @@ public class ManageProfileControllerTest {
                 emails.add(email1);
                 entity.setEmails(emails);
 
-                entity.setRecordNameEntity(getRecordName(invocation.getArgument(0)));
                 // Mark it as deactivated
                 entity.setDeactivationDate(new Date());
                 entity.setEncryptedPassword("password");
@@ -367,7 +374,6 @@ public class ManageProfileControllerTest {
                 email.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
                 ProfileEntity entity = new ProfileEntity(orcidString);
                 entity.setEncryptedPassword("password");
-                entity.setRecordNameEntity(getRecordName(orcidString));
                 // Mark it as deactivated
                 entity.setDeactivationDate(new Date());
                 email.setProfile(entity);
@@ -726,7 +732,6 @@ public class ManageProfileControllerTest {
                 emails.add(email1);
                 entity.setEmails(emails);
 
-                entity.setRecordNameEntity(getRecordName(invocation.getArgument(0)));
                 // Mark it as deactivated
                 entity.setDeactivationDate(new Date());
                 entity.setEncryptedPassword("password");

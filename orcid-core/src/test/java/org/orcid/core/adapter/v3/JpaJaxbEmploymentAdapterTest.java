@@ -128,7 +128,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals(Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
         assertNotNull(employment.getSource());        
         assertNotNull(employment.getSource().retrieveSourcePath());
-        assertEquals("APP-000000001", employment.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, employment.getSource().retrieveSourcePath());
         assertEquals("http://tempuri.org",employment.getUrl().getValue());
     }
     
@@ -151,7 +151,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals("02", employmentSummary.getEndDate().getDay().getValue());        
         assertNotNull(employmentSummary.getSource());
         assertNotNull(employmentSummary.getSource().retrieveSourcePath());
-        assertEquals("APP-000000001", employmentSummary.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, employmentSummary.getSource().retrieveSourcePath());
         assertEquals("http://tempuri.org",employmentSummary.getUrl().getValue());
     }
     
@@ -183,7 +183,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         orgEntity.setUrl("org:url");
         
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
-        clientDetailsEntity.setId("APP-000000001");
+        clientDetailsEntity.setId(CLIENT_SOURCE_ID);
 
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetailsEntity);
@@ -199,7 +199,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("employment:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
-        result.setClientSourceId("APP-000000001");
+        result.setClientSourceId(CLIENT_SOURCE_ID);
         result.setUrl("http://tempuri.org");
         return result;
     }

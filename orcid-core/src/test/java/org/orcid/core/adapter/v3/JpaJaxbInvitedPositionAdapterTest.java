@@ -125,7 +125,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, invitedPosition.getOrganization().getAddress().getCountry());
         assertNotNull(invitedPosition.getSource());        
         assertNotNull(invitedPosition.getSource().retrieveSourcePath());
-        assertEquals("APP-000000001", invitedPosition.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, invitedPosition.getSource().retrieveSourcePath());
         assertEquals("http://tempuri.org",invitedPosition.getUrl().getValue());
     }
     
@@ -148,7 +148,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         assertEquals("02", summary.getEndDate().getDay().getValue());        
         assertNotNull(summary.getSource());
         assertNotNull(summary.getSource().retrieveSourcePath());
-        assertEquals("APP-000000001", summary.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, summary.getSource().retrieveSourcePath());
         assertEquals("http://tempuri.org",summary.getUrl().getValue());
     }
 
@@ -169,7 +169,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         orgEntity.setUrl("org:url");
         
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
-        clientDetailsEntity.setId("APP-000000001");
+        clientDetailsEntity.setId(CLIENT_SOURCE_ID);
 
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetailsEntity);
@@ -185,7 +185,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("invited-position:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
-        result.setClientSourceId("APP-000000001");
+        result.setClientSourceId(CLIENT_SOURCE_ID);
         result.setUrl("http://tempuri.org");
         return result;
     }

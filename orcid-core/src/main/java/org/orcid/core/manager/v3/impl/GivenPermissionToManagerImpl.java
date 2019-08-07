@@ -11,7 +11,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -53,8 +52,7 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
                     // Create the delegate relationship
                     GivenPermissionToEntity permission = new GivenPermissionToEntity();
                     permission.setGiver(userOrcid);
-                    ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
-                    permission.setReceiver(receiver);
+                    permission.setReceiver(delegateOrcid);
                     permission.setApprovalDate(approvalDate);
                     givenPermissionToDao.merge(permission);
 
@@ -76,10 +74,10 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
     @Override
     public void removeAllForProfile(String orcid) {
         List<GivenPermissionToEntity> permissionsGiven = givenPermissionToDao.findByGiver(orcid);
-        permissionsGiven.stream().forEach(e -> remove(e.getGiver(), e.getReceiver().getId()));
+        permissionsGiven.stream().forEach(e -> remove(e.getGiver(), e.getReceiver()));
         
         List<GivenPermissionByEntity> permissionsReceived = givenPermissionToDao.findByReceiver(orcid);
-        permissionsReceived.stream().forEach(e -> remove(e.getGiver().getId(), e.getReceiver()));
+        permissionsReceived.stream().forEach(e -> remove(e.getGiver(), e.getReceiver()));
     }
 
 }

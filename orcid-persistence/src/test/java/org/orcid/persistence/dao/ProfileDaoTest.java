@@ -96,12 +96,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("API", profile.getCreationMethod());
         assertNotNull(profile.getCompletedDate());
         assertNotNull(profile.getSubmissionDate());
-        assertTrue(profile.getClaimed());
-        assertNotNull(profile.getRecordNameEntity());
-        assertEquals("Given Names", profile.getRecordNameEntity().getGivenNames());
-        assertEquals("Family Name", profile.getRecordNameEntity().getFamilyName());
-        assertEquals("Credit Name", profile.getRecordNameEntity().getCreditName());
-        assertEquals("PUBLIC", profile.getRecordNameEntity().getVisibility());
+        assertTrue(profile.getClaimed());        
     }        
 
     @Test

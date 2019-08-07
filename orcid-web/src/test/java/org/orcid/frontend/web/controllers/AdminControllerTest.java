@@ -36,7 +36,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.AdminManager;
@@ -57,8 +56,10 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
@@ -117,7 +118,7 @@ public class AdminControllerTest extends BaseControllerTest {
     private EmailFrequencyManager emailFrequencyManager;
     
     @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    private RecordNameDao recordNameDao;
     
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
     
@@ -138,7 +139,6 @@ public class AdminControllerTest extends BaseControllerTest {
         map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
         map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
         
-        ReflectionTestUtils.setField(jpa2JaxbAdapter, "emailFrequencyManager", mockEmailFrequencyManager);
         when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
         
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
@@ -149,11 +149,6 @@ public class AdminControllerTest extends BaseControllerTest {
         when(mockOrcidSecurityManager.isAdmin()).thenReturn(true);
     }
 
-    @After
-    public void after() {
-        ReflectionTestUtils.setField(jpa2JaxbAdapter, "emailFrequencyManager", emailFrequencyManager);
-    }    
-    
     @AfterClass
     public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml",
@@ -269,8 +264,9 @@ public class AdminControllerTest extends BaseControllerTest {
 
         ProfileEntity deactivated = profileDao.find("4444-4444-4444-4445");
         assertNotNull(deactivated.getDeactivationDate());
-        assertEquals(deactivated.getRecordNameEntity().getFamilyName(), "Family Name Deactivated");
-        assertEquals(deactivated.getRecordNameEntity().getGivenNames(), "Given Names Deactivated");
+        RecordNameEntity name = recordNameDao.getRecordName("4444-4444-4444-4445", System.currentTimeMillis());
+        assertEquals("Family Name Deactivated", name.getFamilyName());
+        assertEquals("Given Names Deactivated", name.getGivenNames());
 
         // Test try to deactivate an already deactive account
         result = adminController.deactivateOrcidRecords(mockRequest, mockResponse, "4444-4444-4444-4445");

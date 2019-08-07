@@ -5,12 +5,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.BibtexManager;
 import org.orcid.core.manager.DOIManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
@@ -19,8 +20,6 @@ import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +29,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 
-public class BibtexManagerImpl implements BibtexManager{
+public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements BibtexManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BibtexManagerImpl.class);
     
@@ -45,6 +44,9 @@ public class BibtexManagerImpl implements BibtexManager{
     
     @Resource 
     private DOIManager doiManager;
+    
+    @Resource(name = "recordNameManagerReadOnly")
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
     
     private static volatile ImmutableMap<Character,String> escapeW3C = null;
     private static Object initLock = new Object();
@@ -203,21 +205,8 @@ public class BibtexManagerImpl implements BibtexManager{
      * @param orcid
      * @return
      */
-    private String getCreditName(String orcid){
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
-        String creditName = null;
-        RecordNameEntity recordNameEntity = entity.getRecordNameEntity();
-        if(recordNameEntity != null) {
-            creditName = recordNameEntity.getCreditName();
-            if (StringUtils.isBlank(creditName)) {
-                creditName = recordNameEntity.getGivenNames();
-                String familyName = recordNameEntity.getFamilyName();
-                if (StringUtils.isNotBlank(familyName)) {
-                    creditName += " " + familyName;
-                }
-            }
-        }
-        return creditName;
+    private String getCreditName(String orcid) {
+        return recordNameManagerReadOnly.fetchDisplayableCreditName(orcid);        
     }
     
     /**

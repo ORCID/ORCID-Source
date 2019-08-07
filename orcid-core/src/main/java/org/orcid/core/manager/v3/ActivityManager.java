@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 public interface ActivityManager {
 
@@ -16,9 +14,7 @@ public interface ActivityManager {
     
     public LinkedHashMap<Long, Affiliation> affiliationMap(String orcid);
     
-    public String getCreditName(ProfileEntity profile);
+    public String getCreditName(String orcid);        
     
-    public String getPublicCreditName(ProfileEntity profile);
-    
-    public String getPublicCreditName(RecordNameEntity recordName);
+    public String getPublicCreditName(String orcid);
 }

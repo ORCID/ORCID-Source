@@ -100,7 +100,7 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
     }
     
     public boolean sendVerifiedRequiredAnnouncement2017(String orcid, String email, String localeString) {
-        String emailFriendlyName = notificationManager.deriveEmailFriendlyName(profileDaoReadOnly.find(orcid));
+        String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcid);
         String verificationUrl = notificationManager.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
         String emailFrequencyUrl = notificationManager.createUpdateEmailFrequencyUrl(email);
 

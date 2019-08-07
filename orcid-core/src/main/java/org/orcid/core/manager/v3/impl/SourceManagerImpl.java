@@ -11,7 +11,6 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.v3.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
@@ -21,7 +20,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -51,7 +49,7 @@ public class SourceManagerImpl implements SourceManager {
     
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
-
+    
     /** returns the active source, either an effective ORCID iD or Client Id.
      * 
      */
@@ -137,8 +135,7 @@ public class SourceManagerImpl implements SourceManager {
             String clientId = authorizationRequest.getClientId();
             ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
             SourceEntity sourceEntity = new SourceEntity();
-            sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));
-            SourceEntityUtils.getSourceName(sourceEntity);
+            sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));            
             return sourceEntity;
         }
         String userOrcid = retrieveEffectiveOrcid(authentication);
@@ -149,8 +146,7 @@ public class SourceManagerImpl implements SourceManager {
         // Normal web user
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceProfile(new ProfileEntity(userOrcid));
-        
-        //TODO! Set the source name in the SourceEntity
+        sourceEntity.setCachedSourceName(sourceNameCacheManager.retrieve(userOrcid));
         
         return sourceEntity;
     }

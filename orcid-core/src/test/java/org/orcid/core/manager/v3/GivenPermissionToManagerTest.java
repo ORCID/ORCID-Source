@@ -23,7 +23,6 @@ import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.pojo.DelegateForm;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -118,18 +117,12 @@ public class GivenPermissionToManagerTest extends BaseTest {
             GivenPermissionByEntity e = new GivenPermissionByEntity();
             e.setApprovalDate(new Date());
             e.setDateCreated(new Date());
-            e.setGiver(getProfileSummaryEntity("orcid" + i));
+            e.setGiver("orcid" + i);
             e.setReceiver("orcid");
             e.setLastModified(new Date());
             permissions.add(e);
         }
         return permissions;
-    }
-
-    private ProfileSummaryEntity getProfileSummaryEntity(String orcid) {
-        ProfileSummaryEntity e = new ProfileSummaryEntity();
-        e.setId(orcid);
-        return e;
     }
 
     private List<GivenPermissionToEntity> getPermissionsGiven() {
@@ -138,7 +131,7 @@ public class GivenPermissionToManagerTest extends BaseTest {
             GivenPermissionToEntity e = new GivenPermissionToEntity();
             e.setApprovalDate(new Date());
             e.setDateCreated(new Date());
-            e.setReceiver(getProfileSummaryEntity("orcid" + i));
+            e.setReceiver("orcid" + i);
             e.setGiver("orcid");
             e.setLastModified(new Date());
             permissions.add(e);

@@ -95,7 +95,8 @@ public class Send2019EmailVisibilityNewsletter {
     
     private EmailMessage getEmailMessage(EmailEntity email) {
         Locale locale = getUserLocaleFromProfileEntity(email.getProfile());
-        String emailName = notificationManager.deriveEmailFriendlyName(email.getProfile());
+        String orcid = email.getProfile().getId();
+        String emailName = notificationManager.deriveEmailFriendlyName(orcid);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);

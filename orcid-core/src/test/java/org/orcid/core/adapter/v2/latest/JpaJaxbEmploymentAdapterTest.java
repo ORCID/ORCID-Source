@@ -111,7 +111,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
         assertNotNull(employment.getSource());        
         assertNotNull(employment.getSource().retrieveSourcePath());
-        assertEquals("APP-000000001", employment.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, employment.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -133,7 +133,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals("02", employmentSummary.getEndDate().getDay().getValue());        
         assertNotNull(employmentSummary.getSource());
         assertNotNull(employmentSummary.getSource().retrieveSourcePath());
-        assertEquals("APP-000000001", employmentSummary.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, employmentSummary.getSource().retrieveSourcePath());
     }
     
     private Employment getEmploymentWithDatesWithNullMonthAndDay() {
@@ -181,7 +181,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         orgEntity.setUrl("org:url");
         
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
-        clientDetailsEntity.setId("APP-000000001");
+        clientDetailsEntity.setId(CLIENT_SOURCE_ID);
 
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetailsEntity);
@@ -197,7 +197,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("employment:title");
         result.setVisibility(Visibility.PRIVATE.name());   
-        result.setClientSourceId("APP-000000001");
+        result.setClientSourceId(CLIENT_SOURCE_ID);
         
         return result;
     }

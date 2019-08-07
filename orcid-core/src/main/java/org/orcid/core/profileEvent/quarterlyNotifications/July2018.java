@@ -41,7 +41,7 @@ public class July2018 extends QuarterlyNotificationsManager {
     
     public Map<String, Object> generateTemplateParams(ProfileEntity profileEntity, Locale locale) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        String emailName = notificationManager.deriveEmailFriendlyName(profileEntity);
+        String emailName = notificationManager.deriveEmailFriendlyName(profileEntity.getId());
         templateParams.put("emailName", emailName);   
         return templateParams;
     }

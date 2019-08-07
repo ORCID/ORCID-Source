@@ -81,7 +81,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         result.setDateCreated(new Date());
         result.setLastModified(new Date());       
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
-        result.setClientSourceId("APP-000000001");
+        result.setClientSourceId(CLIENT_SOURCE_ID);
         
         return result;
     }

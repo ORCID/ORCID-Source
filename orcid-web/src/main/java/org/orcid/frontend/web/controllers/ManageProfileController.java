@@ -31,8 +31,8 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -59,8 +59,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.OrcidStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -84,8 +82,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private static final String FOUND = "found";   
     
-    private static final Logger LOG = LoggerFactory.getLogger(ManageProfileController.class);
-
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -118,6 +114,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
     
     @Resource
     private PreferenceManager preferenceManager;
@@ -305,8 +304,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         Emails deprecatingEmails = emailManager.getEmails(deprecatingEntity.getId());
         Emails primaryEmails = emailManager.getEmails(primaryEntity.getId());
                 
-        String primaryAccountName = RecordNameUtils.getPublicName(primaryEntity.getRecordNameEntity());
-        String deprecatingAccountName = RecordNameUtils.getPublicName(deprecatingEntity.getRecordNameEntity());
+        String primaryOrcid = primaryEntity.getId();
+        String deprecatingOrcid = deprecatingEntity.getId();
+        
+        String primaryAccountName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(primaryOrcid);
+        String deprecatingAccountName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(deprecatingOrcid);
         deprecateProfile.setPrimaryAccountName(primaryAccountName);
         deprecateProfile.setPrimaryOrcid(currentUserOrcid);
         deprecateProfile.setDeprecatingAccountName(deprecatingAccountName);

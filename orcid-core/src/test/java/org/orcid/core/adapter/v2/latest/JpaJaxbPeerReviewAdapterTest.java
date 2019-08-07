@@ -183,7 +183,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("org:city", peerReview.getOrganization().getAddress().getCity());
         assertEquals("org:region", peerReview.getOrganization().getAddress().getRegion());
         assertNotNull(peerReview.getSource());        
-        assertEquals("APP-000000001", peerReview.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, peerReview.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -204,7 +204,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("peer-review:external-identifier-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());        
         assertNotNull(peerReviewSummary.getSource());
-        assertEquals("APP-000000001", peerReviewSummary.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, peerReviewSummary.getSource().retrieveSourcePath());
     }
 
     private PeerReview getPeerReview(boolean full) throws JAXBException {
@@ -227,7 +227,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         orgEntity.setUrl("org:url");
         
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
-        clientDetailsEntity.setId("APP-000000001");
+        clientDetailsEntity.setId(CLIENT_SOURCE_ID);
 
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetailsEntity);
@@ -249,7 +249,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         result.setSubjectUrl("peer-review:subject-url");                
         result.setSubjectType(WorkType.BOOK_REVIEW.name());        
         result.setVisibility(Visibility.PRIVATE.name());   
-        result.setClientSourceId("APP-000000001");
+        result.setClientSourceId(CLIENT_SOURCE_ID);
         result.setGroupId("orcid-generated:12345");
         result.setId(12345L);
         
