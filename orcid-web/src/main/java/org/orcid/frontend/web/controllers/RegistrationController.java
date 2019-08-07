@@ -337,7 +337,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerPasswordValidate(@RequestBody Registration reg) {
-        passwordChecklistValidate(reg.getPasswordConfirm(), reg.getPassword());
+        passwordChecklistValidate(reg.getPasswordConfirm(), reg.getPassword(), reg.getEmail(), reg.getEmailsAdditional());
         return reg;
     }    
 
