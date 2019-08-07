@@ -38,6 +38,7 @@ import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
@@ -252,14 +253,9 @@ public class PublicProfileController extends BaseWorkspaceController {
             publicRecordPersonDetails.setPublicGroupedPersonExternalIdentifiers(null);
         }
         
-        // If the id belongs to a member the name field is removed
-        Member member = null;
-        try {
-        	member  = membersManager.getMember(orcid);
-        } catch (RuntimeException e) {
-        	
-        }
-	    if (member != null) {
+        // If the id belongs to a group the name field is removed
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+	    if (OrcidType.GROUP.name().equals(profile.getOrcidType())) {
 	    	publicRecordPersonDetails.setDisplayName(null);
 	    }
 	     
