@@ -34,12 +34,19 @@ public class MembersListController extends BaseController {
     @RequestMapping("/members")
     public ModelAndView membersList() {
         ModelAndView mav = new ModelAndView("members-list");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
         return mav;
     }
 
     @RequestMapping("/members/{memberSlug}")
     public ModelAndView memberPage(@PathVariable("memberSlug") String memberSlug) {
-        return new ModelAndView("member-page");
+        ModelAndView mav = new ModelAndView("member-page");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
+        return mav;
     }
 
     @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
@@ -65,6 +72,9 @@ public class MembersListController extends BaseController {
     @RequestMapping("/consortia")
     public ModelAndView consortiaList() {
         ModelAndView mav = new ModelAndView("consortia-list");
+        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
+            mav.addObject("noIndex", true);
+        }
         return mav;
     }
 

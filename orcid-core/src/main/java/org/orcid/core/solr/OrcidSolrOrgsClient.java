@@ -1,4 +1,4 @@
-package org.orcid.persistence.dao.impl;
+package org.orcid.core.solr;
 
 import static org.orcid.utils.solr.entities.SolrConstants.ORG_DISAMBIGUATED_ID;
 
@@ -8,68 +8,41 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.params.SolrParams;
-import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.utils.solr.entities.SolrConstants;
 import org.springframework.dao.NonTransientDataAccessResourceException;
+import org.springframework.stereotype.Component;
 
-public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
-
-    @Resource(name = "orgDisambiguatedSolrServer")
-    private SolrServer solrServer;
-
-    @Resource(name = "orgDisambiguatedSolrServerReadOnly")
-    private SolrServer solrServerReadOnly;
-
-    @Override
-    public void persist(OrgDisambiguatedSolrDocument orgDisambiguatedSolrDocument) {
-        try {
-            solrServer.addBean(orgDisambiguatedSolrDocument);
-            solrServer.commit();
-        } catch (SolrServerException se) {
-            throw new NonTransientDataAccessResourceException("Error persisting org to SOLR Server", se);
-        } catch (IOException ioe) {
-            throw new NonTransientDataAccessResourceException("IOException when persisting org to SOLR", ioe);
-        }
-    }
-
-    @Override
-    public void remove(Long id) {
-        try {
-            solrServer.deleteById(String.valueOf(id));
-        } catch (SolrServerException | IOException e) {
-            throw new NonTransientDataAccessResourceException("Error removing org from SOLR Server", e);
-        }
-    }
-
-    @Override
+@Component
+public class OrcidSolrOrgsClient {
+    
+    @Resource(name = "solrReadOnlyOrgsClient")
+    private SolrClient solrReadOnlyOrgsClient;
+    
     public OrgDisambiguatedSolrDocument findById(Long id) {
         SolrQuery query = new SolrQuery();
         query.setQuery(ORG_DISAMBIGUATED_ID + ":" + id).setFields("*");
         try {
-            QueryResponse queryResponse = solrServerReadOnly.query(query);
+            QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
             if (!queryResponse.getResults().isEmpty()) {
                 OrgDisambiguatedSolrDocument document = queryResponse.getBeans(OrgDisambiguatedSolrDocument.class).get(0);
                 return document;
             }
-        } catch (SolrServerException se) {
+        } catch (SolrServerException | IOException se) {
             String errorMessage = MessageFormat.format("Error when attempting to retrieve org {0}", new Object[] { id });
             throw new NonTransientDataAccessResourceException(errorMessage, se);
         }
         return null;
     }
 
-    @Override
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean promoteChosenOrgs) {
         return getOrgs(searchTerm, firstResult, maxResult, false, promoteChosenOrgs);
     }
 
-    @Override
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly, boolean promoteChosenOrgs) {
         StringBuilder queryString = new StringBuilder("{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 ");
         if (promoteChosenOrgs) {
@@ -89,26 +62,24 @@ public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {
         query.setFields("*");
         
         try {
-            QueryResponse queryResponse = solrServerReadOnly.query(query);
+            QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
             return queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
-        } catch (SolrServerException se) {
+        } catch (SolrServerException | IOException se) {
             String errorMessage = MessageFormat.format("Error when attempting to search for orgs, with search term {0}", new Object[] { searchTerm });
             throw new NonTransientDataAccessResourceException(errorMessage, se);
         }
     }
     
-    @Override
     public List<OrgDisambiguatedSolrDocument> getOrgsForSelfService(String searchTerm, int firstResult, int maxResult) {
         SolrQuery query = new SolrQuery();
         query.setQuery("{!edismax qf='org-disambiguated-id-from-source^50.0 org-disambiguated-name^50.0 org-names^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}"
                 + searchTerm + "*").setFields("*");
         try {
-            QueryResponse queryResponse = solrServerReadOnly.query(query);
+            QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
             return queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
-        } catch (SolrServerException se) {
+        } catch (SolrServerException | IOException se) {
             String errorMessage = MessageFormat.format("Error when attempting to search for orgs for self-service, with search term {0}", new Object[] { searchTerm });
             throw new NonTransientDataAccessResourceException(errorMessage, se);
         }
-    }
-    
+    }    
 }

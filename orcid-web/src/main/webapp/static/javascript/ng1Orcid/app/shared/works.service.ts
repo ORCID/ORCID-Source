@@ -270,6 +270,11 @@ export class WorksService {
                                 type: "other",
                                 titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelTitlePublisher"),
                                 titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelTitleOtherPlaceholder")
+                            },
+                            {
+                                type: "physical-object",
+                                titleLabel: om.get("orcid.frontend.manual_work_form_contents.labelPhysicalObjectContainer"),
+                                titlePlaceholder: om.get("orcid.frontend.manual_work_form_contents.labelPhysicalObjectContainerPlaceholder")
                             }
                         ]
                     }

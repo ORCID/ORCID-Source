@@ -722,7 +722,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             if (!NullUtils.allNull(city, region, country)) {
                 OrganizationAddress address = new OrganizationAddress();
                 address.setCity(city);
-                address.setRegion(region);
+                address.setRegion(region.equals("") ? null : region);
                 address.setCountry(country);
                 return address;
             }

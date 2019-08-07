@@ -210,6 +210,8 @@ public class NotificationManagerTest extends DBUnitTest {
         map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, "0.0");
         map.put(EmailFrequencyManager.QUARTERLY_TIPS, "true");
         when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
+        
+        Mockito.when(mockMailGunManager.sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
     }
 
     @After
@@ -228,7 +230,6 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", notificationAdapter);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "mailGunManager", mailGunManager);
     }
 
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {

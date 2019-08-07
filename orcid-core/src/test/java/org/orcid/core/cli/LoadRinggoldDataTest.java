@@ -88,7 +88,7 @@ public class LoadRinggoldDataTest {
     @Test
     public void test_EmptyDB() throws URISyntaxException {
         when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(anyString(), eq(OrgDisambiguatedSourceType.RINGGOLD.name()))).thenReturn(null);
-        when(mockOrgDao.findByNameCityRegionAndCountry(anyString(), anyString(), anyString(), any())).thenReturn(null);
+        when(mockOrgDao.findByNameCityRegionCountryAndType(anyString(), anyString(), anyString(), any(), eq("RINGGOLD"))).thenReturn(null);
 
         Path path = Paths.get(getClass().getClassLoader().getResource("ringgold/test_base/").toURI());
         File testDirectory = path.toFile();
@@ -402,7 +402,7 @@ public class LoadRinggoldDataTest {
         assertEquals(Iso3166Country.CA.name(), entity.getCountry());
         assertEquals("3. Alt Name", entity.getName());
         assertEquals(Long.valueOf(3000), entity.getOrgDisambiguated().getId());
-        assertNull(entity.getRegion());        
+        assertEquals("", entity.getRegion());        
     }
 
     @Test
@@ -491,8 +491,8 @@ public class LoadRinggoldDataTest {
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).remove(anyLong());
         
         ArgumentCaptor<OrgEntity> captor = ArgumentCaptor.forClass(OrgEntity.class);
-        verify(mockOrgDao, times(0)).persist(any());
         verify(mockOrgDao, times(1)).merge(captor.capture());
+        verify(mockOrgDao, times(0)).persist(any());
         List<OrgEntity> list = captor.getAllValues();
         assertEquals(1, list.size());
         OrgEntity entity = list.get(0);
@@ -500,7 +500,7 @@ public class LoadRinggoldDataTest {
         assertEquals(Iso3166Country.CR.name(), entity.getCountry());
         assertEquals("Testing Org", entity.getName());
         assertEquals(Long.valueOf(3000), entity.getOrgDisambiguated().getId());
-        assertEquals(null, entity.getRegion());               
+        assertEquals("", entity.getRegion());               
     }
 
     
@@ -667,7 +667,7 @@ public class LoadRinggoldDataTest {
 
         });
         
-        when(mockOrgDao.findByNameCityRegionAndCountry(anyString(), anyString(), nullable(String.class), any()))
+        when(mockOrgDao.findByNameCityRegionCountryAndType(anyString(), anyString(), nullable(String.class), any(), eq("RINGGOLD")))
                 .thenAnswer(new Answer<OrgEntity>() {
 
                     @Override
@@ -683,12 +683,12 @@ public class LoadRinggoldDataTest {
                         entity.setRegion(region);
                         entity.setCountry(country.name());
 
-                        if ("1. Alt Name".equals(name) && "AltCity#1".equals(city) && region == null && Iso3166Country.MX.equals(country)) {
+                        if ("1. Alt Name".equals(name) && "AltCity#1".equals(city) &&  region.equals("") && Iso3166Country.MX.equals(country)) {
                             OrgDisambiguatedEntity od = new OrgDisambiguatedEntity();
                             // ringgold_id * 1000
                             od.setId(Long.valueOf(1000));
                             entity.setOrgDisambiguated(od);
-                        } else if ("2. Alt Name".equals(name) && "AltCity#2".equals(city) && region == null && Iso3166Country.BR.equals(country)) {
+                        } else if ("2. Alt Name".equals(name) && "AltCity#2".equals(city) &&  region.equals("") && Iso3166Country.BR.equals(country)) {
                             OrgDisambiguatedEntity od = new OrgDisambiguatedEntity();
                             // ringgold_id * 1000
                             od.setId(Long.valueOf(2000));

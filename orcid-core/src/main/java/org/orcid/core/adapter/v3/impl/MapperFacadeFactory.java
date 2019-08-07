@@ -173,7 +173,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private EncryptionManager encryptionManager;
     
-    @Resource
+    @Resource(name = "PIDNormalizationService")
     private PIDNormalizationService norm;
     
     @Resource

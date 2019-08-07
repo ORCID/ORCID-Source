@@ -4,7 +4,7 @@
 <#list clientUpdates as clientUpdate>
     <p>
         <div> 
-            <strong>${(clientUpdate.clientName)!clientUpdate.clientId}</strong><@emailMacros.space /><@emailMacros.msg "email.notification.client.have_made" />
+            <strong>${(clientUpdate.clientName)!clientUpdate.clientId}</strong><@emailMacros.space /><@emailMacros.msg "email.notification.client.has_made" />
         </div> 
         <div style="padding-left:25px">
             <#list types as type>

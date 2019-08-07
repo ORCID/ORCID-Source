@@ -31,7 +31,7 @@ Works (2)
 
 ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
 MORE INFO: https://testserver.orcid.org/inbox#3
-    Lovely Publisher 1 have made the following changes to your ORCID record:
+    Lovely Publisher 1 has made the following changes to your ORCID record:
 EducationNew items added:                            * <i>org name</i> education-1 (2014-07-12)
 
 WorksNew items added:                            * work-1 doi: doi01 (2014-07-12)
