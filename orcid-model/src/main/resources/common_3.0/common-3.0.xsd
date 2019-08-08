@@ -234,7 +234,7 @@
 			<xs:element name="disambiguation-source" type="common:short-text">
 				<xs:annotation>
 					<xs:documentation>The source for providing the disambiguated
-						organization ID.
+						organization ID. For the list of allowed sources see https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/java/org/orcid/core/orgs/OrgDisambiguatedSourceType.java
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
