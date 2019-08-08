@@ -243,7 +243,12 @@ public class PasswordResetController extends BaseController {
         }
 
         passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
-        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        
+        PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getEncryptedEmail());
+    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+    	Emails emails = emailManager.getEmails(orcid);
+    	
+        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword(), emails);
         if (!oneTimeResetPasswordForm.getPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
             return oneTimeResetPasswordForm;
         }
