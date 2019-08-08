@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-md-9 col-sm-9 col-xs-8">
                     <div>
-                        <span class="title" (click)="showDetailsMouseClick(group,$event)"><span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right'"></span> <span><@orcid.msg 'peer_review.review_activity_for' /> </span><span class="peer-review-title"><span>{{group.name}}</span>({{group?.peerReviewDuplicateGroups?.length}})</span></span>
+                        <span class="title" (click)="showDetailsMouseClick(group,$event)"><span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right'"></span> <span><@orcid.msg 'peer_review.revifew_activity_for' /> </span><span class="peer-review-title"><span>{{group.name}}</span>({{group?.peerReviewDuplicateGroups?.length}})</span></span>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
@@ -118,10 +118,10 @@
                                                         <div class="col-md-12 info-detail" *ngIf="peerReviewService.details[peerReview.putCode.value]?.orgName?.value != null">
                                                             <span class="workspace-title"><@orcid.msg 'peer_review.convening_organization' />&nbsp;</span>{{peerReviewService.details[peerReview.putCode.value]?.orgName?.value}} ({{peerReviewService.details[peerReview.putCode.value]?.city?.value}}<span *ngIf="peerReviewService.details[peerReview.putCode.value]?.city?.value && peerReviewService.details[peerReview.putCode.value]?.country?.value">,</span> {{peerReviewService.details[peerReview.putCode.value]?.country?.value}})
                                                         </div>
-                                                        <div class="col-md-12 info-detail">
-                                                            <div *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectName?.value != null">
-                                                                <span class="workspace-title"><@orcid.msg 'peer_review.review_subject'/></span>                                  
-                                                                {{peerReviewService.details[peerReview.putCode.value]?.subjectName?.value}} 
+                                                        <div class="col-md-12 info-detail" *ngIf="(peerReviewService.details[peerReview.putCode.value]?.subjectType?.value != null) || (peerReviewService.details[peerReview.putCode.value]?.subjectName?.value != null) || (peerReviewService.details[peerReview.putCode.value]?.subjectContainerName != null) || (peerReviewService.details[peerReview.putCode.value]?.subjectExternalIdentifier?.externalIdentifierId?.value != null)">
+                                                            <span class="workspace-title"><@orcid.msg 'peer_review.review_subject'/></span>
+                                                            <div>
+                                                                <span *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectName?.value != null">{{peerReviewService.details[peerReview.putCode.value]?.subjectName?.value}} </span>
                                                                 <span *ngIf="peerReviewService.details[peerReview.putCode.value]?.subjectType?.value != null">({{peerReviewService.details[peerReview.putCode.value]?.subjectType?.value}})
                                                                 </span>
                                                             </div>
