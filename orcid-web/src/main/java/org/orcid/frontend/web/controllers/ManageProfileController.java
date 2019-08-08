@@ -295,6 +295,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
+        
+        validateNonDeprecatingEntity(deprecateProfile, primaryEntity);
+        if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
 
         validateDeprecateAccountRequest(deprecateProfile, deprecatingEntity);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
@@ -339,6 +344,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
+
+        validateNonDeprecatingEntity(deprecateProfile, primaryEntity);
+        if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
         
         validateDeprecateAccountRequest(deprecateProfile, deprecatingEntity);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
@@ -350,6 +360,16 @@ public class ManageProfileController extends BaseWorkspaceController {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
         }
         return deprecateProfile;
+    }
+
+    private void validateNonDeprecatingEntity(DeprecateProfile deprecateProfile, ProfileEntity entity) {
+       if (entity.getDeprecatedDate() != null) {
+           deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.this_profile_deprecated", entity.getId())));
+       }
+       
+       if (entity.getDeactivationDate() != null) {
+           deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.this_profile_deactivated", entity.getId())));
+       }
     }
 
     private void validateDeprecatingEntity(ProfileEntity deprecatingEntity, ProfileEntity primaryEntity, DeprecateProfile deprecateProfile) {

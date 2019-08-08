@@ -1,5 +1,5 @@
-<div id="modalDeprecateAccountSuccess" class="modal">
-    <div class="popover-ng2-bck" (click)="cancelDeprecateModal('modalDeprecateAccountSuccess')"></div>
+<div id="modalDeprecateAccountFailure" class="modal">
+    <div class="popover-ng2-bck" (click)="cancelDeprecateModal('modalDeprecateAccountFailure')"></div>
     <div
         class="popover-ng2-content"
         id="colorbox" 
@@ -50,14 +50,16 @@
                             <!--Begin modal content-->      
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">
-                                    <h2><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></h2> 
-                                    <p><@orcid.msg 'deprecate_orcid_confirmation_modal.text_1' />&nbsp;<a href="{{getBaseUri()}}/{{deprecateProfilePojo.deprecatingOrcid}}" target="deprecatingOrcid">{{getBaseUri()}}/{{deprecateProfilePojo.deprecatingOrcid}}</a>&nbsp;<@orcid.msg 'deprecate_orcid_confirmation_modal.text_2' />&nbsp;<a href="{{getBaseUri()}}/{{deprecateProfilePojo.primaryOrcid}}">{{getBaseUri()}}/{{deprecateProfilePojo.primaryOrcid}}</a></p>
+                                    <h2><@orcid.msg 'deprecate_orcid_failure_modal.heading' /></h2> 
+                                    <span class="orcid-error" *ngIf="deprecateProfilePojo?.errors?.length > 0">
+                                        <div *ngFor='let error of deprecateProfilePojo.errors' [innerHTML]="error"></div>
+                                    </span>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12">
                                     <div class="pull-left">
-                                        <button class="btn btn-primary cancel-right" (click)="cancelDeprecateModal('modalDeprecateAccountSuccess')"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></button>
+                                        <button class="btn btn-primary cancel-right" (click)="cancelDeprecateModal('modalDeprecateAccountFailure')"><@orcid.msg 'deprecate_orcid_confirmation_modal.close' /></button>
                                     </div>
                                 </div>
                             </div>
