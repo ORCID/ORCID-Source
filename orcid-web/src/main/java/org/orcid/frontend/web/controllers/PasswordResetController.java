@@ -244,7 +244,6 @@ public class PasswordResetController extends BaseController {
 
         passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
         
-        PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getEncryptedEmail());
     	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
     	Emails emails = emailManager.getEmails(orcid);
     	
@@ -253,7 +252,6 @@ public class PasswordResetController extends BaseController {
             return oneTimeResetPasswordForm;
         }
 
-        String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
 
         String redirectUrl = calculateRedirectUrl(request, response, false);
