@@ -201,14 +201,16 @@ public class PasswordResetController extends BaseController {
     @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)
     public @ResponseBody OneTimeResetPasswordForm resetPasswordConfirmValidate(@RequestBody OneTimeResetPasswordForm resetPasswordForm) {
         
-    	PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getEncryptedEmail());
-    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
-    	Emails emails = emailManager.getEmails(orcid);
-    	
     	resetPasswordForm.setErrors(new ArrayList<String>());
 
-        passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword(), emails);
-
+    	Emails emails = null;
+    	if (resetPasswordForm.getEncryptedEmail() != null) {
+	    	PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getEncryptedEmail());
+	    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+	    	emails = emailManager.getEmails(orcid);
+    	} 
+    	passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword(), emails);
+    	
         if (resetPasswordForm.getRetypedPassword() != null && !resetPasswordForm.getRetypedPassword().equals(resetPasswordForm.getPassword())) {
             setError(resetPasswordForm, "FieldMatch.registrationForm");
         }

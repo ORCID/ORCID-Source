@@ -616,7 +616,12 @@ public class BaseController {
     }
     
     protected void passwordChecklistValidate(Text passwordConfirm, Text password, Emails emails) {
-    	passwordChecklistValidate (passwordConfirm, password, emails.getEmails().stream().map(email-> email.getEmail()).collect(Collectors.toList()));
+    	if (emails != null) {
+    		passwordChecklistValidate (passwordConfirm, password, emails.getEmails().stream().map(email-> email.getEmail()).collect(Collectors.toList()));
+    	} else {
+    		passwordChecklistValidate (passwordConfirm, password);
+    	}
+    	
     }
     
 
