@@ -550,13 +550,18 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     value += " (" + renderCreationDate (createdDate) + ')';
                     break;
                 }   
-                if(item.getActionType() != null) {
-                    updates.get(item.getItemType().name()).get(item.getActionType().name()).add(value);
+                
+                Set<String> elements;
+                if (item.getActionType() != null) {
+                    elements = updates.get(item.getItemType().name()).get(item.getActionType().name());
                 } else {
-                    updates.get(item.getItemType().name()).get(ActionType.UNKNOWN.name()).add(value);
+                    elements = updates.get(item.getItemType().name()).get(ActionType.UNKNOWN.name());
                 }
-            }
-            counter += 1;
+                if (!elements.contains(value)) {
+                    elements.add(value);
+                    counter += 1;
+                }
+            }            
         }        
 
         private void init(String itemType, String actionType) {
