@@ -29,12 +29,16 @@
                                     <table class="table" style="position: static">
                                         <tr *ngFor="let email of formData.emails | orderBy:'value'" class="data-row-group" name="email">
                                             <!-- Primary Email -->
-                                            <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" >                                                     
-                                                <span *ngIf="emailEditing !== email.value" >{{email.value}}</span>
-                                                <input *ngIf="emailEditing === email.value" [(ngModel)]="emailEditingNewValue" (focusout)="emailEditSave()"> 
-                                                <span *ngIf="emailEditing !== email.value" (click)="emailEdit(email.value)"  role="Button" class="glyphicon glyphicon-pencil"  role="presentation" style="padding-left: 5px;"></span>
-                                                <div *ngIf="emailEditing === email.value" class="cancel-edit-button" (click)="emailEditing = null" style="padding-left: 5px;"> CANCEL</div>
-
+                                            <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email">  
+                                                <div *ngIf="emailEditing !== email.value">
+                                                    <span>{{email.value}}</span>
+                                                    <span *ngIf="!email.primary" (click)="emailEdit(email.value)"  role="Button" class="glyphicon glyphicon-pencil"  role="presentation" style="padding-left: 5px;"></span>
+                                                </div>
+                                                <div (clickElsewhere)="emailEditSave()" *ngIf="emailEditing === email.value" >
+                                                    <input autofocus [(ngModel)]="emailEditingNewValue"  (keyup.enter)="emailEditSave()"> 
+                                                    <div  class="cancel-edit-button" (click)="emailEditing = null" style="padding-left: 5px;"> CANCEL</div>
+                                                </div>
+                                                
                                                 <span class="orcid-error small" *ngIf="TOGGLZ_HIDE_UNVERIFIED_EMAILS && !email.verified && !(email.visibility=='PRIVATE')">${springMacroRequestContext.getMessage("manage.email.only_verified")} ${springMacroRequestContext.getMessage("common.please")} <a (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.developer_tools.verify_your_email")}</a></span>
                                             </td>
                                             <td>                     

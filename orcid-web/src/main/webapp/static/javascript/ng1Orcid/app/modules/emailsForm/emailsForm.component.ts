@@ -529,13 +529,52 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     emailEdit(value){
+        console.log (value)
         this.emailEditing = this.emailEditingNewValue = value
+        console.log (this.emailEditing, " ", this.emailEditingNewValue)
+
     }
     emailEditSave(){
         if (this.emailEditing !==  this.emailEditingNewValue) {
-            console.log ("SAVE ", this.emailEditingNewValue )
+            this.initInputEmail();
+            this.inputEmail["value"] = this.emailEditingNewValue
+            // add new email
+            this.emailService.addEmail( this.inputEmail )
+            .subscribe(
+                data => {
+                    this.inputEmail = data;
+                    if (this.inputEmail.errors.length == 0) {
+                        // deletes old email if there are no errors with the new email
+                        this.emailService.delEmail = {value: this.emailEditing};        
+                        this.emailService.deleteEmail()
+                        .subscribe(
+                            data => {
+                                // get the emails from the backend
+                                this.getformData();
+                                // clean form values 
+                                this.initInputEmail();
+                                this.emailEditing = this.emailEditingNewValue = null
+                            },
+                            error => {
+                                // console.log('getEmailsFormError', error);
+                            } 
+                        );
+                    } else {
+                        // delete the inputEmail value if there is an error
+                        // to only display the error at the bottom of the form 
+                        this.inputEmail["value"] = ""
+                    }
+                },
+                error => {
+                    //console.log('getEmailsFormError', error);
+                } 
+            );
+        } else {
+            // if nothing change on the email edit 
+            this.emailEditing = this.emailEditingNewValue = null
         }
     }
+
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
