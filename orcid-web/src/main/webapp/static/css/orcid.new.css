@@ -9737,8 +9737,31 @@ emails-form-ng2 .cancel-edit-button {
     display: inline;
 }
 
-emails-form-ng2 .settings-table .popover {
+emails-form-ng2 .settings-table .popover.show-unverified-popover {
     left: -75px;
-    top: -35px;
+    top: 35px;
     min-width: unset;
+    display: block
+}
+
+emails-form-ng2 .border-button {
+    width: 124px;
+    display: block;
+    text-align: center;
+    height: 30px;
+    line-height: 16px;
+}
+
+emails-form-ng2 .edit-record-emails {
+    width: 100%;
+}
+
+
+emails-form-ng2 privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.arrow {
+    left: 80% !important;
+}
+
+emails-form-ng2 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container {
+    right: calc(50% - 45px);
+    bottom: 31px;
 }

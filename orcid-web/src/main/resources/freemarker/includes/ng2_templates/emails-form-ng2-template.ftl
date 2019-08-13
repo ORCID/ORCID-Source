@@ -47,7 +47,7 @@
                                                     (mouseenter)="showTooltip(email.value)" 
                                                     (mouseleave)="hideTooltip(email.value)">${springMacroRequestContext.getMessage("manage.email.set_primary")} </a>
                                             
-                                                    <div class="popover popover-tooltip top show-hide-details-popover" *ngIf="showElement[email.value]">
+                                                    <div class="popover popover-tooltip bottom show-unverified-popover" *ngIf="showElement[email.value] && !email.verified">
                                                     <div class="arrow"></div><div class="popover-content">
                                                     <span>${springMacroRequestContext.getMessage("email.edit.unverified.popover")}</span>
                                                     </div>
@@ -61,7 +61,17 @@
                                             <!-- 
                                             <td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];"> 
                                             -->
-                                            <td>                            
+             
+                                            <td class="email-verified">
+                                                <span *ngIf="!email.verified" class="left">
+                                                    <a class="border-button" (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
+                                                </span>
+                                                <span *ngIf="email.verified" class="border-button active">
+                                                    ${springMacroRequestContext.getMessage("manage.email.verified")}
+                                                </span>
+                                            </td>   
+                                            <@orcid.checkFeatureStatus 'EMAIL_STATUS_DROPDOWN_OPTION'>   
+                                            <td>            
                                                 <select 
                                                     [(ngModel)]="email.current" 
                                                     (ngModelChange)="saveEmail(false)"
@@ -71,18 +81,10 @@
                                                         [value]="emailStatusOption.val"
                                                     >
                                                         {{emailStatusOption.label}}   
-                                                    </option>             
-                                                    
+                                                    </option>        
                                                 </select>
                                             </td>
-                                            <td class="email-verified">
-                                                <span *ngIf="!email.verified" class="left">
-                                                    <a class="border-button" (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
-                                                </span>
-                                                <span *ngIf="email.verified" class="border-button active">
-                                                    ${springMacroRequestContext.getMessage("manage.email.verified")}
-                                                </span>
-                                            </td>   
+                                            </@orcid.checkFeatureStatus>
                                             <td width="26" class="tooltip-container">                                      
                                                 <a name="delete-email-inline" class="glyphicon glyphicon-trash grey"
                                                     *ngIf="email.primary == false"
