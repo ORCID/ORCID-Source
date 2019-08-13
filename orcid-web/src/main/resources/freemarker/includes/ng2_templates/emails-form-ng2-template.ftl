@@ -30,11 +30,15 @@
                                         <tr *ngFor="let email of formData.emails | orderBy:'value'" class="data-row-group" name="email">
                                             <!-- Primary Email -->
                                             <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" >                                                     
-                                                <span>{{email.value}}</span><br>
+                                                <span *ngIf="emailEditing !== email.value" >{{email.value}}</span>
+                                                <input *ngIf="emailEditing === email.value" [(ngModel)]="emailEditingNewValue" (focusout)="emailEditSave()"> 
+                                                <span *ngIf="emailEditing !== email.value" (click)="emailEdit(email.value)"  role="Button" class="glyphicon glyphicon-pencil"  role="presentation" style="padding-left: 5px;"></span>
+                                                <div *ngIf="emailEditing === email.value" class="cancel-edit-button" (click)="emailEditing = null" style="padding-left: 5px;"> CANCEL</div>
+
                                                 <span class="orcid-error small" *ngIf="TOGGLZ_HIDE_UNVERIFIED_EMAILS && !email.verified && !(email.visibility=='PRIVATE')">${springMacroRequestContext.getMessage("manage.email.only_verified")} ${springMacroRequestContext.getMessage("common.please")} <a (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.developer_tools.verify_your_email")}</a></span>
                                             </td>
                                             <td>                     
-                                                <span *ngIf="!email.primary"> <a 
+                                                <span *ngIf="!email.primary"> <a class="border-button" [ngClass]="{'disabled': !email.verified}"
                                                     (click)="setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
                                                 </span>
                                                 <span *ngIf="email.primary" class="muted" style="color: #bd362f;">
@@ -60,7 +64,7 @@
                                             </td>
                                             <td class="email-verified">
                                                 <span *ngIf="!email.verified" class="left">
-                                                    <a (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
+                                                    <a  (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
                                                 </span>
                                                 <span *ngIf="email.verified" class="left">
                                                     ${springMacroRequestContext.getMessage("manage.email.verified")}

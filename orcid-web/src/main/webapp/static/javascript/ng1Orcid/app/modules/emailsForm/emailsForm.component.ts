@@ -78,6 +78,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     sendQuarterlyTips: boolean;
     aboutUri: String;
     emailFrequencyOptions: any;
+
+    emailEditing
+    emailEditingNewValue
     
     constructor( 
         private elementRef: ElementRef, 
@@ -524,6 +527,15 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     updateDisplayIndex(): void{
         let idx: any;
     };
+
+    emailEdit(value){
+        this.emailEditing = this.emailEditingNewValue = value
+    }
+    emailEditSave(){
+        if (this.emailEditing !==  this.emailEditingNewValue) {
+            console.log ("SAVE ", this.emailEditingNewValue )
+        }
+    }
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
