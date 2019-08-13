@@ -2361,7 +2361,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .settings-table .table td:nth-child(2) {
     width: 50%;
-    min-width: 110px;
+    min-width: 120px;
 }
 
 .settings-table .table td:nth-child(3) {
@@ -9701,7 +9701,7 @@ footer-ng2 .footer-row-container nav a {
 }
 
 
-emails-form-ng2 a.border-button {
+emails-form-ng2 .border-button {
     line-height: 32px;
     border-radius: 6px;
     padding: 6px 11px;
@@ -9710,14 +9710,19 @@ emails-form-ng2 a.border-button {
     font-size: 13.8px;
 }
 
-emails-form-ng2 a.border-button.disabled {
-    pointer-events: none;
+emails-form-ng2 .border-button.disabled, emails-form-ng2 .border-button.disabled:hover{
     cursor: default;
     color: rgba(0, 0, 0, 0.38); 
+    background-color: initial;
 }
 
-emails-form-ng2 a.border-button:hover {
+emails-form-ng2 .border-button:hover {
     background-color: rgba(8,92,119,0.04);
+    color: inherit;
+}
+emails-form-ng2 .border-button.active {
+    color: #2e7f9f;
+    background-color: rgba(8,92,119, 0.12);
 }
 
 emails-form-ng2 .cancel-edit-button {
@@ -9730,4 +9735,10 @@ emails-form-ng2 .cancel-edit-button {
     text-align: center;
     color: #f44336;
     display: inline;
+}
+
+emails-form-ng2 .settings-table .popover {
+    left: -75px;
+    top: -35px;
+    min-width: unset;
 }

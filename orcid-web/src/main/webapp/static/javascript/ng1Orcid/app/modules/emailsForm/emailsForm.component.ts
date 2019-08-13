@@ -366,28 +366,30 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emailService.delEmail = email;                
     };
 
-    setPrimary( email ): void {
-        this.emailService.setPrimary( email )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                let tempData = null;
-                this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
-                
-                this.getformData();
+    setPrimary( email, verifyEmail ): void {
+        if (verifyEmail) {
+            this.emailService.setPrimary( email )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    let tempData = null;
+                    this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
+                    
+                    this.getformData();
 
-                if ( data.verified == false ) {
-                    this.showUnverifiedEmailSetPrimaryBox = true;
-                } else {
-                    this.showUnverifiedEmailSetPrimaryBox = false;
-                }
-            },
-            error => {
-                ////console.log('getEmailsFormError', error);
-            } 
-        );
+                    if ( data.verified == false ) {
+                        this.showUnverifiedEmailSetPrimaryBox = true;
+                    } else {
+                        this.showUnverifiedEmailSetPrimaryBox = false;
+                    }
+                },
+                error => {
+                    ////console.log('getEmailsFormError', error);
+                } 
+            );
+        }
     };
 
     getformData(): void {
@@ -574,6 +576,14 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             this.emailEditing = this.emailEditingNewValue = null
         }
     }
+
+    showTooltip(element): void{        
+        this.showElement[element] = true;
+    };
+
+    hideTooltip(element): void{        
+        this.showElement[element] = false;
+    };
 
 
     //Default init functions provided by Angular Core
