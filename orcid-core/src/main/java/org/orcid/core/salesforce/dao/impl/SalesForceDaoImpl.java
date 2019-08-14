@@ -694,7 +694,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private List<OrgId> retrieveOrgIdsFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of org ids from SalesForce");
         validateSalesForceId(accountId);
-        WebResource resource1 = createQueryResource("Select Id, Name, Identifier_Type__c, Inactive__c, Primary_ID_for_type__c, Organization__c, Date_Granted__c, Notes__c From Organization_Identifier__c Where (Not Identifier_Type__c Like 'ORCID Group ID%%25') And Organization__c = '%s'", accountId);
+        WebResource resource1 = createQueryResource("Select Id, Name, Identifier_Type__c, Inactive__c, Primary_ID_for_type__c, Organization__c, Date_Granted__c, Notes__c From Organization_Identifier__c Where (Not Identifier_Type__c Like 'ORCID Group ID%%25') And (Not Identifier_Type__c Like 'ORCID Client ID%25') And Organization__c = '%s'", accountId);
         WebResource resource = resource1;
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
