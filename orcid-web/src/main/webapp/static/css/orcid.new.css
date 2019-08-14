@@ -8843,8 +8843,8 @@ a.footer-url {
     /* text-shadow: 1px 0 0 currentColor; */
 }
 
-.header2 .menu-bar li > a:hover,
-.header2 .menu-bar li > a:focus{
+.header2 .menu-bar > .container > .menu > li > a:hover,
+.header2 .menu-bar > .container > .menu > li > a:focus{
     background-color: #085c77;
     transition: all .3s ease;
     /* text-shadow: 1px 0 0 currentColor; */
@@ -8852,7 +8852,7 @@ a.footer-url {
 
 .header2 .menu-bar ul.menu ul {
     
-    display:none;
+    display:none;   
     position:absolute;
     left: 0;
     top:100%;
