@@ -681,7 +681,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());                
                 b.setTranslatedTitle((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getContent());
                 b.setTranslatedTitleLanguageCode((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getLanguageCode());
-                b.setNumericAmount((a.getAmount() == null || a.getAmount().getContent() == null) ? null : BigDecimal.valueOf(Long.valueOf(a.getAmount().getContent())));
+                b.setNumericAmount((a.getAmount() == null || a.getAmount().getContent() == null) ? null : BigDecimal.valueOf(Double.valueOf(a.getAmount().getContent())));
                 b.setCurrencyCode((a.getAmount() == null || a.getAmount().getContent() == null) ? null : a.getAmount().getCurrencyCode());
             }                      
         });
