@@ -133,7 +133,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
         Locale locale = getUserLocaleFromProfileEntity(record);
-        int totalMessageCount = 0;
         int orcidMessageCount = 0;
         
         Set<String> memberIds = new HashSet<>();
@@ -143,7 +142,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
         for (Notification notification : notifications) {
             digestEmail.addNotification(notification);
-            totalMessageCount++;
             if (notification.getSource() == null) {
                 orcidMessageCount++;
             } else {
@@ -187,14 +185,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         sortedClientIds.stream().forEach(s -> {sortedClientUpdates.add(updatesByClient.get(s));});
         
         String emailName = notificationManager.deriveEmailFriendlyName(record.getId());
-        String subject = messages.getMessage("email.subject.digest", new String[] { emailName, String.valueOf(totalMessageCount) }, locale);
+        String subject = messages.getMessage("email.subject.digest", new String[] { emailName }, locale);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);
         params.put("messageArgs", new Object[0]); 
         params.put("emailName", emailName);
         params.put("digestEmail", digestEmail);        
-        params.put("totalMessageCount", String.valueOf(totalMessageCount));
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("baseUri", orcidUrlManager.getBaseUrl());
         params.put("subject", subject);
@@ -216,7 +213,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     public EmailMessage createDigestLegacy(String orcid, Collection<Notification> notifications) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);                
         Locale locale = getUserLocaleFromProfileEntity(record);
-        int totalMessageCount = 0;
         int orcidMessageCount = 0;
         int addActivitiesMessageCount = 0;
         int amendedMessageCount = 0;
@@ -225,7 +221,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         DigestEmail digestEmail = new DigestEmail();
         for (Notification notification : notifications) {
             digestEmail.addNotification(notification);
-            totalMessageCount++;
             if (notification.getSource() == null) {
                 orcidMessageCount++;
             } else {
@@ -246,14 +241,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             }
         }
         String emailName = notificationManager.deriveEmailFriendlyName(record.getId());
-        String subject = messages.getMessage("email.subject.digest", new String[] { emailName, String.valueOf(totalMessageCount) }, locale);
+        String subject = messages.getMessage("email.subject.digest", new String[] { emailName }, locale);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);
         params.put("messageArgs", new Object[0]);        
         params.put("emailName", emailName);
         params.put("digestEmail", digestEmail);        
-        params.put("totalMessageCount", String.valueOf(totalMessageCount));
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("addActivitiesMessageCount", addActivitiesMessageCount);
         params.put("activityCount", activityCount);
