@@ -11,7 +11,7 @@
                 <@emailMacros.msg "email.common.hi" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
             </span>
             <p>
-                <@emailMacros.msg "email.digest.youhave" /><@emailMacros.space />${totalMessageCount}<@emailMacros.space /><@emailMacros.msg "email.digest.new" /><@emailMacros.space /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.space /><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_1" /><@emailMacros.space /><a href="${baseUri}/inbox?lang=${locale}" style="color: #2E7F9F; text-decoration: none;"><@emailMacros.msg "email.digest.orcidinbox" /></a><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_4" />
+                <@emailMacros.msg "email.digest.youhave" /><@emailMacros.space /><@emailMacros.msg "email.digest.new" /><@emailMacros.space /><@emailMacros.msg "email.digest.notifications" /><@emailMacros.space /><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_1" /><@emailMacros.space /><a href="${baseUri}/inbox?lang=${locale}" style="color: #2E7F9F; text-decoration: none;"><@emailMacros.msg "email.digest.orcidinbox" /></a><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_4" />
             </p>
             <#if digestEmail.notificationsBySourceId['ORCID']??> 
             <p>

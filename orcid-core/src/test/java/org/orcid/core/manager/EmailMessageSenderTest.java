@@ -118,7 +118,7 @@ public class EmailMessageSenderTest extends BaseTest {
         String text = emailMessage.getBodyText();
         String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body_legacy.txt"));
         String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body_legacy.html"));
-        assertEquals("[ORCID] John Watson you have 6 new notifications", emailMessage.getSubject());
+        assertEquals("[ORCID] John Watson you have new notifications", emailMessage.getSubject());
         assertEquals(expectedBodyHtml, html);
         assertEquals(expectedBodyText, text);
     }
@@ -131,7 +131,7 @@ public class EmailMessageSenderTest extends BaseTest {
         String text = emailMessage.getBodyText();
         String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
         String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.html"));
-        assertEquals("[ORCID] John Watson you have 6 new notifications", emailMessage.getSubject());
+        assertEquals("[ORCID] John Watson you have new notifications", emailMessage.getSubject());
         assertEquals(expectedBodyHtml, html);
         assertEquals(expectedBodyText, text);
     }

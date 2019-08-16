@@ -1,7 +1,7 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.hi" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.digest.youhave" /><@emailMacros.space />${totalMessageCount}<@emailMacros.space /><@emailMacros.msg "email.digest.new" /><@emailMacros.space /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.space /><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_1" /><@emailMacros.space /><@emailMacros.msg "email.digest.orcidinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_2" />${baseUri}/inbox<@emailMacros.msg "email.digest.pleasevisit_3" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_4" />
+<@emailMacros.msg "email.digest.youhave" /><@emailMacros.space /><@emailMacros.msg "email.digest.new" /><@emailMacros.space /><@emailMacros.msg "email.digest.notifications" /><@emailMacros.space /><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_1" /><@emailMacros.space /><@emailMacros.msg "email.digest.orcidinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_2" />${baseUri}/inbox<@emailMacros.msg "email.digest.pleasevisit_3" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_4" />
 
 <#if digestEmail.notificationsBySourceId['ORCID']??>
 <@emailMacros.msg "email.digest.orcidwouldlikeyoutoknow" />

@@ -1,6 +1,6 @@
 Hi John Watson,
 
-You have 6 new notifications in your ORCID inbox - see summary below. Please visit your ORCID Inbox (https://testserver.orcid.org/inbox) to take action or see more details.
+You have new notifications in your ORCID inbox - see summary below. Please visit your ORCID Inbox (https://testserver.orcid.org/inbox) to take action or see more details.
 
 ORCID would like to let you know
 

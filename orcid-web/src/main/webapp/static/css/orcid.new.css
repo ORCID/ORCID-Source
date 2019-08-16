@@ -6863,7 +6863,7 @@ ul.comma li:last-child:after {
 .footer-main p {
     margin: 0 0 6px;
     text-align: center;
-    font: 400 12px/16px "Noto Sans", sans-serif;
+    font: 400 14px/16px "Noto Sans", sans-serif;
 }
 
 .footer-main .social {
@@ -8725,7 +8725,7 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     align-items: center;
 }
 
-.footer-row-text-container > nav a {
+.footer-row-text-container a {
     margin-right: 15px;
     font-family: "Noto Sans", sans-serif;
     font-size: 14px;
@@ -8751,7 +8751,7 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
         margin-top: 20px;
     }
 
-    .footer-row-text-container > nav a {
+    .footer-row-text-container a {
         margin-bottom: 20px;
         margin-right: 0px
     }
@@ -8767,10 +8767,6 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     
 }
 
-
-a.footer-url {
-    text-decoration: underline;
-}
 
 #RegistrationForm .control-label>i {
     font-style: italic;
@@ -8843,8 +8839,8 @@ a.footer-url {
     /* text-shadow: 1px 0 0 currentColor; */
 }
 
-.header2 .menu-bar li > a:hover,
-.header2 .menu-bar li > a:focus{
+.header2 .menu-bar > .container > .menu > li > a:hover,
+.header2 .menu-bar > .container > .menu > li > a:focus{
     background-color: #085c77;
     transition: all .3s ease;
     /* text-shadow: 1px 0 0 currentColor; */
@@ -8852,7 +8848,7 @@ a.footer-url {
 
 .header2 .menu-bar ul.menu ul {
     
-    display:none;
+    display:none;   
     position:absolute;
     left: 0;
     top:100%;
@@ -9695,6 +9691,10 @@ footer-ng2 .footer-main {
 	}
 }
 
-footer-ng2 .footer-row-container nav a {
+footer-ng2 .footer-row-container a {
     color: rgba(0,0,0,0.87);
+}
+
+footer-ng2 .footer-row-container a:hover {
+    text-decoration: underline;
 }

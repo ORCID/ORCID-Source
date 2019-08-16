@@ -221,21 +221,24 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
     private List<Item> createItemList(PeerReviewEntity peerReviewEntity, ActionType type) {
         Item item = new Item();
-        item.setItemName(peerReviewEntity.getSubjectName());
         item.setItemType(ItemType.PEER_REVIEW);
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
         item.setActionType(type);
         Map<String, Object> additionalInfo = new HashMap<String, Object>();
         additionalInfo.put("subject_container_name", peerReviewEntity.getSubjectContainerName());
         
+        String itemName = null;
+        
         Optional<GroupIdRecord> optional = groupIdRecordManagerReadOnly.findByGroupId(peerReviewEntity.getGroupId());
         if(optional.isPresent()) {
             GroupIdRecord groupId = optional.get();
             if(!StringUtils.isBlank(groupId.getName())) {
                 additionalInfo.put("group_name", optional.get().getName());
+                itemName = optional.get().getName();
             }            
         }
         
+        item.setItemName(itemName);
         item.setAdditionalInfo(additionalInfo);
         return Arrays.asList(item);
     }
