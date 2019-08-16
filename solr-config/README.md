@@ -41,7 +41,7 @@ You should end up with
    (Where the port should not collide with any of the ports already in use, if you dont specify the -p param, the default port will be 8983)
 5. Confirm solr is up and cores have been created by going to http://localhost:<SOLR_PORT>/solr/#/
 
-## Configure the ORCID-Solr project to use the new solr instance
+## Configure the project to use the new solr instance
 
 ### Message listener configuration
 

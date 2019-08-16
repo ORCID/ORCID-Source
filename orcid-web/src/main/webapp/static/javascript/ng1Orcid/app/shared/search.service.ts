@@ -87,7 +87,7 @@ export class SearchService {
 
     getResults(url): Observable<any> {
         return this.searchBaseUri.pipe(
-                switchMap((baseUrlString) => {                    
+                switchMap((baseUrlString) => {
                     orcidSearchUrlJs.setBaseUrl(baseUrlString);
                     var theUrl = orcidSearchUrlJs.buildUrl(url);                    
                     return this.http.get(theUrl, {headers: this.publicApiHeaders})                   
