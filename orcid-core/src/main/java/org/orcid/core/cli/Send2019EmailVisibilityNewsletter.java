@@ -68,12 +68,12 @@ public class Send2019EmailVisibilityNewsletter {
     
     private void send() {
         int offset = 0;
-        List<EmailEntity> emails = emailDaoReadOnly.getMarch2019QuarterlyEmailRecipients(offset, BATCH_SIZE);
+        List<EmailEntity> emails = emailDaoReadOnly.get2019VisibilityEmailRecipients(offset, BATCH_SIZE);
         LOG.info("Fetched {} emails for queuing...", emails.size());
         while (!emails.isEmpty()) {
             sendToEmails(emails);
             offset += BATCH_SIZE;
-            emails = emailDaoReadOnly.getMarch2019QuarterlyEmailRecipients(offset, BATCH_SIZE);
+            emails = emailDaoReadOnly.get2019VisibilityEmailRecipients(offset, BATCH_SIZE);
             LOG.info("Fetched {} emails for queuing...", emails.size());
         }
     }
