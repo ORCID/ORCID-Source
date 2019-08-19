@@ -44,7 +44,7 @@ public class OrcidSolrOrgsClient {
     }
 
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly, boolean promoteChosenOrgs) {
-        StringBuilder queryString = new StringBuilder("{!edismax qf='org-disambiguated-name^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 ");
+        StringBuilder queryString = new StringBuilder("{!edismax qf='org-disambiguated-name^50.0 org-disambiguated-name-string^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 ");
         if (promoteChosenOrgs) {
             queryString.append("bq=").append(SolrConstants.ORG_CHOSEN_BY_MEMBER).append(":true ");
         }
@@ -72,7 +72,7 @@ public class OrcidSolrOrgsClient {
     
     public List<OrgDisambiguatedSolrDocument> getOrgsForSelfService(String searchTerm, int firstResult, int maxResult) {
         SolrQuery query = new SolrQuery();
-        query.setQuery("{!edismax qf='org-disambiguated-id-from-source^50.0 org-disambiguated-name^50.0 org-names^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}"
+        query.setQuery("{!edismax qf='org-disambiguated-id-from-source^50.0 org-disambiguated-name^50.0 org-disambiguated-name-string^50.0 org-names^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}"
                 + searchTerm + "*").setFields("*");
         try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
