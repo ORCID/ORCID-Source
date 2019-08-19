@@ -229,8 +229,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
                             {
                                 scrollTop: newSearchResultsTop
                             },
-                            1000,
-                            'easeOutQuint'
+                            1000
                         );
                     }
                 }
