@@ -27,7 +27,6 @@
                                     <th class="width-30" (click)="changeSorting('receiverName.value')"><@orcid.msg 'manage.thproxy' /></th>
                                     <th class="width-30" (click)="changeSorting('receiverOrcid.path')"><@orcid.msg 'search_results.thORCIDID' /></th>
                                     <th class="width-15" (click)="changeSorting('approvalDate')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-                                    <th class="width-15" (click)="changeSorting('lastModifiedDate')"><@orcid.msg 'manage_delegators.delegates_table.last_modified' /></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,7 +34,6 @@
                                     <td width="35%"><a href="{{getBaseUri()}}/switch-user?username={{delegationDetails.giverOrcid.path}}">{{delegationDetails.giverName.value}}</a></td>
                                     <td width="35%"><a href="{{delegationDetails.giverOrcid.uri}}" target="{{delegationDetails.giverOrcid.path}}">{{delegationDetails.giverOrcid.path}}</a></td>                        
                                     <td width="15%">{{delegationDetails.approvalDate|date:'yyyy-MM-dd'}}</td>
-                                    <td width="15%">{{delegationDetails.lastModifiedDate|date:'yyyy-MM-dd'}}</td>
                                 </tr>
                             </tbody>
                         </table>
