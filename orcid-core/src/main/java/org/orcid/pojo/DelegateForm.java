@@ -14,7 +14,6 @@ public class DelegateForm implements Serializable {
     OrcidIdentifier receiverOrcid;
     Text receiverName;
     XMLGregorianCalendar approvalDate;
-    XMLGregorianCalendar lastModifiedDate;
 
     public OrcidIdentifier getGiverOrcid() {
         return giverOrcid;
@@ -54,14 +53,6 @@ public class DelegateForm implements Serializable {
 
     public void setApprovalDate(XMLGregorianCalendar approvalDate) {
         this.approvalDate = approvalDate;
-    }
-
-    public XMLGregorianCalendar getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(XMLGregorianCalendar lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
     }
 
 }

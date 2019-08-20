@@ -20,30 +20,29 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
 
     @Resource
     private OrcidIdentifierUtils orcidIdentifierUtils;
-    
+
     @Resource
     private GivenPermissionToDao givenPermissionToDaoReadOnly;
-    
+
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
-    
+
     @Override
     @Cacheable(value = "delegates-by-giver", key = "#giverOrcid.concat('-').concat(#lastModified)")
     public List<DelegateForm> findByGiver(String giverOrcid, long lastModified) {
         List<DelegateForm> delegates = new ArrayList<DelegateForm>();
         List<GivenPermissionToEntity> list = givenPermissionToDaoReadOnly.findByGiver(giverOrcid);
-        
-        for(GivenPermissionToEntity element : list) {
+        for (GivenPermissionToEntity element : list) {
             DelegateForm form = new DelegateForm();
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(element.getApprovalDate()));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getGiver()));
-            
+
             String orcid = element.getReceiver();
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(orcid));
             form.setReceiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(orcid)));
             delegates.add(form);
         }
-        
+
         return delegates;
     }
 
@@ -52,12 +51,11 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
     public List<DelegateForm> findByReceiver(String receiverOrcid, long lastModified) {
         List<DelegateForm> delegates = new ArrayList<DelegateForm>();
         List<GivenPermissionByEntity> list = givenPermissionToDaoReadOnly.findByReceiver(receiverOrcid);
-        for(GivenPermissionByEntity element : list) {
+        for (GivenPermissionByEntity element : list) {
             DelegateForm form = new DelegateForm();
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(element.getApprovalDate()));
-            form.setLastModifiedDate(DateUtils.convertToXMLGregorianCalendar(getLastModifiedDate(element.getGiver())));
-            form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getReceiver()));            
-            
+            form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getReceiver()));
+
             String giverOrcid = element.getGiver();
             form.setGiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(giverOrcid)));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(giverOrcid));
@@ -65,11 +63,11 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
         }
         return delegates;
     }
-    
+
     @Override
     public DelegateForm findByGiverAndReceiverOrcid(String giverOrcid, String receiverOrcid) {
         GivenPermissionToEntity entity = givenPermissionToDaoReadOnly.findByGiverAndReceiverOrcid(giverOrcid, receiverOrcid);
-        if(entity != null) {
+        if (entity != null) {
             DelegateForm form = new DelegateForm();
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(entity.getApprovalDate()));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(entity.getGiver()));
@@ -78,5 +76,5 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
             return form;
         }
         return null;
-    }    
+    }
 }
