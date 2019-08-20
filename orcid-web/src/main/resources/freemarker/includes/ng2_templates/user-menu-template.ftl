@@ -6,7 +6,7 @@
                           {{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase  }}/{{'${springMacroRequestContext.getMessage("header.register")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}
                          </a>
                         <div *ngIf="userInfo && nameForm"  class="top-menu-button" (click)="state = !state" (keyup.enter)="state = !state" tabindex="0" >  
-                            <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
+                            <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}" role="presentation">
                             <div class="name" *ngIf="!isMobile"> 
                                         <ng-container *ngIf="displayFullName()"> {{nameForm?.creditName?.value}}  </ng-container>
                                         <ng-container *ngIf="displayPublishedName()"> {{nameForm?.givenNames?.value}} {{nameForm?.familyName?.value}}  </ng-container> 
@@ -17,7 +17,7 @@
 
                          <div class="top-menu" *ngIf="state && userInfo && nameForm">
                             <a  class="top-menu-header" href="{{getBaseUri()}}/my-orcid">   
-                                <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}">
+                                <img src="{{assetsPath + '/img/svg/profile-icon.svg'}}" role="presentation">
                             
                                 <div>
                                     <div class="name"> 

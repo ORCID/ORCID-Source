@@ -42,6 +42,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class EmailManagerTest extends BaseTest {
     private static final String ORCID = "0000-0000-0000-0003";
@@ -69,6 +70,9 @@ public class EmailManagerTest extends BaseTest {
     
     @Mock
     private EmailDao mockEmailDao;
+    
+    @Mock
+    private NotificationManager mockNotificationManager;
     
     @Before
     public void before() throws JAXBException {
@@ -259,5 +263,104 @@ public class EmailManagerTest extends BaseTest {
         }
         
         TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);
+    }
+    
+    @Test
+    public void testEditPrimaryEmail() {
+        NotificationManager notificationManager = (NotificationManager) ReflectionTestUtils.getField(emailManager, "notificationManager");
+        EmailDao emailDao = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+        ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+        
+        EmailEntity primaryEmailEntity = new EmailEntity();
+        primaryEmailEntity.setEmail("original");
+        primaryEmailEntity.setDateCreated(new Date());
+        primaryEmailEntity.setLastModified(new Date());
+        primaryEmailEntity.setPrimary(Boolean.TRUE);
+        primaryEmailEntity.setVerified(Boolean.TRUE);
+        primaryEmailEntity.setVisibility("PRIVATE");
+        
+        Mockito.when(mockEmailDao.findByEmail(Mockito.eq("original"))).thenReturn(primaryEmailEntity);
+        
+        emailManager.editEmail("orcid", "original", "edited", new MockHttpServletRequest());
+        ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
+        Mockito.verify(mockEmailDao).merge(captor.capture());
+        Mockito.verify(mockNotificationManager).sendEmailAddressChangedNotification(Mockito.eq("orcid"), Mockito.eq("edited"), Mockito.eq("original"));
+        Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("edited"));
+        
+        EmailEntity mergedEntity = captor.getValue();
+        assertEquals("edited", mergedEntity.getEmail());
+        assertTrue(mergedEntity.getPrimary());
+        assertFalse(mergedEntity.getVerified());
+        assertEquals("PRIVATE", mergedEntity.getVisibility());
+        
+        ReflectionTestUtils.setField(emailManager, "notificationManager", notificationManager);
+        ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
+    }
+    
+    @Test
+    public void testEditSecondaryEmail() {
+        NotificationManager notificationManager = (NotificationManager) ReflectionTestUtils.getField(emailManager, "notificationManager");
+        EmailDao emailDao = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+        ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+        
+        EmailEntity primaryEmailEntity = new EmailEntity();
+        primaryEmailEntity.setEmail("original");
+        primaryEmailEntity.setDateCreated(new Date());
+        primaryEmailEntity.setLastModified(new Date());
+        primaryEmailEntity.setPrimary(Boolean.FALSE);
+        primaryEmailEntity.setVerified(Boolean.TRUE);
+        primaryEmailEntity.setVisibility("PRIVATE");
+        
+        Mockito.when(mockEmailDao.findByEmail(Mockito.eq("original"))).thenReturn(primaryEmailEntity);
+        
+        emailManager.editEmail("orcid", "original", "edited", new MockHttpServletRequest());
+        ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
+        Mockito.verify(mockEmailDao).merge(captor.capture());
+        Mockito.verify(mockNotificationManager, Mockito.never()).sendEmailAddressChangedNotification(Mockito.eq("orcid"), Mockito.eq("edited"), Mockito.eq("original"));
+        Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("edited"));
+        
+        EmailEntity mergedEntity = captor.getValue();
+        assertEquals("edited", mergedEntity.getEmail());
+        assertFalse(mergedEntity.getPrimary());
+        assertFalse(mergedEntity.getVerified());
+        assertEquals("PRIVATE", mergedEntity.getVisibility());
+        
+        ReflectionTestUtils.setField(emailManager, "notificationManager", notificationManager);
+        ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
+    }
+    
+    @Test
+    public void testEditPrimaryEmailNoAddressChange() {
+        NotificationManager notificationManager = (NotificationManager) ReflectionTestUtils.getField(emailManager, "notificationManager");
+        EmailDao emailDao = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+        ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+        
+        EmailEntity primaryEmailEntity = new EmailEntity();
+        primaryEmailEntity.setEmail("original");
+        primaryEmailEntity.setDateCreated(new Date());
+        primaryEmailEntity.setLastModified(new Date());
+        primaryEmailEntity.setPrimary(Boolean.TRUE);
+        primaryEmailEntity.setVerified(Boolean.TRUE);
+        primaryEmailEntity.setVisibility("PRIVATE");
+        
+        Mockito.when(mockEmailDao.findByEmail(Mockito.eq("email"))).thenReturn(primaryEmailEntity);
+        
+        emailManager.editEmail("orcid", "email", "email", new MockHttpServletRequest());
+        ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
+        Mockito.verify(mockEmailDao).merge(captor.capture());
+        Mockito.verify(mockNotificationManager, Mockito.never()).sendEmailAddressChangedNotification(Mockito.eq("email"), Mockito.eq("email"), Mockito.eq("original"));
+        Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("email"));
+        
+        EmailEntity mergedEntity = captor.getValue();
+        assertEquals("email", mergedEntity.getEmail());
+        assertTrue(mergedEntity.getPrimary());
+        assertFalse(mergedEntity.getVerified());
+        assertEquals("PRIVATE", mergedEntity.getVisibility());
+        
+        ReflectionTestUtils.setField(emailManager, "notificationManager", notificationManager);
+        ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
     }
 }

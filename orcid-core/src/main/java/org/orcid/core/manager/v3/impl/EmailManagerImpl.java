@@ -14,15 +14,12 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
-import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -111,20 +108,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     @Transactional
-    public void updateEmails(HttpServletRequest request, String orcid, Emails emails) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                if (emails != null && !emails.getEmails().isEmpty()) {
-                    for (Email email : emails.getEmails()) {
-                        emailDao.updateEmail(orcid, email.getEmail().trim(), email.isCurrent(), email.getVisibility().name());
-                    }
-                }                
-            }
-        });        
-    }
-
-    @Override
-    @Transactional
     public void addEmail(HttpServletRequest request, String orcid, Email email) {
         SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
@@ -134,17 +117,16 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         
         // Create the new email
         emailDao.addEmail(orcid, email.getEmail(), encryptionManager.getEmailHash(email.getEmail()), email.getVisibility().name(), sourceId, clientSourceId);
-        
-        // if primary email changed send notification.
-        if (email.isPrimary() && !StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
-            request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-            notificationManager.sendEmailAddressChangedNotification(orcid, email.getEmail(), currentPrimaryEmail.getEmail());
+        if (email.isPrimary()) {
+            // if primary email changed send notification.
+            if (!StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
+                request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+                notificationManager.sendEmailAddressChangedNotification(orcid, email.getEmail(), currentPrimaryEmail.getEmail());
+            }
         }
-                
-        // send verifcation email for new address
         notificationManager.sendVerificationEmail(orcid, email.getEmail());
     }
-
+    
     @Override
     public boolean hideAllEmails(String orcid) {
         return emailDao.hideAllEmails(orcid);
@@ -168,6 +150,26 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
             }
         }        
+    }
+    
+    @Override
+    public void editEmail(String orcid, String original, String edited, HttpServletRequest request) {
+        EmailEntity originalEntity = emailDao.findByEmail(original); 
+        originalEntity.setLastModified(new Date());
+        originalEntity.setSourceId(orcid);
+        originalEntity.setEmail(edited);
+        originalEntity.setVerified(Boolean.FALSE);
+        
+        emailDao.merge(originalEntity);
+        
+        if (originalEntity.getPrimary()) {
+            // if primary email changed send notification.
+            if (!StringUtils.equals(original, edited)) {
+                request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+                notificationManager.sendEmailAddressChangedNotification(orcid, edited, original);
+            }
+        }
+        notificationManager.sendVerificationEmail(orcid, edited);
     }
 
     @Override
