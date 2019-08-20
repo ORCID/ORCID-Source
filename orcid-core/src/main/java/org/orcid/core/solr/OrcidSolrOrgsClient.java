@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
@@ -19,6 +20,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrcidSolrOrgsClient {
+    
+    private static final String SOLR_ORGS_QUERY = "(org-disambiguated-name:%s)^100.0 (org-disambiguated-name-string:%s)^50.0 (org-disambiguated-country:%s)^5.0 (org-disambiguated-city:%s)^5.0 (org-names:%s)^1.0 ";
+    private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0 (org-names:%s)^1.0";
+    
     
     @Resource(name = "solrReadOnlyOrgsClient")
     private SolrClient solrReadOnlyOrgsClient;
@@ -44,22 +49,20 @@ public class OrcidSolrOrgsClient {
     }
 
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly, boolean promoteChosenOrgs) {
-        StringBuilder queryString = new StringBuilder("{!edismax qf='org-disambiguated-name^50.0 org-disambiguated-name-string^50.0 text^1.0' pf='org-disambiguated-name^50.0' mm=1 ");
-        if (promoteChosenOrgs) {
-            queryString.append("bq=").append(SolrConstants.ORG_CHOSEN_BY_MEMBER).append(":true ");
-        }
-        queryString.append("sort='score desc, ");
-        queryString.append("org-disambiguated-popularity desc'}");
-        queryString.append(searchTerm).append("*");
-        
+        StringBuilder queryString = new StringBuilder(SOLR_ORGS_QUERY.replace("%s", searchTerm + '*'));
         if (fundersOnly) {
             queryString.append(" AND is-funding-org:true");
         }
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString.toString());
-        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s AND %s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "GRID", "RINGGOLD", "FUNDREF", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI", SolrConstants.ORG_CHOSEN_BY_MEMBER, true));
-        query.setFields("*");
+        if (promoteChosenOrgs) {
+            query.addOrUpdateSort("org-chosen-by-member", ORDER.desc);
+        }
+        query.addOrUpdateSort("score", ORDER.desc);
+        query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
+        
+        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s AND %s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "GRID", "RINGGOLD", "FUNDREF", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI", SolrConstants.ORG_CHOSEN_BY_MEMBER, true));       
         
         try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
@@ -72,8 +75,9 @@ public class OrcidSolrOrgsClient {
     
     public List<OrgDisambiguatedSolrDocument> getOrgsForSelfService(String searchTerm, int firstResult, int maxResult) {
         SolrQuery query = new SolrQuery();
-        query.setQuery("{!edismax qf='org-disambiguated-id-from-source^50.0 org-disambiguated-name^50.0 org-disambiguated-name-string^50.0 org-names^1.0' pf='org-disambiguated-name^50.0' mm=1 sort='score desc, org-disambiguated-popularity desc'}"
-                + searchTerm + "*").setFields("*");
+        query.setQuery(SOLR_SELF_SERVICE_ORGS_QUERY.replace("%s", searchTerm));
+        query.addOrUpdateSort("score", ORDER.desc);
+        query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
         try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
             return queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
