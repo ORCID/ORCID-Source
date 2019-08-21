@@ -92,8 +92,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements NotificationManager {
 
-    private static final String UPDATE_NOTIFY_ORCID_ORG = "ORCID <update@notify.orcid.org>";
-
     private static final String SUPPORT_VERIFY_ORCID_ORG = "ORCID <support@verify.orcid.org>";
 
     private static final String RESET_NOTIFY_ORCID_ORG = "ORCID <reset@notify.orcid.org>";
@@ -104,19 +102,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     private static final String LOCKED_NOTIFY_ORCID_ORG = "ORCID <locked@notify.orcid.org>";
 
-    private static final String AMEND_NOTIFY_ORCID_ORG = "ORCID <amend@notify.orcid.org>";
-
-    private static final String DELEGATE_NOTIFY_ORCID_ORG = "ORCID <delegate@notify.orcid.org>";
-
     private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "ORCID <email-changed@notify.orcid.org>";
-
-    private static final String WILDCARD_MEMBER_NAME = "${name}";
-
-    private static final String WILDCARD_USER_NAME = "${user_name}";
-
-    private static final String WILDCARD_WEBSITE = "${website}";
-
-    private static final String WILDCARD_DESCRIPTION = "${description}";
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
     
@@ -563,7 +549,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             return;
         }
 
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userGrantingPermission);
         Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
         
