@@ -904,11 +904,11 @@ function externalIdentifierId(work, idType, value) {
 	
 	//Define relationship type based on work type
 	var relationship = 'self';
-	if(idType == 'issn') {
+	if(idType === 'issn') {
 		if(work.workType.value != 'book') {
 			relationship = 'part-of';
 		}
-	} else if(idType == 'isbn') {
+	} else if(idType === 'isbn') {
 	    var isbnWorkSelfWorkTypes = ['book','manual','report','other_output'];
 		if(isbnWorkSelfWorkTypes.indexOf(work.workType.value) < 0) {
 			relationship = 'part-of';
@@ -930,7 +930,7 @@ function externalIdentifierId(work, idType, value) {
     if (work.workExternalIdentifiers[0].externalIdentifierId.value == null)
         work.workExternalIdentifiers[0] = ident;
     // Only adds the url if there is no other identifier
-    else if ( idType != "url" ) {
+    else if ( idType !== "uri" ) {
         work.workExternalIdentifiers.push(ident);
     }
 };
@@ -980,7 +980,7 @@ function populateWorkAjaxForm(bibJson, work) {
             externalIdentifierId(work, 'isbn', lowerKeyTags['isbn']);
 
         if (lowerKeyTags.hasOwnProperty('url'))
-            externalIdentifierId(work, 'url', lowerKeyTags['url']);
+            externalIdentifierId(work, 'uri', lowerKeyTags['url']);
 
         if (lowerKeyTags.hasOwnProperty('journal'))
             work.journalTitle.value = latexParseJs.decodeLatex(lowerKeyTags['journal']);
