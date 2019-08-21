@@ -929,8 +929,10 @@ function externalIdentifierId(work, idType, value) {
     
     if (work.workExternalIdentifiers[0].externalIdentifierId.value == null)
         work.workExternalIdentifiers[0] = ident;
-    else
+    // Only adds the url if there is no other identifier
+    else if ( idType != "url" ) {
         work.workExternalIdentifiers.push(ident);
+    }
 };
 
 function populateWorkAjaxForm(bibJson, work) {
@@ -976,6 +978,9 @@ function populateWorkAjaxForm(bibJson, work) {
         
         if (lowerKeyTags.hasOwnProperty('isbn'))
             externalIdentifierId(work, 'isbn', lowerKeyTags['isbn']);
+
+        if (lowerKeyTags.hasOwnProperty('url'))
+            externalIdentifierId(work, 'url', lowerKeyTags['url']);
 
         if (lowerKeyTags.hasOwnProperty('journal'))
             work.journalTitle.value = latexParseJs.decodeLatex(lowerKeyTags['journal']);
