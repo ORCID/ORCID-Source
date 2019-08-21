@@ -58,13 +58,25 @@ public class BaseWorkspaceController extends BaseController {
     @ModelAttribute("years")
     public Map<String, String> retrieveYearsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
-        List<String> list = YearsList.createList();
+        List<String> list = YearsList.createList(0);
         map.put("", getMessage("select.item.year"));
         for (String year : list) {
             map.put(year, year);
         }
         return map;
     }
+
+    @ModelAttribute("affiliationYears")
+    public Map<String, String> retrieveAffiliationsYearsAsMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        List<String> list = YearsList.createList(10);
+        map.put("", getMessage("select.item.year"));
+        for (String year : list) {
+            map.put(year, year);
+        }
+        return map;
+    }
+
 
     @ModelAttribute("fundingYears")
     public Map<String, String> retrieveFundingYearsAsMap() {
