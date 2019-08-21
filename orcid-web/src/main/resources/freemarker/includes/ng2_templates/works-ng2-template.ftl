@@ -78,6 +78,14 @@
                                         <@orcid.msg 'groups.common.add_works'/>
                                         <span class="ai ai-arxiv" style="opacity: 0;width: 0;"></span>
                                         <ul class="menu-options works">
+                                            <!--Search & link-->
+                                            <li>
+                                                <a class="action-option manage-button" (click)="showWorkImportWizard()">
+                                                    <span class="glyphicon glyphicon-cloud-upload"></span>
+                                                    <@orcid.msg 'manual_orcid_record_contents.search_link'/>
+                                                </a>
+                                            </li>
+                                            <!--  ADD WORKS WITH EXTERNAL ID CONTAINER-->
                                             <ng-container *ngIf="TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID">
                                                 <li>
                                                     <a class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
@@ -99,13 +107,6 @@
                                                     </a>
                                                 </li>
                                             </ng-container>
-                                            <!--Search & link-->
-                                            <li>
-                                                <a class="action-option manage-button" (click)="showWorkImportWizard()">
-                                                    <span class="glyphicon glyphicon-cloud-upload"></span>
-                                                    <@orcid.msg 'manual_orcid_record_contents.search_link'/>
-                                                </a>
-                                            </li>
                                             <!--Add from Bibtex-->
                                             <li>
                                                 <a class="action-option manage-button" (click)="openBibTextWizard()">
