@@ -38,11 +38,9 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common.AvailableLocales;
@@ -63,7 +61,6 @@ import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -75,7 +72,6 @@ import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEnt
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -1231,5 +1227,37 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         while (notDoneYet) {
             notDoneYet = notificationDao.deleteNotificationsForRecord(orcid, DELETE_BATCH_SIZE);
         }
+    }
+
+    @Override
+    public void sendForgottenIdEmail(String email, String orcid) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);        
+        Locale locale = getUserLocaleFromProfileEntity(record);
+        
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", email);
+        templateParams.put("orcid", orcid);
+        templateParams.put("subject", getSubject("email.subject.forgotten_id", getUserLocaleFromProfileEntity(record)));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        addMessageParams(templateParams, locale);
+
+        String body = templateManager.processTemplate("forgot_id_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("forgot_id_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email, getSubject("email.subject.forgotten_id", locale), body, htmlBody);
+    }
+
+    @Override
+    public void sendForgottenIdEmailNotFoundEmail(String email, Locale locale) {
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", email);
+        templateParams.put("subject", getSubject("email.subject.forgotten_id", locale));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        addMessageParams(templateParams, locale);
+
+        String body = templateManager.processTemplate("forgot_id_email_not_found_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("forgot_id_email_not_found_email_html.ftl", templateParams);
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email, getSubject("email.subject.forgotten_id", locale), body, htmlBody);
     }    
 }
