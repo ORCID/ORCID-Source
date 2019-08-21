@@ -54,7 +54,7 @@ import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.listener.s3.S3Manager;
-import org.orcid.listener.s3.S3MessageProcessor;
+import org.orcid.listener.s3.S3MessageProcessorAPIV2;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
@@ -76,7 +76,7 @@ public class S3MessageProcessorTest {
     private final XMLGregorianCalendar after = DateUtils.convertToXMLGregorianCalendar(dateAfter);
 
     @Resource
-    private S3MessageProcessor processor;
+    private S3MessageProcessorAPIV2 processor;
 
     @Mock
     private Orcid20Manager mock_orcid20ApiClient;

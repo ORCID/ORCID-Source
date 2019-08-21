@@ -7,25 +7,25 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_v2.Educations;
-import org.orcid.jaxb.model.record.summary_v2.Employments;
-import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
-import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
-import org.orcid.jaxb.model.record.summary_v2.Fundings;
-import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
-import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
-import org.orcid.jaxb.model.record.summary_v2.Works;
-import org.orcid.jaxb.model.record_v2.Activity;
-import org.orcid.jaxb.model.record_v2.AffiliationType;
-import org.orcid.jaxb.model.record_v2.Record;
+import org.orcid.jaxb.model.v3.release.error.OrcidError;
+import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Educations;
+import org.orcid.jaxb.model.v3.release.record.summary.Employments;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.jaxb.model.v3.release.record.Activity;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
-import org.orcid.listener.orcid.Orcid20Manager;
+import org.orcid.listener.orcid.Orcid30Manager;
 import org.orcid.listener.persistence.managers.ActivitiesStatusManager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.ActivityType;
@@ -48,12 +48,12 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  *
  */
 @Component
-public class S3MessageProcessor {
+public class S3MessageProcessorAPIV3 {
 
     public static final String VND_ORCID_XML = "application/vnd.orcid+xml";
     public static final String VND_ORCID_JSON = "application/vnd.orcid+json";
 
-    Logger LOG = LoggerFactory.getLogger(S3MessageProcessor.class);
+    Logger LOG = LoggerFactory.getLogger(S3MessageProcessorAPIV3.class);
 
     @Value("${org.orcid.message-listener.index.summaries:true}")
     private boolean isSummaryIndexerEnabled;
@@ -62,13 +62,11 @@ public class S3MessageProcessor {
     private boolean isActivitiesIndexerEnabled;
     
     @Resource
-    private Orcid20Manager orcid20ApiClient;
+    private Orcid30Manager orcid20ApiClient;
     @Resource
     private S3Manager s3Manager;
     @Resource
-    private RecordStatusManager recordStatusManager;    
-    @Resource
-    private ActivitiesStatusManager activitiesStatusManager;
+    private RecordStatusManager recordStatusManager;   
 
     public void update20Summary(BaseMessage message) {
         if(!isSummaryIndexerEnabled) {
