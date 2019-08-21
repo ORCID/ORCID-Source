@@ -32,7 +32,7 @@
                                             <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email">  
                                                 <div *ngIf="emailEditing !== email.value">
                                                     <span>{{email.value}}</span>
-                                                    <span *ngIf="!email.primary" (click)="emailEdit(email.value)"  role="Button" class="glyphicon glyphicon-pencil"  role="presentation" style="padding-left: 5px;"></span>
+                                                    <span (click)="emailEdit(email.value)"  role="Button" class="glyphicon glyphicon-pencil"  role="presentation" style="padding-left: 5px;"></span>
                                                 </div>
                                                 <div (clickElsewhere)="emailEditSave()" *ngIf="emailEditing === email.value" >
                                                     <input autofocus [(ngModel)]="emailEditingNewValue"  (keyup.enter)="emailEditSave()"> 

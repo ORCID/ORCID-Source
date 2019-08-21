@@ -11,7 +11,8 @@ export class ClickElsewhereDirective {
     const targetElement = event.target as HTMLElement;
  
       // Check if the click was outside the element
-      if (targetElement && !this.elementRef.nativeElement.contains(targetElement) && targetElement.classList.value.indexOf("glyphicon glyphicon-pencil") == -1) {
+      if (targetElement && !this.elementRef.nativeElement.contains(targetElement) && targetElement.classList &&  targetElement.classList["value"]
+      && targetElement.classList["value"].indexOf("glyphicon glyphicon-pencil") == -1) {
  
          this.clickElsewhere.emit(event);
       }
