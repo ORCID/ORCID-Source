@@ -54,12 +54,18 @@ public class StatisticsController extends BaseController {
     private void mapProperties(Map<String, Long> statistics, StatsSummary statsSummary) {
         statsSummary.setLiveIds(statistics.get("liveIds"));
         statsSummary.setIdsWithExternalId(statistics.get("idsWithExternalId"));
-        statsSummary.setIdsWithEducation(statistics.get("idsWithEducation"));
-        statsSummary.setNumEducations(statistics.get("education"));
-        statsSummary.setEducationUniqueOrgs(statistics.get("educationUniqueOrg"));
+        statsSummary.setIdsWithEducationQualification(statistics.get("idsWithEducationQualification"));
+        statsSummary.setNumEducationQualifications(statistics.get("educationQualification"));
+        statsSummary.setEducationQualificationUniqueOrgs(statistics.get("educationQualificationUniqueOrg"));
         statsSummary.setIdsWithEmployment(statistics.get("idsWithEmployment"));
         statsSummary.setNumEmployments(statistics.get("employment"));
         statsSummary.setEmploymentUniqueOrgs(statistics.get("employmentUniqueOrg"));
+        statsSummary.setIdsWithInvitedPositionDistinction(statistics.get("idsWithInvitedPositionDistinction"));
+        statsSummary.setNumInvitedPositionDistinctions(statistics.get("invitedPositionDistinction"));
+        statsSummary.setInvitedPositionDistinctionUniqueOrgs(statistics.get("invitedPositionDistinctionUniqueOrg"));
+        statsSummary.setIdsWithMembershipService(statistics.get("idsWithMembershipService"));
+        statsSummary.setNumMembershipServices(statistics.get("membershipService"));
+        statsSummary.setMembershipServiceUniqueOrgs(statistics.get("membershipServiceUniqueOrg"));
         statsSummary.setIdsWithFunding(statistics.get("idsWithFunding"));
         statsSummary.setNumFundings(statistics.get("funding"));
         statsSummary.setFundingUniqueOrgs(statistics.get("fundingUniqueOrg"));
@@ -67,6 +73,8 @@ public class StatisticsController extends BaseController {
         statsSummary.setNumPeerReviews(statistics.get("peerReview"));
         statsSummary.setIdsWithPersonId(statistics.get("idsWithPersonId"));
         statsSummary.setNumPersonIds(statistics.get("personId"));
+        statsSummary.setIdsWithResearchResource(statistics.get("idsWithResearchResource"));
+        statsSummary.setNumResearchResources(statistics.get("researchResource"));
         statsSummary.setIdsWithWork(statistics.get("idsWithWorks"));
         statsSummary.setNumWorks(statistics.get("works"));
         statsSummary.setUniqueDois(statistics.get("uniqueDois"));
