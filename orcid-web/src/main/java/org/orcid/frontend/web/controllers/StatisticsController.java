@@ -67,8 +67,8 @@ public class StatisticsController extends BaseController {
         statsSummary.setNumPeerReviews(statistics.get("peerReview"));
         statsSummary.setIdsWithPersonId(statistics.get("idsWithPersonId"));
         statsSummary.setNumPersonIds(statistics.get("personId"));
-        statsSummary.setIdsWithWork(statistics.get("idsWithWork"));
-        statsSummary.setNumWorks(statistics.get("work"));
+        statsSummary.setIdsWithWork(statistics.get("idsWithWorks"));
+        statsSummary.setNumWorks(statistics.get("works"));
         statsSummary.setUniqueDois(statistics.get("uniqueDois"));
     }
 
