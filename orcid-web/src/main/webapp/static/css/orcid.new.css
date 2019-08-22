@@ -8832,7 +8832,9 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     padding:0 20px;
 }
 
-.header2 .menu-bar li.open > a, .header2 .menu-bar li.open> a:hover , .header2 .menu-bar li.open > a:focus  {
+.header2 .menu-bar > .container > .menu > li.open > a, 
+.header2 .menu-bar > .container > .menu > li.open > a:hover , 
+.header2 .menu-bar > .container > .menu > li.open > a:focus  {
     color:#494a4c;
     background-color:#e3e3e3;
     transition: all .3s ease;
