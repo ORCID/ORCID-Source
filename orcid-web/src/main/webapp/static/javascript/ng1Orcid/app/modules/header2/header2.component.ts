@@ -41,7 +41,7 @@ export class Header2Component  {
     assetsPath: String;
     aboutUri: String;
     liveIds: String;    
-    userMenu: String;
+    userMenu: Boolean;
     searchDropdownOpen = false; 
     mobileMenu: {} = null
     openMobileMenu = false
@@ -93,7 +93,7 @@ export class Header2Component  {
                 this.assetsPath = data.messages['STATIC_PATH'];
                 this.aboutUri = data.messages['ABOUT_URI'];
                 this.liveIds = data.messages['LIVE_IDS'];
-                this.userMenu = data.messages['ENABLE_USER_MENU']     
+                this.userMenu = data.messages['ENABLE_USER_MENU'] === "true"    
                 
                 this.mobileMenu = {
                     HELP: false,
@@ -159,7 +159,10 @@ export class Header2Component  {
     menuHandler (value, $event) {
 
         // Ignore first click on mobile if not is SIGNIN 
-        if (this.isMobile && value !== "SIGNIN") {
+        if (this.isMobile && 
+                (value !== "SIGNIN" &&
+                (!this.userMenu || value !== "RESEARCHERS" ))
+            ) {
                 $event.preventDefault()
             
         }
