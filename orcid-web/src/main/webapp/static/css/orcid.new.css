@@ -8950,6 +8950,7 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     padding: 0;
     background-color: #747476;
     color: white;
+    cursor: pointer;
 }
 
 .header2 .search-dropdown {
@@ -9517,6 +9518,7 @@ user-menu .top-menu-button {
     border-radius: 4px;
     padding-right: 8px;
     outline: none;
+    cursor: pointer;
 }
     
 user-menu .top-menu-button:hover, user-menu .top-menu-button:focus{
