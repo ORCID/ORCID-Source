@@ -1,6 +1,5 @@
 package org.orcid.scheduler.indexer.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -13,7 +12,6 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.messaging.JmsMessageSender;
-import org.orcid.core.solr.OrcidSolrLegacyIndexer;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -48,9 +46,6 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     @Value("${org.orcid.persistence.indexing.delay:5}")
     private Integer indexingDelay;
 
-    @Value("${org.orcid.persistence.solr.legacy.on:true}")
-    private Boolean feedLegacySolr;
-    
     @Resource
     private ProfileDao profileDao;
 
@@ -71,9 +66,6 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
-    
-    @Resource
-    private OrcidSolrLegacyIndexer OrcidSolrLegacyIndexer;
     
     private int claimReminderAfterDays = 8;
     
@@ -167,15 +159,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         } while (!connectionIssue && !orcidsForIndexing.isEmpty());
     }
     
-    private boolean indexSolr(LastModifiedMessage mess, String solrQueue, IndexingStatus status) {
-        // Feed the old SOLR instance, just don't feed it for all records, just for the ones that are created/modified by users
-        if(!IndexingStatus.SOLR_UPDATE.equals(status) && feedLegacySolr) {
-            try {
-                OrcidSolrLegacyIndexer.persist(mess.getOrcid());
-            } catch (IOException e) {
-                LOG.warn("Unable to feed old solr instance", e); 
-            }            
-        }
+    private boolean indexSolr(LastModifiedMessage mess, String solrQueue, IndexingStatus status) {        
         // Send message to solr queue
         if (!messaging.send(mess, solrQueue)) {
             LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + solrQueue);                    
