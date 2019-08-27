@@ -4,16 +4,14 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.listener.persistence.entities.ActivitiesStatusEntity;
 import org.orcid.listener.persistence.entities.Api30RecordStatusEntity;
-import org.orcid.listener.persistence.entities.RecordStatusEntity;
 import org.orcid.listener.persistence.util.ActivityType;
-import org.orcid.listener.persistence.util.AvailableBroker;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,43 +33,33 @@ public class Api30RecordStatusDao {
         return (result != null && result > 0);
     }
 
-    public void create(String orcid, Boolean summaryOk) {
+    public void create(String orcid, Boolean summaryOk, List<ActivityType> failedElements) throws EntityExistsException {
         Api30RecordStatusEntity entity = new Api30RecordStatusEntity();
         entity.setId(orcid);
         Date now = new Date();
-        if (summaryOk) {
-            entity.setSummaryStatus(0);
-            entity.setSummaryLastIndexed(now);
-        } else {
-            entity.setSummaryStatus(1);
-        }
-        entity.setDistinctionsStatus(0);
-        entity.setEducationsStatus(0);
-        entity.setEmploymentsStatus(0);
-        entity.setFundingsStatus(0);
-        entity.setInvitedPositionsStatus(0);
-        entity.setMembershipStatus(0);
-        entity.setPeerReviewsStatus(0);
-        entity.setQualificationsStatus(0);
-        entity.setResearchResourcesStatus(0);
-        entity.setServicesStatus(0);
-        entity.setWorksStatus(0);
+        updateStatus(entity, now, summaryOk, failedElements);
         entity.setDateCreated(now);
         entity.setLastModified(now);
         entityManager.persist(entity);
     }
 
     @Transactional
-    public void update(String orcid, Boolean summaryFailed, List<ActivityType> failedElements) {
+    public void update(String orcid, Boolean summaryOk, List<ActivityType> failedElements) throws IllegalArgumentException {
         Date now = new Date();
         Query query = entityManager.createNativeQuery("SELECT * FROM api_3_0_record_status WHERE orcid = :orcid", Api30RecordStatusEntity.class);
         query.setParameter("orcid", orcid);
         Api30RecordStatusEntity element = (Api30RecordStatusEntity) query.getSingleResult();
-        if (summaryFailed) {
-            element.setSummaryStatus(element.getSummaryStatus() == null ? 1 : element.getSummaryStatus() + 1);
-        } else {
+        updateStatus(element, now, summaryOk, failedElements);
+        element.setLastModified(now);        
+        entityManager.merge(element);
+    }
+    
+    private void updateStatus(Api30RecordStatusEntity element, Date now, Boolean summaryOk, List<ActivityType> failedElements) {
+        if (summaryOk) {
             element.setSummaryLastIndexed(now);
-            element.setSummaryStatus(0);            
+            element.setSummaryStatus(0);
+        } else {
+            element.setSummaryStatus(element.getSummaryStatus() == null ? 1 : element.getSummaryStatus() + 1);
         }
 
         if (failedElements.contains(ActivityType.DISTINCTIONS)) {
@@ -150,8 +138,6 @@ public class Api30RecordStatusDao {
             element.setWorksLastIndexed(now);
             element.setWorksStatus(0);
         }
-        element.setLastModified(now);        
-        entityManager.merge(element);
     }
 
     public List<Api30RecordStatusEntity> getFailedElements(int batchSize) {

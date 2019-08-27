@@ -27,6 +27,7 @@ import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid30Manager;
 import org.orcid.listener.persistence.managers.ActivitiesStatusManager;
+import org.orcid.listener.persistence.managers.Api30RecordStatusManager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
@@ -55,19 +56,59 @@ public class S3MessageProcessorAPIV3 {
 
     Logger LOG = LoggerFactory.getLogger(S3MessageProcessorAPIV3.class);
 
-    @Value("${org.orcid.message-listener.index.summaries:true}")
+    @Value("${org.orcid.message-listener.index.v3.summaries:true}")
     private boolean isSummaryIndexerEnabled;
     
-    @Value("${org.orcid.message-listener.index.activities:true}")
+    @Value("${org.orcid.message-listener.index.v3.activities:true}")
     private boolean isActivitiesIndexerEnabled;
     
     @Resource
-    private Orcid30Manager orcid20ApiClient;
+    private Orcid30Manager orcid30ApiClient;
     @Resource
     private S3Manager s3Manager;
     @Resource
-    private RecordStatusManager recordStatusManager;   
+    private Api30RecordStatusManager api30RecordStatusManager;   
 
+    public void update(BaseMessage message) {
+        String orcid = message.getOrcid();
+        if(isSummaryIndexerEnabled || isActivitiesIndexerEnabled) {
+            try {
+                Record record = orcid30ApiClient.fetchPublicRecord(message);
+            } catch (LockedRecordException | DeprecatedRecordException e) {
+                try {
+                    OrcidError error = null;
+                    if (e instanceof LockedRecordException) {
+                        LOG.error("Record " + orcid + " is locked");
+                        error = ((LockedRecordException) e).getV3OrcidError();
+                    } else {
+                        LOG.error("Record " + orcid + " is deprecated");
+                        error = ((DeprecatedRecordException) e).getV3OrcidError();
+                    }
+                    
+                    //TODO:
+                    // Upload deprecated/locked record file
+                    // Clean up all activities
+                    
+                } catch (Exception e1) {
+                    LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
+                    recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                    throw new RuntimeException(e1);
+                }
+            } catch (AmazonClientException e) {
+                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                throw e;
+            } catch (Exception e) {
+                // something else went wrong fetching record from ORCID and
+                // threw a
+                // runtime exception
+                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    
     public void update20Summary(BaseMessage message) {
         if(!isSummaryIndexerEnabled) {
             return;
@@ -76,7 +117,7 @@ public class S3MessageProcessorAPIV3 {
         String orcid = message.getOrcid();
         LOG.info("Processing summary for record " + orcid);
         try {
-            Record record = orcid20ApiClient.fetchPublicRecord(message);
+            Record record = orcid30ApiClient.fetchPublicRecord(message);
             if (record != null) {
                 // Index only if it is claimed
                 if(record.getHistory() != null && record.getHistory().getClaimed() != null)  {
@@ -93,10 +134,10 @@ public class S3MessageProcessorAPIV3 {
                 OrcidError error = null;
                 if (e instanceof LockedRecordException) {
                     LOG.error("Record " + orcid + " is locked");
-                    error = ((LockedRecordException) e).getOrcidError();
+                    error = ((LockedRecordException) e).getV3OrcidError();
                 } else {
                     LOG.error("Record " + orcid + " is deprecated");
-                    error = ((DeprecatedRecordException) e).getOrcidError();
+                    error = ((DeprecatedRecordException) e).getV3OrcidError();
                 }
                 s3Manager.uploadOrcidError(orcid, error);
                 recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
