@@ -12,6 +12,8 @@ import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
+import org.orcid.listener.exception.DeprecatedRecordException;
+import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.exception.V3DeprecatedRecordException;
 import org.orcid.listener.exception.V3LockedRecordException;
 import org.orcid.listener.orcid.Orcid30Manager;
@@ -94,11 +96,11 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage> {
             
             solrUpdater.persist(recordConv.convert(record, researchResourcesList));
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
-        } catch(V3LockedRecordException lre) {
+        } catch(LockedRecordException lre) {
             LOG.error("Record " + orcid + " is locked");
             solrUpdater.processInvalidRecord(orcid);
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
-        } catch(V3DeprecatedRecordException dre) {
+        } catch(DeprecatedRecordException dre) {
             LOG.error("Record " + orcid + " is deprecated");
             solrUpdater.processInvalidRecord(orcid);
             recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
