@@ -1,4 +1,4 @@
-package org.orcid.core.issn;
+package org.orcid.core.groupIds.issn;
 
 public class IssnData {
 

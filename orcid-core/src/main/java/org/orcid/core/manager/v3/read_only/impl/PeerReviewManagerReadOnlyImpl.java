@@ -26,11 +26,12 @@ import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
 public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PeerReviewManagerReadOnly {
+   
     @Resource(name = "jpaJaxbPeerReviewAdapterV3")
     protected JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
 
     protected PeerReviewDao peerReviewDao;
-
+    
     public void setPeerReviewDao(PeerReviewDao peerReviewDao) {
         this.peerReviewDao = peerReviewDao;
     }
@@ -161,4 +162,5 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
     public Boolean hasPublicPeerReviews(String orcid) {
         return peerReviewDao.hasPublicPeerReviews(orcid);
     }
+
 }

@@ -9,7 +9,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.orcid.core.issn.client.IssnClient;
+import org.orcid.core.groupIds.issn.IssnClient;
+import org.orcid.core.groupIds.issn.IssnData;
+import org.orcid.core.groupIds.issn.IssnPortalUrlBuilder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.sun.jersey.api.client.Client;
@@ -22,7 +24,9 @@ public class IssnClientTest {
     
     @Before
     public void setUp() throws IOException {
-        ReflectionTestUtils.setField(issnClient, "url", "anything");
+        IssnPortalUrlBuilder mockUrlBuilder = Mockito.mock(IssnPortalUrlBuilder.class);
+        Mockito.when(mockUrlBuilder.buildJsonIssnPortalUrlForIssn(Mockito.anyString())).thenReturn("anything");
+        ReflectionTestUtils.setField(issnClient, "issnPortalUrlBuilder", mockUrlBuilder);
     }
     
     @Test

@@ -18,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
+import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
+import org.orcid.core.groupIds.issn.IssnPortalUrlBuilder;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
@@ -131,6 +133,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource(name = "researchResourceManagerReadOnlyV3")
     private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
+    
+    @Resource
+    private IssnPortalUrlBuilder issnPortalUrlBuilder;
 
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -442,7 +447,14 @@ public class PublicProfileController extends BaseWorkspaceController {
         for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
             Optional<GroupIdRecord> groupIdRecord = groupIdRecordManagerReadOnly
                     .findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+            GroupIdRecord record = groupIdRecord.get();
             PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
+            String groupId = record.getGroupId();
+            if (IssnGroupIdPatternMatcher.isIssnGroupType(groupIdRecord.get().getGroupId())) {
+                String issn = IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(groupId);
+                peerReviewGroup.setUrl(issnPortalUrlBuilder.buildIssnPortalUrlForIssn(issn));
+            }
+
             for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
                 for (PeerReviewForm peerReviewForm : duplicateGroup.getPeerReviews()) {
                     if (peerReviewForm.getCountry() != null) {
