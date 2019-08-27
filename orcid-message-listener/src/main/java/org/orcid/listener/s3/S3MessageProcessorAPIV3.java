@@ -71,9 +71,12 @@ public class S3MessageProcessorAPIV3 {
 
     public void update(BaseMessage message) {
         String orcid = message.getOrcid();
+        Boolean isSummaryOk = false;
+        List<ActivityType> failedElements = new ArrayList<ActivityType>();
         if (isSummaryIndexerEnabled || isActivitiesIndexerEnabled) {
+            Record record = null;
             try {
-                Record record = orcid30ApiClient.fetchPublicRecord(message);
+                record = orcid30ApiClient.fetchPublicRecord(message);
             } catch (LockedRecordException | DeprecatedRecordException e) {
                 try {
                     OrcidError error = null;
@@ -88,6 +91,7 @@ public class S3MessageProcessorAPIV3 {
                     // TODO:
                     // Upload deprecated/locked record file
                     // Clean up all activities
+                    // Return
 
                 } catch (Exception e1) {
                     LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
@@ -107,56 +111,64 @@ public class S3MessageProcessorAPIV3 {
                 // TODO: Summary should be set to failed
                 throw new RuntimeException(e);
             }
+            
+            if(isSummaryIndexerEnabled) {
+                isSummaryOk = updateSummary(record);
+            }
+            
+            if(isActivitiesIndexerEnabled) {
+                
+            }
+            
         }
     }
 
-    private void updateSummary(Record record) {
-        if (!isSummaryIndexerEnabled) {
-            return;
+    private boolean updateSummary(Record record) {
+        if(record == null) {
+            return false;
         }
-        if (record != null) {
-            LOG.info("Processing summary for record " + record.getOrcidIdentifier().getPath());
-            try {
-
-                // Index only if it is claimed
-                if (record.getHistory() != null && record.getHistory().getClaimed() != null) {
-                    if (record.getHistory().getClaimed() == true) {
-                        s3Manager.uploadRecordSummary(orcid, record);
-                    } else {
-                        LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
-                    }
+        
+        LOG.info("Processing summary for record " + record.getOrcidIdentifier().getPath());
+        try {
+            String orcid = record.getPath();
+            // Index only if it is claimed
+            if (record.getHistory() != null && record.getHistory().getClaimed() != null) {
+                if (record.getHistory().getClaimed() == true) {
+                    s3Manager.uploadRecordSummary(orcid, record);
+                } else {
+                    LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
                 }
-                recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-            } catch (LockedRecordException | DeprecatedRecordException e) {
-                try {
-                    OrcidError error = null;
-                    if (e instanceof LockedRecordException) {
-                        LOG.error("Record " + orcid + " is locked");
-                        error = ((LockedRecordException) e).getV3OrcidError();
-                    } else {
-                        LOG.error("Record " + orcid + " is deprecated");
-                        error = ((DeprecatedRecordException) e).getV3OrcidError();
-                    }
-                    s3Manager.uploadOrcidError(orcid, error);
-                    recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-                } catch (Exception e1) {
-                    LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
-                    recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-                    throw new RuntimeException(e1);
-                }
-            } catch (AmazonClientException e) {
-                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
-                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-                throw e;
-            } catch (Exception e) {
-                // something else went wrong fetching record from ORCID and
-                // threw a
-                // runtime exception
-                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
-                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-                throw new RuntimeException(e);
             }
-        }
+            recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+        } catch (LockedRecordException | DeprecatedRecordException e) {
+            try {
+                OrcidError error = null;
+                if (e instanceof LockedRecordException) {
+                    LOG.error("Record " + orcid + " is locked");
+                    error = ((LockedRecordException) e).getV3OrcidError();
+                } else {
+                    LOG.error("Record " + orcid + " is deprecated");
+                    error = ((DeprecatedRecordException) e).getV3OrcidError();
+                }
+                s3Manager.uploadOrcidError(orcid, error);
+                recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+            } catch (Exception e1) {
+                LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
+                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+                throw new RuntimeException(e1);
+            }
+        } catch (AmazonClientException e) {
+            LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
+            recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+            throw e;
+        } catch (Exception e) {
+            // something else went wrong fetching record from ORCID and
+            // threw a
+            // runtime exception
+            LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
+            recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+            throw new RuntimeException(e);
+        }        
     }
 
     /**
