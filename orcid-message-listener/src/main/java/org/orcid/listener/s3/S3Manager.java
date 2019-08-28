@@ -83,8 +83,8 @@ public class S3Manager {
         // Initialize JAXBContext
         this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
         this.jaxbContext_2_0_activities_api = JAXBContext.newInstance(Education.class, Employment.class, Funding.class, Work.class, PeerReview.class);
-        
         this.jaxbContext_3_0_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Record.class, org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class, org.orcid.jaxb.model.v3.release.error.OrcidError.class);
+        this.jaxbContext_3_0_activities_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Education.class, org.orcid.jaxb.model.v3.release.record.Employment.class, org.orcid.jaxb.model.v3.release.record.Funding.class, org.orcid.jaxb.model.v3.release.record.Work.class, org.orcid.jaxb.model.v3.release.record.PeerReview.class);
         
         this.bucketPrefix = "";
     }
@@ -108,6 +108,8 @@ public class S3Manager {
         // Initialize JAXBContext
         this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
         this.jaxbContext_2_0_activities_api = JAXBContext.newInstance(Education.class, Employment.class, Funding.class, Work.class, PeerReview.class);
+        this.jaxbContext_3_0_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Record.class, org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class, org.orcid.jaxb.model.v3.release.error.OrcidError.class);
+        this.jaxbContext_3_0_activities_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Education.class, org.orcid.jaxb.model.v3.release.record.Employment.class, org.orcid.jaxb.model.v3.release.record.Funding.class, org.orcid.jaxb.model.v3.release.record.Work.class, org.orcid.jaxb.model.v3.release.record.PeerReview.class);
     }
 
     public void setS3MessagingService(S3MessagingService s3MessagingService) {
