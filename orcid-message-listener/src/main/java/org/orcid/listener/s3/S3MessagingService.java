@@ -33,6 +33,11 @@ public class S3MessagingService {
     private final String summariesBucketName;
     
     private final String activitiesBucketName;
+    
+    private final String v3SummariesBucketName;
+    
+    private final String v3ActivitiesBucketName;
+    
 
     public String getActivitiesBucketName() {
         return activitiesBucketName;
@@ -50,13 +55,17 @@ public class S3MessagingService {
     public S3MessagingService(@Value("${org.orcid.message-listener.s3.secretKey}") String secretKey,
             @Value("${org.orcid.message-listener.s3.accessKey}") String accessKey, 
             @Value("${org.orcid.message-listener.index.summaries.bucket_name}") String summariesBucketName, 
-            @Value("${org.orcid.message-listener.index.activities.bucket_name}") String activitiesBucketName)
+            @Value("${org.orcid.message-listener.index.activities.bucket_name}") String activitiesBucketName,
+            @Value("${org.orcid.message-listener.index.summaries.v3.bucket_name}") String v3SummariesBucketName, 
+            @Value("${org.orcid.message-listener.index.activities.v3.bucket_name}") String v3ActivitiesBucketName)
             throws JAXBException {
         try {
             AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
             this.s3 = new AmazonS3Client(credentials);
             this.summariesBucketName = summariesBucketName;
             this.activitiesBucketName = activitiesBucketName;
+            this.v3ActivitiesBucketName = v3ActivitiesBucketName;
+            this.v3SummariesBucketName = v3SummariesBucketName;
         } catch (Exception e) {
             LOG.error("Unable to connect to the Amazon S3 service", e);
             throw e;
@@ -99,6 +108,21 @@ public class S3MessagingService {
         return true;
     }
 
+    public boolean sendV3Item(String elementName, byte[] elementContent, String contentType, Date lastModified, boolean isActivity) throws AmazonClientException, AmazonServiceException {
+        InputStream is = new ByteArrayInputStream(elementContent);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(contentType);
+        metadata.setContentLength(elementContent.length);
+        metadata.setLastModified(lastModified);
+        if(isActivity) {
+            s3.putObject(new PutObjectRequest(this.v3ActivitiesBucketName, elementName, is, metadata));            
+        } else {
+            s3.putObject(new PutObjectRequest(this.v3SummariesBucketName, elementName, is, metadata));
+        }
+        return true;
+    }
+    
+    
     public ListObjectsV2Result listObjects(ListObjectsV2Request request) {
         return s3.listObjectsV2(request);
     }

@@ -120,11 +120,25 @@ public class S3Manager {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Marshaller marshaller = null;
         Class<?> c = object.getClass();
-        if (Record.class.isAssignableFrom(c) || ActivitiesSummary.class.isAssignableFrom(c) || OrcidError.class.isAssignableFrom(c)) {
+        if (org.orcid.jaxb.model.record_v2.Record.class.isAssignableFrom(c) || org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary.class.isAssignableFrom(c) || org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(c)) {
             marshaller = jaxbContext_2_0_api.createMarshaller();
-        } else if (Education.class.isAssignableFrom(c) || Employment.class.isAssignableFrom(c) || Funding.class.isAssignableFrom(c) || Work.class.isAssignableFrom(c)
-                || PeerReview.class.isAssignableFrom(c)) {
+        } else if (org.orcid.jaxb.model.record_v2.Education.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Employment.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Funding.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Work.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.record_v2.PeerReview.class.isAssignableFrom(c)) {
             marshaller = jaxbContext_2_0_activities_api.createMarshaller();
+        } else if(org.orcid.jaxb.model.v3.release.record.Record.class.isAssignableFrom(c) || org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class.isAssignableFrom(c) || org.orcid.jaxb.model.v3.release.error.OrcidError.class.isAssignableFrom(c)) {
+            marshaller = jaxbContext_3_0_api.createMarshaller();
+        } else if(org.orcid.jaxb.model.v3.release.record.Distinction.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.Education.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.Employment.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.Funding.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.InvitedPosition.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.Membership.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.PeerReview.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.Qualification.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.ResearchResource.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.Service.class.isAssignableFrom(c) ||
+                org.orcid.jaxb.model.v3.release.record.Work.class.isAssignableFrom(c)) {
+            marshaller = jaxbContext_3_0_activities_api.createMarshaller();
         } else {
             throw new IllegalArgumentException("Unable to unmarshall class " + c);
         }
@@ -146,12 +160,20 @@ public class S3Manager {
         }
     }
 
-    public void uploadRecordSummary(String orcid, Record record) throws JAXBException, JsonProcessingException {
+    public void uploadRecordSummary(String orcid, org.orcid.jaxb.model.record_v2.Record record) throws JAXBException, JsonProcessingException {
         Date lastModified = DateUtils.convertToDate(record.getHistory().getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid);
         byte[] xmlElement = toXML(record);
         s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
+    }
+    
+    public void uploadRecordSummary(String orcid, org.orcid.jaxb.model.v3.release.record.Record record) throws JAXBException, JsonProcessingException {
+        Date lastModified = DateUtils.convertToDate(record.getHistory().getLastModifiedDate().getValue());
+        // Upload XML
+        String xmlElementName = getElementName(orcid);
+        byte[] xmlElement = toXML(record);
+        s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
     public void uploadActivity(String orcid, String putCode, Activity activity) throws JAXBException, JsonProcessingException {
