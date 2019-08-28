@@ -88,6 +88,7 @@ public class S3Manager {
         
         this.bucketPrefix = "";
     }
+    
     /**
      * Writes a profile to S3
      * 
