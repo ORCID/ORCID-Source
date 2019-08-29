@@ -531,9 +531,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     emailEdit(value){
-        console.log (value)
         this.emailEditing = this.emailEditingNewValue = value
-        console.log (this.emailEditing, " ", this.emailEditingNewValue)
 
     }
     emailEditSave(){
