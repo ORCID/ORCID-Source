@@ -159,6 +159,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         originalEntity.setSourceId(orcid);
         originalEntity.setEmail(edited);
         originalEntity.setVerified(Boolean.FALSE);
+        originalEntity.setId(encryptionManager.getEmailHash(edited));
         
         emailDao.merge(originalEntity);
         
