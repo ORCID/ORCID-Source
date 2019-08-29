@@ -59,17 +59,15 @@ public class S3Manager {
 
     private final ObjectMapper mapper;
 
-    private final String bucketPrefix;
-
     @Resource
     private S3MessagingService s3MessagingService;
-    
+
     private final JAXBContext jaxbContext_2_0_api;
     private final JAXBContext jaxbContext_2_0_activities_api;
 
     private final JAXBContext jaxbContext_3_0_api;
     private final JAXBContext jaxbContext_3_0_activities_api;
-    
+
     @Value("${org.orcid.message-listener.index.s3.search.max_elements:3000}")
     private Integer maxElements;
 
@@ -81,12 +79,13 @@ public class S3Manager {
         // Initialize JAXBContext
         this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
         this.jaxbContext_2_0_activities_api = JAXBContext.newInstance(Education.class, Employment.class, Funding.class, Work.class, PeerReview.class);
-        this.jaxbContext_3_0_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Record.class, org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class, org.orcid.jaxb.model.v3.release.error.OrcidError.class);
-        this.jaxbContext_3_0_activities_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Education.class, org.orcid.jaxb.model.v3.release.record.Employment.class, org.orcid.jaxb.model.v3.release.record.Funding.class, org.orcid.jaxb.model.v3.release.record.Work.class, org.orcid.jaxb.model.v3.release.record.PeerReview.class);
-        
-        this.bucketPrefix = "";
+        this.jaxbContext_3_0_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Record.class,
+                org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class, org.orcid.jaxb.model.v3.release.error.OrcidError.class);
+        this.jaxbContext_3_0_activities_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Education.class,
+                org.orcid.jaxb.model.v3.release.record.Employment.class, org.orcid.jaxb.model.v3.release.record.Funding.class,
+                org.orcid.jaxb.model.v3.release.record.Work.class, org.orcid.jaxb.model.v3.release.record.PeerReview.class);
     }
-    
+
     /**
      * Writes a profile to S3
      * 
@@ -102,42 +101,45 @@ public class S3Manager {
         mapper.registerModule(module);
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        this.bucketPrefix = bucketPrefix;
-
         // Initialize JAXBContext
         this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
         this.jaxbContext_2_0_activities_api = JAXBContext.newInstance(Education.class, Employment.class, Funding.class, Work.class, PeerReview.class);
-        this.jaxbContext_3_0_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Record.class, org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class, org.orcid.jaxb.model.v3.release.error.OrcidError.class);
-        this.jaxbContext_3_0_activities_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Education.class, org.orcid.jaxb.model.v3.release.record.Employment.class, org.orcid.jaxb.model.v3.release.record.Funding.class, org.orcid.jaxb.model.v3.release.record.Work.class, org.orcid.jaxb.model.v3.release.record.PeerReview.class);
+        this.jaxbContext_3_0_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Record.class,
+                org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class, org.orcid.jaxb.model.v3.release.error.OrcidError.class);
+        this.jaxbContext_3_0_activities_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Education.class,
+                org.orcid.jaxb.model.v3.release.record.Employment.class, org.orcid.jaxb.model.v3.release.record.Funding.class,
+                org.orcid.jaxb.model.v3.release.record.Work.class, org.orcid.jaxb.model.v3.release.record.PeerReview.class);
     }
 
     public void setS3MessagingService(S3MessagingService s3MessagingService) {
         this.s3MessagingService = s3MessagingService;
-    }        
+    }
 
     @Deprecated
     private byte[] toXML(Object object) throws JAXBException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Marshaller marshaller = null;
         Class<?> c = object.getClass();
-        if (org.orcid.jaxb.model.record_v2.Record.class.isAssignableFrom(c) || org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary.class.isAssignableFrom(c) || org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(c)) {
+        if (org.orcid.jaxb.model.record_v2.Record.class.isAssignableFrom(c) || org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(c)) {
             marshaller = jaxbContext_2_0_api.createMarshaller();
-        } else if (org.orcid.jaxb.model.record_v2.Education.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Employment.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Funding.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Work.class.isAssignableFrom(c)
+        } else if (org.orcid.jaxb.model.record_v2.Education.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Employment.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.record_v2.Funding.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Work.class.isAssignableFrom(c)
                 || org.orcid.jaxb.model.record_v2.PeerReview.class.isAssignableFrom(c)) {
             marshaller = jaxbContext_2_0_activities_api.createMarshaller();
-        } else if(org.orcid.jaxb.model.v3.release.record.Record.class.isAssignableFrom(c) || org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class.isAssignableFrom(c) || org.orcid.jaxb.model.v3.release.error.OrcidError.class.isAssignableFrom(c)) {
+        } else if (org.orcid.jaxb.model.v3.release.record.Record.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.error.OrcidError.class.isAssignableFrom(c)) {
             marshaller = jaxbContext_3_0_api.createMarshaller();
-        } else if(org.orcid.jaxb.model.v3.release.record.Distinction.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.Education.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.Employment.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.Funding.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.InvitedPosition.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.Membership.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.PeerReview.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.Qualification.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.ResearchResource.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.Service.class.isAssignableFrom(c) ||
-                org.orcid.jaxb.model.v3.release.record.Work.class.isAssignableFrom(c)) {
+        } else if (org.orcid.jaxb.model.v3.release.record.Distinction.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.record.Education.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.record.Employment.class.isAssignableFrom(c) || org.orcid.jaxb.model.v3.release.record.Funding.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.record.InvitedPosition.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.record.Membership.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.record.PeerReview.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.record.Qualification.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.record.ResearchResource.class.isAssignableFrom(c)
+                || org.orcid.jaxb.model.v3.release.record.Service.class.isAssignableFrom(c) || org.orcid.jaxb.model.v3.release.record.Work.class.isAssignableFrom(c)) {
             marshaller = jaxbContext_3_0_activities_api.createMarshaller();
         } else {
             throw new IllegalArgumentException("Unable to unmarshall class " + c);
@@ -147,28 +149,15 @@ public class S3Manager {
         return baos.toByteArray();
     }
 
-    @Deprecated
-    public String getBucketName(String apiVersion, String format, String orcid) {
-        if (bucketPrefix.endsWith("-dev") || bucketPrefix.endsWith("-qa") || bucketPrefix.endsWith("-sandbox")) {
-            return bucketPrefix + "-all";
-        } else {
-            String c = String.valueOf(orcid.charAt(orcid.length() - 1));
-            if ("X".equals(c)) {
-                c = "x";
-            }
-            return bucketPrefix + '-' + apiVersion + '-' + format + '-' + c;
-        }
-    }
-
-    public void uploadRecordSummary(String orcid, org.orcid.jaxb.model.record_v2.Record record) throws JAXBException, JsonProcessingException {
+    public void uploadV2RecordSummary(String orcid, org.orcid.jaxb.model.record_v2.Record record) throws JAXBException, JsonProcessingException {
         Date lastModified = DateUtils.convertToDate(record.getHistory().getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid);
         byte[] xmlElement = toXML(record);
         s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
-    
-    public void uploadRecordSummary(String orcid, org.orcid.jaxb.model.v3.release.record.Record record) throws JAXBException, JsonProcessingException {
+
+    public void uploadV3RecordSummary(String orcid, org.orcid.jaxb.model.v3.release.record.Record record) throws JAXBException, JsonProcessingException {
         Date lastModified = DateUtils.convertToDate(record.getHistory().getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid);
@@ -176,7 +165,7 @@ public class S3Manager {
         s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
-    public void uploadActivity(String orcid, String putCode, org.orcid.jaxb.model.record_v2.Activity activity) throws JAXBException, JsonProcessingException {
+    public void uploadV2Activity(String orcid, String putCode, org.orcid.jaxb.model.record_v2.Activity activity) throws JAXBException, JsonProcessingException {
         Date lastModified = DateUtils.convertToDate(activity.getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
@@ -184,15 +173,15 @@ public class S3Manager {
         s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
     }
 
-    public void uploadActivity(String orcid, String putCode, org.orcid.jaxb.model.v3.release.record.Activity activity) throws JAXBException, JsonProcessingException {
+    public void uploadV3Activity(String orcid, String putCode, org.orcid.jaxb.model.v3.release.record.Activity activity) throws JAXBException, JsonProcessingException {
         Date lastModified = DateUtils.convertToDate(activity.getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
         byte[] xmlElement = toXML(activity);
         s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
     }
-    
-    public void uploadOrcidError(String orcid, org.orcid.jaxb.model.error_v2.OrcidError error) throws JAXBException, JsonProcessingException {
+
+    public void uploadV2OrcidError(String orcid, org.orcid.jaxb.model.error_v2.OrcidError error) throws JAXBException, JsonProcessingException {
         Date lastModified = new Date();
 
         // Upload XML
@@ -201,7 +190,7 @@ public class S3Manager {
         s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
-    public void uploadOrcidError(String orcid, org.orcid.jaxb.model.v3.release.error.OrcidError error) throws JAXBException, JsonProcessingException {
+    public void uploadV3OrcidError(String orcid, org.orcid.jaxb.model.v3.release.error.OrcidError error) throws JAXBException, JsonProcessingException {
         Date lastModified = new Date();
 
         // Upload XML
@@ -209,7 +198,7 @@ public class S3Manager {
         byte[] xmlElement = toXML(error);
         s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
-    
+
     public Map<ActivityType, Map<String, S3ObjectSummary>> searchActivities(String orcid, APIVersion version) {
         Map<ActivityType, Map<String, S3ObjectSummary>> activitiesOnS3 = new HashMap<ActivityType, Map<String, S3ObjectSummary>>();
 
@@ -236,9 +225,9 @@ public class S3Manager {
         activitiesOnS3.put(ActivityType.RESEARCH_RESOURCES, researchResources);
         activitiesOnS3.put(ActivityType.SERVICES, services);
         activitiesOnS3.put(ActivityType.WORKS, works);
-        
+
         String prefix = buildPrefix(orcid);
-        String bucketName = (APIVersion.V2.equals(version) ? s3MessagingService.getActivitiesBucketName() : s3MessagingService.getV3ActivitiesBucketName());
+        String bucketName = (APIVersion.V2.equals(version) ? s3MessagingService.getV2ActivitiesBucketName() : s3MessagingService.getV3ActivitiesBucketName());
         final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucketName).withPrefix(prefix).withMaxKeys(maxElements);
         ListObjectsV2Result objects;
         do {
@@ -271,7 +260,7 @@ public class S3Manager {
                     researchResources.put(putCode, objectSummary);
                 } else if (activityPath.contains(ActivityType.SERVICES.getPathDiscriminator())) {
                     services.put(putCode, objectSummary);
-                } 
+                }
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());
@@ -288,10 +277,11 @@ public class S3Manager {
         // Delete the XML activity file
         s3MessagingService.removeV3Activity(getElementName(orcid, putCode, type));
     }
-    
+
     public void clearV2Activities(String orcid) {
         String prefix = orcid.substring(16) + "/activities/" + orcid;
-        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV2ActivitiesBucketName()).withPrefix(prefix)
+                .withMaxKeys(maxElements);
         ListObjectsV2Result objects;
         do {
             objects = s3MessagingService.listObjects(req);
@@ -305,32 +295,14 @@ public class S3Manager {
 
     public void clearV3Activities(String orcid) {
         String prefix = orcid.substring(16) + "/activities/" + orcid;
-        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName()).withPrefix(prefix)
+                .withMaxKeys(maxElements);
         ListObjectsV2Result objects;
         do {
             objects = s3MessagingService.listObjects(req);
             for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
                 String elementName = objectSummary.getKey();
                 s3MessagingService.removeV3Activity(elementName);
-            }
-            req.setContinuationToken(objects.getNextContinuationToken());
-        } while (objects.isTruncated());
-    }
-    
-    public void clearActivitiesByType(String orcid, ActivityType type) {
-        // Clear xml activities
-        removeActivitiesByPrefix(buildPrefix(orcid, type));
-    }
-    
-    private void removeActivitiesByPrefix(String prefix) {
-        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
-
-        ListObjectsV2Result objects;
-        do {
-            objects = s3MessagingService.listObjects(req);
-            for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
-                String elementName = objectSummary.getKey();
-                s3MessagingService.removeActivity(elementName);
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());
@@ -355,4 +327,21 @@ public class S3Manager {
     private String buildPrefix(String orcid, ActivityType type) {
         return orcid.substring(16) + "/" + orcid + "/" + type.getValue();
     }
+
+    public void clearV2ActivitiesByType(String orcid, ActivityType type) {
+        String prefix = buildPrefix(orcid, type);
+        
+        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV2ActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+
+        ListObjectsV2Result objects;
+        do {
+            objects = s3MessagingService.listObjects(req);
+            for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
+                String elementName = objectSummary.getKey();
+                s3MessagingService.removeV2Activity(elementName);
+            }
+            req.setContinuationToken(objects.getNextContinuationToken());
+        } while (objects.isTruncated());
+    }
+
 }

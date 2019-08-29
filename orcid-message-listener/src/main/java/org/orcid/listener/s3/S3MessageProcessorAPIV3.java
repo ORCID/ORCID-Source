@@ -127,14 +127,14 @@ public class S3MessageProcessorAPIV3 {
         if(record == null) {
             return false;
         }
-        
-        LOG.info("Processing summary for record " + record.getOrcidIdentifier().getPath());
+        String orcid = record.getOrcidIdentifier().getPath();
+        LOG.info("Processing summary for record " + orcid);
         try {
-            String orcid = record.getPath();
+            
             // Index only if it is claimed
             if (record.getHistory() != null && record.getHistory().getClaimed() != null) {
                 if (record.getHistory().getClaimed() == true) {
-                    s3Manager.uploadRecordSummary(orcid, record);
+                    s3Manager.uploadV3RecordSummary(orcid, record);
                 } else {
                     LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
                 }

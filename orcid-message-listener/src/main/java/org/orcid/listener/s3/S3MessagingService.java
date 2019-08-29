@@ -30,17 +30,17 @@ public class S3MessagingService {
 
     private final AmazonS3 s3;
 
-    private final String summariesBucketName;
+    private final String v2SummariesBucketName;
     
-    private final String activitiesBucketName;
+    private final String v2ActivitiesBucketName;
     
     private final String v3SummariesBucketName;
     
     private final String v3ActivitiesBucketName;
     
 
-    public String getActivitiesBucketName() {
-        return activitiesBucketName;
+    public String getV2ActivitiesBucketName() {
+        return v2ActivitiesBucketName;
     }
 
     public String getV3ActivitiesBucketName() {
@@ -66,8 +66,8 @@ public class S3MessagingService {
         try {
             AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
             this.s3 = new AmazonS3Client(credentials);
-            this.summariesBucketName = summariesBucketName;
-            this.activitiesBucketName = activitiesBucketName;
+            this.v2SummariesBucketName = summariesBucketName;
+            this.v2ActivitiesBucketName = activitiesBucketName;
             this.v3ActivitiesBucketName = v3ActivitiesBucketName;
             this.v3SummariesBucketName = v3SummariesBucketName;
         } catch (Exception e) {
@@ -105,9 +105,9 @@ public class S3MessagingService {
         metadata.setContentLength(elementContent.length);
         metadata.setLastModified(lastModified);
         if(isActivity) {
-            s3.putObject(new PutObjectRequest(this.activitiesBucketName, elementName, is, metadata));            
+            s3.putObject(new PutObjectRequest(this.v2ActivitiesBucketName, elementName, is, metadata));            
         } else {
-            s3.putObject(new PutObjectRequest(this.summariesBucketName, elementName, is, metadata));
+            s3.putObject(new PutObjectRequest(this.v2SummariesBucketName, elementName, is, metadata));
         }
         return true;
     }
@@ -132,7 +132,7 @@ public class S3MessagingService {
     }
 
     public void removeV2Activity(String elementName) throws AmazonClientException, AmazonServiceException {
-        s3.deleteObject(this.activitiesBucketName, elementName);        
+        s3.deleteObject(this.v2ActivitiesBucketName, elementName);        
     }
     
     public void removeV3Activity(String elementName) throws AmazonClientException, AmazonServiceException {
