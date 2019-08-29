@@ -23,6 +23,10 @@ public class PeerReviewGroup implements Serializable {
     private long groupId;
     
     private String url;
+    
+    private String groupType;
+    
+    private String groupIdValue;
 
     public List<PeerReviewDuplicateGroup> getPeerReviewDuplicateGroups() {
         return duplicateGroups;
@@ -70,6 +74,22 @@ public class PeerReviewGroup implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+    
+    public String getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(String groupType) {
+        this.groupType = groupType;
+    }
+    
+    public String getGroupIdValue() {
+        return groupIdValue;
+    }
+
+    public void setGroupIdValue(String groupIdValue) {
+        this.groupIdValue = groupIdValue;
     }
 
     public static PeerReviewGroup getInstance(org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup peerReviewGroup, GroupIdRecord groupIdRecord) {

@@ -77,11 +77,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
         for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
             Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
             GroupIdRecord record = groupIdRecord.get();
-            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
+            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, record);
             String groupId = record.getGroupId();
-            if (IssnGroupIdPatternMatcher.isIssnGroupType(groupIdRecord.get().getGroupId())) {
+            if (IssnGroupIdPatternMatcher.isIssnGroupType(groupId)) {
                 String issn = IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(groupId);
                 peerReviewGroup.setUrl(issnPortalUrlBuilder.buildIssnPortalUrlForIssn(issn));
+                peerReviewGroup.setGroupType("ISSN");
+                peerReviewGroup.setGroupIdValue(issn);
             }
             
             for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {

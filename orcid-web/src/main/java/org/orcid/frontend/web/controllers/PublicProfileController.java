@@ -448,11 +448,13 @@ public class PublicProfileController extends BaseWorkspaceController {
             Optional<GroupIdRecord> groupIdRecord = groupIdRecordManagerReadOnly
                     .findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
             GroupIdRecord record = groupIdRecord.get();
-            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
+            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, record);
             String groupId = record.getGroupId();
-            if (IssnGroupIdPatternMatcher.isIssnGroupType(groupIdRecord.get().getGroupId())) {
+            if (IssnGroupIdPatternMatcher.isIssnGroupType(groupId)) {
                 String issn = IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(groupId);
                 peerReviewGroup.setUrl(issnPortalUrlBuilder.buildIssnPortalUrlForIssn(issn));
+                peerReviewGroup.setGroupType("ISSN");
+                peerReviewGroup.setGroupIdValue(issn);
             }
 
             for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
