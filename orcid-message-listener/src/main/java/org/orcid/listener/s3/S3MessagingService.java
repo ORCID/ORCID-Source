@@ -43,6 +43,10 @@ public class S3MessagingService {
         return activitiesBucketName;
     }
 
+    public String getV3ActivitiesBucketName() {
+        return v3ActivitiesBucketName;
+    }    
+    
     /**
      * Initialize the Amazon S3 connection object
      * 
@@ -127,7 +131,11 @@ public class S3MessagingService {
         return s3.listObjectsV2(request);
     }
 
-    public void removeActivity(String elementName) throws AmazonClientException, AmazonServiceException {
+    public void removeV2Activity(String elementName) throws AmazonClientException, AmazonServiceException {
         s3.deleteObject(this.activitiesBucketName, elementName);        
+    }
+    
+    public void removeV3Activity(String elementName) throws AmazonClientException, AmazonServiceException {
+        s3.deleteObject(this.v3ActivitiesBucketName, elementName);        
     }
 }

@@ -29,13 +29,13 @@ import javax.xml.bind.Marshaller;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
-import org.orcid.jaxb.model.record_v2.Activity;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
@@ -176,7 +176,7 @@ public class S3Manager {
         s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
-    public void uploadActivity(String orcid, String putCode, Activity activity) throws JAXBException, JsonProcessingException {
+    public void uploadActivity(String orcid, String putCode, org.orcid.jaxb.model.record_v2.Activity activity) throws JAXBException, JsonProcessingException {
         Date lastModified = DateUtils.convertToDate(activity.getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
@@ -184,7 +184,15 @@ public class S3Manager {
         s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
     }
 
-    public void uploadOrcidError(String orcid, OrcidError error) throws JAXBException, JsonProcessingException {
+    public void uploadActivity(String orcid, String putCode, org.orcid.jaxb.model.v3.release.record.Activity activity) throws JAXBException, JsonProcessingException {
+        Date lastModified = DateUtils.convertToDate(activity.getLastModifiedDate().getValue());
+        // Upload XML
+        String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
+        byte[] xmlElement = toXML(activity);
+        s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
+    }
+    
+    public void uploadOrcidError(String orcid, org.orcid.jaxb.model.error_v2.OrcidError error) throws JAXBException, JsonProcessingException {
         Date lastModified = new Date();
 
         // Upload XML
@@ -193,23 +201,45 @@ public class S3Manager {
         s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
-    public Map<ActivityType, Map<String, S3ObjectSummary>> searchActivities(String orcid) {
+    public void uploadOrcidError(String orcid, org.orcid.jaxb.model.v3.release.error.OrcidError error) throws JAXBException, JsonProcessingException {
+        Date lastModified = new Date();
+
+        // Upload XML
+        String xmlElementName = getElementName(orcid);
+        byte[] xmlElement = toXML(error);
+        s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
+    }
+    
+    public Map<ActivityType, Map<String, S3ObjectSummary>> searchActivities(String orcid, APIVersion version) {
         Map<ActivityType, Map<String, S3ObjectSummary>> activitiesOnS3 = new HashMap<ActivityType, Map<String, S3ObjectSummary>>();
 
+        Map<String, S3ObjectSummary> distinctions = new HashMap<String, S3ObjectSummary>();
         Map<String, S3ObjectSummary> educations = new HashMap<String, S3ObjectSummary>();
         Map<String, S3ObjectSummary> employments = new HashMap<String, S3ObjectSummary>();
         Map<String, S3ObjectSummary> fundings = new HashMap<String, S3ObjectSummary>();
-        Map<String, S3ObjectSummary> works = new HashMap<String, S3ObjectSummary>();
+        Map<String, S3ObjectSummary> invitedPositions = new HashMap<String, S3ObjectSummary>();
+        Map<String, S3ObjectSummary> memberships = new HashMap<String, S3ObjectSummary>();
         Map<String, S3ObjectSummary> peerReviews = new HashMap<String, S3ObjectSummary>();
+        Map<String, S3ObjectSummary> qualifications = new HashMap<String, S3ObjectSummary>();
+        Map<String, S3ObjectSummary> researchResources = new HashMap<String, S3ObjectSummary>();
+        Map<String, S3ObjectSummary> services = new HashMap<String, S3ObjectSummary>();
+        Map<String, S3ObjectSummary> works = new HashMap<String, S3ObjectSummary>();
 
+        activitiesOnS3.put(ActivityType.DISTINCTIONS, distinctions);
         activitiesOnS3.put(ActivityType.EDUCATIONS, educations);
         activitiesOnS3.put(ActivityType.EMPLOYMENTS, employments);
         activitiesOnS3.put(ActivityType.FUNDINGS, fundings);
-        activitiesOnS3.put(ActivityType.WORKS, works);
+        activitiesOnS3.put(ActivityType.INVITED_POSITIONS, invitedPositions);
+        activitiesOnS3.put(ActivityType.MEMBERSHIP, memberships);
         activitiesOnS3.put(ActivityType.PEER_REVIEWS, peerReviews);
-
+        activitiesOnS3.put(ActivityType.QUALIFICATIONS, qualifications);
+        activitiesOnS3.put(ActivityType.RESEARCH_RESOURCES, researchResources);
+        activitiesOnS3.put(ActivityType.SERVICES, services);
+        activitiesOnS3.put(ActivityType.WORKS, works);
+        
         String prefix = buildPrefix(orcid);
-        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+        String bucketName = (APIVersion.V2.equals(version) ? s3MessagingService.getActivitiesBucketName() : s3MessagingService.getV3ActivitiesBucketName());
+        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucketName).withPrefix(prefix).withMaxKeys(maxElements);
         ListObjectsV2Result objects;
         do {
             objects = s3MessagingService.listObjects(req);
@@ -221,15 +251,27 @@ public class S3Manager {
                 // elements should go on top
                 if (activityPath.contains(ActivityType.WORKS.getPathDiscriminator())) {
                     works.put(putCode, objectSummary);
+                } else if (activityPath.contains(ActivityType.DISTINCTIONS.getPathDiscriminator())) {
+                    distinctions.put(putCode, objectSummary);
                 } else if (activityPath.contains(ActivityType.EDUCATIONS.getPathDiscriminator())) {
                     educations.put(putCode, objectSummary);
                 } else if (activityPath.contains(ActivityType.EMPLOYMENTS.getPathDiscriminator())) {
                     employments.put(putCode, objectSummary);
                 } else if (activityPath.contains(ActivityType.FUNDINGS.getPathDiscriminator())) {
                     fundings.put(putCode, objectSummary);
+                } else if (activityPath.contains(ActivityType.INVITED_POSITIONS.getPathDiscriminator())) {
+                    invitedPositions.put(putCode, objectSummary);
+                } else if (activityPath.contains(ActivityType.MEMBERSHIP.getPathDiscriminator())) {
+                    memberships.put(putCode, objectSummary);
                 } else if (activityPath.contains(ActivityType.PEER_REVIEWS.getPathDiscriminator())) {
                     peerReviews.put(putCode, objectSummary);
-                }
+                } else if (activityPath.contains(ActivityType.QUALIFICATIONS.getPathDiscriminator())) {
+                    qualifications.put(putCode, objectSummary);
+                } else if (activityPath.contains(ActivityType.RESEARCH_RESOURCES.getPathDiscriminator())) {
+                    researchResources.put(putCode, objectSummary);
+                } else if (activityPath.contains(ActivityType.SERVICES.getPathDiscriminator())) {
+                    services.put(putCode, objectSummary);
+                } 
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());
@@ -237,12 +279,17 @@ public class S3Manager {
         return activitiesOnS3;
     }
 
-    public void removeActivity(String orcid, String putCode, ActivityType type) {
+    public void removeV2Activity(String orcid, String putCode, ActivityType type) {
         // Delete the XML activity file
-        s3MessagingService.removeActivity(getElementName(orcid, putCode, type));
+        s3MessagingService.removeV2Activity(getElementName(orcid, putCode, type));
     }
 
-    public void clearActivities(String orcid) {
+    public void removeV3Activity(String orcid, String putCode, ActivityType type) {
+        // Delete the XML activity file
+        s3MessagingService.removeV3Activity(getElementName(orcid, putCode, type));
+    }
+    
+    public void clearV2Activities(String orcid) {
         String prefix = orcid.substring(16) + "/activities/" + orcid;
         final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
         ListObjectsV2Result objects;
@@ -250,12 +297,26 @@ public class S3Manager {
             objects = s3MessagingService.listObjects(req);
             for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
                 String elementName = objectSummary.getKey();
-                s3MessagingService.removeActivity(elementName);
+                s3MessagingService.removeV2Activity(elementName);
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());
     }
 
+    public void clearV3Activities(String orcid) {
+        String prefix = orcid.substring(16) + "/activities/" + orcid;
+        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+        ListObjectsV2Result objects;
+        do {
+            objects = s3MessagingService.listObjects(req);
+            for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
+                String elementName = objectSummary.getKey();
+                s3MessagingService.removeV3Activity(elementName);
+            }
+            req.setContinuationToken(objects.getNextContinuationToken());
+        } while (objects.isTruncated());
+    }
+    
     public void clearActivitiesByType(String orcid, ActivityType type) {
         // Clear xml activities
         removeActivitiesByPrefix(buildPrefix(orcid, type));
