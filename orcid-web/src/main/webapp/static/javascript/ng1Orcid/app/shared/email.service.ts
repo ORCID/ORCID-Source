@@ -93,7 +93,7 @@ export class EmailService {
         return this.http.post( 
             getBaseUri() + '/account/email/edit.json', 
             emails, 
-            { headers: this.headers }
+            { headers: this.headers,  responseType: 'text' }
         )
         .pipe(
             tap(
