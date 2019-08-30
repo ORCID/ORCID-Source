@@ -546,6 +546,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     // clean form values 
                     this.initInputEmail();
                     this.emailEditing = this.emailEditingNewValue = null
+                    this.emailService.notifyOther();
                 },
                 error => {
                     // console.log('getEmailsFormError', error);
