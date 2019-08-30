@@ -262,25 +262,7 @@ public class S3ManagerTest {
     }
 
     @Test
-    public void updateS3_OrcidProfileTest() throws JAXBException, AmazonClientException, IOException {
-        String bucketPrefix = "bucket-production";
-        String orcid = "0000-0000-0000-000X";
-        OrcidMessage om = new OrcidMessage();
-        OrcidProfile op = new OrcidProfile();
-        op.setOrcidIdentifier(orcid);
-        om.setOrcidProfile(op);
-
-        S3Manager s3 = new S3Manager(bucketPrefix);
-        s3.setS3MessagingService(s3MessagingService);
-        s3.updateS3(orcid, om);
-        verify(s3MessagingService, times(1)).send(eq(bucketPrefix + "-api-1-2-json-x"), eq(orcid + ".json"), any(), any());
-        verify(s3MessagingService, times(1)).send(eq(bucketPrefix + "-api-1-2-xml-x"), eq(orcid + ".xml"), any(), any());
-        verify(s3MessagingService, times(0)).send(eq(bucketPrefix + "-api-2-0-json-x"), eq(orcid + ".xml"), any(), any());
-        verify(s3MessagingService, times(0)).send(eq(bucketPrefix + "-api-2-0-xml-x"), eq(orcid + ".xml"), any(), any());
-    }
-
-    @Test
-    public void updateS3_RecordTest() throws JAXBException, AmazonClientException, IOException {
+    public void updateS3_V2RecordTest() throws JAXBException, AmazonClientException, IOException {
         String bucketPrefix = "bucket-production";
         String orcid = "0000-0000-0000-000X";
         Record record = new Record();
@@ -288,11 +270,9 @@ public class S3ManagerTest {
 
         S3Manager s3 = new S3Manager(bucketPrefix);
         s3.setS3MessagingService(s3MessagingService);
-        s3.updateS3(orcid, record);
-        verify(s3MessagingService, times(0)).send(eq(bucketPrefix + "-api-1-2-json-x"), eq(orcid + ".json"), any(), any());
-        verify(s3MessagingService, times(0)).send(eq(bucketPrefix + "-api-1-2-xml-x"), eq(orcid + ".xml"), any(), any());
-        verify(s3MessagingService, times(1)).send(eq(bucketPrefix + "-api-2-0-json-x"), eq(orcid + ".json"), any(), any());
-        verify(s3MessagingService, times(1)).send(eq(bucketPrefix + "-api-2-0-xml-x"), eq(orcid + ".xml"), any(), any());
+        s3.uploadV2RecordSummary(orcid, record);
+        verify(s3MessagingService, times(1)).send(eq(bucketPrefix + "-api-3-0-xml-x"), eq(orcid + ".xml"), any(), any());
+        verify(s3MessagingService, times(1)).send(eq(orcid + ".xml"), any(), any());
     }
 
     @Test

@@ -14,8 +14,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
-import org.orcid.listener.exception.DeprecatedRecordException;
-import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid30Manager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
 import org.orcid.listener.persistence.util.AvailableBroker;
