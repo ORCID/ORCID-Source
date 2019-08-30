@@ -17,9 +17,9 @@ These calls can be used with Member API credentials on sandbox or the production
 * [reading a funding item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/funding-2.1.xml)
 * [reading a full funding item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/read_samples/funding-full-2.1.xml)
 * [writing a funding item in 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/funding-2.1.xml)
-* [reading the fundings section summary in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/fundings-3.0_rc1.xml)
-* [reading a funding item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/funding-3.0_rc1.xml)
-* [writing a funding item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/funding-3.0_rc1.xml)
+* [reading the fundings section summary in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/fundings-3.0.xml)
+* [reading a funding item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/funding-3.0.xml)
+* [writing a funding item in 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/funding-3.0.xml)
 
 ## Permission to edit the record
 Editing the funding section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading funding items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
@@ -77,7 +77,7 @@ Editing the funding section of a record requires a 3 step OAuth token with the `
 
 **Example request in curl**
 
-```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/fundings'```
+```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/fundings'```
 
 **Example response**
 
@@ -98,7 +98,7 @@ Editing the funding section of a record requires a 3 step OAuth token with the `
 
 **Example request in curl**
 
-```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/4413'
+```curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/funding/4413'
 ```
 
 Example response
@@ -119,13 +119,13 @@ Example response
 
 **Example request in curl**
 ```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding'
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name.xml' -X POST 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/funding'
 ```
 
 **Example response**
 
 ```HTTP/1.1 201 Created
-Location: http://api.qa.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/4458```
+Location: http://api.qa.orcid.org/v3.0/0000-0002-9227-8514/funding/4458```
 
 ## Update a funding item
 
@@ -139,7 +139,7 @@ Location: http://api.qa.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/4458```
 
 **Example request in curl**
 
-```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/[PUT-CODE]'```
+```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/funding/[PUT-CODE]'```
 
 **Example response**
 
@@ -164,7 +164,7 @@ Location: http://api.qa.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/4458```
 **Example request in curl**
 
 
-```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/funding/[PUT-CODE]'```
+```curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/funding/[PUT-CODE]'```
 
 **Example response**
 

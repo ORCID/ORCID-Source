@@ -20,13 +20,13 @@ This workflow can be used with Member API credentials on sandbox or the producti
   * [writing a work with the detailed information 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/work-full-2.1.xml)
   * [writing multiple works 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/bulk-work-2.1.xml)
   * [writing multiple works in json 2.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/samples/write_sample/bulk-work-2.1.json)
-  * [reading the works section summary 3.0_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/works-3.0_rc1.xml)
-  * [reading a basic work 3.0_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/work-3.0_rc1.xml)
-  * [reading a detailed work item 3.0_rc1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/work-full-3.0_rc1.xml)
-  * [writing a work item with the minimal information 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/work-simple-3.0_rc1.xml)
-  * [writing a work with the detailed information 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/work-full-3.0_rc1.xml)
-  * [writing multiple works 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/bulk-work-3.0_rc1.xml)
-  * [writing multiple works in json 3.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/bulk-work-3.0_rc1.json)
+  * [reading the works section summary 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/works-3.0.xml)
+  * [reading a basic work 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/work-3.0.xml)
+  * [reading a detailed work item 3.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/work-full-3.0.xml)
+  * [writing a work item with the minimal information 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/work-simple-3.0.xml)
+  * [writing a work with the detailed information 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/work-full-3.0.xml)
+  * [writing multiple works 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/bulk-work-3.0.xml)
+  * [writing multiple works in json 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/bulk-work-3.0.json)
 
 ## Permission to edit the record
 Editing the work section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading works. See [Authenticating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
