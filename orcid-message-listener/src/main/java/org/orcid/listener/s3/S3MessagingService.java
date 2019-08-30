@@ -76,29 +76,7 @@ public class S3MessagingService {
         }
     }
 
-    /**
-     * Sends the content to the given bucket
-     * 
-     * @param bucketName
-     *            The name of the bucket.
-     * @param elementName
-     *            The name of the object to create.
-     * @param elementContent
-     *            the content of the object to create.
-     * 
-     * @return true if the element was correctly sent to the bucket
-     * 
-     **/
-    public boolean send(String bucketName, String elementName, byte[] elementContent, String contentType) throws AmazonClientException, AmazonServiceException {
-        InputStream is = new ByteArrayInputStream(elementContent);
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(contentType);
-        metadata.setContentLength(elementContent.length);
-        s3.putObject(new PutObjectRequest(bucketName, elementName, is, metadata));
-        return true;
-    }
-
-    public boolean send(String elementName, byte[] elementContent, String contentType, Date lastModified, boolean isActivity) throws AmazonClientException, AmazonServiceException {
+    public boolean sendV2Item(String elementName, byte[] elementContent, String contentType, Date lastModified, boolean isActivity) throws AmazonClientException, AmazonServiceException {
         InputStream is = new ByteArrayInputStream(elementContent);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(contentType);

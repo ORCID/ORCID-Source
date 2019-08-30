@@ -154,7 +154,7 @@ public class S3Manager {
         // Upload XML
         String xmlElementName = getElementName(orcid);
         byte[] xmlElement = toXML(record);
-        s3MessagingService.send(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
+        s3MessagingService.sendV2Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
     public void uploadV3RecordSummary(String orcid, org.orcid.jaxb.model.v3.release.record.Record record) throws JAXBException, JsonProcessingException {
