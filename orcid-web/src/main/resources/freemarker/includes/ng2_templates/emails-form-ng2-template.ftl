@@ -37,7 +37,7 @@
                                                 </div>
                                                 <div (clickElsewhere)="emailEditSave()" *ngIf="emailEditing === email.value" >
                                                     <input autofocus [(ngModel)]="emailEditingNewValue"  (keyup.enter)="emailEditSave()"> 
-                                                    <div  class="cancel-edit-button" (click)="emailEditing = null" style="padding-left: 5px;"> CANCEL</div>
+                                                    <div  class="cancel-edit-button" (click)="emailEditing = null" style="padding-left: 5px; word-break: break-word;"> CANCEL</div>
                                                 </div>
                                                 
                                                 <span class="orcid-error small" *ngIf="TOGGLZ_HIDE_UNVERIFIED_EMAILS && !email.verified && !(email.visibility=='PRIVATE')">${springMacroRequestContext.getMessage("manage.email.only_verified")} ${springMacroRequestContext.getMessage("common.please")} <a (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.developer_tools.verify_your_email")}</a></span>
