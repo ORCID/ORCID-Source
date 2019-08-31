@@ -23,11 +23,12 @@
                                     <div class="topBuffer">
                                         <a (click)="closeUnverifiedEmailSetPrimaryBox()"><@orcid.msg 'freemarker.btnclose' /></a>
                                     </div>
-                                </div>                       
+                                </div>
                                 <!-- Email table -->
                                 <div class="table-responsive bottomBuffer" style="position: static">
                                     <table class="table" style="position: static">
-                                        <tr *ngFor="let email of formData.emails | orderBy:'value'" class="data-row-group" name="email">
+                                    <ng-container *ngFor="let email of formData.emails | orderBy:'value'" >
+                                        <tr class="data-row-group" name="email">
                                             <!-- Primary Email -->
                                             <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email">  
                                                 <div *ngIf="emailEditing !== email.value">
@@ -61,7 +62,7 @@
                                             <!-- 
                                             <td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];"> 
                                             -->
-             
+            
                                             <td class="email-verified">
                                                 <span *ngIf="!email.verified" class="left">
                                                     <a class="border-button" (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
@@ -99,10 +100,16 @@
                                                     elementId="email-privacy-toggle" 
                                                     >    
                                                     </privacy-toggle-ng2>
-                         
+                        
                                                 </div>
                                             </td>
+                                        
                                         </tr>
+                                            
+                                        <tr *ngIf="emailEditingErrors && emailEditing === email.value"  style="height: 50px;">                       
+                                                <span style="padding-left: 5px; width: 250%;" class="orcid-error" *ngFor="let error of emailEditingErrors"  [innerHTML]="error"></span>
+                                        </tr>
+                                    </ng-container>
                                     </table>            
                                     <!-- Delete Email Box -->
                                     <div  class="delete-email-box grey-box" *ngIf="showDeleteBox">               

@@ -81,6 +81,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
     emailEditing
     emailEditingNewValue
+    emailEditingErrors
     
     constructor( 
         private elementRef: ElementRef, 
@@ -531,22 +532,27 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     emailEdit(value){
+        this.emailEditingErrors = null
         this.emailEditing = this.emailEditingNewValue = value
 
     }
     emailEditSave(){
         if (this.emailEditing !==  this.emailEditingNewValue) {
-            this.initInputEmail();
             // add new email
             this.emailService.editEmail( this.emailEditing, this.emailEditingNewValue )
             .subscribe(
                 data => {           
-                    // get the emails from the backend
-                    this.getformData();
-                    // clean form values 
-                    this.initInputEmail();
-                    this.emailEditing = this.emailEditingNewValue = null
-                    this.emailService.notifyOther();
+
+                    if (data.errors.length == 0) {
+                        // get the emails from the backend
+                        this.getformData();
+                        // clean form values 
+                        this.emailEditing = this.emailEditingNewValue = null
+                        this.emailService.notifyOther();
+                        this.emailEditingErrors = null
+                    } else {
+                        this.emailEditingErrors = data.errors
+                    }
                 },
                 error => {
                     // console.log('getEmailsFormError', error);
@@ -555,6 +561,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         } else {
             // if nothing change on the email edit 
             this.emailEditing = this.emailEditingNewValue = null
+            this.emailEditingErrors = null
         }
     }
 
@@ -589,6 +596,10 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.modalService.notifyObservable$.subscribe(data => {
             if (data && data['moduleId'] === 'modalEmails' && data['action']==='open') {
                this.getformData() 
+            } 
+            else if (data && (data.action === 'close' && data.moduleId === 'modalEmails' || data.action === "close-with-click-outside")) {
+                this.emailEditingErrors = null
+                this.emailEditing = this.emailEditingNewValue = null
             }
         })
       
