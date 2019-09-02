@@ -14,7 +14,7 @@ public enum MessageConstants {
     TYPE_LAST_UPDATED("lu"),
     TYPE_RETRY("r");
     
-    public static class Queues{
+    public static class Queues {
         public static final String UPDATED_ORCIDS = "updated_orcids";        
         public static final String TEST = "test";
         public static final String TEST_REPLY = "test_reply";

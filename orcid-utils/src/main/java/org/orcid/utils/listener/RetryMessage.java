@@ -16,6 +16,8 @@ public class RetryMessage extends BaseMessage {
     
     public Map<?, ?> retryTypes;
     
+    public Boolean retrySummary = false;
+    
     /**
      * Create a map from the component parts
      * 
@@ -42,5 +44,13 @@ public class RetryMessage extends BaseMessage {
 
     public void setRetryTypes(Map<?, ?> retryTypes) {
         this.retryTypes = retryTypes;
-    }   
+    }
+
+    public Boolean getRetrySummary() {
+        return retrySummary;
+    }
+
+    public void setRetrySummary(Boolean retrySummary) {
+        this.retrySummary = retrySummary;
+    }           
 }
