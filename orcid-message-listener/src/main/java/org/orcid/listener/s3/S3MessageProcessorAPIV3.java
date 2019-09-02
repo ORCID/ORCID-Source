@@ -29,6 +29,7 @@ import org.orcid.listener.orcid.Orcid30Manager;
 import org.orcid.listener.persistence.managers.ActivitiesStatusManager;
 import org.orcid.listener.persistence.managers.Api30RecordStatusManager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
+import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.DateUtils;
@@ -40,6 +41,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 /**
@@ -88,27 +90,24 @@ public class S3MessageProcessorAPIV3 {
                         error = ((DeprecatedRecordException) e).getV3OrcidError();
                     }
 
-                    // TODO:
                     // Upload deprecated/locked record file
+                    s3Manager.uploadV3OrcidError(orcid, error);
+                    // TODO:
                     // Clean up all activities
                     // Return
-
+                    return;
                 } catch (Exception e1) {
-                    LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
+                    LOG.error("Record " + orcid + " is locked or deprecated, however, S3 couldn't be updated", e1);
                     // TODO:
                     // Mark them all as failed
                     throw new RuntimeException(e1);
                 }
-            } catch (AmazonClientException e) {
-                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
-                // TODO: Summary should be set to failed
-                throw e;
             } catch (Exception e) {
                 // something else went wrong fetching record from ORCID and
                 // threw a
                 // runtime exception
-                LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
-                // TODO: Summary should be set to failed
+                LOG.error("Unable to fetch record " + orcid + " for 3.0 API: " + e.getMessage(), e);
+                // TODO: Mark them all as failed
                 throw new RuntimeException(e);
             }
             
@@ -139,36 +138,18 @@ public class S3MessageProcessorAPIV3 {
                     LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
                 }
             }
-            recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-        } catch (LockedRecordException | DeprecatedRecordException e) {
-            try {
-                OrcidError error = null;
-                if (e instanceof LockedRecordException) {
-                    LOG.error("Record " + orcid + " is locked");
-                    error = ((LockedRecordException) e).getV3OrcidError();
-                } else {
-                    LOG.error("Record " + orcid + " is deprecated");
-                    error = ((DeprecatedRecordException) e).getV3OrcidError();
-                }
-                s3Manager.uploadOrcidError(orcid, error);
-                recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-            } catch (Exception e1) {
-                LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
-                recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-                throw new RuntimeException(e1);
-            }
+            return true;
         } catch (AmazonClientException e) {
             LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
-            recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-            throw e;
         } catch (Exception e) {
             // something else went wrong fetching record from ORCID and
             // threw a
             // runtime exception
             LOG.error("Unable to fetch record " + orcid + " for 2.0 API: " + e.getMessage(), e);
-            recordStatusManager.markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-            throw new RuntimeException(e);
         }        
+        
+        // Return false as the Record or OrcidError couldn't be feed
+        return false;
     }
 
     /**
@@ -176,7 +157,7 @@ public class S3MessageProcessorAPIV3 {
      * Activities indexing
      * 
      */
-    public void update20Activities(BaseMessage message) {
+    public void update20Activities(BaseMessage message, List<ActivityType> failedElements) {
         if (!isActivitiesIndexerEnabled) {
             return;
         }
@@ -187,11 +168,15 @@ public class S3MessageProcessorAPIV3 {
         if (record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
             if (record.getActivitiesSummary() != null) {
                 ActivitiesSummary as = record.getActivitiesSummary();
-                Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
+                Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid, APIVersion.V3);
                 if (RetryMessage.class.isAssignableFrom(message.getClass())) {
                     RetryMessage rm = (RetryMessage) message;
                     @SuppressWarnings("unchecked")
                     Map<ActivityType, Boolean> retryMap = (Map<ActivityType, Boolean>) rm.getRetryTypes();
+                    if(retryMap.containsKey(ActivityType.DISTINCTIONS)) {
+                        processDistinctions(orcid, as.getDistinctions(), existingActivities.get(ActivityType.DISTINCTIONS));
+                    }
+                    
                     if (retryMap.containsKey(ActivityType.EDUCATIONS)) {
                         processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
                     }
@@ -203,19 +188,45 @@ public class S3MessageProcessorAPIV3 {
                     if (retryMap.containsKey(ActivityType.FUNDINGS)) {
                         processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
                     }
-
+                    
+                    if(retryMap.containsKey(ActivityType.INVITED_POSITIONS)) {
+                        processInvitedPositions(orcid, as.getInvitedPositions(), existingActivities.get(ActivityType.INVITED_POSITIONS));
+                    }
+                    
+                    if(retryMap.containsKey(ActivityType.MEMBERSHIP)) {
+                        processMemberships(orcid, as.getMemberships(), existingActivities.get(ActivityType.MEMBERSHIP));
+                    }
+                    
                     if (retryMap.containsKey(ActivityType.PEER_REVIEWS)) {
                         processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
                     }
 
+                    if(retryMap.containsKey(ActivityType.QUALIFICATIONS)) {
+                        processQualifications(orcid, as.getQualifications(), existingActivities.get(ActivityType.QUALIFICATIONS));
+                    }
+                    
+                    if(retryMap.containsKey(ActivityType.RESEARCH_RESOURCES)) {
+                        processResearchResources(orcid, as.getResearchResources(), existingActivities.get(ActivityType.RESEARCH_RESOURCES));
+                    }
+                    
+                    if(retryMap.containsKey(ActivityType.SERVICES)) {
+                        processServices(orcid, as.getServices(), existingActivities.get(ActivityType.SERVICES));
+                    }
+                    
                     if (retryMap.containsKey(ActivityType.WORKS)) {
                         processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));
                     }
                 } else {
+                    processDistinctions(orcid, as.getDistinctions(), existingActivities.get(ActivityType.DISTINCTIONS));
                     processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS));
                     processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS));
                     processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS));
+                    processInvitedPositions(orcid, as.getInvitedPositions(), existingActivities.get(ActivityType.INVITED_POSITIONS));
+                    processMemberships(orcid, as.getMemberships(), existingActivities.get(ActivityType.MEMBERSHIP));
                     processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS));
+                    processQualifications(orcid, as.getQualifications(), existingActivities.get(ActivityType.QUALIFICATIONS));
+                    processResearchResources(orcid, as.getResearchResources(), existingActivities.get(ActivityType.RESEARCH_RESOURCES));
+                    processServices(orcid, as.getServices(), existingActivities.get(ActivityType.SERVICES));
                     processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS));
                 }
             }
@@ -225,14 +236,19 @@ public class S3MessageProcessorAPIV3 {
         }
     }
 
-    private void processEducations(String orcid, Educations educations, Map<String, S3ObjectSummary> existingElements) {
-        LOG.info("Processing Educations for record " + orcid);
-        if (educations != null && !educations.getSummaries().isEmpty()) {
-            processActivities(orcid, educations.getSummaries(), existingElements, ActivityType.EDUCATIONS);
-        } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.EDUCATIONS);
-            activitiesStatusManager.markAsSent(orcid, ActivityType.EDUCATIONS);
+    private boolean processEducations(String orcid, Educations educations, Map<String, S3ObjectSummary> existingElements) {
+        try {
+            LOG.info("Processing Educations for record " + orcid);
+            if (educations != null && !educations.getEducationGroups().isEmpty()) {
+                processActivities(orcid, educations.getEducationGroups(), existingElements, ActivityType.EDUCATIONS);
+            } else {
+                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EDUCATIONS);
+            }
+            return true;
+        } catch (AmazonClientException e) {
+            LOG.info("Unable to process Educations for record " + orcid, e);           
         }
+        return false;
     }
 
     private void processEmployments(String orcid, Employments employments, Map<String, S3ObjectSummary> existingElements) {
@@ -287,7 +303,7 @@ public class S3MessageProcessorAPIV3 {
         }
     }
 
-    private void processActivities(String orcid, List<? extends Activity> activities, Map<String, S3ObjectSummary> existingElements, ActivityType type) {
+    private boolean processActivities(String orcid, List<? extends Activity> activities, Map<String, S3ObjectSummary> existingElements, ActivityType type) {
         try {
             for (Activity x : activities) {
                 String putCodeString = String.valueOf(x.getPutCode());
@@ -320,26 +336,29 @@ public class S3MessageProcessorAPIV3 {
                 s3Manager.removeActivity(orcid, putCode, type);
             }
 
-            // Mark them as sent
-            activitiesStatusManager.markAsSent(orcid, type);
+            return true;
         } catch (Exception e) {
-            LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid);
-            // Mark collection as failed
-            activitiesStatusManager.markAsFailed(orcid, type);
+            LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid);            
         }
-
+        return false;
     }
 
     private Activity fetchActivity(String orcid, Long putCode, ActivityType type) {
         switch (type) {
+        case DISTINCTIONS:
         case EDUCATIONS:
             return orcid20ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.EDUCATION);
         case EMPLOYMENTS:
-            return orcid20ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.EMPLOYMENT);
+            return orcid20ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.EMPLOYMENT);        
         case FUNDINGS:
             return orcid20ApiClient.fetchFunding(orcid, putCode);
+        case INVITED_POSITIONS:
+        case MEMBERSHIP:
         case PEER_REVIEWS:
             return orcid20ApiClient.fetchPeerReview(orcid, putCode);
+        case QUALIFICATIONS:
+        case RESEARCH_RESOURCES:
+        case SERVICES:
         case WORKS:
             return orcid20ApiClient.fetchWork(orcid, putCode);
         default:

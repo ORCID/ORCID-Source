@@ -181,7 +181,7 @@ public class S3MessageProcessorAPIV2 {
         if (educations != null && !educations.getSummaries().isEmpty()) {
             processActivities(orcid, educations.getSummaries(), existingElements, ActivityType.EDUCATIONS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.EDUCATIONS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EDUCATIONS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.EDUCATIONS);
         }                
     }
@@ -191,7 +191,7 @@ public class S3MessageProcessorAPIV2 {
         if (employments != null && !employments.getSummaries().isEmpty()) {
             processActivities(orcid, employments.getSummaries(), existingElements, ActivityType.EMPLOYMENTS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.EMPLOYMENTS);
         }
     }
@@ -205,7 +205,7 @@ public class S3MessageProcessorAPIV2 {
             }
             processActivities(orcid, fundings, existingElements, ActivityType.FUNDINGS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.FUNDINGS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.FUNDINGS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.FUNDINGS);
         }
     }
@@ -219,7 +219,7 @@ public class S3MessageProcessorAPIV2 {
             }
             processActivities(orcid, peerReviews, existingElements, ActivityType.PEER_REVIEWS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.PEER_REVIEWS);
         }
     }
@@ -233,7 +233,7 @@ public class S3MessageProcessorAPIV2 {
             }
             processActivities(orcid, works, existingElements, ActivityType.WORKS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.WORKS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.WORKS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.WORKS);
         }
     }  
