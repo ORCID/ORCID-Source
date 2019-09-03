@@ -33,6 +33,7 @@ public class Api30RecordStatusDao {
         return (result != null && result > 0);
     }
 
+    @Transactional
     public void create(String orcid, Boolean summaryOk, List<ActivityType> failedElements) throws EntityExistsException {
         Api30RecordStatusEntity entity = new Api30RecordStatusEntity();
         entity.setId(orcid);
@@ -146,5 +147,33 @@ public class Api30RecordStatusDao {
                 Api30RecordStatusEntity.class);
         query.setMaxResults(batchSize);
         return query.getResultList();
+    }    
+    
+    @Transactional
+    public boolean setSummaryFail(String orcid) throws IllegalArgumentException {        
+        Query query = entityManager.createNativeQuery("UPDATE api_3_0_record_status SET summary_status = summary_status + 1 WHERE orcid = :orcid", Api30RecordStatusEntity.class);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
+    }
+    
+    @Transactional
+    public boolean setSummaryOk(String orcid) throws IllegalArgumentException {        
+        Query query = entityManager.createNativeQuery("UPDATE api_3_0_record_status SET summary_status = 0, summary_last_indexed = now() WHERE orcid = :orcid", Api30RecordStatusEntity.class);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
+    }
+    
+    @Transactional
+    public boolean setActivityFail(String orcid, ActivityType type) throws IllegalArgumentException {        
+        Query query = entityManager.createNativeQuery("UPDATE api_3_0_record_status SET " + type.getStatusColumnName() + " = " + type.getStatusColumnName() + " + 1 WHERE orcid = :orcid", Api30RecordStatusEntity.class);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
+    }
+    
+    @Transactional
+    public boolean setActivityOk(String orcid, ActivityType type) throws IllegalArgumentException {        
+        Query query = entityManager.createNativeQuery("UPDATE api_3_0_record_status SET " + type.getStatusColumnName() + " = 0, " + type.getLastIndexedColumnName() + " = now() WHERE orcid = :orcid", Api30RecordStatusEntity.class);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
     }
 }
