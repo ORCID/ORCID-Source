@@ -16,14 +16,19 @@ import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.release.record.summary.Educations;
 import org.orcid.jaxb.model.v3.release.record.summary.Employments;
 import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositions;
+import org.orcid.jaxb.model.v3.release.record.summary.Memberships;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.release.record.summary.Qualifications;
+import org.orcid.jaxb.model.v3.release.record.summary.Services;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
@@ -35,13 +40,13 @@ import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
-import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -218,31 +223,138 @@ public class S3MessageProcessorAPIV3 {
         }
     }
 
+    /**
+     * Affiliations
+     * */
+    private boolean processDistinctions(String orcid, Distinctions distinctions, Map<String, S3ObjectSummary> existingElements) {
+        try {
+            LOG.info("Processing Distinctions for record " + orcid);
+            if (distinctions != null && !distinctions.retrieveGroups().isEmpty()) {                
+                processAffiliations(orcid, distinctions.retrieveGroups(), existingElements, ActivityType.DISTINCTIONS);                                                        
+            } else {
+                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.DISTINCTIONS);
+            }            
+        } catch (Exception e) {
+            LOG.info("Unable to process Distinctions for record " + orcid, e);
+            return false;
+        }
+        return true;
+    }
+    
     private boolean processEducations(String orcid, Educations educations, Map<String, S3ObjectSummary> existingElements) {
         try {
             LOG.info("Processing Educations for record " + orcid);
-            if (educations != null && !educations.getEducationGroups().isEmpty()) {
-                processAffiliations(orcid, educations.getEducationGroups(), existingElements, ActivityType.EDUCATIONS);
+            if (educations != null && !educations.retrieveGroups().isEmpty()) {                
+                processAffiliations(orcid, educations.retrieveGroups(), existingElements, ActivityType.EDUCATIONS);                                                        
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EDUCATIONS);
-            }
-            return true;
-        } catch (AmazonClientException e) {
+            }            
+        } catch (Exception e) {
             LOG.info("Unable to process Educations for record " + orcid, e);
+            return false;
         }
-        return false;
+        return true;
     }
 
-    private void processEmployments(String orcid, Employments employments, Map<String, S3ObjectSummary> existingElements) {
-        LOG.info("Processing Employments for record " + orcid);
-        if (employments != null && !employments.getEmploymentGroups().isEmpty()) {
-            processActivities(orcid, employments.getEmploymentGroups(), existingElements, ActivityType.EMPLOYMENTS);
-        } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
-            activitiesStatusManager.markAsSent(orcid, ActivityType.EMPLOYMENTS);
+    private boolean processEmployments(String orcid, Employments employments, Map<String, S3ObjectSummary> existingElements) {
+        try {
+            LOG.info("Processing Employments for record " + orcid);
+            if (employments != null && !employments.retrieveGroups().isEmpty()) {                
+                processAffiliations(orcid, employments.retrieveGroups(), existingElements, ActivityType.EMPLOYMENTS);                                                        
+            } else {
+                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EDUCATIONS);
+            }            
+        } catch (Exception e) {
+            LOG.info("Unable to process Employments for record " + orcid, e);
+            return false;
         }
+        return true;
     }
 
+    private boolean processInvitedPositions(String orcid, InvitedPositions invitedPositions, Map<String, S3ObjectSummary> existingElements) {
+        try {
+            LOG.info("Processing Invited Positions for record " + orcid);
+            if (invitedPositions != null && !invitedPositions.retrieveGroups().isEmpty()) {                
+                processAffiliations(orcid, invitedPositions.retrieveGroups(), existingElements, ActivityType.INVITED_POSITIONS);                                                        
+            } else {
+                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.INVITED_POSITIONS);
+            }            
+        } catch (Exception e) {
+            LOG.info("Unable to process Invited Positions for record " + orcid, e);
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean processMemberships(String orcid, Memberships memberships, Map<String, S3ObjectSummary> existingElements) {
+        try {
+            LOG.info("Processing Memberships for record " + orcid);
+            if (memberships != null && !memberships.retrieveGroups().isEmpty()) {                
+                processAffiliations(orcid, memberships.retrieveGroups(), existingElements, ActivityType.MEMBERSHIP);                                                        
+            } else {
+                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.MEMBERSHIP);
+            }            
+        } catch (Exception e) {
+            LOG.info("Unable to process Memberships for record " + orcid, e);
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean processQualifications(String orcid, Qualifications qualifications, Map<String, S3ObjectSummary> existingElements) {
+        try {
+            LOG.info("Processing Qualifications for record " + orcid);
+            if (qualifications != null && !qualifications.retrieveGroups().isEmpty()) {                
+                processAffiliations(orcid, qualifications.retrieveGroups(), existingElements, ActivityType.QUALIFICATIONS);                                                        
+            } else {
+                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.QUALIFICATIONS);
+            }            
+        } catch (Exception e) {
+            LOG.info("Unable to process Qualifications for record " + orcid, e);
+            return false;
+        }
+        return true;
+    }
+    
+    private boolean processServices(String orcid, Services services, Map<String, S3ObjectSummary> existingElements) {
+        try {
+            LOG.info("Processing Services for record " + orcid);
+            if (services != null && !services.retrieveGroups().isEmpty()) {                
+                processAffiliations(orcid, services.retrieveGroups(), existingElements, ActivityType.SERVICES);                                                        
+            } else {
+                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.SERVICES);
+            }            
+        } catch (Exception e) {
+            LOG.info("Unable to process Services for record " + orcid, e);
+            return false;
+        }
+        return true;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * Fundings
+     * */
     private void processFundings(String orcid, Fundings fundingsElement, Map<String, S3ObjectSummary> existingElements) {
         LOG.info("Processing Fundings for record " + orcid);
         if (fundingsElement != null && !fundingsElement.getFundingGroup().isEmpty()) {
@@ -285,17 +397,20 @@ public class S3MessageProcessorAPIV3 {
         }
     }    
     
-    private boolean processAffiliations(String orcid, Collection<AffiliationGroup<?>> affiliations, Map<String, S3ObjectSummary> existingElements, ActivityType type) {
-        try {
-            for(AffiliationGroup<? extends AffiliationSummary> group : affiliations) {
-                for(AffiliationSummary summary : group.getActivities()) {
-                    processActivity(orcid, summary, existingElements, type);
-                }
+    private void processAffiliations(String orcid, Collection<?> affGroups, Map<String, S3ObjectSummary> existingElements, ActivityType type) throws AmazonServiceException, AmazonClientException, JsonProcessingException, JAXBException {
+        for(Object o : affGroups) {
+            @SuppressWarnings("unchecked")
+            AffiliationGroup<? extends AffiliationSummary> affGroup = (AffiliationGroup<? extends AffiliationSummary>) o;
+            for(AffiliationSummary affSummary : affGroup.getActivities()) {
+                processActivity(orcid, affSummary, existingElements, type);                
             }
-        } catch (Exception e) {
-            LOG.error("Unable to fetch affiliations " + type.getValue() + " for orcid " + orcid);
         }
-        return false;
+        
+        // Remove from S3 all element that still exists on the
+        // existingElements map
+        for (String putCode : existingElements.keySet()) {
+            s3Manager.removeV3Activity(orcid, putCode, type);
+        } 
     }
     
     private boolean processActivities(String orcid, List<? extends Activity> activities, Map<String, S3ObjectSummary> existingElements, ActivityType type) {
@@ -316,7 +431,7 @@ public class S3MessageProcessorAPIV3 {
         return false;
     }
 
-    private void processActivity(String orcid, Activity x, Map<String, S3ObjectSummary> existingElements, ActivityType type) throws JsonProcessingException, JAXBException {
+    private void processActivity(String orcid, Activity x, Map<String, S3ObjectSummary> existingElements, ActivityType type) throws AmazonClientException, AmazonServiceException , JsonProcessingException, JAXBException {
         String putCodeString = String.valueOf(x.getPutCode());
         Activity activity = null;
         if (existingElements.containsKey(putCodeString)) {
@@ -383,7 +498,7 @@ public class S3MessageProcessorAPIV3 {
      *             be cleared in S3 or, when the record ca't be fetched from the
      *             ORCID API
      */
-    private Record fetchPublicRecordAndClearIfNeeded(BaseMessage message) throws Exception {
+    private Record fetchPublicRecordAndClearIfNeeded(BaseMessage message) throws AmazonClientException, AmazonServiceException, Exception {
         String orcid = message.getOrcid();
         try {
             return orcid30ApiClient.fetchPublicRecord(message);
