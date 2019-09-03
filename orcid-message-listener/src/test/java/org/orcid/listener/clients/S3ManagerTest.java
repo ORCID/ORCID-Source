@@ -59,8 +59,8 @@ public class S3ManagerTest {
         S3Manager s3 = new S3Manager(bucketPrefix);
         s3.setS3MessagingService(s3MessagingService);
         s3.uploadV2RecordSummary(orcid, record);
-        verify(s3MessagingService, times(1)).sendV2Item(eq("000/0000-0000-0000-0000/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
-        verify(s3MessagingService, times(0)).sendV3Item(eq("000/0000-0000-0000-0000/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
+        verify(s3MessagingService, times(1)).sendV2Item(eq("00X/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
+        verify(s3MessagingService, times(0)).sendV3Item(eq("00X/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
     }
 
     @Test
@@ -79,8 +79,8 @@ public class S3ManagerTest {
         S3Manager s3 = new S3Manager(bucketPrefix);
         s3.setS3MessagingService(s3MessagingService);
         s3.uploadV3RecordSummary(orcid, record);
-        verify(s3MessagingService, times(0)).sendV2Item(eq("000/0000-0000-0000-0000/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
-        verify(s3MessagingService, times(1)).sendV3Item(eq("000/0000-0000-0000-0000/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
+        verify(s3MessagingService, times(0)).sendV2Item(eq("00X/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
+        verify(s3MessagingService, times(1)).sendV3Item(eq("00X/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
     }
     
     @Test
@@ -128,7 +128,7 @@ public class S3ManagerTest {
         s3.uploadV2OrcidError(orcid, error);
 
         verify(s3MessagingService, times(1)).sendV2Item(eq("000/0000-0000-0000-0000.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), any(Date.class), eq(false));
-        verify(s3MessagingService, times(0)).sendV2Item(eq("000/0000-0000-0000-0000.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), any(Date.class), eq(false));
+        verify(s3MessagingService, times(0)).sendV3Item(eq("000/0000-0000-0000-0000.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), any(Date.class), eq(false));
     }
     
     @Test
@@ -140,6 +140,6 @@ public class S3ManagerTest {
         s3.uploadV3OrcidError(orcid, error);
 
         verify(s3MessagingService, times(0)).sendV2Item(eq("000/0000-0000-0000-0000.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), any(Date.class), eq(false));
-        verify(s3MessagingService, times(1)).sendV2Item(eq("000/0000-0000-0000-0000.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), any(Date.class), eq(false));
+        verify(s3MessagingService, times(1)).sendV3Item(eq("000/0000-0000-0000-0000.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), any(Date.class), eq(false));
     }
 }

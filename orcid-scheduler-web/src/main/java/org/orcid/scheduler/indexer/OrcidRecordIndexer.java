@@ -12,4 +12,6 @@ public interface OrcidRecordIndexer {
     void processUnclaimedProfilesForReminder();
 
     void reindexRecordsOnSolr();
+    
+    void reindexV3RecordsOnS3();
 }

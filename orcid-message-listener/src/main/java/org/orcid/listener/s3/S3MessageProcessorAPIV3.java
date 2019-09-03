@@ -72,12 +72,9 @@ public class S3MessageProcessorAPIV3 {
 
     Logger LOG = LoggerFactory.getLogger(S3MessageProcessorAPIV3.class);
 
-    @Value("${org.orcid.message-listener.index.v3.summaries:true}")
-    private boolean isSummaryIndexerEnabled;
-
-    @Value("${org.orcid.message-listener.index.v3.activities:true}")
-    private boolean isActivitiesIndexerEnabled;
-
+    @Value("${org.orcid.message-listener.index.v3:false}")
+    private boolean isV3IndexerEnabled;
+    
     @Resource
     private Orcid30Manager orcid30ApiClient;
     @Resource
@@ -89,7 +86,7 @@ public class S3MessageProcessorAPIV3 {
         String orcid = message.getOrcid();
         Boolean isSummaryOk = false;
         List<ActivityType> failedElements = new ArrayList<ActivityType>();
-        if (isSummaryIndexerEnabled || isActivitiesIndexerEnabled) {
+        if (isV3IndexerEnabled) {
             Record record = null;
             try {
                 record = fetchPublicRecordAndClearIfNeeded(message);
@@ -99,20 +96,17 @@ public class S3MessageProcessorAPIV3 {
             }
 
             if (record != null) {
-                if (isSummaryIndexerEnabled) {
-                    isSummaryOk = updateSummary(record);
-                }
-
-                if (isActivitiesIndexerEnabled) {
-                    updateActivities(record, failedElements);
-                }
-                
+                isSummaryOk = updateSummary(record);
+                updateActivities(record, failedElements);
                 api30RecordStatusManager.save(orcid, isSummaryOk, failedElements);
             }
         }
     }
 
     public void retry(Record record, Boolean retrySummary, Map<ActivityType, Boolean> retryMap) {
+        if(!isV3IndexerEnabled) {
+            return;
+        }
         String orcid = record.getOrcidIdentifier().getPath();
         
         if(retrySummary) {
@@ -191,7 +185,7 @@ public class S3MessageProcessorAPIV3 {
     }
 
     private boolean updateSummary(Record record) {
-        if (record == null || !isSummaryIndexerEnabled) {
+        if (record == null || !isV3IndexerEnabled) {
             return false;
         }
         String orcid = record.getOrcidIdentifier().getPath();
@@ -222,8 +216,8 @@ public class S3MessageProcessorAPIV3 {
      * Activities indexing
      * 
      */
-    public void updateActivities(Record record, List<ActivityType> failedElements) {
-        if (record == null || !isActivitiesIndexerEnabled) {
+    private void updateActivities(Record record, List<ActivityType> failedElements) {
+        if (record == null || !isV3IndexerEnabled) {
             return;
         }
 
@@ -594,6 +588,7 @@ public class S3MessageProcessorAPIV3 {
                 LOG.error("Record " + orcid + " is locked or deprecated, however, S3 couldn't be updated", e1);
                 throw new Exception(e1);
             }
+            api30RecordStatusManager.save(orcid, true, new ArrayList<ActivityType>());
             return null;
         } catch (Exception e) {
             throw new Exception(e);

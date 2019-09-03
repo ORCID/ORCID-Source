@@ -68,7 +68,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
-public class S3MessageProcessorTest {
+public class S3MessageProcessorAPIV2Test {
 
     private final String orcid = "0000-0000-0000-0000";
 
@@ -180,7 +180,7 @@ public class S3MessageProcessorTest {
     @Test
     public void activities_AllSentTest() throws Exception {
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(getEmptyMapOfActivities());
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(getEmptyMapOfActivities());
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EDUCATION))).thenReturn(getEducation());
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EMPLOYMENT))).thenReturn(getEmployment());
         when(mock_orcid20ApiClient.fetchFunding(eq(orcid), eq(0L))).thenReturn(getFunding());
@@ -212,7 +212,7 @@ public class S3MessageProcessorTest {
         r.getActivitiesSummary().getWorks().getWorkGroup().clear();
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(getEmptyMapOfActivities());
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(getEmptyMapOfActivities());
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EDUCATION))).thenReturn(getEducation());
         doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getEducation()));
 
@@ -250,7 +250,7 @@ public class S3MessageProcessorTest {
         r.getActivitiesSummary().getWorks().getWorkGroup().clear();
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(getEmptyMapOfActivities());
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(getEmptyMapOfActivities());
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EMPLOYMENT))).thenReturn(getEmployment());
         doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getEmployment()));
 
@@ -288,7 +288,7 @@ public class S3MessageProcessorTest {
         r.getActivitiesSummary().getWorks().getWorkGroup().clear();
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(getEmptyMapOfActivities());
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(getEmptyMapOfActivities());
         when(mock_orcid20ApiClient.fetchFunding(eq(orcid), eq(0L))).thenReturn(getFunding());
         doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getFunding()));
 
@@ -326,7 +326,7 @@ public class S3MessageProcessorTest {
         r.getActivitiesSummary().getWorks().getWorkGroup().clear();
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(getEmptyMapOfActivities());
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(getEmptyMapOfActivities());
         when(mock_orcid20ApiClient.fetchPeerReview(eq(orcid), eq(0L))).thenReturn(getPeerReview());
         doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getPeerReview()));
 
@@ -364,7 +364,7 @@ public class S3MessageProcessorTest {
         r.getActivitiesSummary().getPeerReviews().getPeerReviewGroup().clear();
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(getEmptyMapOfActivities());
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(getEmptyMapOfActivities());
         when(mock_orcid20ApiClient.fetchWork(eq(orcid), eq(0L))).thenReturn(getWork());
         doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getWork()));
 
@@ -405,7 +405,7 @@ public class S3MessageProcessorTest {
         map.get(ActivityType.EDUCATIONS).put(String.valueOf(1L), new S3ObjectSummary());
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(map);
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(map);
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EDUCATION))).thenReturn(getEducation());
 
         try {
@@ -445,7 +445,7 @@ public class S3MessageProcessorTest {
         map.get(ActivityType.EMPLOYMENTS).put(String.valueOf(1L), new S3ObjectSummary());
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(map);
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(map);
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EMPLOYMENT))).thenReturn(getEmployment());
 
         try {
@@ -485,7 +485,7 @@ public class S3MessageProcessorTest {
         map.get(ActivityType.FUNDINGS).put(String.valueOf(1L), new S3ObjectSummary());
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(map);
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(map);
         when(mock_orcid20ApiClient.fetchFunding(eq(orcid), eq(0L))).thenReturn(getFunding());
 
         try {
@@ -525,7 +525,7 @@ public class S3MessageProcessorTest {
         map.get(ActivityType.PEER_REVIEWS).put(String.valueOf(1L), new S3ObjectSummary());
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(map);
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(map);
         when(mock_orcid20ApiClient.fetchPeerReview(eq(orcid), eq(0L))).thenReturn(getPeerReview());
 
         try {
@@ -565,7 +565,7 @@ public class S3MessageProcessorTest {
         map.get(ActivityType.WORKS).put(String.valueOf(1L), new S3ObjectSummary());
 
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(map);
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(map);
         when(mock_orcid20ApiClient.fetchWork(eq(orcid), eq(0L))).thenReturn(getWork());
 
         try {
@@ -605,7 +605,7 @@ public class S3MessageProcessorTest {
         map.get(ActivityType.WORKS).put(String.valueOf(0L), s3Object);
         
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(map);
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(map);
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EDUCATION))).thenReturn(getEducation());
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EMPLOYMENT))).thenReturn(getEmployment());
         when(mock_orcid20ApiClient.fetchFunding(eq(orcid), eq(0L))).thenReturn(getFunding());
@@ -645,7 +645,7 @@ public class S3MessageProcessorTest {
         map.get(ActivityType.WORKS).put(String.valueOf(0L), s3Object);
         
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
-        when(mock_s3Manager.searchActivities(any(), APIVersion.V2)).thenReturn(map);
+        when(mock_s3Manager.searchActivities(any(), eq(APIVersion.V2))).thenReturn(map);
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EDUCATION))).thenReturn(getEducation());
         when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EMPLOYMENT))).thenReturn(getEmployment());
         when(mock_orcid20ApiClient.fetchFunding(eq(orcid), eq(0L))).thenReturn(getFunding());
