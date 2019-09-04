@@ -1,5 +1,6 @@
 package org.orcid.listener.common;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
@@ -90,7 +92,9 @@ import org.orcid.utils.listener.MessageConstants;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
@@ -98,7 +102,7 @@ public class S3MessageProcessorAPIV3Test {
 
     private final String orcid = "0000-0000-0000-0000";
 
-    private final Date dateNow = new Date(System.currentTimeMillis());    
+    private final Date dateNow = new Date(System.currentTimeMillis());
     private final Date dateAfter = new Date(System.currentTimeMillis() + 1000);
     private final XMLGregorianCalendar after = DateUtils.convertToXMLGregorianCalendar(dateAfter);
 
@@ -115,24 +119,39 @@ public class S3MessageProcessorAPIV3Test {
     private Api30RecordStatusManager mock_api30RecordStatusManager;
 
     @Before
-    public void before() {
+    public void before() throws LockedRecordException, DeprecatedRecordException, ExecutionException {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(processor, "isV3IndexerEnabled", true);
         TargetProxyHelper.injectIntoProxy(processor, "orcid30ApiClient", mock_orcid30ApiClient);
-        TargetProxyHelper.injectIntoProxy(processor, "api30RecordStatusManager", mock_api30RecordStatusManager);        
+        TargetProxyHelper.injectIntoProxy(processor, "api30RecordStatusManager", mock_api30RecordStatusManager);
         TargetProxyHelper.injectIntoProxy(processor, "s3Manager", mock_s3Manager);
-    }
 
+        // Setup mocks
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getEmptyMapOfActivities());
+        when(mock_orcid30ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.DISTINCTION))).thenReturn(getDistinction());
+        when(mock_orcid30ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EDUCATION))).thenReturn(getEducation());
+        when(mock_orcid30ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EMPLOYMENT))).thenReturn(getEmployment());
+        when(mock_orcid30ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.INVITED_POSITION))).thenReturn(getInvitedPosition());
+        when(mock_orcid30ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.MEMBERSHIP))).thenReturn(getMembership());
+        when(mock_orcid30ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.QUALIFICATION))).thenReturn(getQualification());
+        when(mock_orcid30ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.SERVICE))).thenReturn(getService());
+        when(mock_orcid30ApiClient.fetchFunding(eq(orcid), eq(0L))).thenReturn(getFunding());
+        when(mock_orcid30ApiClient.fetchPeerReview(eq(orcid), eq(0L))).thenReturn(getPeerReview());
+        when(mock_orcid30ApiClient.fetchResearchResource(eq(orcid), eq(0L))).thenReturn(getResearchResource());
+        when(mock_orcid30ApiClient.fetchWork(eq(orcid), eq(0L))).thenReturn(getWork());
+    }
+    
     @Test
     public void v30RecordDeprecatedExceptionTest() throws Exception {
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenThrow(new DeprecatedRecordException(new OrcidError()));
         process(orcid);
         verify(mock_s3Manager, times(1)).clearV3Activities(eq(orcid));
         verify(mock_s3Manager, times(1)).uploadV3OrcidError(eq(orcid), any(OrcidError.class));
-        final ArgumentCaptor<ArrayList> captor = ArgumentCaptor.forClass(ArrayList.class);
-        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());   
-        
-        final ArrayList argument = captor.getValue();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+
+        final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
     }
@@ -143,53 +162,290 @@ public class S3MessageProcessorAPIV3Test {
         process(orcid);
         verify(mock_s3Manager, times(1)).clearV3Activities(eq(orcid));
         verify(mock_s3Manager, times(1)).uploadV3OrcidError(eq(orcid), any(OrcidError.class));
-        final ArgumentCaptor<ArrayList> captor = ArgumentCaptor.forClass(ArrayList.class);
-        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());   
-        
-        final ArrayList argument = captor.getValue();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+
+        final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
     }
 
     @Test
     public void recordSummary_AmazonClientExceptionTest() throws Exception {
-        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
-        setGetActivitiesMocks();
-        when(mock_s3Manager.searchActivities(eq("0000-0000-0000-0000"), eq(APIVersion.V3))).thenReturn(getEmptyMapOfActivities());
         doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3RecordSummary(eq(orcid), any(Record.class));
         doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), any(String.class), any(Activity.class));
-
         try {
             process(orcid);
-        } catch (AmazonClientException ace) {
-
         } catch (Exception e) {
             fail();
         }
-        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(11)).uploadV3Activity(eq(orcid), any(), any());
-        verify(mock_s3Manager, times(0)).uploadV3OrcidError(any(), any());
-        verify(mock_s3Manager, times(0)).clearV3ActivitiesByType(any(), any());
-        final ArgumentCaptor<ArrayList> captor = ArgumentCaptor.forClass(ArrayList.class);
-        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(false), captor.capture());        
-        final ArrayList argument = captor.getValue();
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(false), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.containsAll(Arrays.asList(ActivityType.values())));
     }
 
-    private void setGetActivitiesMocks() {
-        when(mock_orcid30ApiClient.fetchAffiliation(eq("0000-0000-0000-0000"), any(), eq(AffiliationType.DISTINCTION))).thenReturn(getDistinction());
-        when(mock_orcid30ApiClient.fetchAffiliation(eq("0000-0000-0000-0000"), any(), eq(AffiliationType.EDUCATION))).thenReturn(getEducation());
-        when(mock_orcid30ApiClient.fetchAffiliation(eq("0000-0000-0000-0000"), any(), eq(AffiliationType.EMPLOYMENT))).thenReturn(getEmployment());
-        when(mock_orcid30ApiClient.fetchAffiliation(eq("0000-0000-0000-0000"), any(), eq(AffiliationType.INVITED_POSITION))).thenReturn(getInvitedPosition());
-        when(mock_orcid30ApiClient.fetchAffiliation(eq("0000-0000-0000-0000"), any(), eq(AffiliationType.MEMBERSHIP))).thenReturn(getMembership());
-        when(mock_orcid30ApiClient.fetchAffiliation(eq("0000-0000-0000-0000"), any(), eq(AffiliationType.QUALIFICATION))).thenReturn(getQualification());
-        when(mock_orcid30ApiClient.fetchAffiliation(eq("0000-0000-0000-0000"), any(), eq(AffiliationType.SERVICE))).thenReturn(getService());
-        when(mock_orcid30ApiClient.fetchFunding(eq("0000-0000-0000-0000"), any())).thenReturn(getFunding());
-        when(mock_orcid30ApiClient.fetchPeerReview(eq("0000-0000-0000-0000"), any())).thenReturn(getPeerReview());
-        when(mock_orcid30ApiClient.fetchResearchResource(eq("0000-0000-0000-0000"), any())).thenReturn(getResearchResource());
-        when(mock_orcid30ApiClient.fetchWork(eq("0000-0000-0000-0000"), any())).thenReturn(getWork());
+    @Test
+    public void recordSummary_JAXBExceptionTest() throws Exception {
+        doThrow(new JAXBException("error")).when(mock_s3Manager).uploadV3RecordSummary(eq(orcid), any(Record.class));
+        doThrow(new JAXBException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), any(String.class), any(Activity.class));
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(false), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertTrue(argument.containsAll(Arrays.asList(ActivityType.values())));
     }
+
+    @Test
+    public void recordStatusMarkAllOkTest() throws Exception {
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+        
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertTrue(argument.isEmpty());
+    }
+
+    @Test
+    public void activities_DistinctionsFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getDistinction()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.DISTINCTIONS));
+    }
+
+    @Test
+    public void activities_EducationsFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getEducation()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.EDUCATIONS));
+    }
+    
+    @Test
+    public void activities_EmploymentsFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getEmployment()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.EMPLOYMENTS));
+    }
+    
+    @Test
+    public void activities_FundingsFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getFunding()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.FUNDINGS));
+    }
+    
+    @Test
+    public void activities_InvitedPositionsFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getInvitedPosition()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.INVITED_POSITIONS));
+    }
+    
+    @Test
+    public void activities_MembershipsFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getMembership()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.MEMBERSHIP));
+    }
+    
+    @Test
+    public void activities_PeerReviewsFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getPeerReview()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.PEER_REVIEWS));
+    }
+    
+    @Test
+    public void activities_QualificationsFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getQualification()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.QUALIFICATIONS));
+    }
+    
+    @Test
+    public void activities_ResearchResourcesFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getResearchResource()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.RESEARCH_RESOURCES));
+    }
+    
+    @Test
+    public void activities_ServicesFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getService()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.SERVICES));
+    }
+    
+    @Test
+    public void activities_WorksFailTest() throws Exception {
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getWork()));
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verifyUploadIsCalledForSummaryAndActivities();
+        final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
+        final ArrayList<ActivityType> argument = captor.getValue();
+        assertNotNull(argument);
+        assertEquals(1, argument.size());
+        assertTrue(argument.contains(ActivityType.WORKS));
+    }
+    
+    private void verifyUploadIsCalledForSummaryAndActivities() throws AmazonServiceException, JsonProcessingException, AmazonClientException, JAXBException {
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(Distinction.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(Education.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(Employment.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(Funding.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(InvitedPosition.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(Membership.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(PeerReview.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(Qualification.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(ResearchResource.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(Service.class));
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV3OrcidError(any(), any());
+        verify(mock_s3Manager, times(0)).clearV3ActivitiesByType(any(), any());        
+    }
+    
     
     private void process(String orcid) throws Exception {
         Map<String, String> map = new HashMap<String, String>();
@@ -203,21 +459,21 @@ public class S3MessageProcessorAPIV3Test {
 
     private Record getRecord() {
         Record claimedRecord = new Record();
-        claimedRecord.setOrcidIdentifier(new OrcidIdentifier("0000-0000-0000-0000"));
+        claimedRecord.setOrcidIdentifier(new OrcidIdentifier(orcid));
         History history = new History();
         history.setClaimed(true);
         claimedRecord.setHistory(history);
         ActivitiesSummary as = new ActivitiesSummary();
         as.setDistinctions(new Distinctions(getDistinctionGroups()));
-        as.setEducations(new Educations(getEducationGroups()));        
+        as.setEducations(new Educations(getEducationGroups()));
         as.setEmployments(new Employments(getEmploymentGroups()));
         as.setInvitedPositions(new InvitedPositions(getInvitedPositionGroups()));
         as.setMemberships(new Memberships(getMembershipGroups()));
         as.setQualifications(new Qualifications(getQualificationGroups()));
         as.setServices(new Services(getServiceGroups()));
-               
+
         as.getFundings().getFundingGroup().add(getFundingGroup());
-        as.getPeerReviews().getPeerReviewGroup().add(getPeerReviewGroup()); 
+        as.getPeerReviews().getPeerReviewGroup().add(getPeerReviewGroup());
         as.getResearchResources().getResearchResourceGroup().add(getResearchResourcesGroup());
         as.getWorks().getWorkGroup().add(getWorkGroup());
         claimedRecord.setActivitiesSummary(as);
@@ -234,7 +490,7 @@ public class S3MessageProcessorAPIV3Test {
         list.add(group);
         return list;
     }
-    
+
     private List<AffiliationGroup<EducationSummary>> getEducationGroups() {
         List<AffiliationGroup<EducationSummary>> list = new ArrayList<>();
         EducationSummary e = new EducationSummary();
@@ -267,7 +523,7 @@ public class S3MessageProcessorAPIV3Test {
         list.add(group);
         return list;
     }
-    
+
     private List<AffiliationGroup<MembershipSummary>> getMembershipGroups() {
         List<AffiliationGroup<MembershipSummary>> list = new ArrayList<>();
         MembershipSummary e = new MembershipSummary();
@@ -278,7 +534,7 @@ public class S3MessageProcessorAPIV3Test {
         list.add(group);
         return list;
     }
-    
+
     private List<AffiliationGroup<QualificationSummary>> getQualificationGroups() {
         List<AffiliationGroup<QualificationSummary>> list = new ArrayList<>();
         QualificationSummary e = new QualificationSummary();
@@ -289,7 +545,7 @@ public class S3MessageProcessorAPIV3Test {
         list.add(group);
         return list;
     }
-    
+
     private List<AffiliationGroup<ServiceSummary>> getServiceGroups() {
         List<AffiliationGroup<ServiceSummary>> list = new ArrayList<>();
         ServiceSummary e = new ServiceSummary();
@@ -300,7 +556,7 @@ public class S3MessageProcessorAPIV3Test {
         list.add(group);
         return list;
     }
-    
+
     private FundingGroup getFundingGroup() {
         FundingGroup g = new FundingGroup();
         FundingSummary f = new FundingSummary();
@@ -320,7 +576,7 @@ public class S3MessageProcessorAPIV3Test {
         g.getPeerReviewGroup().add(dg);
         return g;
     }
-    
+
     private ResearchResourceGroup getResearchResourcesGroup() {
         ResearchResourceGroup g = new ResearchResourceGroup();
         ResearchResourceSummary p = new ResearchResourceSummary();
@@ -345,42 +601,42 @@ public class S3MessageProcessorAPIV3Test {
         e.setLastModifiedDate(new LastModifiedDate(after));
         return e;
     }
-    
+
     private Education getEducation() {
         Education e = new Education();
         e.setPutCode(0L);
         e.setLastModifiedDate(new LastModifiedDate(after));
         return e;
     }
-    
+
     private Employment getEmployment() {
         Employment e = new Employment();
         e.setPutCode(0L);
         e.setLastModifiedDate(new LastModifiedDate(after));
         return e;
     }
-    
+
     private InvitedPosition getInvitedPosition() {
         InvitedPosition e = new InvitedPosition();
         e.setPutCode(0L);
         e.setLastModifiedDate(new LastModifiedDate(after));
         return e;
     }
-    
+
     private Membership getMembership() {
         Membership e = new Membership();
         e.setPutCode(0L);
         e.setLastModifiedDate(new LastModifiedDate(after));
         return e;
     }
-    
+
     private Qualification getQualification() {
         Qualification e = new Qualification();
         e.setPutCode(0L);
         e.setLastModifiedDate(new LastModifiedDate(after));
         return e;
     }
-    
+
     private Service getService() {
         Service e = new Service();
         e.setPutCode(0L);
@@ -408,7 +664,7 @@ public class S3MessageProcessorAPIV3Test {
         p.setLastModifiedDate(new LastModifiedDate(after));
         return p;
     }
-    
+
     private Work getWork() {
         Work w = new Work();
         w.setPutCode(0L);
@@ -430,7 +686,7 @@ public class S3MessageProcessorAPIV3Test {
         Map<String, S3ObjectSummary> researchResources = new HashMap<String, S3ObjectSummary>();
         Map<String, S3ObjectSummary> services = new HashMap<String, S3ObjectSummary>();
         Map<String, S3ObjectSummary> works = new HashMap<String, S3ObjectSummary>();
-        
+
         activitiesOnS3.put(ActivityType.DISTINCTIONS, distinctions);
         activitiesOnS3.put(ActivityType.EDUCATIONS, educations);
         activitiesOnS3.put(ActivityType.EMPLOYMENTS, employments);
@@ -441,7 +697,7 @@ public class S3MessageProcessorAPIV3Test {
         activitiesOnS3.put(ActivityType.QUALIFICATIONS, qualifications);
         activitiesOnS3.put(ActivityType.RESEARCH_RESOURCES, researchResources);
         activitiesOnS3.put(ActivityType.SERVICES, services);
-        activitiesOnS3.put(ActivityType.WORKS, works);        
+        activitiesOnS3.put(ActivityType.WORKS, works);
         return activitiesOnS3;
     }
 }
