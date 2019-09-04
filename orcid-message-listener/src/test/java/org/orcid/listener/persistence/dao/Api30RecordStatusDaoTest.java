@@ -65,17 +65,17 @@ public class Api30RecordStatusDaoTest {
         assertEquals(Integer.valueOf(0), e.getSummaryStatus());
         assertEquals(Integer.valueOf(0), e.getWorksStatus());
         
-        assertNull(e.getDistinctionsLastIndexed());
-        assertNull(e.getEducationsLastIndexed());
-        assertNull(e.getEmploymentsLastIndexed());
-        assertNull(e.getFundingsLastIndexed());
-        assertNull(e.getInvitedPositionsLastIndexed());
-        assertNull(e.getMembershipLastIndexed());
-        assertNull(e.getPeerReviewsLastIndexed());
-        assertNull(e.getQualificationsLastIndexed());
-        assertNull(e.getResearchResourcesLastIndexed());
-        assertNull(e.getServicesLastIndexed());
-        assertNull(e.getWorksLastIndexed()); 
+        assertNotNull(e.getDistinctionsLastIndexed());
+        assertNotNull(e.getEducationsLastIndexed());
+        assertNotNull(e.getEmploymentsLastIndexed());
+        assertNotNull(e.getFundingsLastIndexed());
+        assertNotNull(e.getInvitedPositionsLastIndexed());
+        assertNotNull(e.getMembershipLastIndexed());
+        assertNotNull(e.getPeerReviewsLastIndexed());
+        assertNotNull(e.getQualificationsLastIndexed());
+        assertNotNull(e.getResearchResourcesLastIndexed());
+        assertNotNull(e.getServicesLastIndexed());
+        assertNotNull(e.getWorksLastIndexed()); 
         entityManager.remove(dao.get(ORCID));
     }
     
@@ -83,6 +83,8 @@ public class Api30RecordStatusDaoTest {
     @Transactional
     public void updateTest() {
         dao.create(ORCID, true, Arrays.asList());
+        Api30RecordStatusEntity entity = dao.get(ORCID);
+        Date lastIndexedDate = entity.getDistinctionsLastIndexed();
         
         // Set it to all failed
         dao.update(ORCID, false, Arrays.asList(ActivityType.values()));
@@ -105,17 +107,17 @@ public class Api30RecordStatusDaoTest {
         assertEquals(Integer.valueOf(1), e.getSummaryStatus());
         assertEquals(Integer.valueOf(1), e.getWorksStatus());
         
-        assertNull(e.getDistinctionsLastIndexed());
-        assertNull(e.getEducationsLastIndexed());
-        assertNull(e.getEmploymentsLastIndexed());
-        assertNull(e.getFundingsLastIndexed());
-        assertNull(e.getInvitedPositionsLastIndexed());
-        assertNull(e.getMembershipLastIndexed());
-        assertNull(e.getPeerReviewsLastIndexed());
-        assertNull(e.getQualificationsLastIndexed());
-        assertNull(e.getResearchResourcesLastIndexed());
-        assertNull(e.getServicesLastIndexed());
-        assertNull(e.getWorksLastIndexed()); 
+        assertEquals(lastIndexedDate, e.getDistinctionsLastIndexed());
+        assertEquals(lastIndexedDate, e.getEducationsLastIndexed());
+        assertEquals(lastIndexedDate, e.getEmploymentsLastIndexed());
+        assertEquals(lastIndexedDate, e.getFundingsLastIndexed());
+        assertEquals(lastIndexedDate, e.getInvitedPositionsLastIndexed());
+        assertEquals(lastIndexedDate, e.getMembershipLastIndexed());
+        assertEquals(lastIndexedDate, e.getPeerReviewsLastIndexed());
+        assertEquals(lastIndexedDate, e.getQualificationsLastIndexed());
+        assertEquals(lastIndexedDate, e.getResearchResourcesLastIndexed());
+        assertEquals(lastIndexedDate, e.getServicesLastIndexed());
+        assertEquals(lastIndexedDate, e.getWorksLastIndexed()); 
         
         // Set it to all worked
         dao.update(ORCID, true, Arrays.asList());
@@ -126,7 +128,7 @@ public class Api30RecordStatusDaoTest {
         assertNotNull(e.getLastModified());
         assertNotNull(e.getSummaryLastIndexed());
         
-        Date lastIndexedDate = e.getLastModified();
+        lastIndexedDate = e.getLastModified();
         
         assertEquals(Integer.valueOf(0), e.getSummaryStatus());
         assertEquals(Integer.valueOf(0), e.getDistinctionsStatus());
@@ -169,8 +171,6 @@ public class Api30RecordStatusDaoTest {
         dao.update(ORCID, false, failedElements);
         failedElements.add(ActivityType.PEER_REVIEWS);
         dao.update(ORCID, false, failedElements);
-        failedElements.add(ActivityType.PEER_REVIEWS);
-        dao.update(ORCID, false, failedElements);
         failedElements.add(ActivityType.QUALIFICATIONS);
         dao.update(ORCID, false, failedElements);
         failedElements.add(ActivityType.RESEARCH_RESOURCES);
@@ -187,19 +187,18 @@ public class Api30RecordStatusDaoTest {
         
         lastIndexedDate = e.getLastModified();
         
-        assertEquals(Integer.valueOf(13), e.getSummaryStatus());
-        assertEquals(Integer.valueOf(12), e.getDistinctionsStatus());
-        assertEquals(Integer.valueOf(11), e.getEducationsStatus());
-        assertEquals(Integer.valueOf(10), e.getEmploymentsStatus());
-        assertEquals(Integer.valueOf(9), e.getFundingsStatus());
-        assertEquals(Integer.valueOf(8), e.getInvitedPositionsStatus());
-        assertEquals(Integer.valueOf(7), e.getMembershipStatus());
-        assertEquals(Integer.valueOf(6), e.getPeerReviewsStatus());
-        assertEquals(Integer.valueOf(5), e.getQualificationsStatus());
-        assertEquals(Integer.valueOf(4), e.getResearchResourcesStatus());
-        assertEquals(Integer.valueOf(3), e.getServicesStatus());
-        assertEquals(Integer.valueOf(2), e.getSummaryStatus());
         assertEquals(Integer.valueOf(1), e.getWorksStatus());
+        assertEquals(Integer.valueOf(2), e.getServicesStatus());
+        assertEquals(Integer.valueOf(3), e.getResearchResourcesStatus());
+        assertEquals(Integer.valueOf(4), e.getQualificationsStatus());        
+        assertEquals(Integer.valueOf(5), e.getPeerReviewsStatus());
+        assertEquals(Integer.valueOf(6), e.getMembershipStatus());
+        assertEquals(Integer.valueOf(7), e.getInvitedPositionsStatus());
+        assertEquals(Integer.valueOf(8), e.getFundingsStatus());
+        assertEquals(Integer.valueOf(9), e.getEmploymentsStatus());
+        assertEquals(Integer.valueOf(10), e.getEducationsStatus());
+        assertEquals(Integer.valueOf(11), e.getSummaryStatus());
+        assertEquals(Integer.valueOf(11), e.getDistinctionsStatus());
         
         assertNotNull(e.getDistinctionsLastIndexed());
         assertNotNull(e.getEducationsLastIndexed());
