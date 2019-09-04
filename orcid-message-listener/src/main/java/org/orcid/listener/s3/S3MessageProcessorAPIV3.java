@@ -274,7 +274,9 @@ public class S3MessageProcessorAPIV3 {
                 distinctions.retrieveGroups().forEach(g -> {
                     all.addAll(g.getActivities());
                 });
-                processActivities(orcid, all, existingElements, ActivityType.DISTINCTIONS);
+                if(!processActivities(orcid, all, existingElements, ActivityType.DISTINCTIONS)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.DISTINCTIONS);
             }
@@ -293,7 +295,9 @@ public class S3MessageProcessorAPIV3 {
                 educations.retrieveGroups().forEach(g -> {
                     all.addAll(g.getActivities());
                 });
-                processActivities(orcid, all, existingElements, ActivityType.EDUCATIONS);
+                if(!processActivities(orcid, all, existingElements, ActivityType.EDUCATIONS)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EDUCATIONS);
             }
@@ -312,7 +316,9 @@ public class S3MessageProcessorAPIV3 {
                 employments.retrieveGroups().forEach(g -> {
                     all.addAll(g.getActivities());
                 });
-                processActivities(orcid, all, existingElements, ActivityType.EMPLOYMENTS);
+                if(!processActivities(orcid, all, existingElements, ActivityType.EMPLOYMENTS)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
             }
@@ -331,7 +337,9 @@ public class S3MessageProcessorAPIV3 {
                 invitedPositions.retrieveGroups().forEach(g -> {
                     all.addAll(g.getActivities());
                 });
-                processActivities(orcid, all, existingElements, ActivityType.INVITED_POSITIONS);
+                if(!processActivities(orcid, all, existingElements, ActivityType.INVITED_POSITIONS)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.INVITED_POSITIONS);
             }
@@ -350,7 +358,9 @@ public class S3MessageProcessorAPIV3 {
                 memberships.retrieveGroups().forEach(g -> {
                     all.addAll(g.getActivities());
                 });
-                processActivities(orcid, all, existingElements, ActivityType.MEMBERSHIP);
+                if(!processActivities(orcid, all, existingElements, ActivityType.MEMBERSHIP)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.MEMBERSHIP);
             }
@@ -369,7 +379,9 @@ public class S3MessageProcessorAPIV3 {
                 qualifications.retrieveGroups().forEach(g -> {
                     all.addAll(g.getActivities());
                 });
-                processActivities(orcid, all, existingElements, ActivityType.QUALIFICATIONS);
+                if(!processActivities(orcid, all, existingElements, ActivityType.QUALIFICATIONS)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.QUALIFICATIONS);
             }
@@ -388,7 +400,9 @@ public class S3MessageProcessorAPIV3 {
                 services.retrieveGroups().forEach(g -> {
                     all.addAll(g.getActivities());
                 });
-                processActivities(orcid, all, existingElements, ActivityType.SERVICES);
+                if(!processActivities(orcid, all, existingElements, ActivityType.SERVICES)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.SERVICES);
             }
@@ -407,7 +421,9 @@ public class S3MessageProcessorAPIV3 {
                 for (FundingGroup g : fundingsElement.getFundingGroup()) {
                     fundings.addAll(g.getFundingSummary());
                 }
-                processActivities(orcid, fundings, existingElements, ActivityType.FUNDINGS);
+                if(!processActivities(orcid, fundings, existingElements, ActivityType.FUNDINGS)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.FUNDINGS);
             }
@@ -428,7 +444,9 @@ public class S3MessageProcessorAPIV3 {
                         peerReviews.addAll(dg.getPeerReviewSummary());
                     }
                 }
-                processActivities(orcid, peerReviews, existingElements, ActivityType.PEER_REVIEWS);
+                if(!processActivities(orcid, peerReviews, existingElements, ActivityType.PEER_REVIEWS)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
             }
@@ -447,7 +465,9 @@ public class S3MessageProcessorAPIV3 {
                 for (ResearchResourceGroup g : researchResourcesElement.getResearchResourceGroup()) {
                     researchResources.addAll(g.getResearchResourceSummary());
                 }
-                processActivities(orcid, researchResources, existingElements, ActivityType.RESEARCH_RESOURCES);
+                if(!processActivities(orcid, researchResources, existingElements, ActivityType.RESEARCH_RESOURCES)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.RESEARCH_RESOURCES);
             }
@@ -466,7 +486,9 @@ public class S3MessageProcessorAPIV3 {
                 for (WorkGroup g : worksElement.getWorkGroup()) {
                     works.addAll(g.getWorkSummary());
                 }
-                processActivities(orcid, works, existingElements, ActivityType.WORKS);
+                if(!processActivities(orcid, works, existingElements, ActivityType.WORKS)) {
+                    return false;
+                }
             } else {
                 s3Manager.clearV3ActivitiesByType(orcid, ActivityType.WORKS);
             }
