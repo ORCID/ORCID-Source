@@ -33,13 +33,27 @@ import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Distinctions;
 import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Educations;
 import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Employments;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositions;
 import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Memberships;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewDuplicateGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Qualifications;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Services;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid30Manager;
@@ -123,7 +137,7 @@ public class S3MessageProcessorAPIV3Test {
     @Test
     public void recordSummary_AmazonClientExceptionTest() throws Exception {
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
-        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2RecordSummary(eq(orcid), any(Record.class));
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV3RecordSummary(eq(orcid), any(Record.class));
 
         try {
             processSummaries(orcid);
@@ -132,10 +146,10 @@ public class S3MessageProcessorAPIV3Test {
         } catch (Exception e) {
             fail();
         }
-        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any());
-        verify(mock_s3Manager, times(0)).uploadV2OrcidError(any(), any());
-        verify(mock_recordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
-        verify(mock_recordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any());
+        verify(mock_s3Manager, times(0)).uploadV3OrcidError(any(), any());
+        verify(mock_api30RecordStatusManager, times(0)).markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
+        verify(mock_api30RecordStatusManager, times(1)).markAsFailed(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
     }
 
     @Test
@@ -702,9 +716,14 @@ public class S3MessageProcessorAPIV3Test {
         history.setClaimed(true);
         claimedRecord.setHistory(history);
         ActivitiesSummary as = new ActivitiesSummary();
+        as.setDistinctions(new Distinctions(getDistinctionGroups()));
         as.setEducations(new Educations(getEducationGroups()));        
-        as.setEmployments(new Employments());
-        as.getEmployments().getSummaries().add(getEmploymentSummary());
+        as.setEmployments(new Employments(getEmploymentGroups()));
+        as.setInvitedPositions(new InvitedPositions(getInvitedPositionGroups()));
+        as.setMemberships(new Memberships(getMembershipGroups()));
+        as.setQualifications(new Qualifications(getQualificationGroups()));
+        as.setServices(new Services(getServiceGroups()));
+        
         as.setFundings(new Fundings());
         as.getFundings().getFundingGroup().add(getFundingGroup());
         as.setPeerReviews(new PeerReviews());
@@ -796,10 +815,12 @@ public class S3MessageProcessorAPIV3Test {
 
     private PeerReviewGroup getPeerReviewGroup() {
         PeerReviewGroup g = new PeerReviewGroup();
+        PeerReviewDuplicateGroup dg = new PeerReviewDuplicateGroup();
         PeerReviewSummary p = new PeerReviewSummary();
         p.setPutCode(0L);
         p.setLastModifiedDate(new LastModifiedDate(after));
-        g.getPeerReviewSummary().add(p);
+        dg.getPeerReviewSummary().add(p);
+        g.getPeerReviewGroup().add(dg);
         return g;
     }
 
