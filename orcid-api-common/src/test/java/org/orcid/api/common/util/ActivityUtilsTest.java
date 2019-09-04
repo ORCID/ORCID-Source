@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.CreditName;
+import org.orcid.jaxb.model.common_v2.Organization;
+import org.orcid.jaxb.model.common_v2.OrganizationAddress;
 import org.orcid.jaxb.model.common_v2.Subtitle;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.TranslatedTitle;
@@ -294,6 +296,26 @@ public class ActivityUtilsTest {
         ActivityUtils.cleanEmptyFields(f);
         assertNotNull(f.getContributors().getContributor().get(0).getCreditName());
         assertEquals("test", f.getContributors().getContributor().get(0).getCreditName().getContent());        
+    }
+    
+    @Test
+    public void cleanOrganizationTest() {
+        Organization org = new Organization();
+        org.setName("test");
+        
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("");
+        address.setRegion("");
+        org.setAddress(address);
+
+        // need an OrganizationHolder, let's use a funding
+        Funding funding = new Funding();
+        funding.setOrganization(org);
+        
+        ActivityUtils.cleanOrganizationEmptyFields(funding);
+        
+        assertNull(address.getCity());
+        assertNull(address.getRegion());
     }
 
     private Educations getEducations() {

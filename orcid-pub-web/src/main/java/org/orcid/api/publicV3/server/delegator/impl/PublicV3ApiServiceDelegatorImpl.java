@@ -324,6 +324,7 @@ public class PublicV3ApiServiceDelegatorImpl
         Funding f = profileFundingManagerReadOnly.getFunding(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(f);
         ActivityUtils.setPathToActivity(f, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(f);
         ActivityUtils.cleanEmptyFields(f);
         sourceUtilsReadOnly.setSourceName(f);
         contributorUtilsReadOnly.filterContributorPrivateData(f);
@@ -337,6 +338,7 @@ public class PublicV3ApiServiceDelegatorImpl
         Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
         publicAPISecurityManagerV3.filter(publicFundings);
         ActivityUtils.setPathToFundings(publicFundings, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fundings);
         Api3_0LastModifiedDatesHelper.calculateLastModified(publicFundings);
         sourceUtilsReadOnly.setSourceName(publicFundings);
         return Response.ok(publicFundings).build();
@@ -348,6 +350,7 @@ public class PublicV3ApiServiceDelegatorImpl
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fs);
         sourceUtilsReadOnly.setSourceName(fs);
         return Response.ok(fs).build();
     }
@@ -358,6 +361,7 @@ public class PublicV3ApiServiceDelegatorImpl
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -397,6 +401,7 @@ public class PublicV3ApiServiceDelegatorImpl
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -435,6 +440,7 @@ public class PublicV3ApiServiceDelegatorImpl
         PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(peerReview);
         ActivityUtils.setPathToActivity(peerReview, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(peerReview);
         sourceUtilsReadOnly.setSourceName(peerReview);
         return Response.ok(peerReview).build();
     }
@@ -716,6 +722,7 @@ public class PublicV3ApiServiceDelegatorImpl
         Distinction e = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -752,6 +759,7 @@ public class PublicV3ApiServiceDelegatorImpl
         InvitedPosition e = affiliationsManagerReadOnly.getInvitedPositionAffiliation(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -788,6 +796,7 @@ public class PublicV3ApiServiceDelegatorImpl
         Membership e = affiliationsManagerReadOnly.getMembershipAffiliation(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -824,6 +833,7 @@ public class PublicV3ApiServiceDelegatorImpl
         Qualification e = affiliationsManagerReadOnly.getQualificationAffiliation(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -859,6 +869,7 @@ public class PublicV3ApiServiceDelegatorImpl
         Service e = affiliationsManagerReadOnly.getServiceAffiliation(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }

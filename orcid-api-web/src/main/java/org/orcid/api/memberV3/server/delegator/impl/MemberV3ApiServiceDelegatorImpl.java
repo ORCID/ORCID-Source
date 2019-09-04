@@ -439,6 +439,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, fundingSummaries, ScopePathType.FUNDING_READ_LIMITED);
         Fundings fundings = profileFundingManager.groupFundings(fundingSummaries, false);
         ActivityUtils.setPathToFundings(fundings, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fundingSummaries);
         Api3_0LastModifiedDatesHelper.calculateLastModified(fundings);
         sourceUtils.setSourceName(fundings);
         return Response.ok(fundings).build();
@@ -449,6 +450,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, fs, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(fs, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fs);
         sourceUtils.setSourceName(fs);
         return Response.ok(fs).build();
     }
@@ -493,6 +495,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -558,6 +561,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -630,6 +634,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         PeerReview p = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, p, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(p, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(p);
         sourceUtils.setSourceName(p);
         return Response.ok(p).build();
     }
@@ -1217,6 +1222,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Distinction e = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1282,6 +1288,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         InvitedPosition e = affiliationsManagerReadOnly.getInvitedPositionAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1347,6 +1354,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Membership e = affiliationsManagerReadOnly.getMembershipAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1412,6 +1420,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Qualification e = affiliationsManagerReadOnly.getQualificationAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1477,6 +1486,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Service e = affiliationsManagerReadOnly.getServiceAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }

@@ -9,6 +9,8 @@ import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.release.common.Subtitle;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.TranslatedTitle;
@@ -351,6 +353,26 @@ public class ActivityUtilsTest {
         ActivityUtils.cleanEmptyFields(f);
         assertNotNull(f.getContributors().getContributor().get(0).getCreditName());
         assertEquals("test", f.getContributors().getContributor().get(0).getCreditName().getContent());        
+    }
+    
+    @Test
+    public void cleanOrganizationTest() {
+        Organization org = new Organization();
+        org.setName("test");
+        
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("");
+        address.setRegion("");
+        org.setAddress(address);
+
+        // need an OrganizationHolder, let's use a funding
+        Funding funding = new Funding();
+        funding.setOrganization(org);
+        
+        ActivityUtils.cleanOrganizationEmptyFields(funding);
+        
+        assertNull(address.getCity());
+        assertNull(address.getRegion());
     }
 
     private Educations getEducations() {
