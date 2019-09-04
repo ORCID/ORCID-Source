@@ -16,13 +16,6 @@
  */
 package org.orcid.listener.persistence.util;
 
-import org.orcid.jaxb.model.record_v2.Activity;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.Work;
-
 public enum ActivityType {
     //@formatter:off
     DISTINCTIONS("/distinctions/", "distinctions", "distinctions_status", "distinctions_last_indexed"),
