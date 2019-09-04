@@ -5,6 +5,8 @@ import java.util.List;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.release.record.Activity;
 import org.orcid.jaxb.model.v3.release.record.Distinction;
 import org.orcid.jaxb.model.v3.release.record.Education;
@@ -337,6 +339,30 @@ public class ActivityUtils {
                     c.setCreditName(null);
                 }
             }
+        }
+
+        cleanOrganizationEmptyFields(funding);
+    }
+
+    public static void cleanOrganizationEmptyFields(List<? extends OrganizationHolder> organizationHolders) {
+        for (OrganizationHolder organizationHolder : organizationHolders) {
+            cleanOrganizationEmptyFields(organizationHolder);
+        }
+    }
+
+    public static void cleanOrganizationEmptyFields(OrganizationHolder organizationHolder) {
+        if (organizationHolder != null && organizationHolder.getOrganization() != null && organizationHolder.getOrganization().getAddress() != null) {
+            Organization organization = organizationHolder.getOrganization();
+            if (organization.getAddress() != null) {
+                if (organization.getAddress().getCity() != null && organization.getAddress().getCity().isEmpty()) {
+                    organization.getAddress().setCity(null);
+                }
+
+                if (organization.getAddress().getRegion() != null && organization.getAddress().getRegion().isEmpty()) {
+                    organization.getAddress().setRegion(null);
+                }
+            }
+
         }
     }
 }

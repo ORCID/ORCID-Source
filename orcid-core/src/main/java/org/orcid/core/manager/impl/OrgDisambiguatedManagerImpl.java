@@ -92,13 +92,13 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     private void processDisambiguatedOrg(OrgDisambiguatedEntity entity)  {
         LOGGER.info("About to index disambiguated org, id={}", entity.getId());
-        try {
+//        try {
             OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
-            if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus()) || OrganizationStatus.OBSOLETE.name().equals(entity.getStatus())) {
-                orcidSolrLegacyIndexer.deleteOrgDisambiguated(String.valueOf(document.getOrgDisambiguatedId()));
-            } else {
-                orcidSolrLegacyIndexer.persistOrgDisambiguated(document);
-            }
+//            if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus()) || OrganizationStatus.OBSOLETE.name().equals(entity.getStatus())) {
+//                orcidSolrLegacyIndexer.deleteOrgDisambiguated(String.valueOf(document.getOrgDisambiguatedId()));
+//            } else {
+//                orcidSolrLegacyIndexer.persistOrgDisambiguated(document);
+//            }
             
             // Send message to the message listener
             if (!messaging.send(document, updateSolrQueueName)) {
@@ -106,11 +106,11 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
                 orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
                 return;
             }    
-        } catch(IOException e) {
-            LOGGER.error("Unable to process disambiguatd org with id " + entity.getId());
-            LOGGER.error(e.getMessage());
-            orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
-        }
+//        } catch(IOException e) {
+//            LOGGER.error("Unable to process disambiguatd org with id " + entity.getId());
+//            LOGGER.error(e.getMessage());
+//            orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
+//        }
         
         orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.DONE);
     }
