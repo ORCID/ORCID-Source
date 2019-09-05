@@ -53,6 +53,7 @@ import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.AddressesForm;
 import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.EditEmail;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -586,6 +587,21 @@ public class ManageProfileController extends BaseWorkspaceController {
         return email;
     }
     
+    @RequestMapping(value = "/email/edit.json", method = RequestMethod.GET)
+    public @ResponseBody EditEmail getEmailEdit(HttpServletRequest request) {                                
+        return new EditEmail();
+    }
+    
+    @RequestMapping(value = "/email/edit", method = RequestMethod.POST)
+    public @ResponseBody String editEmail(HttpServletRequest request, @RequestBody EditEmail editEmail) {
+        String orcid = getCurrentUserOrcid();
+        String owner = emailManager.findOrcidIdByEmail(editEmail.getOriginal());
+        if(orcid.equals(owner)) {            
+            emailManager.editEmail(orcid, editEmail.getOriginal(), editEmail.getEdited(), request);               
+        }
+        return editEmail.getEdited();
+    }
+    
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) {
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
@@ -803,13 +819,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
-    }
-    
-    @Deprecated
-    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {       
-        emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
-        return emails;
     }
     
     @RequestMapping(value = "/emailFrequencyOptions.json", method = RequestMethod.GET)
