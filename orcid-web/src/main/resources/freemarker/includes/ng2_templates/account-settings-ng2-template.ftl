@@ -191,6 +191,7 @@
                     </div>
                     <#include "/includes/ng2_templates/deprecate-account-modal-ng2-template.ftl"> 
                     <#include "/includes/ng2_templates/deprecate-account-success-modal-ng2-template.ftl"> 
+                    <#include "/includes/ng2_templates/deprecate-account-failure-modal-ng2-template.ftl"> 
                 </td>
             </tr>
             <!--Two-factor authentication-->
