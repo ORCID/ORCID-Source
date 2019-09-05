@@ -86,7 +86,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     private void processDisambiguatedOrg(OrgDisambiguatedEntity entity)  {
         LOGGER.info("About to index disambiguated org, id={}", entity.getId());
-        
         OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
         // Send message to the message listener
         if (!messaging.send(document, updateSolrQueueName)) {
@@ -94,7 +93,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
             return;
         }    
-        
         orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.DONE);
     }
 

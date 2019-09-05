@@ -1,7 +1,11 @@
 package org.orcid.api.common.util;
 
+import java.util.List;
+
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.common_v2.Contributor;
+import org.orcid.jaxb.model.common_v2.Organization;
+import org.orcid.jaxb.model.common_v2.OrganizationHolder;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
@@ -38,7 +42,7 @@ public class ActivityUtils {
      *            An activity object
      * @param orcid
      *            The activity owner
-     * */
+     */
     public static void setPathToActivity(Activity activity, String orcid) {
         Long putCode = activity.getPutCode();
         String activityType = OrcidApiConstants.ACTIVITY_WORK;
@@ -65,33 +69,34 @@ public class ActivityUtils {
      *            The educations container
      * @param orcid
      *            The activity owner
-     * */
+     */
     public static void setPathToEducations(Educations educations, String orcid) {
-        if(educations != null) { 
+        if (educations != null) {
             educations.setPath(OrcidApiConstants.EDUCATIONS.replace("{orcid}", orcid));
-            for(EducationSummary summary : educations.getSummaries()) {
+            for (EducationSummary summary : educations.getSummaries()) {
                 setPathToActivity(summary, orcid);
-            }            
+            }
         }
     }
-    
+
     /**
-     * Set the path attribute to every employment inside the Employments element.
+     * Set the path attribute to every employment inside the Employments
+     * element.
      * 
      * @param employments
      *            The employments container
      * @param orcid
      *            The activity owner
-     * */
+     */
     public static void setPathToEmployments(Employments employments, String orcid) {
-        if(employments != null) {  
+        if (employments != null) {
             employments.setPath(OrcidApiConstants.EMPLOYMENTS.replace("{orcid}", orcid));
-            for(EmploymentSummary summary : employments.getSummaries()) {
+            for (EmploymentSummary summary : employments.getSummaries()) {
                 setPathToActivity(summary, orcid);
-            }            
+            }
         }
     }
-    
+
     /**
      * Set the path attribute to every work inside the Works element.
      * 
@@ -99,18 +104,18 @@ public class ActivityUtils {
      *            The works container
      * @param orcid
      *            The activity owner
-     * */
+     */
     public static void setPathToWorks(Works works, String orcid) {
-        if(works != null) {
+        if (works != null) {
             works.setPath(OrcidApiConstants.WORKS.replace("{orcid}", orcid));
-            for(WorkGroup group : works.getWorkGroup()) {
-                for(WorkSummary summary : group.getWorkSummary()) {
+            for (WorkGroup group : works.getWorkGroup()) {
+                for (WorkSummary summary : group.getWorkSummary()) {
                     setPathToActivity(summary, orcid);
                 }
             }
         }
     }
-    
+
     /**
      * Set the path attribute to every funding inside the Fundings element.
      * 
@@ -118,44 +123,45 @@ public class ActivityUtils {
      *            The fundings container
      * @param orcid
      *            The activity owner
-     * */
+     */
     public static void setPathToFundings(Fundings fundings, String orcid) {
-        if(fundings != null) {
+        if (fundings != null) {
             fundings.setPath(OrcidApiConstants.FUNDINGS.replace("{orcid}", orcid));
-            for(FundingGroup group : fundings.getFundingGroup()) {
-                for(FundingSummary summary : group.getFundingSummary()) {
+            for (FundingGroup group : fundings.getFundingGroup()) {
+                for (FundingSummary summary : group.getFundingSummary()) {
                     setPathToActivity(summary, orcid);
                 }
             }
         }
     }
-    
+
     /**
-     * Set the path attribute to every peer review inside the PeerReviews element.
+     * Set the path attribute to every peer review inside the PeerReviews
+     * element.
      * 
      * @param PeerReviews
      *            The peer reviews container
      * @param orcid
      *            The activity owner
-     * */
+     */
     public static void setPathToPeerReviews(PeerReviews peerReviews, String orcid) {
-        if(peerReviews != null) {
+        if (peerReviews != null) {
             peerReviews.setPath(OrcidApiConstants.PEER_REVIEWS.replace("{orcid}", orcid));
-            for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
-                for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
+            for (PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+                for (PeerReviewSummary summary : group.getPeerReviewSummary()) {
                     setPathToActivity(summary, orcid);
                 }
             }
         }
-    }    
-    
+    }
+
     /**
      * Set the path attribute to all activities in the summary object
      * 
      * @param ActivitiesSummary
      * @param orcid
      *            The activity owner
-     * */
+     */
     public static void setPathToActivity(ActivitiesSummary activitiesSummary, String orcid) {
         if (activitiesSummary != null) {
             activitiesSummary.setPath(OrcidApiConstants.ACTIVITIES.replace("{orcid}", orcid));
@@ -167,7 +173,7 @@ public class ActivityUtils {
 
         }
     }
-    
+
     /**
      * Set the path attribute to all works in the workBulk element
      * 
@@ -182,27 +188,47 @@ public class ActivityUtils {
             });
         }
     }
-    
+
     public static void cleanEmptyFields(ActivitiesSummary summaries) {
-        if(summaries != null) {
-            if(summaries.getWorks() != null && summaries.getWorks().getWorkGroup() != null) {
-                for(WorkGroup group : summaries.getWorks().getWorkGroup()) {
-                    if(group.getWorkSummary() != null) {
-                        for(WorkSummary summary : group.getWorkSummary()) {
+        if (summaries != null) {
+            if (summaries.getWorks() != null && summaries.getWorks().getWorkGroup() != null) {
+                for (WorkGroup group : summaries.getWorks().getWorkGroup()) {
+                    if (group.getWorkSummary() != null) {
+                        for (WorkSummary summary : group.getWorkSummary()) {
                             cleanEmptyFields(summary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getFundings() != null && summaries.getFundings().getFundingGroup() != null) {
+                for (FundingGroup group : summaries.getFundings().getFundingGroup()) {
+                    if (group.getFundingSummary() != null) {
+                        for (FundingSummary fundingSummary : group.getFundingSummary()) {
+                            cleanOrganizationEmptyFields(fundingSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getPeerReviews() != null && summaries.getPeerReviews().getPeerReviewGroup() != null) {
+                for (PeerReviewGroup group : summaries.getPeerReviews().getPeerReviewGroup()) {
+                    if (group.getPeerReviewSummary() != null) {
+                        for (PeerReviewSummary peerReviewSummary : group.getPeerReviewSummary()) {
+                            cleanOrganizationEmptyFields(peerReviewSummary);
                         }
                     }
                 }
             }
         }
     }
-    
+
     public static void cleanEmptyFields(Works works) {
-        if(works != null) {
-            if(works.getWorkGroup() != null) {
-                for(WorkGroup group : works.getWorkGroup()) {
-                    if(group.getWorkSummary() != null) {
-                        for(WorkSummary summary : group.getWorkSummary()) {
+        if (works != null) {
+            if (works.getWorkGroup() != null) {
+                for (WorkGroup group : works.getWorkGroup()) {
+                    if (group.getWorkSummary() != null) {
+                        for (WorkSummary summary : group.getWorkSummary()) {
                             cleanEmptyFields(summary);
                         }
                     }
@@ -210,25 +236,25 @@ public class ActivityUtils {
             }
         }
     }
-    
+
     public static void cleanEmptyFields(WorkSummary summary) {
-        if(summary != null) {
-            if(summary.getTitle() != null) {
-                if(summary.getTitle().getTranslatedTitle() != null) {
-                    if(PojoUtil.isEmpty(summary.getTitle().getTranslatedTitle().getContent())) {
+        if (summary != null) {
+            if (summary.getTitle() != null) {
+                if (summary.getTitle().getTranslatedTitle() != null) {
+                    if (PojoUtil.isEmpty(summary.getTitle().getTranslatedTitle().getContent())) {
                         summary.getTitle().setTranslatedTitle(null);
                     }
                 }
             }
         }
     }
-    
+
     public static void cleanEmptyFields(WorkBulk workBulk) {
         if (workBulk != null && workBulk.getBulk() != null) {
             workBulk.getBulk().forEach(b -> cleanEmptyFields(b));
         }
     }
-    
+
     public static void cleanEmptyFields(BulkElement bulk) {
         if (bulk instanceof Work) {
             cleanEmptyFields((Work) bulk);
@@ -236,24 +262,24 @@ public class ActivityUtils {
     }
 
     public static void cleanEmptyFields(Work work) {
-        if(work != null) {
-            if(work.getWorkCitation() != null) {
-                if(PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
+        if (work != null) {
+            if (work.getWorkCitation() != null) {
+                if (PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
                     work.setWorkCitation(null);
                 }
             }
-            
-            if(work.getWorkTitle() != null) {
-                if(work.getWorkTitle().getTranslatedTitle() != null) {
-                    if(PojoUtil.isEmpty(work.getWorkTitle().getTranslatedTitle().getContent())) {
+
+            if (work.getWorkTitle() != null) {
+                if (work.getWorkTitle().getTranslatedTitle() != null) {
+                    if (PojoUtil.isEmpty(work.getWorkTitle().getTranslatedTitle().getContent())) {
                         work.getWorkTitle().setTranslatedTitle(null);
                     }
                 }
             }
-            
-            if(work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
-                for(Contributor c : work.getWorkContributors().getContributor()) {
-                    if(c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) {
+
+            if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
+                for (Contributor c : work.getWorkContributors().getContributor()) {
+                    if (c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) {
                         c.setCreditName(null);
                     }
                 }
@@ -262,12 +288,34 @@ public class ActivityUtils {
     }
 
     public static void cleanEmptyFields(Funding funding) {
-        if(funding != null && funding.getContributors() != null && !funding.getContributors().getContributor().isEmpty()) {
-            for(FundingContributor c : funding.getContributors().getContributor()) {
-                if(c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) {
+        if (funding != null && funding.getContributors() != null && !funding.getContributors().getContributor().isEmpty()) {
+            for (FundingContributor c : funding.getContributors().getContributor()) {
+                if (c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) {
                     c.setCreditName(null);
                 }
             }
         }
+
+        cleanOrganizationEmptyFields(funding);
+    }
+
+    public static void cleanOrganizationEmptyFields(List<? extends OrganizationHolder> organizationHolders) {
+        for (OrganizationHolder organizationHolder : organizationHolders) {
+            cleanOrganizationEmptyFields(organizationHolder);
+        }
+    }
+
+    public static void cleanOrganizationEmptyFields(OrganizationHolder organizationHolder) {
+        if (organizationHolder != null && organizationHolder.getOrganization() != null && organizationHolder.getOrganization().getAddress() != null) {
+            Organization organization = organizationHolder.getOrganization();
+            if (organization.getAddress().getCity() != null && organization.getAddress().getCity().isEmpty()) {
+                organization.getAddress().setCity(null);
+            }
+
+            if (organization.getAddress().getRegion() != null && organization.getAddress().getRegion().isEmpty()) {
+                organization.getAddress().setRegion(null);
+            }
+        }
+
     }
 }

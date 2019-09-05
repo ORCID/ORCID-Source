@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.orcid.core.issn.IssnData;
-import org.orcid.core.issn.client.IssnClient;
-import org.orcid.core.manager.validator.IssnValidator;
+import org.orcid.core.groupIds.issn.IssnClient;
+import org.orcid.core.groupIds.issn.IssnData;
+import org.orcid.core.groupIds.issn.IssnValidator;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GroupIdRecordDao;

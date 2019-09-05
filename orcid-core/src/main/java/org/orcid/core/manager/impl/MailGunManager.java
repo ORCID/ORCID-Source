@@ -105,7 +105,8 @@ public class MailGunManager {
         if (to.matches(filter)) {
             ClientResponse cr = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
             if (cr.getStatus() != 200) {
-                LOGGER.error("Post MailGunManager.sendEmail to {} not accepted", formData.get("to"));
+                LOGGER.warn("Post MailGunManager.sendEmail to {} not accepted\nstatus: {}\nbody: {}", 
+                        new Object[] { formData.get("to"), cr.getStatus(), cr.getEntity(String.class) });
                 return false;
             }
             return true;

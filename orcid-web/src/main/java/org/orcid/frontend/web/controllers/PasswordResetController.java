@@ -32,6 +32,7 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ReactivationData;
@@ -116,6 +117,33 @@ public class PasswordResetController extends BaseController {
         }
         return passwordResetRequest;
     }
+    
+    @RequestMapping(value = "/forgot-id.json", method = RequestMethod.POST)
+    public @ResponseBody EmailRequest issueForgottenIdRequest(@RequestBody EmailRequest forgotIdRequest) {
+        List<String> errors = new ArrayList<>();
+        forgotIdRequest.setErrors(errors);
+        forgotIdRequest.setEmail(forgotIdRequest.getEmail().trim());
+        if (!validateEmailAddress(forgotIdRequest.getEmail())) {
+            errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
+            return forgotIdRequest;
+        }
+        
+        if (emailManager.emailExists(forgotIdRequest.getEmail())) {
+            String orcid = emailManager.findOrcidIdByEmail(forgotIdRequest.getEmail());
+            if (profileEntityManager.isDeactivated(orcid)) {
+                notificationManager.sendReactivationEmail(forgotIdRequest.getEmail(), orcid);
+            } else if (!profileEntityManager.isProfileClaimedByEmail(forgotIdRequest.getEmail())) {
+                notificationManager.sendApiRecordCreationEmail(forgotIdRequest.getEmail(), orcid);
+            } else {
+                notificationManager.sendForgottenIdEmail(forgotIdRequest.getEmail(), orcid);
+            }
+        } else {
+            Locale locale = localeManager.getLocale();
+            notificationManager.sendForgottenIdEmailNotFoundEmail(forgotIdRequest.getEmail(), locale);
+        }
+        forgotIdRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + forgotIdRequest.getEmail());
+        return forgotIdRequest;
+    }
 
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<EmailRequest> issuePasswordResetRequest(HttpServletRequest request, @RequestBody EmailRequest passwordResetRequest) {
@@ -199,10 +227,17 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/reset-password-form-validate.json", method = RequestMethod.POST)
     public @ResponseBody OneTimeResetPasswordForm resetPasswordConfirmValidate(@RequestBody OneTimeResetPasswordForm resetPasswordForm) {
-        resetPasswordForm.setErrors(new ArrayList<String>());
+        
+    	resetPasswordForm.setErrors(new ArrayList<String>());
 
-        passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword());
-
+    	Emails emails = null;
+    	if (resetPasswordForm.getEncryptedEmail() != null) {
+	    	PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getEncryptedEmail());
+	    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+	    	emails = emailManager.getEmails(orcid);
+    	} 
+    	passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword(), emails);
+    	
         if (resetPasswordForm.getRetypedPassword() != null && !resetPasswordForm.getRetypedPassword().equals(resetPasswordForm.getPassword())) {
             setError(resetPasswordForm, "FieldMatch.registrationForm");
         }
@@ -215,6 +250,7 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/password-reset.json", method = RequestMethod.GET)
     public @ResponseBody OneTimeResetPasswordForm getResetPassword() {
+    	
         OneTimeResetPasswordForm oneTimeResetPasswordForm  = new OneTimeResetPasswordForm();
         passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
         return oneTimeResetPasswordForm;
@@ -236,12 +272,15 @@ public class PasswordResetController extends BaseController {
         }
 
         passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
-        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        
+    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+    	Emails emails = emailManager.getEmails(orcid);
+    	
+        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword(), emails);
         if (!oneTimeResetPasswordForm.getPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
             return oneTimeResetPasswordForm;
         }
 
-        String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
 
         String redirectUrl = calculateRedirectUrl(request, response, false);

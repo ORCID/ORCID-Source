@@ -47,7 +47,7 @@ XML for the ```peer-review``` activity follows the [peer-review-2.0_rc1.xsd](htt
 
 **DESCRIBING THE ORGANIZATION THAT THE REVIEW WAS DONE FOR**
 
-- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc) . Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
+- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc) . Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or Crossref Funder Registry ID.
 
 ###Example file
 

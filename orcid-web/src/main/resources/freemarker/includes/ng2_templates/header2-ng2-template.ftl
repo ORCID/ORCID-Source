@@ -63,7 +63,17 @@
                     <!-- FOR RESEARCHERS -->
                     <li class="first expanded" role="presentation"
                      [ngClass]="{'hover': mobileMenu.RESEARCHERS, 'open':  this.currentUrl.indexOf('signin') == -1}"  >
-                        <a href="{{aboutUri}}/about/what-is-orcid/mission" title="" role="menuitem" (mouseenter)="menuHandler('RESEARCHERS', $event)" (focus)="menuHandler('RESEARCHERS', $event)" (click)="menuHandler('RESEARCHERS', $event)">{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")}' | uppercase }} <span class="more" [ngClass]="{'less':mobileMenu.RESEARCHERS == true}"></span></a>
+                        <a href="{{aboutUri}}/about/what-is-orcid/mission" 
+                        title="" role="menuitem" 
+                        (mouseenter)="menuHandler('RESEARCHERS', $event)" 
+                        (focus)="menuHandler('RESEARCHERS', $event)" 
+                        (click)="menuHandler('RESEARCHERS', $event)">{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")}' | uppercase }} 
+                            <@orcid.checkFeatureStatus featureName='ENABLE_USER_MENU' enabled=false>
+                            <span class="more" [ngClass]="{'less':mobileMenu.RESEARCHERS == true}"></span>
+                            </@orcid.checkFeatureStatus>
+                        </a>
+                        
+                        <@orcid.checkFeatureStatus featureName='ENABLE_USER_MENU' enabled=false>
                         <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']" aria-label="submenu">
                             <!-- Mobile view Only -->
                             <li class="leaf    " [hidden]="!isMobile"><a href="{{getBaseUri()}}" title="" role="menuitem">{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}</a></li>
@@ -105,6 +115,7 @@
                                     
                             <li  role="presentation" class="leaf last"><a role="menuitem" href="{{getBaseUri()}}/content/initiative">{{'${springMacroRequestContext.getMessage("manage_delegators.learn_more.link.text")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a></li>
                         </ul>
+                        </@orcid.checkFeatureStatus>
                     </li>
 
                     <!-- DRUPAL WEBSITE MENUS -->

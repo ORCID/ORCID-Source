@@ -2,7 +2,7 @@
 
 This tutorial goes over editing information in the research resources section of an ORCID record. The ```research-resource``` activity type is intended to reference and link to things that researchers use for their research which require a specific proposal process or credential to access.
 
-Research resources is available in the 3.0_rc1 and later versions of the API. These calls can be used with Member API credentials on sandbox or the production servers.
+Research resources is available in the 3.0 and later versions of the API. These calls can be used with Member API credentials on sandbox or the production servers.
 
 ## Overview
 
@@ -13,9 +13,9 @@ Research resources is available in the 3.0_rc1 and later versions of the API. Th
 **Endpoints:** ```/research-resource``` and ```/research-resources```
 
 **Sample XML files:**
-  * [reading the research resource section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/research-resources-3.0_rc1.xml)
-  * [reading a research resource](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/read_samples/research-resource-3.0_rc1.xml)
-  * [writing a research resource](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0_rc1/samples/write_samples/research-resource-3.0_rc1.xml)
+  * [reading the research resource section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/research-resources-3.0.xml)
+  * [reading a research resource](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/research-resource-3.0.xml)
+  * [writing a research resource](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/research-resource-3.0.xml)
 
 ## Permission to edit the record
 Editing the research resources section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading research resource items. See [Authenticating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
@@ -71,7 +71,7 @@ Editing the research resources section of a record requires a 3 step OAuth token
 **Example request in curl**
 
 ```
-curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resources'
+curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/research-resources'
 ```
 Example response
 ```
@@ -94,7 +94,7 @@ HTTP/1.1 200 OK
 **Example request in curl**
 
 ```
-curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resource/1000'
+curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/research-resource/1000'
 ```
 
 Example response
@@ -117,14 +117,14 @@ HTTP/1.1 200 OK
 
 **Example request in curl**
 ```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name.xml' -X POST 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resource'
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/file_name.xml' -X POST 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/research-resource'
 ```
 
 Example response
 
 ```
 HTTP/1.1 201 Created
-Location: http://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resource/1000
+Location: http://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/research-resource/1000
 ```
 
 ## Update a research resource
@@ -139,7 +139,7 @@ Location: http://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-res
 
 **Example request in curl**
 ```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resource/1000'
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/research-resource/1000'
 ```
 
 Example response
@@ -163,7 +163,7 @@ HTTP/1.1 200 OK
 **Example request in curl**
 
 ```
-curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0_rc1/0000-0002-9227-8514/research-resource/1000'
+curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -X DELETE 'https://api.sandbox.orcid.org/v3.0/0000-0002-9227-8514/research-resource/1000'
 
 ```
 

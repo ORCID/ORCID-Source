@@ -1,5 +1,5 @@
 <div id="modalDeprecateAccountSuccess" class="modal">
-    <div class="popover-ng2-bck" (click)="cancelEditModal('modalDeprecateAccountSuccess')"></div>
+    <div class="popover-ng2-bck" (click)="cancelDeprecateModal('modalDeprecateAccountSuccess')"></div>
     <div
         class="popover-ng2-content"
         id="colorbox" 

@@ -53,6 +53,7 @@ import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.AddressesForm;
 import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.EditEmail;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -265,6 +266,15 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), profile.getEncryptedPassword())) {
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
+        if (cp.getPassword() != null && !cp.getPassword().isEmpty()) {
+        	final String newPassword  = cp.getPassword();
+        	 emailManager.getEmails(getCurrentUserOrcid()).getEmails().forEach(email -> {
+	        	if (!email.getEmail().isEmpty()  && newPassword.contains(email.getEmail())) {
+	        		errors.add(getMessage("Pattern.registrationForm.password.containsEmail"));
+	        	}
+	        	
+	        });
+        }
 
         if (errors.size() == 0) {            
             profileEntityManager.updatePassword(getCurrentUserOrcid(), cp.getPassword());
@@ -292,6 +302,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
         
         validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
+        if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
+        
+        validateNonDeprecatingEntity(deprecateProfile, primaryEntity);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
@@ -339,6 +354,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
+
+        validateNonDeprecatingEntity(deprecateProfile, primaryEntity);
+        if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
         
         validateDeprecateAccountRequest(deprecateProfile, deprecatingEntity);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
@@ -350,6 +370,16 @@ public class ManageProfileController extends BaseWorkspaceController {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
         }
         return deprecateProfile;
+    }
+
+    private void validateNonDeprecatingEntity(DeprecateProfile deprecateProfile, ProfileEntity entity) {
+       if (entity.getDeprecatedDate() != null) {
+           deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.this_profile_deprecated", entity.getId())));
+       }
+       
+       if (entity.getDeactivationDate() != null) {
+           deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.this_profile_deactivated", entity.getId())));
+       }
     }
 
     private void validateDeprecatingEntity(ProfileEntity deprecatingEntity, ProfileEntity primaryEntity, DeprecateProfile deprecateProfile) {
@@ -555,6 +585,21 @@ public class ManageProfileController extends BaseWorkspaceController {
             emailManager.setPrimary(orcid, email.getValue().trim(), request);               
         }
         return email;
+    }
+    
+    @RequestMapping(value = "/email/edit.json", method = RequestMethod.GET)
+    public @ResponseBody EditEmail getEmailEdit(HttpServletRequest request) {                                
+        return new EditEmail();
+    }
+    
+    @RequestMapping(value = "/email/edit", method = RequestMethod.POST)
+    public @ResponseBody String editEmail(HttpServletRequest request, @RequestBody EditEmail editEmail) {
+        String orcid = getCurrentUserOrcid();
+        String owner = emailManager.findOrcidIdByEmail(editEmail.getOriginal());
+        if(orcid.equals(owner)) {            
+            emailManager.editEmail(orcid, editEmail.getOriginal(), editEmail.getEdited(), request);               
+        }
+        return editEmail.getEdited();
     }
     
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
@@ -774,13 +819,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }
-    }
-    
-    @Deprecated
-    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails postEmailsJson(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Emails emails) {       
-        emailManager.updateEmails(request, getCurrentUserOrcid(), emails.toV3Emails());
-        return emails;
     }
     
     @RequestMapping(value = "/emailFrequencyOptions.json", method = RequestMethod.GET)

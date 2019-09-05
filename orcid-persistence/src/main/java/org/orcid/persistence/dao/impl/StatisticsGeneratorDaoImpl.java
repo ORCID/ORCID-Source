@@ -21,16 +21,28 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
         return numberOfLiveIds.longValue();
     }
     
-    public long getAccountsWithEducation() {
-        Query query = entityManager.createNativeQuery("SELECT COUNT(DISTINCT orcid) FROM org_affiliation_relation WHERE org_affiliation_relation_role = 'EDUCATION'");
-        BigInteger numberOfAccountsWithEducation = (BigInteger) query.getSingleResult();
-        return numberOfAccountsWithEducation.longValue();
-    }
-    
     public long getAccountsWithEmployment() {
         Query query = entityManager.createNativeQuery("SELECT COUNT(DISTINCT orcid) FROM org_affiliation_relation WHERE org_affiliation_relation_role = 'EMPLOYMENT'");
         BigInteger numberOfAccountsWithEmployment = (BigInteger) query.getSingleResult();
         return numberOfAccountsWithEmployment.longValue();
+    }
+    
+    public long getAccountsWithEducationQualification() {
+        Query query = entityManager.createNativeQuery("SELECT COUNT(DISTINCT orcid) FROM org_affiliation_relation WHERE (org_affiliation_relation_role = 'EDUCATION' or org_affiliation_relation_role = 'QUALIFICATION')");
+        BigInteger numberOfAccountsWithEducation = (BigInteger) query.getSingleResult();
+        return numberOfAccountsWithEducation.longValue();
+    }
+    
+    public long getAccountsWithInvitedPositionDistinction() {
+        Query query = entityManager.createNativeQuery("SELECT COUNT(DISTINCT orcid) FROM org_affiliation_relation WHERE (org_affiliation_relation_role = 'INVITED_POSITION' or org_affiliation_relation_role = 'DISTINCTION')");
+        BigInteger numberOfAccountsWithInvitedPositionDistinction = (BigInteger) query.getSingleResult();
+        return numberOfAccountsWithInvitedPositionDistinction.longValue();
+    }
+    
+    public long getAccountsWithMembershipService() {
+        Query query = entityManager.createNativeQuery("SELECT COUNT(DISTINCT orcid) FROM org_affiliation_relation WHERE (org_affiliation_relation_role = 'MEMBERSHIP' or org_affiliation_relation_role = 'SERVICE')");
+        BigInteger numberOfAccountsWithMembershipService = (BigInteger) query.getSingleResult();
+        return numberOfAccountsWithMembershipService.longValue();
     }
     
     public long getAccountsWithExternalId() {
@@ -55,6 +67,12 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
         Query query = entityManager.createNativeQuery("SELECT COUNT(DISTINCT orcid) FROM peer_review");
         BigInteger numberOfAccountsWithPeerReview = (BigInteger) query.getSingleResult();
         return numberOfAccountsWithPeerReview.longValue();
+    }
+    
+    public long getAccountsWithResearchResource() {
+        Query query = entityManager.createNativeQuery("SELECT COUNT(DISTINCT orcid) FROM research_resource");
+        BigInteger numberOfAccountsWithResearchResource = (BigInteger) query.getSingleResult();
+        return numberOfAccountsWithResearchResource.longValue();
     }
     
     public long getAccountsWithPersonId() {
@@ -97,51 +115,86 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
     }
 
     @Override
-    public long getNumberOfEducation() {
-        Query query = entityManager.createNativeQuery("select count(*) from org_affiliation_relation where org_affiliation_relation_role = 'EDUCATION'");
-        BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
-        return numberOfWorks.longValue();
+    public long getNumberOfEducationQualification() {
+        Query query = entityManager.createNativeQuery("select count(*) from org_affiliation_relation where (org_affiliation_relation_role = 'EDUCATION' or org_affiliation_relation_role = 'QUALIFICATION')");
+        BigInteger numberOfEducationQualification = (BigInteger) query.getSingleResult();
+        return numberOfEducationQualification.longValue();
+    }
+    
+    @Override
+    public long getNumberOfInvitedPositionDistinction() {
+        Query query = entityManager.createNativeQuery("select count(*) from org_affiliation_relation where (org_affiliation_relation_role = 'INVITED_POSITION' or org_affiliation_relation_role = 'DISTINCTION')");
+        BigInteger numberOfInvitedPositionDistinction = (BigInteger) query.getSingleResult();
+        return numberOfInvitedPositionDistinction.longValue();
+    }
+    
+    @Override
+    public long getNumberOfMembershipService() {
+        Query query = entityManager.createNativeQuery("select count(*) from org_affiliation_relation where (org_affiliation_relation_role = 'MEMBERSHIP' or org_affiliation_relation_role = 'SERVICE')");
+        BigInteger numberOfMembershipService = (BigInteger) query.getSingleResult();
+        return numberOfMembershipService.longValue();
     }
 
     @Override
     public long getNumberOfFunding() {
         Query query = entityManager.createNativeQuery("select count(*) from profile_funding");
-        BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
-        return numberOfWorks.longValue();
+        BigInteger numberOfFunding = (BigInteger) query.getSingleResult();
+        return numberOfFunding.longValue();
     }
     
     @Override
     public long getNumberOfPeerReview() {
         Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM peer_review");
-        BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
-        return numberOfWorks.longValue();
+        BigInteger numberOfPeerReview = (BigInteger) query.getSingleResult();
+        return numberOfPeerReview.longValue();
+    }
+    
+    @Override
+    public long getNumberOfResearchResource() {
+        Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM research_resource");
+        BigInteger numberOfResearchResource = (BigInteger) query.getSingleResult();
+        return numberOfResearchResource.longValue();
     }
     
     @Override
     public long getNumberOfPersonId() {
         Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM external_identifier");
-        BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
-        return numberOfWorks.longValue();
+        BigInteger numberOfPersonId = (BigInteger) query.getSingleResult();
+        return numberOfPersonId.longValue();
     }
 
     @Override
     public long getNumberOfEmploymentUniqueOrg() {
         Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from org_affiliation_relation where org_affiliation_relation_role = 'EMPLOYMENT'");
-        BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
-        return numberOfWorks.longValue();
+        BigInteger numberOfEmploymentUniqueOrg = (BigInteger) query.getSingleResult();
+        return numberOfEmploymentUniqueOrg.longValue();
     }
 
     @Override
-    public long getNumberOfEducationUniqueOrg() {
-        Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from org_affiliation_relation where org_affiliation_relation_role = 'EDUCATION'");
-        BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
-        return numberOfWorks.longValue();
+    public long getNumberOfEducationQualificationUniqueOrg() {
+        Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from org_affiliation_relation where (org_affiliation_relation_role = 'EDUCATION' or org_affiliation_relation_role = 'QUALIFICATION')");
+        BigInteger numberOfEducationQualificationUniqueOrg = (BigInteger) query.getSingleResult();
+        return numberOfEducationQualificationUniqueOrg.longValue();
+    }
+    
+    @Override
+    public long getNumberOfInvitedPositionDistinctionUniqueOrg() {
+        Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from org_affiliation_relation where (org_affiliation_relation_role = 'INVITED_POSITION' or org_affiliation_relation_role = 'DISTINCTION')");
+        BigInteger numberOfInvitedPositionDistinctionUniqueOrg = (BigInteger) query.getSingleResult();
+        return numberOfInvitedPositionDistinctionUniqueOrg.longValue();
+    }
+    
+    @Override
+    public long getNumberOfMembershipServiceUniqueOrg() {
+        Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from org_affiliation_relation where (org_affiliation_relation_role = 'MEMBERSHIP' or org_affiliation_relation_role = 'SERVICE')");
+        BigInteger numberOfEducationQualificationUniqueOrg = (BigInteger) query.getSingleResult();
+        return numberOfEducationQualificationUniqueOrg.longValue();
     }
 
     @Override
     public long getNumberOfFundingUniqueOrg() {
         Query query = entityManager.createNativeQuery("select count(distinct(org_id)) from profile_funding");
-        BigInteger numberOfWorks = (BigInteger) query.getSingleResult();
-        return numberOfWorks.longValue();
+        BigInteger numberOfFundingUniqueOrg = (BigInteger) query.getSingleResult();
+        return numberOfFundingUniqueOrg.longValue();
     }
 }

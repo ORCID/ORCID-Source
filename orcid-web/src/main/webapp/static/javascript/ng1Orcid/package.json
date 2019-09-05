@@ -27,7 +27,7 @@
     "jquery": "^3.4.0",
     "mdn-polyfills": "5.8.0",
     "primeicons": "^1.0.0",
-    "primeng": "^7.0.0-beta.1",
+    "primeng": "7.0.0-beta.1",
     "promise-polyfill": "8.1.0",
     "rxjs": "6.2.0",
     "url-search-params-polyfill": "^5.0.0",

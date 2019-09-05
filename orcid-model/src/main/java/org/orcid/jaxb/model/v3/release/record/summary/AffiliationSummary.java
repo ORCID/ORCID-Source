@@ -12,6 +12,7 @@ import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -26,7 +27,7 @@ import io.swagger.annotations.ApiModel;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "departmentName", "roleTitle", "startDate", "endDate", "organization", "url", "externalIdentifiers", "displayIndex" })
 @ApiModel(value = "AffiliationSummaryV3_0")
-public abstract class AffiliationSummary implements Serializable, VisibilityType, Activity, SourceAware, GroupableActivity {
+public abstract class AffiliationSummary implements Serializable, VisibilityType, Activity, SourceAware, GroupableActivity, OrganizationHolder {
     private static final long serialVersionUID = -4466713277256891056L;
     @XmlElement(name = "department-name", namespace = "http://www.orcid.org/ns/common")
     protected String departmentName;

@@ -379,6 +379,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, fundingSummaries, ScopePathType.FUNDING_READ_LIMITED);
         Fundings fundings = profileFundingManager.groupFundings(fundingSummaries, false);
         ActivityUtils.setPathToFundings(fundings, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fundingSummaries);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(fundings);
         sourceUtils.setSourceName(fundings);
         return Response.ok(fundings).build();
@@ -389,6 +390,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, fs, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(fs, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fs);
         sourceUtils.setSourceName(fs);
         return Response.ok(fs).build();
     }
@@ -433,6 +435,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -498,6 +501,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -588,6 +592,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, peerReviewList, ScopePathType.PEER_REVIEW_READ_LIMITED);
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);
         ActivityUtils.setPathToPeerReviews(peerReviews, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(peerReviewList);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(peerReviews);
         sourceUtils.setSourceName(peerReviews);
         return Response.ok(peerReviews).build();
@@ -598,6 +603,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         PeerReviewSummary ps = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, ps, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(ps, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(ps);
         sourceUtils.setSourceName(ps);
         return Response.ok(ps).build();
     }

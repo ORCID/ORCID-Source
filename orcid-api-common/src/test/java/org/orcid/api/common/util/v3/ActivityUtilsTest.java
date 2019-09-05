@@ -9,6 +9,8 @@ import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.release.common.Subtitle;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.TranslatedTitle;
@@ -186,6 +188,37 @@ public class ActivityUtilsTest {
         ActivityUtils.cleanEmptyFields(x);
         assertEquals("test", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
         assertEquals("en", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        
+        Organization orgWithEmptyAddressFields = new Organization();
+        OrganizationAddress addressWithEmptyFields = new OrganizationAddress();
+        addressWithEmptyFields.setRegion("");
+        addressWithEmptyFields.setCity("");
+        orgWithEmptyAddressFields.setAddress(addressWithEmptyFields);
+        
+        FundingSummary fundingSummary = new FundingSummary();
+        fundingSummary.setOrganization(orgWithEmptyAddressFields);
+        FundingGroup group = new FundingGroup();
+        group.getFundingSummary().add(fundingSummary);
+        Fundings fundings = new Fundings();
+        fundings.getFundingGroup().add(group);
+        x.setFundings(fundings);
+        
+        PeerReviewSummary peerReviewSummary = new PeerReviewSummary();
+        peerReviewSummary.setOrganization(orgWithEmptyAddressFields);
+        PeerReviewDuplicateGroup duplicateGroup = new PeerReviewDuplicateGroup();
+        duplicateGroup.getPeerReviewSummary().add(peerReviewSummary);
+        PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
+        peerReviewGroup.getPeerReviewGroup().add(duplicateGroup);
+        PeerReviews peerReviews = new PeerReviews();
+        peerReviews.getPeerReviewGroup().add(peerReviewGroup);
+        x.setPeerReviews(peerReviews);
+        
+        ActivityUtils.cleanEmptyFields(x);
+        
+        assertNull(x.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getOrganization().getAddress().getRegion());
+        assertNull(x.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getOrganization().getAddress().getCity());
+        assertNull(x.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getRegion());
+        assertNull(x.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getCity());
     }
 
     @Test
@@ -351,6 +384,26 @@ public class ActivityUtilsTest {
         ActivityUtils.cleanEmptyFields(f);
         assertNotNull(f.getContributors().getContributor().get(0).getCreditName());
         assertEquals("test", f.getContributors().getContributor().get(0).getCreditName().getContent());        
+    }
+    
+    @Test
+    public void cleanOrganizationTest() {
+        Organization org = new Organization();
+        org.setName("test");
+        
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("");
+        address.setRegion("");
+        org.setAddress(address);
+
+        // need an OrganizationHolder, let's use a funding
+        Funding funding = new Funding();
+        funding.setOrganization(org);
+        
+        ActivityUtils.cleanOrganizationEmptyFields(funding);
+        
+        assertNull(address.getCity());
+        assertNull(address.getRegion());
     }
 
     private Educations getEducations() {

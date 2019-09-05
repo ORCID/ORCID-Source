@@ -8,17 +8,29 @@ public class StatsSummary {
     
     private Long idsWithExternalId;
     
-    private Long idsWithEducation;
+    private Long idsWithEducationQualification;
     
-    private Long numEducations;
+    private Long numEducationQualifications;
     
-    private Long educationUniqueOrgs;
+    private Long educationQualificationUniqueOrgs;
     
     private Long idsWithEmployment;
     
     private Long numEmployments;
     
     private Long employmentUniqueOrgs;
+    
+    private Long idsWithInvitedPositionDistinction;
+    
+    private Long numInvitedPositionDistinctions;
+    
+    private Long invitedPositionDistinctionUniqueOrgs;
+    
+    private Long idsWithMembershipService;
+    
+    private Long numMembershipServices;
+    
+    private Long membershipServiceUniqueOrgs;
     
     private Long idsWithFunding;
     
@@ -33,6 +45,10 @@ public class StatsSummary {
     private Long idsWithPersonId;
     
     private Long numPersonIds;
+    
+    private Long idsWithResearchResource;
+    
+    private Long numResearchResources;
     
     private Long idsWithWork;
     
@@ -64,28 +80,28 @@ public class StatsSummary {
         this.idsWithExternalId = idsWithExternalId;
     }
 
-    public Long getIdsWithEducation() {
-        return idsWithEducation;
+    public Long getIdsWithEducationQualification() {
+        return idsWithEducationQualification;
     }
 
-    public void setIdsWithEducation(Long idsWithEducation) {
-        this.idsWithEducation = idsWithEducation;
+    public void setIdsWithEducationQualification(Long idsWithEducation) {
+        this.idsWithEducationQualification = idsWithEducation;
     }
 
-    public Long getNumEducations() {
-        return numEducations;
+    public Long getNumEducationQualifications() {
+        return numEducationQualifications;
     }
 
-    public void setNumEducations(Long numEducations) {
-        this.numEducations = numEducations;
+    public void setNumEducationQualifications(Long numEducationQualifications) {
+        this.numEducationQualifications = numEducationQualifications;
     }
 
-    public Long getEducationUniqueOrgs() {
-        return educationUniqueOrgs;
+    public Long getEducationQualificationUniqueOrgs() {
+        return educationQualificationUniqueOrgs;
     }
 
-    public void setEducationUniqueOrgs(Long educationUniqueOrgs) {
-        this.educationUniqueOrgs = educationUniqueOrgs;
+    public void setEducationQualificationUniqueOrgs(Long educationQualificationUniqueOrgs) {
+        this.educationQualificationUniqueOrgs = educationQualificationUniqueOrgs;
     }
 
     public Long getIdsWithEmployment() {
@@ -110,6 +126,54 @@ public class StatsSummary {
 
     public void setEmploymentUniqueOrgs(Long employmentUniqueOrgs) {
         this.employmentUniqueOrgs = employmentUniqueOrgs;
+    }
+
+    public Long getIdsWithInvitedPositionDistinction() {
+        return idsWithInvitedPositionDistinction;
+    }
+
+    public void setIdsWithInvitedPositionDistinction(Long idsWithInvitedPositionDistinction) {
+        this.idsWithInvitedPositionDistinction = idsWithInvitedPositionDistinction;
+    }
+
+    public Long getNumInvitedPositionDistinctions() {
+        return numInvitedPositionDistinctions;
+    }
+
+    public void setNumInvitedPositionDistinctions(Long numInvitedPositionDistinctions) {
+        this.numInvitedPositionDistinctions = numInvitedPositionDistinctions;
+    }
+
+    public Long getInvitedPositionDistinctionUniqueOrgs() {
+        return invitedPositionDistinctionUniqueOrgs;
+    }
+
+    public void setInvitedPositionDistinctionUniqueOrgs(Long invitedPositionDistinctionUniqueOrgs) {
+        this.invitedPositionDistinctionUniqueOrgs = invitedPositionDistinctionUniqueOrgs;
+    }
+
+    public Long getIdsWithMembershipService() {
+        return idsWithMembershipService;
+    }
+
+    public void setIdsWithMembershipService(Long idsWithMembershipService) {
+        this.idsWithMembershipService = idsWithMembershipService;
+    }
+
+    public Long getNumMembershipServices() {
+        return numMembershipServices;
+    }
+
+    public void setNumMembershipServices(Long numMembershipServices) {
+        this.numMembershipServices = numMembershipServices;
+    }
+
+    public Long getMembershipServiceUniqueOrgs() {
+        return membershipServiceUniqueOrgs;
+    }
+
+    public void setMembershipServiceUniqueOrgs(Long membershipServiceUniqueOrgs) {
+        this.membershipServiceUniqueOrgs = membershipServiceUniqueOrgs;
     }
 
     public Long getIdsWithFunding() {
@@ -166,6 +230,22 @@ public class StatsSummary {
 
     public void setNumPersonIds(Long numPersonIds) {
         this.numPersonIds = numPersonIds;
+    }
+    
+    public Long getIdsWithResearchResource() {
+        return idsWithResearchResource;
+    }
+
+    public void setIdsWithResearchResource(Long idsWithResearchResource) {
+        this.idsWithResearchResource = idsWithResearchResource;
+    }
+
+    public Long getNumResearchResources() {
+        return numResearchResources;
+    }
+
+    public void setNumResearchResources(Long numResearchResources) {
+        this.numResearchResources = numResearchResources;
     }
 
     public Long getIdsWithWork() {

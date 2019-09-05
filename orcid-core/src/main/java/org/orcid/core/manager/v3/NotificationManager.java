@@ -15,7 +15,6 @@ import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermi
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
 
@@ -110,5 +109,9 @@ public interface NotificationManager {
     void deleteNotificationsForRecord(String orcid);
 
     NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);
+
+    void sendForgottenIdEmail(String email, String orcid);
+
+    void sendForgottenIdEmailNotFoundEmail(String email, Locale locale);
 
 }

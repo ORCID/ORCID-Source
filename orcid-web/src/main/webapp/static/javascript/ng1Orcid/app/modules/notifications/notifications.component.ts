@@ -19,7 +19,8 @@ import { NotificationsService }
 
 @Component({
     selector: 'notifications-ng2',
-    template:  scriptTmpl("notifications-ng2-template")
+    template:  scriptTmpl("notifications-ng2-template"),
+    preserveWhitespaces: true
 })
 export class NotificationsComponent implements AfterViewInit, OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();

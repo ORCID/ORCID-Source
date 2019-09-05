@@ -1355,24 +1355,10 @@ ul.privacyHelp li.private,
     color: #494a4c
 }
 
-#statistics span.stat-data,#statistics span.stat-name-st {
-    font-size: 1em;
-    font-style: normal;
-    color: #494a4c
-}
-
-#statistics span.stat-data {
-    font-size: 1.5em;
-    font-weight: 700
-}
-
-#statistics .col-md-3,#statistics .col-md-6,#statistics .col-sm-8,#statistics .col-xs-12,#statistics .col-xs-8 {
-    border-top: 1px solid #eee;
-    padding: 15px
-}
-
-#statistics .stat-subheader {
-    border: 0
+#statistics .stat-data {
+    font-weight: bold;
+    text-align: right;
+    padding-right: 1em;
 }
 
 .dropdown,.dropup {
@@ -8832,7 +8818,9 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     padding:0 20px;
 }
 
-.header2 .menu-bar li.open > a, .header2 .menu-bar li.open> a:hover , .header2 .menu-bar li.open > a:focus  {
+.header2 .menu-bar > .container > .menu > li.open > a, 
+.header2 .menu-bar > .container > .menu > li.open > a:hover , 
+.header2 .menu-bar > .container > .menu > li.open > a:focus  {
     color:#494a4c;
     background-color:#e3e3e3;
     transition: all .3s ease;
@@ -8950,6 +8938,7 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     padding: 0;
     background-color: #747476;
     color: white;
+    cursor: pointer;
 }
 
 .header2 .search-dropdown {
@@ -9517,6 +9506,7 @@ user-menu .top-menu-button {
     border-radius: 4px;
     padding-right: 8px;
     outline: none;
+    cursor: pointer;
 }
     
 user-menu .top-menu-button:hover, user-menu .top-menu-button:focus{

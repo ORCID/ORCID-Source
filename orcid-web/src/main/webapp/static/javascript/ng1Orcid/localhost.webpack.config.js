@@ -17,7 +17,14 @@ module.exports = {
       },
       {
         test: /((script)|(plugins)|(typeahead.min)|(XSRF.js))\.js/, //(jquery.min)|(jquery-ui.min)|(typeahead.min)|(jquery-migrate-1.3.0.min)|
-        use: ["script-loader"]
+        use: [
+          {
+            loader: 'script-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+        ]
       },
       {
         test: /\.css$/,

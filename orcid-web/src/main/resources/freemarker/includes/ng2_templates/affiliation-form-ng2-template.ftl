@@ -210,8 +210,8 @@
                         <div class="relative">
                             
                             <select id="endYear" name="endYear" [(ngModel)]="editAffiliation.endDate.year">
-                                <#list years?keys as key>
-                                    <option value="${key}">${years[key]}</option>
+                                <#list affiliationYears?keys as key>
+                                    <option value="${key}">${affiliationYears[key]}</option>
                                 </#list>
                             </select>
                             <select id="endMonth" name="endMonth" [(ngModel)]="editAffiliation.endDate.month">
