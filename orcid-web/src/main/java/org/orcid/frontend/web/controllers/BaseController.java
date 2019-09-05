@@ -610,8 +610,22 @@ public class BaseController {
             setError(passwordConfirm, "FieldMatch.registrationForm");
         }
     }
-
+    
     protected void passwordChecklistValidate(Text passwordConfirm, Text password) {
+    	passwordChecklistValidate (passwordConfirm, password, new ArrayList<String>());
+    }
+    
+    protected void passwordChecklistValidate(Text passwordConfirm, Text password, Emails emails) {
+    	if (emails != null) {
+    		passwordChecklistValidate (passwordConfirm, password, emails.getEmails().stream().map(email-> email.getEmail()).collect(Collectors.toList()));
+    	} else {
+    		passwordChecklistValidate (passwordConfirm, password);
+    	}
+    	
+    }
+    
+
+    protected void passwordChecklistValidate(Text passwordConfirm, Text password, List<String> userEmails) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
@@ -625,7 +639,17 @@ public class BaseController {
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_NUMBER)) {
             password.getErrors().add("Pattern.registrationForm.password.oneNumber");
         }
-        
+
+    	
+        if (userEmails != null) {
+        	userEmails.forEach(additionalEmail->{
+	        if (password.getValue() != null  && additionalEmail != null && !additionalEmail.isEmpty() && password.getValue().contains(additionalEmail)) {
+	        	password.getErrors().add("Pattern.registrationForm.password.containsEmail");
+	        }
+	        });
+        }
+    	
+    
         if (CommonPasswords.passwordIsCommon(password.getValue())) {
             setError(password, "password.too_common", password.getValue());
         }
