@@ -68,6 +68,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     getFirstResults(input: any){
+        this.input.text = this.input.text.toUpperCase();
         this.showNoResultsAlert = false;
         this.allResults = new Array();
         this.numFound = 0;
@@ -232,7 +233,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     ngOnInit() {
         var urlParams = new URLSearchParams(location.search);
         this.input.text = urlParams.get('searchQuery');
-        if(typeof this.input.text !== 'undefined'){
+        if(typeof this.input.text !== 'undefined' && this.input.text != null){
             this.searchResultsLoading = true;
             this.search(this.input);
         }
