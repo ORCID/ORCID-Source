@@ -1001,6 +1001,10 @@
 		multiValued="false" />
 	<field name="org-disambiguated-name" type="text_general" indexed="true" stored="true"
 		multiValued="false" />
+	<copyField source="org-disambiguated-name" dest="org-disambiguated-name-string" />
+	<!-- Non tokenized field -->
+	<field name="org-disambiguated-name-string" type="string" indexed="true" stored="false"
+		multiValued="false" />		
 	<field name="org-disambiguated-city" type="text_general" indexed="true" stored="true"
 		multiValued="false" />
 	<field name="org-disambiguated-region" type="text_general" indexed="true" stored="true"
@@ -1028,6 +1032,6 @@
 
 	<field name="text" type="text_general" indexed="true" stored="false"
 			multiValued="true" />
-	<copyField source="*" dest="text" />
+	<copyField source="*" dest="text" />		
 	
 </schema>
