@@ -265,6 +265,30 @@ public class ActivityUtils {
                     }
                 }
             }
+            
+            if (summaries.getFundings() != null && summaries.getFundings().getFundingGroup() != null) {
+                for (FundingGroup group : summaries.getFundings().getFundingGroup()) {
+                    if (group.getFundingSummary() != null) {
+                        for (FundingSummary fundingSummary : group.getFundingSummary()) {
+                            cleanOrganizationEmptyFields(fundingSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getPeerReviews() != null && summaries.getPeerReviews().getPeerReviewGroup() != null) {
+                for (PeerReviewGroup group : summaries.getPeerReviews().getPeerReviewGroup()) {
+                    if (group.getPeerReviewGroup() != null) {
+                        for (PeerReviewDuplicateGroup duplicateGroup : group.getPeerReviewGroup()) {
+                            if (duplicateGroup.getPeerReviewSummary() != null) {
+                                for (PeerReviewSummary peerReviewSummary : duplicateGroup.getPeerReviewSummary()) {
+                                    cleanOrganizationEmptyFields(peerReviewSummary);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

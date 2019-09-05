@@ -592,6 +592,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, peerReviewList, ScopePathType.PEER_REVIEW_READ_LIMITED);
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);
         ActivityUtils.setPathToPeerReviews(peerReviews, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(peerReviewList);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(peerReviews);
         sourceUtils.setSourceName(peerReviews);
         return Response.ok(peerReviews).build();
@@ -602,6 +603,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         PeerReviewSummary ps = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, ps, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(ps, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(ps);
         sourceUtils.setSourceName(ps);
         return Response.ok(ps).build();
     }

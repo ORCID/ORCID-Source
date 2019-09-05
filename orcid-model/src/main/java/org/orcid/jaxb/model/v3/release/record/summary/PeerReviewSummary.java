@@ -19,6 +19,7 @@ import org.orcid.jaxb.model.v3.release.common.Filterable;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -33,7 +34,7 @@ import io.swagger.annotations.ApiModel;
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "role", "externalIdentifiers", "url", "type", "completionDate", "groupId", "organization" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
 @ApiModel(value = "PeerReviewSummaryV3_0")
-public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable, SourceAware {
+public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable, SourceAware, OrganizationHolder {
     private static final long serialVersionUID = -2215607501129977294L;
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
     protected ExternalIDs externalIdentifiers;
