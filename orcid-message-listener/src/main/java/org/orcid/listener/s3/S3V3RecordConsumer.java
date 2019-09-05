@@ -9,17 +9,17 @@ import org.orcid.utils.listener.RetryMessage;
 import org.springframework.stereotype.Component;
 
 @Component
-public class S3ActivitiesConsumer implements Consumer<LastModifiedMessage>{
+public class S3V3RecordConsumer implements Consumer<LastModifiedMessage> {
 
     @Resource
-    S3MessageProcessorAPIV2 proc;
-    
+    S3MessageProcessorAPIV3 proc;
+
     @Override
     public void accept(LastModifiedMessage message) {
-        proc.update20Activities(message);
+        proc.update(message);
     }
 
     public void accept(RetryMessage message) {
-        proc.update20Activities(message);
+        proc.update(message);
     }
 }

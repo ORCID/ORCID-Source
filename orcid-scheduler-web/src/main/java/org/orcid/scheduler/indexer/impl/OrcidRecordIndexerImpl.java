@@ -45,7 +45,10 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     private String reindexActivitiesQueueName;
     @Value("${org.orcid.persistence.indexing.delay:5}")
     private Integer indexingDelay;
-
+    @Value("${org.orcid.persistence.messaging.updated.v3:updateV3Record}")
+    private String updateV3RecordQueueName;
+    @Value("${org.orcid.persistence.messaging.reindex.v3:reindexV3Record}")
+    private String reindexV3RecordQueueName;
     @Resource
     private ProfileDao profileDao;
 
@@ -77,22 +80,27 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     
     @Override
     public void processProfilesWithPendingFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING, updateSolrQueueName, updateSummaryQueueName, updateActivitiesQueueName);
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.PENDING);
     }
 
     @Override
     public void processProfilesWithReindexFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, reindexSolrQueueName, reindexSummaryQueueName, reindexActivitiesQueueName);
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX);
     }
 
     @Override
     public void processProfilesWithFailedFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, updateSolrQueueName, updateSummaryQueueName, updateActivitiesQueueName);
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED);
     }
     
     @Override
     public void reindexRecordsOnSolr() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.SOLR_UPDATE, updateSolrQueueName, updateSummaryQueueName, updateActivitiesQueueName);
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.SOLR_UPDATE);
+    }
+    
+    @Override
+    public void reindexV3RecordsOnS3() {
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.S3_V3_REINDEX);
     }
     
     @Override
@@ -122,12 +130,16 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         } while (!orcidsToRemind.isEmpty());
     }
 
-    private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, String solrQueue, String summaryQueue, String activitiesQueue) {
+    private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status) {
         LOG.info("processing profiles with " + status.name() + " flag.");
         List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
         boolean connectionIssue = false;
+        String solrQueue = (IndexingStatus.REINDEX.equals(status) ? reindexSolrQueueName : updateSolrQueueName);
+        String v2SummaryQueue = (IndexingStatus.REINDEX.equals(status) ? reindexSummaryQueueName : updateSummaryQueueName);
+        String v2ActivitiesQueue = (IndexingStatus.REINDEX.equals(status) ? reindexActivitiesQueueName : updateActivitiesQueueName);
+        String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
         do {
-            if (IndexingStatus.REINDEX.equals(status)) {
+            if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
                 orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
             } else {
                 orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);
@@ -142,16 +154,22 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                 
                 if(IndexingStatus.SOLR_UPDATE.equals(status)) {
                     connectionIssue = indexSolr(mess, solrQueue, status);
+                } else if(IndexingStatus.S3_V3_REINDEX.equals(orcid)) {
+                    connectionIssue = indexV3Record(mess, v3Queue, status);
                 } else if(IndexingStatus.DUMP_UPDATE.equals(status)) {
-                    connectionIssue = indexSummaries(mess, summaryQueue, status);
+                    connectionIssue = indexSummaries(mess, v2SummaryQueue, status);
                     if(!connectionIssue)
-                        connectionIssue = indexActivities(mess, activitiesQueue, status);
+                        connectionIssue = indexActivities(mess, v2ActivitiesQueue, status);
+                    if(!connectionIssue)
+                        connectionIssue = indexV3Record(mess, v3Queue, status);
                 } else {
                     connectionIssue = indexSolr(mess, solrQueue, status);
                     if(!connectionIssue)
-                        connectionIssue = indexSummaries(mess, summaryQueue, status);
+                        connectionIssue = indexSummaries(mess, v2SummaryQueue, status);
                     if(!connectionIssue)
-                        connectionIssue = indexActivities(mess, activitiesQueue, status);
+                        connectionIssue = indexActivities(mess, v2ActivitiesQueue, status);
+                    if(!connectionIssue)
+                        connectionIssue = indexV3Record(mess, v3Queue, status);
                 }                
                 
                 profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
@@ -181,6 +199,15 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         // Send message to activities queue
         if (!messaging.send(mess, activitiesQueue)) {
             LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + activitiesQueue);                    
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean indexV3Record(LastModifiedMessage mess, String queueName, IndexingStatus status) {
+        // Send message to activities queue
+        if (!messaging.send(mess, queueName)) {
+            LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + queueName);                    
             return true;
         }
         return false;

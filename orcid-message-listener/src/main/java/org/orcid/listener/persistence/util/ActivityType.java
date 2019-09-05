@@ -16,19 +16,18 @@
  */
 package org.orcid.listener.persistence.util;
 
-import org.orcid.jaxb.model.record_v2.Activity;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.Work;
-
 public enum ActivityType {
     //@formatter:off
+    DISTINCTIONS("/distinctions/", "distinctions", "distinctions_status", "distinctions_last_indexed"),
     EDUCATIONS("/educations/", "educations", "educations_status", "educations_last_indexed"), 
     EMPLOYMENTS("/employments/", "employments", "employments_status", "employments_last_indexed"), 
     FUNDINGS("/fundings/", "fundings", "fundings_status", "fundings_last_indexed"), 
+    INVITED_POSITIONS("/invited-positions/", "invited-positions", "invited_positions_status", "invited_positions_last_indexed"),
+    MEMBERSHIP("/membership/", "membership", "membership_status", "membership_last_indexed"),
     PEER_REVIEWS("/peer-reviews/", "peer-reviews", "peer_reviews_status", "peer_reviews_last_indexed"), 
+    QUALIFICATIONS("/qualifications/", "qualifications", "qualifications_status", "qualifications_last_indexed"),
+    RESEARCH_RESOURCES("/research-resources/", "research-resources", "research_resources_status", "research_resources_last_indexed"),
+    SERVICES("/services/", "services", "services_status", "services_last_indexed"),
     WORKS("/works/", "works", "works_status", "works_last_indexed");
     //@formatter:on
 
@@ -60,16 +59,44 @@ public enum ActivityType {
         return lastIndexedColumnName;
     }
 
-    public static ActivityType inferFromActivity(Activity a) {
-        if (a.getClass().isAssignableFrom(Education.class)) {
+    public static ActivityType inferFromActivity(org.orcid.jaxb.model.record_v2.Activity a) {
+        if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.record_v2.Education.class)) {
             return EDUCATIONS;
-        } else if (a.getClass().isAssignableFrom(Employment.class)) {
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.record_v2.Employment.class)) {
             return EMPLOYMENTS;
-        } else if (a.getClass().isAssignableFrom(Funding.class)) {
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.record_v2.Funding.class)) {
             return FUNDINGS;
-        } else if (a.getClass().isAssignableFrom(PeerReview.class)) {
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.record_v2.PeerReview.class)) {
             return PEER_REVIEWS;
-        } else if (a.getClass().isAssignableFrom(Work.class)) {
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.record_v2.Work.class)) {
+            return WORKS;
+        }
+
+        throw new IllegalArgumentException("Unable to find activity of type " + a.getClass().toGenericString());
+    }
+    
+    public static ActivityType inferFromActivity(org.orcid.jaxb.model.v3.release.record.Activity a) {
+        if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.Distinction.class)) {
+            return DISTINCTIONS;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.Education.class)) {
+            return EDUCATIONS;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.Employment.class)) {
+            return EMPLOYMENTS;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.Funding.class)) {
+            return FUNDINGS;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.InvitedPosition.class)) {
+            return INVITED_POSITIONS;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.Membership.class)) {
+            return MEMBERSHIP;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.PeerReview.class)) {
+            return PEER_REVIEWS;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.Qualification.class)) {
+            return QUALIFICATIONS;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.ResearchResource.class)) {
+            return RESEARCH_RESOURCES;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.Service.class)) {
+            return SERVICES;
+        } else if (a.getClass().isAssignableFrom(org.orcid.jaxb.model.v3.release.record.Work.class)) {
             return WORKS;
         }
 

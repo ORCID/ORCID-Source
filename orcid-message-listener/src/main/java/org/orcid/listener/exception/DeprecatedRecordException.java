@@ -1,30 +1,18 @@
 package org.orcid.listener.exception;
 
-import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.message.OrcidDeprecated;
+public class DeprecatedRecordException extends RecordException {
 
-public class DeprecatedRecordException extends Exception {
-    private static final long serialVersionUID = 1L;
-    
-    //1.2 Error message
-    OrcidDeprecated orcidDeprecated;
-    
-    //2.0 Error message
-    OrcidError orcidError;
-    
-    public DeprecatedRecordException (OrcidDeprecated orcidDeprecated) {
-        this.orcidDeprecated = orcidDeprecated;
-    }
-    
-    public DeprecatedRecordException (OrcidError orcidError) {
-        this.orcidError = orcidError;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7131616904201657225L;
+
+    public DeprecatedRecordException(org.orcid.jaxb.model.error_v2.OrcidError orcidError) {
+        super(orcidError);
     }
 
-    public OrcidDeprecated getOrcidDeprecated() {
-        return orcidDeprecated;
+    public DeprecatedRecordException(org.orcid.jaxb.model.v3.release.error.OrcidError v3OrcidError) {
+        super(v3OrcidError);
     }
 
-    public OrcidError getOrcidError() {
-        return orcidError;
-    }    
 }

@@ -28,6 +28,7 @@ import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid20Manager;
 import org.orcid.listener.persistence.managers.ActivitiesStatusManager;
 import org.orcid.listener.persistence.managers.RecordStatusManager;
+import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.utils.DateUtils;
@@ -48,12 +49,12 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
  *
  */
 @Component
-public class S3MessageProcessor {
+public class S3MessageProcessorAPIV2 {
 
     public static final String VND_ORCID_XML = "application/vnd.orcid+xml";
     public static final String VND_ORCID_JSON = "application/vnd.orcid+json";
 
-    Logger LOG = LoggerFactory.getLogger(S3MessageProcessor.class);
+    Logger LOG = LoggerFactory.getLogger(S3MessageProcessorAPIV2.class);
 
     @Value("${org.orcid.message-listener.index.summaries:true}")
     private boolean isSummaryIndexerEnabled;
@@ -83,7 +84,7 @@ public class S3MessageProcessor {
                 // Index only if it is claimed
                 if(record.getHistory() != null && record.getHistory().getClaimed() != null)  {
                     if(record.getHistory().getClaimed() == true) {
-                        s3Manager.uploadRecordSummary(orcid, record);                                        
+                        s3Manager.uploadV2RecordSummary(orcid, record);                                        
                     } else {
                         LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
                     }                    
@@ -100,7 +101,7 @@ public class S3MessageProcessor {
                     LOG.error("Record " + orcid + " is deprecated");
                     error = ((DeprecatedRecordException) e).getOrcidError();
                 }
-                s3Manager.uploadOrcidError(orcid, error);
+                s3Manager.uploadV2OrcidError(orcid, error);
                 recordStatusManager.markAsSent(orcid, AvailableBroker.DUMP_STATUS_2_0_API);
             } catch (Exception e1) {
                 LOG.error("Unable to handle LockedRecordException for record " + orcid, e1);
@@ -137,7 +138,7 @@ public class S3MessageProcessor {
         if(record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
             if (record.getActivitiesSummary() != null) {
                 ActivitiesSummary as = record.getActivitiesSummary();
-                Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid);
+                Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid, APIVersion.V2);
                 if(RetryMessage.class.isAssignableFrom(message.getClass())) {
                     RetryMessage rm = (RetryMessage) message;
                     @SuppressWarnings("unchecked")
@@ -180,7 +181,7 @@ public class S3MessageProcessor {
         if (educations != null && !educations.getSummaries().isEmpty()) {
             processActivities(orcid, educations.getSummaries(), existingElements, ActivityType.EDUCATIONS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.EDUCATIONS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EDUCATIONS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.EDUCATIONS);
         }                
     }
@@ -190,7 +191,7 @@ public class S3MessageProcessor {
         if (employments != null && !employments.getSummaries().isEmpty()) {
             processActivities(orcid, employments.getSummaries(), existingElements, ActivityType.EMPLOYMENTS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.EMPLOYMENTS);
         }
     }
@@ -204,7 +205,7 @@ public class S3MessageProcessor {
             }
             processActivities(orcid, fundings, existingElements, ActivityType.FUNDINGS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.FUNDINGS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.FUNDINGS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.FUNDINGS);
         }
     }
@@ -218,7 +219,7 @@ public class S3MessageProcessor {
             }
             processActivities(orcid, peerReviews, existingElements, ActivityType.PEER_REVIEWS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.PEER_REVIEWS);
         }
     }
@@ -232,7 +233,7 @@ public class S3MessageProcessor {
             }
             processActivities(orcid, works, existingElements, ActivityType.WORKS);
         } else {
-            s3Manager.clearActivitiesByType(orcid, ActivityType.WORKS);
+            s3Manager.clearV2ActivitiesByType(orcid, ActivityType.WORKS);
             activitiesStatusManager.markAsSent(orcid, ActivityType.WORKS);
         }
     }  
@@ -258,7 +259,7 @@ public class S3MessageProcessor {
 
                 if (activity != null) {
                     // Upload it to S3
-                    s3Manager.uploadActivity(orcid, putCodeString, activity);
+                    s3Manager.uploadV2Activity(orcid, putCodeString, activity);
                     // Remove it from the existingElements list means that the
                     // elements was already processed
                     existingElements.remove(putCodeString);
@@ -267,7 +268,7 @@ public class S3MessageProcessor {
             // Remove from S3 all element that still exists on the
             // existingEducations map
             for (String putCode : existingElements.keySet()) {
-                s3Manager.removeActivity(orcid, putCode, type);
+                s3Manager.removeV2Activity(orcid, putCode, type);
             }
 
             // Mark them as sent
@@ -303,7 +304,7 @@ public class S3MessageProcessor {
             return orcid20ApiClient.fetchPublicRecord(message);
         } catch (LockedRecordException | DeprecatedRecordException e) {
             // Remove all activities from this record
-            s3Manager.clearActivities(orcid);
+            s3Manager.clearV2Activities(orcid);
             // Mark all activities as ok
             activitiesStatusManager.markAllAsSent(orcid);
         } catch (Exception e) {
