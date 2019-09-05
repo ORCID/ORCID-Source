@@ -1,9 +1,10 @@
-package org.orcid.core.manager.validator;
+package org.orcid.core.groupIds.issn;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.orcid.core.groupIds.issn.IssnValidator;
 
 public class IssnValidatorTest {
     

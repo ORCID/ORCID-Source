@@ -10,6 +10,8 @@ import java.util.Optional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
+import org.orcid.core.groupIds.issn.IssnPortalUrlBuilder;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.GroupIdRecordManager;
@@ -28,8 +30,6 @@ import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,9 +43,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller("peerReviewsController")
 @RequestMapping(value = { "/peer-reviews" })
 public class PeerReviewsController extends BaseWorkspaceController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PeerReviewsController.class);
-    private static final String PEER_REVIEW_MAP = "PEER_REVIEW_MAP";
 
+    @Resource
+    private IssnPortalUrlBuilder issnPortalUrlBuilder;
+    
     @Resource
     private LocaleManager localeManager;
 
@@ -75,7 +76,16 @@ public class PeerReviewsController extends BaseWorkspaceController {
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(summaries, false);
         for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
             Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
-            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, groupIdRecord.get());
+            GroupIdRecord record = groupIdRecord.get();
+            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, record);
+            String groupId = record.getGroupId();
+            if (IssnGroupIdPatternMatcher.isIssnGroupType(groupId)) {
+                String issn = IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(groupId);
+                peerReviewGroup.setUrl(issnPortalUrlBuilder.buildIssnPortalUrlForIssn(issn));
+                peerReviewGroup.setGroupType("ISSN");
+                peerReviewGroup.setGroupIdValue(issn);
+            }
+            
             for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
                 for (PeerReviewForm peerReviewForm : duplicateGroup.getPeerReviews()) {
                     if (peerReviewForm.getCountry() != null) {

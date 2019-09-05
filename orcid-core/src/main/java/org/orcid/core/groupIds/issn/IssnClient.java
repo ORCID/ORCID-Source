@@ -1,17 +1,17 @@
-package org.orcid.core.issn.client;
+package org.orcid.core.groupIds.issn;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.orcid.core.issn.IssnData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.sun.jersey.api.client.Client;
@@ -21,12 +21,12 @@ import com.sun.jersey.api.client.WebResource;
 @Component
 public class IssnClient {
 
-    @Value("${org.orcid.core.issn.portal.url:https://portal.issn.org/resource/ISSN/%s?format=json}")
-    private String url;
+    private static final Logger LOG = LoggerFactory.getLogger(IssnClient.class);
 
     private Client client = Client.create();
 
-    private static final Logger LOG = LoggerFactory.getLogger(IssnClient.class);
+    @Resource
+    private IssnPortalUrlBuilder issnPortalUrlBuilder;
 
     public IssnData getIssnData(String issn) {
         String json = null;
@@ -69,7 +69,7 @@ public class IssnClient {
     }
 
     private String getJsonDataFromIssnPortal(String issn) throws IOException {
-        String issnUrl = String.format(url, issn);
+        String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);
         WebResource resource = client.resource(issnUrl);
         ClientResponse response = resource.get(ClientResponse.class);
         int status = response.getStatus();

@@ -1,4 +1,4 @@
-package org.orcid.core.manager.validator;
+package org.orcid.core.groupIds.issn;
 
 import java.util.regex.Pattern;
 

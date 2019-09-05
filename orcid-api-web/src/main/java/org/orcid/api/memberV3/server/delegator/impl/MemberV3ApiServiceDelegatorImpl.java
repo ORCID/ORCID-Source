@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -28,6 +26,7 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNoResultException;
+import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
@@ -133,9 +132,6 @@ import org.springframework.stereotype.Component;
 public class MemberV3ApiServiceDelegatorImpl implements
         MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> {
 
-    // deliberately loose so we can recognise anything that claims to be an issn record
-    private static Pattern issnGroupTypePattern = Pattern.compile("^issn:(.*)$");
-    
     // Managers that goes to the primary database
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
@@ -714,10 +710,10 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Override
     public Response createGroupIdRecord(GroupIdRecord groupIdRecord) {
         orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_UPDATE);
-        Matcher matcher = issnGroupTypePattern.matcher(groupIdRecord.getGroupId());
-        if (!groupIdRecordManager.exists(groupIdRecord.getGroupId()) && matcher.find()) {
+        
+        if (!groupIdRecordManager.exists(groupIdRecord.getGroupId()) && IssnGroupIdPatternMatcher.isIssnGroupType(groupIdRecord.getGroupId())) {
             // issn group type
-            groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupIdRecord.getGroupId(), matcher.group(1));
+            groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupIdRecord.getGroupId(), IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(groupIdRecord.getGroupId()));
             throw new DuplicatedGroupIdRecordException();
         }
         
@@ -771,12 +767,11 @@ public class MemberV3ApiServiceDelegatorImpl implements
     public Response findGroupIdRecordByGroupId(String groupId) {
         orcidSecurityManager.checkScopes(ScopePathType.GROUP_ID_RECORD_READ);
         Optional<GroupIdRecord> record = groupIdRecordManager.findByGroupId(groupId);
-        Matcher matcher = issnGroupTypePattern.matcher(groupId);
         if (record.isPresent()) {
             return Response.ok(record.get()).build();
-        } else if (matcher.find()) {
+        } else if (IssnGroupIdPatternMatcher.isIssnGroupType(groupId)) {
             // issn group type
-            return Response.ok(groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupId, matcher.group(1))).build();
+            return Response.ok(groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupId, IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(groupId))).build();
         }
         return Response.ok(new GroupIdRecord()).build();
     }

@@ -43,6 +43,11 @@
                                 <span class="italic" *ngIf="group.type">{{group.type}}</span><span *ngIf="group.description">, {{group.description}}</span>
                             </div>              
                         </div>
+                        <div class="col-md-12">
+                            <div class="group-summary-details">
+                                <span *ngIf="group.groupType && group.groupIdValue && group.url">{{group.groupType}} : <a href="{{group.url}}" target="orcid.blank">{{group.groupIdValue}}</a></span>
+                            </div>              
+                        </div>
                         <div class="peer-review-list-container">
                             <ul class="sources-edit-list">
                                 <li class="source-active">
