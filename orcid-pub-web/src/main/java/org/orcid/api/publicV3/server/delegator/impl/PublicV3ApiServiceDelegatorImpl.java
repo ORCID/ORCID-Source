@@ -452,6 +452,7 @@ public class PublicV3ApiServiceDelegatorImpl
         PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
         publicAPISecurityManagerV3.filter(publicPeerReviews);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(peerReviews);
         Api3_0LastModifiedDatesHelper.calculateLastModified(publicPeerReviews);
         sourceUtilsReadOnly.setSourceName(publicPeerReviews);
         return Response.ok(publicPeerReviews).build();
@@ -463,6 +464,7 @@ public class PublicV3ApiServiceDelegatorImpl
         PeerReviewSummary summary = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(summary);
         sourceUtilsReadOnly.setSourceName(summary);
         return Response.ok(summary).build();
     }

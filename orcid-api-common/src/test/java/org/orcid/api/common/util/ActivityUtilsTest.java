@@ -131,6 +131,35 @@ public class ActivityUtilsTest {
         ActivityUtils.cleanEmptyFields(x);
         assertEquals("test", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
         assertEquals("en_us", x.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        
+        Organization orgWithEmptyAddressFields = new Organization();
+        OrganizationAddress addressWithEmptyFields = new OrganizationAddress();
+        addressWithEmptyFields.setRegion("");
+        addressWithEmptyFields.setCity("");
+        orgWithEmptyAddressFields.setAddress(addressWithEmptyFields);
+        
+        FundingSummary fundingSummary = new FundingSummary();
+        fundingSummary.setOrganization(orgWithEmptyAddressFields);
+        FundingGroup group = new FundingGroup();
+        group.getFundingSummary().add(fundingSummary);
+        Fundings fundings = new Fundings();
+        fundings.getFundingGroup().add(group);
+        x.setFundings(fundings);
+        
+        PeerReviewSummary peerReviewSummary = new PeerReviewSummary();
+        peerReviewSummary.setOrganization(orgWithEmptyAddressFields);
+        PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
+        peerReviewGroup.getPeerReviewSummary().add(peerReviewSummary);
+        PeerReviews peerReviews = new PeerReviews();
+        peerReviews.getPeerReviewGroup().add(peerReviewGroup);
+        x.setPeerReviews(peerReviews);
+        
+        ActivityUtils.cleanEmptyFields(x);
+        
+        assertNull(x.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getOrganization().getAddress().getRegion());
+        assertNull(x.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getOrganization().getAddress().getCity());
+        assertNull(x.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getRegion());
+        assertNull(x.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getCity());
     }
 
     @Test
