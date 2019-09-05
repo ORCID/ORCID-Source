@@ -101,11 +101,11 @@ export class SearchComponent implements OnDestroy, OnInit {
                 this.searchResultsLoading = false;
                 this.showMoreLoading = false;
 
-                this.getDetails(this.newResults);
-
-                this.allResults = this.allResults.concat(this.newResults); 
-
-                this.cdr.detectChanges();
+                if (this.newResults) {
+                    this.getDetails(this.newResults);
+                    this.allResults = this.allResults.concat(this.newResults); 
+                    this.cdr.detectChanges();
+                }
                 
                 if(!this.numFound){
                     this.showNoResultsAlert = true;
