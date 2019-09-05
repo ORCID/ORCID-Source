@@ -148,7 +148,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         String v2ActivitiesQueue = (IndexingStatus.REINDEX.equals(status) ? reindexActivitiesQueueName : updateActivitiesQueueName);
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
         do {
-            if (IndexingStatus.REINDEX.equals(status)) {
+            if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
                 orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
             } else {
                 orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);

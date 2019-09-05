@@ -79,16 +79,16 @@ public class S3MessagingService {
         case '1':
         case '2':
         case '3':
-            bucketName += "-A";
+            bucketName += "-a";
             break;
         case '4':
         case '5':
         case '6':
         case '7':
-            bucketName += "-B";
+            bucketName += "-b";
             break;
         default: 
-            bucketName += "-C";
+            bucketName += "-c";
             break;                
         }
         return bucketName;
