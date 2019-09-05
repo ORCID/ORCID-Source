@@ -24,6 +24,18 @@ public class RetryMessage extends BaseMessage {
      * @param orcid
      * @param date
      */
+    public RetryMessage(String orcid, boolean retrySummary) {
+        super(ImmutableMap.of(MessageConstants.ORCID.value, orcid));
+        this.retrySummary = retrySummary;
+    }
+
+    
+    /**
+     * Create a map from the component parts
+     * 
+     * @param orcid
+     * @param date
+     */
     public RetryMessage(String orcid, String brokerName) {
         super(ImmutableMap.of(MessageConstants.TYPE.value, MessageConstants.TYPE_RETRY.value, 
                 MessageConstants.ORCID.value, orcid, BROKER_NAME, brokerName));

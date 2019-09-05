@@ -48,6 +48,7 @@ import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
+import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,11 +104,23 @@ public class S3MessageProcessorAPIV3 {
         }
     }
 
-    public void retry(Record record, Boolean retrySummary, Map<ActivityType, Boolean> retryMap) {
+    public void retry(RetryMessage message, Boolean retrySummary, List<ActivityType> retryList) {
         if(!isV3IndexerEnabled) {
             return;
         }
-        String orcid = record.getOrcidIdentifier().getPath();
+        String orcid = message.getOrcid();
+        
+        Record record = null;
+        try {
+            record = fetchPublicRecordAndClearIfNeeded(message);
+        } catch (Exception e) {
+            LOG.error("Unable to fetch public record for " + orcid, e);
+            api30RecordStatusManager.allFailed(orcid);
+        }
+        
+        if(record == null) {
+            return;
+        }
         
         if(retrySummary) {
             if(!updateSummary(record)) {
@@ -117,67 +130,67 @@ public class S3MessageProcessorAPIV3 {
         
         ActivitiesSummary as = record.getActivitiesSummary();
         Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid, APIVersion.V3);
-        if (retryMap.containsKey(ActivityType.DISTINCTIONS)) {
+        if (retryList.contains(ActivityType.DISTINCTIONS)) {
             if(!processDistinctions(orcid, as.getDistinctions(), existingActivities.get(ActivityType.DISTINCTIONS))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.DISTINCTIONS);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.EDUCATIONS)) {
+        if (retryList.contains(ActivityType.EDUCATIONS)) {
             if(!processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.EDUCATIONS);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.EMPLOYMENTS)) {
+        if (retryList.contains(ActivityType.EMPLOYMENTS)) {
             if(!processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.EMPLOYMENTS);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.FUNDINGS)) {
+        if (retryList.contains(ActivityType.FUNDINGS)) {
             if(!processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.FUNDINGS);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.INVITED_POSITIONS)) {
+        if (retryList.contains(ActivityType.INVITED_POSITIONS)) {
             if(!processInvitedPositions(orcid, as.getInvitedPositions(), existingActivities.get(ActivityType.INVITED_POSITIONS))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.INVITED_POSITIONS);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.MEMBERSHIP)) {
+        if (retryList.contains(ActivityType.MEMBERSHIP)) {
             if(!processMemberships(orcid, as.getMemberships(), existingActivities.get(ActivityType.MEMBERSHIP))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.MEMBERSHIP);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.PEER_REVIEWS)) {
+        if (retryList.contains(ActivityType.PEER_REVIEWS)) {
             if(!processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.PEER_REVIEWS);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.QUALIFICATIONS)) {
+        if (retryList.contains(ActivityType.QUALIFICATIONS)) {
             if(!processQualifications(orcid, as.getQualifications(), existingActivities.get(ActivityType.QUALIFICATIONS))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.QUALIFICATIONS);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.RESEARCH_RESOURCES)) {
+        if (retryList.contains(ActivityType.RESEARCH_RESOURCES)) {
             if(!processResearchResources(orcid, as.getResearchResources(), existingActivities.get(ActivityType.RESEARCH_RESOURCES))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.RESEARCH_RESOURCES);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.SERVICES)) {
+        if (retryList.contains(ActivityType.SERVICES)) {
             if(!processServices(orcid, as.getServices(), existingActivities.get(ActivityType.SERVICES))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.SERVICES);
             }
         }
 
-        if (retryMap.containsKey(ActivityType.WORKS)) {
+        if (retryList.contains(ActivityType.WORKS)) {
             if(!processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS))) {
                 api30RecordStatusManager.setActivityFail(orcid, ActivityType.WORKS);
             }
