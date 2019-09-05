@@ -13,7 +13,7 @@
                 <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
             </span>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.2019.vis_settings.we_are_contacting_you_about" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a>
+                <@emailMacros.msg "email.2019.vis_settings.we_are_contacting_you_about" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a><@emailMacros.msg "email.common.period" />
             </p>            
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.2019.vis_settings.as_an_orcid_user" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings" target="email.2019.vis_settings.visibility_settings"><@emailMacros.msg "email.2019.vis_settings.visibility_settings" /></a><@emailMacros.space /><@emailMacros.msg "email.2019.vis_settings.for_more_information" />
@@ -28,7 +28,7 @@
                 <@emailMacros.msg "email.2019.vis_settings.changing_who_you_share" />
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.2019.vis_settings.for_more_information_please" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings" target="email.2019.vis_settings.visibility_settings"><@emailMacros.msg "email.2019.vis_settings.visibility_settings" /></a><@emailMacros.space /><@emailMacros.msg "email.2019.vis_settings.if_you_have" /> 
+                <@emailMacros.msg "email.2019.vis_settings.for_more_information_please" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/articles/360006897614-Visibility-settings" target="email.2019.vis_settings.visibility_settings"><@emailMacros.msg "email.2019.vis_settings.visibility_settings" /></a><@emailMacros.msg "email.common.period" /><@emailMacros.space /><@emailMacros.msg "email.2019.vis_settings.if_you_have" /> 
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.2019.vis_settings.thanks_for_your" />
