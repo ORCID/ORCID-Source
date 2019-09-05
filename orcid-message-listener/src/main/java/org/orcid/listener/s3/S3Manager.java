@@ -164,7 +164,7 @@ public class S3Manager {
         // Upload XML
         String xmlElementName = getElementName(orcid);
         byte[] xmlElement = toXML(record);
-        s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
+        s3MessagingService.sendV3Item(orcid, xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
     public void uploadV2Activity(String orcid, String putCode, org.orcid.jaxb.model.record_v2.Activity activity) throws JAXBException, JsonProcessingException,AmazonClientException, AmazonServiceException {
@@ -180,7 +180,7 @@ public class S3Manager {
         // Upload XML
         String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
         byte[] xmlElement = toXML(activity);
-        s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
+        s3MessagingService.sendV3Item(orcid, xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
     }
 
     public void uploadV2OrcidError(String orcid, org.orcid.jaxb.model.error_v2.OrcidError error) throws JAXBException, JsonProcessingException, AmazonClientException, AmazonServiceException {
@@ -198,7 +198,7 @@ public class S3Manager {
         // Upload XML
         String xmlElementName = getElementName(orcid);
         byte[] xmlElement = toXML(error);
-        s3MessagingService.sendV3Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
+        s3MessagingService.sendV3Item(orcid, xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
     public Map<ActivityType, Map<String, S3ObjectSummary>> searchActivities(String orcid, APIVersion version) {
@@ -229,7 +229,7 @@ public class S3Manager {
         activitiesOnS3.put(ActivityType.WORKS, works);
 
         String prefix = buildPrefix(orcid);
-        String bucketName = (APIVersion.V2.equals(version) ? s3MessagingService.getV2ActivitiesBucketName() : s3MessagingService.getV3ActivitiesBucketName());
+        String bucketName = (APIVersion.V2.equals(version) ? s3MessagingService.getV2ActivitiesBucketName() : s3MessagingService.getV3ActivitiesBucketName(orcid));
         final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucketName).withPrefix(prefix).withMaxKeys(maxElements);
         ListObjectsV2Result objects;
         do {
@@ -277,7 +277,7 @@ public class S3Manager {
 
     public void removeV3Activity(String orcid, String putCode, ActivityType type) throws AmazonClientException, AmazonServiceException {
         // Delete the XML activity file
-        s3MessagingService.removeV3Activity(getElementName(orcid, putCode, type));
+        s3MessagingService.removeV3Activity(orcid, getElementName(orcid, putCode, type));
     }
 
     public void clearV2Activities(String orcid) throws AmazonClientException, AmazonServiceException {
@@ -297,14 +297,14 @@ public class S3Manager {
 
     public void clearV3Activities(String orcid) throws AmazonClientException, AmazonServiceException {
         String prefix = orcid.substring(16) + "/activities/" + orcid;
-        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName()).withPrefix(prefix)
+        final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName(orcid)).withPrefix(prefix)
                 .withMaxKeys(maxElements);
         ListObjectsV2Result objects;
         do {
             objects = s3MessagingService.listObjects(req);
             for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
                 String elementName = objectSummary.getKey();
-                s3MessagingService.removeV3Activity(elementName);
+                s3MessagingService.removeV3Activity(orcid, elementName);
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());
@@ -349,14 +349,14 @@ public class S3Manager {
     public void clearV3ActivitiesByType(String orcid, ActivityType type) throws AmazonClientException, AmazonServiceException {
         String prefix = buildPrefix(orcid, type);
         
-        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName(orcid)).withPrefix(prefix).withMaxKeys(maxElements);
 
         ListObjectsV2Result objects;
         do {
             objects = s3MessagingService.listObjects(req);
             for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
                 String elementName = objectSummary.getKey();
-                s3MessagingService.removeV3Activity(elementName);
+                s3MessagingService.removeV3Activity(orcid, elementName);
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());

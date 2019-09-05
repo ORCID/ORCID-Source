@@ -38,15 +38,6 @@ public class S3MessagingService {
     
     private final String v3ActivitiesBucketName;
     
-
-    public String getV2ActivitiesBucketName() {
-        return v2ActivitiesBucketName;
-    }
-
-    public String getV3ActivitiesBucketName() {
-        return v3ActivitiesBucketName;
-    }    
-    
     /**
      * Initialize the Amazon S3 connection object
      * 
@@ -76,6 +67,37 @@ public class S3MessagingService {
         }
     }
 
+    public String getV2ActivitiesBucketName() {
+        return v2ActivitiesBucketName;
+    }
+
+    public String getV3ActivitiesBucketName(String orcid) {
+        char last = orcid.charAt(orcid.length() - 1);
+        String bucketName = v3ActivitiesBucketName;
+        switch(last){
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+            bucketName += "-A";
+            break;
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+            bucketName += "-B";
+            break;
+        default: 
+            bucketName += "-C";
+            break;                
+        }
+        return bucketName;
+    }    
+    
+    public ListObjectsV2Result listObjects(ListObjectsV2Request request) {
+        return s3.listObjectsV2(request);
+    }
+    
     public boolean sendV2Item(String elementName, byte[] elementContent, String contentType, Date lastModified, boolean isActivity) throws AmazonClientException, AmazonServiceException {
         InputStream is = new ByteArrayInputStream(elementContent);
         ObjectMetadata metadata = new ObjectMetadata();
@@ -90,14 +112,14 @@ public class S3MessagingService {
         return true;
     }
 
-    public boolean sendV3Item(String elementName, byte[] elementContent, String contentType, Date lastModified, boolean isActivity) throws AmazonClientException, AmazonServiceException {
+    public boolean sendV3Item(String orcid, String elementName, byte[] elementContent, String contentType, Date lastModified, boolean isActivity) throws AmazonClientException, AmazonServiceException {
         InputStream is = new ByteArrayInputStream(elementContent);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentType(contentType);
         metadata.setContentLength(elementContent.length);
         metadata.setLastModified(lastModified);
         if(isActivity) {
-            s3.putObject(new PutObjectRequest(this.v3ActivitiesBucketName, elementName, is, metadata));            
+            s3.putObject(new PutObjectRequest(this.getV3ActivitiesBucketName(orcid), elementName, is, metadata));            
         } else {
             s3.putObject(new PutObjectRequest(this.v3SummariesBucketName, elementName, is, metadata));
         }
@@ -105,15 +127,11 @@ public class S3MessagingService {
     }
     
     
-    public ListObjectsV2Result listObjects(ListObjectsV2Request request) {
-        return s3.listObjectsV2(request);
-    }
-
     public void removeV2Activity(String elementName) throws AmazonClientException, AmazonServiceException {
         s3.deleteObject(this.v2ActivitiesBucketName, elementName);        
     }
     
-    public void removeV3Activity(String elementName) throws AmazonClientException, AmazonServiceException {
-        s3.deleteObject(this.v3ActivitiesBucketName, elementName);        
+    public void removeV3Activity(String orcid, String elementName) throws AmazonClientException, AmazonServiceException {
+        s3.deleteObject(this.getV3ActivitiesBucketName(orcid), elementName);        
     }
 }
