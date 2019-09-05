@@ -37,7 +37,7 @@ Example response:
 
 ## Search for ORCID records
 
-Version is the the version of the API you are using, the latest stable release is v2.1.
+Version is the the version of the API you are using, the latest stable release is v3.0.
 Query is the terms you are searching for.
 
 ### Member API
@@ -52,7 +52,7 @@ Query is the terms you are searching for.
 **Curl example:**
 
 ```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://api.sandbox.orcid.org/v2.1/search/?q=orcid' -i
+curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://api.sandbox.orcid.org/v3.0/search/?q=orcid' -i
 ```
 
 ### Public API
@@ -67,7 +67,7 @@ curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c
 **Curl example:**
 
 ```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v2.1/search/?q=orcid' -i
+curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v3.0/search/?q=orcid' -i
 ```
 
 Example response
@@ -92,7 +92,7 @@ Example response
 
  The API supports Boolean searches using multiple keywords, exact phrases, and other Boolean search features. Keywords must be combined using brackets and “AND” or “OR” in uppercase.
 
- [All query syntaxes available in SOLR 3.6 are supported](https://cwiki.apache.org/confluence/display/solr/The+Standard+Query+Parser), including Lucene with Solr extensions (default), DisMax, and Extended Dismax.
+ [All query syntaxes available in SOLR 8.0 are supported](https://lucene.apache.org/solr/guide/8_0/), including Lucene with Solr extensions (default), DisMax, and Extended Dismax.
 
  The number of matching records is returned in the num-found field in the results.
 
@@ -119,6 +119,8 @@ Example response
 * keyword
 
 * external-id-reference
+
+* biography
 
 **Affiliations data**
 
@@ -148,6 +150,16 @@ Example response
 
 * [external identifier type]&ast;-part-of
 
+* external-id-type-and-value: like ResearcherID=A-1007-2016
+
+**Peer review**
+
+* peer-review-type
+
+* peer-review-role
+
+* peer-review-group-id
+
 **Record data**
 
 * orcid
@@ -156,7 +168,7 @@ Example response
 
 * profile-last-modified-date
 
-&ast; For a full list of external identifier see the [identifiers list](https://pub.qa.orcid.org/v2.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
+&ast; For a full list of external identifier see the [identifiers list](https://pub.qa.orcid.org/v3.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
 
 ## Example search queries
 
@@ -168,7 +180,7 @@ Syntax: Lucene
 
 Paging: First 10 rows only
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=text:English&start=0&rows=10```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=text:English&start=0&rows=10```
 
 ### Example 2
 
@@ -178,7 +190,7 @@ Syntax: Lucene
 
 Paging: Rows 5-10 only
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=family-name:Sanchez&start=4&rows=6```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=family-name:Sanchez&start=4&rows=6```
 
 ### Example 3
 
@@ -188,7 +200,7 @@ Syntax: Lucene
 
 Paging: All records
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=pmid:24857732```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=pmid:24857732```
 
 ### Example 4
 
@@ -198,7 +210,7 @@ Syntax: Lucene
 
 Paging: First 10 rows only
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=family-name:Einstein+AND+keyword:Relativity&start=0&rows=10```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=family-name:Einstein+AND+keyword:Relativity&start=0&rows=10```
 
 ### Example 5
 
@@ -208,7 +220,7 @@ Syntax: Lucene
 
 Paging: All results
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=family-name:Taylor+AND+given-names:Michael```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=family-name:Taylor+AND+given-names:Michael```
 
 ### Example 6
 
@@ -218,7 +230,7 @@ Syntax: Extended DisMax
 
 Paging: First 10 rows only
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?defType=edismax&q=Raymond&qf=given-names^1.0%20family-name^2.0&start=0&rows=10```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?defType=edismax&q=Raymond&qf=given-names^1.0%20family-name^2.0&start=0&rows=10```
 
 ### Example 7
 
@@ -230,7 +242,7 @@ Syntax: Extended DisMax
 
 Paging: First 10 rows only
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?defType=edismax&q=Raymond+-orcid:(0000-0002-0879-455X+0000-0001-6238-4490)&qf=given-names^1.0+family-name^2.0&start=0&rows=10```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?defType=edismax&q=Raymond+-orcid:(0000-0002-0879-455X+0000-0001-6238-4490)&qf=given-names^1.0+family-name^2.0&start=0&rows=10```
 
 ### Example 8
 
@@ -238,7 +250,7 @@ Description: Search for records with the exact DOI 10.1087/20120404 set to self
 
 Paging: Default
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=doi-self:%2210.1087/20120404%22```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=doi-self:%2210.1087/20120404%22```
 
 ### Example 9
 
@@ -246,7 +258,7 @@ Description: Search for records with a DOI that includes 10.1087 set either to s
 
 Paging: First 200 rows
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=digital-object-ids:10.1087&start=0&rows=200```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=digital-object-ids:10.1087&start=0&rows=200```
 
 ### Example 10
 
@@ -254,7 +266,7 @@ Description: Search for records with a PubMed Identifier 27281629 set to self
 
 Paging: Default
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=pmid-self:27281629```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=pmid-self:27281629```
 
 ### Example 11
 
@@ -262,7 +274,7 @@ Description: Search for records with an ISBN Identifier including 1234 set to ei
 
 Paging: Default
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=isbn:1234```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=isbn:1234```
 
 ### Example 12
 
@@ -271,7 +283,7 @@ Description: Search for all records with an email address with an @orcid.org dom
 Paging: Default  
 Note: Most ORCID records have the email address marked as private, and private information will not be returned in the search results.
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=email:*@orcid.org```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=email:*@orcid.org```
 
 ### Example 13
 
@@ -279,7 +291,7 @@ Description: Search for records modified between January 1, 2018 and today
 
 Paging: First 10 results
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=profile-last-modified-date:%5B2018-01-01T00:00:00Z%20TO%20NOW%5D&start=1&rows=10```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=profile-last-modified-date:%5B2018-01-01T00:00:00Z%20TO%20NOW%5D&start=1&rows=10```
 
 ### Example 14
 
@@ -287,7 +299,7 @@ Description: Search for records affiliated with the organization with the exact 
 
 Paging: Default
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=affiliation-org-name:(%22Boston%20University%22+OR+BU)```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=affiliation-org-name:(%22Boston%20University%22+OR+BU)```
 
 ### Example 15
 
@@ -295,7 +307,7 @@ Description: Search for records affiliated with the Ringgold ID 1438 (University
 
 Paging: Default
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=ringgold-org-id:1438```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=ringgold-org-id:1438```
 
 ### Example 16
 
@@ -303,4 +315,4 @@ Description: Search for records affiliated with the GRID ID grid.5509.9 (Univers
 
 Paging: Default
 
-URL: ```https://pub.sandbox.orcid.org/v2.1/search/?q=grid-org-id:grid.5509.9```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=grid-org-id:grid.5509.9```
