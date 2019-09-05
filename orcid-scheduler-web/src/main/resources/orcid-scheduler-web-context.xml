@@ -27,7 +27,8 @@
 		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>     	  
 		<task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesToFlagForIndexing" cron="${org.orcid.scheduler.web.processUnclaimedProfilesToFlagForIndexingCron:25 25 * * * *}"/>
 		<task:scheduled ref="orcidRecordIndexer" method="processUnclaimedProfilesForReminder" cron="${org.orcid.scheduler.web.processUnclaimedProfilesForReminderCron:35 35 * * * *}"/>
-		<task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:90}000"/>			      
+		<task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:90}000"/>	
+		<task:scheduled ref="orcidRecordIndexer" method="reindexV3RecordsOnS3" fixed-delay="${org.orcid.scheduler.web.dumpApiV3:30}000"/>		      
 		<task:scheduled ref="publicProfileValidator" method="validatePublicRecords" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
 		<task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" cron="${org.orcid.scheduler.web.processFundingSubTypesForIndexing:15 15 * * * *}" />		
 	</task:scheduled-tasks>

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class S3SummaryConsumer implements Consumer<LastModifiedMessage> {
 
     @Resource
-    S3MessageProcessor proc;
+    S3MessageProcessorAPIV2 proc;
 
     @Override
     public void accept(LastModifiedMessage message) {

@@ -26,8 +26,8 @@ import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
-import org.orcid.listener.exception.V3DeprecatedRecordException;
-import org.orcid.listener.exception.V3LockedRecordException;
+import org.orcid.listener.exception.DeprecatedRecordException;
+import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.BaseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,14 +87,14 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
      * 
      */
     @Override
-    public Record fetchPublicRecord(BaseMessage message) throws V3DeprecatedRecordException, V3LockedRecordException, ExecutionException {
+    public Record fetchPublicRecord(BaseMessage message) throws DeprecatedRecordException, LockedRecordException, ExecutionException {
         RecordContainer container = v3ThreadSharedCache.get(message);
         if (container.status != 200) {
             switch (container.status) {
             case 301:
-                throw new V3DeprecatedRecordException(container.error);
+                throw new DeprecatedRecordException(container.error);
             case 409:
-                throw new V3LockedRecordException(container.error);
+                throw new LockedRecordException(container.error);
             default:
                 LOG.error("Unable to fetch public record " + message.getOrcid() + " on API 3.0 HTTP error code: " + container.status);
                 throw new RuntimeException("Failed : HTTP error code : " + container.status);
@@ -104,7 +104,7 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     }
 
     @Override
-    public ActivitiesSummary fetchPublicActivitiesSummary(BaseMessage message) throws V3LockedRecordException, V3DeprecatedRecordException {
+    public ActivitiesSummary fetchPublicActivitiesSummary(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
         WebResource webResource = jerseyClient.resource(baseUri).path(message.getOrcid() + "/activities");
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
         Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
@@ -114,10 +114,10 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
             switch (response.getStatus()) {
             case 301:
                 orcidError = response.getEntity(OrcidError.class);
-                throw new V3DeprecatedRecordException(orcidError);
+                throw new DeprecatedRecordException(orcidError);
             case 409:
                 orcidError = response.getEntity(OrcidError.class);
-                throw new V3LockedRecordException(orcidError);
+                throw new LockedRecordException(orcidError);
             default:
                 LOG.error("Unable to fetch public activities for " + message.getOrcid() + " on API 3.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
