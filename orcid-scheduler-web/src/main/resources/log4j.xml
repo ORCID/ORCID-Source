@@ -16,6 +16,10 @@
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="SCH %-5.5p [%-11.11t] %d{HH:mm:ss,SSS} (%F:%L) | %m %n" />
 		</layout>
+		<filter class="org.apache.log4j.filter.ExpressionFilter">
+            <param name="expression" value="EXCEPTION ~= org.orcid.scheduler.email.trickle.TrickleTooHeavyException" />
+            <param name="acceptOnMatch" value="false"/>
+        </filter>
 	</appender>
 
 	<!-- 3rd party Loggers -->
