@@ -54,7 +54,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("en", pfe.getTranslatedTitleLanguageCode());
         assertEquals("common:organization-defined-type", pfe.getOrganizationDefinedType());
         assertEquals("funding:short-description", pfe.getDescription());
-        assertEquals("1234", pfe.getNumericAmount().toString());
+        assertEquals("1234.0", pfe.getNumericAmount().toString());
         assertEquals("ADP", pfe.getCurrencyCode());
         assertEquals("http://tempuri.org", pfe.getUrl());
 
@@ -151,7 +151,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("common:translated-title", pfe.getTranslatedTitle());
         assertEquals("en", pfe.getTranslatedTitleLanguageCode());
         assertEquals("common:organization-defined-type", pfe.getOrganizationDefinedType());
-        assertEquals("1234", pfe.getNumericAmount().toString());
+        assertEquals("1234.0", pfe.getNumericAmount().toString());
         assertEquals("ADP", pfe.getCurrencyCode());
         assertEquals("http://tempuri.org", pfe.getUrl());
 

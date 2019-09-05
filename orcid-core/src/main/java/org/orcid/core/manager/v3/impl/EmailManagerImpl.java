@@ -178,10 +178,13 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         if(!orcid.equals(entity.getProfile().getId())) {
             throw new IllegalArgumentException("Email with hash {}" + hash + " doesn't belong to " + orcid);
         }
-        if(!PojoUtil.isEmpty(entity.getEmail()) && !email.equals(entity.getEmail())) {            
+        if(!PojoUtil.isEmpty(entity.getEmail()) && !email.equalsIgnoreCase(entity.getEmail())) {            
             throw new IllegalArgumentException("Email address with hash " + hash + " is already populated and doesn't match the given address " + email);            
         }
-        entity.setEmail(email);
+        // Update the email just in case the email is empty
+        if(PojoUtil.isEmpty(entity.getEmail())) {
+            entity.setEmail(email);
+        }
         entity.setPrimary(true);
         entity.setVerified(true);
         entity.setLastModified(new Date());

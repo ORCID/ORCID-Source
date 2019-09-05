@@ -134,12 +134,19 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
         .subscribe(
             data => {
                 if(data) {
+                    this.deprecateProfilePojo = data;
                     this.closeModal('modalDeprecateAccountConfirm');
                     this.genericService.close('modalDeprecateAccountConfirm');
                     this.elementWidth = '400';
                     this.elementHeight = '200';
-                    this.genericService.open('modalDeprecateAccountSuccess');
-                    this.emailService.emailsUpdated(true);
+                    
+                    if (data.errors.length == 0) {
+                        this.emailService.emailsUpdated(true);
+                        this.genericService.open('modalDeprecateAccountSuccess');
+                    } else {
+                        this.emailService.emailsUpdated(false);
+                        this.genericService.open('modalDeprecateAccountFailure');
+                    }
                 }
             },
             error => {

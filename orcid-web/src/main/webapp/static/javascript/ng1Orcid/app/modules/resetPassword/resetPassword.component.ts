@@ -76,6 +76,9 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
 
     serverValidate(): void {
         console.log('server validate');
+        var urlParts = window.location.href.split('/');
+        var encryptedEmail = urlParts[urlParts.length -1];
+        this.resetPasswordForm.encryptedEmail = encryptedEmail;
         this.passwordService.serverValidate( this.resetPasswordForm )
         .pipe(    
             takeUntil(this.ngUnsubscribe)

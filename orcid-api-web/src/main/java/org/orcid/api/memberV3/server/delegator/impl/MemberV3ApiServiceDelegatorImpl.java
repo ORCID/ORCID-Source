@@ -439,6 +439,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, fundingSummaries, ScopePathType.FUNDING_READ_LIMITED);
         Fundings fundings = profileFundingManager.groupFundings(fundingSummaries, false);
         ActivityUtils.setPathToFundings(fundings, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fundingSummaries);
         Api3_0LastModifiedDatesHelper.calculateLastModified(fundings);
         sourceUtils.setSourceName(fundings);
         return Response.ok(fundings).build();
@@ -449,6 +450,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, fs, ScopePathType.FUNDING_READ_LIMITED);
         ActivityUtils.setPathToActivity(fs, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fs);
         sourceUtils.setSourceName(fs);
         return Response.ok(fs).build();
     }
@@ -493,6 +495,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -558,6 +561,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -630,6 +634,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         PeerReview p = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, p, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(p, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(p);
         sourceUtils.setSourceName(p);
         return Response.ok(p).build();
     }
@@ -648,6 +653,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, peerReviewList, ScopePathType.PEER_REVIEW_READ_LIMITED);
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);
         ActivityUtils.setPathToPeerReviews(peerReviews, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(peerReviewList);
         Api3_0LastModifiedDatesHelper.calculateLastModified(peerReviews);
         sourceUtils.setSourceName(peerReviews);
         return Response.ok(peerReviews).build();
@@ -658,6 +664,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         PeerReviewSummary ps = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, ps, ScopePathType.PEER_REVIEW_READ_LIMITED);
         ActivityUtils.setPathToActivity(ps, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(ps);
         sourceUtils.setSourceName(ps);
         return Response.ok(ps).build();
     }
@@ -1217,6 +1224,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Distinction e = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1235,6 +1243,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, distinctionsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Distinctions distinctions = new Distinctions(affiliationsManagerReadOnly.groupAffiliations(distinctionsList, false));
         ActivityUtils.setPathToAffiliations(distinctions, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(distinctionsList);
         sourceUtils.setSourceName(distinctions);
         Api3_0LastModifiedDatesHelper.calculateLastModified(distinctions);
         return Response.ok(distinctions).build();
@@ -1245,6 +1254,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         DistinctionSummary es = affiliationsManagerReadOnly.getDistinctionSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(es);
         sourceUtils.setSourceName(es);
         return Response.ok(es).build();
     }
@@ -1282,24 +1292,26 @@ public class MemberV3ApiServiceDelegatorImpl implements
         InvitedPosition e = affiliationsManagerReadOnly.getInvitedPositionAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
 
     @Override
     public Response viewInvitedPositions(String orcid) {
-        List<InvitedPositionSummary> inivitedPositionsList = affiliationsManagerReadOnly.getInvitedPositionSummaryList(orcid);
+        List<InvitedPositionSummary> invitedPositionsList = affiliationsManagerReadOnly.getInvitedPositionSummaryList(orcid);
 
         // Lets copy the list so we don't modify the cached collection
         List<InvitedPositionSummary> filteredList = null;
-        if (inivitedPositionsList != null) {
-            filteredList = new ArrayList<InvitedPositionSummary>(inivitedPositionsList);
+        if (invitedPositionsList != null) {
+            filteredList = new ArrayList<InvitedPositionSummary>(invitedPositionsList);
         }
-        inivitedPositionsList = filteredList;
+        invitedPositionsList = filteredList;
 
-        orcidSecurityManager.checkAndFilter(orcid, inivitedPositionsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
-        InvitedPositions inivitedPositions = new InvitedPositions(affiliationsManagerReadOnly.groupAffiliations(inivitedPositionsList, false));
+        orcidSecurityManager.checkAndFilter(orcid, invitedPositionsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
+        InvitedPositions inivitedPositions = new InvitedPositions(affiliationsManagerReadOnly.groupAffiliations(invitedPositionsList, false));
         ActivityUtils.setPathToAffiliations(inivitedPositions, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(invitedPositionsList);
         sourceUtils.setSourceName(inivitedPositions);
         Api3_0LastModifiedDatesHelper.calculateLastModified(inivitedPositions);
         return Response.ok(inivitedPositions).build();
@@ -1310,6 +1322,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         InvitedPositionSummary es = affiliationsManagerReadOnly.getInvitedPositionSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(es);
         sourceUtils.setSourceName(es);
         return Response.ok(es).build();
     }
@@ -1347,6 +1360,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Membership e = affiliationsManagerReadOnly.getMembershipAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1365,6 +1379,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, membershipsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Memberships memberships = new Memberships(affiliationsManagerReadOnly.groupAffiliations(membershipsList, false));
         ActivityUtils.setPathToAffiliations(memberships, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(membershipsList);
         sourceUtils.setSourceName(memberships);
         Api3_0LastModifiedDatesHelper.calculateLastModified(memberships);
         return Response.ok(memberships).build();
@@ -1375,6 +1390,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         MembershipSummary es = affiliationsManagerReadOnly.getMembershipSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(es);
         sourceUtils.setSourceName(es);
         return Response.ok(es).build();
     }
@@ -1412,6 +1428,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Qualification e = affiliationsManagerReadOnly.getQualificationAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1430,6 +1447,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, qualificationsList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Qualifications qualifications = new Qualifications(affiliationsManagerReadOnly.groupAffiliations(qualificationsList, false));
         ActivityUtils.setPathToAffiliations(qualifications, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(qualificationsList);
         sourceUtils.setSourceName(qualifications);
         Api3_0LastModifiedDatesHelper.calculateLastModified(qualifications);
         return Response.ok(qualifications).build();
@@ -1440,6 +1458,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         QualificationSummary es = affiliationsManagerReadOnly.getQualificationSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(es);
         sourceUtils.setSourceName(es);
         return Response.ok(es).build();
     }
@@ -1477,6 +1496,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Service e = affiliationsManagerReadOnly.getServiceAffiliation(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, e, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -1495,6 +1515,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, servicesList, ScopePathType.AFFILIATIONS_READ_LIMITED);
         Services services = new Services(affiliationsManagerReadOnly.groupAffiliations(servicesList, false));
         ActivityUtils.setPathToAffiliations(services, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(servicesList);
         sourceUtils.setSourceName(services);
         Api3_0LastModifiedDatesHelper.calculateLastModified(services);
         return Response.ok(services).build();
@@ -1505,6 +1526,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         ServiceSummary es = affiliationsManagerReadOnly.getServiceSummary(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, es, ScopePathType.AFFILIATIONS_READ_LIMITED);
         ActivityUtils.setPathToActivity(es, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(es);
         sourceUtils.setSourceName(es);
         return Response.ok(es).build();
     }

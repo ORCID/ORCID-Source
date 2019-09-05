@@ -589,6 +589,44 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile);
         assertTrue(deprecateProfile.getErrors().isEmpty());
     }
+    
+    @Test
+    public void testConfirmDeprecateProfileCurrentProfileDeprecated() {
+        ProfileEntity deprecatedEntity = new ProfileEntity();
+        deprecatedEntity.setId("0000-0000-0000-0123");
+        deprecatedEntity.setDeprecatedDate(new Date());
+        Mockito.when(mockProfileEntityCacheManager.retrieve("0000-0000-0000-0123")).thenReturn(deprecatedEntity);
+        
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-0123"));
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryOrcid("0000-0000-0000-0123");
+        deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0124");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile);
+        assertEquals(1, deprecateProfile.getErrors().size());
+        assertEquals("deprecate_orcid.this_profile_deprecated", deprecateProfile.getErrors().get(0));
+    }
+    
+    @Test
+    public void testConfirmDeprecateProfileCurrentProfileDeactivated() {
+        ProfileEntity deprecatedEntity = new ProfileEntity();
+        deprecatedEntity.setId("0000-0000-0000-0123");
+        deprecatedEntity.setDeactivationDate(new Date());
+        Mockito.when(mockProfileEntityCacheManager.retrieve("0000-0000-0000-0123")).thenReturn(deprecatedEntity);
+        
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-0123"));
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryOrcid("0000-0000-0000-0123");
+        deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0124");
+        deprecateProfile.setDeprecatingPassword("password");
+
+        deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile);
+        assertEquals(1, deprecateProfile.getErrors().size());
+        assertEquals("deprecate_orcid.this_profile_deactivated", deprecateProfile.getErrors().get(0));
+    }
 
     @Test
     public void testConfirmDeprecateProfileUnkownError() {

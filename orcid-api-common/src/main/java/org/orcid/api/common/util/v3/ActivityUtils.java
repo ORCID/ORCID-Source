@@ -5,6 +5,8 @@ import java.util.List;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.Organization;
+import org.orcid.jaxb.model.v3.release.common.OrganizationHolder;
 import org.orcid.jaxb.model.v3.release.record.Activity;
 import org.orcid.jaxb.model.v3.release.record.Distinction;
 import org.orcid.jaxb.model.v3.release.record.Education;
@@ -263,6 +265,80 @@ public class ActivityUtils {
                     }
                 }
             }
+            
+            if (summaries.getFundings() != null && summaries.getFundings().getFundingGroup() != null) {
+                for (FundingGroup group : summaries.getFundings().getFundingGroup()) {
+                    if (group.getFundingSummary() != null) {
+                        for (FundingSummary fundingSummary : group.getFundingSummary()) {
+                            cleanOrganizationEmptyFields(fundingSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getPeerReviews() != null && summaries.getPeerReviews().getPeerReviewGroup() != null) {
+                for (PeerReviewGroup group : summaries.getPeerReviews().getPeerReviewGroup()) {
+                    if (group.getPeerReviewGroup() != null) {
+                        for (PeerReviewDuplicateGroup duplicateGroup : group.getPeerReviewGroup()) {
+                            if (duplicateGroup.getPeerReviewSummary() != null) {
+                                for (PeerReviewSummary peerReviewSummary : duplicateGroup.getPeerReviewSummary()) {
+                                    cleanOrganizationEmptyFields(peerReviewSummary);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getServices() != null && summaries.getServices().getServiceGroups() != null) {
+                for (AffiliationGroup<ServiceSummary> group : summaries.getServices().getServiceGroups()) {
+                    if (group.getActivities() != null) {
+                        for (ServiceSummary serviceSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(serviceSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getQualifications() != null && summaries.getQualifications().getQualificationGroups() != null) {
+                for (AffiliationGroup<QualificationSummary> group : summaries.getQualifications().getQualificationGroups()) {
+                    if (group.getActivities() != null) {
+                        for (QualificationSummary qualificationSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(qualificationSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getMemberships() != null && summaries.getMemberships().getMembershipGroups() != null) {
+                for (AffiliationGroup<MembershipSummary> group : summaries.getMemberships().getMembershipGroups()) {
+                    if (group.getActivities() != null) {
+                        for (MembershipSummary membershipSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(membershipSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getInvitedPositions() != null && summaries.getInvitedPositions().getInvitedPositionGroups() != null) {
+                for (AffiliationGroup<InvitedPositionSummary> group : summaries.getInvitedPositions().getInvitedPositionGroups()) {
+                    if (group.getActivities() != null) {
+                        for (InvitedPositionSummary invitedPositionSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(invitedPositionSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getDistinctions() != null && summaries.getDistinctions().getDistinctionGroups() != null) {
+                for (AffiliationGroup<DistinctionSummary> group : summaries.getDistinctions().getDistinctionGroups()) {
+                    if (group.getActivities() != null) {
+                        for (DistinctionSummary distinctionSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(distinctionSummary);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -337,6 +413,30 @@ public class ActivityUtils {
                     c.setCreditName(null);
                 }
             }
+        }
+
+        cleanOrganizationEmptyFields(funding);
+    }
+
+    public static void cleanOrganizationEmptyFields(List<? extends OrganizationHolder> organizationHolders) {
+        for (OrganizationHolder organizationHolder : organizationHolders) {
+            cleanOrganizationEmptyFields(organizationHolder);
+        }
+    }
+
+    public static void cleanOrganizationEmptyFields(OrganizationHolder organizationHolder) {
+        if (organizationHolder != null && organizationHolder.getOrganization() != null && organizationHolder.getOrganization().getAddress() != null) {
+            Organization organization = organizationHolder.getOrganization();
+            if (organization.getAddress() != null) {
+                if (organization.getAddress().getCity() != null && organization.getAddress().getCity().isEmpty()) {
+                    organization.getAddress().setCity(null);
+                }
+
+                if (organization.getAddress().getRegion() != null && organization.getAddress().getRegion().isEmpty()) {
+                    organization.getAddress().setRegion(null);
+                }
+            }
+
         }
     }
 }

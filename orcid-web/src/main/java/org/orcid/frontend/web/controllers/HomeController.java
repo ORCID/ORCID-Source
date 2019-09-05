@@ -299,7 +299,7 @@ public class HomeController extends BaseController {
     protected String getSearchBaseUrl() {
         String pubBaseUri = orcidUrlManager.getPubBaseUrl();
         if(Features.HTTPS_IDS.isActive()) {
-            return pubBaseUri + "/v2.1/search/";
+            return pubBaseUri + "/v3.0/search/";
         } else {
             return pubBaseUri + "/v1.2/search/orcid-bio/";
         }          

@@ -85,11 +85,11 @@ export class SearchService {
         );
     }
 
-    getResults(url): Observable<any> {
+    getResults(params): Observable<any> {
         return this.searchBaseUri.pipe(
-                switchMap((baseUrlString) => {                    
+                switchMap((baseUrlString) => {
                     orcidSearchUrlJs.setBaseUrl(baseUrlString);
-                    var theUrl = orcidSearchUrlJs.buildUrl(url);                    
+                    var theUrl = orcidSearchUrlJs.buildUrl(params);                    
                     return this.http.get(theUrl, {headers: this.publicApiHeaders})                   
                 })
               )                
@@ -105,6 +105,6 @@ export class SearchService {
     }
     
     isValidOrcidId(input): boolean {
-        return orcidSearchUrlJs.isValidOrcidId(input)
+        return orcidSearchUrlJs.isValidOrcidId(input.toUpperCase())
     }
 }

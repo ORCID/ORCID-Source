@@ -118,6 +118,7 @@
                         <span class="orcid-error" *ngIf="registrationForm?.password?.errors?.length > 0">
                                 <div *ngFor='let error of registrationForm.password.errors'>
                                 <ng-container *ngIf="error.indexOf('Pattern.') < 0">{{error}} </ng-container>
+                                <ng-container *ngIf="error.indexOf('containsEmail') >= 0"><@spring.message 'Pattern.registrationForm.password.containsEmail'/> </ng-container>
                                 </div>
                         </span>  
                     </div>

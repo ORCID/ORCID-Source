@@ -276,6 +276,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Fundings publicFundings = profileFundingManagerReadOnly.groupFundings(fundings, true);
         publicAPISecurityManagerV2.filter(publicFundings);
         ActivityUtils.setPathToFundings(publicFundings, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fundings);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(publicFundings);
         sourceUtilsReadOnly.setSourceName(publicFundings);
         return Response.ok(publicFundings).build();
@@ -286,6 +287,7 @@ public class PublicV2ApiServiceDelegatorImpl
         FundingSummary fs = profileFundingManagerReadOnly.getSummary(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(fs);
         ActivityUtils.setPathToActivity(fs, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(fs);
         sourceUtilsReadOnly.setSourceName(fs);
         return Response.ok(fs).build();
     }
@@ -295,6 +297,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Education e = affiliationsManagerReadOnly.getEducationAffiliation(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -329,6 +332,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Employment e = affiliationsManagerReadOnly.getEmploymentAffiliation(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(e);
         ActivityUtils.setPathToActivity(e, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(e);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
     }
@@ -373,6 +377,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PeerReviews publicPeerReviews = peerReviewManagerReadOnly.groupPeerReviews(peerReviews, true);
         publicAPISecurityManagerV2.filter(publicPeerReviews);
         ActivityUtils.setPathToPeerReviews(publicPeerReviews, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(peerReviews);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(publicPeerReviews);
         sourceUtilsReadOnly.setSourceName(publicPeerReviews);
         return Response.ok(publicPeerReviews).build();
@@ -383,6 +388,7 @@ public class PublicV2ApiServiceDelegatorImpl
         PeerReviewSummary summary = peerReviewManagerReadOnly.getPeerReviewSummary(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(summary);
         ActivityUtils.setPathToActivity(summary, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(summary);
         sourceUtilsReadOnly.setSourceName(summary);
         return Response.ok(summary).build();
     }
