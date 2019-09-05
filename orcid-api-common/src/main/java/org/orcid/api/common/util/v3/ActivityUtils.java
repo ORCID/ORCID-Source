@@ -289,6 +289,56 @@ public class ActivityUtils {
                     }
                 }
             }
+            
+            if (summaries.getServices() != null && summaries.getServices().getServiceGroups() != null) {
+                for (AffiliationGroup<ServiceSummary> group : summaries.getServices().getServiceGroups()) {
+                    if (group.getActivities() != null) {
+                        for (ServiceSummary serviceSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(serviceSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getQualifications() != null && summaries.getQualifications().getQualificationGroups() != null) {
+                for (AffiliationGroup<QualificationSummary> group : summaries.getQualifications().getQualificationGroups()) {
+                    if (group.getActivities() != null) {
+                        for (QualificationSummary qualificationSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(qualificationSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getMemberships() != null && summaries.getMemberships().getMembershipGroups() != null) {
+                for (AffiliationGroup<MembershipSummary> group : summaries.getMemberships().getMembershipGroups()) {
+                    if (group.getActivities() != null) {
+                        for (MembershipSummary membershipSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(membershipSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getInvitedPositions() != null && summaries.getInvitedPositions().getInvitedPositionGroups() != null) {
+                for (AffiliationGroup<InvitedPositionSummary> group : summaries.getInvitedPositions().getInvitedPositionGroups()) {
+                    if (group.getActivities() != null) {
+                        for (InvitedPositionSummary invitedPositionSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(invitedPositionSummary);
+                        }
+                    }
+                }
+            }
+            
+            if (summaries.getDistinctions() != null && summaries.getDistinctions().getDistinctionGroups() != null) {
+                for (AffiliationGroup<DistinctionSummary> group : summaries.getDistinctions().getDistinctionGroups()) {
+                    if (group.getActivities() != null) {
+                        for (DistinctionSummary distinctionSummary : group.getActivities()) {
+                            cleanOrganizationEmptyFields(distinctionSummary);
+                        }
+                    }
+                }
+            }
         }
     }
 

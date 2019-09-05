@@ -740,7 +740,7 @@ public class PublicV3ApiServiceDelegatorImpl
                 publicDistinctions.add(summary);
             }
         }
-        
+        ActivityUtils.cleanOrganizationEmptyFields(publicDistinctions);
         Distinctions groupedDistinctions = new Distinctions(affiliationsManagerReadOnly.groupAffiliations(publicDistinctions, true));
         Api3_0LastModifiedDatesHelper.calculateLastModified(groupedDistinctions);
         ActivityUtils.setPathToAffiliations(groupedDistinctions, orcid);
@@ -752,6 +752,7 @@ public class PublicV3ApiServiceDelegatorImpl
         DistinctionSummary s = affiliationsManagerReadOnly.getDistinctionSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(s);
         ActivityUtils.setPathToActivity(s, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(s);
         sourceUtilsReadOnly.setSourceName(s);
         return Response.ok(s).build();
     }
@@ -777,7 +778,7 @@ public class PublicV3ApiServiceDelegatorImpl
                         publicInvitedPositions.add(summary);
                 }
         }
-        
+        ActivityUtils.cleanOrganizationEmptyFields(publicInvitedPositions);
         InvitedPositions groupedInvitedPositions = new InvitedPositions(affiliationsManagerReadOnly.groupAffiliations(publicInvitedPositions, true));
         Api3_0LastModifiedDatesHelper.calculateLastModified(groupedInvitedPositions);
         ActivityUtils.setPathToAffiliations(groupedInvitedPositions, orcid);
@@ -789,6 +790,7 @@ public class PublicV3ApiServiceDelegatorImpl
         InvitedPositionSummary s = affiliationsManagerReadOnly.getInvitedPositionSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(s);
         ActivityUtils.setPathToActivity(s, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(s);
         sourceUtilsReadOnly.setSourceName(s);
         return Response.ok(s).build();
     }
@@ -815,6 +817,7 @@ public class PublicV3ApiServiceDelegatorImpl
                 }
         }
         
+        ActivityUtils.cleanOrganizationEmptyFields(publicMemberships);
         Memberships groupedMemberships = new Memberships(affiliationsManagerReadOnly.groupAffiliations(publicMemberships, true));
         Api3_0LastModifiedDatesHelper.calculateLastModified(groupedMemberships);
         ActivityUtils.setPathToAffiliations(groupedMemberships, orcid);
@@ -826,6 +829,7 @@ public class PublicV3ApiServiceDelegatorImpl
         MembershipSummary s = affiliationsManagerReadOnly.getMembershipSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(s);
         ActivityUtils.setPathToActivity(s, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(s);
         sourceUtilsReadOnly.setSourceName(s);
         return Response.ok(s).build();
     }
@@ -851,6 +855,7 @@ public class PublicV3ApiServiceDelegatorImpl
                         publicQualifications.add(summary);
                 }
         }
+        ActivityUtils.cleanOrganizationEmptyFields(publicQualifications);
         Qualifications groupedQualifications = new Qualifications(affiliationsManagerReadOnly.groupAffiliations(publicQualifications, true));
         Api3_0LastModifiedDatesHelper.calculateLastModified(groupedQualifications);
         ActivityUtils.setPathToAffiliations(groupedQualifications, orcid);
@@ -862,6 +867,7 @@ public class PublicV3ApiServiceDelegatorImpl
         QualificationSummary s = affiliationsManagerReadOnly.getQualificationSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(s);
         ActivityUtils.setPathToActivity(s, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(s);
         sourceUtilsReadOnly.setSourceName(s);
         return Response.ok(s).build();
     }
@@ -887,6 +893,7 @@ public class PublicV3ApiServiceDelegatorImpl
                         publicServices.add(summary);
                 }
         }
+        ActivityUtils.cleanOrganizationEmptyFields(publicServices);
         Services groupedServices = new Services(affiliationsManagerReadOnly.groupAffiliations(publicServices, true));
         Api3_0LastModifiedDatesHelper.calculateLastModified(groupedServices);
         ActivityUtils.setPathToAffiliations(groupedServices, orcid);
@@ -898,6 +905,7 @@ public class PublicV3ApiServiceDelegatorImpl
         ServiceSummary s = affiliationsManagerReadOnly.getServiceSummary(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(s);
         ActivityUtils.setPathToActivity(s, orcid);
+        ActivityUtils.cleanOrganizationEmptyFields(s);
         sourceUtilsReadOnly.setSourceName(s);
         return Response.ok(s).build();
     }
