@@ -118,10 +118,7 @@ public enum Features implements Feature {
     VERBOSE_NOTIFICATIONS,
 
     @Label("Works failure debug")
-    WORKS_FAILURE_DEBUG,
-    
-    @Label("Stop feeding legacy solr version 4.10")
-    DISABLE_LEGACY_SOLR;
+    WORKS_FAILURE_DEBUG;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

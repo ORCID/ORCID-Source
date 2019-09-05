@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.solr.client.solrj.SolrClient;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
@@ -19,7 +18,6 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.messaging.JmsMessageSender;
-import org.orcid.core.solr.OrcidSolrLegacyIndexer;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -72,9 +70,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
-    
-    @Resource
-    private OrcidSolrLegacyIndexer orcidSolrLegacyIndexer;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -143,9 +138,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
                 if (!isInappropriate) {
                     OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
-                    document.setOrgDefinedFundingType(subtype);
-                    // TODO: Remove after solr migration is done
-                    orcidSolrLegacyIndexer.persistFundingSubType(document);
+                    document.setOrgDefinedFundingType(subtype);                    
 
                     // Send message to the message listener
                     if (!messaging.send(document, solrQueueName)) {

@@ -1,6 +1,5 @@
 package org.orcid.core.manager.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,10 +15,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
-import org.orcid.core.solr.OrcidSolrLegacyIndexer;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.core.togglz.Features;
-import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -64,9 +61,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
     
-    @Resource
-    private OrcidSolrLegacyIndexer orcidSolrLegacyIndexer;
-    
     @Override
     synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
@@ -92,26 +86,13 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     private void processDisambiguatedOrg(OrgDisambiguatedEntity entity)  {
         LOGGER.info("About to index disambiguated org, id={}", entity.getId());
-//        try {
-            OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
-//            if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus()) || OrganizationStatus.OBSOLETE.name().equals(entity.getStatus())) {
-//                orcidSolrLegacyIndexer.deleteOrgDisambiguated(String.valueOf(document.getOrgDisambiguatedId()));
-//            } else {
-//                orcidSolrLegacyIndexer.persistOrgDisambiguated(document);
-//            }
-            
-            // Send message to the message listener
-            if (!messaging.send(document, updateSolrQueueName)) {
-                LOGGER.error("Unable to send orgs disambiguated message for org: " + document.getOrgDisambiguatedName() + "(" + document.getOrgDisambiguatedId() + ")");            
-                orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
-                return;
-            }    
-//        } catch(IOException e) {
-//            LOGGER.error("Unable to process disambiguatd org with id " + entity.getId());
-//            LOGGER.error(e.getMessage());
-//            orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
-//        }
-        
+        OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
+        // Send message to the message listener
+        if (!messaging.send(document, updateSolrQueueName)) {
+            LOGGER.error("Unable to send orgs disambiguated message for org: " + document.getOrgDisambiguatedName() + "(" + document.getOrgDisambiguatedId() + ")");            
+            orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
+            return;
+        }    
         orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.DONE);
     }
 
