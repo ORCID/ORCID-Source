@@ -1355,24 +1355,10 @@ ul.privacyHelp li.private,
     color: #494a4c
 }
 
-#statistics span.stat-data,#statistics span.stat-name-st {
-    font-size: 1em;
-    font-style: normal;
-    color: #494a4c
-}
-
-#statistics span.stat-data {
-    font-size: 1.5em;
-    font-weight: 700
-}
-
-#statistics .col-md-3,#statistics .col-md-6,#statistics .col-sm-8,#statistics .col-xs-12,#statistics .col-xs-8 {
-    border-top: 1px solid #eee;
-    padding: 15px
-}
-
-#statistics .stat-subheader {
-    border: 0
+#statistics .stat-data {
+    font-weight: bold;
+    text-align: right;
+    padding-right: 1em;
 }
 
 .dropdown,.dropup {

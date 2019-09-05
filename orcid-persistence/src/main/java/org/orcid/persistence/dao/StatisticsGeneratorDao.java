@@ -4,15 +4,21 @@ public interface StatisticsGeneratorDao {
 
     public long getLiveIds();
     
-    public long getAccountsWithEducation();
-    
     public long getAccountsWithEmployment();
+    
+    public long getAccountsWithEducationQualification();
+    
+    public long getAccountsWithInvitedPositionDistinction();
+    
+    public long getAccountsWithMembershipService();
     
     public long getAccountsWithExternalId();
     
     public long getAccountsWithFunding();
     
     public long getAccountsWithPeerReview();
+    
+    public long getAccountsWithResearchResource();
     
     public long getAccountsWithPersonId();
 
@@ -26,17 +32,27 @@ public interface StatisticsGeneratorDao {
 
     long getNumberOfEmployment();
 
-    long getNumberOfEducation();
+    long getNumberOfEducationQualification();
+    
+    long getNumberOfInvitedPositionDistinction();
+    
+    long getNumberOfMembershipService();
 
     long getNumberOfFunding();
     
     public long getNumberOfPeerReview();
     
+    public long getNumberOfResearchResource();
+    
     public long getNumberOfPersonId();
 
     long getNumberOfEmploymentUniqueOrg();
 
-    long getNumberOfEducationUniqueOrg();
+    long getNumberOfEducationQualificationUniqueOrg();
+    
+    long getNumberOfInvitedPositionDistinctionUniqueOrg();
+    
+    long getNumberOfMembershipServiceUniqueOrg();
 
     long getNumberOfFundingUniqueOrg();
 }
