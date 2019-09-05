@@ -23,16 +23,16 @@ public class S3MessagingServiceTest {
     
     @Test
     public void getV3ActivitiesBucketNameTest() {
-        assertEquals("v3Activites-A", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0000"));
-        assertEquals("v3Activites-A", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0001"));
-        assertEquals("v3Activites-A", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0002"));
-        assertEquals("v3Activites-A", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0003"));
-        assertEquals("v3Activites-B", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0004"));
-        assertEquals("v3Activites-B", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0005"));
-        assertEquals("v3Activites-B", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0006"));
-        assertEquals("v3Activites-B", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0007"));
-        assertEquals("v3Activites-C", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0008"));
-        assertEquals("v3Activites-C", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0009"));
-        assertEquals("v3Activites-C", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-000X"));
+        assertEquals("v3Activites-a", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0000"));
+        assertEquals("v3Activites-a", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0001"));
+        assertEquals("v3Activites-a", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0002"));
+        assertEquals("v3Activites-a", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0003"));
+        assertEquals("v3Activites-b", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0004"));
+        assertEquals("v3Activites-b", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0005"));
+        assertEquals("v3Activites-b", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0006"));
+        assertEquals("v3Activites-b", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0007"));
+        assertEquals("v3Activites-c", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0008"));
+        assertEquals("v3Activites-c", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-0009"));
+        assertEquals("v3Activites-c", s3MessagingService.getV3ActivitiesBucketName("0000-0000-0000-000X"));
     }
 }
