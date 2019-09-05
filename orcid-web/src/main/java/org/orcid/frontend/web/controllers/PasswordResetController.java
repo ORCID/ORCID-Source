@@ -117,6 +117,33 @@ public class PasswordResetController extends BaseController {
         }
         return passwordResetRequest;
     }
+    
+    @RequestMapping(value = "/forgot-id.json", method = RequestMethod.POST)
+    public @ResponseBody EmailRequest issueForgottenIdRequest(@RequestBody EmailRequest forgotIdRequest) {
+        List<String> errors = new ArrayList<>();
+        forgotIdRequest.setErrors(errors);
+        forgotIdRequest.setEmail(forgotIdRequest.getEmail().trim());
+        if (!validateEmailAddress(forgotIdRequest.getEmail())) {
+            errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
+            return forgotIdRequest;
+        }
+        
+        if (emailManager.emailExists(forgotIdRequest.getEmail())) {
+            String orcid = emailManager.findOrcidIdByEmail(forgotIdRequest.getEmail());
+            if (profileEntityManager.isDeactivated(orcid)) {
+                notificationManager.sendReactivationEmail(forgotIdRequest.getEmail(), orcid);
+            } else if (!profileEntityManager.isProfileClaimedByEmail(forgotIdRequest.getEmail())) {
+                notificationManager.sendApiRecordCreationEmail(forgotIdRequest.getEmail(), orcid);
+            } else {
+                notificationManager.sendForgottenIdEmail(forgotIdRequest.getEmail(), orcid);
+            }
+        } else {
+            Locale locale = localeManager.getLocale();
+            notificationManager.sendForgottenIdEmailNotFoundEmail(forgotIdRequest.getEmail(), locale);
+        }
+        forgotIdRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + forgotIdRequest.getEmail());
+        return forgotIdRequest;
+    }
 
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<EmailRequest> issuePasswordResetRequest(HttpServletRequest request, @RequestBody EmailRequest passwordResetRequest) {
