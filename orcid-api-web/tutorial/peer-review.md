@@ -82,7 +82,7 @@ Peer-review items are grouped on ORCID records based on who or what the reivew w
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[version]/[ORCID iD]/group-id-record/?group-id=[issn:0962-1105] |
+| URL 				| https://api.[host]/[version]/group-id-record/?group-id=[issn:0962-1105] |
 | Method    | GET |
 | header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
@@ -98,7 +98,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer 1
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[version]/[ORCID iD]/group-id-record/?group-id=[issn:0962-1105] |
+| URL 				| https://api.[host]/[version]/group-id-record/?group-id=[issn:0962-1105] |
 | Method    | GET |
 | header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
