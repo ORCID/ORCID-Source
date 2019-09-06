@@ -48,7 +48,7 @@ public class ResendV3FailedMessages {
     @Resource
     S3MessageProcessorAPIV3 proc;
     
-    @Scheduled(cron = "${org.orcid.cron.v3.reindex-failed:0 * * * * *}")
+    @Scheduled(cron = "${org.orcid.cron.v3.reindex-failed:0 0 7,13 * * *}")
     public void resendFailedElements() {
         LOGGER.info("Processing failed elements for V3.0");
         List<ActivityType> retryList = new ArrayList<ActivityType>();
