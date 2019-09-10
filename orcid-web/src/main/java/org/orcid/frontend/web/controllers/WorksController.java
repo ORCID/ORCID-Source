@@ -749,10 +749,10 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@RequestParam("offset") int offset, @RequestParam("sort") String sort,
+    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@RequestParam("pageSize") int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
             @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
-        return worksPaginator.getWorksPage(orcid, offset, false, sort, sortAsc);
+        return worksPaginator.getWorksPage(orcid, offset, pageSize, false, sort, sortAsc);
     }
 
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
