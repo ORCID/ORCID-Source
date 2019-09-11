@@ -279,12 +279,14 @@ public class EmailManagerTest extends BaseTest {
         primaryEmailEntity.setPrimary(Boolean.TRUE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
+        primaryEmailEntity.setId("some-email-hash");
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("original"))).thenReturn(primaryEmailEntity);
         
         emailManager.editEmail("orcid", "original", "edited", new MockHttpServletRequest());
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
-        Mockito.verify(mockEmailDao).merge(captor.capture());
+        Mockito.verify(mockEmailDao).persist(captor.capture());
+        Mockito.verify(mockEmailDao).remove(Mockito.eq("some-email-hash"));
         Mockito.verify(mockNotificationManager).sendEmailAddressChangedNotification(Mockito.eq("orcid"), Mockito.eq("edited"), Mockito.eq("original"));
         Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("edited"));
         
@@ -312,12 +314,14 @@ public class EmailManagerTest extends BaseTest {
         primaryEmailEntity.setPrimary(Boolean.FALSE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
+        primaryEmailEntity.setId("some-email-hash");
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("original"))).thenReturn(primaryEmailEntity);
         
         emailManager.editEmail("orcid", "original", "edited", new MockHttpServletRequest());
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
-        Mockito.verify(mockEmailDao).merge(captor.capture());
+        Mockito.verify(mockEmailDao).persist(captor.capture());
+        Mockito.verify(mockEmailDao).remove(Mockito.eq("some-email-hash"));
         Mockito.verify(mockNotificationManager, Mockito.never()).sendEmailAddressChangedNotification(Mockito.eq("orcid"), Mockito.eq("edited"), Mockito.eq("original"));
         Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("edited"));
         
@@ -345,12 +349,14 @@ public class EmailManagerTest extends BaseTest {
         primaryEmailEntity.setPrimary(Boolean.TRUE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
+        primaryEmailEntity.setId("some-email-hash");
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("email"))).thenReturn(primaryEmailEntity);
         
         emailManager.editEmail("orcid", "email", "email", new MockHttpServletRequest());
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
-        Mockito.verify(mockEmailDao).merge(captor.capture());
+        Mockito.verify(mockEmailDao).persist(captor.capture());
+        Mockito.verify(mockEmailDao).remove(Mockito.eq("some-email-hash"));
         Mockito.verify(mockNotificationManager, Mockito.never()).sendEmailAddressChangedNotification(Mockito.eq("email"), Mockito.eq("email"), Mockito.eq("original"));
         Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("email"));
         
