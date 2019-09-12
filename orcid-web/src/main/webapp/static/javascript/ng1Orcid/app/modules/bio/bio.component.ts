@@ -58,9 +58,6 @@ export class bioComponent implements OnDestroy, OnInit {
           });
           this.bio = person.biography.content;
         }
-      },
-      error => {
-        console.log(error);
       }
     );
   }
