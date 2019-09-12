@@ -525,7 +525,7 @@ public class S3MessageProcessorAPIV3 {
 
             return true;
         } catch (Exception e) {
-            LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid);
+            LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid, e);
         }
         return false;
     }

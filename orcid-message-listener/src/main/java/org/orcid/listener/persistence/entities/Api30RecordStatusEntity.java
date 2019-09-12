@@ -157,7 +157,7 @@ public class Api30RecordStatusEntity {
         this.fundingsLastIndexed = fundingsLastIndexed;
     }
 
-    @Column(name = "invited_postitions_status")
+    @Column(name = "invited_positions_status")
     public Integer getInvitedPositionsStatus() {
         return invitedPositionsStatus;
     }
@@ -166,7 +166,7 @@ public class Api30RecordStatusEntity {
         this.invitedPositionsStatus = invitedPositionsStatus;
     }
 
-    @Column(name = "invited_postitions_last_indexed")
+    @Column(name = "invited_positions_last_indexed")
     public Date getInvitedPositionsLastIndexed() {
         return invitedPositionsLastIndexed;
     }
