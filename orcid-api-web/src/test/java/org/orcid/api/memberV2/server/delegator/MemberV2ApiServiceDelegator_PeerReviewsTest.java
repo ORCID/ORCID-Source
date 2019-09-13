@@ -24,7 +24,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.OrcidAccessControlException;
@@ -33,6 +36,10 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.groupIds.issn.IssnClient;
+import org.orcid.core.groupIds.issn.IssnData;
+import org.orcid.core.groupIds.issn.IssnValidator;
+import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
@@ -92,6 +99,15 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
     @Resource(name = "notificationManager")
     private NotificationManager notificationManager;
     
+    @Resource
+    private GroupIdRecordManager groupIdRecordManager;
+    
+    @Resource
+    private IssnValidator issnValidator;
+    
+    @Resource
+    private IssnClient issnClient;
+    
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
@@ -103,11 +119,37 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         
         when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager); 
+        
+        IssnValidator mockIssnValidator = Mockito.mock(IssnValidator.class);
+        when(mockIssnValidator.issnValid(Mockito.anyString())).thenReturn(true);
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", mockIssnValidator); 
+        
+        IssnClient mockIssnClient = Mockito.mock(IssnClient.class);
+       
+        
+        Answer<IssnData> issnDataAnswer = new Answer<IssnData>() {
+
+            @Override
+            public IssnData answer(InvocationOnMock invocation) throws Throwable {
+                String issn = (String) invocation.getArguments()[0];
+                IssnData mockData = new IssnData();
+                mockData.setIssn(issn);
+                mockData.setMainTitle("test");
+                return mockData;
+            }
+            
+        };
+        
+        when(mockIssnClient.getIssnData(Mockito.anyString())).thenAnswer(issnDataAnswer);
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnClient", mockIssnClient); 
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "orcidSourceClientDetailsId", "APP-1234567898765432");
     }
     
     @After
     public void after() {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);         
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", issnValidator);
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnClient", issnClient);
     }
     
     @BeforeClass
