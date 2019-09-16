@@ -35,7 +35,9 @@ public class ISSNNormalizerTest {
             //unrecognised
             "978-85-17-00088-1",
             "1234567",
-            "123456789"
+            "123456789",
+            "issn:12345678",
+            "11223344"
             );
     
     List<String> results = Lists.newArrayList(
@@ -59,7 +61,9 @@ public class ISSNNormalizerTest {
             "0365-0340",
             "",
             "",
-            "");
+            "",
+            "1234-5678",
+            "1122-3344");
     
     @Test
     public void go(){
