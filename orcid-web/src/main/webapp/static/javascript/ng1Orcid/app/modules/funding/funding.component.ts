@@ -141,6 +141,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
+                    this.fundingService.details.length=0;
                     this.fundingService.loading = false;
                     this.groups = data;
                 },
@@ -155,6 +156,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
             )
             .subscribe(
                 data => {
+                    this.fundingService.details.length=0;
                     this.fundingService.loading = false;
                     this.groups = data;
                 },
