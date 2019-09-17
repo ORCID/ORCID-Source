@@ -289,7 +289,7 @@ public class S3Manager {
     }
 
     public void clearV2Activities(String orcid) throws AmazonClientException, AmazonServiceException {
-        String prefix = orcid.substring(16) + "/activities/" + orcid;
+        String prefix = orcid.substring(16) + "/" + orcid;
         final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV2ActivitiesBucketName()).withPrefix(prefix)
                 .withMaxKeys(maxElements);
         ListObjectsV2Result objects;
@@ -304,7 +304,7 @@ public class S3Manager {
     }
 
     public void clearV3Activities(String orcid) throws AmazonClientException, AmazonServiceException {
-        String prefix = orcid.substring(16) + "/activities/" + orcid;
+        String prefix = orcid.substring(16) + "/" + orcid;
         final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName(orcid)).withPrefix(prefix)
                 .withMaxKeys(maxElements);
         ListObjectsV2Result objects;
