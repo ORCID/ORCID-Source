@@ -68,7 +68,7 @@ export class SearchService {
     }
 
     getAffiliations(orcid): Observable<any> {
-        var url = this.pubBaseUri + '/v2.1/' + orcid + '/activities';
+        var url = this.pubBaseUri + '/v3.0/' + orcid + '/activities';
 
         return this.http.get(url, {headers: this.publicApiHeaders})
         .pipe(
@@ -77,7 +77,7 @@ export class SearchService {
     }
 
     getNames(orcid): Observable<any> {
-        var url = this.pubBaseUri + '/v2.1/' + orcid + '/personal-details';
+        var url = this.pubBaseUri + '/v3.0/' + orcid + '/personal-details';
 
         return this.http.get(url, {headers: this.publicApiHeaders})
         .pipe(
@@ -85,26 +85,16 @@ export class SearchService {
         );
     }
 
-    getResults(params): Observable<any> {
+    getResults(query): Observable<any> {
         return this.searchBaseUri.pipe(
-                switchMap((baseUrlString) => {
-                    orcidSearchUrlJs.setBaseUrl(baseUrlString);
-                    var theUrl = orcidSearchUrlJs.buildUrl(params);                    
-                    return this.http.get(theUrl, {headers: this.publicApiHeaders})                   
-                })
-              )                
+            switchMap((baseUrlString) => {                 
+                return this.http.get(baseUrlString + query, {headers: this.publicApiHeaders})                   
+            })
+        )               
     }
 
     notifyOther(): void {
         this.notify.next();
         console.log('notify');
-    }
-
-    isValid(input): boolean {
-        return orcidSearchUrlJs.isValidInput(input)
-    }
-    
-    isValidOrcidId(input): boolean {
-        return orcidSearchUrlJs.isValidOrcidId(input.toUpperCase())
     }
 }
