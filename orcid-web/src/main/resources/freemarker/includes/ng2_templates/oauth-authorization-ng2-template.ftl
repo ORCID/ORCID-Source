@@ -38,10 +38,10 @@
                         <div id="login-buttons" ng-init="loadAndInitAuthorizationForm()">
                             <div class="row">
                                 <div>
-                                    <button id="authorize" class="btn btn-primary topBuffer bottomBuffer" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (click)="authorize()">
+                                    <button id="authorize" class="btn btn-primary topBuffer bottomBuffer" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (keyup.Space)="authorize()" (keyup.Enter)="authorize()" (click)="authorize()">
                                         <@orcid.msg 'confirm-oauth-access.Authorize' />
                                     </button>
-                                    <a class="oauth-deny-link topBuffer" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" (click)="deny()">
+                                    <a role="button" tabindex="0" class="oauth-deny-link topBuffer" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" (keyup.Space)="deny()" (keyup.Enter)="deny()" (click)="deny()">
                                         <@orcid.msg 'confirm-oauth-access.Deny' />
                                     </a>
                                 </div>                  
@@ -60,13 +60,15 @@
         >
 
             <div *ngIf="!this.isLoggedIn <#if (RequestParameters['oauth'])??>|| true</#if>" class="login">         
-                <p class="title" *ngIf="!showRegisterForm" >${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a id="switch-to-register-form" (click)="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
-                <p class="title" *ngIf="showRegisterForm" >${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account")} <a id = "switch-to-login-form" (click)="switchForm()">${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account.link.text")}</a></p>
+                <p class="title" *ngIf="!showRegisterForm" >${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a role="button" tabindex="0" id="switch-to-register-form" (keyup.Enter)="switchForm()" (keyup.Space)="switchForm()" (click)="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
+                <p class="title" *ngIf="showRegisterForm" >${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account")} <a role="button" tabindex="0" id = "switch-to-login-form" (keyup.Enter)="switchForm()" (keyup.Space)="switchForm()" (click)="switchForm()">${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account.link.text")}</a></p>
                 <div *ngIf="!showRegisterForm">
                     <div class="personal-login" >
                         <div *ngIf="shibbolethEnabled" class="btn-group btn-group-justified" role="group">
-                            <a (click)="showPersonalLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-                            <a (click)="showInstitutionLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+                            <a role="button" tabindex="0"  (keyup.Enter)="showPersonalLogin()" (keyup.Space)="showPersonalLogin()" (click)="showPersonalLogin()" class="btn btn-default" 
+                            [ngClass]="{active: personalLogin == true}" role="button" tabindex="0"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+                            <a role="button" tabindex="0" (keyup.Enter)="showInstitutionLogin()" (keyup.Space)="showInstitutionLogin()" (click)="showInstitutionLogin()" class="btn btn-default" 
+                            [ngClass]="{active: personalLogin == false}" role="button" tabindex="0"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
                         </div>
                         <div *ngIf="personalLogin == true">
                             <div class="login-box">
