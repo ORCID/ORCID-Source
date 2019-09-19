@@ -65,10 +65,8 @@
                 <div *ngIf="!showRegisterForm">
                     <div class="personal-login" >
                         <div *ngIf="shibbolethEnabled" class="btn-group btn-group-justified" role="group">
-                            <a role="button" tabindex="0"  (keyup.Enter)="showPersonalLogin()" (keyup.Space)="showPersonalLogin()" (click)="showPersonalLogin()" class="btn btn-default" 
-                            [ngClass]="{active: personalLogin == true}" role="button" tabindex="0"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-                            <a role="button" tabindex="0" (keyup.Enter)="showInstitutionLogin()" (keyup.Space)="showInstitutionLogin()" (click)="showInstitutionLogin()" class="btn btn-default" 
-                            [ngClass]="{active: personalLogin == false}" role="button" tabindex="0"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+                            <a role="button" tabindex="0"  (keyup.Enter)="showPersonalLogin()" (keyup.Space)="showPersonalLogin()" (click)="showPersonalLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == true}" <span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+                            <a role="button" tabindex="0" (keyup.Enter)="showInstitutionLogin()" (keyup.Space)="showInstitutionLogin()" (click)="showInstitutionLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == false}"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
                         </div>
                         <div *ngIf="personalLogin == true">
                             <div class="login-box">
