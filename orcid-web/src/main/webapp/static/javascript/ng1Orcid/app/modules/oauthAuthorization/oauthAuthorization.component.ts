@@ -210,15 +210,17 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         head.appendChild(script); // Inject the script
     }; 
 
-    authorize(): void {
+    authorize($event): void {
         this.authorizationForm.approved = true;
         this.authorizeRequest();
+        $event.preventDefault()
     };
 
-    deny(): void {
+    deny($event): void {
         this.authorizationForm.approved = false;
         orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + this.gaString]);
         this.authorizeRequest();
+        $event.preventDefault()
     };
 
     isValidClass(cur): any {
@@ -246,8 +248,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }
     };
 
-    showInstitutionLogin(): void  {
-
+    showInstitutionLogin($event): void  {
+        $event.preventDefault()
         this.personalLogin = false; // Hide Personal Login
         
         if(!this.scriptsInjected){ // If shibboleth scripts haven't been
@@ -262,11 +264,15 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
 
-    showPersonalLogin(): void {        
+    showPersonalLogin($event): void {        
         this.personalLogin = true;
+        $event.preventDefault()
     };
 
-    switchForm(email): void {
+    switchForm($event, email): void {
+        console.log( $event)
+        $event.stopPropagation()
+        $event.preventDefault()
         this.showDeactivatedError = false;
         this.showReactivationSent = false; 
         var re = new RegExp("(/register)(.*)?$");
@@ -283,6 +289,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             }
         }
         this.cdr.detectChanges();
+        
     };
 
     toggleNotYouDescription(): void {

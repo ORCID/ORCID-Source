@@ -29,7 +29,7 @@
                             <input id="email" name="email" type="text" class="form-control" [(ngModel)]="requestResetPassword.email" />
                         </div>
                         <span class="orcid-error" *ngIf="showDeactivatedError && !showReactivationSent">
-                            ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a role="button" tabindex="0"  (keyup.Enter)="sendReactivationResetPasswordPage()" (keyup.Space)="sendReactivationResetPasswordPage()" (click)="sendReactivationResetPasswordPage()" >${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                            ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a role="button" tabindex="0"  (keydown.Enter)="sendReactivationResetPasswordPage($event, requestResetPassword.email)" (keydown.Space)="sendReactivationResetPasswordPage($event, requestResetPassword.email)" (click)="sendReactivationResetPasswordPage($event, requestResetPassword.email)" >${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                         </span>
                         <span class="orcid-error" *ngIf="showReactivationSent">
                             <@orcid.msg 'orcid.frontend.verify.reactivation_sent.1'/> <a href="https://orcid.org/help/contact-us">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
@@ -46,7 +46,7 @@
     <#else>
         <div id="RequestPasswordResetCtr" class="reset-password">
         <a name="resetPassword"></a>
-        <a role="button" tabindex="0"  (keyup.Enter)="toggleResetPassword()" (keyup.Space)="toggleResetPassword()" (click)="toggleResetPassword()" id="reset-password-toggle-text" [innerHTML]="resetPasswordToggleText"></a>
+        <a role="button" tabindex="0"  (keydown.Enter)="toggleResetPassword($event)" (keydown.Space)="toggleResetPassword($event)" (click)="toggleResetPassword($event)" id="reset-password-toggle-text" [innerHTML]="resetPasswordToggleText"></a>
         <div *ngIf="showResetPassword">
             <p>
                  <small>
@@ -75,7 +75,7 @@
                         <input id="email" name="email" type="text" class="form-control" [(ngModel)]="requestResetPassword.email" />
                     </div>
                     <span class="orcid-error" *ngIf="showDeactivatedError && !showReactivationSent">
-                        ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a role="button" tabindex="0" (keyup.Enter)="sendReactivation(requestResetPassword.email)" (keyup.Space)="sendReactivation(requestResetPassword.email)" (click)="sendReactivation(requestResetPassword.email)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
+                        ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a role="button" tabindex="0" (keydown.Enter)="sendReactivation($event, requestResetPassword.email)" (keydown.Space)="sendReactivation($event, requestResetPassword.email)" (click)="sendReactivation($event, requestResetPassword.email)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}
                     </span> 
                     <span class="orcid-error" *ngIf="showReactivationSent">
                         <@orcid.msg 'orcid.frontend.verify.reactivation_sent.1'/> <a href="https://orcid.org/help/contact-us">${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.reactivation_sent.3")}
