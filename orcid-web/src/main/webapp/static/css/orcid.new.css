@@ -1,9 +1,14 @@
 body a, 
 a {
     color: #2E7F9F;
+    font-weight: bold;
     cursor: pointer;
     text-decoration: none;
     word-wrap: break-word
+}
+
+accesible-urls {
+
 }
 
 body a:active,
@@ -9564,6 +9569,7 @@ user-menu .top-menu-header > div .my-profile{
 user-menu a.top-menu-item {
     display: block;
     color: rgba(0, 0, 0, 0.87);
+    font-weight: 400;
 }
 
 .lang-rl user-menu a.top-menu-item {
