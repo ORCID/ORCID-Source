@@ -22,7 +22,7 @@
                 <div class="form-group clear-fix">
                     <label for="givenNames" class="control-label"><@orcid.msg "oauth_sign_up.labelfirstname" /></label>
                     <div class="bottomBuffer form-group clear-fix">
-                        <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" class="input-xlarge" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>
+                        <input id="register-form-given-names" name="givenNames" type="text" class="input-xlarge" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>
                         <span class="required" [ngClass]="isValidClass(registrationForm.givenNames)">*</span> 
                         <div class="popover-help-container  leftBuffer">
                             <i class="glyphicon glyphicon-question-sign"></i>
@@ -36,7 +36,7 @@
                                 </div>
                             </div>
                         </div>
-                        <span class="orcid-error" *ngIf="registrationForm.givenNames.errors.length > 0">
+                        <span role="alert" class="orcid-error" *ngIf="registrationForm.givenNames.errors.length > 0">
                             <div *ngFor="let error of registrationForm.givenNames.errors" [innerHTML]="error"></div>
                         </span>
                     </div>
@@ -45,8 +45,8 @@
                 <div class="form-group clear-fix">
                     <label class="control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
                     <div class="bottomBuffer">
-                        <input id="register-form-family-name" name="familyNames" type="text" tabindex="2" class="input-xlarge" [(ngModel)]="registrationForm.familyNames.value" (blur)="serverValidate('FamilyNames')"/>
-                        <span class="orcid-error" *ngIf="registrationForm.familyNames.errors.length > 0">
+                        <input id="register-form-family-name" name="familyNames" type="text" class="input-xlarge" [(ngModel)]="registrationForm.familyNames.value" (blur)="serverValidate('FamilyNames')"/>
+                        <span  role="alert"  class="orcid-error" *ngIf="registrationForm.familyNames.errors.length > 0">
                             <div *ngFor="let error of registrationForm.familyNames.errors" [innerHTML]="error"></div>
                         </span>
                     </div>
@@ -56,7 +56,7 @@
                     <div class="form-group clear-fix">
                         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
                         <div class="relative">          
-                            <input name="emailprimary234" type="text" tabindex="3" class="input-xlarge" disabled="true" [(ngModel)]="registrationForm.email.value" (blur)="serverValidate('Email')"/>
+                            <input name="emailprimary234" type="text" class="input-xlarge" disabled="true" [(ngModel)]="registrationForm.email.value" (blur)="serverValidate('Email')"/>
                             <span class="required" [ngClass]="isValidClass(registrationForm.email)">*</span>                                                       
                         </div>
                     </div>                
@@ -64,7 +64,7 @@
                     <div class="form-group clear-fix" *ngFor="let emailAdditional of registrationForm.emailsAdditional;let i = index;trackBy:trackByIndex">
                         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailadditional")}</label>
                         <div class="relative">
-                            <input name="emailadditional234" type="text" tabindex="3" class="input-xlarge" [(ngModel)]="registrationForm.emailsAdditional[i].value" (blur)="serverValidate('EmailsAdditional')"/>
+                            <input name="emailadditional234" type="text" class="input-xlarge" [(ngModel)]="registrationForm.emailsAdditional[i].value" (blur)="serverValidate('EmailsAdditional')"/>
                             <div *ngIf="i == 0" class="popover-help-container leftBuffer">
                                 <i class="glyphicon glyphicon-question-sign"></i>
                                 <div id="email-additional-help" class="popover bottom">
@@ -80,10 +80,10 @@
                             </div>
                             <span class="orcid-error" *ngIf="registrationForm?.emailsAdditional[i]?.errors && registrationForm?.emailsAdditional[i]?.errors?.length > 0">
                                 <div *ngFor="let error of registrationForm.emailsAdditional[i].errors;let i = index;trackBy:trackByIndex">
-                                    <span class="orcid-error" *ngIf="error=='unavailable'">
+                                    <span  role="alert"  class="orcid-error" *ngIf="error=='unavailable'">
                                         {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_1_ng2' /> <a href="{{getBaseUri()}}/signin?loginId={{registrationForm.emailsAdditional[i].value}}"><@orcid.msg 'oauth.registration.duplicate_email_2' /></a><@orcid.msg 'oauth.registration.duplicate_email_3_ng2' /> {{registrationForm.emailsAdditional[i].value}} <@orcid.msg 'oauth.registration.duplicate_email_4_ng2' />
                                     </span>
-                                    <span class="orcid-error" *ngIf="error!='unavailable'" [innerHTML]="error"></span>
+                                    <span   role="alert" class="orcid-error" *ngIf="error!='unavailable'" [innerHTML]="error"></span>
                                 </div>
                             </span>
                         </div>
@@ -95,7 +95,7 @@
                 <div class="form-group clear-fix">
                     <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
                     <div class="bottomBuffer">
-                        <input id="register-form-password" type="password" name="password" tabindex="5" class="input-xlarge" [(ngModel)]="registrationForm.password.value" (ngModelChange)="serverValidate('Password')"/>
+                        <input id="register-form-password" type="password" name="password" class="input-xlarge" [(ngModel)]="registrationForm.password.value" (ngModelChange)="serverValidate('Password')"/>
                         <span class="required" [ngClass]="isValidClass(registrationForm.password)">*</span>
                         <@orcid.passwordHelpPopup />
                         <span class="pattern-errors">
@@ -115,7 +115,7 @@
                                 <@spring.message 'Pattern.registrationForm.password.oneNumber'/>
                             </div>
                         </span>
-                        <span class="orcid-error" *ngIf="registrationForm?.password?.errors?.length > 0">
+                        <span  role="alert"  class="orcid-error" *ngIf="registrationForm?.password?.errors?.length > 0">
                                 <div *ngFor='let error of registrationForm.password.errors'>
                                 <ng-container *ngIf="error.indexOf('Pattern.') < 0">{{error}} </ng-container>
                                 <ng-container *ngIf="error.indexOf('containsEmail') >= 0"><@spring.message 'Pattern.registrationForm.password.containsEmail'/> </ng-container>
@@ -127,9 +127,9 @@
                 <div class="form-group clear-fix">
                     <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
                     <div class="bottomBuffer">
-                        <input id="register-form-confirm-password" type="password" name="confirmPassword" tabindex="6" class="input-xlarge" [(ngModel)]="registrationForm.passwordConfirm.value" (blur)="serverValidate('PasswordConfirm')"/>
+                        <input id="register-form-confirm-password" type="password" name="confirmPassword" class="input-xlarge" [(ngModel)]="registrationForm.passwordConfirm.value" (blur)="serverValidate('PasswordConfirm')"/>
                         <span class="required" [ngClass]="isValidClass(registrationForm.passwordConfirm)">*</span>                 
-                        <span class="orcid-error" *ngIf="registrationForm.passwordConfirm.errors.length > 0">
+                        <span  role="alert"  class="orcid-error" *ngIf="registrationForm.passwordConfirm.errors.length > 0">
                             <div *ngFor="let error of registrationForm.passwordConfirm.errors" [innerHTML]="error"></div>
                         </span>
                     </div>
@@ -169,7 +169,7 @@
                                 </div>
                             </div>
                         </div>
-                        <span class="orcid-error" *ngIf="registrationForm.activitiesVisibilityDefault.errors.length > 0">
+                        <span  role="alert" class="orcid-error" *ngIf="registrationForm.activitiesVisibilityDefault.errors.length > 0">
                             <div *ngFor="let error of registrationForm.activitiesVisibilityDefault.errors" [innerHTML]="error"></div>
                         </span>
                     </div>
@@ -178,16 +178,16 @@
                         <h4><@orcid.msg 'register.labelTermsofUse'/>
                             <span class="required"  [ngClass]="{'text-error':registrationForm.termsOfUse.value == false}"></span></h4>  
                         <p>
-                            <input id="register-form-term-box" type="checkbox" name="termsConditions" tabindex="9" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
+                            <input id="register-form-term-box" type="checkbox" name="termsConditions"name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
                             <@orcid.msg 'register.labelconsent'/> <a href="{{aboutUri}}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="{{aboutUri}}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
                         </p>
-                        <span class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
+                        <span  role="alert"  class="orcid-error" *ngIf="registrationForm.termsOfUse.errors.length > 0">
                             <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
                         </span>
                     </div>
                 </div>
                 <div class="relative">
-                    <button tabindex="10" class="btn btn-primary" (click)="postReactivationConfirm(null)"><@orcid.msg "orcid.frontend.reactivate" /></button>
+                    <button class="btn btn-primary" (click)="postReactivationConfirm(null)"><@orcid.msg "orcid.frontend.reactivate" /></button>
                 </div>
             </div>
         </div>
