@@ -3,8 +3,9 @@ declare var $: any;
 import {  Component, OnDestroy, OnInit, ChangeDetectorRef } 
     from '@angular/core';
 
-import { Subject, Subscription } 
-    from 'rxjs';
+import { Observable, Subject, Subscription } 
+    from 'rxjs'; 
+
 import { takeUntil } 
     from 'rxjs/operators';
 
@@ -21,6 +22,11 @@ import { SearchService }
 export class SearchComponent implements OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
+
+    quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
+    orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
+    orcidFullRegex = new RegExp(
+            "^\\s*((http://)?([^/]*orcid\\.org|localhost.*/orcid-web)/)?(\\d{4}-){3,}\\d{3}[\\dX]\\s*$");
 
     allResults: any;
     areMoreResults: any;
@@ -67,6 +73,100 @@ export class SearchComponent implements OnDestroy, OnInit {
         }
     };
 
+    areResults(): any {
+        return this.allResults.length > 0;
+    };
+
+    buildAdvancedSearchQuery(input: any) {
+        var escapedAffiliationOrg;
+        var escapedFamilyName;
+        var escapedGivenNames;
+        var escapedGridOrg;
+        var escapedKeyword;
+        var query = '';
+        var doneSomething = false;
+        if (this.hasValue(input.givenNames)) {
+            escapedGivenNames = this.escapeReservedChar(input.givenNames);
+            query += 'given-names:' + escapedGivenNames;
+            doneSomething = true;
+        }
+        if (this.hasValue(input.familyName)) {
+            if (doneSomething) {
+                query += ' AND ';
+            }
+            escapedFamilyName = this.escapeReservedChar(input.familyName);
+            query += 'family-name:' + escapedFamilyName;
+            doneSomething = true;
+        }
+        if (this.hasValue(input.searchOtherNames) && this.hasValue(input.givenNames)) {
+            query += ' OR other-names:' + escapedGivenNames;
+        }
+        if (this.hasValue(input.keyword)) {
+            if (doneSomething) {
+                query += ' AND ';
+            }
+            escapedKeyword = this.escapeReservedChar(input.keyword);
+            query += 'keyword:' + escapedKeyword;
+            doneSomething = true;
+        }
+        if (this.hasValue(input.affiliationOrg)) {
+            if (doneSomething) {
+                query += ' AND ';
+            }
+            
+            //if all chars are numbers, assume it's a ringgold id
+            if (input.affiliationOrg.match(/^[0-9]*$/)) {
+                query += 'ringgold-org-id:' + input.affiliationOrg;
+            } else if(input.affiliationOrg.startsWith('grid.')) {
+                escapedGridOrg = this.escapeReservedChar(input.affiliationOrg);
+                query += 'grid-org-id:' + escapedGridOrg;
+            } else {
+                escapedAffiliationOrg = this.escapeReservedChar(input.affiliationOrg);
+                query += 'affiliation-org-name:' + escapedAffiliationOrg;
+            }
+            doneSomething = true;
+        }
+        
+        return doneSomething ? '?q=' + encodeURIComponent(query)
+                + this.offset(input) : '?q=';
+    }
+
+    buildQuery(input: any) {
+        if (this.hasValue(input.text)) {
+            var orcidId = this.extractOrcidId(input.text);
+            if (orcidId) {
+                // Search for iD specifically
+                return "?q=orcid:" + orcidId + this.offset(input);
+            }
+            // General quick search
+            return '?q='
+                    + encodeURIComponent(this.quickSearchEDisMax + input.text)
+                    + this.offset(input);
+        } else {
+            // Advanced search
+            return this.buildAdvancedSearchQuery(input);
+        }
+    };
+
+    escapeReservedChar(inputText: any){
+        //escape all reserved chars except double quotes
+        //per https://lucene.apache.org/solr/guide/6_6/the-standard-query-parser.html#TheStandardQueryParser-EscapingSpecialCharacters
+        var escapedText = inputText.replace(/([!^&*()+=\[\]\\/{}|:?~])/g, "\\$1");
+        return escapedText.toLowerCase();
+    }
+
+    extractOrcidId(string: any) {
+        var regexResult = this.orcidPathRegex.exec(string);
+        if (regexResult) {
+            return regexResult[0];
+        }
+        return null;
+    }
+
+    getBaseUri(): String {
+        return getBaseUri();
+    };
+
     getFirstResults(input: any){        
         this.showNoResultsAlert = false;
         this.allResults = new Array();
@@ -91,7 +191,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     search(input: any) {
-        this.searchSrvc.getResults(this.input).pipe(    
+        this.searchSrvc.getResults(this.buildQuery(this.input)).pipe(    
             takeUntil(this.ngUnsubscribe)
         ).subscribe(
             searchResults => {
@@ -200,29 +300,42 @@ export class SearchComponent implements OnDestroy, OnInit {
                 }
             );
         } 
-    }
+    };
 
     getDetails(orcidList: any) {
        for(var i = 0; i < orcidList.length; i++){
             this.getNames(orcidList[i]);
             this.getAffiliations(orcidList[i]);
        }
-    }
+    };
 
-    areResults(): any {
-        return this.allResults.length > 0;
-    }
+    hasValue(ref: any) {
+        return typeof ref !== 'undefined' && ref !== null && ref !== '';
+    };
 
     isValid(): any {
-        return this.searchSrvc.isValid(this.input);
+        var fieldsToCheck = [ this.input.text, this.input.givenNames, this.input.familyName,
+                this.input.keyword, this.input.affiliationOrg ];
+        for ( var i = 0; i < fieldsToCheck.length; i++) {
+            if (this.hasValue(fieldsToCheck[i])) {
+                return true;
+            }
+        }
+        return false;
     };
 
     isValidOrcidId(): any{
-        if(typeof this.input.text === 'undefined' || this.input.text === null || this.input.text === '' || this.searchSrvc.isValidOrcidId(this.input.text)){
+        if(typeof this.input.text === 'undefined' || this.input.text === null || this.input.text === '' || this.orcidFullRegex.exec(this.input.text.toUpperCase())){
             return true;
         }
         return false;
     }
+
+    offset(input: any) {
+        var start = this.hasValue(input.start) ? input.start : 0;
+        var rows = this.hasValue(input.rows) ? input.rows : 10;
+        return '&start=' + start + '&rows=' + rows;
+    };
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();
@@ -237,10 +350,5 @@ export class SearchComponent implements OnDestroy, OnInit {
             this.search(this.input);
         }
     }
-
-        
-    getBaseUri(): String {
-        return getBaseUri();
-    };
 
 }
