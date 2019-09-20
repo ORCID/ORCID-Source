@@ -1,14 +1,21 @@
 body a, 
 a {
     color: #2E7F9F;
-    font-weight: bold;
     cursor: pointer;
     text-decoration: none;
     word-wrap: break-word
 }
 
-accesible-urls {
+.accesible-urls body a, .accesible-urls a {
+    font-weight: bold;
+}
 
+body .accesible-urls a:active,
+body .accesible-urls a:hover,
+.accesible-urls a:active,
+.accesible-urls a:hover{
+    color: #2E7F9F;
+    text-decoration: underline;
 }
 
 body a:active,
@@ -8653,7 +8660,7 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 span.notYouUrl {
     display: flex;
     align-items: center;
-    width: 80px;
+    width: 90px;
     justify-content: space-between;
 }
 
@@ -9748,4 +9755,9 @@ button.google-login {
 button.google-login img, button.facebook-login img {
     height: 18px;
     margin-right: 10px;
+}
+
+
+oauth-authorization-ng2 a:hover {
+
 }

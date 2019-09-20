@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="oauth-authorization-ng2-template">
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/confirm-oauth-access.ftl -->
     <#if springMacroRequestContext.requestUri?contains("/oauth/authorize")>
-        <div class="container confirm-oauth-access oneStepWidth">     
+        <div class="container confirm-oauth-access oneStepWidth accesible-urls">     
             <!-- /Freemarker and GA variables -->
             <@security.authorize access="hasRole('ROLE_USER')">
                 <div class="row top-header">
@@ -55,8 +55,8 @@
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/login.ftl -->
     <#if springMacroRequestContext.requestUri?contains("/signin") || springMacroRequestContext.requestUri?contains("/login") >
         <div   
-        <@orcid.checkFeatureStatus 'WIDE_GRID'> class="col-md-5 col-md-offset-3" </@orcid.checkFeatureStatus>
-        <@orcid.checkFeatureStatus featureName='WIDE_GRID' enabled=false> class="col-md-6 col-md-offset-3" </@orcid.checkFeatureStatus>
+        <@orcid.checkFeatureStatus 'WIDE_GRID'> class="col-md-5 col-md-offset-3 accesible-urls" </@orcid.checkFeatureStatus>
+        <@orcid.checkFeatureStatus featureName='WIDE_GRID' enabled=false> class="col-md-6 col-md-offset-3 accesible-urls" </@orcid.checkFeatureStatus>
         >
 
             <div *ngIf="!this.isLoggedIn <#if (RequestParameters['oauth'])??>|| true</#if>" class="login">         
@@ -99,7 +99,7 @@
                                         <li>
                                             <form ngNoForm action="{{getBaseUri()}}/signin/google" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                <button type="submit" class="google-login"> <img src="{{assetsPath}}/img/svg/google-simple.svg"> Sign in with Google</button>
+                                                <button type="submit" class="google-login"> <img role="presentation" src="{{assetsPath}}/img/svg/google-simple.svg"> Sign in with Google</button>
                                                 <input type="hidden" name="scope" value="email" />
                                             </form>
                                         </li>
@@ -107,7 +107,7 @@
                                         <li>
                                             <form ngNoForm action="{{getBaseUri()}}/signin/facebook" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                <button type="submit" class="facebook-login"> <img src="{{assetsPath}}/img/svg/facebook-icon-white.svg"> Sign in With Facebook</button>
+                                                <button type="submit" class="facebook-login"> <img role="presentation" src="{{assetsPath}}/img/svg/facebook-icon-white.svg"> Sign in With Facebook</button>
                                                 <input type="hidden" name="scope" value="email"/>
                                             </form>
                                         </li>                                        
