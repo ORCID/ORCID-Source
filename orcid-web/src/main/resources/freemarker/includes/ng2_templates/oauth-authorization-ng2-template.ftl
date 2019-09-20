@@ -95,22 +95,23 @@
                                         </div>
                                     </div>
                                     <ul class="social-icons">
-                                        <!--FACEBOOK-->
-                                        <li>
-                                            <form ngNoForm action="{{getBaseUri()}}/signin/facebook" method="POST">
-                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                <button type="submit" class="btn btn-social-icon btn-facebook"></button>
-                                                <input type="hidden" name="scope" value="email"/>
-                                            </form>
-                                        </li>                                        
                                         <!--GOOGLE-->
                                         <li>
                                             <form ngNoForm action="{{getBaseUri()}}/signin/google" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                <button type="submit" class="btn btn-social-icon btn-google" ></button>
+                                                <button type="submit" class="google-login"> <img src="{{assetsPath}}/img/svg/google-simple.svg"> Sign in with Google</button>
                                                 <input type="hidden" name="scope" value="email" />
                                             </form>
                                         </li>
+                                        <!--FACEBOOK-->
+                                        <li>
+                                            <form ngNoForm action="{{getBaseUri()}}/signin/facebook" method="POST">
+                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                                <button type="submit" class="facebook-login"> <img src="{{assetsPath}}/img/svg/facebook-icon-white.svg"> Sign in With Facebook</button>
+                                                <input type="hidden" name="scope" value="email"/>
+                                            </form>
+                                        </li>                                        
+
                                     </ul>
                                 </div><!--social login-->
                             </div><!--login box-->

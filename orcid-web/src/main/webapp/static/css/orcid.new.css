@@ -6071,10 +6071,10 @@ a#reset-password-toggle-text:hover:active {
 }
 
 .login .social-login ul.social-icons {
-    display: block;
     margin: 0 auto;
     padding: 0;
-    width: 110px
+    display: flex;
+    justify-content: center;
 }
 
 .login .social-login ul.social-icons li {
@@ -6082,7 +6082,17 @@ a#reset-password-toggle-text:hover:active {
 }
 
 .login .social-login ul.social-icons li:not(:first-child) {
-    margin-left: 25px
+    margin-left: 8px
+}
+
+@media (max-width:650px) { 
+    .login .social-login ul.social-icons {
+        flex-direction: column;
+    }
+    .login .social-login ul.social-icons li:not(:first-child) {
+        margin-left: 0px;
+        margin-top: 5px;
+    }
 }
 
 .login #authorize-button {
@@ -9692,4 +9702,50 @@ footer-ng2 .footer-row-container a {
 
 footer-ng2 .footer-row-container a:hover {
     text-decoration: underline;
+}
+
+
+button.facebook-login {
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+    align-items: center;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
+    background-color: #3b5998;
+    border-radius: 5px;
+    display: flex;
+    padding: 6.5px 9px;
+    color: white;
+    min-width: 200px;
+    justify-content: center;
+}
+
+button.google-login {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+    align-items: center;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
+    background-color: #fafafa;
+    border-radius: 5px;
+    display: flex;
+    padding: 6.5px 9px;
+    min-width: 200px;
+    justify-content: center;
+}
+
+button.facebook-login {
+}
+button.google-login {
+}
+
+button.google-login img, button.facebook-login img {
+    height: 18px;
+    margin-right: 10px;
 }
