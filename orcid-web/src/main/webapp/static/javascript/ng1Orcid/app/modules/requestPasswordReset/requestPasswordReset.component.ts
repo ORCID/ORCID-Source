@@ -113,7 +113,7 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
 
     //Send reactivation email from /reset-password
     sendReactivationResetPasswordPage($event, email): void {
-        $event.preventDefaults()
+        $event.preventDefault()
         this.oauthService.sendReactivationEmail(email)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -134,13 +134,13 @@ export class RequestPasswordResetComponent implements AfterViewInit, OnDestroy, 
     //Used on /signin and any other location where request-reset-password-ng2 
     //is child of oauth-authorization-ng2
     sendReactivation($event, email?): void {
-        $event.preventDefaults()
+        $event.preventDefault()
         let _email = email;
         this.sendReactivationEmail.emit(_email);
     }
 
     toggleResetPassword($event): void {
-        $event.preventDefaults()
+        $event.preventDefault()
         this.showResetPassword = !this.showResetPassword;
 
         // pre-populate with email from signin form 

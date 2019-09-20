@@ -521,7 +521,10 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }  
     };
 
-    sendReactivationEmail(email): void {
+    sendReactivationEmail(email, $event?): void {
+        if (event) {
+            $event.preventDefault()
+        }
         this.oauthService.sendReactivationEmail(email)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
