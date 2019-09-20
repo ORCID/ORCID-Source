@@ -41,10 +41,10 @@
                                     <button id="authorize" class="btn btn-primary topBuffer bottomBuffer" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (keydown.Space)="authorize($event)" (keydown.Enter)="authorize($event)" (click)="authorize($event)">
                                         <@orcid.msg 'confirm-oauth-access.Authorize' />
                                     </button>
+                                </div>       
                                     <a role="button" tabindex="0" class="oauth-deny-link topBuffer" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" (keydown.Space)="deny($event)" (keydown.Enter)="deny($event)" (click)="deny($event)">
                                         <@orcid.msg 'confirm-oauth-access.Deny' />
-                                    </a>
-                                </div>                  
+                                    </a>           
                             </div>
                         </div>
                     </div>      
