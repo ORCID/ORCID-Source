@@ -51,7 +51,7 @@ Editing the work section of a record requires a 3 step OAuth token with the ```/
 
 - **publication_date** _(optional)_ The date the work was completed
 
-- **exteral-id-type** _(required)_ The type of identifier. This field must be selected from the [supported work identifiers](https://pub.qa.orcid.org/v2.0/identifiers?locale=en)
+- **exteral-id-type** _(required)_ The type of identifier. This field must be selected from the [supported work identifiers](https://pub.qa.orcid.org/v3.0/identifiers?locale=en)
 
 - **exteral-id-value** _(required)_ The identifier itself
 

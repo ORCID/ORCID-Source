@@ -30,7 +30,7 @@ Editing the research resources section of a record requires a 3 step OAuth token
 
 - **proposal host** _(required)_ The organization that receives and processes resource proposals or requests. Proposal host may or may not be the same as resource host.
 
-- **external-id** _(required)_ An identifier for the propsal. The identifier type must be selected from the [supported identifier types](https://pub.qa.orcid.org/v2.0/identifiers?locale=en). In the case where there is no persistent unique identifier for the proposal, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type").
+- **external-id** _(required)_ An identifier for the propsal. The identifier type must be selected from the [supported identifier types](https://pub.qa.orcid.org/v3.0/identifiers?locale=en). In the case where there is no persistent unique identifier for the proposal, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type").
 
 - **start date** _(optional)_ The date the access started
 
