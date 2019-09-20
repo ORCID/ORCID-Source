@@ -6407,10 +6407,10 @@ a#reset-password-toggle-text:hover:active {
 .member-list .member-logo {
     width: auto;
     height: auto;
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 200px;
+    max-height: 200px;
     float: left;
-    margin: 0 10px 0 0
+    margin: 0 100% 15px 0;
 }
 
 .member-list h3 {
