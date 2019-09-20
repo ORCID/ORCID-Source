@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="oauth-authorization-ng2-template">
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/confirm-oauth-access.ftl -->
     <#if springMacroRequestContext.requestUri?contains("/oauth/authorize")>
-        <div class="container confirm-oauth-access oneStepWidth accesible-urls">     
+        <div class="container confirm-oauth-access oneStepWidth accessible-urls accessible-errors">     
             <!-- /Freemarker and GA variables -->
             <@security.authorize access="hasRole('ROLE_USER')">
                 <div class="row top-header">
@@ -55,8 +55,8 @@
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/login.ftl -->
     <#if springMacroRequestContext.requestUri?contains("/signin") || springMacroRequestContext.requestUri?contains("/login") >
         <div   
-        <@orcid.checkFeatureStatus 'WIDE_GRID'> class="col-md-5 col-md-offset-3 accesible-urls" </@orcid.checkFeatureStatus>
-        <@orcid.checkFeatureStatus featureName='WIDE_GRID' enabled=false> class="col-md-6 col-md-offset-3 accesible-urls" </@orcid.checkFeatureStatus>
+        <@orcid.checkFeatureStatus 'WIDE_GRID'> class="col-md-5 col-md-offset-3 accessible-urls accessible-errors" </@orcid.checkFeatureStatus>
+        <@orcid.checkFeatureStatus featureName='WIDE_GRID' enabled=false> class="col-md-6 col-md-offset-3 accessible-urls accessible-errors" </@orcid.checkFeatureStatus>
         >
 
             <div *ngIf="!this.isLoggedIn <#if (RequestParameters['oauth'])??>|| true</#if>" class="login">         

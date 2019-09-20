@@ -6,14 +6,14 @@ a {
     word-wrap: break-word
 }
 
-.accesible-urls body a, .accesible-urls a {
+.accessible-urls body a, .accessible-urls a {
     font-weight: bold;
 }
 
-body .accesible-urls a:active,
-body .accesible-urls a:hover,
-.accesible-urls a:active,
-.accesible-urls a:hover{
+body .accessible-urls a:active,
+body .accessible-urls a:hover,
+.accessible-urls a:active,
+.accessible-urls a:hover{
     color: #2E7F9F;
     text-decoration: underline;
 }
@@ -2426,6 +2426,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .badPass,.shortPass,div.orcid-error,label.error,span.orcid-error {
     color: red
+}
+
+.accessible-errors .badPass,.accessible-errors .shortPass,.accessible-errors div.orcid-error,.accessible-errors label.error,.accessible-errors span.orcid-error {
+    color: #C62828;
 }
 
 .goodPass {

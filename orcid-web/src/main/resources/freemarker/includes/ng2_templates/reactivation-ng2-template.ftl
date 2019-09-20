@@ -12,7 +12,7 @@
         </div>
     </div>
 
-    <div *ngIf="reactivationData && reactivationData.tokenValid && !reactivationData.linkExpired" class="row">
+    <div *ngIf="reactivationData && reactivationData.tokenValid && !reactivationData.linkExpired" class="row accessible-urls accessible-errors">
         <div class="col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
             <p><@orcid.msg "orcid.frontend.verify.reactivation.thank_you" /></p>
             <p><@orcid.msg "orcid.frontend.verify.reactivation.please_complete" /></p>

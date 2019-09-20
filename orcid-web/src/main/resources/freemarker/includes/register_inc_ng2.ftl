@@ -1,4 +1,4 @@
-<div id="register" class="oauth-registration">
+<div id="register" class="oauth-registration accesible-urls accesible-erros">
     <!-- First name -->
     <div class="form-group clear-fix">
         <label for="givenNames" id="label-register-form-given-names"class="control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
