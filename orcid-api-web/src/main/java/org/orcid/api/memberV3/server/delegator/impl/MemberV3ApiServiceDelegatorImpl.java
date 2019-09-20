@@ -669,6 +669,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     public Response createPeerReview(String orcid, PeerReview peerReview) {
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_UPDATE);
         clearSource(peerReview);
+
         PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
         sourceUtils.setSourceName(newPeerReview);
         try {
@@ -688,6 +689,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(params);
         }
         clearSource(peerReview);
+        
         PeerReview updatedPeerReview = peerReviewManager.updatePeerReview(orcid, peerReview, true);
         sourceUtils.setSourceName(updatedPeerReview);
         return Response.ok(updatedPeerReview).build();

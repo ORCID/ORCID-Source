@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
+import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.NotificationManager;
@@ -25,6 +26,7 @@ import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.identifiers.normalizers.ISSNNormalizer;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
@@ -41,6 +43,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
 
+    @Resource
+    private ISSNNormalizer issnNormaliser;
+    
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
@@ -97,6 +102,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
                 externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
             }
 
+            createIssnGroupIdIfNecessary(peerReview);
             validateGroupId(peerReview);
         }
 
@@ -119,6 +125,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         entity.setProfile(profile);        
         setIncomingPrivacy(entity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
+        
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE));
@@ -163,13 +170,24 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         //Be sure it doesn't overwrite the source
         updatedEntity.setSourceId(existingSourceId);
         updatedEntity.setClientSourceId(existingClientSourceId);
-        
+        createIssnGroupIdIfNecessary(peerReview);
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         updatedEntity.setOrg(updatedOrganization);
         updatedEntity = peerReviewDao.merge(updatedEntity);
         peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(updatedEntity, ActionType.UPDATE));
         return jpaJaxbPeerReviewAdapter.toPeerReview(updatedEntity);
+    }
+
+    private void createIssnGroupIdIfNecessary(PeerReview peerReview) {
+        if (IssnGroupIdPatternMatcher.isIssnGroupType(peerReview.getGroupId())) {
+            String normalisedIssn = issnNormaliser.normalise("issn", peerReview.getGroupId());
+            String normalisedGroupId = "issn:" + normalisedIssn;
+            if (!groupIdRecordManager.exists(normalisedGroupId)) {
+                groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(normalisedGroupId, normalisedIssn);
+            }
+            peerReview.setGroupId(normalisedGroupId);
+        }
     }
 
     @Override
@@ -247,4 +265,5 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     public void removeAllPeerReviews(String orcid) {
         peerReviewDao.removeAllPeerReviews(orcid);
     }
+    
 }
