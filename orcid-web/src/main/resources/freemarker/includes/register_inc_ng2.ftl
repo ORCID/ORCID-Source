@@ -3,7 +3,7 @@
     <div class="form-group clear-fix">
         <label for="givenNames" class="control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
         <div class="bottomBuffer">
-            <input id="register-form-given-names" name="givenNames" type="text" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>                             
+            <input required id="register-form-given-names" name="givenNames" type="text" [(ngModel)]="registrationForm.givenNames.value" (blur)="serverValidate('GivenNames')"/>                             
             <div class="popover-help-container leftBuffer">
                 <i class="glyphicon glyphicon-question-sign"></i>
                 <div id="name-help" class="popover bottom">
@@ -25,7 +25,7 @@
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labellastname'/> <i><@orcid.msg 'register.optional'/></i></label>
         <div class="bottomBuffer">
-            <input id="register-form-family-name" name="familyNames" type="text" class=""  [(ngModel)]="registrationForm.familyNames.value" (blur)="serverValidate('FamilyNames')"/>
+            <input required id="register-form-family-name" name="familyNames" type="text" class=""  [(ngModel)]="registrationForm.familyNames.value" (blur)="serverValidate('FamilyNames')"/>
             <span role="alert" class="orcid-error" *ngIf="registrationForm?.familyNames?.errors?.length > 0">
                 <div *ngFor="let error of registrationForm.familyNames.errors" [innerHTML]="error"></div>
             </span>
@@ -36,7 +36,7 @@
         <div class="form-group clear-fix">
             <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemailprimary")}</label>
             <div class="relative">          
-                <input name="emailprimary234" type="text" class="input-xlarge" [(ngModel)]="registrationForm.email.value" (blur)="serverValidate('Email')"/>
+                <input required name="emailprimary234" type="text" class="input-xlarge" [(ngModel)]="registrationForm.email.value" (blur)="serverValidate('Email')"/>
                 <span role="alert" class="orcid-error" *ngIf="registrationForm?.email?.errors?.length > 0 && !showDeactivatedError && !showReactivationSent && !showDuplicateEmailError">
                     <div *ngFor="let error of registrationForm.email.errors" [innerHTML]="error"></div>
                 </span>
@@ -90,23 +90,23 @@
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
         <div class="bottomBuffer">
-            <input id="register-form-password" type="password" name="password" class="" [(ngModel)]="registrationForm.password.value" (ngModelChange)="serverValidate('Password')"/>
+            <input required id="register-form-password" type="password" name="password" class="" [(ngModel)]="registrationForm.password.value" (ngModelChange)="serverValidate('Password')"/>
             <@orcid.passwordHelpPopup />
-            <span class="pattern-errors">
-                <div class="pattern-container">
-                    <img *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
-                    <img *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
-                    <@spring.message 'Pattern.registrationForm.password.eigthCharacters'/>
+            <span class="pattern-errors" aria-live="polite" >
+                <div class="pattern-container flex" aria-labelledby="eigthCharacters-status eigthCharacters" >
+                    <img aria-hidden="true" tabindex="-1" id="eigthCharacters-status" *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet" aria-label="Unmet password requirement " >
+                    <img aria-hidden="true" tabindex="-1" id="eigthCharacters-status" *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met" aria-label="Met password requirement " >
+                    <div aria-hidden="true" tabindex="-1" id="eigthCharacters"><@spring.message 'Pattern.registrationForm.password.eigthCharacters'/></div>
                 </div>
-                <div class="pattern-container">
-                    <img *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.letterOrSymbol')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
-                    <img *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.letterOrSymbol')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
-                    <@spring.message 'Pattern.registrationForm.password.letterOrSymbol'/>
+                <div class="pattern-container flex"  aria-labelledby="letterOrSymbol-status letterOrSymbol">
+                    <img aria-hidden="true" tabindex="-1" id="letterOrSymbol-status" *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.letterOrSymbol')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" aria-label="Unmet password requirement " >
+                    <img aria-hidden="true" tabindex="-1" id="letterOrSymbol-status" *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.letterOrSymbol')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" aria-label="Met password requirement " >
+                    <div aria-hidden="true" tabindex="-1" id="letterOrSymbol" ><@spring.message 'Pattern.registrationForm.password.letterOrSymbol'/></div>
                 </div>
-                <div class="pattern-container">
-                    <img *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.oneNumber')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
-                    <img *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.oneNumber')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
-                    <@spring.message 'Pattern.registrationForm.password.oneNumber'/>
+                <div class="pattern-container flex"  aria-labelledby="oneNumber-status oneNumber">
+                    <img aria-hidden="true" tabindex="-1" id="oneNumber-status" *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.oneNumber')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" aria-label="Unmet password requirement" >
+                    <img aria-hidden="true" tabindex="-1" id="oneNumber-status"*ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.oneNumber')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" aria-label="Met password requiremen"t >
+                    <div aria-hidden="true" tabindex="-1" id="oneNumber"><@spring.message 'Pattern.registrationForm.password.oneNumber'/></div>
                 </div>
             </span>
             <span role="alert" class="orcid-error" *ngIf="registrationForm?.password?.errors?.length > 0">
@@ -121,7 +121,7 @@
     <div class="form-group clear-fix">
         <label class="control-label"><@orcid.msg 'password_one_time_reset.labelconfirmpassword'/></label>
         <div class="bottomBuffer">
-            <input id="register-form-confirm-password" type="password" name="confirmPassword" class="" [(ngModel)]="registrationForm.passwordConfirm.value" (blur)="serverValidate('PasswordConfirm')"/>
+            <input required id="register-form-confirm-password" type="password" name="confirmPassword" class="" [(ngModel)]="registrationForm.passwordConfirm.value" (blur)="serverValidate('PasswordConfirm')"/>
             <span role="alert" class="orcid-error" *ngIf="registrationForm?.passwordConfirm?.errors?.length > 0">
                 <div *ngFor="let error of registrationForm.passwordConfirm.errors" [innerHTML]="error"></div>
             </span>
@@ -135,13 +135,13 @@
             <p><b>${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</b></p>
             <div class="visibilityDefault">
                 <div class="radio">
-                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="PUBLIC" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
+                  <label><input required type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="PUBLIC" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="public"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lipublic'/></b> <@orcid.msg 'register.privacy_everyone_text'/></span></label>
                 </div>
                 <div class="radio">
-                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="LIMITED" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
+                  <label><input required type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="LIMITED" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="limited"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.lilimited'/></b> <@orcid.msg 'register.privacy_limited_text'/></span></label>
                 </div>
                 <div class="radio">
-                  <label><input type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="PRIVATE" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
+                  <label><input required type="radio" name="defaultVisibility" [(ngModel)]="registrationForm.activitiesVisibilityDefault.visibility" value="PRIVATE" (blur)="serverValidate('ActivitiesVisibilityDefault')"><span class="private"></span><span class="defaultVisLabel"><b><@orcid.msg 'manage.liprivate'/></b> <@orcid.msg 'register.privacy_private_text'/></span></label>
                 </div>
             </div>
             <span role="alert" class="orcid-error" *ngIf="registrationForm?.activitiesVisibilityDefault?.errors?.length > 0">
@@ -166,7 +166,7 @@
         <div class="clearfix bottomBuffer">
             <h4><@orcid.msg 'register.labelTermsofUse'/></h4>  
             <p>
-                <input id="register-form-term-box" type="checkbox" name="termsConditions" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
+                <input  required id="register-form-term-box" type="checkbox" name="termsConditions" name="acceptTermsAndConditions" [(ngModel)]="registrationForm.termsOfUse.value" (change)="serverValidate('TermsOfUse')" />
                 <@orcid.msg 'register.labelconsent'/> <a href="{{aboutUri}}/footer/privacy-policy" target="register.labelprivacypolicy"><@orcid.msg 'register.labelprivacypolicy'/></a>&nbsp;<@orcid.msg 'register.labeland'/>&nbsp;<@orcid.msg 'common.termsandconditions1'/><a href="{{aboutUri}}/content/orcid-terms-use" target="common.termsandconditions2"><@orcid.msg 'common.termsandconditions2'/></a>&nbsp;<@orcid.msg 'common.termsandconditions3'/>
             </p>
             <span role="alert" class="orcid-error" *ngIf="registrationForm?.termsOfUse?.errors?.length > 0">

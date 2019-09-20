@@ -8785,6 +8785,10 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
     display: block;
 }
 
+.pattern-container.flex {
+    display: flex;
+}
+
 .header2 .form-group {
     display: flex;
     margin: 0;
