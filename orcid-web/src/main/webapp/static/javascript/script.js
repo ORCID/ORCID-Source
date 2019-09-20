@@ -632,7 +632,7 @@ $(function() {
     function showLoginError(message) {
         if ($('form#loginForm #loginErrors #login-error-mess, form#loginForm #loginErrors #login-deactivated-error:visible').length == 0) {
              $(
-                "<div class='orcid-error' id='login-error-mess'>"
+                "<div class='orcid-error' id='login-error-mess'  role='alert'>"
                         + message
                         + "</div>")
                 .hide()
