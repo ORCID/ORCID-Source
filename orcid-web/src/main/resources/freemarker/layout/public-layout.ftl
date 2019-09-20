@@ -2,6 +2,7 @@
     <!DOCTYPE html>
     <html class="no-js oldie" lang="en">
     <#include "/common/html-head.ftl" />
+    <body
     <@orcid.checkFeatureStatus 'WIDE_GRID'> class="wide-grid" </@orcid.checkFeatureStatus> 
     >
     <root-cmp role="presentation">
