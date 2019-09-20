@@ -78,6 +78,10 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     sendQuarterlyTips: boolean;
     aboutUri: String;
     emailFrequencyOptions: any;
+
+    emailEditing
+    emailEditingNewValue
+    emailEditingErrors
     
     constructor( 
         private elementRef: ElementRef, 
@@ -363,28 +367,30 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emailService.delEmail = email;                
     };
 
-    setPrimary( email ): void {
-        this.emailService.setPrimary( email )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                let tempData = null;
-                this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
-                
-                this.getformData();
+    setPrimary( email, verifyEmail ): void {
+        if (verifyEmail) {
+            this.emailService.setPrimary( email )
+            .pipe(    
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    let tempData = null;
+                    this.formDataBeforeChange = JSON.parse(JSON.stringify(data));
+                    
+                    this.getformData();
 
-                if ( data.verified == false ) {
-                    this.showUnverifiedEmailSetPrimaryBox = true;
-                } else {
-                    this.showUnverifiedEmailSetPrimaryBox = false;
-                }
-            },
-            error => {
-                ////console.log('getEmailsFormError', error);
-            } 
-        );
+                    if ( data.verified == false ) {
+                        this.showUnverifiedEmailSetPrimaryBox = true;
+                    } else {
+                        this.showUnverifiedEmailSetPrimaryBox = false;
+                    }
+                },
+                error => {
+                    ////console.log('getEmailsFormError', error);
+                } 
+            );
+        }
     };
 
     getformData(): void {
@@ -525,6 +531,49 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         let idx: any;
     };
 
+    emailEdit(value){
+        this.emailEditingErrors = null
+        this.emailEditing = this.emailEditingNewValue = value
+
+    }
+    emailEditSave(){
+        if (this.emailEditing !==  this.emailEditingNewValue) {
+            // add new email
+            this.emailService.editEmail( this.emailEditing, this.emailEditingNewValue )
+            .subscribe(
+                data => {           
+
+                    if (data.errors.length == 0) {
+                        // get the emails from the backend
+                        this.getformData();
+                        // clean form values 
+                        this.emailEditing = this.emailEditingNewValue = null
+                        this.emailService.notifyOther();
+                        this.emailEditingErrors = null
+                    } else {
+                        this.emailEditingErrors = data.errors
+                    }
+                },
+                error => {
+                    // console.log('getEmailsFormError', error);
+                } 
+            );
+        } else {
+            // if nothing change on the email edit 
+            this.emailEditing = this.emailEditingNewValue = null
+            this.emailEditingErrors = null
+        }
+    }
+
+    showTooltip(element): void{        
+        this.showElement[element] = true;
+    };
+
+    hideTooltip(element): void{        
+        this.showElement[element] = false;
+    };
+
+
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         if(this.popUp == "true" ){
@@ -547,6 +596,10 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.modalService.notifyObservable$.subscribe(data => {
             if (data && data['moduleId'] === 'modalEmails' && data['action']==='open') {
                this.getformData() 
+            } 
+            else if (data && (data.action === 'close' && data.moduleId === 'modalEmails' || data.action === "close-with-click-outside")) {
+                this.emailEditingErrors = null
+                this.emailEditing = this.emailEditingNewValue = null
             }
         })
       

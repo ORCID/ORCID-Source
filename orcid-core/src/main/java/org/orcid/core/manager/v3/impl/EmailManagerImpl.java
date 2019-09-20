@@ -155,13 +155,19 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     public void editEmail(String orcid, String original, String edited, HttpServletRequest request) {
         EmailEntity originalEntity = emailDao.findByEmail(original); 
-        originalEntity.setLastModified(new Date());
-        originalEntity.setSourceId(orcid);
-        originalEntity.setEmail(edited);
-        originalEntity.setVerified(Boolean.FALSE);
         
-        emailDao.merge(originalEntity);
-        
+        EmailEntity updatedEntity = new EmailEntity();
+        updatedEntity.setDateCreated(new Date());
+        updatedEntity.setLastModified(new Date());
+        updatedEntity.setSourceId(orcid);
+        updatedEntity.setEmail(edited);
+        updatedEntity.setVerified(Boolean.FALSE);
+        updatedEntity.setId(encryptionManager.getEmailHash(edited));
+        updatedEntity.setCurrent(originalEntity.getCurrent());
+        updatedEntity.setVisibility(originalEntity.getVisibility());
+        updatedEntity.setPrimary(originalEntity.getPrimary());
+        updatedEntity.setProfile(originalEntity.getProfile());
+
         if (originalEntity.getPrimary()) {
             // if primary email changed send notification.
             if (!StringUtils.equals(original, edited)) {
@@ -169,6 +175,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 notificationManager.sendEmailAddressChangedNotification(orcid, edited, original);
             }
         }
+        
+        emailDao.persist(updatedEntity);
+        emailDao.remove(originalEntity.getId());
         notificationManager.sendVerificationEmail(orcid, edited);
     }
 
