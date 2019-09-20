@@ -70,6 +70,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(MissingStartDateException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9050));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(IllegalEnumValueException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9051));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidIssnException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9053));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidAmountException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9054));
         
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
