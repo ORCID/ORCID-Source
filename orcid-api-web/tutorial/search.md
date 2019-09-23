@@ -335,20 +335,12 @@ Paging: Default
 
 URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=grid-org-id:grid.5509.9```
 
-### Example 17 
-
-Description: You can search for records using external IDs, these can be any of the Identifiers in this list https://pub.orcid.org/v3.0/identifiers. The following search is for records affiliated with Research ID 1007-2016
-
-URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=ResearcherID:A-1007-2016```
-
 
 ### Example 18
 
-Description: Search for peer-review group IDs. You can search group IDs with SOLR search but you do not need to put the ID type in the search. For example the following search looks for 1741-4857 which is a valid ISSN. Exact matches will be returned first. If there are no exact matches, closest matches will be returned. 
-;:
+Description: Search for peer-review group IDs. You can search group IDs with SOLR search but you do not need to put the ID type in the search. For example the following search looks for 1741-4857 which is a valid ISSN. Exact matches will be returned first. If there are no exact matches, closest matches will be returned:
+
 URL ```'https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:1741-4857'```
-
-
 
 Paging: first 25 results
 
