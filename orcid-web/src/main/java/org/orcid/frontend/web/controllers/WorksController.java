@@ -63,6 +63,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class WorksController extends BaseWorkspaceController {
 
     private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
+    private static final String PAGE_SIZE_DEFAULT = "50";
 
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
@@ -749,7 +750,7 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@RequestParam("pageSize") int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
+    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
             @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.getWorksPage(orcid, offset, pageSize, false, sort, sortAsc);
