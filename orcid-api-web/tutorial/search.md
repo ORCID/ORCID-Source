@@ -16,16 +16,16 @@ If you search using the given names fields then our search will parse any letter
 
 For example the following will all return records containing both 'Kårlsbeârd' and 'Karlsbeard':
 
-"https://pub.qa.orcid.org/v3.0/search/?q=given-and-family-names:K%C3%A5rlsbe%C3%A2rd"
-"https://pub.qa.orcid.org/v3.0/search/?q=given-and-family-names:Kårlsbeârd"
-"https://pub.qa.orcid.org/v3.0/search/?q=given-and-family-names:Karlsbeard"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=given-and-family-names:K%C3%A5rlsbe%C3%A2rd"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=given-and-family-names:Kårlsbeârd"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=given-and-family-names:Karlsbeard"
 
 If you do the same search without specifically searching in the family-names field your search will only return words that exactly what you typed in. 
 
 For example both of the following searches will only return records matching 'Kårlsbeârd' not 'Karlsbeard':
 
-"https://pub.qa.orcid.org/v3.0/search/?q=K%C3%A5rlsbe%C3%A2rd"
-"https://pub.qa.orcid.org/v3.0/search/?q=Kårlsbeârd"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=K%C3%A5rlsbe%C3%A2rd"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=Kårlsbeârd"
 
 
 
@@ -169,7 +169,6 @@ Example response
 
 * [external identifier type]&ast;-part-of
 
-* external-id-type-and-value: like ResearcherID=A-1007-2016
 
 **Peer review**
 
@@ -187,7 +186,7 @@ Example response
 
 * profile-last-modified-date
 
-&ast; For a full list of external identifier see the [identifiers list](https://pub.qa.orcid.org/v3.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
+&ast; For a full list of external identifier see the [identifiers list](https://pub.sandbox.orcid.org/v3.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
 
 ## Example search queries
 
@@ -345,9 +344,11 @@ URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=ResearcherID:A-1007-2016```
 
 ### Example 18
 
-Description: Search for peer-review group IDs. You can search group IDs with SOLR search but you do not need to put the ID type in the search. For example the following search looks for 1996-3068 which is a valid ISSN. 
+Description: Search for peer-review group IDs. You can search group IDs with SOLR search but you do not need to put the ID type in the search. For example the following search looks for 1741-4857 which is a valid ISSN. Exact matches will be returned first. If there are no exact matches, closest matches will be returned. 
 ;:
-URL ```'https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:1996-3068'```
+URL ```'https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:1741-4857'```
+
+
 
 Paging: first 25 results
 
