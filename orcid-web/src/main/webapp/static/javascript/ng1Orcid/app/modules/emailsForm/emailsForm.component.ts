@@ -539,6 +539,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     emailEditSave(){
         if (this.emailEditing !==  this.emailEditingNewValue) {
             // add new email
+            let isPrimary = this.formData.emails.find((email)=>email.value === this.emailEditing).primary
             this.emailService.editEmail( this.emailEditing, this.emailEditingNewValue )
             .subscribe(
                 data => {           
@@ -550,6 +551,9 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         this.emailEditing = this.emailEditingNewValue = null
                         this.emailService.notifyOther();
                         this.emailEditingErrors = null
+                        if (isPrimary) {
+                            this.showUnverifiedEmailSetPrimaryBox = true
+                        }
                     } else {
                         this.emailEditingErrors = data.errors
                     }
