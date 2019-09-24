@@ -138,6 +138,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
 
     public static int ORCID_HASH_LENGTH = 8;
+    private static final String PAGE_SIZE_DEFAULT = "50";
 
     private Long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
@@ -361,7 +362,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
-    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("pageSize") int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
+    public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
             @RequestParam("sortAsc") boolean sortAsc) {
         return worksPaginator.getWorksPage(orcid, offset, pageSize, true, sort, sortAsc);
     }
