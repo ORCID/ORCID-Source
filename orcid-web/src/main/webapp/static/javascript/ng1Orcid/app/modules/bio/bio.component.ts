@@ -42,6 +42,20 @@ export class bioComponent implements OnDestroy, OnInit {
       ([configInfo, userInfo, person]) => {
         this.userInfo = userInfo;
         if (person && person.biography) {
+          this.meta.addTag({
+            name: "og:title ",
+            content:
+              person.displayName + " (" + userInfo.EFFECTIVE_USER_ORCID + ")"
+          });
+          this.meta.addTag({
+            name: "og:description",
+            content: person.biography.content
+          });
+          this.meta.addTag({
+            name: "og:image",
+            content:
+              configInfo.messages["STATIC_PATH"] + "/img/orcid-og-image.png"
+          });
           this.bio = person.biography.content;
         }
       }
