@@ -210,6 +210,18 @@ public class PublicProfileController extends BaseWorkspaceController {
                 mav.addObject("noIndex", true);
             }
         }
+        PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();
+        publicRecordPersonDetails = getPersonDetails(orcid, true);
+        if (publicRecordPersonDetails.getDisplayName() != null) {
+        	mav.addObject("ogTitle", publicRecordPersonDetails.getDisplayName() + " ("+ orcid +")" );
+        } else {
+        	mav.addObject("ogTitle", orcid);
+        }
+        if (publicRecordPersonDetails.getBiography() != null && publicRecordPersonDetails.getBiography().getContent() != null) {
+        	mav.addObject("ogDescription", publicRecordPersonDetails.getBiography().getContent()  );
+        } else {
+        	mav.addObject("ogDescription", " " );
+        }
         return mav;
     }
 
