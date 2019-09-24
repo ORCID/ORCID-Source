@@ -169,6 +169,7 @@ Example response
 
 * [external identifier type]&ast;-part-of
 
+* external-id-type-and-value
 
 **Peer review**
 
@@ -186,7 +187,7 @@ Example response
 
 * profile-last-modified-date
 
-&ast; For a full list of external identifier see the [identifiers list](https://pub.sandbox.orcid.org/v3.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
+&ast; For a full list of external identifiers see the [identifiers list](https://pub.sandbox.orcid.org/v3.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
 
 ## Example search queries
 
@@ -335,14 +336,15 @@ Paging: Default
 
 URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=grid-org-id:grid.5509.9```
 
+### Example 17 
+
+Description: Search for records by personal identifier. The following example searches for records that have a ResearcherID that exactly matches A-1111-2011:
+
+URL ```'https://pub.sandbox.orcid.org/v3.0/search/?q=external-id-type-and-value:ResearcherID\:%22A-1111-2011%22'```
+
 
 ### Example 18
 
-Description: Search for peer-review group IDs. You can search group IDs with SOLR search but you do not need to put the ID type in the search. For example the following search looks for 1741-4857 which is a valid ISSN. Exact matches will be returned first. If there are no exact matches, closest matches will be returned:
+Description: Search for peer-review group IDs. The following example searches for records with a peer-review-group-id that matches ISSN:1741-4857 exactly:
 
-URL ```'https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:1741-4857'```
-
-Paging: first 25 results
-
-
-
+URL ```'https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:%22issn\:1741-4857%22'```
