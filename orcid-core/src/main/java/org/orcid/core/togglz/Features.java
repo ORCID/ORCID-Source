@@ -72,12 +72,6 @@ public enum Features implements Feature {
     @Label("Self service org ids")
     SELF_SERVICE_ORG_IDS,
 
-    @Label("Set the 2.0 API as the default one in the public API")
-    PUB_API_2_0_BY_DEFAULT,
-
-    @Label("Set the 2.0 API as the default one in the members API")
-    MEMBER_API_2_0_BY_DEFAULT,
-
     @Label("Disable reCAPTCHA")
     DISABLE_RECAPTCHA,
 
@@ -121,7 +115,13 @@ public enum Features implements Feature {
     VERBOSE_NOTIFICATIONS,
 
     @Label("Works failure debug")
-    WORKS_FAILURE_DEBUG;
+    WORKS_FAILURE_DEBUG,
+    
+    @Label("Set the 3.0 API as the default one in the public API")
+    PUB_API_DEFAULT_TO_V3,
+
+    @Label("Set the 3.0 API as the default one in the members API")
+    MEMBER_API_DEFAULT_TO_V3;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
