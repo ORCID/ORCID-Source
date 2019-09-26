@@ -3,7 +3,7 @@
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectorRef } 
+import { AfterViewInit, Component, OnDestroy, OnInit} 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
