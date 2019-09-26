@@ -9754,3 +9754,9 @@ emails-form-ng2 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-hel
 footer-ng2 .footer-row-container a:hover {
     text-decoration: underline;
 }
+
+delegates-ng2, alt-signin-accounts-ng2 
+    {
+        display: flex;
+        flex-direction: column;
+    }
