@@ -27,6 +27,11 @@ export const WorksModule = angular.module(
     []
 );
 
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+
+
+
 // This is the Angular 2 part of the module
 
 @NgModule(
@@ -40,7 +45,10 @@ export const WorksModule = angular.module(
             WorksMergeComponent,
         ],
         imports: [
-            CommonNg2Module
+            CommonNg2Module,
+            MatPaginatorModule,
+            BrowserAnimationsModule
+
         ],
         
     }
