@@ -82,7 +82,7 @@
                     <tbody>
                         <tr>
                             <td><@orcid.msg 'statistics.ids_with_invited_position_distinction'/></td>
-                            <td class="stat-data">{{stats?.idsWithEducationQualification}}</td>
+                            <td class="stat-data">{{stats?.idsWithInvitedPositionDistinction}}</td>
                         </tr>
                         <tr>
                             <td><@orcid.msg 'statistics.number_of_invited_position_distinction'/></td>
