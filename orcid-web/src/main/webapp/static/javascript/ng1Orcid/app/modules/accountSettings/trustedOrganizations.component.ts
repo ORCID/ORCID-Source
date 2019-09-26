@@ -51,7 +51,10 @@ export class TrustedOrganizationsComponent implements AfterViewInit, OnDestroy, 
         )
         .subscribe(
             data => {
-                this.applicationSummaryList = data;  
+                data.map(value=> {
+                    value.href = this.getApplicationUrlLink(value)
+                });  
+                this.applicationSummaryList = data;
             },
             error => {
                 //console.log('error getting trusted orgs', error);
