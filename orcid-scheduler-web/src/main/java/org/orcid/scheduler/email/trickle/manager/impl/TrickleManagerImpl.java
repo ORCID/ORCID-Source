@@ -2,6 +2,7 @@ package org.orcid.scheduler.email.trickle.manager.impl;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -67,7 +68,7 @@ public class TrickleManagerImpl implements TrickleManager {
                 profileEventDao.merge(getProfileEventEntity(item.getSkippedType(), item.getOrcid()));
             }
         } else {
-            LOG.info("Email already sent to {}", item.getEmailMessage().getTo());
+            LOG.info("Attempt already made to send email to {}", item.getEmailMessage().getTo());
         }
     }
 
@@ -95,7 +96,13 @@ public class TrickleManagerImpl implements TrickleManager {
     }
 
     private boolean notAlreadySent(EmailTrickleItem item) {
-        return profileDaoReadOnly.getProfileEvents(item.getOrcid(), Arrays.asList(item.getSuccessType(), item.getFailureType(), item.getSkippedType())).isEmpty();
+        List<ProfileEventEntity> events = profileDaoReadOnly.getProfileEvents(item.getOrcid(),
+                Arrays.asList(item.getSuccessType(), item.getFailureType(), item.getSkippedType()));
+        if (!events.isEmpty()) {
+            LOG.info("Found email event for {}: {} ({})", new Object[] { item.getOrcid(), events.get(0).getType().name(), events.get(0).getDateCreated() });
+            return false;
+        }
+        return true;
     }
 
 }
