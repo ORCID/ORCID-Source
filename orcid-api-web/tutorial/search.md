@@ -12,7 +12,7 @@ Depending on your use you should consider these alternatives to the ORCID API se
 
 ## A note about using search with diacritics 
 
-If you search using the given names fields then our search will parse any letters or characters with diacritics and return all the words both with and without diacritics in them.
+The *given-and-family-names* field will parse any letters or characters with diacritics and return records with names both with and without diacritics in them.
 
 For example the following will all return records containing both 'Kårlsbeârd' and 'Karlsbeard':
 
@@ -20,7 +20,7 @@ For example the following will all return records containing both 'Kårlsbeârd'
 "https://pub.sandbox.orcid.org/v3.0/search/?q=given-and-family-names:Kårlsbeârd"
 "https://pub.sandbox.orcid.org/v3.0/search/?q=given-and-family-names:Karlsbeard"
 
-If you do the same search without specifically searching in the family-names field your search will only return words that exactly what you typed in. 
+Only the *given-and-family-names* field will match characters with and without disacritics, other fields will match only on the character searched.
 
 For example both of the following searches will only return records matching 'Kårlsbeârd' not 'Karlsbeard':
 
@@ -139,6 +139,8 @@ Example response
 
 * external-id-reference
 
+* external-id-type-and-value
+
 * biography
 
 **Affiliations data**
@@ -168,8 +170,6 @@ Example response
 * [external identifier type]&ast;-self
 
 * [external identifier type]&ast;-part-of
-
-* external-id-type-and-value
 
 **Peer review**
 
@@ -338,13 +338,16 @@ URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=grid-org-id:grid.5509.9```
 
 ### Example 17 
 
-Description: Search for records by personal identifier. The following example searches for records that have a ResearcherID that exactly matches A-1111-2011:
+Description: Search for records that have a personal identifier "ResearcherID:A-1111-2011":
 
-URL ```'https://pub.sandbox.orcid.org/v3.0/search/?q=external-id-type-and-value:ResearcherID\:%22A-1111-2011%22'```
+Paging: Default
 
+URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=external-id-type-and-value:ResearcherID\:%22A-1111-2011%22```
 
 ### Example 18
 
-Description: Search for peer-review group IDs. The following example searches for records with a peer-review-group-id that matches ISSN:1741-4857 exactly:
+Description: Search for records with peer-reviews that are associated with the peer-review group "issn:1741-4857":
 
-URL ```'https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:%22issn\:1741-4857%22'```
+Paging: Default
+
+URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:%22issn\:1741-4857%22```
