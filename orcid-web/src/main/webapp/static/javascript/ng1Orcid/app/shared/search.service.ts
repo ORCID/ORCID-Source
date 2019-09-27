@@ -116,7 +116,7 @@ export class SearchService {
                     + this.offset(input);	
         } else {	
             // Advanced search	
-            return this.buildAdvancedSearchUrl(input);	
+            return  this.buildAdvancedSearchUrl(input, baseUrl);	
         }	
     };
 
@@ -139,7 +139,7 @@ export class SearchService {
         return '&start=' + start + '&rows=' + rows;
     };
 
-    buildAdvancedSearchUrl(input: any) {
+    buildAdvancedSearchUrl(input: any, baseUrl: string) {
         var escapedAffiliationOrg;
         var escapedFamilyName;
         var escapedGivenNames;
@@ -189,7 +189,7 @@ export class SearchService {
             doneSomething = true;
         }
 
-        return doneSomething ? '?q=' + encodeURIComponent(query)
+        return doneSomething ? baseUrl + '?q=' + encodeURIComponent(query)
                 + this.offset(input) : '?q=';
     }
 
