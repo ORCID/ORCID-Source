@@ -33,10 +33,10 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-    
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Override
     public boolean deleteKeyword(String orcid, Long putCode, boolean checkSource) {
         ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
@@ -53,8 +53,8 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         return true;
     }
 
-    @Override    
-    public Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest) { 
+    @Override
+    public Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, sourceEntity, true, isApiRequest, null);
@@ -73,15 +73,15 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
         newEntity.setDateCreated(new Date());
-        
-        //Set the source
-        if(sourceEntity.getSourceProfile() != null) {
-                newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+
+        // Set the source
+        if (sourceEntity.getSourceProfile() != null) {
+            newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
         }
-        if(sourceEntity.getSourceClient() != null) {
-                newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        } 
-        
+        if (sourceEntity.getSourceClient() != null) {
+            newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        }
+
         setIncomingPrivacy(newEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         profileKeywordDao.persist(newEntity);
@@ -94,11 +94,11 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         ProfileKeywordEntity updatedEntity = profileKeywordDao.getProfileKeyword(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility());
-        
-        //Save the original source
+
+        // Save the original source
         String existingSourceId = updatedEntity.getSourceId();
         String existingClientSourceId = updatedEntity.getClientSourceId();
-                
+
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, sourceEntity, false, isApiRequest, originalVisibility);
         // Validate it is not duplicated
@@ -111,16 +111,16 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-                
+
         orcidSecurityManager.checkSource(updatedEntity);
-        
+
         adapter.toProfileKeywordEntity(keyword, updatedEntity);
-        updatedEntity.setLastModified(new Date());        
-        
-        //Be sure it doesn't overwrite the source
+        updatedEntity.setLastModified(new Date());
+
+        // Be sure it doesn't overwrite the source
         updatedEntity.setSourceId(existingSourceId);
         updatedEntity.setClientSourceId(existingClientSourceId);
-        
+
         profileKeywordDao.merge(updatedEntity);
         return adapter.toKeyword(updatedEntity);
     }
@@ -128,18 +128,18 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     @Override
     @Transactional
     public Keywords updateKeywords(String orcid, Keywords keywords) {
-        List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywords(orcid, getLastModified(orcid));        
+        List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywords(orcid, getLastModified(orcid));
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
             boolean deleteMe = true;
-            if(keywords.getKeywords() != null) {
+            if (keywords.getKeywords() != null) {
                 for (Keyword updatedOrNew : keywords.getKeywords()) {
                     if (existing.getId().equals(updatedOrNew.getPutCode())) {
                         deleteMe = false;
                         break;
                     }
                 }
-            }            
+            }
 
             if (deleteMe) {
                 try {
@@ -170,13 +170,13 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newKeyword.setProfile(profile);
                     newKeyword.setDateCreated(new Date());
-                    //Set the source
-                    if(sourceEntity.getSourceProfile() != null) {
+                    // Set the source
+                    if (sourceEntity.getSourceProfile() != null) {
                         newKeyword.setSourceId(sourceEntity.getSourceProfile().getId());
                     }
-                    if(sourceEntity.getSourceClient() != null) {
+                    if (sourceEntity.getSourceClient() != null) {
                         newKeyword.setClientSourceId(sourceEntity.getSourceClient().getId());
-                    } 
+                    }
                     newKeyword.setVisibility(updatedOrNew.getVisibility().name());
                     newKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     profileKeywordDao.persist(newKeyword);
@@ -184,25 +184,26 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                 }
             }
         }
-        
+
         return keywords;
     }
 
     private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.record_v2.Keyword keyword, SourceEntity source) {
         if (!existing.getId().equals(keyword.getPutCode())) {
-            String existingSourceId = existing.getElementSourceId();             
+            String existingSourceId = existing.getElementSourceId();
             if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
                 if (existing.getKeywordName() != null && existing.getKeywordName().equals(keyword.getContent())) {
                     return true;
                 }
-            }           
+            }
         }
         return false;
     }
 
     private void setIncomingPrivacy(ProfileKeywordEntity entity, ProfileEntity profile) {
         String incomingKeywordVisibility = entity.getVisibility();
-        String defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name() : profile.getActivitiesVisibilityDefault();
+        String defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name()
+                : profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultKeywordVisibility);
         } else if (incomingKeywordVisibility == null) {
