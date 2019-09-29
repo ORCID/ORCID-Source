@@ -137,6 +137,43 @@ public class WorkManagerTest extends BaseTest {
     }
     
     @Test
+    public void testCreateWorkWithUserOBOClient() {
+        String orcid = "0000-0000-0000-0003";
+        
+        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
+        userOboClient.setUserOBOEnabled(true);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
+        
+        Work work = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Another work # 1111"));
+        work.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID extId1 = new ExternalID();
+        extId1.setRelationship(Relationship.SELF);
+        extId1.setType("isbn");
+        extId1.setUrl(new Url("http://isbn/12345/"));
+        extId1.setValue("isbn-12345");
+        extIds1.getExternalIdentifier().add(extId1);
+        work.setWorkExternalIdentifiers(extIds1);
+        work.setWorkType(WorkType.BOOK);
+        work = workManager.createWork(orcid, work, true);
+        
+        // check user obo info present
+        WorkEntity entity = workDao.find(work.getPutCode());
+        assertEquals(orcid, entity.getAssertionOriginSourceId());
+        
+        // check user obo info not lost on update
+        title1.setTitle(new Title("Updated title"));
+        workManager.updateWork(orcid, work, true);
+        
+        entity = workDao.find(work.getPutCode());
+        assertEquals(orcid, entity.getAssertionOriginSourceId());
+        
+        workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
+    }
+    
+    @Test
     public void testUpdateWork() {
         String orcid = "0000-0000-0000-0003";
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
