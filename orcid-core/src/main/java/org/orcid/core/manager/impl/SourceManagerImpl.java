@@ -66,7 +66,11 @@ public class SourceManagerImpl extends ManagerReadOnlyBaseImpl implements Source
             String clientId = authorizationRequest.getClientId();
             ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
             SourceEntity sourceEntity = new SourceEntity();
-            sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));            
+            
+            ClientDetailsEntity sourceClient = new ClientDetailsEntity(clientId, clientDetails.getClientName());
+            sourceClient.setUserOBOEnabled(clientDetails.isUserOBOEnabled());
+            sourceEntity.setSourceClient(sourceClient);          
+            
             return sourceEntity;
         }
         String userOrcid = retrieveEffectiveOrcid(authentication);
