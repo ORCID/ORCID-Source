@@ -254,6 +254,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         if(sourceEntity.getSourceClient() != null) {
                             workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+                            
+                            // user obo?
+                            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                                workEntity.setAssertionOriginSourceId(orcid);
+                            }
                         } 
                         
                         setIncomingWorkPrivacy(workEntity, profile);        
