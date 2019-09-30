@@ -54,9 +54,11 @@ export class PublicRecordComponent {
       return null;
     }
     if (source.assertionOriginClientId || source.assertionOriginOrcid) {
-      return (
-        source.assertionOriginName.content || source.assertionOriginOrcid.path
-      );
+      if (source.assertionOriginName) {
+        return source.assertionOriginName.content || source.assertionOriginOrcid.path
+      } else {
+        return source.assertionOriginOrcid.path
+      }
     }
     return null;
   }
