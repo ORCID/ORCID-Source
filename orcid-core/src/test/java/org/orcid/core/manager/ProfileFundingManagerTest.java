@@ -104,6 +104,28 @@ public class ProfileFundingManagerTest extends BaseTest {
     }
     
     @Test
+    public void testCreateFundingWithUserOBOClient() {
+        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
+        userOboClient.setUserOBOEnabled(true);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));   
+
+        Funding funding = getAnotherFunding(null);
+        funding = profileFundingManager.createFunding(claimedOrcid, funding, true);
+
+        // check user obo details
+        ProfileFundingEntity entity = profileFundingDao.find(funding.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
+        
+        // check user obo details aren't lost on update
+        userOboClient.setUserOBOEnabled(false);
+        funding.setDescription("user obo funding");
+        profileFundingManager.updateFunding(claimedOrcid, funding, true);
+        
+        entity = profileFundingDao.find(funding.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
+    }
+    
+    @Test
     public void testAddMultipleModifiesIndexingStatus() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
         Funding f1 = getFunding("F1");
@@ -474,6 +496,42 @@ public class ProfileFundingManagerTest extends BaseTest {
         org.setName("org-name");
         OrganizationAddress address = new OrganizationAddress();
         address.setCity("city");
+        address.setCountry(Iso3166Country.US);
+        org.setAddress(address);
+        funding.setOrganization(org);
+        funding.setVisibility(Visibility.PUBLIC);
+        funding.setType(FundingType.AWARD);
+        return funding;
+    }
+    
+    private Funding getAnotherFunding(String grantNumber) {
+        Funding funding = new Funding();
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("grant_number");
+        extId.setUrl(new Url("http://bbc.co.uk"));
+        if(grantNumber == null) {
+            extId.setValue("another-ext-id-value");
+        } else {
+            extId.setValue(grantNumber);
+        }
+        
+        extIds.getExternalIdentifier().add(extId);
+        funding.setExternalIdentifiers(extIds);
+        
+        FundingTitle title = new FundingTitle();
+        if(grantNumber == null) {
+            title.setTitle(new Title("Another funding title"));
+        } else {
+            title.setTitle(new Title("Another funding title " + grantNumber));
+        }        
+        funding.setTitle(title);
+        
+        Organization org = new Organization();
+        org.setName("another-org-name");
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("another city");
         address.setCountry(Iso3166Country.US);
         org.setAddress(address);
         funding.setOrganization(org);

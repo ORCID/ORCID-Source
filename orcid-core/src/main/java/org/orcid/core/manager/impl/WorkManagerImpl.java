@@ -24,6 +24,7 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.ActionType;
@@ -170,9 +171,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workEntity.setSourceId(sourceEntity.getSourceProfile().getId());
         }
         
-        if(sourceEntity.getSourceClient() != null) {
+        if (sourceEntity.getSourceClient() != null) {
             workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-        } 
+            
+            // user obo?
+            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                workEntity.setAssertionOriginSourceId(orcid);
+            }
+        }
         
         setIncomingWorkPrivacy(workEntity, profile);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        

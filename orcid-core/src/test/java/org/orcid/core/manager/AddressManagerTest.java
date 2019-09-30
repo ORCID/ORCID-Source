@@ -24,6 +24,8 @@ import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
+import org.orcid.persistence.dao.AddressDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -46,6 +48,9 @@ public class AddressManagerTest extends BaseTest {
     
     @Resource 
     private AddressManager addressManager;
+    
+    @Resource 
+    private AddressDao addressDao;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -86,6 +91,29 @@ public class AddressManagerTest extends BaseTest {
         
         assertNotNull(address);
         assertEquals(Visibility.LIMITED, address.getVisibility());  
+    }
+    
+    @Test
+    public void testCreateAddressWithUserOboClient() {
+        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
+        userOboClient.setUserOBOEnabled(true);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));                
+        Address address = getAddress(Iso3166Country.US);
+        
+        address = addressManager.createAddress(claimedOrcid, address, true);
+        
+        // test user obo info present
+        AddressEntity addressEntity = addressDao.find(address.getPutCode());
+        assertEquals(claimedOrcid, addressEntity.getAssertionOriginSourceId());
+        
+        // test user obo info doesn't get lost on update
+        userOboClient.setUserOBOEnabled(false);
+        address.setCountry(new Country(Iso3166Country.AD));
+        addressManager.updateAddress(claimedOrcid, address.getPutCode(), address, true);
+        
+        addressEntity = addressDao.find(address.getPutCode());
+        assertEquals(claimedOrcid, addressEntity.getAssertionOriginSourceId());
+        
     }
     
     @Test

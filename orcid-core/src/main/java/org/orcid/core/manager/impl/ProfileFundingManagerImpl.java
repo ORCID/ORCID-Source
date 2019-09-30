@@ -18,6 +18,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.messaging.JmsMessageSender;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -197,6 +198,11 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         }
         if(sourceEntity.getSourceClient() != null) {
             profileFundingEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+            
+            // user obo?
+            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                profileFundingEntity.setAssertionOriginSourceId(orcid);
+            }
         } 
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        

@@ -34,7 +34,9 @@ import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
@@ -51,6 +53,9 @@ public class AffiliationsManagerTest extends BaseTest {
     
     @Resource 
     private AffiliationsManager affiliationsManager;
+    
+    @Resource 
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;    ;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -113,6 +118,49 @@ public class AffiliationsManagerTest extends BaseTest {
         
         assertNotNull(employment);
         assertEquals(Visibility.LIMITED, employment.getVisibility());
+    }
+    
+    @Test
+    public void testCreateEducationWithUserOBOClient() {
+        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
+        userOboClient.setUserOBOEnabled(true);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));   
+        
+        Education education = getEducation();
+        education = affiliationsManager.createEducationAffiliation(claimedOrcid, education, true);
+        
+        // test user obo
+        OrgAffiliationRelationEntity affiliation = orgAffiliationRelationDao.find(education.getPutCode());
+        assertEquals(claimedOrcid, affiliation.getAssertionOriginSourceId());
+        
+        education.setRoleTitle("test");
+        affiliationsManager.updateEducationAffiliation(claimedOrcid, education, true);
+        
+        // test user obo info not lost after update
+        affiliation = orgAffiliationRelationDao.find(education.getPutCode());
+        assertEquals(claimedOrcid, affiliation.getAssertionOriginSourceId());
+    }
+    
+    @Test
+    public void testCreateEmploymentWithUserOBOClient() {
+        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
+        userOboClient.setUserOBOEnabled(true);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));   
+
+        Employment employment = getEmployment();
+        employment = affiliationsManager.createEmploymentAffiliation(claimedOrcid, employment, true);
+        
+        // test user obo
+        OrgAffiliationRelationEntity affiliation = orgAffiliationRelationDao.find(employment.getPutCode());
+        assertEquals(claimedOrcid, affiliation.getAssertionOriginSourceId());
+        
+        // test user obo info isn't lost on update
+        userOboClient.setUserOBOEnabled(false);
+        employment.setDepartmentName("test");
+        affiliationsManager.updateEmploymentAffiliation(claimedOrcid, employment, true);
+        
+        affiliation = orgAffiliationRelationDao.find(employment.getPutCode());
+        assertEquals(claimedOrcid, affiliation.getAssertionOriginSourceId());
     }
     
     @Test

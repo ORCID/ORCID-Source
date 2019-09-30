@@ -22,7 +22,9 @@ import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.OtherNames;
+import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
@@ -39,6 +41,9 @@ public class OtherNameManagerTest extends BaseTest {
     
     @Resource 
     private OtherNameManager otherNameManager;
+    
+    @Resource
+    private OtherNameDao otherNameDao;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -79,6 +84,28 @@ public class OtherNameManagerTest extends BaseTest {
         
         assertNotNull(otherName);
         assertEquals(Visibility.LIMITED, otherName.getVisibility());       
+    }
+    
+    @Test
+    public void testCreateOtherNameWithUserOBOClient() {
+        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
+        userOboClient.setUserOBOEnabled(true);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
+                        
+        OtherName otherName = getAnotherOtherName();
+        otherName = otherNameManager.createOtherName(claimedOrcid, otherName, true);
+
+        // user obo info
+        OtherNameEntity entity = otherNameDao.find(otherName.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
+        
+        // check userobo info not lost after update
+        userOboClient.setUserOBOEnabled(false);
+        otherName.setContent("updated");
+        otherNameManager.updateOtherName(claimedOrcid, otherName.getPutCode(), otherName, true);
+        
+        entity = otherNameDao.find(otherName.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
     }
     
     @Test
@@ -150,6 +177,13 @@ public class OtherNameManagerTest extends BaseTest {
     private OtherName getOtherName() {
         OtherName otherName = new OtherName();
         otherName.setContent("other-name");
+        otherName.setVisibility(Visibility.PUBLIC);
+        return otherName;
+    }
+    
+    private OtherName getAnotherOtherName() {
+        OtherName otherName = new OtherName();
+        otherName.setContent("another-other-name");
         otherName.setVisibility(Visibility.PUBLIC);
         return otherName;
     }
