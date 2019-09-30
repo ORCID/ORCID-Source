@@ -12,20 +12,20 @@ Depending on your use you should consider these alternatives to the ORCID API se
 
 ## A note about using search with diacritics 
 
-If you search using the given names fields then our search will parse any letters or characters with diacritics and return all the words both with and without diacritics in them.
+The *given-and-family-names* field will parse any letters or characters with diacritics and return records with names both with and without diacritics in them.
 
 For example the following will all return records containing both 'Kårlsbeârd' and 'Karlsbeard':
 
-"https://pub.qa.orcid.org/v3.0/search/?q=given-and-family-names:K%C3%A5rlsbe%C3%A2rd"
-"https://pub.qa.orcid.org/v3.0/search/?q=given-and-family-names:Kårlsbeârd"
-"https://pub.qa.orcid.org/v3.0/search/?q=given-and-family-names:Karlsbeard"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=given-and-family-names:K%C3%A5rlsbe%C3%A2rd"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=given-and-family-names:Kårlsbeârd"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=given-and-family-names:Karlsbeard"
 
-If you do the same search without specifically searching in the family-names field your search will only return words that exactly what you typed in. 
+Only the *given-and-family-names* field will match characters with and without disacritics, other fields will match only on the character searched.
 
 For example both of the following searches will only return records matching 'Kårlsbeârd' not 'Karlsbeard':
 
-"https://pub.qa.orcid.org/v3.0/search/?q=K%C3%A5rlsbe%C3%A2rd"
-"https://pub.qa.orcid.org/v3.0/search/?q=Kårlsbeârd"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=K%C3%A5rlsbe%C3%A2rd"
+"https://pub.sandbox.orcid.org/v3.0/search/?q=Kårlsbeârd"
 
 
 
@@ -139,6 +139,8 @@ Example response
 
 * external-id-reference
 
+* external-id-type-and-value
+
 * biography
 
 **Affiliations data**
@@ -169,8 +171,6 @@ Example response
 
 * [external identifier type]&ast;-part-of
 
-* external-id-type-and-value: like ResearcherID=A-1007-2016
-
 **Peer review**
 
 * peer-review-type
@@ -187,7 +187,7 @@ Example response
 
 * profile-last-modified-date
 
-&ast; For a full list of external identifier see the [identifiers list](https://pub.qa.orcid.org/v3.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
+&ast; For a full list of external identifiers see the [identifiers list](https://pub.sandbox.orcid.org/v3.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
 
 ## Example search queries
 
@@ -338,18 +338,16 @@ URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=grid-org-id:grid.5509.9```
 
 ### Example 17 
 
-Description: You can search for records using external IDs, these can be any of the Identifiers in this list https://pub.orcid.org/v3.0/identifiers. The following search is for records affiliated with Research ID 1007-2016
+Description: Search for records that have a personal identifier "ResearcherID:A-1111-2011":
 
-URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=ResearcherID:A-1007-2016```
+Paging: Default
 
+URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=external-id-type-and-value:ResearcherID\:%22A-1111-2011%22```
 
 ### Example 18
 
-Description: Search for peer-review group IDs. You can search group IDs with SOLR search but you do not need to put the ID type in the search. For example the following search looks for 1996-3068 which is a valid ISSN. 
-;:
-URL ```'https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:1996-3068'```
+Description: Search for records with peer-reviews that are associated with the peer-review group "issn:1741-4857":
 
-Paging: first 25 results
+Paging: Default
 
-
-
+URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:%22issn\:1741-4857%22```
