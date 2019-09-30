@@ -182,7 +182,7 @@
                                         <ng-container>
                                             <#--  OBO  -->
                                              <ng-container *ngIf="getOboAssertionDisplayName(keywordSource.source)">
-                                                 getOboAssertionDisplayName(keywordSource.source) <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                                 {{getOboAssertionDisplayName(keywordSource.source)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
                                              {{keywordSource?.source?.sourceName?.content || keywordSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
