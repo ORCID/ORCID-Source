@@ -31,8 +31,8 @@
 
                                         <ng-container>
                                             <#--  OBO  -->
-                                             <ng-container *ngIf="getOboAssertionDisplayName(otherNameSource.source?)">
-                                                 {{getOboAssertionDisplayName(otherNameSource.source?)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(otherNameSource.source)">
+                                                 {{getOboAssertionDisplayName(otherNameSource.source)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
                                             {{otherNameSource?.source?.sourceName?.content || otherNameSource?.source?.sourceOrcid?.path}}
                           
@@ -80,8 +80,8 @@
                                     <ng-container  *ngFor="let urlSource of personData.publicGroupedResearcherUrls[url]; let lastSource = last;">
                                         <ng-container>
                                              <#--  OBO  -->
-                                             <ng-container *ngIf="getOboAssertionDisplayName(urlSource.source?)">
-                                                 {{getOboAssertionDisplayName(urlSource.source?)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(urlSource.source)">
+                                                 {{getOboAssertionDisplayName(urlSource.source)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>    
                                             {{urlSource?.source?.sourceName?.content || urlSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
@@ -131,8 +131,8 @@
 
                                         <ng-container>
                                             <#--  OBO  -->
-                                             <ng-container *ngIf="getOboAssertionDisplayName(addressSource.source?)">
-                                                 {{getOboAssertionDisplayName(addressSource.source?)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(addressSource.source)">
+                                                 {{getOboAssertionDisplayName(addressSource.source)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
                                             {{addressSource?.source?.sourceName?.content || addressSource?.source?.sourceOrcid?.path}}
 
@@ -181,8 +181,8 @@
 
                                         <ng-container>
                                             <#--  OBO  -->
-                                             <ng-container *ngIf="getOboAssertionDisplayName(keywordSource.source?)">
-                                                 getOboAssertionDisplayName(keywordSource.source?) <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(keywordSource.source)">
+                                                 getOboAssertionDisplayName(keywordSource.source) <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
                                              {{keywordSource?.source?.sourceName?.content || keywordSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
@@ -236,8 +236,8 @@
                                             
                                             
                                              <#--  OBO  -->
-                                             <ng-container *ngIf="getOboAssertionDisplayName(externalIdentifier.source?)">
-                                                 {{getOboAssertionDisplayName(externalIdentifier.source?)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(externalIdentifier.source)">
+                                                 {{getOboAssertionDisplayName(externalIdentifier.source)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
                                              {{externalIdentifier?.source?.sourceName?.content }}
 
