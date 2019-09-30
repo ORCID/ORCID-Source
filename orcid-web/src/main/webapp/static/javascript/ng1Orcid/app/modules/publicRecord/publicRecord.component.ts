@@ -5,6 +5,7 @@ import { takeUntil } from "rxjs/operators";
 import { Component } from "@angular/core";
 import { CommonService } from "../../shared/common.service";
 import { PersonService } from "../../shared/person.service";
+import { Source } from "../../types";
 
 @Component({
   selector: "public-record-ng2",
@@ -46,6 +47,20 @@ export class PublicRecordComponent {
         }
       }
     });
+  }
+
+  getOboAssertionDisplayName(source: Source): string | null {
+    if (!source) {
+      return null;
+    }
+    if (source.assertionOriginClientId || source.assertionOriginOrcid) {
+      if (source.assertionOriginName) {
+        return source.assertionOriginName.content || source.assertionOriginOrcid.path
+      } else {
+        return source.assertionOriginOrcid.path
+      }
+    }
+    return null;
   }
 
   hidePopover(section): void {

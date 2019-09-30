@@ -31,8 +31,8 @@
 
                                         <ng-container>
                                             <#--  OBO  -->
-                                             <ng-container *ngIf="(otherNameSource.source.assertionOriginClientId && otherNameSource.source.assertionOriginClientId.path !== otherNameSource.source.sourceClientId.path) || (otherNameSource.source.assertionOriginOrcid && otherNameSource.source.assertionOriginOrcid.path !== otherNameSource.source.sourceOrcid.path)">
-                                                 {{otherNameSource?.source?.assertionOriginName?.content || otherNameSource?.source?.assertionOriginOrcid?.path}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(otherNameSource.source)">
+                                                 {{getOboAssertionDisplayName(otherNameSource.source)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
                                             {{otherNameSource?.source?.sourceName?.content || otherNameSource?.source?.sourceOrcid?.path}}
                           
@@ -80,9 +80,8 @@
                                     <ng-container  *ngFor="let urlSource of personData.publicGroupedResearcherUrls[url]; let lastSource = last;">
                                         <ng-container>
                                              <#--  OBO  -->
-                                             <ng-container *ngIf="(urlSource.source.assertionOriginClientId && urlSource.source.assertionOriginClientId.path !== urlSource.source.sourceClientId.path) ||
-                                                                (urlSource.source.assertionOriginOrcid && urlSource.source.assertionOriginOrcid.path !== urlSource.source.sourceOrcid.path)">
-                                                 {{urlSource?.source?.assertionOriginName?.content || urlSource?.source?.assertionOriginOrcid?.path}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(urlSource.source)">
+                                                 {{getOboAssertionDisplayName(urlSource.source)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>    
                                             {{urlSource?.source?.sourceName?.content || urlSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
@@ -132,9 +131,8 @@
 
                                         <ng-container>
                                             <#--  OBO  -->
-                                             <ng-container *ngIf="(addressSource.source.assertionOriginClientId && addressSource.source.assertionOriginClientId.path !== addressSource.source.sourceClientId.path) ||
-                                                                (addressSource.source.assertionOriginOrcid && addressSource.source.assertionOriginOrcid.path !== addressSource.source.sourceOrcid.path)">
-                                                 {{addressSource.source.assertionOriginName.content || addressSource.source.assertionOriginOrcid?.path}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(addressSource.source)">
+                                                 {{getOboAssertionDisplayName(addressSource.source)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
                                             {{addressSource?.source?.sourceName?.content || addressSource?.source?.sourceOrcid?.path}}
 
@@ -183,9 +181,8 @@
 
                                         <ng-container>
                                             <#--  OBO  -->
-                                             <ng-container *ngIf="(keywordSource.source.assertionOriginClientId && keywordSource.source.assertionOriginClientId.path !== keywordSource.source.sourceClientId.path) ||
-                                                                (keywordSource.source.assertionOriginOrcid && keywordSource.source.assertionOriginOrcid.path !== keywordSource.source.sourceOrcid.path)">
-                                                 {{keywordSource.source.assertionOriginName.content || keywordSource.source.assertionOriginOrcid?.path}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(keywordSource.source)">
+                                                 getOboAssertionDisplayName(keywordSource.source) <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
                                              {{keywordSource?.source?.sourceName?.content || keywordSource?.source?.sourceOrcid?.path}}
                                         </ng-container>
@@ -239,8 +236,8 @@
                                             
                                             
                                              <#--  OBO  -->
-                                             <ng-container *ngIf="externalIdentifier.source.assertionOriginClientId && externalIdentifier.source.assertionOriginClientId.path !== externalIdentifier.source.sourceClientId.path">
-                                                 {{externalIdentifier.source.assertionOriginName.content}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
+                                             <ng-container *ngIf="getOboAssertionDisplayName(externalIdentifier.source)">
+                                                 {{getOboAssertionDisplayName(externalIdentifier.source)}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i>
                                              </ng-container>
                                              {{externalIdentifier?.source?.sourceName?.content }}
 
