@@ -36,7 +36,7 @@ You should end up with
 3. cd into /opt/solr-8.0.0/bin
 4. Start solr server: 
 
-        ./solr -p <port> -s /opt/solr/solr_conf/data start  
+        ./solr start -p <port> -s /opt/solr/solr_conf/data  
 
    (Where the port should not collide with any of the ports already in use, if you dont specify the -p param, the default port will be 8983)
 5. Confirm solr is up and cores have been created by going to http://localhost:<SOLR_PORT>/solr/#/

@@ -15,6 +15,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.AffiliationsManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
@@ -74,6 +75,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         
         if(sourceEntity.getSourceClient() != null) {
             educationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+            
+            // user obo?
+            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                educationEntity.setAssertionOriginSourceId(orcid);
+            }
         }        
                         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
@@ -154,6 +160,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         
         if(sourceEntity.getSourceClient() != null) {
             employmentEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+            
+            // user obo?
+            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                employmentEntity.setAssertionOriginSourceId(orcid);
+            }
         }
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);

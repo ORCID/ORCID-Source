@@ -26,7 +26,9 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.Relationship;
+import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
@@ -44,6 +46,9 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
+    
+    @Resource
+    private ExternalIdentifierDao externalIdentifierDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -84,6 +89,34 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
         assertNotNull(extId);
         assertEquals(Visibility.LIMITED, extId.getVisibility());
+    }
+    
+    @Test
+    public void testCreateExternalIdentifierWithUserOboClient() {
+        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
+        userOboClient.setUserOBOEnabled(true);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));       
+        
+        PersonExternalIdentifier extId = new PersonExternalIdentifier();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("person-ext-id-type-user-obo");
+        extId.setValue("person-ext-id-value-user-obo");
+        extId.setUrl(new Url("http://orcid.org/user/obo"));
+        extId.setVisibility(Visibility.PUBLIC);
+
+        extId = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
+        
+        // check user obo
+        ExternalIdentifierEntity entity = externalIdentifierDao.find(extId.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
+        
+        // check user obo info not lost on update
+        userOboClient.setUserOBOEnabled(false);
+        extId.setValue("test");
+        externalIdentifierManager.updateExternalIdentifier(claimedOrcid, extId, true);
+        
+        externalIdentifierDao.find(extId.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
     }
 
     @Test

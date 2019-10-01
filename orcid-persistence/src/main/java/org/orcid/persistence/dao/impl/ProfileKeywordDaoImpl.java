@@ -155,7 +155,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Override
     @Transactional
     public void updateUserOBODetails(List<BigInteger> ids) {
-        Query query = entityManager.createNativeQuery("UPDATE profile_keyword SET assertion_origin_source_id = orcid where id IN :ids");
+        Query query = entityManager.createNativeQuery("UPDATE profile_keyword SET assertion_origin_source_id = profile_orcid where id IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
     }

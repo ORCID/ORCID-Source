@@ -23,7 +23,9 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
@@ -40,6 +42,9 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Resource
     private ResearcherUrlManager researcherUrlManager;
+    
+    @Resource
+    private ResearcherUrlDao researcherUrlDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -80,6 +85,28 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
         assertNotNull(rUrl);
         assertEquals(Visibility.LIMITED, rUrl.getVisibility());
+    }
+    
+    @Test
+    public void testCreateResearcherUrlWithUserOBOClient() {
+        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
+        userOboClient.setUserOBOEnabled(true);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
+
+        ResearcherUrl rUrl = getAnotherResearcherUrl();
+        rUrl = researcherUrlManager.createResearcherUrl(claimedOrcid, rUrl, true);
+        
+        // check user obo info
+        ResearcherUrlEntity entity = researcherUrlDao.find(rUrl.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
+        
+        // check user obo info not lost on update
+        userOboClient.setUserOBOEnabled(false);
+        rUrl.setUrlName("updated name");
+        researcherUrlManager.updateResearcherUrl(claimedOrcid, rUrl, true);
+        
+        entity = researcherUrlDao.find(rUrl.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
     }
 
     @Test
@@ -152,6 +179,14 @@ public class ResearcherUrlManagerTest extends BaseTest {
         ResearcherUrl rUrl = new ResearcherUrl();
         rUrl.setUrl(new Url("http://orcid.org"));
         rUrl.setUrlName("ORCID Site");
+        rUrl.setVisibility(Visibility.PUBLIC);
+        return rUrl;
+    }
+    
+    private ResearcherUrl getAnotherResearcherUrl() {
+        ResearcherUrl rUrl = new ResearcherUrl();
+        rUrl.setUrl(new Url("http://bbc.co.uk"));
+        rUrl.setUrlName("BBC site");
         rUrl.setVisibility(Visibility.PUBLIC);
         return rUrl;
     }

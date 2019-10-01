@@ -24,6 +24,7 @@ import org.orcid.core.manager.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.PeerReviewManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.normalizers.ISSNNormalizer;
@@ -119,6 +120,11 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
         if(sourceEntity.getSourceClient() != null) {
             entity.setClientSourceId(sourceEntity.getSourceClient().getId());
+            
+            // user obo?
+            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                entity.setAssertionOriginSourceId(orcid);
+            }
         } 
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);      
@@ -141,6 +147,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         //Save the original source
         String existingSourceId = existingEntity.getSourceId();
         String existingClientSourceId = existingEntity.getClientSourceId();
+        String existingAssertionOriginSourceId = existingEntity.getAssertionOriginSourceId();
         
         // If request comes from the API perform validations
         if (isApiRequest) {
@@ -170,6 +177,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         //Be sure it doesn't overwrite the source
         updatedEntity.setSourceId(existingSourceId);
         updatedEntity.setClientSourceId(existingClientSourceId);
+        updatedEntity.setAssertionOriginSourceId(existingAssertionOriginSourceId);
         createIssnGroupIdIfNecessary(peerReview);
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         updatedEntity.setOrg(updatedOrganization);

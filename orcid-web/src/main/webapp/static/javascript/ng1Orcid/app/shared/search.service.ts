@@ -1,5 +1,4 @@
 declare var orcidVar: any;
-declare var orcidSearchUrlJs: any;
 
 import { Injectable } 
     from '@angular/core';
@@ -85,16 +84,138 @@ export class SearchService {
         );
     }
 
-    getResults(query): Observable<any> {
+    getResults(input): Observable<any> {
         return this.searchBaseUri.pipe(
-            switchMap((baseUrlString) => {                 
-                return this.http.get(baseUrlString + query, {headers: this.publicApiHeaders})                   
+            switchMap((baseUrlString) => {
+                const searchUrlAndParameters = this.buildUrl(input, baseUrlString)  
+                return this.http.get(searchUrlAndParameters, {headers: this.publicApiHeaders})                   
             })
-        )               
+        )                   
     }
 
     notifyOther(): void {
         this.notify.next();
         console.log('notify');
     }
+
+    orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
+    orcidFullRegex = new RegExp(
+            "^\\s*((http://)?([^/]*orcid\\.org|localhost.*/orcid-web)/)?(\\d{4}-){3,}\\d{3}[\\dX]\\s*$");
+    quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
+
+    buildUrl (input, baseUrl) {	
+        if (this.hasValue(input.text)) {	
+            var orcidId = this.extractOrcidId(input.text);	
+            if (orcidId) {	
+                // Search for iD specifically	
+                return baseUrl + "?q=orcid:" + orcidId + this.offset(input);	
+            }	
+            // General quick search	
+            return baseUrl + '?q='	
+                    + encodeURIComponent(   this.quickSearchEDisMax  + input.text)	
+                    + this.offset(input);	
+        } else {	
+            // Advanced search	
+            return  this.buildAdvancedSearchUrl(input, baseUrl);	
+        }	
+    };
+
+
+    hasValue(ref) {	
+        return typeof ref !== 'undefined' && ref !== null && ref !== '';	
+    }
+
+    extractOrcidId(string: any) {
+        var regexResult = this.orcidPathRegex.exec(string);
+        if (regexResult) {
+            return regexResult[0];
+        }
+        return null;
+    }
+
+    offset(input: any) {
+        var start = this.hasValue(input.start) ? input.start : 0;
+        var rows = this.hasValue(input.rows) ? input.rows : 10;
+        return '&start=' + start + '&rows=' + rows;
+    };
+
+    buildAdvancedSearchUrl(input: any, baseUrl: string) {
+        var escapedAffiliationOrg;
+        var escapedFamilyName;
+        var escapedGivenNames;
+        var escapedGridOrg;
+        var escapedKeyword;
+        var query = '';
+        var doneSomething = false;
+        if (this.hasValue(input.givenNames)) {
+            escapedGivenNames = this.escapeReservedChar(input.givenNames);
+            query += 'given-names:' + escapedGivenNames;
+            doneSomething = true;
+        }
+        if (this.hasValue(input.familyName)) {
+            if (doneSomething) {
+                query += ' AND ';
+            }
+            escapedFamilyName = this.escapeReservedChar(input.familyName);
+            query += 'family-name:' + escapedFamilyName;
+            doneSomething = true;
+        }
+        if (this.hasValue(input.searchOtherNames) && this.hasValue(input.givenNames)) {
+            query += ' OR other-names:' + escapedGivenNames;
+        }
+        if (this.hasValue(input.keyword)) {
+            if (doneSomething) {
+                query += ' AND ';
+            }
+            escapedKeyword = this.escapeReservedChar(input.keyword);
+            query += 'keyword:' + escapedKeyword;
+            doneSomething = true;
+        }
+        if (this.hasValue(input.affiliationOrg)) {
+            if (doneSomething) {
+                query += ' AND ';
+            }
+
+            //if all chars are numbers, assume it's a ringgold id
+            if (input.affiliationOrg.match(/^[0-9]*$/)) {
+                query += 'ringgold-org-id:' + input.affiliationOrg;
+            } else if(input.affiliationOrg.startsWith('grid.')) {
+                escapedGridOrg = this.escapeReservedChar(input.affiliationOrg);
+                query += 'grid-org-id:' + escapedGridOrg;
+            } else {
+                escapedAffiliationOrg = this.escapeReservedChar(input.affiliationOrg);
+                query += 'affiliation-org-name:' + escapedAffiliationOrg;
+            }
+            doneSomething = true;
+        }
+
+        return doneSomething ? baseUrl + '?q=' + encodeURIComponent(query)
+                + this.offset(input) : '?q=';
+    }
+
+    
+    escapeReservedChar(inputText: any){
+        //escape all reserved chars except double quotes
+        //per https://lucene.apache.org/solr/guide/6_6/the-standard-query-parser.html#TheStandardQueryParser-EscapingSpecialCharacters
+        var escapedText = inputText.replace(/([!^&*()+=\[\]\\/{}|:?~])/g, "\\$1");
+        return escapedText.toLowerCase();
+    }
+
+    isValidOrcidId(input): any{
+        if(typeof input.text === 'undefined' || input.text === null || input.text === '' || this.orcidFullRegex.exec(input.text.toUpperCase())){
+            return true;
+        }
+        return false;
+    }
+
+    isValid = function(input) {
+        var fieldsToCheck = [ input.text, input.givenNames, input.familyName,	
+                input.keyword, input.affiliationOrg ];	
+        for ( var i = 0; i < fieldsToCheck.length; i++) {	
+            if (this.hasValue(fieldsToCheck[i])) {	
+                return true;	
+            }	
+        }	
+        return false;	
+    };
 }

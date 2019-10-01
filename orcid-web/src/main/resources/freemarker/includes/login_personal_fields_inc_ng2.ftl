@@ -50,7 +50,7 @@
 <div id="login-deactivated-error" class="orcid-error" style="display:none">
     <span *ngIf="showDeactivatedError">
         <p>
-            <small>
+            <small role="alert" >
                 <@spring.message 'orcid.frontend.deactivated' /><br />
                 <@spring.message 'reset_password.enterEmail_2' />
                 <a href="https://orcid.org/help/contact-us"><@spring.message 'resend_claim.labelorg' /></a>
@@ -62,10 +62,10 @@
                 <div class="controls"> 
                     <input id="email" name="email" type="text" class="form-control" [(ngModel)]="initReactivationRequest.email" />
                 </div>
-                <span class="orcid-error" *ngIf="initReactivationRequest.error != null">
+                <span  role="alert"  class="orcid-error" *ngIf="initReactivationRequest.error != null">
                     <div [innerHTML]="initReactivationRequest.error"></div>
                 </span>
-                <span class="btn btn-primary" (click)="sendReactivationEmail(initReactivationRequest.email)"><@spring.message 'check_password_modal.submit' /></span>
+                <span role="button" tabindex="0" class="btn btn-primary" (keydown.Space)="sendReactivationEmail(initReactivationRequest.email, $event)" (keydown.Enter)="sendReactivationEmail(initReactivationRequest.email, $event)"  (click)="sendReactivationEmail(initReactivationRequest.email, $event)"><@spring.message 'check_password_modal.submit' /></span>
             </div>
         </div>         
     </span> 
