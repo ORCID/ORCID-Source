@@ -47,6 +47,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     closeModal(): void{
         //$('body').removeClass('overflow-hidden');
         this.showModal = false;
+        this.modalService.notifyOther({action:'close-with-click-outside'});
     };
 
     formColorBoxWidth(): string {

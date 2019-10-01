@@ -18,8 +18,6 @@ import org.orcid.pojo.grouping.WorkGroup;
 
 public class WorksPaginator {
     
-    static final int PAGE_SIZE = 50;
-
     static final String TITLE_SORT_KEY = "title";
 
     static final String DATE_SORT_KEY = "date";
@@ -32,7 +30,7 @@ public class WorksPaginator {
     @Resource
     private WorksCacheManager worksCacheManager;
     
-    public Page<WorkGroup> getWorksPage(String orcid, int offset, boolean justPublic, String sort, boolean sortAsc) {
+    public Page<WorkGroup> getWorksPage(String orcid, int offset, int pageSize, boolean justPublic, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
         List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
         filteredGroups = sort(filteredGroups, sort, sortAsc);
@@ -41,12 +39,12 @@ public class WorksPaginator {
         worksPage.setTotalGroups(filteredGroups.size());
 
         List<WorkGroup> workGroups = new ArrayList<>();
-        for (int i = offset; i < Math.min(offset + PAGE_SIZE, filteredGroups.size()); i++) {
+        for (int i = offset; i < Math.min(offset + pageSize, filteredGroups.size()); i++) {
             org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = filteredGroups.get(i);
             workGroups.add(WorkGroup.valueOf(group, i, orcid));
         }
         worksPage.setGroups(workGroups);
-        worksPage.setNextOffset(offset + PAGE_SIZE);
+        worksPage.setNextOffset(offset + pageSize);
         return worksPage;
     }
 

@@ -13,6 +13,7 @@ import { CommonNg2Module }
 
 import { EmailsFormComponent } 
     from './emailsForm.component';
+import { ClickElsewhereDirective } from './ClickElsewhereDirective';
 
 // This is the Angular 1 part of the module
 export const EmailsFormModule = angular.module(
@@ -25,7 +26,8 @@ export const EmailsFormModule = angular.module(
 @NgModule(
     {
         declarations: [
-            EmailsFormComponent
+            EmailsFormComponent,
+            ClickElsewhereDirective
         ],
         entryComponents: [ 
             EmailsFormComponent 

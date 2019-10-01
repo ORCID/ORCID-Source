@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.validator;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
+import org.orcid.core.exception.InvalidAmountException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
 import org.orcid.core.exception.InvalidOrgException;
@@ -295,6 +297,12 @@ public class ActivityValidator {
                 throw new OrcidValidationException("Please specify a currency code");
             } else if (amount.getCurrencyCode() != null && PojoUtil.isEmpty(amount.getContent())) {
                 throw new OrcidValidationException("Please specify an amount or remove the amount tag");
+            } else if (amount.getCurrencyCode() != null && !PojoUtil.isEmpty(amount.getContent())) {
+                try {
+                    Double.parseDouble(amount.getContent());
+                } catch (NumberFormatException e) {
+                    throw new InvalidAmountException();
+                }
             }
         }
 

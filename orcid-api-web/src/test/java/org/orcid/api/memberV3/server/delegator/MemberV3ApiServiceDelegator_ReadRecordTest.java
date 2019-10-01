@@ -767,28 +767,28 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
             assertEquals("agr", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
             if (peerReview.getPutCode().equals(Long.valueOf(9))) {
                 assertEquals("0", peerReview.getDisplayIndex());
-                assertEquals("issn:0000009", peerReview.getGroupId());
+                assertEquals("issn:0000-0009", peerReview.getGroupId());
                 assertEquals("/0000-0000-0000-0003/peer-review/9", peerReview.getPath());
                 assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
                 assertEquals(Visibility.PUBLIC.value(), peerReview.getVisibility().value());
             } else if (peerReview.getPutCode().equals(Long.valueOf(10))) {
                 assertEquals("1", peerReview.getDisplayIndex());
-                assertEquals("issn:0000010", peerReview.getGroupId());
+                assertEquals("issn:0000-0010", peerReview.getGroupId());
                 assertEquals("/0000-0000-0000-0003/peer-review/10", peerReview.getPath());
                 assertEquals("work:external-identifier-id#2", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
                 assertEquals(Visibility.LIMITED.value(), peerReview.getVisibility().value());
             } else if (peerReview.getPutCode().equals(Long.valueOf(11))) {
                 assertEquals("2", peerReview.getDisplayIndex());
-                assertEquals("issn:0000011", peerReview.getGroupId());
+                assertEquals("issn:0000-0011", peerReview.getGroupId());
                 assertEquals("/0000-0000-0000-0003/peer-review/11", peerReview.getPath());
                 assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
                 assertEquals(Visibility.PRIVATE.value(), peerReview.getVisibility().value());
             } else if (peerReview.getPutCode().equals(Long.valueOf(12))) {
                 assertEquals("3", peerReview.getDisplayIndex());
-                assertEquals("issn:0000012", peerReview.getGroupId());
+                assertEquals("issn:0000-0012", peerReview.getGroupId());
                 assertEquals("/0000-0000-0000-0003/peer-review/12", peerReview.getPath());
                 assertEquals("work:external-identifier-id#4", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 assertEquals("0000-0000-0000-0003", peerReview.getSource().retrieveSourcePath());

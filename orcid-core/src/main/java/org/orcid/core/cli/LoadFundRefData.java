@@ -212,6 +212,7 @@ public class LoadFundRefData {
             String itemDoi = node.getNodeValue();
             //Get item node
             Node organizationNode = (Node) xPath.compile(itemExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.NODE);
+            organizationNode.getParentNode().removeChild(organizationNode);
             
             // Get organization name
             String orgName = (String) xPath.compile(orgNameExpression).evaluate(organizationNode, XPathConstants.STRING);

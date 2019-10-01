@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.GroupIdRecordManager;
@@ -25,6 +26,7 @@ import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.identifiers.normalizers.ISSNNormalizer;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -40,6 +42,9 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
+    
+    @Resource
+    private ISSNNormalizer issnNormaliser;
 
     @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
@@ -58,20 +63,20 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
     @Resource(name = "groupIdRecordManagerReadOnlyV3")
     private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
-    
+
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource(name = "externalIDValidatorV3")
     private ExternalIDValidator externalIDValidator;
-    
+
     @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
-    
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-        
-    @Override    
+
+    @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
 
@@ -87,16 +92,15 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                        activityValidator.checkExternalIdentifiersForDuplicates(peerReview, existing, existing.getSource(),
-                                activeSource);
+                        activityValidator.checkExternalIdentifiersForDuplicates(peerReview, existing, existing.getSource(), activeSource);
                     }
                 }
-            }else{
-                //check vocab of external identifiers
+            } else {
+                // check vocab of external identifiers
                 externalIDValidator.validatePeerReview(peerReview.getExternalIdentifiers());
                 externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
             }
-
+            createIssnGroupIdIfNecessary(peerReview);
             validateGroupId(peerReview);
         }
 
@@ -106,14 +110,15 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         // database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         entity.setOrg(updatedOrganization);
-        
-        //Set the source
+
+        // Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
-        
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);      
-        entity.setProfile(profile);        
+
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        entity.setProfile(profile);
         setIncomingPrivacy(entity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
+        
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE));
@@ -122,13 +127,13 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
     @Override
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
-        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
+        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());
         Visibility originalVisibility = Visibility.valueOf(existingEntity.getVisibility());
         Source activeSource = sourceManager.retrieveActiveSource();
-        
-        //Save the original source
+
+        // Save the original source
         Source originalSource = SourceEntityUtils.extractSourceFromEntity(existingEntity);
-        
+
         // If request comes from the API perform validations
         if (isApiRequest) {
             activityValidator.validatePeerReview(peerReview, activeSource, false, isApiRequest, originalVisibility);
@@ -137,26 +142,25 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             for (PeerReview existing : existingReviews) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(peerReview.getPutCode())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(peerReview, existing, existing.getSource(),
-                            activeSource);
+                    activityValidator.checkExternalIdentifiersForDuplicates(peerReview, existing, existing.getSource(), activeSource);
                 }
             }
-        }else{
-            //check vocab of external identifiers
+        } else {
+            // check vocab of external identifiers
             externalIDValidator.validatePeerReview(peerReview.getExternalIdentifiers());
             externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }
-        PeerReviewEntity updatedEntity = new PeerReviewEntity();        
-        
-        orcidSecurityManager.checkSourceAndThrow(existingEntity);        
-        
+        PeerReviewEntity updatedEntity = new PeerReviewEntity();
+
+        orcidSecurityManager.checkSourceAndThrow(existingEntity);
+
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, updatedEntity);
         updatedEntity.setProfile(new ProfileEntity(orcid));
         updatedEntity.setVisibility(originalVisibility.name());
-        
-        //Be sure it doesn't overwrite the source
+
+        // Be sure it doesn't overwrite the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedEntity);
-        
+        createIssnGroupIdIfNecessary(peerReview);
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         updatedEntity.setOrg(updatedOrganization);
         updatedEntity = peerReviewDao.merge(updatedEntity);
@@ -175,15 +179,15 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     }
 
     @Transactional
-    private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {        
+    private boolean deletePeerReview(PeerReviewEntity entity, String orcid) {
         return peerReviewDao.removePeerReview(orcid, entity.getId());
     }
 
     private void setIncomingPrivacy(PeerReviewEntity entity, ProfileEntity profile) {
         String incomingVisibility = entity.getVisibility();
         String defaultVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {            
-            entity.setVisibility(defaultVisibility);            
+        if (profile.getClaimed()) {
+            entity.setVisibility(defaultVisibility);
         } else if (incomingVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
@@ -219,18 +223,18 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         item.setActionType(type);
         Map<String, Object> additionalInfo = new HashMap<String, Object>();
         additionalInfo.put("subject_container_name", peerReviewEntity.getSubjectContainerName());
-        
+
         String itemName = null;
-        
-        Optional<GroupIdRecord> optional = groupIdRecordManagerReadOnly.findByGroupId(peerReviewEntity.getGroupId());
-        if(optional.isPresent()) {
+
+        Optional<GroupIdRecord> optional = groupIdRecordManager.findByGroupId(peerReviewEntity.getGroupId());
+        if (optional.isPresent()) {
             GroupIdRecord groupId = optional.get();
-            if(!StringUtils.isBlank(groupId.getName())) {
+            if (!StringUtils.isBlank(groupId.getName())) {
                 additionalInfo.put("group_name", optional.get().getName());
                 itemName = optional.get().getName();
-            }            
+            }
         }
-        
+
         item.setItemName(itemName);
         item.setAdditionalInfo(additionalInfo);
         return Arrays.asList(item);
@@ -239,5 +243,16 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     @Override
     public void removeAllPeerReviews(String orcid) {
         peerReviewDao.removeAllPeerReviews(orcid);
+    }
+    
+    private void createIssnGroupIdIfNecessary(PeerReview peerReview) {
+        if (IssnGroupIdPatternMatcher.isIssnGroupType(peerReview.getGroupId())) {
+            String normalisedIssn = issnNormaliser.normalise("issn", peerReview.getGroupId());
+            String normalisedGroupId = "issn:" + normalisedIssn;
+            if (!groupIdRecordManager.exists(normalisedGroupId)) {
+                groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(normalisedGroupId, normalisedIssn);
+            }
+            peerReview.setGroupId(normalisedGroupId);
+        }
     }
 }

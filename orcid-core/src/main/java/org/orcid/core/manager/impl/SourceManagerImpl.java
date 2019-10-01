@@ -9,11 +9,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.utils.RecordNameUtils;
-import org.orcid.core.utils.SourceEntityUtils;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -70,7 +66,11 @@ public class SourceManagerImpl extends ManagerReadOnlyBaseImpl implements Source
             String clientId = authorizationRequest.getClientId();
             ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
             SourceEntity sourceEntity = new SourceEntity();
-            sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));            
+            
+            ClientDetailsEntity sourceClient = new ClientDetailsEntity(clientId, clientDetails.getClientName());
+            sourceClient.setUserOBOEnabled(clientDetails.isUserOBOEnabled());
+            sourceEntity.setSourceClient(sourceClient);          
+            
             return sourceEntity;
         }
         String userOrcid = retrieveEffectiveOrcid(authentication);

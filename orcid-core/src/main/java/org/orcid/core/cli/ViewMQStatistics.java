@@ -21,7 +21,7 @@ public class ViewMQStatistics {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewMQStatistics.class);
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "resource" })
     public static void main(String[] args) throws JMSException {
         if (args.length == 0) {
             throw new RuntimeException("Queue name arg required");

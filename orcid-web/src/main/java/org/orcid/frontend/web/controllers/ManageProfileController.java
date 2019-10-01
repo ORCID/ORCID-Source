@@ -593,13 +593,34 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/email/edit", method = RequestMethod.POST)
-    public @ResponseBody String editEmail(HttpServletRequest request, @RequestBody EditEmail editEmail) {
+    public @ResponseBody EditEmail editEmail(HttpServletRequest request, @RequestBody EditEmail editEmail) {
         String orcid = getCurrentUserOrcid();
         String owner = emailManager.findOrcidIdByEmail(editEmail.getOriginal());
-        if(orcid.equals(owner)) {            
-            emailManager.editEmail(orcid, editEmail.getOriginal(), editEmail.getEdited(), request);               
+
+        List<String> errors = new ArrayList<String>();
+        if(!orcid.equals(owner)) {            
+            errors.add(getMessage("Email.personalInfoForm.email"));
         }
-        return editEmail.getEdited();
+        
+        MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+        validateEmailAddress(editEmail.getEdited(), false, false, request, mbr);
+
+        for (ObjectError oe : mbr.getAllErrors()) {
+            if (oe.getCode() != null) {
+                errors.add(getMessage(oe.getCode(), oe.getArguments()));
+            } else {
+                errors.add(oe.getDefaultMessage());
+            }
+        }
+        
+        if (errors.isEmpty()) {
+            // clear errors
+            editEmail.setErrors(new ArrayList<String>());
+            emailManager.editEmail(orcid, editEmail.getOriginal(), editEmail.getEdited(), request);            
+        } else {
+            editEmail.setErrors(errors);
+        }
+        return editEmail;
     }
     
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)

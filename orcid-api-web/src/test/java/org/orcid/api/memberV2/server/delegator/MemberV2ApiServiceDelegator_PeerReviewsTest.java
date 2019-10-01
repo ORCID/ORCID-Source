@@ -24,7 +24,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.OrcidAccessControlException;
@@ -33,6 +36,10 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.groupIds.issn.IssnClient;
+import org.orcid.core.groupIds.issn.IssnData;
+import org.orcid.core.groupIds.issn.IssnValidator;
+import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
@@ -92,6 +99,15 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
     @Resource(name = "notificationManager")
     private NotificationManager notificationManager;
     
+    @Resource
+    private GroupIdRecordManager groupIdRecordManager;
+    
+    @Resource
+    private IssnValidator issnValidator;
+    
+    @Resource
+    private IssnClient issnClient;
+    
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
@@ -103,11 +119,37 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         
         when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager); 
+        
+        IssnValidator mockIssnValidator = Mockito.mock(IssnValidator.class);
+        when(mockIssnValidator.issnValid(Mockito.anyString())).thenReturn(true);
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", mockIssnValidator); 
+        
+        IssnClient mockIssnClient = Mockito.mock(IssnClient.class);
+       
+        
+        Answer<IssnData> issnDataAnswer = new Answer<IssnData>() {
+
+            @Override
+            public IssnData answer(InvocationOnMock invocation) throws Throwable {
+                String issn = (String) invocation.getArguments()[0];
+                IssnData mockData = new IssnData();
+                mockData.setIssn(issn);
+                mockData.setMainTitle("test");
+                return mockData;
+            }
+            
+        };
+        
+        when(mockIssnClient.getIssnData(Mockito.anyString())).thenAnswer(issnDataAnswer);
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnClient", mockIssnClient); 
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "orcidSourceClientDetailsId", "APP-1234567898765432");
     }
     
     @After
     public void after() {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);         
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", issnValidator);
+        TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnClient", issnClient);
     }
     
     @BeforeClass
@@ -180,7 +222,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertEquals("Peer Review # 1 container name", peerReview.getSubjectContainerName().getContent());
         assertEquals("peer-review:subject-external-identifier-id#1", peerReview.getSubjectExternalIdentifier().getValue());
         assertEquals("agr", peerReview.getSubjectExternalIdentifier().getType());
-        assertEquals("issn:0000001", peerReview.getGroupId());
+        assertEquals("issn:0000-0001", peerReview.getGroupId());
     }
 
     @Test
@@ -199,7 +241,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
         assertEquals("work:external-identifier-id#2", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("limited", peerReview.getVisibility().value());
-        assertEquals("issn:0000002", peerReview.getGroupId());
+        assertEquals("issn:0000-0002", peerReview.getGroupId());
     }
 
     @Test
@@ -218,7 +260,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
         assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("private", peerReview.getVisibility().value());
-        assertEquals("issn:0000003", peerReview.getGroupId());
+        assertEquals("issn:0000-0003", peerReview.getGroupId());
     }
 
     @Test(expected = OrcidVisibilityException.class)
@@ -276,23 +318,23 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
             PeerReviewSummary summary = group.getPeerReviewSummary().get(0);
             Utils.verifyLastModified(summary.getLastModifiedDate());
             switch (group.getIdentifiers().getExternalIdentifier().get(0).getValue()) {
-            case "issn:0000009":
-                assertEquals("issn:0000009", summary.getGroupId());
+            case "issn:0000-0009":
+                assertEquals("issn:0000-0009", summary.getGroupId());
                 assertEquals(Long.valueOf(9), summary.getPutCode());
                 found1 = true;
                 break;
-            case "issn:0000010":
-                assertEquals("issn:0000010", summary.getGroupId());
+            case "issn:0000-0010":
+                assertEquals("issn:0000-0010", summary.getGroupId());
                 assertEquals(Long.valueOf(10), summary.getPutCode());
                 found2 = true;
                 break;
-            case "issn:0000011":
-                assertEquals("issn:0000011", summary.getGroupId());
+            case "issn:0000-0011":
+                assertEquals("issn:0000-0011", summary.getGroupId());
                 assertEquals(Long.valueOf(11), summary.getPutCode());
                 found3 = true;
                 break;
-            case "issn:0000012":
-                assertEquals("issn:0000012", summary.getGroupId());
+            case "issn:0000-0012":
+                assertEquals("issn:0000-0012", summary.getGroupId());
                 assertEquals(Long.valueOf(12), summary.getPutCode());
                 found4 = true;
                 break;
@@ -463,7 +505,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0));
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary());
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0));
-        assertEquals("issn:0000001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        assertEquals("issn:0000-0001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
 
         PeerReview peerReview = Utils.getPeerReview();
 
@@ -492,10 +534,10 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         for (PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
             Utils.verifyLastModified(group.getLastModifiedDate());
             Utils.verifyLastModified(group.getPeerReviewSummary().get(0).getLastModifiedDate());
-            if ("issn:0000001".equals(group.getPeerReviewSummary().get(0).getGroupId())) {
+            if ("issn:0000-0001".equals(group.getPeerReviewSummary().get(0).getGroupId())) {
                 haveOld = true;
             } else {
-                assertEquals("issn:0000003", group.getPeerReviewSummary().get(0).getGroupId());
+                assertEquals("issn:0000-0003", group.getPeerReviewSummary().get(0).getGroupId());
                 haveNew = true;
             }
         }
@@ -532,7 +574,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         wei1.setType(WorkExternalIdentifierType.DOI.value());
         weis1.getExternalIdentifier().add(wei1);
         peerReview1.setExternalIdentifiers(weis1);
-        peerReview1.setGroupId("issn:0000003");
+        peerReview1.setGroupId("issn:0000-0003");
         peerReview1.setOrganization(Utils.getOrganization());
         peerReview1.setRole(Role.CHAIR);
         peerReview1.setSubjectContainerName(new Title("subject-container-name"));
@@ -561,7 +603,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
                                                                 // type
         weis2.getExternalIdentifier().add(wei2);
         peerReview2.setExternalIdentifiers(weis2);
-        peerReview2.setGroupId("issn:0000003");
+        peerReview2.setGroupId("issn:0000-0003");
         peerReview2.setOrganization(Utils.getOrganization());
         peerReview2.setRole(Role.CHAIR);
         peerReview2.setSubjectContainerName(new Title("subject-container-name"));
