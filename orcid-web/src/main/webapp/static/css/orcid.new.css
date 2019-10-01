@@ -8160,10 +8160,6 @@ ul.comma li:last-child:after {
         margin-top: 15px
     }
 
-    .padding-fix {
-        padding: 15px
-    }
-
     .country-controller #country {
         margin: 0 0 0 50px
     }
@@ -9756,7 +9752,14 @@ footer-ng2 .footer-row-container a:hover {
 }
 
 delegates-ng2, alt-signin-accounts-ng2 
-    {
-        display: flex;
-        flex-direction: column;
+{
+    display: flex;
+    flex-direction: column;
+}
+
+
+@media (min-width:768px) and (max-width:1350px) {
+    .padding-fix {
+        padding: 15px;
     }
+}
