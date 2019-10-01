@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="oauth-authorization-ng2-template">
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/confirm-oauth-access.ftl -->
     <#if springMacroRequestContext.requestUri?contains("/oauth/authorize")>
-        <div class="container confirm-oauth-access oneStepWidth">     
+        <div class="container confirm-oauth-access oneStepWidth accessible-urls accessible-errors">     
             <!-- /Freemarker and GA variables -->
             <@security.authorize access="hasRole('ROLE_USER')">
                 <div class="row top-header">
@@ -38,13 +38,13 @@
                         <div id="login-buttons" ng-init="loadAndInitAuthorizationForm()">
                             <div class="row">
                                 <div>
-                                    <button id="authorize" class="btn btn-primary topBuffer bottomBuffer" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (click)="authorize()">
+                                    <button id="authorize" class="btn btn-primary topBuffer bottomBuffer" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" (keydown.Space)="authorize($event)" (keydown.Enter)="authorize($event)" (click)="authorize($event)">
                                         <@orcid.msg 'confirm-oauth-access.Authorize' />
                                     </button>
-                                    <a class="oauth-deny-link topBuffer" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" (click)="deny()">
+                                </div>       
+                                    <a role="button" tabindex="0" class="oauth-deny-link topBuffer" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" (keydown.Space)="deny($event)" (keydown.Enter)="deny($event)" (click)="deny($event)">
                                         <@orcid.msg 'confirm-oauth-access.Deny' />
-                                    </a>
-                                </div>                  
+                                    </a>           
                             </div>
                         </div>
                     </div>      
@@ -55,18 +55,18 @@
     <!-- /data/orcid/git/ORCID-Source/ORCID-Source/orcid-web/src/main/resources/freemarker/login.ftl -->
     <#if springMacroRequestContext.requestUri?contains("/signin") || springMacroRequestContext.requestUri?contains("/login") >
         <div   
-        <@orcid.checkFeatureStatus 'WIDE_GRID'> class="col-md-5 col-md-offset-3" </@orcid.checkFeatureStatus>
-        <@orcid.checkFeatureStatus featureName='WIDE_GRID' enabled=false> class="col-md-6 col-md-offset-3" </@orcid.checkFeatureStatus>
+        <@orcid.checkFeatureStatus 'WIDE_GRID'> class="col-md-5 col-md-offset-3 accessible-urls accessible-errors" </@orcid.checkFeatureStatus>
+        <@orcid.checkFeatureStatus featureName='WIDE_GRID' enabled=false> class="col-md-6 col-md-offset-3 accessible-urls accessible-errors" </@orcid.checkFeatureStatus>
         >
 
             <div *ngIf="!this.isLoggedIn <#if (RequestParameters['oauth'])??>|| true</#if>" class="login">         
-                <p class="title" *ngIf="!showRegisterForm" >${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a id="switch-to-register-form" (click)="switchForm()">${springMacroRequestContext.getMessage("login.register")}</a></p>
-                <p class="title" *ngIf="showRegisterForm" >${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account")} <a id = "switch-to-login-form" (click)="switchForm()">${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account.link.text")}</a></p>
+                <p class="title" *ngIf="!showRegisterForm" >${springMacroRequestContext.getMessage("login.signin")} ${springMacroRequestContext.getMessage("login.or")} <a role="button" tabindex="0" id="switch-to-register-form" (keydown.Enter)="switchForm($event)" (keydown.Space)="switchForm($event)" (click)="switchForm($event)">${springMacroRequestContext.getMessage("login.register")}</a></p>
+                <p class="title" *ngIf="showRegisterForm" >${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account")} <a role="button" tabindex="0" id = "switch-to-login-form" (keydown.Enter)="switchForm($event)" (keydown.Space)="switchForm($event)" (click)="switchForm($event)">${springMacroRequestContext.getMessage("orcid.frontend.oauth.alread_have_account.link.text")}</a></p>
                 <div *ngIf="!showRegisterForm">
                     <div class="personal-login" >
                         <div *ngIf="shibbolethEnabled" class="btn-group btn-group-justified" role="group">
-                            <a (click)="showPersonalLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
-                            <a (click)="showInstitutionLogin()" class="btn btn-default" [ngClass]="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
+                            <a role="button" tabindex="0"  (keydown.Enter)="showPersonalLogin($event)" (keydown.Space)="showPersonalLogin($event)" (click)="showPersonalLogin($event)" class="btn btn-default" [ngClass]="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+                            <a role="button" tabindex="0" (keydown.Enter)="showInstitutionLogin($event)" (keydown.Space)="showInstitutionLogin($event)" (click)="showInstitutionLogin($event)" class="btn btn-default" [ngClass]="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
                         </div>
                         <div *ngIf="personalLogin == true">
                             <div class="login-box">
@@ -95,22 +95,23 @@
                                         </div>
                                     </div>
                                     <ul class="social-icons">
-                                        <!--FACEBOOK-->
-                                        <li>
-                                            <form ngNoForm action="{{getBaseUri()}}/signin/facebook" method="POST">
-                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                <button type="submit" class="btn btn-social-icon btn-facebook"></button>
-                                                <input type="hidden" name="scope" value="email"/>
-                                            </form>
-                                        </li>                                        
                                         <!--GOOGLE-->
                                         <li>
                                             <form ngNoForm action="{{getBaseUri()}}/signin/google" method="POST">
                                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                <button type="submit" class="btn btn-social-icon btn-google" ></button>
+                                                <button type="submit" class="google-login"> <img role="presentation" src="{{assetsPath}}/img/svg/google-simple.svg"> Sign in with Google</button>
                                                 <input type="hidden" name="scope" value="email" />
                                             </form>
                                         </li>
+                                        <!--FACEBOOK-->
+                                        <li>
+                                            <form ngNoForm action="{{getBaseUri()}}/signin/facebook" method="POST">
+                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                                                <button type="submit" class="facebook-login"> <img role="presentation" src="{{assetsPath}}/img/svg/facebook-icon-white.svg"> Sign in With Facebook</button>
+                                                <input type="hidden" name="scope" value="email"/>
+                                            </form>
+                                        </li>                                        
+
                                     </ul>
                                 </div><!--social login-->
                             </div><!--login box-->

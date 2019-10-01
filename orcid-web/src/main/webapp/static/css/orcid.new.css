@@ -6,6 +6,18 @@ a {
     word-wrap: break-word
 }
 
+.accessible-urls body a, .accessible-urls a {
+    font-weight: bold;
+}
+
+body .accessible-urls a:active,
+body .accessible-urls a:hover,
+.accessible-urls a:active,
+.accessible-urls a:hover{
+    color: #2E7F9F;
+    text-decoration: underline;
+}
+
 body a:active,
 body a:hover,
 a:active,
@@ -2415,6 +2427,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 
 .badPass,.shortPass,div.orcid-error,label.error,span.orcid-error {
     color: red
+}
+
+.accessible-errors .badPass,.accessible-errors .shortPass,.accessible-errors div.orcid-error,.accessible-errors label.error,.accessible-errors span.orcid-error {
+    color: #C62828;
 }
 
 .goodPass {
@@ -6067,10 +6083,10 @@ a#reset-password-toggle-text:hover:active {
 }
 
 .login .social-login ul.social-icons {
-    display: block;
     margin: 0 auto;
     padding: 0;
-    width: 110px
+    display: flex;
+    justify-content: center;
 }
 
 .login .social-login ul.social-icons li {
@@ -6078,7 +6094,17 @@ a#reset-password-toggle-text:hover:active {
 }
 
 .login .social-login ul.social-icons li:not(:first-child) {
-    margin-left: 25px
+    margin-left: 8px
+}
+
+@media (max-width:650px) { 
+    .login .social-login ul.social-icons {
+        flex-direction: column;
+    }
+    .login .social-login ul.social-icons li:not(:first-child) {
+        margin-left: 0px;
+        margin-top: 5px;
+    }
 }
 
 .login #authorize-button {
@@ -8635,7 +8661,7 @@ ul.twoFactorAuthSetup, ul.twoFactorAuthSetup li {
 span.notYouUrl {
     display: flex;
     align-items: center;
-    width: 80px;
+    width: 90px;
     justify-content: space-between;
 }
 
@@ -8758,6 +8784,10 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
 .pattern-errors {
     padding-top: 10px;
     display: block;
+}
+
+.pattern-container.flex {
+    display: flex;
 }
 
 .header2 .form-group {
@@ -9486,7 +9516,7 @@ user-menu .top-menu {
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 8px 10px 1px rgba(0, 0, 0, 0.14);
   background-color: #fafafa;
   position: absolute;
-  display: flex;
+  display: flex;     
   flex-direction: column;
   z-index: 1000;
   min-width: 248px;
@@ -9561,6 +9591,7 @@ user-menu .top-menu-header > div .my-profile{
 user-menu a.top-menu-item {
     display: block;
     color: rgba(0, 0, 0, 0.87);
+    font-weight: 400;
 }
 
 .lang-rl user-menu a.top-menu-item {
@@ -9749,6 +9780,56 @@ emails-form-ng2 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-hel
 
 footer-ng2 .footer-row-container a:hover {
     text-decoration: underline;
+}
+
+button.facebook-login {
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+    align-items: center;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
+    background-color: #3b5998;
+    border-radius: 5px;
+    display: flex;
+    padding: 6.5px 9px;
+    color: white;
+    min-width: 200px;
+    justify-content: center;
+}
+
+button.google-login {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+    align-items: center;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 1px 0 rgba(0, 0, 0, 0.14);
+    background-color: #fafafa;
+    border-radius: 5px;
+    display: flex;
+    padding: 6.5px 9px;
+    min-width: 200px;
+    justify-content: center;
+}
+
+button.facebook-login {
+}
+button.google-login {
+}
+
+button.google-login img, button.facebook-login img {
+    margin-right: 10px;
+    width: 18px;
+}
+
+
+oauth-authorization-ng2 a:hover {
+
 }
 
 delegates-ng2, alt-signin-accounts-ng2 
