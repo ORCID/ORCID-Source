@@ -53,7 +53,6 @@ the software.
         <module>orcid-pub-web</module>
         <module>orcid-api-web</module>
         <module>orcid-scheduler-web</module>
-        <module>orcid-solr-web</module>
         <module>orcid-integration-test</module>
         <module>orcid-internal-api</module>
         <module>orcid-activemq</module>
