@@ -17,6 +17,14 @@
         <meta name="robots" content="noindex">
         <meta name="BaiduSpider" content="noindex">
     </#if>
+    <#if ogTitle?has_content>
+        <meta property="og:title" content="${(ogTitle)!}">
+    </#if>
+
+    <#if ogDescription?has_content>
+        <meta property="og:description" content="${(ogDescription)!}">
+    </#if>
+    <meta property="og:image" content="${staticCdn}/img/orcid-og-image.png">
     
     <#include "/layout/google_analytics.ftl">
 
