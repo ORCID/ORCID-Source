@@ -3,7 +3,7 @@
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, OnDestroy, OnInit } 
+import { AfterViewInit, Component, OnDestroy, OnInit} 
     from '@angular/core';
 
 import { Observable, Subject, Subscription } 
@@ -69,15 +69,14 @@ export class AltSigninAccountsComponent implements AfterViewInit, OnDestroy, OnI
     };
 
     getSocialAccounts(): void {
-        console.log("getting social accounts");
         this.accountService.getSocialAccounts()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
+                this.populateIdPNames(data);
                 this.socialAccounts = data;  
-                this.populateIdPNames();
             },
             error => {
                 //console.log('error getting trusted orgs', error);
@@ -100,11 +99,10 @@ export class AltSigninAccountsComponent implements AfterViewInit, OnDestroy, OnI
         );
     };
 
-    populateIdPNames(): void {
+    populateIdPNames(socialAccounts): void {
         var account = null;
-        var name = null;
-        for(var i in this.socialAccounts){
-            account = this.socialAccounts[i];
+        for(var i in socialAccounts){
+            account = socialAccounts[i];
             if(account.id.providerid === "facebook" || account.id.providerid === "google"){
                 account.idpName = account.id.providerid.charAt(0).toUpperCase() + account.id.providerid.slice(1);
             } else if(this.feed) {

@@ -122,7 +122,7 @@
                                                             <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="keyword.sourceName">
                                                              <#--  OBO  -->
                                                             <ng-container *ngIf="(keyword.assertionOriginClientId && keyword.assertionOriginClientId !== keyword.source) ||
-                                                            (keyword.assertionOriginOrcid && keyword.assertionOriginOrcid !== okeywordtherName.source.source)">
+                                                            (keyword.assertionOriginOrcid && keyword.assertionOriginOrcid !== keyword.source.source)">
                                                             {{keyword.assertionOriginName || keyword.assertionOriginOrcid}} <i>${springMacroRequestContext.getMessage("public_profile.onBehalfOf")}</i> 
                                                             </ng-container>
                                                             {{keyword.sourceName}}

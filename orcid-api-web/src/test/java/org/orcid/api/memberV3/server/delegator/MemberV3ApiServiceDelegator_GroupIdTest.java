@@ -93,7 +93,7 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends DBUnitTest {
         assertNotNull(groupIdRecord);
         Utils.verifyLastModified(groupIdRecord.getLastModifiedDate());
         assertEquals(Long.valueOf(2), groupIdRecord.getPutCode());
-        assertEquals("issn:0000002", groupIdRecord.getGroupId());
+        assertEquals("issn:0000-0002", groupIdRecord.getGroupId());
         assertEquals("TestGroup2", groupIdRecord.getName());
         assertEquals("TestDescription2", groupIdRecord.getDescription());
         assertEquals("publisher", groupIdRecord.getType());
@@ -204,11 +204,11 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends DBUnitTest {
     @Test
     public void testFindGroupIdByGroupId() {
         SecurityContextTestUtils.setUpSecurityContextForGroupIdClientOnly();
-        Response response = serviceDelegator.findGroupIdRecordByGroupId("issn:0000001");
+        Response response = serviceDelegator.findGroupIdRecordByGroupId("issn:0000-0001");
         assertNotNull(response);
         GroupIdRecord groupIdRecord = (GroupIdRecord) response.getEntity();
         assertNotNull(groupIdRecord);
-        assertEquals("issn:0000001", groupIdRecord.getGroupId());
+        assertEquals("issn:0000-0001", groupIdRecord.getGroupId());
     }
 
     @Test

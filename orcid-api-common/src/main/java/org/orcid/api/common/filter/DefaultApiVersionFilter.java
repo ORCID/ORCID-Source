@@ -57,13 +57,15 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
                 if (isLODButNotJSONLD(request.getHeader("Accept"))) {
                     String redirectUri = orcidUrlManager.getPubBaseUrl() + OrcidApiConstants.EXPERIMENTAL_RDF_V1 + path;
                     response.sendRedirect(redirectUri);
-                }
-                else if (feature.isActive()) {
-                    String baseUrl = Features.PUB_API_2_0_BY_DEFAULT.equals(feature) ? orcidUrlManager.getPubBaseUrl() : orcidUrlManager.getApiBaseUrl();
-                    String redirectUri = baseUrl + "/v2.0" + path;
-                    response.sendRedirect(redirectUri);
                 } else {
-                    filterChain.doFilter(request, response);
+                    String baseUrl = Features.PUB_API_DEFAULT_TO_V3.equals(feature) ? orcidUrlManager.getPubBaseUrl() : orcidUrlManager.getApiBaseUrl();
+                    if (feature.isActive()) {
+                        String redirectUri = baseUrl + "/v3.0" + path;
+                        response.sendRedirect(redirectUri);
+                    } else {
+                        String redirectUri = baseUrl + "/v2.0" + path;
+                        response.sendRedirect(redirectUri);
+                    }
                 }
             } else {
                 filterChain.doFilter(request, response);

@@ -22,7 +22,9 @@ import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.Keywords;
+import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
@@ -39,6 +41,9 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Resource
     private ProfileKeywordManager profileKeywordManager;
+    
+    @Resource
+    private ProfileKeywordDao profileKeywordDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -79,6 +84,28 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
         assertNotNull(keyword);
         assertEquals(Visibility.LIMITED, keyword.getVisibility());
+    }
+    
+    @Test
+    public void testCreateKeywordWithUserOBOClient() {
+        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
+        userOboClient.setUserOBOEnabled(true);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
+        
+        Keyword keyword = getKeyword();
+        keyword = profileKeywordManager.createKeyword(claimedOrcid, keyword, true);
+
+        // check user obo info
+        ProfileKeywordEntity entity = profileKeywordDao.find(keyword.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
+        
+        // check user obo info isn't lost on update
+        userOboClient.setUserOBOEnabled(false);
+        keyword.setContent("updated");
+        profileKeywordManager.updateKeyword(claimedOrcid, keyword.getPutCode(), keyword, true);
+        
+        entity = profileKeywordDao.find(keyword.getPutCode());
+        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
     }
 
     @Test

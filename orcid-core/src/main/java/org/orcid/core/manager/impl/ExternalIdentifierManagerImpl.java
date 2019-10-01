@@ -16,6 +16,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ExternalIdentifierManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -70,6 +71,11 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         }
         if(sourceEntity.getSourceClient() != null) {
             newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+           
+            // user obo?
+            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                newEntity.setAssertionOriginSourceId(orcid);
+            }
         }
                 
         setIncomingPrivacy(newEntity, profile);

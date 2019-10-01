@@ -3,8 +3,9 @@ declare var $: any;
 import {  Component, OnDestroy, OnInit, ChangeDetectorRef } 
     from '@angular/core';
 
-import { Subject, Subscription } 
-    from 'rxjs';
+import { Observable, Subject, Subscription } 
+    from 'rxjs'; 
+
 import { takeUntil } 
     from 'rxjs/operators';
 
@@ -20,7 +21,7 @@ import { SearchService }
 })
 export class SearchComponent implements OnDestroy, OnInit {
     private ngUnsubscribe: Subject<void> = new Subject<void>();
-    private subscription: Subscription;
+    private subscription: Subscription; 
 
     allResults: any;
     areMoreResults: any;
@@ -67,6 +68,10 @@ export class SearchComponent implements OnDestroy, OnInit {
         }
     };
 
+    getBaseUri(): String {
+        return getBaseUri();
+    };
+
     getFirstResults(input: any){        
         this.showNoResultsAlert = false;
         this.allResults = new Array();
@@ -74,7 +79,7 @@ export class SearchComponent implements OnDestroy, OnInit {
         this.input.start = 0;
         this.input.rows = 10;
         this.areMoreResults = false;
-        if(this.isValid()){
+        if(this.searchSrvc.isValid(this.input)){
             this.hasErrors = false;
             this.searchResultsLoading = true;
             this.search(this.input);
@@ -200,28 +205,17 @@ export class SearchComponent implements OnDestroy, OnInit {
                 }
             );
         } 
-    }
+    };
 
     getDetails(orcidList: any) {
        for(var i = 0; i < orcidList.length; i++){
             this.getNames(orcidList[i]);
             this.getAffiliations(orcidList[i]);
        }
-    }
-
+    };
+    
     areResults(): any {
         return this.allResults.length > 0;
-    }
-
-    isValid(): any {
-        return this.searchSrvc.isValid(this.input);
-    };
-
-    isValidOrcidId(): any{
-        if(typeof this.input.text === 'undefined' || this.input.text === null || this.input.text === '' || this.searchSrvc.isValidOrcidId(this.input.text)){
-            return true;
-        }
-        return false;
     }
 
     ngOnDestroy() {
@@ -238,9 +232,8 @@ export class SearchComponent implements OnDestroy, OnInit {
         }
     }
 
-        
-    getBaseUri(): String {
-        return getBaseUri();
-    };
+    isValidOrcidId(): boolean{
+         return this.searchSrvc.isValidOrcidId(this.input)
+    }
 
 }

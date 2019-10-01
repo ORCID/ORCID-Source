@@ -9,6 +9,10 @@ public class IssnGroupIdPatternMatcher {
     private static Pattern issnGroupTypePattern = Pattern.compile("^issn:(.*)$");
 
     public static boolean isIssnGroupType(String groupId) {
+        if (groupId == null) {
+            return false;
+        }
+        
         Matcher matcher = issnGroupTypePattern.matcher(groupId);
         return matcher.find();
     }

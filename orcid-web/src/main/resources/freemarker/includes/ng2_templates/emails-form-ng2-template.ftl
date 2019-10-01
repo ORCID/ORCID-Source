@@ -23,28 +23,56 @@
                                     <div class="topBuffer">
                                         <a (click)="closeUnverifiedEmailSetPrimaryBox()"><@orcid.msg 'freemarker.btnclose' /></a>
                                     </div>
-                                </div>                       
+                                </div>
                                 <!-- Email table -->
                                 <div class="table-responsive bottomBuffer" style="position: static">
                                     <table class="table" style="position: static">
-                                        <tr *ngFor="let email of formData.emails | orderBy:'value'" class="data-row-group" name="email">
+                                    <ng-container *ngFor="let email of formData.emails | orderBy:'value'" >
+                                        <tr class="data-row-group" name="email">
                                             <!-- Primary Email -->
-                                            <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" >                                                     
-                                                <span>{{email.value}}</span><br>
+                                            <td [ngClass]="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email">  
+                                                <div *ngIf="emailEditing !== email.value">
+                                                    <span>{{email.value}}</span>
+                                                    <span (click)="emailEdit(email.value)"  role="Button" class="glyphicon glyphicon-pencil"  role="presentation" style="padding-left: 5px;"></span>
+                                                </div>
+                                                <div (clickElsewhere)="emailEditSave()" *ngIf="emailEditing === email.value" >
+                                                    <input autofocus [(ngModel)]="emailEditingNewValue"  (keyup.enter)="emailEditSave()"> 
+                                                    <div  class="cancel-edit-button" (click)="emailEditing = null" style="padding-left: 5px; word-break: break-word;"> CANCEL</div>
+                                                </div>
+                                                
                                                 <span class="orcid-error small" *ngIf="TOGGLZ_HIDE_UNVERIFIED_EMAILS && !email.verified && !(email.visibility=='PRIVATE')">${springMacroRequestContext.getMessage("manage.email.only_verified")} ${springMacroRequestContext.getMessage("common.please")} <a (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.developer_tools.verify_your_email")}</a></span>
                                             </td>
                                             <td>                     
-                                                <span *ngIf="!email.primary"> <a 
-                                                    (click)="setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
+                                                <span *ngIf="!email.primary"> <a class="border-button" [ngClass]="{'disabled': !email.verified}"
+                                                    (click)="setPrimary(email, email.verified)"
+                                                    (mouseenter)="showTooltip(email.value)" 
+                                                    (mouseleave)="hideTooltip(email.value)">${springMacroRequestContext.getMessage("manage.email.set_primary")} </a>
+                                            
+                                                    <div class="popover popover-tooltip bottom show-unverified-popover" *ngIf="showElement[email.value] && !email.verified">
+                                                    <div class="arrow"></div><div class="popover-content">
+                                                    <span>${springMacroRequestContext.getMessage("email.edit.unverified.popover")}</span>
+                                                    </div>
+                                                    </div>
                                                 </span>
-                                                <span *ngIf="email.primary" class="muted" style="color: #bd362f;">
+
+                                                <span *ngIf="email.primary" class="muted" class="border-button active">
                                                     ${springMacroRequestContext.getMessage("manage.email.primary_email")}
                                                 </span>
                                             </td>
                                             <!-- 
                                             <td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];"> 
                                             -->
-                                            <td>                            
+            
+                                            <td class="email-verified">
+                                                <span *ngIf="!email.verified" class="left">
+                                                    <a class="border-button" (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
+                                                </span>
+                                                <span *ngIf="email.verified" class="border-button active">
+                                                    ${springMacroRequestContext.getMessage("manage.email.verified")}
+                                                </span>
+                                            </td>   
+                                            <@orcid.checkFeatureStatus 'EMAIL_STATUS_DROPDOWN_OPTION'>   
+                                            <td>            
                                                 <select 
                                                     [(ngModel)]="email.current" 
                                                     (ngModelChange)="saveEmail(false)"
@@ -54,18 +82,10 @@
                                                         [value]="emailStatusOption.val"
                                                     >
                                                         {{emailStatusOption.label}}   
-                                                    </option>             
-                                                    
+                                                    </option>        
                                                 </select>
                                             </td>
-                                            <td class="email-verified">
-                                                <span *ngIf="!email.verified" class="left">
-                                                    <a (click)="verifyEmail(email, popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
-                                                </span>
-                                                <span *ngIf="email.verified" class="left">
-                                                    ${springMacroRequestContext.getMessage("manage.email.verified")}
-                                                </span>
-                                            </td>
+                                            </@orcid.checkFeatureStatus>
                                             <td width="26" class="tooltip-container">                                      
                                                 <a name="delete-email-inline" class="glyphicon glyphicon-trash grey"
                                                     *ngIf="email.primary == false"
@@ -80,10 +100,16 @@
                                                     elementId="email-privacy-toggle" 
                                                     >    
                                                     </privacy-toggle-ng2>
-                         
+                        
                                                 </div>
                                             </td>
+                                        
                                         </tr>
+                                            
+                                        <tr *ngIf="emailEditingErrors && emailEditing === email.value"  style="height: 50px;">                       
+                                                <span style="padding-left: 5px; width: 250%;" class="orcid-error" *ngFor="let error of emailEditingErrors"  [innerHTML]="error"></span>
+                                        </tr>
+                                    </ng-container>
                                     </table>            
                                     <!-- Delete Email Box -->
                                     <div  class="delete-email-box grey-box" *ngIf="showDeleteBox">               

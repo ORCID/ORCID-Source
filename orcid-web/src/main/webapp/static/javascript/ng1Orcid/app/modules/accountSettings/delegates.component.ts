@@ -143,14 +143,14 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.delegatesByOrcid = {};
-                this.delegation = data;
                 if(data != null){
+                    this.delegatesByOrcid = {};
                     for(var i=0; i < data.length; i++){
                         var delegate = data[i];
                         this.delegatesByOrcid[delegate.receiverOrcid.value] = delegate;
                     }
                 }
+                this.delegation = data;
             },
             error => {
                 //console.log('setformDataError', error);

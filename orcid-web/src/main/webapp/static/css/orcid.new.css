@@ -2358,7 +2358,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .settings-table .table td:nth-child(2) {
-    width: 50%
+    width: 50%;
+    min-width: 120px;
 }
 
 .settings-table .table td:nth-child(3) {
@@ -6432,10 +6433,10 @@ a#reset-password-toggle-text:hover:active {
 .member-list .member-logo {
     width: auto;
     height: auto;
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 200px;
+    max-height: 200px;
     float: left;
-    margin: 0 10px 0 0
+    margin: 0 100% 15px 0;
 }
 
 .member-list h3 {
@@ -9715,10 +9716,75 @@ footer-ng2 .footer-row-container a {
     color: rgba(0,0,0,0.87);
 }
 
+
+emails-form-ng2 .border-button {
+    line-height: 32px;
+    border-radius: 6px;
+    padding: 6px 11px;
+    color: rgba(0, 0, 0, 0.87);
+    border: solid 1px rgba(0, 0, 0, 0.32);
+    font-size: 13.8px;
+}
+
+emails-form-ng2 .border-button.disabled, emails-form-ng2 .border-button.disabled:hover{
+    cursor: default;
+    color: rgba(0, 0, 0, 0.38); 
+    background-color: initial;
+}
+
+emails-form-ng2 .border-button:hover {
+    background-color: rgba(8,92,119,0.04);
+    color: inherit;
+}
+emails-form-ng2 .border-button.active {
+    color: #2e7f9f;
+    background-color: rgba(8,92,119, 0.12);
+}
+
+emails-form-ng2 .cancel-edit-button {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.14;
+    letter-spacing: 1.25px;
+    text-align: center;
+    color: #f44336;
+    display: inline;
+}
+
+emails-form-ng2 .settings-table .popover.show-unverified-popover {
+    left: -75px;
+    top: 35px;
+    min-width: unset;
+    display: block
+}
+
+emails-form-ng2 .border-button {
+    width: 124px;
+    display: block;
+    text-align: center;
+    height: 30px;
+    line-height: 16px;
+}
+
+emails-form-ng2 .edit-record-emails {
+    width: 100%;
+}
+
+
+emails-form-ng2 privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.privacy-myorcid3>.arrow {
+    left: 80% !important;
+}
+
+emails-form-ng2 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container {
+    right: calc(50% - 45px);
+    bottom: 31px;
+}
+
 footer-ng2 .footer-row-container a:hover {
     text-decoration: underline;
 }
-
 
 button.facebook-login {
     background: none;
@@ -9768,4 +9834,9 @@ button.google-login img, button.facebook-login img {
 
 oauth-authorization-ng2 a:hover {
 
+}
+
+delegates-ng2, alt-signin-accounts-ng2 {
+    display: flex;
+    flex-direction: column;
 }
