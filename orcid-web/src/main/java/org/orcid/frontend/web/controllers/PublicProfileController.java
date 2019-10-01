@@ -212,15 +212,22 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();
         publicRecordPersonDetails = getPersonDetails(orcid, true);
-        if (publicRecordPersonDetails.getDisplayName() != null) {
-        	mav.addObject("ogTitle", publicRecordPersonDetails.getDisplayName() + " ("+ orcid +")" );
-        } else {
-        	mav.addObject("ogTitle", orcid);
+      
+        if (profile.isAccountNonLocked() && profile.getDeactivationDate() == null) {
+	        if (publicRecordPersonDetails.getDisplayName() != null && profile.isAccountNonLocked()) {
+	        	mav.addObject("ogTitle", publicRecordPersonDetails.getDisplayName() + " ("+ orcid +")" );
+	        } else {
+	        	mav.addObject("ogTitle", orcid);
+	        }
+	        if (publicRecordPersonDetails.getBiography() != null && publicRecordPersonDetails.getBiography().getContent() != null) {
+	        	mav.addObject("ogDescription", publicRecordPersonDetails.getBiography().getContent()  );
+	        } else {
+	        	mav.addObject("ogDescription", " " );
+	        }
         }
-        if (publicRecordPersonDetails.getBiography() != null && publicRecordPersonDetails.getBiography().getContent() != null) {
-        	mav.addObject("ogDescription", publicRecordPersonDetails.getBiography().getContent()  );
-        } else {
-        	mav.addObject("ogDescription", " " );
+        else {
+        		mav.addObject("ogTitle", orcid);
+        		mav.addObject("ogDescription", " " );
         }
         return mav;
     }
