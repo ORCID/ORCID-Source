@@ -47,31 +47,16 @@ export class UserMenuComponent {
     );
     this.onResize();
 
-    this.isPublicPage = this.commonSrvc.isPublicPage;
-    if (this.isPublicPage) {
-      this.commonSrvc.publicUserInfo$.subscribe(
-        data => {
-          this.userInfo = data;
-        },
-        error => {
-          console.log(
-            "header.component.ts: unable to fetch publicUserInfo",
-            error
-          );
-          this.userInfo = null;
-        }
-      );
-    } else {
-      this.commonSrvc.userInfo$.subscribe(
-        data => {
-          this.userInfo = data;
-        },
-        error => {
-          console.log("header.component.ts: unable to fetch userInfo", error);
-          this.userInfo = null;
-        }
-      );
-    }
+    this.commonSrvc.userInfo$.subscribe(
+      data => {
+        this.userInfo = data;
+      },
+      error => {
+        // User not logged in 
+        this.userInfo = null;
+      }
+    );
+  
 
     this.nameService.getData("/account/nameForm.json").subscribe(
       data => {
@@ -85,7 +70,6 @@ export class UserMenuComponent {
         if (this.nameForm.givenNames == null) {
           this.nameForm.givenNames = { value: null };
         }
-        console.log("this.nameForm", this.nameForm);
       },
       error => {
         //console.log('getNameForm Error', error);
