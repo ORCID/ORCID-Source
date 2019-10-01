@@ -24,7 +24,7 @@
     <#if ogDescription?has_content>
         <meta property="og:description" content="${(ogDescription)!}">
     </#if>
-    <meta property="og:image" content="${staticCdn}/img/orcid-og-image.png">
+    <meta property="og:image" content="https:${staticCdn}/img/orcid-og-image.png">
     
     <#include "/layout/google_analytics.ftl">
 
