@@ -9836,7 +9836,8 @@ oauth-authorization-ng2 a:hover {
 
 }
 
-delegates-ng2, alt-signin-accounts-ng2 {
-    display: flex;
-    flex-direction: column;
-}
+delegates-ng2, alt-signin-accounts-ng2 
+    {
+        display: flex;
+        flex-direction: column;
+    }
