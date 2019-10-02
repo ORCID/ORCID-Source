@@ -215,18 +215,14 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         String orcidDescription1 = "ORCID record for ";
         String orcidDescription2 = "ORCID provides an identifier for individuals to use with their name as they engage in research, scholarship, and innovation activities.";
-        if (profile.isAccountNonLocked() && profile.getDeactivationDate() == null) {
-	        if (publicRecordPersonDetails.getDisplayName() != null) {
-                mav.addObject("ogTitle", publicRecordPersonDetails.getDisplayName() + " ("+ orcid +")" );
-                mav.addObject("ogDescription", orcidDescription1 + publicRecordPersonDetails.getDisplayName() + ". " +orcidDescription2  );
-	        } else {
-                mav.addObject("ogTitle", orcid);
-                mav.addObject("ogDescription",  orcidDescription2 );
-	        }
-        }
-        else {
-        		mav.addObject("ogTitle", orcid);
-        		mav.addObject("ogDescription", "ORCID provides an identifier for individuals to use with their name as they engage in research, scholarship, and innovation activities." );
+        
+        // Check the user is not locked, deactivated and has public name
+        if (profile.isAccountNonLocked() && profile.getDeactivationDate() == null && publicRecordPersonDetails.getDisplayName() != null) {
+            mav.addObject("ogTitle", publicRecordPersonDetails.getDisplayName() + " ("+ orcid +")" );
+            mav.addObject("ogDescription", orcidDescription1 + publicRecordPersonDetails.getDisplayName() + ". " +orcidDescription2  );
+        } else {
+            mav.addObject("ogTitle", orcid);
+            mav.addObject("ogDescription",  orcidDescription2 );
         }
         return mav;
     }
