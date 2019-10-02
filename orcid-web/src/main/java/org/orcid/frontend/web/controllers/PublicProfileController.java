@@ -212,22 +212,21 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();
         publicRecordPersonDetails = getPersonDetails(orcid, true);
-      
+
+        String orcidDescription1 = "ORCID record for ";
+        String orcidDescription2 = "ORCID provides an identifier for individuals to use with their name as they engage in research, scholarship, and innovation activities.";
         if (profile.isAccountNonLocked() && profile.getDeactivationDate() == null) {
-	        if (publicRecordPersonDetails.getDisplayName() != null && profile.isAccountNonLocked()) {
-	        	mav.addObject("ogTitle", publicRecordPersonDetails.getDisplayName() + " ("+ orcid +")" );
+	        if (publicRecordPersonDetails.getDisplayName() != null) {
+                mav.addObject("ogTitle", publicRecordPersonDetails.getDisplayName() + " ("+ orcid +")" );
+                mav.addObject("ogDescription", orcidDescription1 + publicRecordPersonDetails.getDisplayName() + ". " +orcidDescription2  );
 	        } else {
-	        	mav.addObject("ogTitle", orcid);
-	        }
-	        if (publicRecordPersonDetails.getBiography() != null && publicRecordPersonDetails.getBiography().getContent() != null) {
-	        	mav.addObject("ogDescription", publicRecordPersonDetails.getBiography().getContent()  );
-	        } else {
-	        	mav.addObject("ogDescription", " " );
+                mav.addObject("ogTitle", orcid);
+                mav.addObject("ogDescription",  orcidDescription2 );
 	        }
         }
         else {
         		mav.addObject("ogTitle", orcid);
-        		mav.addObject("ogDescription", " " );
+        		mav.addObject("ogDescription", "ORCID provides an identifier for individuals to use with their name as they engage in research, scholarship, and innovation activities." );
         }
         return mav;
     }
