@@ -106,7 +106,6 @@ export class SearchComponent implements OnDestroy, OnInit {
                 this.showMoreLoading = false;
 
                 if (this.newResults) {
-                    console.log("new results");
                     this.getDetails(this.newResults);
                     this.allResults = this.allResults.concat(this.newResults); 
                     this.cdr.detectChanges();
@@ -210,7 +209,6 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     getDetails(orcidList: any) {
-        console.log("get details");
        for(var i = 0; i < orcidList.length; i++){
             this.getNames(orcidList[i]);
             this.getAffiliations(orcidList[i]);
