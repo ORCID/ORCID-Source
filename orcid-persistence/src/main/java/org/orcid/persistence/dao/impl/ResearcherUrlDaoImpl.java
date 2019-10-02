@@ -158,4 +158,21 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
         query.executeUpdate();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM researcher_url WHERE client_source_id = :clientDetailsId AND assertion_origin_source_id IS NOT NULL");
+        query.setParameter("clientDetailsId", clientDetailsId);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void revertUserOBODetails(List<BigInteger> ids) {
+        Query query = entityManager.createNativeQuery("UPDATE researcher_url SET assertion_origin_source_id = NULL where id IN :ids");
+        query.setParameter("ids", ids);
+        query.executeUpdate();
+    }
+
 }
