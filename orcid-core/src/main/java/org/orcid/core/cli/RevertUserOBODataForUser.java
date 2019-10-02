@@ -28,12 +28,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class RevertUserOBODataForUser {
 
-    static final int BATCH_SIZE = 400;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RevertUserOBODataForUser.class);
 
-    @Option(name = "-c", usage = "Client ID")
+    @Option(name = "-c", usage = "Client ID", required = true)
     private String clientDetailsId;
+    
+    @Option(name = "-b", usage = "Batch size", required = true)
+    private int batchSize;
 
     private ResearcherUrlDao researcherUrlDao;
 
@@ -96,7 +97,7 @@ public class RevertUserOBODataForUser {
     private void revertOrgAffiliations() {
         LOGGER.info("Updating org affiliations...");
         int updated = 0;
-        List<BigInteger> ids = orgAffiliationRelationDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = orgAffiliationRelationDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -104,7 +105,7 @@ public class RevertUserOBODataForUser {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = orgAffiliationRelationDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+            ids = orgAffiliationRelationDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -112,7 +113,7 @@ public class RevertUserOBODataForUser {
     private void revertAddresses() {
         LOGGER.info("Updating addresses...");
         int updated = 0;
-        List<BigInteger> ids = addressDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = addressDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -120,7 +121,7 @@ public class RevertUserOBODataForUser {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = addressDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+            ids = addressDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -128,7 +129,7 @@ public class RevertUserOBODataForUser {
     private void revertEmails() {
         LOGGER.info("Updating emails...");
         int updated = 0;
-        List<String> ids = emailDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+        List<String> ids = emailDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<String> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -136,7 +137,7 @@ public class RevertUserOBODataForUser {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = emailDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+            ids = emailDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -144,7 +145,7 @@ public class RevertUserOBODataForUser {
     private void revertOtherNames() {
         LOGGER.info("Updating other names...");
         int updated = 0;
-        List<BigInteger> ids = otherNameDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = otherNameDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -152,7 +153,7 @@ public class RevertUserOBODataForUser {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = otherNameDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+            ids = otherNameDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -160,7 +161,7 @@ public class RevertUserOBODataForUser {
     private void revertFundings() {
         LOGGER.info("Updating fundings...");
         int updated = 0;
-        List<BigInteger> ids = profileFundingDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = profileFundingDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -168,7 +169,7 @@ public class RevertUserOBODataForUser {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileFundingDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+            ids = profileFundingDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -176,7 +177,7 @@ public class RevertUserOBODataForUser {
     private void revertKeywords() {
         LOGGER.info("Updating keywords...");
         int updated = 0;
-        List<BigInteger> ids = profileKeywordDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = profileKeywordDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -184,7 +185,7 @@ public class RevertUserOBODataForUser {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileKeywordDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+            ids = profileKeywordDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -192,7 +193,7 @@ public class RevertUserOBODataForUser {
     private void revertWorks() {
         LOGGER.info("Updating works...");
         int updated = 0;
-        List<BigInteger> ids = workDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = workDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -200,7 +201,7 @@ public class RevertUserOBODataForUser {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = workDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+            ids = workDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -208,7 +209,7 @@ public class RevertUserOBODataForUser {
     private void revertResearcherUrls() {
         LOGGER.info("Updating researcher urls...");
         int updated = 0;
-        List<BigInteger> ids = researcherUrlDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = researcherUrlDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -216,14 +217,14 @@ public class RevertUserOBODataForUser {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = researcherUrlDao.getIdsForUserOBORecords(clientDetailsId, BATCH_SIZE * 20);
+            ids = researcherUrlDao.getIdsForUserOBORecords(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
     
     private <T> List<T> getNextIdSubset(List<T> ids) {
         List<T> subset = new ArrayList<>();
-        for (int i = 0; i < BATCH_SIZE && !ids.isEmpty(); i++) {
+        for (int i = 0; i < batchSize && !ids.isEmpty(); i++) {
             subset.add(ids.remove(0));
         }
         return subset;

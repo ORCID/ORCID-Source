@@ -22,12 +22,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class UpdateHistoricalDataForUserOBOClient {
 
-    private static final int BATCH_SIZE = 400;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateHistoricalDataForUserOBOClient.class);
 
-    @Option(name = "-c", usage = "Client ID")
+    @Option(name = "-c", usage = "Client ID", required = true)
     private String clientDetailsId;
+    
+    @Option(name = "-b", usage = "Batch size", required = true)
+    private int batchSize;
 
     private ResearcherUrlDao researcherUrlDao;
 
@@ -90,7 +91,7 @@ public class UpdateHistoricalDataForUserOBOClient {
     private void updateOrgAffiliations() {
         LOGGER.info("Updating org affiliations...");
         int updated = 0;
-        List<BigInteger> ids = orgAffiliationRelationDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = orgAffiliationRelationDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -98,7 +99,7 @@ public class UpdateHistoricalDataForUserOBOClient {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = orgAffiliationRelationDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+            ids = orgAffiliationRelationDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -106,7 +107,7 @@ public class UpdateHistoricalDataForUserOBOClient {
     private void updateAddresses() {
         LOGGER.info("Updating addresses...");
         int updated = 0;
-        List<BigInteger> ids = addressDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = addressDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -114,7 +115,7 @@ public class UpdateHistoricalDataForUserOBOClient {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = addressDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+            ids = addressDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -122,7 +123,7 @@ public class UpdateHistoricalDataForUserOBOClient {
     private void updateEmails() {
         LOGGER.info("Updating emails...");
         int updated = 0;
-        List<String> ids = emailDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+        List<String> ids = emailDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<String> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -130,7 +131,7 @@ public class UpdateHistoricalDataForUserOBOClient {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = emailDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+            ids = emailDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -138,7 +139,7 @@ public class UpdateHistoricalDataForUserOBOClient {
     private void updateOtherNames() {
         LOGGER.info("Updating other names...");
         int updated = 0;
-        List<BigInteger> ids = otherNameDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = otherNameDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -146,7 +147,7 @@ public class UpdateHistoricalDataForUserOBOClient {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = otherNameDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+            ids = otherNameDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -154,7 +155,7 @@ public class UpdateHistoricalDataForUserOBOClient {
     private void updateFundings() {
         LOGGER.info("Updating fundings...");
         int updated = 0;
-        List<BigInteger> ids = profileFundingDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = profileFundingDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -162,7 +163,7 @@ public class UpdateHistoricalDataForUserOBOClient {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileFundingDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+            ids = profileFundingDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -170,7 +171,7 @@ public class UpdateHistoricalDataForUserOBOClient {
     private void updateKeywords() {
         LOGGER.info("Updating keywords...");
         int updated = 0;
-        List<BigInteger> ids = profileKeywordDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = profileKeywordDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -178,7 +179,7 @@ public class UpdateHistoricalDataForUserOBOClient {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileKeywordDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+            ids = profileKeywordDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -186,7 +187,7 @@ public class UpdateHistoricalDataForUserOBOClient {
     private void updateWorks() {
         LOGGER.info("Updating works...");
         int updated = 0;
-        List<BigInteger> ids = workDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = workDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -194,7 +195,7 @@ public class UpdateHistoricalDataForUserOBOClient {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = workDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+            ids = workDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
@@ -202,7 +203,7 @@ public class UpdateHistoricalDataForUserOBOClient {
     private void updateResearcherUrls() {
         LOGGER.info("Updating researcher urls...");
         int updated = 0;
-        List<BigInteger> ids = researcherUrlDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+        List<BigInteger> ids = researcherUrlDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -210,14 +211,14 @@ public class UpdateHistoricalDataForUserOBOClient {
                 updated += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = researcherUrlDao.getIdsForUserOBOUpdate(clientDetailsId, BATCH_SIZE * 20);
+            ids = researcherUrlDao.getIdsForUserOBOUpdate(clientDetailsId, batchSize * 20);
         }
         LOGGER.info("Updated {} records", updated);
     }
     
     private <T> List<T> getNextIdSubset(List<T> ids) {
         List<T> subset = new ArrayList<>();
-        for (int i = 0; i < BATCH_SIZE && !ids.isEmpty(); i++) {
+        for (int i = 0; i < batchSize && !ids.isEmpty(); i++) {
             subset.add(ids.remove(0));
         }
         return subset;

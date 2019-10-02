@@ -57,56 +57,58 @@ public class RevertUserOBODataForUserTest {
     @Test
     public void test() {
         String clientId = "client-id";
+        int batchSize = 400;
         
-        Mockito.when(researcherUrlDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20))).thenReturn(getListOfIds(RevertUserOBODataForUser.BATCH_SIZE * 3));
+        Mockito.when(researcherUrlDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20))).thenReturn(getListOfIds(batchSize * 3));
         Mockito.doNothing().when(researcherUrlDao).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.when(workDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20))).thenReturn(getListOfIds(RevertUserOBODataForUser.BATCH_SIZE * 9 + 3));
+        Mockito.when(workDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20))).thenReturn(getListOfIds(batchSize * 9 + 3));
         Mockito.doNothing().when(workDao).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.when(profileKeywordDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20))).thenReturn(getListOfIds(RevertUserOBODataForUser.BATCH_SIZE * 20)).thenReturn(getListOfIds(RevertUserOBODataForUser.BATCH_SIZE * 20)).thenReturn(getListOfIds(RevertUserOBODataForUser.BATCH_SIZE));
+        Mockito.when(profileKeywordDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20))).thenReturn(getListOfIds(batchSize * 20)).thenReturn(getListOfIds(batchSize * 20)).thenReturn(getListOfIds(batchSize));
         Mockito.doNothing().when(profileKeywordDao).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.when(profileFundingDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20))).thenReturn(getListOfIds(0));
+        Mockito.when(profileFundingDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20))).thenReturn(getListOfIds(0));
         Mockito.doNothing().when(profileFundingDao).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.when(otherNameDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20))).thenReturn(getListOfIds(RevertUserOBODataForUser.BATCH_SIZE * 20));
+        Mockito.when(otherNameDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20))).thenReturn(getListOfIds(batchSize * 20));
         Mockito.doNothing().when(otherNameDao).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.when(emailDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20))).thenReturn(getListOfStringIds(RevertUserOBODataForUser.BATCH_SIZE * 20)).thenReturn(getListOfStringIds(RevertUserOBODataForUser.BATCH_SIZE * 2));
+        Mockito.when(emailDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20))).thenReturn(getListOfStringIds(batchSize * 20)).thenReturn(getListOfStringIds(batchSize * 2));
         Mockito.doNothing().when(emailDao).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.when(addressDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20))).thenReturn(getListOfIds(RevertUserOBODataForUser.BATCH_SIZE));
+        Mockito.when(addressDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20))).thenReturn(getListOfIds(batchSize));
         Mockito.doNothing().when(addressDao).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.when(orgAffiliationRelationDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20))).thenReturn(getListOfIds(1));
+        Mockito.when(orgAffiliationRelationDao.getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20))).thenReturn(getListOfIds(1));
         Mockito.doNothing().when(orgAffiliationRelationDao).revertUserOBODetails(Mockito.anyList());
         
         ReflectionTestUtils.setField(dataReverter, "clientDetailsId", clientId);
+        ReflectionTestUtils.setField(dataReverter, "batchSize", batchSize);
         dataReverter.execute();
         
-        Mockito.verify(researcherUrlDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20));
+        Mockito.verify(researcherUrlDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20));
         Mockito.verify(researcherUrlDao, Mockito.times(3)).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.verify(workDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20));
+        Mockito.verify(workDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20));
         Mockito.verify(workDao, Mockito.times(10)).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.verify(profileKeywordDao, Mockito.times(4)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20));
+        Mockito.verify(profileKeywordDao, Mockito.times(4)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20));
         Mockito.verify(profileKeywordDao, Mockito.times(41)).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.verify(profileFundingDao, Mockito.times(1)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20));
+        Mockito.verify(profileFundingDao, Mockito.times(1)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20));
         Mockito.verify(profileFundingDao, Mockito.times(0)).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.verify(otherNameDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20));
+        Mockito.verify(otherNameDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20));
         Mockito.verify(otherNameDao, Mockito.times(20)).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.verify(emailDao, Mockito.times(3)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20));
+        Mockito.verify(emailDao, Mockito.times(3)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20));
         Mockito.verify(emailDao, Mockito.times(22)).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.verify(addressDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20));
+        Mockito.verify(addressDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20));
         Mockito.verify(addressDao, Mockito.times(1)).revertUserOBODetails(Mockito.anyList());
         
-        Mockito.verify(orgAffiliationRelationDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(RevertUserOBODataForUser.BATCH_SIZE * 20));
+        Mockito.verify(orgAffiliationRelationDao, Mockito.times(2)).getIdsForUserOBORecords(Mockito.eq(clientId), Mockito.eq(batchSize * 20));
         Mockito.verify(orgAffiliationRelationDao, Mockito.times(1)).revertUserOBODetails(Mockito.anyList());
     }
 
