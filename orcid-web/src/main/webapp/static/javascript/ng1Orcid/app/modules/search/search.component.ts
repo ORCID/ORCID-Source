@@ -226,9 +226,11 @@ export class SearchComponent implements OnDestroy, OnInit {
     ngOnInit() {
         var urlParams = new URLSearchParams(location.search);
         this.input.text = urlParams.get('searchQuery');
-        if(typeof this.input.text !== 'undefined' && this.input.text != null){
+        if(this.input.text){
             this.searchResultsLoading = true;
             this.search(this.input);
+        } else{
+            this.showNoResultsAlert = true;
         }
     }
 
