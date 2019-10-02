@@ -73,4 +73,8 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
     List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max);
 
     void updateUserOBODetails(List<BigInteger> ids);
+
+    List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max);
+
+    void revertUserOBODetails(List<BigInteger> ids);
 }
