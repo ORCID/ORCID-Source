@@ -1,5 +1,6 @@
 __webpack_public_path__ = window.resourceBasePath;
-
+  
+require("../../css/orcid.material.scss");
 require("../../css/glyphicons.css");
 require("../../css/social.css");
 //  require("../../css/filetypes.css");
@@ -8,7 +9,6 @@ require("../../css/primeicons.css");
 require("../../css/primeng.min.css");
 require("../../twitter-bootstrap/3.3.6/css/bootstrap.min.css");
 require("../../css/orcid.new.css");
-require("../../css/orcid.material.sass");
 require('../../css/idpselect.css');
 require("../../css/academicons.css");
 // require("../../css/jquery-ui-1.10.0.custom.min.css");
