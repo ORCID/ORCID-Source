@@ -106,6 +106,7 @@ export class SearchComponent implements OnDestroy, OnInit {
                 this.showMoreLoading = false;
 
                 if (this.newResults) {
+                    console.log("new results");
                     this.getDetails(this.newResults);
                     this.allResults = this.allResults.concat(this.newResults); 
                     this.cdr.detectChanges();
@@ -167,17 +168,18 @@ export class SearchComponent implements OnDestroy, OnInit {
             var orcid = result['orcid-identifier'].path;
             this.searchSrvc.getAffiliations(orcid).subscribe(
                 affiliationsResult => {
-                    if(affiliationsResult.employments){
-                        for(var i in affiliationsResult.employments['employment-summary']){
-                            if (result['affiliations'].indexOf(affiliationsResult.employments['employment-summary'][i]['organization']['name']) < 0){
-                                result['affiliations'].push(affiliationsResult.employments['employment-summary'][i]['organization']['name']);
+                    
+                    if(affiliationsResult.employments['affiliation-group'].length > 0){
+                        for(var i in affiliationsResult.employments['affiliation-group']){
+                            if (result['affiliations'].indexOf(affiliationsResult.employments['affiliation-group'][i]['summaries'][0]['employment-summary']['organization']['name']) < 0){
+                                result['affiliations'].push(affiliationsResult.employments['affiliation-group'][i]['summaries'][0]['employment-summary']['organization']['name']);
                             }
                         }
                     }
-                    if(affiliationsResult.educations){
-                        for(var i in affiliationsResult.educations['education-summary']){
-                            if (result['affiliations'].indexOf(affiliationsResult.educations['education-summary'][i]['organization']['name']) < 0){
-                                result['affiliations'].push(affiliationsResult.educations['education-summary'][i]['organization']['name']);
+                    if(affiliationsResult.educations['affiliation-group'].length > 0){
+                        for(var i in affiliationsResult.educations['affiliation-group']){
+                            if (result['affiliations'].indexOf(affiliationsResult.educations['affiliation-group'][i]['summaries'][0]['education-summary']['organization']['name']) < 0){
+                                result['affiliations'].push(affiliationsResult.educations['affiliation-group'][i]['summaries'][0]['education-summary']['organization']['name']);
                             }
                         }
                     }
@@ -208,6 +210,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     };
 
     getDetails(orcidList: any) {
+        console.log("get details");
        for(var i = 0; i < orcidList.length; i++){
             this.getNames(orcidList[i]);
             this.getAffiliations(orcidList[i]);
