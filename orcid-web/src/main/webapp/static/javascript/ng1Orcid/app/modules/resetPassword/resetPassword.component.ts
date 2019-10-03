@@ -27,6 +27,7 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
 
     displayError: boolean;
     resetPasswordForm: any;
+    theFormWasSubmittedAndHasSomeErrors = false
 
     constructor(
         private commonSrvc: CommonService,
@@ -65,6 +66,7 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
                     window.location.href = data.successRedirectLocation;
                 } else {
                     this.commonSrvc.copyErrorsLeft(this.resetPasswordForm, data);
+                    this.theFormWasSubmittedAndHasSomeErrors = true
                 }
 
             },
@@ -72,6 +74,10 @@ export class ResetPasswordComponent implements AfterViewInit, OnDestroy, OnInit 
                 console.log('error posting to reset-password-email.json');
             } 
         );
+    }
+
+    showPasswordPatterError ( errors : string[] ) {
+        return errors.filter(error => error.indexOf('Pattern.') >= 0 ).length && this.theFormWasSubmittedAndHasSomeErrors
     }
 
     serverValidate(): void {

@@ -11,6 +11,20 @@
                     <span class="required">*</span>
                     <@orcid.passwordHelpPopup /> 
                 </div>
+                <ng-container 
+                    *ngIf="showPasswordPatterError(registrationForm?.password?.errors)">
+                    <span role="alert" class="orcid-error">
+                    <div>  <@spring.message 'Pattern.registrationForm.password'/> </div>
+                    </span>
+                </ng-container>
+                <ng-container *ngIf="registrationForm?.password?.errors?.length > 0">
+                <span role="alert" class="orcid-error" >
+                        <div *ngFor='let error of registrationForm.password.errors'>
+                        <ng-container *ngIf="error.indexOf('Pattern.') < 0">{{error}} </ng-container>
+                        <ng-container *ngIf="error.indexOf('containsEmail') >= 0"><@spring.message 'Pattern.registrationForm.password.containsEmail'/> </ng-container>
+                        </div>
+                </span>  
+                </ng-container>
                 <span class="pattern-errors">
                 <div class="pattern-container">
                     <img *ngIf="resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
@@ -27,12 +41,6 @@
                     <img *ngIf="!resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.oneNumber')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
                     <@spring.message 'Pattern.registrationForm.password.oneNumber'/>
                 </div>
-                <span class="orcid-error" *ngIf="resetPasswordForm?.password?.errors?.length > 0">
-                    <div *ngFor='let error of resetPasswordForm.password.errors'>
-                     <ng-container *ngIf="error.indexOf('Pattern.') < 0">{{error}} </ng-container>
-                     <ng-container *ngIf="error.indexOf('containsEmail') >= 0"><@spring.message 'Pattern.registrationForm.password.containsEmail'/> </ng-container>
-                    </div>
-                </span>  
             </span>
             </div>
             <div class="control-group">
