@@ -124,4 +124,8 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     List<BigInteger> getIdsForUserOBOUpdate(String clientDetailsId, int max);
 
     void updateUserOBODetails(List<BigInteger> ids);
+
+    List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max);
+
+    void revertUserOBODetails(List<BigInteger> ids);
 }
