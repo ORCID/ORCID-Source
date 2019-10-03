@@ -86,9 +86,10 @@
 ### JSON
 - JSON enumerated types are now expressed in lowercase with dashes instead of underscores, matching the existing XML enums (ie *JOURNAL_ARTICLE* is now expressed as *journal-article*). This affects enums for visibility, locale, work types, contributor roles, citation types, external identifier relationship, funding types, peer review types, and peer review role
 
-### Token Delegation
+### Assertion Origin Source information
 - Member clients can now generating tokens that allow another client to update an ORCID record on behalf of the original client. This process is described in the [Token Delegation tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/token_delegation.md).
 - Items added using token delegation have additional source fields *common:assertion-origin-client-id* and *common:assertion-origin-name*.
+- Items added by clients associated with a Search and Link Wizard have the client listed as the source of the item and the user as the source of the assertion with the fields *common:assertion-origin-orcid* and *common:assertion-origin-orcid*
 
 ### Identifiers
 - Addition of new identifier relationship *version-of*, which is intended to map works to identifiers of different versions and instances of the same work. Works with the same *version-of* identifier are grouped together.
@@ -99,6 +100,8 @@
 ### Affiliations
 - Addition of new affiliation sections: Distinction, Invited-position, Membership, Qualification, and Service in addition to the existing Education and Employment sections. For more information see [Affiliations tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/affiliations.md)
 - Summary information now available for each section including affiliation source, role-title, department-name, dates, organization and external-ids
+- Addition of optional element *common:external-ids* for identifiers that apply to the affiliation itself (*common:disambiguated-organization-identifier* should continue to be be used for organizational identifiers)
+- Grouping of affiliations using external-ids, including returning affiliations in the *activities:affiliation-group* tag when reading an entire section.
 - *common:start-date* is required if *common:end-date* is provided
 - Addition of optional element *common:url* for recording links about the affiliation
 - Addition of optional element *common:external-ids* for recording identifiers for the affiliation
@@ -109,10 +112,11 @@
 - This new section of the ORCID record captures information about things that researchers use for their research which require a specific proposal process or credential to access, such as collections, equipment, infrastructure, and services. For more information see the [Research-resource tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/research-resources.md).
 
 ### Works
+- an external-id with a *self* relationship is now required when posting works
 - *work:journal-title* field is returned with the work summary
 - Addition of *common:external-id-normalized* when reading works for normalized work identifiers
-- Addition of *software* to the list of [supported work types](https://members.orcid.org/api/resources/work-types)
 - Use of common namespace for *common:url* replacing *work:url* and this field is now returned in the work summary
+- Addition of *annotation*, *software* and *physical object* to the list of [supported work types](https://members.orcid.org/api/resources/work-types)
 - work type *dissertation* has been migrated to *dissertation-thesis*
 
 ### Fundings
