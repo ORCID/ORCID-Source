@@ -111,7 +111,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     assetsPath: String;
     aboutUri: String;
     shibbolethEnabled: boolean = false;
-    theRegisterFormWasSubmittedAndHasSomeErros = false
+    theFormWasSubmittedAndHasSomeErrors = false
     
     constructor(
         private zone:NgZone,
@@ -595,7 +595,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         );
     };
     showPasswordPatterError ( errors : string[] ) {
-        return errors.filter(error => error.indexOf('Pattern.') >= 0 ).length && this.theRegisterFormWasSubmittedAndHasSomeErros
+        return  !errors ? errors :
+        errors.filter(error => error.indexOf('Pattern.') >= 0 ).length && this.theFormWasSubmittedAndHasSomeErrors
     }
 
     oauth2ScreensRegister(linkFlag): void {
@@ -625,7 +626,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     || this.registrationForm.errors.length == 0) {                                 
                     this.getDuplicates();
                 } else {
-                    this.theRegisterFormWasSubmittedAndHasSomeErros = true
+                    this.theFormWasSubmittedAndHasSomeErrors = true
                     if(this.registrationForm.email.errors.length > 0) {
                         this.errorEmail = data.email.value;
                         //deactivated error

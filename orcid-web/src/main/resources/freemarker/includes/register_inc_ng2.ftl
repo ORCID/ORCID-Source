@@ -92,19 +92,28 @@
         <div class="bottomBuffer">
             <input aria-labelledby="label-register-form-password" required id="register-form-password" type="password" name="password" class="" [(ngModel)]="registrationForm.password.value" (ngModelChange)="serverValidate('Password')"/>
             <@orcid.passwordHelpPopup />
-            <ng-container 
-                *ngIf="showPasswordPatterError(registrationForm?.password?.errors)">
-                 <span role="alert" class="orcid-error">
-                <div>  <@spring.message 'Pattern.registrationForm.password'/> </div>
-                </span>
-            </ng-container>
             <ng-container *ngIf="registrationForm?.password?.errors?.length > 0">
-            <span role="alert" class="orcid-error" >
-                    <div *ngFor='let error of registrationForm.password.errors'>
-                     <ng-container *ngIf="error.indexOf('Pattern.') < 0">{{error}} </ng-container>
-                     <ng-container *ngIf="error.indexOf('containsEmail') >= 0"><@spring.message 'Pattern.registrationForm.password.containsEmail'/> </ng-container>
+                <span role="alert" class="orcid-error" *ngIf="showPasswordPatterError(registrationForm?.password?.errors)">
+                    <div > 
+                        <@spring.message 'Pattern.registrationForm.password'/> 
                     </div>
-            </span>  
+                </span>
+                <ng-container *ngFor='let error of registrationForm.password.errors'>
+                            <ng-container *ngIf="error.indexOf('Pattern.') < 0">
+                                <span role="alert" class="orcid-error">
+                                    <div> 
+                                        {{error}} 
+                                    </div>
+                                </span>
+                            </ng-container>
+                            <ng-container *ngIf="error.indexOf('containsEmail') >= 0">
+                            <span role="alert" class="orcid-error">
+                                    <div> 
+                                    <@spring.message 'Pattern.registrationForm.password.containsEmail'/> 
+                                    </div>
+                                </span>
+                            </ng-container>
+                </ng-container>
             </ng-container>
             <span class="pattern-errors" aria-live="polite" >
                 <div class="pattern-container flex" aria-labelledby="eigthCharacters-status eigthCharacters" >

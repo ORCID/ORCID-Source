@@ -188,7 +188,8 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     showPasswordPatterError ( errors : string[] ) {
-        return errors.filter(error => error.indexOf('Pattern.') >= 0 ).length && this.theFormWasSubmittedAndHasSomeErrors
+        return  !errors ? errors :
+        errors.filter(error => error.indexOf('Pattern.') >= 0 ).length && this.theFormWasSubmittedAndHasSomeErrors
     }
 
     serverValidate(field): void {
