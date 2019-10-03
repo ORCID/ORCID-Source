@@ -8784,6 +8784,9 @@ _::-webkit-full-page-media, _:future, :root .controls, .settings-table td>div {
 .pattern-errors {
     padding-top: 10px;
     display: block;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
 }
 
 .pattern-container.flex {
