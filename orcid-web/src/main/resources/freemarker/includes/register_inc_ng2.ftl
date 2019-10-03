@@ -200,9 +200,13 @@
             </div>
         </div>
     </div>
-    <!--Registration error-->
+    <!--oauth2ScreensPost errors-->
     <div style="margin-bottom: 15px;" *ngIf="showGeneralRegistrationError">
         <span role="alert" class="orcid-error" [innerHtml]="generalRegistrationError"></span>
+    </div>
+    <#--  registry errors   -->
+    <div style="margin-bottom: 15px;" *ngIf="showFormHasError()">
+        <span role="alert" class="orcid-error" >${springMacroRequestContext.getMessage("common.please_fix_errors")}</span>
     </div>
     <!-- Buttons  -->
     <div class="bottomBuffer col-xs-12 col-sm-3">

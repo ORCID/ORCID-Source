@@ -191,6 +191,15 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
         return  !errors ? errors :
         errors.filter(error => error.indexOf('Pattern.') >= 0 ).length && this.theFormWasSubmittedAndHasSomeErrors
     }
+    
+    showFormHasError () {
+        const hasErrors = Object.keys(this.registrationForm)
+            .find(field => this.registrationForm[field] && 
+                           this.registrationForm[field]['errors'] && 
+                           this.registrationForm[field]['errors'].length )
+                           
+        return hasErrors && this.theFormWasSubmittedAndHasSomeErrors
+    }
 
     serverValidate(field): void {
         if (field === undefined) {

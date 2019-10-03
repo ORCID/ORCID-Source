@@ -203,6 +203,10 @@
                         </span>
                     </div>
                 </div>
+                    <#--  registry errors   -->
+                <div style="margin-bottom: 15px;" *ngIf="showFormHasError()">
+                    <span role="alert" class="orcid-error" >${springMacroRequestContext.getMessage("common.please_fix_errors")}</span>
+                </div>
                 <div class="relative">
                     <button class="btn btn-primary" (click)="postReactivationConfirm(null)"><@orcid.msg "orcid.frontend.reactivate" /></button>
                 </div>
