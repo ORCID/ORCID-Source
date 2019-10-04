@@ -96,6 +96,29 @@
                     <label id="label-register-form-password" class="control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
                     <div class="bottomBuffer">
                         <input aria-labelledby="label-register-form-password" required id="register-form-password" type="password" name="password" class="input-xlarge" [(ngModel)]="registrationForm.password.value" (ngModelChange)="serverValidate('Password')"/>
+                        <ng-container *ngIf="registrationForm?.password?.errors?.length > 0">
+                            <span role="alert" class="orcid-error" *ngIf="showPasswordPatterError(registrationForm?.password?.errors)">
+                                <div > 
+                                    <@spring.message 'Pattern.registrationForm.password'/> 
+                                </div>
+                            </span>
+                            <ng-container *ngFor='let error of registrationForm.password.errors'>
+                                        <ng-container *ngIf="error.indexOf('Pattern.') < 0">
+                                            <span role="alert" class="orcid-error">
+                                                <div> 
+                                                    {{error}} 
+                                                </div>
+                                            </span>
+                                        </ng-container>
+                                        <ng-container *ngIf="error.indexOf('containsEmail') >= 0">
+                                        <span role="alert" class="orcid-error">
+                                                <div> 
+                                                <@spring.message 'Pattern.registrationForm.password.containsEmail'/> 
+                                                </div>
+                                            </span>
+                                        </ng-container>
+                            </ng-container>
+                        </ng-container>
                         <span class="required" [ngClass]="isValidClass(registrationForm.password)">*</span>
                         <@orcid.passwordHelpPopup />
                         <span class="pattern-errors" aria-live="polite" >
@@ -115,12 +138,6 @@
                                 <div aria-hidden="true" tabindex="-1" id="oneNumber"><@spring.message 'Pattern.registrationForm.password.oneNumber'/></div>
                             </div>
                         </span>
-                        <span  role="alert"  class="orcid-error" *ngIf="registrationForm?.password?.errors?.length > 0">
-                                <div *ngFor='let error of registrationForm.password.errors'>
-                                <ng-container *ngIf="error.indexOf('Pattern.') < 0">{{error}} </ng-container>
-                                <ng-container *ngIf="error.indexOf('containsEmail') >= 0"><@spring.message 'Pattern.registrationForm.password.containsEmail'/> </ng-container>
-                                </div>
-                        </span>  
                     </div>
                 </div>
                 <!--Confirm password-->
@@ -185,6 +202,10 @@
                             <div *ngFor="let error of registrationForm.termsOfUse.errors" [innerHTML]="error"></div>
                         </span>
                     </div>
+                </div>
+                    <#--  registry errors   -->
+                <div style="margin-bottom: 15px;" *ngIf="showFormHasError()">
+                    <span role="alert" class="orcid-error" >${springMacroRequestContext.getMessage("common.please_fix_errors")}</span>
                 </div>
                 <div class="relative">
                     <button class="btn btn-primary" (click)="postReactivationConfirm(null)"><@orcid.msg "orcid.frontend.reactivate" /></button>

@@ -167,17 +167,18 @@ export class SearchComponent implements OnDestroy, OnInit {
             var orcid = result['orcid-identifier'].path;
             this.searchSrvc.getAffiliations(orcid).subscribe(
                 affiliationsResult => {
-                    if(affiliationsResult.employments){
-                        for(var i in affiliationsResult.employments['employment-summary']){
-                            if (result['affiliations'].indexOf(affiliationsResult.employments['employment-summary'][i]['organization']['name']) < 0){
-                                result['affiliations'].push(affiliationsResult.employments['employment-summary'][i]['organization']['name']);
+                    
+                    if(affiliationsResult.employments['affiliation-group'].length > 0){
+                        for(var i in affiliationsResult.employments['affiliation-group']){
+                            if (result['affiliations'].indexOf(affiliationsResult.employments['affiliation-group'][i]['summaries'][0]['employment-summary']['organization']['name']) < 0){
+                                result['affiliations'].push(affiliationsResult.employments['affiliation-group'][i]['summaries'][0]['employment-summary']['organization']['name']);
                             }
                         }
                     }
-                    if(affiliationsResult.educations){
-                        for(var i in affiliationsResult.educations['education-summary']){
-                            if (result['affiliations'].indexOf(affiliationsResult.educations['education-summary'][i]['organization']['name']) < 0){
-                                result['affiliations'].push(affiliationsResult.educations['education-summary'][i]['organization']['name']);
+                    if(affiliationsResult.educations['affiliation-group'].length > 0){
+                        for(var i in affiliationsResult.educations['affiliation-group']){
+                            if (result['affiliations'].indexOf(affiliationsResult.educations['affiliation-group'][i]['summaries'][0]['education-summary']['organization']['name']) < 0){
+                                result['affiliations'].push(affiliationsResult.educations['affiliation-group'][i]['summaries'][0]['education-summary']['organization']['name']);
                             }
                         }
                     }
@@ -226,9 +227,11 @@ export class SearchComponent implements OnDestroy, OnInit {
     ngOnInit() {
         var urlParams = new URLSearchParams(location.search);
         this.input.text = urlParams.get('searchQuery');
-        if(typeof this.input.text !== 'undefined' && this.input.text != null){
+        if(this.input.text){
             this.searchResultsLoading = true;
             this.search(this.input);
+        } else{
+            this.showNoResultsAlert = true;
         }
     }
 
