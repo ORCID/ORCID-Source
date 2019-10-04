@@ -86,6 +86,25 @@ export class EmailService {
         ;
     }
 
+
+    
+    editEmail( original, edited ): Observable<any> {
+        let emails = {original, edited}
+        return this.http.post( 
+            getBaseUri() + '/account/email/edit.json', 
+            emails, 
+            { headers: this.headers}
+        )
+        .pipe(
+            tap(
+            (data) => {
+                this.getEmails();                       
+            }
+        )
+        )
+    }
+
+
     //Send change event to subscribed components
     emailsUpdated(status) {
         this.emailListUpdated = status

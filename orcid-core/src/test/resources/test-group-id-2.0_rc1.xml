@@ -5,7 +5,7 @@
     <group-id:page-size>5</group-id:page-size>
     <group-id:group-id-record put-code="1009">
         <group-id:name>TestName</group-id:name>
-        <group-id:group-id>issn:00000002</group-id:group-id>
+        <group-id:group-id>issn:0000-0002</group-id:group-id>
         <group-id:description>TestDescription</group-id:description>
         <group-id:type>publisher</group-id:type>
         <common:source>
@@ -21,7 +21,7 @@
     </group-id:group-id-record>
     <group-id:group-id-record put-code="1013">
         <group-id:name>TestName</group-id:name>
-        <group-id:group-id>issn:00000006</group-id:group-id>
+        <group-id:group-id>issn:0000-0006</group-id:group-id>
         <group-id:description>TestDescription</group-id:description>
 		<group-id:type/>
         <common:source>

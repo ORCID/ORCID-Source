@@ -31,7 +31,8 @@ public class IssnClient {
     public IssnData getIssnData(String issn) {
         String json = null;
         try {
-            json = getJsonDataFromIssnPortal(issn);
+            // ensure any lower case x is X otherwise issn portal won't work
+            json = getJsonDataFromIssnPortal(issn.toUpperCase());
         } catch (IOException e) {
             throw new RuntimeException("Error extracting json from issn portal response", e);
         }

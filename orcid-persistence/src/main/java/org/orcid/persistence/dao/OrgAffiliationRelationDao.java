@@ -166,4 +166,8 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
     void updateUserOBODetails(List<BigInteger> ids);
 
     List<OrgAffiliationRelationEntity> getOrgAffiliationRelationsReferencingOrgs(List<Long> orgIds);
+
+    List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max);
+
+    void revertUserOBODetails(List<BigInteger> ids);
 }

@@ -563,8 +563,9 @@ public class BaseController {
         if (givenName.getValue() == null || givenName.getValue().trim().isEmpty()) {
             setError(givenName, "NotBlank.registrationForm.givenNames");
         }
-        if (givenName.getValue().length() >= 100)
+        else if (givenName.getValue().length() >= 100) {
             setError(givenName, "Pattern.registrationForm.nameSegment");
+        }
     }
 
     void familyNameValidate(Text familyName) {

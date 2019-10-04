@@ -135,7 +135,7 @@
     </bean>
        
     <bean id="memberDefaultApiVersionFilter" class="org.orcid.api.common.filter.DefaultApiVersionFilter">
-        <property name="feature" value="MEMBER_API_2_0_BY_DEFAULT" />
+        <property name="feature" value="MEMBER_API_DEFAULT_TO_V3" />
     </bean>        
     
     <bean id="disable12Filter" class="org.orcid.api.common.filter.Disable12ApiFilter">

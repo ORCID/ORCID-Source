@@ -107,7 +107,7 @@ public class OrgDisambiguated implements Serializable {
     }
 
     public String getAffiliationKey() {
-        return (value != null ? value : "") + (city != null ? city : "") + (region != null ? region : "") + (country != null ? country : "");
+        return (value != null ? value : "") + " " + (city != null ? city : "") + " " + (region != null ? region : "") + " " + (country != null ? country : "");
     }
 
     public Map<String, String> toMap() {

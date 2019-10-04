@@ -97,4 +97,8 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     void updateUserOBODetails(List<String> ids);
 
     List<EmailEntity> get2019VisibilityEmailRecipients(int offset, int batchSize);
+
+    List<String> getIdsForUserOBORecords(String clientDetailsId, int max);
+
+    void revertUserOBODetails(List<String> ids);
 }

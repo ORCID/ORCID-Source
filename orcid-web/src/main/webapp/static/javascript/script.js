@@ -632,7 +632,7 @@ $(function() {
     function showLoginError(message) {
         if ($('form#loginForm #loginErrors #login-error-mess, form#loginForm #loginErrors #login-deactivated-error:visible').length == 0) {
              $(
-                "<div class='orcid-error' id='login-error-mess'>"
+                "<div class='orcid-error' id='login-error-mess'  role='alert'>"
                         + message
                         + "</div>")
                 .hide()
@@ -4153,136 +4153,6 @@ this.w3cLatexCharMap = {
 })(typeof exports === 'undefined'? this['workIdLinkJs']={}: exports);
 
 /* END: workIdLinkJs */
-
-
-/* START: orcidSearchUrlJs v0.0.1 */
-/* https://github.com/ORCID/orcidSearchUrlJs */
-
-/* browser and NodeJs compatible */
-(function(exports) {
-
-    var baseUrl = 'https://orcid.org/v2.0/search/orcid-bio/';
-    var quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
-    var orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
-    var orcidFullRegex = new RegExp(
-            "^\\s*((http://)?([^/]*orcid\\.org|localhost.*/orcid-web)/)?(\\d{4}-){3,}\\d{3}[\\dX]\\s*$");
-
-    function offset(input) {
-        var start = hasValue(input.start) ? input.start : 0;
-        var rows = hasValue(input.rows) ? input.rows : 10;
-        return '&start=' + start + '&rows=' + rows;
-    }
-
-    function hasValue(ref) {
-        return typeof ref !== 'undefined' && ref !== null && ref !== '';
-    }
-
-    function escapeReservedChar(inputText){
-        //escape all reserved chars except double quotes
-        //per https://lucene.apache.org/solr/guide/6_6/the-standard-query-parser.html#TheStandardQueryParser-EscapingSpecialCharacters
-        var escapedText = inputText.replace(/([!^&*()+=\[\]\\/{}|:?~])/g, "\\$1");
-        return escapedText.toLowerCase();
-    }
-
-    function buildAdvancedSearchUrl(input) {
-        var query = '';
-        var doneSomething = false;
-        if (hasValue(input.givenNames)) {
-            escapedGivenNames = escapeReservedChar(input.givenNames);
-            query += 'given-names:' + escapedGivenNames;
-            doneSomething = true;
-        }
-        if (hasValue(input.familyName)) {
-            if (doneSomething) {
-                query += ' AND ';
-            }
-            escapedFamilyName = escapeReservedChar(input.familyName);
-            query += 'family-name:' + escapedFamilyName;
-            doneSomething = true;
-        }
-        if (hasValue(input.searchOtherNames) && hasValue(input.givenNames)) {
-            query += ' OR other-names:' + escapedGivenNames;
-        }
-        if (hasValue(input.keyword)) {
-            if (doneSomething) {
-                query += ' AND ';
-            }
-            escapedKeyword = escapeReservedChar(input.keyword);
-            query += 'keyword:' + escapedKeyword;
-            doneSomething = true;
-        }
-        if (hasValue(input.affiliationOrg)) {
-            if (doneSomething) {
-                query += ' AND ';
-            }
-            
-            //if all chars are numbers, assume it's a ringgold id
-            if (input.affiliationOrg.match(/^[0-9]*$/)) {
-                query += 'ringgold-org-id:' + input.affiliationOrg;
-            } else if(input.affiliationOrg.startsWith('grid.')) {
-                escapedGridOrg = escapeReservedChar(input.affiliationOrg);
-                query += 'grid-org-id:' + escapedGridOrg;
-            } else {
-                escapedAffiliationOrg = escapeReservedChar(input.affiliationOrg);
-                query += 'affiliation-org-name:' + escapedAffiliationOrg;
-            }
-            doneSomething = true;
-        }
-        
-        return doneSomething ? baseUrl + '?q=' + encodeURIComponent(query)
-                + offset(input) : baseUrl + '?q=';
-    }
-
-    exports.setBaseUrl = function(url) {        
-        baseUrl = url;
-    };
-
-    exports.isValidInput = function(input) {
-        var fieldsToCheck = [ input.text, input.givenNames, input.familyName,
-                input.keyword, input.affiliationOrg ];
-        for ( var i = 0; i < fieldsToCheck.length; i++) {
-            if (hasValue(fieldsToCheck[i])) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-    function extractOrcidId(string) {
-        var regexResult = orcidPathRegex.exec(string);
-        if (regexResult) {
-            return regexResult[0];
-        }
-        return null;
-    }
-
-    exports.buildUrl = function(input) {
-        if (hasValue(input.text)) {
-            var orcidId = extractOrcidId(input.text);
-            if (orcidId) {
-                // Search for iD specifically
-                return baseUrl + "?q=orcid:" + orcidId + offset(input);
-            }
-            // General quick search
-            return baseUrl + '?q='
-                    + encodeURIComponent(quickSearchEDisMax + input.text)
-                    + offset(input);
-        } else {
-            // Advanced search
-            return buildAdvancedSearchUrl(input);
-        }
-    };
-
-    exports.isValidOrcidId = function(orcidId) {
-        if (orcidFullRegex.exec(orcidId)) {
-            return true;
-        }
-        return false;
-    };
-
-})(typeof exports === 'undefined' ? this.orcidSearchUrlJs = {} : exports);
-
-/* END: orcidSearchUrlJs */
 
 /* Mobile detection, useful for colorbox lightboxes resizing */
 function isMobile() {

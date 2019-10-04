@@ -23,7 +23,7 @@
                         <@orcid.checkFeatureStatus 'ENABLE_USER_MENU'> 
                         <user-menu *ngIf="!isMobile"></user-menu>
                         </@orcid.checkFeatureStatus>
-                        <language-ng2 *ngIf="!isMobile" role="navigation"></language-ng2>
+                        <language-ng2 *ngIf="!isMobile"></language-ng2>
                 </div>
                    
                     <div class="form-group " role="presentation">

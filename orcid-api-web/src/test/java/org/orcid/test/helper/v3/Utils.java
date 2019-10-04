@@ -242,7 +242,7 @@ public class Utils {
         wei1.setType(WorkExternalIdentifierType.DOI.value());
         weis.getExternalIdentifier().add(wei1);
         peerReview.setExternalIdentifiers(weis);
-        peerReview.setGroupId("issn:0000003");
+        peerReview.setGroupId("issn:0000-0003");
         peerReview.setOrganization(getOrganization());
         peerReview.setRole(Role.CHAIR);
         peerReview.setSubjectContainerName(new Title("subject-container-name"));

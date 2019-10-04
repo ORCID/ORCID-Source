@@ -19,6 +19,7 @@
     <bean id="jmsListenerContainerFactory"
         class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
         <property name="connectionFactory" ref="jmsConnectionFactory" />
+        <property name="errorHandler" ref="emailQueueErrorHandler" />
         <property name="concurrency" value="1" />
         
         <!-- client acknowledge -->
@@ -40,6 +41,8 @@
 	<bean id="emailQueueListener" class="org.orcid.scheduler.email.trickle.listener.EmailQueueListener" >
 	   <property name="trickleManager" ref="trickleManager" />
 	</bean>
+	
+	<bean id="emailQueueErrorHandler" class="org.orcid.scheduler.email.trickle.EmailTrickleErrorHandler" />
 	
 	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />	
 

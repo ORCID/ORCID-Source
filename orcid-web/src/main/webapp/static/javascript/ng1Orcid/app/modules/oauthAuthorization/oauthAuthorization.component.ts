@@ -111,6 +111,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     assetsPath: String;
     aboutUri: String;
     shibbolethEnabled: boolean = false;
+    theFormWasSubmittedAndHasSomeErrors = false
     
     constructor(
         private zone:NgZone,
@@ -210,15 +211,17 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         head.appendChild(script); // Inject the script
     }; 
 
-    authorize(): void {
+    authorize($event): void {
         this.authorizationForm.approved = true;
         this.authorizeRequest();
+        $event.preventDefault()
     };
 
-    deny(): void {
+    deny($event): void {
         this.authorizationForm.approved = false;
         orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + this.gaString]);
         this.authorizeRequest();
+        $event.preventDefault()
     };
 
     isValidClass(cur): any {
@@ -246,8 +249,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }
     };
 
-    showInstitutionLogin(): void  {
-
+    showInstitutionLogin($event): void  {
+        $event.preventDefault()
         this.personalLogin = false; // Hide Personal Login
         
         if(!this.scriptsInjected){ // If shibboleth scripts haven't been
@@ -262,11 +265,15 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
 
-    showPersonalLogin(): void {        
+    showPersonalLogin($event): void {        
         this.personalLogin = true;
+        $event.preventDefault()
     };
 
-    switchForm(email): void {
+    switchForm($event, email): void {
+        console.log( $event)
+        $event.stopPropagation()
+        $event.preventDefault()
         this.showDeactivatedError = false;
         this.showReactivationSent = false; 
         var re = new RegExp("(/register)(.*)?$");
@@ -283,6 +290,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             }
         }
         this.cdr.detectChanges();
+        
     };
 
     toggleNotYouDescription(): void {
@@ -514,7 +522,10 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         }  
     };
 
-    sendReactivationEmail(email): void {
+    sendReactivationEmail(email, $event?): void {
+        if (event) {
+            $event.preventDefault()
+        }
         this.oauthService.sendReactivationEmail(email)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -583,6 +594,19 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             } 
         );
     };
+    showPasswordPatterError ( errors : string[] ) {
+        return  !errors ? errors :
+        errors.filter(error => error.indexOf('Pattern.') >= 0 ).length && this.theFormWasSubmittedAndHasSomeErrors
+    }
+
+    showFormHasError () {
+        const hasErrors = Object.keys(this.registrationForm)
+            .find(field => this.registrationForm[field] && 
+                           this.registrationForm[field]['errors'] && 
+                           this.registrationForm[field]['errors'].length )
+                           
+        return hasErrors && this.theFormWasSubmittedAndHasSomeErrors
+    }
 
     oauth2ScreensRegister(linkFlag): void {
         if (this.gaString) {
@@ -611,6 +635,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     || this.registrationForm.errors.length == 0) {                                 
                     this.getDuplicates();
                 } else {
+                    this.theFormWasSubmittedAndHasSomeErrors = true
                     if(this.registrationForm.email.errors.length > 0) {
                         this.errorEmail = data.email.value;
                         //deactivated error

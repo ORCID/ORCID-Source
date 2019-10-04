@@ -194,38 +194,6 @@
                         </div>
                         
                     </div>
-
-                    <!-- Right column -->
-                    <div class="col-md-6 col-sm-6 col-xs-12" *ngIf="editWork?.contributors?.length > 0">               
-
-                        <div class="control-group" *ngFor="let contributor of editWork.contributors">
-                            <label class="relative"><@orcid.msg 'manual_work_form_contents.labelRole'/></label>
-                            <div class="relative">  
-                                <select id="role" name="role" [(ngModel)]="contributor.contributorRole.value">
-                                    <option value=""><@orcid.msg 'org.orcid.jaxb.model.message.ContributorRole.empty' /></option>
-                                    <#list roles?keys as key>
-                                        <option value="${key}">${roles[key]}</option>
-                                    </#list>
-                                </select>
-                                <button (click)="deleteContributor(contributor)" class="glyphicon glyphicon-trash grey"></button>
-                                <span class="orcid-error" *ngIf="contributor?.contributorRole?.errors?.length > 0">
-                                        <div *ngFor='let error of contributor.contributorRole.errors' [innerHtml]="error"></div>
-                                </span>
-                            </div>
-                            <label class="relative"><@orcid.msg 'manual_work_form_contents.labelcredited'/></label>
-                            <div class="relative">
-                                <select id="sequence" name="sequence" [(ngModel)]="contributor.contributorSequence.value">
-                                    <option value=""><@orcid.msg 'org.orcid.jaxb.model.message.SequenceType.empty'/></option>
-                                    <#list sequences?keys as key>
-                                        <option value="${key}">${sequences[key]}</option>
-                                    </#list>
-                                </select>
-                                <span class="orcid-error" *ngIf="contributor?.contributorSequence?.errors?.length > 0">
-                                        <div *ngFor='let error of contributor.contributorSequence.errors' [innerHtml]="error"></div>
-                                </span>
-                            </div>
-                        </div>                                              
-                    </div>
                     
                     <div class="col-md-6 col-sm-6 col-xs-12" *ngIf="editWork?.workExternalIdentifiers">                        
                         <div class="control-group">
