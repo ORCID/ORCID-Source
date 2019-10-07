@@ -1,0 +1,15 @@
+{
+  "name": "@bit/orcid.angular.orcid-theme",
+  "version": "0.0.1",
+  "homepage": "https://bit.dev/orcid/angular/orcid-theme",
+  "main": "material.scss",
+  "dependencies": {
+    "@angular/material": "^8.1.4"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "license": "SEE LICENSE IN LICENSE",
+  "bit": {
+    "env": {}
+  }
+}

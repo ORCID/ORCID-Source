@@ -1,0 +1,25 @@
+$notosans-fontface-path: '../fonts/noto-sans' !default;
+
+// Support for Chrome 6, Edge 6, Firefox 3.5, Firefox Android 4, IE  9, Opera 11.1, Opera Android 11.1, Safari 5.1, Safari ios 5, Webview Android 4.4
+
+@mixin notosans-fontface($type, $weight, $style) {
+  @font-face {
+    font-family: 'Noto Sans';
+    src: url('#{$notosans-fontface-path}/NotoSans-#{$type}.woff') format('woff'),
+      url('#{$notosans-fontface-path}/NotoSans-#{$type}.woff2') format('woff');
+    font-weight: $weight;
+    font-style: $style;
+  }
+}
+
+// Based on w3 font-weight mapping https://www.w3.org/TR/css3-values/#number-value
+
+@include notosans-fontface('Thin', 100, normal);
+@include notosans-fontface('ExtraLight', 200, normal);
+@include notosans-fontface('Light', 300, normal);
+@include notosans-fontface('Regular', 400, normal);
+@include notosans-fontface('Medium', 500, normal);
+@include notosans-fontface('SemiBold', 600, normal);
+@include notosans-fontface('Bold', 700, normal);
+@include notosans-fontface('ExtraBold', 800, normal);
+@include notosans-fontface('Black', 900, normal);

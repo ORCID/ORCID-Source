@@ -13,6 +13,7 @@
     "@angular/platform-browser": "6.0.4",
     "@angular/platform-browser-dynamic": "6.0.4",
     "@angular/upgrade": "6.0.4",
+    "@bit/orcid.angular.orcid-theme": "file:./components/orcid-theme",
     "@ng-bootstrap/ng-bootstrap": "^2.2.0",
     "angular": "1.7.0",
     "angular-cookies": "1.7.0",
@@ -27,7 +28,7 @@
     "intl": "1.2.5",
     "jquery": "^3.4.1",
     "mdn-polyfills": "5.8.0",
-    "node-sass": "4.5.3",
+    "node-sass": "^4.12.0",
     "npm": "^6.11.3",
     "primeicons": "^1.0.0",
     "primeng": "7.0.0-beta.1",
@@ -49,6 +50,7 @@
     "css-loader": "^2.1.1",
     "file-loader": "^3.0.1",
     "relative-file-loader": "^1.1.12",
+    "sass": "^1.23.0",
     "sass-loader": "^8.0.0",
     "script-loader": "^0.7.2",
     "style-loader": "^0.23.1",
@@ -61,5 +63,10 @@
     "webpack": "^4.41.0",
     "webpack-cli": "3.0.3"
   },
-  "private": true
+  "private": true,
+  "bit": {
+    "env": {},
+    "componentsDefaultDirectory": "components/{name}",
+    "packageManager": "npm"
+  }
 }

@@ -1,0 +1,12 @@
+@import '~@angular/material/_theming';
+@import './material.light-theme.scss';
+
+$orcid-app-primary: mat-palette($orcid-blue);
+$orcid-app-accent: mat-palette($orcid-green);
+$orcid-app-warn: mat-palette($mat-red);
+$orcid-app-theme: mat-light-theme(
+  $orcid-app-primary,
+  $orcid-app-accent,
+  $orcid-app-warn
+);
+$orcid-app-theme: light-theme-overwrites($orcid-app-theme);
