@@ -9847,3 +9847,7 @@ delegates-ng2, alt-signin-accounts-ng2
         padding: 15px;
     }
 }
+/* remove red shadow on firefox required inputs  */
+input:required, input:invalid {
+    box-shadow:none;
+}
