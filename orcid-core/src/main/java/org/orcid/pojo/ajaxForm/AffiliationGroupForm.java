@@ -128,7 +128,7 @@ public class AffiliationGroupForm implements Serializable {
                 displayIndex = Long.parseLong(summary.getDisplayIndex());
             } 
             
-            if(summary.getSource().retrieveSourcePath().equals(orcid)) {
+            if(summary.getSource() != null && summary.getSource().retrieveSourcePath() != null && summary.getSource().retrieveSourcePath().equals(orcid)) {
                 affiliationGroup.setUserVersionPresent(true);
             } 
             
