@@ -1,0 +1,15 @@
+{
+  "name": "@bit/orcid.angular.types",
+  "version": "0.0.1",
+  "homepage": "https://bit.dev/orcid/angular/types",
+  "main": "index.ts",
+  "dependencies": {
+    "rxjs": "~6.5.2"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "license": "SEE LICENSE IN LICENSE",
+  "bit": {
+    "env": {}
+  }
+}
