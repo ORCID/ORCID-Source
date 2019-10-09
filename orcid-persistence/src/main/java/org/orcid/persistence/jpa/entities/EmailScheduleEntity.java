@@ -26,6 +26,10 @@ public class EmailScheduleEntity extends BaseEntity<Long> {
     
     private Date latestSent;
     
+    private String comments;
+    
+    private boolean paused;
+    
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "email_schedule_seq")
@@ -72,6 +76,24 @@ public class EmailScheduleEntity extends BaseEntity<Long> {
 
     public void setLatestSent(Date latestSent) {
         this.latestSent = latestSent;
+    }
+    
+    @Column
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    @Column
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 
     @Override
