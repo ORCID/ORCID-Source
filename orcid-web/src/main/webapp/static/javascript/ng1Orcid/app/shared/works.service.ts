@@ -3,14 +3,15 @@ declare var bibtexParse: any;
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
+import { HttpClient, HttpHeaders, HttpParams } 
      from '@angular/common/http';
 
-import { Observable, Subject } 
+import { Observable, Subject, of } 
     from 'rxjs';
 
-import { catchError, map, tap } 
+import {  map, tap, mergeMap } 
     from 'rxjs/operators';
+import { Works } from '../../components/types';
 
 @Injectable({
     providedIn: 'root',
@@ -29,6 +30,10 @@ export class WorksService {
     public labelsMapping: any;
     public loading: boolean;
     public showLoadMore: boolean;
+
+    paginationTotalAmountOfWorks: number; 
+    paginationBatchSize = 50;
+    paginationIndex = 0; 
     
     notifyObservable$ = this.notify.asObservable();
 
@@ -410,6 +415,7 @@ export class WorksService {
         return null;
     }
 
+    // TODO REMOVING
     getWorksPage( accessType, sort, sortAsc): Observable<any> {
         this.showLoadMore = false;
         this.details = new Object();
@@ -433,6 +439,7 @@ export class WorksService {
         )   
     }
 
+    // TODO REMOVING
     handleWorkGroupData(data, callback?): void {
         if (this.groups == undefined) {
             this.groups = new Array();
@@ -627,5 +634,35 @@ export class WorksService {
             { headers: this.headers }
         )
     }
+
+    
+    getWorksByPage(sort, sortAsc, index, pageSize) {
+        return of(true)
+          .pipe(
+            map(() => {
+              this.loading = true;
+              this.paginationIndex = index;
+              this.paginationBatchSize = pageSize;
+            })
+          )
+          .pipe(
+            mergeMap(
+              () =>
+                this.http.get(
+                  `${getBaseUri()}/works/worksPage.json?offset=${index *
+                    pageSize}&sort=${sort}&sortAsc=${sortAsc}&pageSize=${pageSize}`
+                ) as Observable<Works>
+            )
+          )
+          .pipe(
+            map((data: Works) => {
+              this.loading = false;
+              this.groups = data.groups;
+              this.paginationTotalAmountOfWorks = data.totalGroups;
+              // TODO add groupsLabel label when the user has less than 50 works
+            })
+          );
+      }
+
     
 }

@@ -31,6 +31,8 @@ import { WorksService }
 
 import { WorkspaceService } 
     from '../../shared/workspace.service'; 
+import { PageEvent } from '@angular/material/paginator';
+import { Works } from '../../../components/types';
 
 @Component({
     selector: 'works-ng2',
@@ -101,6 +103,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     exIdResolverFeatureEnabled: boolean;
     groupingSuggestionFeatureEnabled: boolean;    
     recordLocked: boolean;
+    loading: boolean;
+
     
     constructor( 
         private commonSrvc: CommonService,
@@ -705,7 +709,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
             );
         }
     };
-
+    // REMOVING
     loadMore(): void {
         if(this.publicView === "true") {
             if(this.printView === "true") {
@@ -1108,6 +1112,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.workImportWizard = !this.workImportWizard;
     }; 
 
+    // TODO 
+    // RESET PAGINATION
     sort(key): void {
         if(key == this.sortKey){
             this.sortAsc = !this.sortAsc;
@@ -1323,6 +1329,17 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.ngUnsubscribe.complete();
     };
 
+    sortWorksPage(){
+    }
+
+    loadWorkPage(index, pageSize) {
+        this.worksService.getWorksByPage(this.sortKey, this.sortAsc, index, pageSize).subscribe()
+    }
+
+    pageEvent (event: PageEvent ) {
+        this.loadWorkPage(event.pageIndex, event.pageSize)
+    }
+
     ngOnInit() {
         // Check for the various File API support.
         if ((<any>window).File != undefined && (<any>window).FileReader != undefined  && (<any>window).FileList != undefined  && (<any>window).Blob) {
@@ -1335,6 +1352,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 userInfo => {
                     this.recordLocked = !userInfo || userInfo.IS_LOCKED === 'true' || userInfo.IS_DEACTIVATED === 'true';
                     if (!this.recordLocked) {
+                        // TODO 
+                         // add pagination on public page
                         this.loadMore();
                     }
                 },
@@ -1343,7 +1362,10 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         } else {
-            this.loadMore();
+            this.loadWorkPage(1, 50)
+          // TODO 
+          // remove or add into a togglz 
+          // this.loadMore();
             this.loadWorkImportWizardList();
         }
     };

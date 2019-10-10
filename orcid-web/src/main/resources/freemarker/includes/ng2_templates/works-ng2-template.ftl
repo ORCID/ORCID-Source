@@ -472,9 +472,12 @@
                     <#include "work-details-ng2.ftl"/>  
                 </li>
             </ul>
-            <mat-paginator [length]="100"
-              [pageSize]="10"
-              [pageSizeOptions]="[5, 10, 25, 100]">
+            <mat-paginator 
+              [length]="worksService.paginationTotalAmountOfWorks"
+              [pageSize]="worksService.paginationBatchSize"
+              [pageSizeOptions]="[50, 100, 500]"
+              (page)="pageEvent($event)"
+              >
             </mat-paginator> 
             <button *ngIf="worksService.showLoadMore" (click)="loadMore()" class="btn btn-primary">${springMacroRequestContext.getMessage("workspace.works.load_more")}</button>
             <div *ngIf="worksService?.loading" class="text-center" id="workSpinner">
