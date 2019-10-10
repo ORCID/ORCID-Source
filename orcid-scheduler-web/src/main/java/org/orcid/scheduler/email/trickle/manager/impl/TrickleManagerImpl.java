@@ -13,6 +13,7 @@ import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.dao.EmailScheduleDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.scheduler.email.trickle.TrickleTooHeavyException;
@@ -92,7 +93,9 @@ public class TrickleManagerImpl implements TrickleManager {
     }
 
     private boolean emailPreferencesAllowSend(String orcid) {
-        return emailFrequencyDaoReadOnly.findByOrcid(orcid).getSendQuarterlyTips();
+        ProfileEntity profileEntity = profileDaoReadOnly.find(orcid);
+        return emailFrequencyDaoReadOnly.findByOrcid(orcid).getSendQuarterlyTips() && profileEntity.getDeactivationDate() == null
+                && profileEntity.getDeprecatedDate() == null && profileEntity.isAccountNonLocked();
     }
 
     private boolean notAlreadySent(EmailTrickleItem item) {
