@@ -453,10 +453,6 @@ public class AffiliationsController extends BaseWorkspaceController {
             setError(affiliationForm.getEndDate(), "common.dates.invalid");
         }
 
-        if (primaryValidation && (PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
-            setError(affiliationForm.getStartDate(), "common.dates.start_date_required");
-        }
-
         if (primaryValidation && (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
             if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
                 setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
