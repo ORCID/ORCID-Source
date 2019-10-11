@@ -10,10 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SolrBeanFactory {
-
-    @Value("${org.orcid.persistence.solr.legacy.url}")
-    private String legacySolrMasterUrl;
+public class SolrBeanFactory {    
     
     @Value("${org.orcid.persistence.solr.read.only.url}") 
     private String solrReadOnlyUrl;
