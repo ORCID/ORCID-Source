@@ -36,7 +36,14 @@ import { Works } from '../../../components/types';
 
 @Component({
     selector: 'works-ng2',
-    template:  scriptTmpl("works-ng2-template")
+    template:  scriptTmpl("works-ng2-template"),
+    styles:[`
+    ::ng-deep .mat-paginator-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap-reverse;
+    }`]
 })
 export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() publicView: any;
@@ -1362,7 +1369,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         } else {
-            this.loadWorkPage(1, 50)
+            this.loadWorkPage(0, 50)
           // TODO 
           // remove or add into a togglz 
           // this.loadMore();
