@@ -100,7 +100,7 @@ public class SourceManagerImpl implements SourceManager {
                     ClientDetailsEntity oboClientDetails = clientDetailsManager.findByClientId(tokenDetail.getOboClientDetailsId());
                     source.setAssertionOriginClientId(new SourceClientId(oboClientDetails.getClientId()));
                     source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));  
-                } else if (clientDetails.isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                } else if (tokenDetail.getProfile() != null && clientDetails.isUserOBOEnabled() && Features.USER_OBO.isActive()) {
                     source.setAssertionOriginOrcid(new SourceOrcid(tokenDetail.getProfile().getId()));
                     source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(tokenDetail.getProfile().getId())));
                 }
