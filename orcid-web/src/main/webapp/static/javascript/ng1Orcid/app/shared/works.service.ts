@@ -34,10 +34,11 @@ export class WorksService {
     paginationTotalAmountOfWorks: number; 
     paginationBatchSize = 50;
     paginationIndex = 0; 
+    showPagination = false;
     
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: HttpClient ){
+    constructor( private http: HttpClient){
         this.bibtexJson = {};
         this.constants = { 
             'access_type': { 
@@ -415,7 +416,6 @@ export class WorksService {
         return null;
     }
 
-    // TODO REMOVING
     getWorksPage( accessType, sort, sortAsc): Observable<any> {
         this.showLoadMore = false;
         this.details = new Object();
@@ -439,7 +439,6 @@ export class WorksService {
         )   
     }
 
-    // TODO REMOVING
     handleWorkGroupData(data, callback?): void {
         if (this.groups == undefined) {
             this.groups = new Array();
@@ -636,7 +635,9 @@ export class WorksService {
     }
 
     
-    getWorksByPage(sort, sortAsc, index, pageSize) {
+    getWorksByPage(sort, sortAsc, index, pageSize, isPublicPage) {
+        const url = `${getBaseUri()}/${isPublicPage? orcidVar.orcidId : "works"}/worksPage.json?offset=${index * pageSize}&sort=${sort}&sortAsc=${sortAsc}&pageSize=${pageSize}`
+
         return of(true)
           .pipe(
             map(() => {
@@ -648,18 +649,17 @@ export class WorksService {
           .pipe(
             mergeMap(
               () =>
-                this.http.get(
-                  `${getBaseUri()}/works/worksPage.json?offset=${index *
-                    pageSize}&sort=${sort}&sortAsc=${sortAsc}&pageSize=${pageSize}`
-                ) as Observable<Works>
+                this.http.get(url) as Observable<Works>
             )
           )
           .pipe(
             map((data: Works) => {
               this.loading = false;
+              //this._cdr.detectChanges();
               this.groups = data.groups;
               this.paginationTotalAmountOfWorks = data.totalGroups;
-              // TODO add groupsLabel label when the user has less than 50 works
+              this.showPagination = this.paginationTotalAmountOfWorks > 15 ? true: false; 
+              this.groupsLabel = this.showPagination? null : this.groups.length + " of " + data.totalGroups;
             })
           );
       }

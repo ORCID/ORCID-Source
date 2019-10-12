@@ -8,7 +8,12 @@
                     <div class="affiliation-heading">
                         <a (click)="toggleSectionDisplay($event)" class="toggle-text">
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
-                           <h2 id="affiliationType.Works"><@orcid.msg 'workspace.Works'/> (<span>{{worksService.groupsLabel}}</span>)</h2>
+                           <h2 id="affiliationType.Works">
+                                <@orcid.msg 'workspace.Works'/> 
+                                <ng-container *ngIf="worksService.groupsLabel">
+                                    (<span>{{worksService.groupsLabel}}</span>)
+                                </ng-container>
+                           </h2>
                         </a>
                         <div *ngIf="!isPublicPage" class="popover-help-container">
                             <i class="glyphicon glyphicon-question-sign"></i>
@@ -468,7 +473,8 @@
                 </div>             
             </@orcid.checkFeatureStatus>
             <@orcid.checkFeatureStatus featureName='WORKS_PAGINATION'>
-            <mat-paginator 
+                <mat-paginator 
+                *ngIf="worksService.showPagination && !this.printView && worksService.groups"
                 class="col-md-12 col-sm-12 col-xs-12"
                 [length]="worksService.paginationTotalAmountOfWorks"
                 [pageSize]="worksService.paginationBatchSize"
@@ -476,7 +482,7 @@
                 [pageIndex]="worksService.paginationIndex"
                 (page)="pageEvent($event)"
                 >
-                </mat-paginator> 
+                </mat-paginator>
             </@orcid.checkFeatureStatus>
                 <ul *ngIf="worksService?.groups?.length" class="workspace-publications bottom-margin-medium" id="body-work-list" role="presentation">
                     <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of worksService.groups">
@@ -485,6 +491,7 @@
                 </ul>
             <@orcid.checkFeatureStatus featureName='WORKS_PAGINATION'>
                 <mat-paginator 
+                *ngIf="worksService.showPagination && !this.printView && worksService.groups"
                 class="col-md-12 col-sm-12 col-xs-12"
                 [length]="worksService.paginationTotalAmountOfWorks"
                 [pageIndex]="worksService.paginationIndex"
@@ -492,12 +499,14 @@
                 [pageSizeOptions]="[50, 100, 500]"
                 (page)="pageEvent($event)"
                 >
-                </mat-paginator> 
+                </mat-paginator>
             </@orcid.checkFeatureStatus>
+            <@orcid.checkFeatureStatus featureName='WORKS_PAGINATION' enabled=false>
             <button *ngIf="worksService.showLoadMore" (click)="loadMore()" class="btn btn-primary">${springMacroRequestContext.getMessage("workspace.works.load_more")}</button>
             <div *ngIf="worksService?.loading" class="text-center" id="workSpinner">
                 <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
             </div>
+            </@orcid.checkFeatureStatus>
             <div *ngIf="worksService?.loading == false && worksService?.groups?.length == 0">
                 <strong>
                     ${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} 
