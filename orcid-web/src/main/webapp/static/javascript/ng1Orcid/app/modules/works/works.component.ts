@@ -46,7 +46,13 @@ import { Works } from '../../../components/types';
     .mat-paginator{
         display: flex;
         padding: 0;
-    }`]
+    }
+    .paginatorContainer{
+        display: flex;
+        padding: 0;
+        align-items: center;
+    }
+    `]
 })
 export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() publicView: any;

@@ -473,16 +473,22 @@
                 </div>             
             </@orcid.checkFeatureStatus>
             <@orcid.checkFeatureStatus featureName='WORKS_PAGINATION'>
-                <mat-paginator 
-                *ngIf="worksService.showPagination && !this.printView && worksService.groups"
-                class="col-md-12 col-sm-12 col-xs-12"
-                [length]="worksService.paginationTotalAmountOfWorks"
-                [pageSize]="worksService.paginationBatchSize"
-                [pageSizeOptions]="[50, 100, 500]"
-                [pageIndex]="worksService.paginationIndex"
-                (page)="pageEvent($event)"
-                >
-                </mat-paginator>
+                <#--  INITIAL LOADER  -->
+                <div *ngIf="worksService.loading && !worksService.showPagination" class="text-center" id="workSpinner">
+                    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+                </div>
+                <#--  TOP PAGINATION CONTOL  -->
+                <div class="paginatorContainer col-md-12 col-sm-12 col-xs-12" *ngIf="worksService.showPagination && !this.printView">
+                    <mat-paginator
+                    [length]="worksService.paginationTotalAmountOfWorks"
+                    [pageSize]="worksService.paginationBatchSize"
+                    [pageSizeOptions]="[50, 100, 500]"
+                    [pageIndex]="worksService.paginationIndex"
+                    (page)="pageEvent($event)"
+                    >
+                    </mat-paginator>
+                    <i class="glyphicon glyphicon-refresh spin x2 green" id="spinner" *ngIf="worksService?.loading"></i>
+                </div>
             </@orcid.checkFeatureStatus>
                 <ul *ngIf="worksService?.groups?.length" class="workspace-publications bottom-margin-medium" id="body-work-list" role="presentation">
                     <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of worksService.groups">
@@ -490,16 +496,18 @@
                     </li>
                 </ul>
             <@orcid.checkFeatureStatus featureName='WORKS_PAGINATION'>
-                <mat-paginator 
-                *ngIf="worksService.showPagination && !this.printView && worksService.groups"
-                class="col-md-12 col-sm-12 col-xs-12"
-                [length]="worksService.paginationTotalAmountOfWorks"
-                [pageIndex]="worksService.paginationIndex"
-                [pageSize]="worksService.paginationBatchSize"
-                [pageSizeOptions]="[50, 100, 500]"
-                (page)="pageEvent($event)"
-                >
-                </mat-paginator>
+                <#--  BOTTOM PAGINATION CONTOL  -->
+                <div class="paginatorContainer col-md-12 col-sm-12 col-xs-12" *ngIf="worksService.showPagination && !this.printView">
+                    <mat-paginator 
+                    [length]="worksService.paginationTotalAmountOfWorks"
+                    [pageSize]="worksService.paginationBatchSize"
+                    [pageSizeOptions]="[50, 100, 500]"
+                    [pageIndex]="worksService.paginationIndex"
+                    (page)="pageEvent($event)"
+                    >
+                    </mat-paginator>
+                    <i class="glyphicon glyphicon-refresh spin x2 green" id="spinner" *ngIf="worksService?.loading"></i>
+                </div>
             </@orcid.checkFeatureStatus>
             <@orcid.checkFeatureStatus featureName='WORKS_PAGINATION' enabled=false>
             <button *ngIf="worksService.showLoadMore" (click)="loadMore()" class="btn btn-primary">${springMacroRequestContext.getMessage("workspace.works.load_more")}</button>

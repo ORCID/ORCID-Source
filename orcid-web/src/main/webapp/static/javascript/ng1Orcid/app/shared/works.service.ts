@@ -655,10 +655,9 @@ export class WorksService {
           .pipe(
             map((data: Works) => {
               this.loading = false;
-              //this._cdr.detectChanges();
               this.groups = data.groups;
               this.paginationTotalAmountOfWorks = data.totalGroups;
-              this.showPagination = this.paginationTotalAmountOfWorks > 15 ? true: false; 
+              this.showPagination = this.paginationTotalAmountOfWorks > 50 ? true: false; 
               this.groupsLabel = this.showPagination? null : this.groups.length + " of " + data.totalGroups;
             })
           );
