@@ -237,7 +237,7 @@ public class JpaJaxbMembershipAdapterTest extends MockSourceNameCache {
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
-        
+
         OrgAffiliationRelationEntity entity = getEntity();
         assertNotNull(entity);
         MembershipSummary summary = adapter.toMembershipSummary(entity);

@@ -52,30 +52,30 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbEmploymentAdapterV3")
     private JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;
-    
+
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
+
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
-    
+
     @Mock
     private ClientDetailsManager mockClientDetailsManager;
-    
+
     @Mock
     private RecordNameDao mockRecordNameDao;
-    
+
     @Mock
     private RecordNameManagerReadOnly mockRecordNameManager;
-    
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        
+
         // by default return client details entity with user obo disabled
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(new ClientDetailsEntity());
         ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
-        
+
         Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
         Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
@@ -88,57 +88,57 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
-        //General info
+        // General info
         assertEquals(Long.valueOf(0), oar.getId());
-        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), oar.getVisibility());        
+        assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("employment:department-name", oar.getDepartment());
         assertEquals("employment:role-title", oar.getTitle());
-        
-        //Dates
-        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
+
+        // Dates
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
-        
-        //Source                
-        assertNull(oar.getSourceId());        
-        assertNull(oar.getClientSourceId());        
+
+        // Source
+        assertNull(oar.getSourceId());
+        assertNull(oar.getClientSourceId());
         assertNull(oar.getElementSourceId());
-        assertEquals("http://tempuri.org",oar.getUrl());
+        assertEquals("http://tempuri.org", oar.getUrl());
     }
-    
+
     @Test
     public void clearOrgAffiliationRelationEntityFieldsTest() throws JAXBException {
         Employment e = getEmployment(true);
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
-        
+
         e.setUrl(null);
         jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e, oar);
-        
+
         assertNotNull(oar);
         assertNull(oar.getUrl());
-        
-        //General info
+
+        // General info
         assertEquals(Long.valueOf(0), oar.getId());
-        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
+        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("employment:department-name", oar.getDepartment());
         assertEquals("employment:role-title", oar.getTitle());
-        
-        //Dates
-        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
+
+        // Dates
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
-        
+
         // Source
-        assertNull(oar.getSourceId());        
-        assertNull(oar.getClientSourceId());        
+        assertNull(oar.getSourceId());
+        assertNull(oar.getClientSourceId());
         assertNull(oar.getElementSourceId());
     }
 
@@ -165,15 +165,15 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals("org:city", employment.getOrganization().getAddress().getCity());
         assertEquals("org:region", employment.getOrganization().getAddress().getRegion());
         assertEquals(Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
-        assertNotNull(employment.getSource());        
+        assertNotNull(employment.getSource());
         assertNotNull(employment.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, employment.getSource().retrieveSourcePath());
-        assertEquals("http://tempuri.org",employment.getUrl().getValue());
-        
+        assertEquals("http://tempuri.org", employment.getUrl().getValue());
+
         // no user obo
         assertNull(employment.getSource().getAssertionOriginOrcid());
     }
-    
+
     @Test
     public void fromOrgAffiliationRelationEntityToEmploymentSummary() {
         OrgAffiliationRelationEntity entity = getEmploymentEntity();
@@ -190,23 +190,23 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals("01", employmentSummary.getStartDate().getDay().getValue());
         assertEquals("2020", employmentSummary.getEndDate().getYear().getValue());
         assertEquals("02", employmentSummary.getEndDate().getMonth().getValue());
-        assertEquals("02", employmentSummary.getEndDate().getDay().getValue());        
+        assertEquals("02", employmentSummary.getEndDate().getDay().getValue());
         assertNotNull(employmentSummary.getSource());
         assertNotNull(employmentSummary.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, employmentSummary.getSource().retrieveSourcePath());
-        assertEquals("http://tempuri.org",employmentSummary.getUrl().getValue());
-        
+        assertEquals("http://tempuri.org", employmentSummary.getUrl().getValue());
+
         // no user obo
         assertNull(employmentSummary.getSource().getAssertionOriginOrcid());
     }
-    
+
     @Test
     public void fromOrgAffiliationRelationEntityToUserOBOEmployment() {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(userOBOClient);
-        
+
         OrgAffiliationRelationEntity entity = getEmploymentEntity();
         assertNotNull(entity);
         Employment employment = jpaJaxbEmploymentAdapter.toEmployment(entity);
@@ -228,22 +228,22 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals("org:city", employment.getOrganization().getAddress().getCity());
         assertEquals("org:region", employment.getOrganization().getAddress().getRegion());
         assertEquals(Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
-        assertNotNull(employment.getSource());        
+        assertNotNull(employment.getSource());
         assertNotNull(employment.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, employment.getSource().retrieveSourcePath());
-        assertEquals("http://tempuri.org",employment.getUrl().getValue());
-        
+        assertEquals("http://tempuri.org", employment.getUrl().getValue());
+
         // user obo
         assertNotNull(employment.getSource().getAssertionOriginOrcid());
     }
-    
+
     @Test
     public void fromOrgAffiliationRelationEntityToUserOBOEmploymentSummary() {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(userOBOClient);
-        
+
         OrgAffiliationRelationEntity entity = getEmploymentEntity();
         assertNotNull(entity);
         EmploymentSummary employmentSummary = jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
@@ -258,35 +258,34 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertEquals("01", employmentSummary.getStartDate().getDay().getValue());
         assertEquals("2020", employmentSummary.getEndDate().getYear().getValue());
         assertEquals("02", employmentSummary.getEndDate().getMonth().getValue());
-        assertEquals("02", employmentSummary.getEndDate().getDay().getValue());        
+        assertEquals("02", employmentSummary.getEndDate().getDay().getValue());
         assertNotNull(employmentSummary.getSource());
         assertNotNull(employmentSummary.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, employmentSummary.getSource().retrieveSourcePath());
-        assertEquals("http://tempuri.org",employmentSummary.getUrl().getValue());
-        
+        assertEquals("http://tempuri.org", employmentSummary.getUrl().getValue());
+
         // user obo
         assertNotNull(employmentSummary.getSource().getAssertionOriginOrcid());
     }
-    
+
     private Employment getEmployment(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Employment.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Marshaller m = context.createMarshaller();
         String name = "/record_3.0_rc1/samples/read_samples/employment-3.0_rc1.xml";
-        if(full) {
+        if (full) {
             name = "/record_3.0_rc1/samples/read_samples/employment-full-3.0_rc1.xml";
-        }            
+        }
         InputStream inputStream = getClass().getResourceAsStream(name);
         Employment e = (Employment) unmarshaller.unmarshal(inputStream);
-        
+
         StringWriter stringWriter = new StringWriter();
         m.marshal(e, stringWriter);
         System.out.println(stringWriter.toString());
-        
-        
+
         return e;
     }
-    
+
     private OrgAffiliationRelationEntity getEmploymentEntity() {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
@@ -294,14 +293,14 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
-        
+
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(CLIENT_SOURCE_ID);
 
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetailsEntity);
         orgEntity.setSource(sourceEntity);
-        
+
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
         result.setAffiliationType(AffiliationType.EMPLOYMENT.name());
         result.setDepartment("employment:department");
@@ -311,7 +310,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("employment:title");
-        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
+        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         result.setClientSourceId(CLIENT_SOURCE_ID);
         result.setUrl("http://tempuri.org");
         return result;

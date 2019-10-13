@@ -49,100 +49,100 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbEducationAdapterV3")
     private JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
-    
+
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
+
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
-    
+
     @Mock
     private ClientDetailsManager mockClientDetailsManager;
-    
+
     @Mock
     private RecordNameDao mockRecordNameDao;
-    
+
     @Mock
     private RecordNameManagerReadOnly mockRecordNameManager;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        
+
         // by default return client details entity with user obo disabled
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(new ClientDetailsEntity());
         ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
-        
+
         Mockito.when(mockRecordNameDao.exists(Mockito.eq("0000-0001-0002-0003"))).thenReturn(true);
         Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.eq("0000-0001-0002-0003"))).thenReturn("test");
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
     }
-    
+
     @Test
     public void testToOrgAffiliationRelationEntity() throws JAXBException {
         Education e = getEducation(true);
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
-        //General info
+        // General info
         assertEquals(Long.valueOf(0), oar.getId());
-        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
+        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("education:department-name", oar.getDepartment());
         assertEquals("education:role-title", oar.getTitle());
-        
-        //Dates
-        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
+
+        // Dates
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
-        
+
         // Source
-        assertNull(oar.getSourceId());        
-        assertNull(oar.getClientSourceId());        
+        assertNull(oar.getSourceId());
+        assertNull(oar.getClientSourceId());
         assertNull(oar.getElementSourceId());
-        assertEquals("http://tempuri.org",oar.getUrl());
+        assertEquals("http://tempuri.org", oar.getUrl());
     }
-    
+
     @Test
     public void clearOrgAffiliationRelationEntityFieldsTest() throws JAXBException {
         Education e = getEducation(true);
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
-        assertEquals("http://tempuri.org",oar.getUrl());
-        
+        assertEquals("http://tempuri.org", oar.getUrl());
+
         // Clear the url
         e.setUrl(null);
-        
+
         jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(e, oar);
         assertNotNull(oar);
-        
+
         // Check url is null
         assertNull(oar.getUrl());
-        
-        //General info
+
+        // General info
         assertEquals(Long.valueOf(0), oar.getId());
-        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
+        assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("education:department-name", oar.getDepartment());
         assertEquals("education:role-title", oar.getTitle());
-        
-        //Dates
-        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());        
+
+        // Dates
+        assertEquals(Integer.valueOf(2), oar.getStartDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getStartDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getStartDate().getYear());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getDay());
         assertEquals(Integer.valueOf(2), oar.getEndDate().getMonth());
         assertEquals(Integer.valueOf(1948), oar.getEndDate().getYear());
-        
+
         // Source
-        assertNull(oar.getSourceId());        
-        assertNull(oar.getClientSourceId());        
+        assertNull(oar.getSourceId());
+        assertNull(oar.getClientSourceId());
         assertNull(oar.getElementSourceId());
     }
-    
+
     @Test
     public void fromOrgAffiliationRelationEntityToEducation() {
         OrgAffiliationRelationEntity entity = getEducationEntity();
@@ -166,22 +166,22 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals("org:city", education.getOrganization().getAddress().getCity());
         assertEquals("org:region", education.getOrganization().getAddress().getRegion());
         assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
-        assertNotNull(education.getSource());        
+        assertNotNull(education.getSource());
         assertNotNull(education.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, education.getSource().retrieveSourcePath());
-        assertEquals("http://tempuri.org",education.getUrl().getValue());
-        
+        assertEquals("http://tempuri.org", education.getUrl().getValue());
+
         // no user obo
         assertNull(education.getSource().getAssertionOriginOrcid());
     }
-    
+
     @Test
     public void fromOrgAffiliationRelationEntityToUserOBOEducation() {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(userOBOClient);
-        
+
         OrgAffiliationRelationEntity entity = getEducationEntity();
         assertNotNull(entity);
         Education education = jpaJaxbEducationAdapter.toEducation(entity);
@@ -203,15 +203,15 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals("org:city", education.getOrganization().getAddress().getCity());
         assertEquals("org:region", education.getOrganization().getAddress().getRegion());
         assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, education.getOrganization().getAddress().getCountry());
-        assertNotNull(education.getSource());        
+        assertNotNull(education.getSource());
         assertNotNull(education.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, education.getSource().retrieveSourcePath());
-        assertEquals("http://tempuri.org",education.getUrl().getValue());
-        
+        assertEquals("http://tempuri.org", education.getUrl().getValue());
+
         // user obo
         assertNotNull(education.getSource().getAssertionOriginOrcid());
     }
-    
+
     @Test
     public void fromOrgAffiliationRelationEntityToEducationSummary() {
         OrgAffiliationRelationEntity entity = getEducationEntity();
@@ -228,23 +228,23 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals("01", educationSummary.getStartDate().getDay().getValue());
         assertEquals("2020", educationSummary.getEndDate().getYear().getValue());
         assertEquals("02", educationSummary.getEndDate().getMonth().getValue());
-        assertEquals("02", educationSummary.getEndDate().getDay().getValue());        
+        assertEquals("02", educationSummary.getEndDate().getDay().getValue());
         assertNotNull(educationSummary.getSource());
         assertNotNull(educationSummary.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, educationSummary.getSource().retrieveSourcePath());
-        assertEquals("http://tempuri.org",educationSummary.getUrl().getValue());
- 
+        assertEquals("http://tempuri.org", educationSummary.getUrl().getValue());
+
         // no user obo
         assertNull(educationSummary.getSource().getAssertionOriginOrcid());
     }
-    
+
     @Test
     public void fromOrgAffiliationRelationEntityToUserOBOEducationSummary() {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(userOBOClient);
-        
+
         OrgAffiliationRelationEntity entity = getEducationEntity();
         assertNotNull(entity);
         EducationSummary educationSummary = jpaJaxbEducationAdapter.toEducationSummary(entity);
@@ -259,13 +259,13 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertEquals("01", educationSummary.getStartDate().getDay().getValue());
         assertEquals("2020", educationSummary.getEndDate().getYear().getValue());
         assertEquals("02", educationSummary.getEndDate().getMonth().getValue());
-        assertEquals("02", educationSummary.getEndDate().getDay().getValue());        
+        assertEquals("02", educationSummary.getEndDate().getDay().getValue());
         assertNotNull(educationSummary.getSource());
         assertNotNull(educationSummary.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, educationSummary.getSource().retrieveSourcePath());
-        assertEquals("http://tempuri.org",educationSummary.getUrl().getValue());
-        
-        // user obo 
+        assertEquals("http://tempuri.org", educationSummary.getUrl().getValue());
+
+        // user obo
         assertNotNull(educationSummary.getSource().getAssertionOriginOrcid());
     }
 
@@ -273,13 +273,13 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Education.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_3.0_rc1/samples/read_samples/education-3.0_rc1.xml";
-        if(full) {
+        if (full) {
             name = "/record_3.0_rc1/samples/read_samples/education-full-3.0_rc1.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Education) unmarshaller.unmarshal(inputStream);
     }
-    
+
     private OrgAffiliationRelationEntity getEducationEntity() {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
@@ -287,14 +287,14 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         orgEntity.setName("org:name");
         orgEntity.setRegion("org:region");
         orgEntity.setUrl("org:url");
-        
+
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         clientDetailsEntity.setId(CLIENT_SOURCE_ID);
 
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(clientDetailsEntity);
         orgEntity.setSource(sourceEntity);
-        
+
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
         result.setAffiliationType(AffiliationType.EDUCATION.name());
         result.setDepartment("education:department");
@@ -304,7 +304,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("education:title");
-        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
+        result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         result.setClientSourceId(CLIENT_SOURCE_ID);
         result.setUrl("http://tempuri.org");
         return result;

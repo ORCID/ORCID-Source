@@ -308,7 +308,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals("work:journalTitle", ws.getJournalTitle().getContent());
         assertEquals("work:url",ws.getUrl().getValue());
         
-        // user obo work 
+        // user obo work
         assertNotNull(ws.getSource().getAssertionOriginOrcid());
     }
 
