@@ -2,6 +2,7 @@ package org.orcid.core.adapter.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,12 +13,21 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.adapter.MockSourceNameCache;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
+import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -27,6 +37,7 @@ import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
@@ -39,8 +50,35 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbResearchResourceAdapterV3")
     private JpaJaxbResearchResourceAdapter jpaJaxbResearchResourceAdapter;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
 
     private Date createdDate = new Date();
+    
+    @Before
+    public void setUp() {
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+    }
     
     @Test
     public void testEntityToModel() throws JAXBException{
@@ -71,6 +109,48 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals("id",m.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("org:name",m.getResourceItems().get(0).getHosts().getOrganization().get(0).getName());
         assertEquals("org:city",m.getResourceItems().get(0).getHosts().getOrganization().get(0).getAddress().getCity());
+        
+        // no user obo
+        assertNull(m.getSource().getAssertionOriginOrcid());
+    }
+    
+    @Test
+    public void testEntityToUserOBOModel() throws JAXBException{
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        
+        ResearchResourceEntity e = getResearchResourceEntity();
+        ResearchResource m = jpaJaxbResearchResourceAdapter.toModel(e);
+        assertNotNull(m.getCreatedDate().getValue());
+        assertNotNull(m.getLastModifiedDate().getValue());
+        assertEquals("title",m.getProposal().getTitle().getTitle().getContent());
+        assertEquals("translatedTitle",m.getProposal().getTitle().getTranslatedTitle().getContent());
+        assertEquals("en",m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("2020",m.getProposal().getEndDate().getYear().getValue());
+        assertEquals("2019",m.getProposal().getStartDate().getYear().getValue());
+        assertEquals("http://blah.com",m.getProposal().getUrl().getValue());
+        assertEquals("source-work-id",m.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("id",m.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("org:name",m.getProposal().getHosts().getOrganization().get(0).getName());
+        assertEquals("org:city",m.getProposal().getHosts().getOrganization().get(0).getAddress().getCity());
+        //assertEquals("https://orcid.org/0000-0001-0002-0003/research-resource/1234",m.getPath());
+        assertEquals(Long.valueOf(12345l),m.getPutCode());
+        assertEquals(CLIENT_SOURCE_ID,m.getSource().retrieveSourcePath());
+        assertEquals(Visibility.PUBLIC,m.getVisibility());
+        
+        assertEquals(1,m.getResourceItems().size());
+        assertEquals("resourceName",m.getResourceItems().get(0).getResourceName());
+        assertEquals("equipment",m.getResourceItems().get(0).getResourceType().name());
+        assertEquals("http://blah.com",m.getResourceItems().get(0).getUrl().getValue());
+        assertEquals("source-work-id",m.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("id",m.getResourceItems().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("org:name",m.getResourceItems().get(0).getHosts().getOrganization().get(0).getName());
+        assertEquals("org:city",m.getResourceItems().get(0).getHosts().getOrganization().get(0).getAddress().getCity());
+        
+        // user obo
+        assertNotNull(m.getSource().getAssertionOriginOrcid());
         
     }
     
@@ -141,7 +221,6 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), e.getResourceItems().get(1).getHosts().get(0).getCountry());
         assertEquals("XX", e.getResourceItems().get(1).getHosts().get(0).getOrgDisambiguated().getSourceId());
         assertEquals("lei", e.getResourceItems().get(1).getHosts().get(0).getOrgDisambiguated().getSourceType()); 
-        
     }
 
     @Test
@@ -163,6 +242,38 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals(Long.valueOf(12345l),m.getPutCode());
         assertEquals(CLIENT_SOURCE_ID,m.getSource().retrieveSourcePath());
         assertEquals(Visibility.PUBLIC,m.getVisibility());
+        
+        // no user obo
+        assertNull(m.getSource().getAssertionOriginOrcid());
+    }
+    
+    @Test
+    public void testEntityToUserOBOSummary(){
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        
+        ResearchResourceSummary m = jpaJaxbResearchResourceAdapter.toSummary(getResearchResourceEntity());
+        assertNotNull(m.getCreatedDate().getValue());
+        assertNotNull(m.getLastModifiedDate().getValue());
+        assertEquals("title",m.getProposal().getTitle().getTitle().getContent());
+        assertEquals("translatedTitle",m.getProposal().getTitle().getTranslatedTitle().getContent());
+        assertEquals("en",m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals("2020",m.getProposal().getEndDate().getYear().getValue());
+        assertEquals("2019",m.getProposal().getStartDate().getYear().getValue());
+        assertEquals("http://blah.com",m.getProposal().getUrl().getValue());
+        assertEquals("source-work-id",m.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("id",m.getProposal().getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("org:name",m.getProposal().getHosts().getOrganization().get(0).getName());
+        assertEquals("org:city",m.getProposal().getHosts().getOrganization().get(0).getAddress().getCity());
+        //assertEquals("https://orcid.org/0000-0001-0002-0003/research-resource/1234",m.getPath());
+        assertEquals(Long.valueOf(12345l),m.getPutCode());
+        assertEquals(CLIENT_SOURCE_ID,m.getSource().retrieveSourcePath());
+        assertEquals(Visibility.PUBLIC,m.getVisibility());
+        
+        // user obo
+        assertNotNull(m.getSource().getAssertionOriginOrcid());
     }
 
     private ResearchResource getResearchResource() throws JAXBException {

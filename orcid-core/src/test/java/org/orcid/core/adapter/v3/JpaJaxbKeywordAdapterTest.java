@@ -12,16 +12,26 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.adapter.v3.JpaJaxbKeywordAdapter;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
@@ -31,8 +41,36 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
     @Resource
     private JpaJaxbKeywordAdapter adapter;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
+    
+    @Before
+    public void setUp() {
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+    }
     
     @Test
     public void fromKeywordToProfileKeywordEntityTest() throws JAXBException {
@@ -65,6 +103,33 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         assertNotNull(keyword.getSource());
         assertEquals(CLIENT_SOURCE_ID, keyword.getSource().retrieveSourcePath());
         assertEquals(Visibility.LIMITED, keyword.getVisibility());
+        
+        // no user obo
+        assertNull(keyword.getSource().getAssertionOriginOrcid());
+    }
+    
+    @Test
+    public void fromProfileKeywordEntityToUserOBOKeywordTest() {
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        
+        ProfileKeywordEntity entity = getProfileKeywordEntity();
+        Keyword keyword = adapter.toKeyword(entity);
+        assertNotNull(keyword);
+        assertEquals("keyword-1", keyword.getContent());
+        assertNotNull(keyword.getCreatedDate());
+        assertNotNull(keyword.getCreatedDate().getValue());
+        assertNotNull(keyword.getLastModifiedDate());
+        assertNotNull(keyword.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(1), keyword.getPutCode());
+        assertNotNull(keyword.getSource());
+        assertEquals(CLIENT_SOURCE_ID, keyword.getSource().retrieveSourcePath());
+        assertEquals(Visibility.LIMITED, keyword.getVisibility());
+        
+        // user obo
+        assertNotNull(keyword.getSource().getAssertionOriginOrcid());
     }
     
     private Keyword getKeyword() throws JAXBException {

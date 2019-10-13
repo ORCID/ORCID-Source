@@ -155,7 +155,6 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         assertEquals(workEntity2.getAddedToProfileDate(), workEntity.getAddedToProfileDate());
         assertEquals(workEntity2.getAssertionOriginClientSourceId(), workEntity.getAssertionOriginClientSourceId());
-        assertEquals(workEntity2.getAssertionOriginSourceId(), workEntity.getAssertionOriginSourceId());
         assertEquals(workEntity2.getClientSourceId(), workEntity.getClientSourceId());
         assertEquals(workEntity2.getContributorsJson(), workEntity.getContributorsJson());
         assertEquals(workEntity2.getDateCreated(), workEntity.getDateCreated());

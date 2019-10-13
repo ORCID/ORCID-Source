@@ -11,13 +11,21 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.adapter.MockSourceNameCache;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -27,6 +35,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
@@ -39,6 +48,33 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbServiceAdapterV3")
     private JpaJaxbServiceAdapter adapter;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
+    
+    @Before
+    public void setUp() {
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+    }
 
     @Test
     public void testToOrgAffiliationRelationEntity() throws JAXBException {
@@ -127,6 +163,9 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
         assertNotNull(service.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, service.getSource().retrieveSourcePath());
         assertEquals("http://tempuri.org",service.getUrl().getValue());
+        
+        // no user obo
+        assertNull(service.getSource().getAssertionOriginOrcid());
     }
     
     @Test
@@ -150,6 +189,77 @@ public class JpaJaxbServiceAdapterTest extends MockSourceNameCache {
         assertNotNull(summary.getSource().retrieveSourcePath());
         assertEquals(CLIENT_SOURCE_ID, summary.getSource().retrieveSourcePath());
         assertEquals("http://tempuri.org",summary.getUrl().getValue());
+        
+        // no user obo
+        assertNull(summary.getSource().getAssertionOriginOrcid());
+    }
+    
+    @Test
+    public void fromOrgAffiliationRelationEntityToUserOBOService() {
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        
+        OrgAffiliationRelationEntity entity = getEntity();
+        assertNotNull(entity);
+        Service service = adapter.toService(entity);
+        assertNotNull(service);
+        assertEquals("service:department", service.getDepartmentName());
+        assertEquals(Long.valueOf(123456), service.getPutCode());
+        assertEquals("service:title", service.getRoleTitle());
+        assertEquals("private", service.getVisibility().value());
+        assertNotNull(service.getStartDate());
+        assertEquals("2000", service.getStartDate().getYear().getValue());
+        assertEquals("01", service.getStartDate().getMonth().getValue());
+        assertEquals("01", service.getStartDate().getDay().getValue());
+        assertEquals("2020", service.getEndDate().getYear().getValue());
+        assertEquals("02", service.getEndDate().getMonth().getValue());
+        assertEquals("02", service.getEndDate().getDay().getValue());
+        assertNotNull(service.getOrganization());
+        assertEquals("org:name", service.getOrganization().getName());
+        assertNotNull(service.getOrganization().getAddress());
+        assertEquals("org:city", service.getOrganization().getAddress().getCity());
+        assertEquals("org:region", service.getOrganization().getAddress().getRegion());
+        assertEquals(org.orcid.jaxb.model.common.Iso3166Country.US, service.getOrganization().getAddress().getCountry());
+        assertNotNull(service.getSource());        
+        assertNotNull(service.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, service.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",service.getUrl().getValue());
+        
+        // user obo
+        assertNotNull(service.getSource().getAssertionOriginOrcid());
+    }
+    
+    @Test
+    public void fromOrgAffiliationRelationEntityToUserOBOServiceSummary() {
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        
+        OrgAffiliationRelationEntity entity = getEntity();
+        assertNotNull(entity);
+        ServiceSummary summary = adapter.toServiceSummary(entity);
+        assertNotNull(summary);
+        assertEquals("service:department", summary.getDepartmentName());
+        assertEquals(Long.valueOf(123456), summary.getPutCode());
+        assertEquals("service:title", summary.getRoleTitle());
+        assertEquals("private", summary.getVisibility().value());
+        assertNotNull(summary.getStartDate());
+        assertEquals("2000", summary.getStartDate().getYear().getValue());
+        assertEquals("01", summary.getStartDate().getMonth().getValue());
+        assertEquals("01", summary.getStartDate().getDay().getValue());
+        assertEquals("2020", summary.getEndDate().getYear().getValue());
+        assertEquals("02", summary.getEndDate().getMonth().getValue());
+        assertEquals("02", summary.getEndDate().getDay().getValue());        
+        assertNotNull(summary.getSource());
+        assertNotNull(summary.getSource().retrieveSourcePath());
+        assertEquals(CLIENT_SOURCE_ID, summary.getSource().retrieveSourcePath());
+        assertEquals("http://tempuri.org",summary.getUrl().getValue());
+        
+        // user obo
+        assertNotNull(summary.getSource().getAssertionOriginOrcid());
     }
 
     private Service getService() throws JAXBException {

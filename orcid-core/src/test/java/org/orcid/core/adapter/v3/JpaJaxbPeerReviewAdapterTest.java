@@ -11,9 +11,16 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.adapter.MockSourceNameCache;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.PeerReviewSubjectType;
 import org.orcid.jaxb.model.common.PeerReviewType;
 import org.orcid.jaxb.model.common.Role;
@@ -21,6 +28,7 @@ import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -29,6 +37,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
@@ -41,6 +50,33 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbPeerReviewAdapterV3")
     private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
+    
+    @Before
+    public void setUp() {
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+    }
 
     @Test
     public void testToOrgAffiliationRelationEntity() throws JAXBException {
@@ -183,6 +219,9 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("org:region", peerReview.getOrganization().getAddress().getRegion());
         assertNotNull(peerReview.getSource());        
         assertEquals(CLIENT_SOURCE_ID, peerReview.getSource().retrieveSourcePath());
+        
+        // no user obo
+        assertNull(peerReview.getSource().getAssertionOriginOrcid());
     }
     
     @Test
@@ -204,6 +243,87 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());        
         assertNotNull(peerReviewSummary.getSource());
         assertEquals(CLIENT_SOURCE_ID, peerReviewSummary.getSource().retrieveSourcePath());
+        
+        // no user obo
+        assertNull(peerReviewSummary.getSource().getAssertionOriginOrcid());
+    }
+    
+    @Test
+    public void fromPeerReviewEntityToUserOBOPeerReview() {
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        
+        PeerReviewEntity entity = getPeerReviewEntity();
+        assertNotNull(entity);
+        PeerReview peerReview= jpaJaxbPeerReviewAdapter.toPeerReview(entity);
+        assertNotNull(peerReview);
+        assertEquals(Long.valueOf(12345), peerReview.getPutCode());
+        assertEquals("private", peerReview.getVisibility().value());    
+        assertEquals("orcid-generated:12345", peerReview.getGroupId());
+        //Subject
+        assertNotNull(peerReview.getSubjectExternalIdentifier());
+        assertEquals("peer-review:subject-external-identifier-id", peerReview.getSubjectExternalIdentifier().getValue());
+        assertEquals("source-work-id", peerReview.getSubjectExternalIdentifier().getType());
+        assertEquals("peer-review:subject-container-name", peerReview.getSubjectContainerName().getContent());
+        assertEquals("peer-review:subject-name", peerReview.getSubjectName().getTitle().getContent());
+        assertEquals("peer-review:subject-translated-name", peerReview.getSubjectName().getTranslatedTitle().getContent());
+        assertEquals("en", peerReview.getSubjectName().getTranslatedTitle().getLanguageCode());
+        assertEquals(WorkType.BOOK_REVIEW.value(), peerReview.getSubjectType().value());
+        assertEquals("peer-review:subject-url", peerReview.getSubjectUrl().getValue());        
+        //Fields
+        assertNotNull(peerReview.getExternalIdentifiers());
+        assertNotNull(peerReview.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, peerReview.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("peer-review:external-identifier-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("source-work-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals(Role.MEMBER.value(), peerReview.getRole().value());
+        assertEquals(PeerReviewType.EVALUATION.value(), peerReview.getType().value());
+        assertEquals("peer-review:url", peerReview.getUrl().getValue());
+        assertNotNull(peerReview.getCompletionDate());
+        assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
+        assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
+        assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
+        assertNotNull(peerReview.getOrganization());
+        assertEquals("org:name", peerReview.getOrganization().getName());
+        assertNotNull(peerReview.getOrganization().getAddress());
+        assertEquals("org:city", peerReview.getOrganization().getAddress().getCity());
+        assertEquals("org:region", peerReview.getOrganization().getAddress().getRegion());
+        assertNotNull(peerReview.getSource());        
+        assertEquals(CLIENT_SOURCE_ID, peerReview.getSource().retrieveSourcePath());
+        
+        // user obo
+        assertNotNull(peerReview.getSource().getAssertionOriginOrcid());
+    }
+    
+    @Test
+    public void fromPeerReviewEntityToUserOBOPeerReviewSummary() {
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        
+        PeerReviewEntity entity = getPeerReviewEntity();
+        assertNotNull(entity);
+        PeerReviewSummary peerReviewSummary = jpaJaxbPeerReviewAdapter.toPeerReviewSummary(entity);
+        assertNotNull(peerReviewSummary);
+        assertEquals(Long.valueOf(12345), peerReviewSummary.getPutCode());
+        assertEquals("private", peerReviewSummary.getVisibility().value());
+        assertNotNull(peerReviewSummary.getCompletionDate());
+        assertEquals("2015", peerReviewSummary.getCompletionDate().getYear().getValue());
+        assertEquals("01", peerReviewSummary.getCompletionDate().getMonth().getValue());
+        assertEquals("01", peerReviewSummary.getCompletionDate().getDay().getValue());
+        assertNotNull(peerReviewSummary.getExternalIdentifiers());
+        assertNotNull(peerReviewSummary.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("peer-review:external-identifier-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());        
+        assertNotNull(peerReviewSummary.getSource());
+        assertEquals(CLIENT_SOURCE_ID, peerReviewSummary.getSource().retrieveSourcePath());
+        
+        // user obo
+        assertNotNull(peerReviewSummary.getSource().getAssertionOriginOrcid());
     }
 
     private PeerReview getPeerReview(boolean full) throws JAXBException {
