@@ -17,9 +17,9 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class SourceAwareEntity<T extends Serializable> extends BaseEntity<T> {
     private static final long serialVersionUID = -5397119397438830995L;
     protected String sourceId;
-    protected String clientSourceId;   
+    protected String clientSourceId;
     protected String assertionOriginSourceId;
-    protected String assertionOriginClientSourceId;    
+    protected String assertionOriginClientSourceId;
 
     @Column(name = "source_id")
     public String getSourceId() {
@@ -47,31 +47,33 @@ public abstract class SourceAwareEntity<T extends Serializable> extends BaseEnti
     public void setAssertionOriginClientSourceId(String assertionOriginClientSourceId) {
         this.assertionOriginClientSourceId = assertionOriginClientSourceId;
     }
-    
+
     /**
-     * Get the element source id, helpful when we just need the id, not the complete source element
-     * */
+     * Get the element source id, helpful when we just need the id, not the
+     * complete source element
+     */
     @Transient
     public String getElementSourceId() {
-        if(!StringUtils.isEmpty(clientSourceId)) {
+        if (!StringUtils.isEmpty(clientSourceId)) {
             return clientSourceId;
-        } else if(!StringUtils.isEmpty(sourceId)) {
+        } else if (!StringUtils.isEmpty(sourceId)) {
             return sourceId;
         }
         return null;
-    }    
-    
+    }
+
     /**
-     * Get the element assertion origin source id, helpful when we just need the id, not the complete source element
-     * */
+     * Get the element assertion origin source id, helpful when we just need the
+     * id, not the complete source element
+     */
     @Transient
     public String getElementAssertionOriginSourceId() {
-        if(!StringUtils.isEmpty(assertionOriginClientSourceId)) {
+        if (!StringUtils.isEmpty(assertionOriginClientSourceId)) {
             return assertionOriginClientSourceId;
-        } else if(!StringUtils.isEmpty(assertionOriginSourceId)) {
+        } else if (!StringUtils.isEmpty(assertionOriginSourceId)) {
             return assertionOriginSourceId;
         }
         return null;
-    }  
-    
+    }
+
 }

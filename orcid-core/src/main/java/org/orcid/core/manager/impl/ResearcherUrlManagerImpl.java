@@ -15,7 +15,6 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ResearcherUrlManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;

@@ -16,7 +16,6 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.ProfileKeywordManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -57,8 +56,10 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     @Override
     public Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, sourceEntity, true, isApiRequest, null);
+        
         // Validate it is not duplicated
         List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywords(orcid, getLastModified(orcid));
         for (ProfileKeywordEntity existing : existingKeywords) {
