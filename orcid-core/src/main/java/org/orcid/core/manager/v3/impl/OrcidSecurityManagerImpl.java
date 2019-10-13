@@ -93,7 +93,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
@@ -219,16 +219,16 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
     }
 
-    /** This is odd.   Previous behavior was to get id from either client_source_id or source_id then check against both.
-     * Strictly this was incorrect.  Now checks properly, field for field.  TD 22/11/18
+    /**
+     * This is odd. Previous behavior was to get id from either client_source_id
+     * or source_id then check against both. Strictly this was incorrect. Now
+     * checks properly, field for field. TD 22/11/18
      * 
      */
     @Override
     public void checkSourceAndThrow(SourceAwareEntity<?> existingEntity) {
-        //String sourceIdOfUpdater = sourceManager.retrieveActiveSourceId();
-        //if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
         Source activeSource = sourceManager.retrieveActiveSource();
-        if (activeSource !=null && !SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity, clientDetailsEntityCacheManager)) {
+        if (activeSource != null && !SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity, clientDetailsEntityCacheManager)) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
             throw new WrongSourceException(params);
@@ -555,7 +555,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                     filteredElements.add(work);
                     continue;
                 }
-                
+
                 if (work.retrieveSourcePath().equals(clientId)) {
                     filteredElements.add(work);
                     continue;

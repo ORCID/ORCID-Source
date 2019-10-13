@@ -43,7 +43,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
-    
+
     @Resource
     private ISSNNormalizer issnNormaliser;
 
@@ -76,7 +76,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
@@ -122,7 +122,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         entity.setProfile(profile);
         setIncomingPrivacy(entity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
-        
+
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE));
@@ -248,7 +248,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     public void removeAllPeerReviews(String orcid) {
         peerReviewDao.removeAllPeerReviews(orcid);
     }
-    
+
     private void createIssnGroupIdIfNecessary(PeerReview peerReview) {
         if (IssnGroupIdPatternMatcher.isIssnGroupType(peerReview.getGroupId())) {
             String normalisedIssn = issnNormaliser.normalise("issn", peerReview.getGroupId());

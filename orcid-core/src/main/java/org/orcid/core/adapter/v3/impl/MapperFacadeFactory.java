@@ -157,13 +157,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private WorkDao workDao;
-    
+
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
 
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
+
     @Resource(name = "clientDetailsManagerReadOnlyV3")
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
@@ -172,13 +172,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private EncryptionManager encryptionManager;
-    
+
     @Resource(name = "PIDNormalizationService")
     private PIDNormalizationService norm;
-    
+
     @Resource
     private LocaleManager localeManager;
-    
+
     @Override
     public MapperFacade getObject() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
@@ -192,121 +192,122 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 TypeFactory.<Item> valueOf(Item.class));
 
         // Custom notification
-        ClassMapBuilder<NotificationCustom, NotificationCustomEntity> notificationCustomClassMap = mapperFactory.classMap(NotificationCustom.class, NotificationCustomEntity.class); 
+        ClassMapBuilder<NotificationCustom, NotificationCustomEntity> notificationCustomClassMap = mapperFactory.classMap(NotificationCustom.class,
+                NotificationCustomEntity.class);
         registerSourceConverters(mapperFactory, notificationCustomClassMap);
-        mapCommonFields(notificationCustomClassMap).register();        
-        
+        mapCommonFields(notificationCustomClassMap).register();
+
         // Service Announcement notification
-        ClassMapBuilder<NotificationServiceAnnouncement, NotificationServiceAnnouncementEntity> notificationServiceAnnouncementClassMap = mapperFactory.classMap(NotificationServiceAnnouncement.class,
-                NotificationServiceAnnouncementEntity.class);
+        ClassMapBuilder<NotificationServiceAnnouncement, NotificationServiceAnnouncementEntity> notificationServiceAnnouncementClassMap = mapperFactory
+                .classMap(NotificationServiceAnnouncement.class, NotificationServiceAnnouncementEntity.class);
         registerSourceConverters(mapperFactory, notificationServiceAnnouncementClassMap);
         mapCommonFields(notificationServiceAnnouncementClassMap).register();
-        
+
         // Tip notification
-        ClassMapBuilder<NotificationTip, NotificationTipEntity> notificationTipClassMap = mapperFactory.classMap(NotificationTip.class,
-                NotificationTipEntity.class);
+        ClassMapBuilder<NotificationTip, NotificationTipEntity> notificationTipClassMap = mapperFactory.classMap(NotificationTip.class, NotificationTipEntity.class);
         registerSourceConverters(mapperFactory, notificationTipClassMap);
         mapCommonFields(notificationTipClassMap).register();
-        
+
         // Administrative notification
-        ClassMapBuilder<NotificationAdministrative, NotificationAdministrativeEntity> notificationAdministrativeClassMap = mapperFactory.classMap(NotificationAdministrative.class,
-                NotificationAdministrativeEntity.class);
+        ClassMapBuilder<NotificationAdministrative, NotificationAdministrativeEntity> notificationAdministrativeClassMap = mapperFactory
+                .classMap(NotificationAdministrative.class, NotificationAdministrativeEntity.class);
         registerSourceConverters(mapperFactory, notificationAdministrativeClassMap);
         mapCommonFields(notificationAdministrativeClassMap).register();
-        
+
         // Permission notification
-        ClassMapBuilder<NotificationPermission, NotificationAddItemsEntity> notificationPermissionClassMap = mapperFactory.classMap(NotificationPermission.class, NotificationAddItemsEntity.class);
+        ClassMapBuilder<NotificationPermission, NotificationAddItemsEntity> notificationPermissionClassMap = mapperFactory.classMap(NotificationPermission.class,
+                NotificationAddItemsEntity.class);
         registerSourceConverters(mapperFactory, notificationPermissionClassMap);
-        mapCommonFields(
-                notificationPermissionClassMap.field("authorizationUrl.uri", "authorizationUrl")
-                        .field("items.items", "notificationItems").customize(new CustomMapper<NotificationPermission, NotificationAddItemsEntity>() {
-                            @Override
-                            public void mapAtoB(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
-                                if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
-                                    String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
-                                    // validate
-                                    validateAndConvertToURI(authUrl);
-                                    entity.setAuthorizationUrl(authUrl);
-                                }                                
-                            }
+        mapCommonFields(notificationPermissionClassMap.field("authorizationUrl.uri", "authorizationUrl").field("items.items", "notificationItems")
+                .customize(new CustomMapper<NotificationPermission, NotificationAddItemsEntity>() {
+                    @Override
+                    public void mapAtoB(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
+                        if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
+                            String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
+                            // validate
+                            validateAndConvertToURI(authUrl);
+                            entity.setAuthorizationUrl(authUrl);
+                        }
+                    }
 
-                            @Override
-                            public void mapBtoA(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
-                                AuthorizationUrl authUrl = notification.getAuthorizationUrl();
-                                if (authUrl != null) {
-                                    authUrl.setPath(extractFullPath(authUrl.getUri()));
-                                    authUrl.setHost(orcidUrlManager.getBaseHost());
-                                }
-                            }
-                        })).register();
-        
+                    @Override
+                    public void mapBtoA(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
+                        AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+                        if (authUrl != null) {
+                            authUrl.setPath(extractFullPath(authUrl.getUri()));
+                            authUrl.setHost(orcidUrlManager.getBaseHost());
+                        }
+                    }
+                })).register();
+
         // Institutional sign in notification
-        ClassMapBuilder<NotificationInstitutionalConnection, NotificationInstitutionalConnectionEntity> institutionalConnectionNotificationClassMap = mapperFactory.classMap(NotificationInstitutionalConnection.class, NotificationInstitutionalConnectionEntity.class);
-        registerSourceConverters(mapperFactory, institutionalConnectionNotificationClassMap); 
-        mapCommonFields(
-                institutionalConnectionNotificationClassMap.field("authorizationUrl.uri", "authorizationUrl")
-                        .customize(new CustomMapper<NotificationInstitutionalConnection, NotificationInstitutionalConnectionEntity>() {
-                            @Override
-                            public void mapAtoB(NotificationInstitutionalConnection notification, NotificationInstitutionalConnectionEntity entity, MappingContext context) {
-                                if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
-                                    String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
-                                    // validate
-                                    validateAndConvertToURI(authUrl);
-                                    entity.setAuthorizationUrl(authUrl);
-                                }                                
-                            }
+        ClassMapBuilder<NotificationInstitutionalConnection, NotificationInstitutionalConnectionEntity> institutionalConnectionNotificationClassMap = mapperFactory
+                .classMap(NotificationInstitutionalConnection.class, NotificationInstitutionalConnectionEntity.class);
+        registerSourceConverters(mapperFactory, institutionalConnectionNotificationClassMap);
+        mapCommonFields(institutionalConnectionNotificationClassMap.field("authorizationUrl.uri", "authorizationUrl")
+                .customize(new CustomMapper<NotificationInstitutionalConnection, NotificationInstitutionalConnectionEntity>() {
+                    @Override
+                    public void mapAtoB(NotificationInstitutionalConnection notification, NotificationInstitutionalConnectionEntity entity, MappingContext context) {
+                        if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
+                            String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
+                            // validate
+                            validateAndConvertToURI(authUrl);
+                            entity.setAuthorizationUrl(authUrl);
+                        }
+                    }
 
-                            @Override
-                            public void mapBtoA(NotificationInstitutionalConnectionEntity entity, NotificationInstitutionalConnection notification, MappingContext context) {
-                                AuthorizationUrl authUrl = notification.getAuthorizationUrl();
-                                if (authUrl != null) {
-                                    authUrl.setPath(extractFullPath(authUrl.getUri()));
-                                    authUrl.setHost(orcidUrlManager.getBaseHost());
-                                }
-                                String providerId = entity.getAuthenticationProviderId();
-                                if (StringUtils.isNotBlank(providerId)) {
-                                    String idpName = identityProviderManager.retrieveIdentitifyProviderName(providerId);
-                                    notification.setIdpName(idpName);
-                                } else {
-                                    notification.setIdpName(LAST_RESORT_IDENTITY_PROVIDER_NAME);
-                                }
-                            }
-                        })).register();
-        
+                    @Override
+                    public void mapBtoA(NotificationInstitutionalConnectionEntity entity, NotificationInstitutionalConnection notification, MappingContext context) {
+                        AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+                        if (authUrl != null) {
+                            authUrl.setPath(extractFullPath(authUrl.getUri()));
+                            authUrl.setHost(orcidUrlManager.getBaseHost());
+                        }
+                        String providerId = entity.getAuthenticationProviderId();
+                        if (StringUtils.isNotBlank(providerId)) {
+                            String idpName = identityProviderManager.retrieveIdentitifyProviderName(providerId);
+                            notification.setIdpName(idpName);
+                        } else {
+                            notification.setIdpName(LAST_RESORT_IDENTITY_PROVIDER_NAME);
+                        }
+                    }
+                })).register();
+
         // Find my stuff notification
-        ClassMapBuilder<NotificationFindMyStuff, NotificationFindMyStuffEntity> findMyStuffNotificationClassMap = mapperFactory.classMap(NotificationFindMyStuff.class, NotificationFindMyStuffEntity.class);
-        registerSourceConverters(mapperFactory, institutionalConnectionNotificationClassMap); 
-        mapCommonFields(
-                findMyStuffNotificationClassMap.field("authorizationUrl.uri", "authorizationUrl")
-                        .customize(new CustomMapper<NotificationFindMyStuff, NotificationFindMyStuffEntity>() {
-                            @Override
-                            public void mapAtoB(NotificationFindMyStuff notification, NotificationFindMyStuffEntity entity, MappingContext context) {
-                                if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
-                                    String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
-                                    // validate
-                                    validateAndConvertToURI(authUrl);
-                                    entity.setAuthorizationUrl(authUrl);
-                                    entity.setAuthenticationProviderId(notification.getServiceProviderId());
-                                }                                
-                            }
+        ClassMapBuilder<NotificationFindMyStuff, NotificationFindMyStuffEntity> findMyStuffNotificationClassMap = mapperFactory.classMap(NotificationFindMyStuff.class,
+                NotificationFindMyStuffEntity.class);
+        registerSourceConverters(mapperFactory, institutionalConnectionNotificationClassMap);
+        mapCommonFields(findMyStuffNotificationClassMap.field("authorizationUrl.uri", "authorizationUrl")
+                .customize(new CustomMapper<NotificationFindMyStuff, NotificationFindMyStuffEntity>() {
+                    @Override
+                    public void mapAtoB(NotificationFindMyStuff notification, NotificationFindMyStuffEntity entity, MappingContext context) {
+                        if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
+                            String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
+                            // validate
+                            validateAndConvertToURI(authUrl);
+                            entity.setAuthorizationUrl(authUrl);
+                            entity.setAuthenticationProviderId(notification.getServiceProviderId());
+                        }
+                    }
 
-                            @Override
-                            public void mapBtoA(NotificationFindMyStuffEntity entity, NotificationFindMyStuff notification, MappingContext context) {
-                                AuthorizationUrl authUrl = notification.getAuthorizationUrl();
-                                if (authUrl != null) {
-                                    authUrl.setPath(extractFullPath(authUrl.getUri()));
-                                    authUrl.setHost(orcidUrlManager.getBaseHost());
-                                }
-                                notification.setServiceProviderId(entity.getAuthenticationProviderId());
-                            }
-                        })).register();
-        
+                    @Override
+                    public void mapBtoA(NotificationFindMyStuffEntity entity, NotificationFindMyStuff notification, MappingContext context) {
+                        AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+                        if (authUrl != null) {
+                            authUrl.setPath(extractFullPath(authUrl.getUri()));
+                            authUrl.setHost(orcidUrlManager.getBaseHost());
+                        }
+                        notification.setServiceProviderId(entity.getAuthenticationProviderId());
+                    }
+                })).register();
+
         // Amend notification
-        ClassMapBuilder<NotificationAmended, NotificationAmendedEntity> amendNotificationClassMap = mapperFactory.classMap(NotificationAmended.class, NotificationAmendedEntity.class);
-        registerSourceConverters(mapperFactory, amendNotificationClassMap); 
+        ClassMapBuilder<NotificationAmended, NotificationAmendedEntity> amendNotificationClassMap = mapperFactory.classMap(NotificationAmended.class,
+                NotificationAmendedEntity.class);
+        registerSourceConverters(mapperFactory, amendNotificationClassMap);
         amendNotificationClassMap.field("items.items", "notificationItems");
         mapCommonFields(amendNotificationClassMap).register();
-        
+
         mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.type").converter("externalIdentifierIdConverter")
                 .add().field("externalIdValue", "externalIdentifier.value").customize(new CustomMapper<NotificationItemEntity, Item>() {
                     @Override
@@ -361,21 +362,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     private class SourceMapper<T, U> extends CustomMapper<SourceAware, SourceAwareEntity<?>> {
         @Override
-        public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {            
-            Source source  = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager);
-            
-            
-            
+        public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {
+            Source source = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager);
+
             a.setSource(source);
         }
     }
-    
+
     public MapperFacade getExternalIdentifierMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
 
-        ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class, ExternalIdentifierEntity.class);        
-        addV3DateFields(externalIdentifierClassMap);        
+        ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class,
+                ExternalIdentifierEntity.class);
+        addV3DateFields(externalIdentifierClassMap);
         externalIdentifierClassMap.field("putCode", "id");
         externalIdentifierClassMap.field("type", "externalIdCommonName");
         externalIdentifierClassMap.field("value", "externalIdReference");
@@ -385,26 +385,26 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         externalIdentifierClassMap.customize(new CustomMapper<PersonExternalIdentifier, ExternalIdentifierEntity>() {
             /**
              * From model object to database object
-             */            
+             */
             @Override
             public void mapAtoB(PersonExternalIdentifier a, ExternalIdentifierEntity b, MappingContext context) {
-                b.setExternalIdUrl(a.getUrl() == null ? null : a.getUrl().getValue());                
-            }                      
+                b.setExternalIdUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+            }
         });
         externalIdentifierClassMap.byDefault();
         registerSourceConverters(mapperFactory, externalIdentifierClassMap);
-        
-        //TODO: add relationship to database schema for people.
+
+        // TODO: add relationship to database schema for people.
         externalIdentifierClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getResearcherUrlMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
         mapperFactory.getConverterFactory().registerConverter("emptyStringToNullConverter", new EmptyStringToNullConverter());
 
-        ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);        
+        ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);
         addV3DateFields(researcherUrlClassMap);
         registerSourceConverters(mapperFactory, researcherUrlClassMap);
         researcherUrlClassMap.field("putCode", "id");
@@ -416,12 +416,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         researcherUrlClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getOtherNameMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
 
-        ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);        
+        ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);
         addV3DateFields(otherNameClassMap);
         registerSourceConverters(mapperFactory, otherNameClassMap);
         otherNameClassMap.field("putCode", "id");
@@ -433,12 +433,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         otherNameClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getKeywordMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
 
-        ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);        
+        ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);
         addV3DateFields(keywordClassMap);
         registerSourceConverters(mapperFactory, keywordClassMap);
         keywordClassMap.field("putCode", "id");
@@ -446,15 +446,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         keywordClassMap.fieldBToA("displayIndex", "displayIndex");
         keywordClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         keywordClassMap.byDefault();
-        keywordClassMap.register();        
+        keywordClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getAddressMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
 
-        ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);        
+        ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);
         addV3DateFields(addressClassMap);
         registerSourceConverters(mapperFactory, addressClassMap);
         addressClassMap.field("putCode", "id");
@@ -463,10 +463,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addressClassMap.fieldBToA("displayIndex", "displayIndex");
         addressClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         addressClassMap.byDefault();
-        addressClassMap.register();        
+        addressClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getEmailMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         mapperFactory.getConverterFactory().registerConverter("visibilityConverter", new VisibilityConverter());
@@ -481,21 +481,21 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         emailClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm,localeManager));
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, localeManager));
         converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter());
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
-        
+
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
         workClassMap.field("putCode", "id");
         addV3DateFields(workClassMap);
         registerSourceConverters(mapperFactory, workClassMap);
         workClassMap.field("shortDescription", "description");
-        workClassMap.field("publicationDate", "publicationDate");        
+        workClassMap.field("publicationDate", "publicationDate");
         workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
         workClassMap.field("languageCode", "languageCode");
@@ -512,28 +512,31 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.exclude("workType").customize(new CustomMapper<Work, WorkEntity>() {
             /**
              * From model object to database object
-             */            
+             */
             @Override
             public void mapAtoB(Work a, WorkEntity b, MappingContext context) {
                 b.setWorkType(a.getWorkType().name());
                 b.setWorkUrl(a.getUrl() == null ? null : a.getUrl().getValue());
                 b.setIso2Country(a.getCountry() == null ? null : a.getCountry().getValue().toString());
                 b.setJournalTitle(a.getJournalTitle() == null ? null : a.getJournalTitle().getContent());
-                b.setTranslatedTitle((a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getContent());
-                b.setTranslatedTitleLanguageCode((a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                b.setTranslatedTitle(
+                        (a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode(
+                        (a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getLanguageCode());
                 b.setSubtitle((a.getWorkTitle() == null || a.getWorkTitle().getSubtitle() == null) ? null : a.getWorkTitle().getSubtitle().getContent());
                 b.setCitation(a.getWorkCitation() == null ? null : a.getWorkCitation().getCitation());
-                b.setCitationType((a.getWorkCitation() == null || a.getWorkCitation().getWorkCitationType() == null) ? null : a.getWorkCitation().getWorkCitationType().toString());
+                b.setCitationType(
+                        (a.getWorkCitation() == null || a.getWorkCitation().getWorkCitationType() == null) ? null : a.getWorkCitation().getWorkCitationType().toString());
             }
-            
+
             /**
              * From database to model object
              */
             @Override
-            public void mapBtoA(WorkEntity b, Work a, MappingContext context) {                
-                a.setWorkType(WorkType.valueOf(b.getWorkType()));                
+            public void mapBtoA(WorkEntity b, Work a, MappingContext context) {
+                a.setWorkType(WorkType.valueOf(b.getWorkType()));
             }
-            
+
         });
         workClassMap.byDefault();
         workClassMap.register();
@@ -548,20 +551,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryClassMap.customize(new CustomMapper<WorkSummary, WorkEntity>() {
             /**
              * From model object to database object
-             */            
+             */
             @Override
             public void mapAtoB(WorkSummary a, WorkEntity b, MappingContext context) {
-                b.setWorkType(a.getType().name());                               
+                b.setWorkType(a.getType().name());
             }
-            
+
             /**
              * From database to model object
              */
             @Override
             public void mapBtoA(WorkEntity b, WorkSummary a, MappingContext context) {
-                a.setType(WorkType.valueOf(b.getWorkType()));               
+                a.setType(WorkType.valueOf(b.getWorkType()));
             }
-            
+
         });
         workSummaryClassMap.field("publicationDate", "publicationDate");
         workSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
@@ -579,12 +582,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryMinimizedClassMap.customize(new CustomMapper<WorkSummary, MinimizedWorkEntity>() {
             /**
              * From model object to database object
-             */            
+             */
             @Override
             public void mapAtoB(WorkSummary a, MinimizedWorkEntity b, MappingContext context) {
-                b.setWorkType(a.getType().name());                               
+                b.setWorkType(a.getType().name());
             }
-            
+
             /**
              * From database to model object
              */
@@ -592,8 +595,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             public void mapBtoA(MinimizedWorkEntity b, WorkSummary a, MappingContext context) {
                 a.setType(WorkType.valueOf(b.getWorkType()));
             }
-            
-        });;
+
+        });
+        ;
         workSummaryMinimizedClassMap.field("publicationDate.year.value", "publicationYear");
         workSummaryMinimizedClassMap.field("publicationDate.month.value", "publicationMonth");
         workSummaryMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
@@ -615,20 +619,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         minimizedWorkClassMap.exclude("workType").customize(new CustomMapper<Work, MinimizedWorkEntity>() {
             /**
              * From model object to database object
-             */            
+             */
             @Override
             public void mapAtoB(Work a, MinimizedWorkEntity b, MappingContext context) {
-                b.setWorkType(a.getWorkType().name());                               
+                b.setWorkType(a.getWorkType().name());
             }
-            
+
             /**
              * From database to model object
              */
             @Override
             public void mapBtoA(MinimizedWorkEntity b, Work a, MappingContext context) {
-                a.setWorkType(WorkType.valueOf(b.getWorkType()));               
+                a.setWorkType(WorkType.valueOf(b.getWorkType()));
             }
-            
+
         });
         minimizedWorkClassMap.field("publicationDate.year.value", "publicationYear");
         minimizedWorkClassMap.field("publicationDate.month.value", "publicationMonth");
@@ -640,7 +644,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         minimizedWorkClassMap.register();
 
         mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
-                .register();        
+                .register();
 
         return mapperFactory.getMapperFacade();
     }
@@ -677,21 +681,22 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.customize(new CustomMapper<Funding, ProfileFundingEntity>() {
             /**
              * From model object to database object
-             */            
+             */
             @Override
             public void mapAtoB(Funding a, ProfileFundingEntity b, MappingContext context) {
                 b.setOrganizationDefinedType(a.getOrganizationDefinedType() == null ? null : a.getOrganizationDefinedType().getContent());
-                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());                
+                b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
                 b.setTranslatedTitle((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getContent());
-                b.setTranslatedTitleLanguageCode((a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getLanguageCode());
+                b.setTranslatedTitleLanguageCode(
+                        (a.getTitle() == null || a.getTitle().getTranslatedTitle() == null) ? null : a.getTitle().getTranslatedTitle().getLanguageCode());
                 b.setNumericAmount((a.getAmount() == null || a.getAmount().getContent() == null) ? null : BigDecimal.valueOf(Double.valueOf(a.getAmount().getContent())));
                 b.setCurrencyCode((a.getAmount() == null || a.getAmount().getContent() == null) ? null : a.getAmount().getCurrencyCode());
-            }                      
+            }
         });
-        
+
         fundingClassMap.byDefault();
         fundingClassMap.register();
-        
+
         ClassMapBuilder<FundingSummary, ProfileFundingEntity> fundingSummaryClassMap = mapperFactory.classMap(FundingSummary.class, ProfileFundingEntity.class);
         addV3CommonFields(fundingSummaryClassMap);
         registerSourceConverters(mapperFactory, fundingSummaryClassMap);
@@ -713,99 +718,98 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
-        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();        
+        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
         return mapperFactory.getMapperFacade();
     }
 
     public MapperFacade getEducationMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
+
         ClassMapBuilder<Education, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Education.class, OrgAffiliationRelationEntity.class);
-        
+
         ClassMapBuilder<EducationSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(EducationSummary.class,
                 OrgAffiliationRelationEntity.class);
-        
+
         return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
     }
 
     public MapperFacade getEmploymentMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
+
         ClassMapBuilder<Employment, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Employment.class, OrgAffiliationRelationEntity.class);
-        
+
         ClassMapBuilder<EmploymentSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(EmploymentSummary.class,
                 OrgAffiliationRelationEntity.class);
-        
+
         return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
     }
-    
+
     public MapperFacade getDistinctionMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
+
         ClassMapBuilder<Distinction, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Distinction.class, OrgAffiliationRelationEntity.class);
-        
+
         ClassMapBuilder<DistinctionSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(DistinctionSummary.class,
                 OrgAffiliationRelationEntity.class);
-        
+
         return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
     }
-    
+
     public MapperFacade getInvitedPositionMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
+
         ClassMapBuilder<InvitedPosition, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(InvitedPosition.class, OrgAffiliationRelationEntity.class);
-        
+
         ClassMapBuilder<InvitedPositionSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(InvitedPositionSummary.class,
                 OrgAffiliationRelationEntity.class);
-        
+
         return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
     }
-    
+
     public MapperFacade getMembershipMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
+
         ClassMapBuilder<Membership, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Membership.class, OrgAffiliationRelationEntity.class);
-        
+
         ClassMapBuilder<MembershipSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(MembershipSummary.class,
                 OrgAffiliationRelationEntity.class);
-        
+
         return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
     }
-    
+
     public MapperFacade getQualificationMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
+
         ClassMapBuilder<Qualification, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Qualification.class, OrgAffiliationRelationEntity.class);
-        
+
         ClassMapBuilder<QualificationSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(QualificationSummary.class,
                 OrgAffiliationRelationEntity.class);
-        
+
         return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
     }
-    
+
     public MapperFacade getServiceMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        
+
         ClassMapBuilder<Service, OrgAffiliationRelationEntity> classMap = mapperFactory.classMap(Service.class, OrgAffiliationRelationEntity.class);
-        
-        ClassMapBuilder<ServiceSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(ServiceSummary.class,
-                OrgAffiliationRelationEntity.class);
-        
+
+        ClassMapBuilder<ServiceSummary, OrgAffiliationRelationEntity> summaryClassMap = mapperFactory.classMap(ServiceSummary.class, OrgAffiliationRelationEntity.class);
+
         return generateMapperFacadeForAffiliation(mapperFactory, classMap, summaryClassMap);
     }
-    
+
     /**
      * Configure fields for affiliations
-     * */    
+     */
     private MapperFacade generateMapperFacadeForAffiliation(MapperFactory mapperFactory, ClassMapBuilder<? extends Affiliation, OrgAffiliationRelationEntity> classMap,
             ClassMapBuilder<? extends AffiliationSummary, OrgAffiliationRelationEntity> summaryClassMap) {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("externalIdentifiersConverterId", new JSONExternalIdentifiersConverterV3(norm, localeManager));
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
-        
+
         // Configure element class map
         addV3CommonFields(classMap);
-        registerSourceConverters(mapperFactory, classMap);                
+        registerSourceConverters(mapperFactory, classMap);
         classMap.fieldBToA("org.name", "organization.name");
         classMap.fieldBToA("org.city", "organization.address.city");
         classMap.fieldBToA("org.region", "organization.address.region");
@@ -813,27 +817,27 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         classMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         classMap.fieldBToA("org.orgDisambiguated.id", "organization.disambiguatedOrganization.id");
-        
-        classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();        
-        classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();        
-        
+
+        classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();
+        classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+
         classMap.field("departmentName", "department");
         classMap.field("roleTitle", "title");
         classMap.fieldAToB("url.value", "url");
         classMap.fieldBToA("url", "url.value");
-        
+
         class AffiliationUrlMapper<T, U> extends CustomMapper<Affiliation, OrgAffiliationRelationEntity> {
             @Override
-            public void mapAtoB(Affiliation a, OrgAffiliationRelationEntity b, MappingContext context) {            
+            public void mapAtoB(Affiliation a, OrgAffiliationRelationEntity b, MappingContext context) {
                 b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
             }
         }
-        
+
         @SuppressWarnings("rawtypes")
         AffiliationUrlMapper affiliationUrlMapper = new AffiliationUrlMapper();
-        
+
         classMap.customize(affiliationUrlMapper);
-        
+
         classMap.byDefault();
         classMap.register();
 
@@ -852,25 +856,25 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         summaryClassMap.field("displayIndex", "displayIndex");
         summaryClassMap.fieldAToB("url.value", "url");
         summaryClassMap.fieldBToA("url", "url.value");
-        summaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();    
-        summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
+        summaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("externalIdentifiersConverterId").add();
+        summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         summaryClassMap.byDefault();
         summaryClassMap.register();
 
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getPeerReviewMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm,localeManager));
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, localeManager));
         converterFactory.registerConverter("workExternalIdentifierConverterId", new JSONPeerReviewWorkExternalIdentifierConverterV3());
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
-        
-        //do same as work
-        
+
+        // do same as work
+
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
         addV3CommonFields(classMap);
         registerSourceConverters(mapperFactory, classMap);
@@ -890,23 +894,25 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("subjectContainerName.content", "subjectContainerName");
         classMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         classMap.fieldMap("subjectExternalIdentifier", "subjectExternalIdentifiersJson").converter("workExternalIdentifierConverterId").add();
-        classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
+        classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         classMap.customize(new CustomMapper<PeerReview, PeerReviewEntity>() {
             /**
              * From model object to database object
-             */            
+             */
             @Override
             public void mapAtoB(PeerReview a, PeerReviewEntity b, MappingContext context) {
                 b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
                 b.setSubjectUrl(a.getSubjectUrl() == null ? null : a.getSubjectUrl().getValue());
-                b.setSubjectTranslatedName((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getContent());
-                b.setSubjectTranslatedNameLanguageCode((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getLanguageCode());
+                b.setSubjectTranslatedName(
+                        (a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getContent());
+                b.setSubjectTranslatedNameLanguageCode((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null
+                        : a.getSubjectName().getTranslatedTitle().getLanguageCode());
                 b.setSubjectContainerName(a.getSubjectContainerName() == null ? null : a.getSubjectContainerName().getContent());
-            }                      
+            }
         });
-        
+
         classMap.byDefault();
-        classMap.register();      
+        classMap.register();
 
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
         addV3CommonFields(peerReviewSummaryClassMap);
@@ -917,37 +923,32 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         peerReviewSummaryClassMap.field("organization.address.region", "org.region");
         peerReviewSummaryClassMap.field("organization.address.country", "org.country");
         peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
-        peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");        
+        peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
         peerReviewSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         peerReviewSummaryClassMap.byDefault();
         peerReviewSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
                 .register();
-        
+
         return mapperFactory.getMapperFacade();
     }
-    
-    public MapperFacade getResearchResourceMapperFacade(){
+
+    public MapperFacade getResearchResourceMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm,localeManager));
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, localeManager));
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
-        
-        mapperFactory.classMap(Organization.class,OrgEntity.class)
-            .field("name","name")
-            .field("address.city","city")
-            .field("address.region","region")
-            .field("address.country","country")
-            .field("disambiguatedOrganization.disambiguatedOrganizationIdentifier","orgDisambiguated.sourceId")
-            .field("disambiguatedOrganization.disambiguationSource","orgDisambiguated.sourceType")
-            .register();
-        
+
+        mapperFactory.classMap(Organization.class, OrgEntity.class).field("name", "name").field("address.city", "city").field("address.region", "region")
+                .field("address.country", "country").field("disambiguatedOrganization.disambiguatedOrganizationIdentifier", "orgDisambiguated.sourceId")
+                .field("disambiguatedOrganization.disambiguationSource", "orgDisambiguated.sourceType").register();
+
         ClassMapBuilder<ResearchResource, ResearchResourceEntity> classMap = mapperFactory.classMap(ResearchResource.class, ResearchResourceEntity.class);
         addV3CommonFields(classMap);
         registerSourceConverters(mapperFactory, classMap);
-        classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
+        classMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         classMap.field("proposal.title.title.content", "title");
         classMap.field("proposal.title.translatedTitle.content", "translatedTitle");
         classMap.field("proposal.title.translatedTitle.languageCode", "translatedTitleLanguageCode");
@@ -955,26 +956,30 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("proposal.url.value", "url");
         classMap.field("proposal.startDate", "startDate");
         classMap.field("proposal.endDate", "endDate");
-        classMap.field("proposal.hosts.organization", "hosts");   
+        classMap.field("proposal.hosts.organization", "hosts");
         classMap.customize(new CustomMapper<ResearchResource, ResearchResourceEntity>() {
             /**
              * From model object to database object
-             */            
+             */
             @Override
             public void mapAtoB(ResearchResource a, ResearchResourceEntity b, MappingContext context) {
-                b.setTranslatedTitle((a.getProposal() == null || a.getProposal().getTitle() == null || a.getProposal().getTitle().getTranslatedTitle() == null) ? null : a.getProposal().getTitle().getTranslatedTitle().getContent());
-                b.setTranslatedTitleLanguageCode((a.getProposal() == null || a.getProposal().getTitle() == null || a.getProposal().getTitle().getTranslatedTitle() == null) ? null : a.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
-                b.setUrl((a.getProposal() == null || a.getProposal().getUrl() == null) ? null : a.getProposal().getUrl().getValue());          
+                b.setTranslatedTitle((a.getProposal() == null || a.getProposal().getTitle() == null || a.getProposal().getTitle().getTranslatedTitle() == null) ? null
+                        : a.getProposal().getTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode(
+                        (a.getProposal() == null || a.getProposal().getTitle() == null || a.getProposal().getTitle().getTranslatedTitle() == null) ? null
+                                : a.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
+                b.setUrl((a.getProposal() == null || a.getProposal().getUrl() == null) ? null : a.getProposal().getUrl().getValue());
             }
         });
         classMap.byDefault();
         classMap.register();
-                
-        ClassMapBuilder<ResearchResourceSummary, ResearchResourceEntity> summaryClassMap = mapperFactory.classMap(ResearchResourceSummary.class, ResearchResourceEntity.class);
+
+        ClassMapBuilder<ResearchResourceSummary, ResearchResourceEntity> summaryClassMap = mapperFactory.classMap(ResearchResourceSummary.class,
+                ResearchResourceEntity.class);
         addV3CommonFields(summaryClassMap);
         registerSourceConverters(mapperFactory, summaryClassMap);
         summaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();    
+        summaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         summaryClassMap.field("proposal.title.title.content", "title");
         summaryClassMap.field("proposal.title.translatedTitle.content", "translatedTitle");
         summaryClassMap.field("proposal.title.translatedTitle.languageCode", "translatedTitleLanguageCode");
@@ -985,16 +990,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         summaryClassMap.field("proposal.hosts.organization", "hosts");
         summaryClassMap.byDefault();
         summaryClassMap.register();
-        
-        ClassMapBuilder<ResearchResourceItem, ResearchResourceItemEntity> itemClassMap = mapperFactory.classMap(ResearchResourceItem.class, ResearchResourceItemEntity.class);
+
+        ClassMapBuilder<ResearchResourceItem, ResearchResourceItemEntity> itemClassMap = mapperFactory.classMap(ResearchResourceItem.class,
+                ResearchResourceItemEntity.class);
         itemClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        //itemClassMap.field("id", "id");
-        //TODO: what do we do about IDs?
+        // itemClassMap.field("id", "id");
+        // TODO: what do we do about IDs?
         itemClassMap.field("resourceName", "resourceName");
         itemClassMap.field("resourceType", "resourceType");
         itemClassMap.field("url.value", "url");
         itemClassMap.field("hosts.organization", "hosts");
-        itemClassMap.register();        
+        itemClassMap.register();
         return mapperFactory.getMapperFacade();
     }
 
@@ -1010,49 +1016,51 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("type", "groupType");
         classMap.byDefault();
         classMap.register();
-        
+
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getClientMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<ClientSummary, ClientDetailsEntity> clientSummaryClassMap = mapperFactory.classMap(ClientSummary.class, ClientDetailsEntity.class);        
+        ClassMapBuilder<ClientSummary, ClientDetailsEntity> clientSummaryClassMap = mapperFactory.classMap(ClientSummary.class, ClientDetailsEntity.class);
         clientSummaryClassMap.field("name", "clientName");
         clientSummaryClassMap.field("description", "clientDescription");
         clientSummaryClassMap.byDefault();
-        clientSummaryClassMap.register();        
-                
-        ClassMapBuilder<Client, ClientDetailsEntity> clientClassMap = mapperFactory.classMap(Client.class, ClientDetailsEntity.class);        
+        clientSummaryClassMap.register();
+
+        ClassMapBuilder<Client, ClientDetailsEntity> clientClassMap = mapperFactory.classMap(Client.class, ClientDetailsEntity.class);
         clientClassMap.field("name", "clientName");
-        clientClassMap.field("description", "clientDescription");        
-        clientClassMap.field("website", "clientWebsite");        
+        clientClassMap.field("description", "clientDescription");
+        clientClassMap.field("website", "clientWebsite");
         clientClassMap.field("allowAutoDeprecate", "allowAutoDeprecate");
-        
+
         clientClassMap.fieldBToA("clientId", "id");
-        clientClassMap.fieldBToA("clientType", "clientType");                
-        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");   
+        clientClassMap.fieldBToA("clientType", "clientType");
+        clientClassMap.fieldBToA("groupProfileId", "groupProfileId");
         clientClassMap.fieldBToA("authenticationProviderId", "authenticationProviderId");
         clientClassMap.fieldBToA("persistentTokensEnabled", "persistentTokensEnabled");
         clientClassMap.fieldBToA("userOBOEnabled", "userOBOEnabled");
-        
+
         clientClassMap.customize(new CustomMapper<Client, ClientDetailsEntity>() {
             /**
-             * On the way in, from Client to ClientDetailsEntity, we need to care about mapping the redirect uri's, since all config features will not change from UI requests             
-             * */
+             * On the way in, from Client to ClientDetailsEntity, we need to
+             * care about mapping the redirect uri's, since all config features
+             * will not change from UI requests
+             */
             @Override
             public void mapAtoB(Client a, ClientDetailsEntity b, MappingContext context) {
                 Map<String, ClientRedirectUriEntity> existingRedirectUriEntitiesMap = new HashMap<String, ClientRedirectUriEntity>();
-                if(b.getClientRegisteredRedirectUris() != null && !b.getClientRegisteredRedirectUris().isEmpty()) {
+                if (b.getClientRegisteredRedirectUris() != null && !b.getClientRegisteredRedirectUris().isEmpty()) {
                     existingRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUriAndType(b.getClientRegisteredRedirectUris());
-                }                        
-                if(b.getClientRegisteredRedirectUris() != null) {
+                }
+                if (b.getClientRegisteredRedirectUris() != null) {
                     b.getClientRegisteredRedirectUris().clear();
                 } else {
                     b.setClientRegisteredRedirectUris(new TreeSet<ClientRedirectUriEntity>());
                 }
-                
-                if(a.getClientRedirectUris() != null) {
-                    for(ClientRedirectUri cru : a.getClientRedirectUris()) {
+
+                if (a.getClientRedirectUris() != null) {
+                    for (ClientRedirectUri cru : a.getClientRedirectUris()) {
                         String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(cru.getRedirectUri(), cru.getRedirectUriType());
                         if (existingRedirectUriEntitiesMap.containsKey(rUriKey)) {
                             ClientRedirectUriEntity existingEntity = existingRedirectUriEntitiesMap.get(rUriKey);
@@ -1080,21 +1088,23 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             }
 
             /**
-             * On the way out, from ClientDetailsEntity to Client, we just need to care about mapping the redirect uri's and the primary client secret since all config features will not be visible on the UI
-             * */
+             * On the way out, from ClientDetailsEntity to Client, we just need
+             * to care about mapping the redirect uri's and the primary client
+             * secret since all config features will not be visible on the UI
+             */
             @Override
             public void mapBtoA(ClientDetailsEntity b, Client a, MappingContext context) {
-                if(b.getClientSecrets() != null) {
-                    for(ClientSecretEntity entity : b.getClientSecrets()) {
-                        if(entity.isPrimary()) {
+                if (b.getClientSecrets() != null) {
+                    for (ClientSecretEntity entity : b.getClientSecrets()) {
+                        if (entity.isPrimary()) {
                             a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getClientSecret()));
                         }
                     }
                 }
-                if(b.getRegisteredRedirectUri() != null) {
+                if (b.getRegisteredRedirectUri() != null) {
                     a.setClientRedirectUris(new HashSet<ClientRedirectUri>());
-                    for(ClientRedirectUriEntity entity : b.getClientRegisteredRedirectUris()) {
-                        ClientRedirectUri element = new ClientRedirectUri();                        
+                    for (ClientRedirectUriEntity entity : b.getClientRegisteredRedirectUris()) {
+                        ClientRedirectUri element = new ClientRedirectUri();
                         element.setRedirectUri(entity.getRedirectUri());
                         element.setRedirectUriType(entity.getRedirectUriType());
                         element.setUriActType(entity.getUriActType());
@@ -1110,8 +1120,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                     a.setOboEnabled(false);
                 }
             }
-        });                  
-        clientClassMap.register();                
+        });
+        clientClassMap.register();
         return mapperFactory.getMapperFacade();
     }
 
@@ -1121,33 +1131,36 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         mapperFactory.getConverterFactory().registerConverter("familyNameConverter", new FamilyNameConverter());
         mapperFactory.getConverterFactory().registerConverter("givenNamesConverter", new GivenNamesConverter());
         mapperFactory.getConverterFactory().registerConverter("creditNameConverter", new CreditNameConverter());
-        
-        ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);        
-        addV3DateFields(nameClassMap);        
-        nameClassMap.fieldMap("creditName", "creditName").converter("creditNameConverter").add();;
-        nameClassMap.fieldMap("givenNames", "givenNames").converter("givenNamesConverter").add();;
-        nameClassMap.fieldMap("familyName", "familyName").converter("familyNameConverter").add();;
+
+        ClassMapBuilder<Name, RecordNameEntity> nameClassMap = mapperFactory.classMap(Name.class, RecordNameEntity.class);
+        addV3DateFields(nameClassMap);
+        nameClassMap.fieldMap("creditName", "creditName").converter("creditNameConverter").add();
+        ;
+        nameClassMap.fieldMap("givenNames", "givenNames").converter("givenNamesConverter").add();
+        ;
+        nameClassMap.fieldMap("familyName", "familyName").converter("familyNameConverter").add();
+        ;
         nameClassMap.field("path", "orcid");
         nameClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
-        
+
         nameClassMap.byDefault();
         nameClassMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     public MapperFacade getInvalidRecordDataChangeMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<RecordCorrection, InvalidRecordDataChangeEntity> classMap = mapperFactory.classMap(RecordCorrection.class, InvalidRecordDataChangeEntity.class);        
+        ClassMapBuilder<RecordCorrection, InvalidRecordDataChangeEntity> classMap = mapperFactory.classMap(RecordCorrection.class, InvalidRecordDataChangeEntity.class);
         classMap.fieldBToA("id", "sequence");
         classMap.fieldBToA("sqlUsedToUpdate", "sqlUsedToUpdate");
         classMap.fieldBToA("description", "description");
         classMap.fieldBToA("numChanged", "numChanged");
         classMap.fieldBToA("type", "type");
         classMap.byDefault();
-        classMap.register();        
+        classMap.register();
         return mapperFactory.getMapperFacade();
     }
-    
+
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("createdDate", "dateCreated").field("putCode", "id").byDefault();
     }
@@ -1160,8 +1173,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private void addV3DateFields(ClassMapBuilder<?, ?> classMap) {
         classMap.field("createdDate.value", "dateCreated");
         classMap.field("lastModifiedDate.value", "lastModified");
-    }    
-    
+    }
+
     private void mapFuzzyDateToStartDateEntityAndEndDateEntity(MapperFactory mapperFactory) {
         mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).customize(new CustomMapper<FuzzyDate, StartDateEntity>() {
             @Override
@@ -1251,7 +1264,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             }
         }).register();
     }
-    
+
     @Override
     public Class<?> getObjectType() {
         return MapperFacade.class;
