@@ -59,7 +59,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         PersonValidator.validateOtherName(otherName, sourceEntity, true, isApiRequest, null);
-        
+
         // Validate it is not duplicated
         List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         for (OtherNameEntity existing : existingOtherNames) {

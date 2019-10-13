@@ -44,7 +44,7 @@ public class AddressManagerTest extends BaseTest {
 
     @Mock
     private SourceManager sourceManager;
-    
+
     @Mock
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 

@@ -24,27 +24,26 @@ import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
 public class OtherNameManagerTest extends BaseTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
-    
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
+
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
-    
+
     @Mock
     private SourceManager sourceManager;
-    
-    @Resource 
+
+    @Resource
     private OtherNameManager otherNameManager;
-    
+
     @Resource
     private OtherNameDao otherNameDao;
-    
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -52,66 +51,66 @@ public class OtherNameManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(otherNameManager, "sourceManager", sourceManager); 
+        TargetProxyHelper.injectIntoProxy(otherNameManager, "sourceManager", sourceManager);
     }
-    
+
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
         Collections.reverse(reversedDataFiles);
         removeDBUnitData(reversedDataFiles);
     }
-    
+
     @Test
     public void testAddOtherNameToUnclaimedRecordPreserveOtherNameVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         OtherName otherName = getOtherName();
-        
+
         otherName = otherNameManager.createOtherName(unclaimedOrcid, otherName, true);
         otherName = otherNameManager.getOtherName(unclaimedOrcid, otherName.getPutCode());
-        
+
         assertNotNull(otherName);
-        assertEquals(Visibility.PUBLIC, otherName.getVisibility());        
+        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
     }
-    
+
     @Test
     public void testAddOtherNameToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         OtherName otherName = getOtherName();
-        
+
         otherName = otherNameManager.createOtherName(claimedOrcid, otherName, true);
         otherName = otherNameManager.getOtherName(claimedOrcid, otherName.getPutCode());
-        
+
         assertNotNull(otherName);
-        assertEquals(Visibility.LIMITED, otherName.getVisibility());       
+        assertEquals(Visibility.LIMITED, otherName.getVisibility());
     }
-    
+
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromUI");
-        
+
         otherName = otherNameManager.createOtherName(claimedOrcid, otherName, false);
         otherName = otherNameManager.getOtherName(claimedOrcid, otherName.getPutCode());
-        
+
         assertNotNull(otherName);
         assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
     }
-    
+
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromAPI");
-        
+
         otherName = otherNameManager.createOtherName(claimedOrcid, otherName, true);
         otherName = otherNameManager.getOtherName(claimedOrcid, otherName.getPutCode());
-        
+
         assertNotNull(otherName);
         assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
     }
-    
+
     @Test
     public void getAllTest() {
         String orcid = "0000-0000-0000-0003";
@@ -120,16 +119,16 @@ public class OtherNameManagerTest extends BaseTest {
         assertNotNull(elements.getOtherNames());
         assertEquals(5, elements.getOtherNames().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
-        for(OtherName element : elements.getOtherNames()) {
-            if(13 == element.getPutCode()){
+        for (OtherName element : elements.getOtherNames()) {
+            if (13 == element.getPutCode()) {
                 found1 = true;
-            } else if(14 == element.getPutCode()){
+            } else if (14 == element.getPutCode()) {
                 found2 = true;
-            } else if(15 == element.getPutCode()){
+            } else if (15 == element.getPutCode()) {
                 found3 = true;
-            } else if(16 == element.getPutCode()){
+            } else if (16 == element.getPutCode()) {
                 found4 = true;
-            } else if(17 == element.getPutCode()){
+            } else if (17 == element.getPutCode()) {
                 found5 = true;
             } else {
                 fail("Invalid put code found: " + element.getPutCode());
@@ -141,24 +140,24 @@ public class OtherNameManagerTest extends BaseTest {
         assertTrue(found4);
         assertTrue(found5);
     }
-    
+
     @Test
     public void getPublicTest() {
-        String orcid = "0000-0000-0000-0003";        
+        String orcid = "0000-0000-0000-0003";
         OtherNames elements = otherNameManager.getPublicOtherNames(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getOtherNames());
         assertEquals(1, elements.getOtherNames().size());
         assertEquals(Long.valueOf(13), elements.getOtherNames().get(0).getPutCode());
     }
-    
+
     private OtherName getOtherName() {
         OtherName otherName = new OtherName();
         otherName.setContent("other-name");
         otherName.setVisibility(Visibility.PUBLIC);
         return otherName;
     }
-    
+
     private OtherName getAnotherOtherName() {
         OtherName otherName = new OtherName();
         otherName.setContent("another-other-name");
