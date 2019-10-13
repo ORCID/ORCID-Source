@@ -119,28 +119,6 @@ public class PeerReviewManagerTest extends BaseTest {
     }
 
     @Test
-    public void testCreatePeerReviewWithUserOBOClient() {
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
-
-        PeerReview peer = getAnotherPeerReview();
-        peer = peerReviewManager.createPeerReview(claimedOrcid, peer, true);
-
-        // test user obo info present
-        PeerReviewEntity entity = peerReviewDao.find(peer.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-
-        // test user obo info not lost on update
-        userOboClient.setUserOBOEnabled(false);
-        peer.setRole(Role.CHAIR);
-        peerReviewManager.updatePeerReview(claimedOrcid, peer, true);
-
-        entity = peerReviewDao.find(peer.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-    }
-
-    @Test
     public void testAddMultipleModifiesIndexingStatus() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         PeerReview p1 = getPeerReview("extId1");

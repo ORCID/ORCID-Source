@@ -137,43 +137,6 @@ public class WorkManagerTest extends BaseTest {
     }
     
     @Test
-    public void testCreateWorkWithUserOBOClient() {
-        String orcid = "0000-0000-0000-0003";
-        
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
-        
-        Work work = new Work();
-        WorkTitle title1 = new WorkTitle();
-        title1.setTitle(new Title("Another work # 1111"));
-        work.setWorkTitle(title1);
-        ExternalIDs extIds1 = new ExternalIDs();
-        ExternalID extId1 = new ExternalID();
-        extId1.setRelationship(Relationship.SELF);
-        extId1.setType("isbn");
-        extId1.setUrl(new Url("http://isbn/12345/"));
-        extId1.setValue("isbn-12345");
-        extIds1.getExternalIdentifier().add(extId1);
-        work.setWorkExternalIdentifiers(extIds1);
-        work.setWorkType(WorkType.BOOK);
-        work = workManager.createWork(orcid, work, true);
-        
-        // check user obo info present
-        WorkEntity entity = workDao.find(work.getPutCode());
-        assertEquals(orcid, entity.getAssertionOriginSourceId());
-        
-        // check user obo info not lost on update
-        title1.setTitle(new Title("Updated title"));
-        workManager.updateWork(orcid, work, true);
-        
-        entity = workDao.find(work.getPutCode());
-        assertEquals(orcid, entity.getAssertionOriginSourceId());
-        
-        workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
-    }
-    
-    @Test
     public void testUpdateWork() {
         String orcid = "0000-0000-0000-0003";
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
@@ -352,59 +315,6 @@ public class WorkManagerTest extends BaseTest {
         assertEquals(Relationship.PART_OF, ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("isbn-1", ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());      
     
-        workManager.removeWorks(orcid, Arrays.asList(((Work)updatedBulk.getBulk().get(0)).getPutCode(), ((Work)updatedBulk.getBulk().get(1)).getPutCode()));
-    }
-    
-    @Test
-    public void testCreateWorksWithOBOClient() {
-        String orcid = "0000-0000-0000-0003";
-        Long time = System.currentTimeMillis();
-        
-        ClientDetailsEntity clientDetails = new ClientDetailsEntity(CLIENT_1_ID);
-        clientDetails.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(clientDetails));
-        
-        WorkBulk bulk = new WorkBulk();
-        // Work # 1
-        Work work1 = new Work();
-        WorkTitle title1 = new WorkTitle();
-        title1.setTitle(new Title("User obo bulk work # 1"));
-        work1.setWorkTitle(title1);
-        ExternalIDs extIds1 = new ExternalIDs();
-        ExternalID extId1 = new ExternalID();
-        extId1.setRelationship(Relationship.SELF);
-        extId1.setType("isbn");
-        extId1.setUrl(new Url("http://isbn/135/" + time));
-        extId1.setValue("isbn-135");
-        extIds1.getExternalIdentifier().add(extId1);
-        work1.setWorkExternalIdentifiers(extIds1);
-        work1.setWorkType(WorkType.BOOK);
-        bulk.getBulk().add(work1);
-        
-        // Work # 2
-        Work work2 = new Work();
-        WorkTitle title2 = new WorkTitle();
-        title2.setTitle(new Title("User obo bulk work # 2"));
-        work2.setWorkTitle(title2);
-        ExternalIDs extIds2 = new ExternalIDs();
-        ExternalID extId2 = new ExternalID();
-        extId2.setRelationship(Relationship.PART_OF);
-        extId2.setType("isbn");
-        extId2.setUrl(new Url("http://isbn/246/" + time));
-        extId2.setValue("isbn-246");
-        extIds2.getExternalIdentifier().add(extId2);
-        work2.setWorkExternalIdentifiers(extIds2);
-        work2.setWorkType(WorkType.BOOK);
-        bulk.getBulk().add(work2);
-                
-        WorkBulk updatedBulk = workManager.createWorks(orcid, bulk);
-        
-        WorkEntity firstOBOWork = workDao.find(((Work) updatedBulk.getBulk().get(0)).getPutCode());
-        assertEquals(orcid, firstOBOWork.getAssertionOriginSourceId());
-        WorkEntity secondOBOWork = workDao.find(((Work) updatedBulk.getBulk().get(1)).getPutCode());
-        assertEquals(orcid, secondOBOWork.getAssertionOriginSourceId());
-        
-        
         workManager.removeWorks(orcid, Arrays.asList(((Work)updatedBulk.getBulk().get(0)).getPutCode(), ((Work)updatedBulk.getBulk().get(1)).getPutCode()));
     }
     

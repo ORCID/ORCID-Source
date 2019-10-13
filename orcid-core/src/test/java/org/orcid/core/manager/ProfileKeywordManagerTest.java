@@ -85,28 +85,6 @@ public class ProfileKeywordManagerTest extends BaseTest {
         assertNotNull(keyword);
         assertEquals(Visibility.LIMITED, keyword.getVisibility());
     }
-    
-    @Test
-    public void testCreateKeywordWithUserOBOClient() {
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
-        
-        Keyword keyword = getKeyword();
-        keyword = profileKeywordManager.createKeyword(claimedOrcid, keyword, true);
-
-        // check user obo info
-        ProfileKeywordEntity entity = profileKeywordDao.find(keyword.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-        
-        // check user obo info isn't lost on update
-        userOboClient.setUserOBOEnabled(false);
-        keyword.setContent("updated");
-        profileKeywordManager.updateKeyword(claimedOrcid, keyword.getPutCode(), keyword, true);
-        
-        entity = profileKeywordDao.find(keyword.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-    }
 
     @Test
     public void displayIndexIsSetTo_1_FromUI() {

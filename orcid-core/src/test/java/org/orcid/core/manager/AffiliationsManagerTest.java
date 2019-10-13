@@ -121,49 +121,6 @@ public class AffiliationsManagerTest extends BaseTest {
     }
     
     @Test
-    public void testCreateEducationWithUserOBOClient() {
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));   
-        
-        Education education = getEducation();
-        education = affiliationsManager.createEducationAffiliation(claimedOrcid, education, true);
-        
-        // test user obo
-        OrgAffiliationRelationEntity affiliation = orgAffiliationRelationDao.find(education.getPutCode());
-        assertEquals(claimedOrcid, affiliation.getAssertionOriginSourceId());
-        
-        education.setRoleTitle("test");
-        affiliationsManager.updateEducationAffiliation(claimedOrcid, education, true);
-        
-        // test user obo info not lost after update
-        affiliation = orgAffiliationRelationDao.find(education.getPutCode());
-        assertEquals(claimedOrcid, affiliation.getAssertionOriginSourceId());
-    }
-    
-    @Test
-    public void testCreateEmploymentWithUserOBOClient() {
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));   
-
-        Employment employment = getEmployment();
-        employment = affiliationsManager.createEmploymentAffiliation(claimedOrcid, employment, true);
-        
-        // test user obo
-        OrgAffiliationRelationEntity affiliation = orgAffiliationRelationDao.find(employment.getPutCode());
-        assertEquals(claimedOrcid, affiliation.getAssertionOriginSourceId());
-        
-        // test user obo info isn't lost on update
-        userOboClient.setUserOBOEnabled(false);
-        employment.setDepartmentName("test");
-        affiliationsManager.updateEmploymentAffiliation(claimedOrcid, employment, true);
-        
-        affiliation = orgAffiliationRelationDao.find(employment.getPutCode());
-        assertEquals(claimedOrcid, affiliation.getAssertionOriginSourceId());
-    }
-    
-    @Test
     public void testGetAllEducations() {
         String orcid = "0000-0000-0000-0003";
         List<EducationSummary> elements = affiliationsManager.getEducationSummaryList(orcid);

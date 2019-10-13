@@ -86,28 +86,6 @@ public class ResearcherUrlManagerTest extends BaseTest {
         assertNotNull(rUrl);
         assertEquals(Visibility.LIMITED, rUrl.getVisibility());
     }
-    
-    @Test
-    public void testCreateResearcherUrlWithUserOBOClient() {
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
-
-        ResearcherUrl rUrl = getAnotherResearcherUrl();
-        rUrl = researcherUrlManager.createResearcherUrl(claimedOrcid, rUrl, true);
-        
-        // check user obo info
-        ResearcherUrlEntity entity = researcherUrlDao.find(rUrl.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-        
-        // check user obo info not lost on update
-        userOboClient.setUserOBOEnabled(false);
-        rUrl.setUrlName("updated name");
-        researcherUrlManager.updateResearcherUrl(claimedOrcid, rUrl, true);
-        
-        entity = researcherUrlDao.find(rUrl.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-    }
 
     @Test
     public void displayIndexIsSetTo_1_FromUI() {

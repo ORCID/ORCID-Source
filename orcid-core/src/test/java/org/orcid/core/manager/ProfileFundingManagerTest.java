@@ -104,28 +104,6 @@ public class ProfileFundingManagerTest extends BaseTest {
     }
     
     @Test
-    public void testCreateFundingWithUserOBOClient() {
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));   
-
-        Funding funding = getAnotherFunding(null);
-        funding = profileFundingManager.createFunding(claimedOrcid, funding, true);
-
-        // check user obo details
-        ProfileFundingEntity entity = profileFundingDao.find(funding.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-        
-        // check user obo details aren't lost on update
-        userOboClient.setUserOBOEnabled(false);
-        funding.setDescription("user obo funding");
-        profileFundingManager.updateFunding(claimedOrcid, funding, true);
-        
-        entity = profileFundingDao.find(funding.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-    }
-    
-    @Test
     public void testAddMultipleModifiesIndexingStatus() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
         Funding f1 = getFunding("F1");

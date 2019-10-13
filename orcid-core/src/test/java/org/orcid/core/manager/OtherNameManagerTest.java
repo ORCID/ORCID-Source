@@ -87,28 +87,6 @@ public class OtherNameManagerTest extends BaseTest {
     }
     
     @Test
-    public void testCreateOtherNameWithUserOBOClient() {
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
-                        
-        OtherName otherName = getAnotherOtherName();
-        otherName = otherNameManager.createOtherName(claimedOrcid, otherName, true);
-
-        // user obo info
-        OtherNameEntity entity = otherNameDao.find(otherName.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-        
-        // check userobo info not lost after update
-        userOboClient.setUserOBOEnabled(false);
-        otherName.setContent("updated");
-        otherNameManager.updateOtherName(claimedOrcid, otherName.getPutCode(), otherName, true);
-        
-        entity = otherNameDao.find(otherName.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-    }
-    
-    @Test
     public void displayIndexIsSetTo_1_FromUI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         OtherName otherName = getOtherName();
