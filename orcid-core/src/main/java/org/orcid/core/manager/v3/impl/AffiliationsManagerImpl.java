@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -58,6 +59,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
     @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     /**
      * Add a new distinction to the given user
@@ -345,7 +349,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         Source activeSource = sourceManager.retrieveActiveSource();
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(entity);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(entity, clientDetailsEntityCacheManager);
 
         String originalVisibility = entity.getVisibility();
         orcidSecurityManager.checkSourceAndThrow(entity);

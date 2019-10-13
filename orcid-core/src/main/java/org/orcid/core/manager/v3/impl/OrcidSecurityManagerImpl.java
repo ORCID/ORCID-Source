@@ -93,7 +93,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-
+    
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
@@ -228,7 +228,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         //String sourceIdOfUpdater = sourceManager.retrieveActiveSourceId();
         //if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
         Source activeSource = sourceManager.retrieveActiveSource();
-        if (activeSource !=null && !SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity)) {
+        if (activeSource !=null && !SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity, clientDetailsEntityCacheManager)) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
             throw new WrongSourceException(params);

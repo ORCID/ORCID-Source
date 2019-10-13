@@ -11,6 +11,7 @@ import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
@@ -44,6 +45,9 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Override
     public PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) { 
@@ -80,7 +84,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         ExternalIdentifierEntity updatedExternalIdentifierEntity = externalIdentifierDao.getExternalIdentifierEntity(orcid, externalIdentifier.getPutCode());
         
         //Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedExternalIdentifierEntity);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedExternalIdentifierEntity, clientDetailsEntityCacheManager);
         
         Visibility originalVisibility = Visibility.valueOf(updatedExternalIdentifierEntity.getVisibility());
         // Validate external identifier
@@ -110,7 +114,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         if (!existing.getId().equals(newExternalIdentifier.getPutCode())) {
             // If they have the same source
             String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing)) {
+            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing, clientDetailsEntityCacheManager)) {
                 // And they have the same reference
                 if ((PojoUtil.isEmpty(existing.getExternalIdReference()) && PojoUtil.isEmpty(newExternalIdentifier.getValue()))
                         || (!PojoUtil.isEmpty(existing.getExternalIdReference()) && existing.getExternalIdReference().equals(newExternalIdentifier.getValue()))) {

@@ -11,6 +11,7 @@ import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.OtherNameManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.OtherNameManagerReadOnlyImpl;
@@ -37,6 +38,9 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;        
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
         
     @Override
     @Transactional
@@ -92,7 +96,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
         OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility());        
         //Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedOtherNameEntity);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedOtherNameEntity, clientDetailsEntityCacheManager);
         // Validate the other name
         PersonValidator.validateOtherName(otherName, activeSource, false, isApiRequest, originalVisibility);
 
@@ -176,7 +180,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     private boolean isDuplicated(OtherNameEntity existing, OtherName otherName, Source activeSource) {
         if (!existing.getId().equals(otherName.getPutCode())) {
             String existingSourceId = existing.getElementSourceId(); 
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing)) {
+            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing, clientDetailsEntityCacheManager)) {
                 if (existing.getDisplayName() != null && existing.getDisplayName().equals(otherName.getContent())) {
                     return true;
                 }

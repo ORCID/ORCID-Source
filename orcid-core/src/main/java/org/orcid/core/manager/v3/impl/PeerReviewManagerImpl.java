@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -75,6 +76,9 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
@@ -132,7 +136,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         Source activeSource = sourceManager.retrieveActiveSource();
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(existingEntity);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
 
         // If request comes from the API perform validations
         if (isApiRequest) {

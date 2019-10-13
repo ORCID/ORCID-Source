@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -71,6 +72,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     /**
      * Removes the relationship that exists between a funding and a profile.
@@ -249,7 +253,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     	Visibility originalVisibility = Visibility.valueOf(pfe.getVisibility());
         
         //Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(pfe);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(pfe, clientDetailsEntityCacheManager);
         
         activityValidator.validateFunding(funding, activeSOurce, false, isApiRequest, originalVisibility);
     	if(!isApiRequest) {

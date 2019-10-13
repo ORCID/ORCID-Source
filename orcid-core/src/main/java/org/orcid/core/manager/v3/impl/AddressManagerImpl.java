@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -37,6 +38,9 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager; 
     
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
     @Override
     @Transactional
     public Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest) {
@@ -45,7 +49,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility());
         
         //Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedEntity);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedEntity, clientDetailsEntityCacheManager);
         
         //If it is an update from the API, check the source and preserve the original visibility
         if(isApiRequest) {
@@ -125,7 +129,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         if (!existing.getId().equals(address.getPutCode())) {
             //If they have the same source 
             String existingSourceId = existing.getElementSourceId(); 
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing)) {
+            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing, clientDetailsEntityCacheManager)) {
                 //TODO: Not sure this works!  String vs Iso3166Country enum 
                 if(existing.getIso2Country().equals(address.getCountry().getValue())) {
                     return true;

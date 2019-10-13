@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.v3.SourceManager;
@@ -41,6 +42,9 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Override
     public boolean deleteResearcherUrl(String orcid, Long id, boolean checkSource) {
@@ -134,7 +138,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
         Source activeSource = sourceManager.retrieveActiveSource();                
         
         //Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedResearcherUrlEntity);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedResearcherUrlEntity, clientDetailsEntityCacheManager);
         
         // Validate the researcher url
         PersonValidator.validateResearcherUrl(researcherUrl, activeSource, false, isApiRequest, originalVisibility);        
@@ -195,7 +199,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
             //If they have the same source 
             String existingSourceId = existing.getElementSourceId(); 
             // If they have the same source
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing)) {
+            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing, clientDetailsEntityCacheManager)) {
                 // If the url is the same
                 if (existing.getUrl() != null && existing.getUrl().equals(newResearcherUrl.getUrl().getValue())) {
                     return true;

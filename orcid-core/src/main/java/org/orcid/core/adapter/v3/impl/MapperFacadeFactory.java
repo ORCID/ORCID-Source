@@ -362,7 +362,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private class SourceMapper<T, U> extends CustomMapper<SourceAware, SourceAwareEntity<?>> {
         @Override
         public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {            
-            Source source  = SourceEntityUtils.extractSourceFromEntityComplete(b,sourceNameCacheManager,orcidUrlManager);
+            Source source  = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager);
+            
+            
+            
             a.setSource(source);
         }
     }

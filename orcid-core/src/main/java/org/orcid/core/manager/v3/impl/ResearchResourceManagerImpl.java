@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbResearchResourceAdapter;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -52,6 +53,9 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
@@ -106,7 +110,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         Visibility originalVisibility = Visibility.valueOf(rre.getVisibility());
         
         //Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(rre);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(rre, clientDetailsEntityCacheManager);
         
         activityValidator.validateResearchResource(rr, activeSource, false, isApiRequest, originalVisibility);
         if(!isApiRequest) {

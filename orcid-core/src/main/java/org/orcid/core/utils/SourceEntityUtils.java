@@ -3,13 +3,18 @@ package org.orcid.core.utils;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
 import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OrcidAware;
+import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -90,19 +95,36 @@ public class SourceEntityUtils {
     /** Utility that copies source ids from entity into new Source model.
      * 
      */
-    public static Source extractSourceFromEntity(SourceAwareEntity<?> e) {
+    public static Source extractSourceFromEntity(SourceAwareEntity<?> e, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
         Source source = new Source();
         //orcid
-        if (!StringUtils.isEmpty(e.getSourceId()))
+        if (!StringUtils.isEmpty(e.getSourceId())) {
             source.setSourceOrcid(new SourceOrcid(e.getSourceId()));
+        }
+        
         //client
-        if (!StringUtils.isEmpty(e.getClientSourceId()))
+        if (!StringUtils.isEmpty(e.getClientSourceId())) {
             source.setSourceClientId(new SourceClientId(e.getClientSourceId()));
-        //obo
-        if (!StringUtils.isEmpty(e.getAssertionOriginSourceId()))
-            source.setAssertionOriginOrcid(new SourceOrcid(e.getAssertionOriginSourceId()));
-        if (!StringUtils.isEmpty(e.getAssertionOriginClientSourceId()))
+            
+            if (Features.USER_OBO.isActive() && (e instanceof ProfileAware || e instanceof OrcidAware)) {
+                ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
+                if (clientSource.isUserOBOEnabled()) {
+                    String orcidId = null;
+                    if (e instanceof ProfileAware) {
+                        orcidId = ((ProfileAware) e).getProfile().getId();
+                    } else {
+                        orcidId = ((OrcidAware) e).getOrcid();
+                    }
+                    source.setAssertionOriginOrcid(new SourceOrcid(orcidId));
+                }
+            }
+        }
+        
+        // member obo
+        if (!StringUtils.isEmpty(e.getAssertionOriginClientSourceId())) {
             source.setAssertionOriginClientId(new SourceClientId(e.getAssertionOriginClientSourceId()));
+        }
+        
         return source;
     }
     
@@ -119,8 +141,8 @@ public class SourceEntityUtils {
         return source;
     }
     
-    public static Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager) {
-        Source s = extractSourceFromEntity(b);
+    public static Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+        Source s = extractSourceFromEntity(b, clientDetailsEntityCacheManager);
         populateSource(s, sourceNameCacheManager, orcidUrlManager);
         return s;
     }
@@ -173,8 +195,8 @@ public class SourceEntityUtils {
      * @param existing
      * @return
      */
-    public static boolean isTheSameForDuplicateChecking(Source activeSource,SourceAwareEntity<?> existingEntity) {
-        Source existing = extractSourceFromEntity(existingEntity);
+    public static boolean isTheSameForDuplicateChecking(Source activeSource, SourceAwareEntity<?> existingEntity, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+        Source existing = extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
         return existing.equals(activeSource);
     }
 
@@ -200,8 +222,8 @@ public class SourceEntityUtils {
      * @param existingEntity
      * @return
      */
-    public static boolean isTheSameForPermissionChecking(Source activeSource, SourceAwareEntity<?> existingEntity) {
-        Source existing = extractSourceFromEntity(existingEntity);
+    public static boolean isTheSameForPermissionChecking(Source activeSource, SourceAwareEntity<?> existingEntity, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+        Source existing = extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
         return existing.equals(activeSource);
     }
 }

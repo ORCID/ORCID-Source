@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.SourceManager;
@@ -37,6 +38,9 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Override
     public boolean deleteKeyword(String orcid, Long putCode, boolean checkSource) {
@@ -92,7 +96,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         Visibility originalVisibility = Visibility.valueOf(updatedEntity.getVisibility());
         
         //Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedEntity);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedEntity, clientDetailsEntityCacheManager);
                 
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, activeSource, false, isApiRequest, originalVisibility);
@@ -180,7 +184,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.v3.release.record.Keyword keyword, Source activeSource) {
         if (!existing.getId().equals(keyword.getPutCode())) {
             String existingSourceId = existing.getElementSourceId();             
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing)) {
+            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing, clientDetailsEntityCacheManager)) {
                 if (existing.getKeywordName() != null && existing.getKeywordName().equals(keyword.getContent())) {
                     return true;
                 }
