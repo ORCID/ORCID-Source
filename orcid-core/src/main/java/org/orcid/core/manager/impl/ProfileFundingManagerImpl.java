@@ -198,11 +198,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         }
         if(sourceEntity.getSourceClient() != null) {
             profileFundingEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-            
-            // user obo?
-            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
-                profileFundingEntity.setAssertionOriginSourceId(orcid);
-            }
         } 
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        

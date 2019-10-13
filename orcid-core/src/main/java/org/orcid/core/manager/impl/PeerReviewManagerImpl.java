@@ -120,11 +120,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
         if(sourceEntity.getSourceClient() != null) {
             entity.setClientSourceId(sourceEntity.getSourceClient().getId());
-            
-            // user obo?
-            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
-                entity.setAssertionOriginSourceId(orcid);
-            }
         } 
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);      
@@ -147,7 +142,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         //Save the original source
         String existingSourceId = existingEntity.getSourceId();
         String existingClientSourceId = existingEntity.getClientSourceId();
-        String existingAssertionOriginSourceId = existingEntity.getAssertionOriginSourceId();
         
         // If request comes from the API perform validations
         if (isApiRequest) {
@@ -177,7 +171,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         //Be sure it doesn't overwrite the source
         updatedEntity.setSourceId(existingSourceId);
         updatedEntity.setClientSourceId(existingClientSourceId);
-        updatedEntity.setAssertionOriginSourceId(existingAssertionOriginSourceId);
         createIssnGroupIdIfNecessary(peerReview);
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         updatedEntity.setOrg(updatedOrganization);

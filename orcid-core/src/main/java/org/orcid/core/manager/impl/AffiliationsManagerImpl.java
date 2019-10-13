@@ -75,11 +75,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         
         if(sourceEntity.getSourceClient() != null) {
             educationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-            
-            // user obo?
-            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
-                educationEntity.setAssertionOriginSourceId(orcid);
-            }
         }        
                         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
@@ -160,11 +155,6 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         
         if(sourceEntity.getSourceClient() != null) {
             employmentEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-            
-            // user obo?
-            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
-                employmentEntity.setAssertionOriginSourceId(orcid);
-            }
         }
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);

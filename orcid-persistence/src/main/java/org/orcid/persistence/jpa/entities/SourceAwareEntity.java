@@ -39,15 +39,6 @@ public abstract class SourceAwareEntity<T extends Serializable> extends BaseEnti
         this.clientSourceId = clientSourceId;
     }
 
-    @Column(name = "assertion_origin_source_id")
-    public String getAssertionOriginSourceId() {
-        return assertionOriginSourceId;
-    }
-
-    public void setAssertionOriginSourceId(String assertionOriginSourceId) {
-        this.assertionOriginSourceId = assertionOriginSourceId;
-    }
-
     @Column(name = "assertion_origin_client_source_id")
     public String getAssertionOriginClientSourceId() {
         return assertionOriginClientSourceId;

@@ -108,11 +108,6 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         }
         if(sourceEntity.getSourceClient() != null) {
             newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-            
-            // user obo?
-            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
-                newEntity.setAssertionOriginSourceId(orcid);
-            }
         }        
         
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);

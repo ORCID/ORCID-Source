@@ -85,10 +85,7 @@ public class SourceEntityUtils {
         if (from.getSourceClientId() != null && from.getSourceClientId().getPath() != null) {
             to.setClientSourceId(from.getSourceClientId().getPath());
         }
-        // Set the OBO
-        if (from.getAssertionOriginOrcid() != null && from.getAssertionOriginOrcid().getPath() != null) {
-            to.setAssertionOriginSourceId(from.getAssertionOriginOrcid().getPath());
-        }
+        // Set the member OBO
         if (from.getAssertionOriginClientId() != null && from.getAssertionOriginClientId().getPath() != null) {
             to.setAssertionOriginClientSourceId(from.getAssertionOriginClientId().getPath());
         }
