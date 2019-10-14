@@ -210,12 +210,15 @@ The swagger interfaces to the API available at:
 ### Scopes
 | Scope           | Request method | Obtain Access Token Through	| Expires In | API  |
 |-----------------|-------------|--------------------------|----------------------------------|-------------|
-| /authenticate     | No API call. Client retrieves access token only.| 3-legged OAuth| Single authentication | Public API and Member API   |
-| /activities/update     |POST, PUT, DELETE| 3-legged OAuth| When expired or revoked by user | Member API   |
-| /person/update     |POST, PUT, DELETE| 3-legged OAuth| When expired or revoked by user | Member API   |
-| /read-limited     |GET| 3-legged OAuth| When expired or revoked by user | Member API   |
-| /read-public     |GET| Client credentials| When revoked by ORCID | Public API and Member API  |
-| /webhook     |PUT, DELETE| Client credentials| When revoked by ORCID | Premium Member API  |
+| /authenticate     | GET| [3-legged OAuth](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#authenticating-users-and-using-oauth--openid-connect)| When expired or revoked by user | Public API and Member API   |
+| /activities/update     |POST, PUT, DELETE| [3-legged OAuth](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#authenticating-users-and-using-oauth--openid-connect)| When expired or revoked by user | Member API   |
+| /person/update     |POST, PUT, DELETE| [3-legged OAuth](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#authenticating-users-and-using-oauth--openid-connect)| When expired or revoked by user | Member API   |
+| /read-limited     |GET| [3-legged OAuth](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#authenticating-users-and-using-oauth--openid-connect)| When expired or revoked by user | Member API   |
+| /read-public     |GET| [Client credentials](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#generate-a-two-step-read-public-access-token) | When revoked by ORCID | Public API and Member API  |
+| /webhook     |PUT, DELETE| [Client credentials](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#generate-a-two-step-read-public-access-token) | When revoked by ORCID | Premium Member API  |
+| openid  | GET | [OpenID Connect 1.0](https://github.com/ORCID/ORCID-Source/blob/master/orcid-web/ORCID_AUTH_WITH_OPENID_CONNECT.md) | When expired or revoked by user | Public API and Member API  |
+
+Multiple scopes can be requested with a single access token by listing the requested scopes with a space between each in the authorization URL.
 
 
 ### Calls
@@ -270,6 +273,9 @@ The swagger interfaces to the API available at:
 - biography, email, person and personal-details sections are read only
 - when reading and posting multiple works a maximum of 100 works can be accessed with a single call.
 - When searching by default a maximum of 100 results will be returned. The `rows` parameter can be used to increase the number or results, but only up to 200. The `start` parameter (integer pointing to the zero-based position of the first result to be returned) can be used to page through larger results sets. See [Searching the API tutorial](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/search.md)
+
+## OpenID Connect
+In addition to the REST API, ORCID Supports [OpenID Connect](https://github.com/ORCID/ORCID-Source/blob/master/orcid-web/ORCID_AUTH_WITH_OPENID_CONNECT.md) and an [Implicit workflow](https://github.com/ORCID/ORCID-Source/blob/master/orcid-web/ORCID_AUTH_WITH_OPENID_CONNECT.md#implicit-flow).
 
 ## Examples
 
