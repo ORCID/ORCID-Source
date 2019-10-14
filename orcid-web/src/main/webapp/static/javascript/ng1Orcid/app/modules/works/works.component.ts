@@ -1399,7 +1399,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     pageEvent (event: PageEvent ) {
-        this.loadWorkPage(event.pageIndex, event.pageSize)
+        this.loadWorkPage(event.pageIndex, event.pageSize, this.isPublicPage)
     }
 
     ngOnInit() {
