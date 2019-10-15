@@ -1,0 +1,22 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="George Nash" id="ADD-COMMENTS-COLUMN-TO-EMAIL-SCHEDULE">	    
+		<preConditions onFail="MARK_RAN">
+         	<not>
+         		<columnExists tableName="email_schedule" columnName="comments"/>
+         	</not>
+         </preConditions>
+        <sql>ALTER TABLE email_schedule ADD COLUMN comments VARCHAR(100);</sql>
+    </changeSet>
+
+	<changeSet author="George Nash" id="ADD-PAUSED-COLUMN-TO-EMAIL-SCHEDULE">        
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="email_schedule" columnName="paused"/>
+            </not>
+         </preConditions>
+        <sql>ALTER TABLE email_schedule ADD COLUMN paused boolean NOT NULL DEFAULT false;</sql>
+    </changeSet>
+</databaseChangeLog>
