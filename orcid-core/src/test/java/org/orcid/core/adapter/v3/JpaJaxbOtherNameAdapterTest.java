@@ -12,6 +12,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,6 +51,15 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
     
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManager;
+    
     @Mock
     private ClientDetailsManager mockClientDetailsManager;
     
@@ -69,6 +79,13 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+    }
+    
+    @After
+    public void tearDown() {
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }
     
     @Test

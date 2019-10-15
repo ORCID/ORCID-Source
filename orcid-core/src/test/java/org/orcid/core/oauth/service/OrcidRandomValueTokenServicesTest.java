@@ -56,7 +56,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
     @Resource
     private ClientDetailsManager clientDetailsManager;
-
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",

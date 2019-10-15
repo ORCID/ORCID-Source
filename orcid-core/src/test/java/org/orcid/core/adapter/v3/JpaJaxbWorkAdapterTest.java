@@ -65,6 +65,15 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManager;
+    
+    @Resource
     private SourceNameCacheManager sourceNameCacheManager;
     
     @Mock
@@ -90,6 +99,13 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.eq("0000-0000-0000-0001"))).thenReturn("test");
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+    }
+    
+    @After
+    public void tearDown() {
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }
     
     @After
