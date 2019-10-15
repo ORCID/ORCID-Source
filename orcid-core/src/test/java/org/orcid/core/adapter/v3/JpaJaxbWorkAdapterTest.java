@@ -253,6 +253,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         // Identifier URIs should always be http, event if base url is https
         assertEquals("https://testserver.orcid.org/client/" + CLIENT_SOURCE_ID, w.getSource().retriveSourceUri());
+        
+        // user obo work
+        assertNotNull(w.getSource().getAssertionOriginOrcid());
     }
 
     @Test
