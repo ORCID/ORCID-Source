@@ -56,15 +56,15 @@ public class OrcidSolrOrgsClient {
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString.toString());
+        query.addOrUpdateSort("score", ORDER.desc);
         if (promoteChosenOrgs) {
             query.addOrUpdateSort("org-chosen-by-member", ORDER.desc);
         }
-        query.addOrUpdateSort("score", ORDER.desc);
         query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
         
         query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s AND %s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "GRID", "RINGGOLD", "FUNDREF", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI", SolrConstants.ORG_CHOSEN_BY_MEMBER, true));       
         
-        try {
+        try { 
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
             return queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
         } catch (SolrServerException | IOException se) {
