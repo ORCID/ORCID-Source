@@ -131,13 +131,15 @@ export class Header2Component  {
     };
 
     searchSubmit(): void {
-        if (this.headerSearch.searchOption=='website'){
-            window.location.assign(getBaseUri() + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
-        }
-        if(this.headerSearch.searchOption=='registry'){
-            window.location.assign(getBaseUri()
-                    + "/orcid-search/quick-search/?searchQuery="
-                    + encodeURIComponent(this.headerSearch.searchInput));
+        if (this.headerSearch.searchInput){
+            if (this.headerSearch.searchOption=='website'){
+                window.location.assign(getBaseUri() + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
+            }
+            if(this.headerSearch.searchOption=='registry'){
+                window.location.assign(getBaseUri()
+                        + "/orcid-search/quick-search/?searchQuery="
+                        + encodeURIComponent(this.headerSearch.searchInput));
+            }
         }
     }
     

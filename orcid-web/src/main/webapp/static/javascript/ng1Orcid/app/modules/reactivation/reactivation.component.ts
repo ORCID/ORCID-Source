@@ -44,6 +44,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     showEmailsAdditionalDuplicateEmailError: any;
     aboutUri: String;
     reactivationData: any;
+    theFormWasSubmittedAndHasSomeErrors = false;
     
     constructor(
         private oauthService: OauthService,
@@ -161,6 +162,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                     window.location.href = data.url;
                 }
                 else{
+                    this.theFormWasSubmittedAndHasSomeErrors = true
                     this.registrationForm = data;
                     for (var index in this.registrationForm.emailsAdditional) {
                         if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
@@ -184,6 +186,20 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
+
+    showPasswordPatterError ( errors : string[] ) {
+        return  !errors ? errors :
+        errors.filter(error => error.indexOf('Pattern.') >= 0 ).length && this.theFormWasSubmittedAndHasSomeErrors
+    }
+    
+    showFormHasError () {
+        const hasErrors = Object.keys(this.registrationForm)
+            .find(field => this.registrationForm[field] && 
+                           this.registrationForm[field]['errors'] && 
+                           this.registrationForm[field]['errors'].length )
+                           
+        return hasErrors && this.theFormWasSubmittedAndHasSomeErrors
+    }
 
     serverValidate(field): void {
         if (field === undefined) {

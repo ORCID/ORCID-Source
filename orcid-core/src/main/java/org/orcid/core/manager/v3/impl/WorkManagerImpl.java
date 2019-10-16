@@ -433,14 +433,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 userPreferred = work;
             }
             
-            ExternalIDs externalIDs = externalIdConverter.convertFrom(work.getExternalIdentifiersJson(), null);
-            for (ExternalID externalID : externalIDs.getExternalIdentifier()) {
-                if (!allExternalIDs.getExternalIdentifier().contains(externalID)) {
-                    allExternalIDs.getExternalIdentifier().add(externalID);
-                }
-                
-                if (externalID.isGroupAble()) {
-                    groupableExternalIdFound = true;
+            if (work.getExternalIdentifiersJson() != null) {
+                ExternalIDs externalIDs = externalIdConverter.convertFrom(work.getExternalIdentifiersJson(), null);
+                for (ExternalID externalID : externalIDs.getExternalIdentifier()) {
+                    if (!allExternalIDs.getExternalIdentifier().contains(externalID)) {
+                        allExternalIDs.getExternalIdentifier().add(externalID);
+                    }
+                    
+                    if (externalID.isGroupAble()) {
+                        groupableExternalIdFound = true;
+                    }
                 }
             }
         }
@@ -454,6 +456,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             for (MinimizedWorkEntity userVersion : userVersions) {
                 WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
                 userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);
+                userVersionFullEntity.setLastModified(new Date());
                 workDao.merge(userVersionFullEntity);
             }
         } else {

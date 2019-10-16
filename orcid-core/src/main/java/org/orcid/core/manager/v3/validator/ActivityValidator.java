@@ -379,10 +379,7 @@ public class ActivityValidator {
         if (isApiRequest) {
             validateDisambiguatedOrg(affiliation);
             if (affiliation.getEndDate() != null) {
-                validateFuzzyDate(affiliation.getEndDate());
-                if (affiliation.getStartDate() == null) {
-                    throw new MissingStartDateException();
-                }
+                validateFuzzyDate(affiliation.getEndDate());                
             }
             if (affiliation.getStartDate() != null) {
                 validateFuzzyDate(affiliation.getStartDate());

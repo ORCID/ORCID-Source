@@ -129,6 +129,8 @@ Example response
 
 * family-name
 
+* given-and-family-names
+
 * credit-name
 
 * other-names
