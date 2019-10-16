@@ -22,7 +22,9 @@ import org.orcid.core.exception.InvalidFuzzyDateException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.StartDateAfterEndDateException;
 import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.core.utils.FuzzyDateUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.LanguageCode;
 import org.orcid.jaxb.model.common_v2.Amount;
@@ -339,6 +341,9 @@ public class ActivityValidator {
             }
             if (employment.getStartDate() != null) {
                 validateFuzzyDate(employment.getStartDate());
+            	if(FuzzyDateUtils.compareTo(employment.getStartDate(), employment.getEndDate()) > 0) {
+            		throw new StartDateAfterEndDateException();
+            	}
             }
         }
     }
@@ -364,6 +369,9 @@ public class ActivityValidator {
             }
             if (education.getStartDate() != null) {
                 validateFuzzyDate(education.getStartDate());
+                if(FuzzyDateUtils.compareTo(education.getStartDate(), education.getEndDate()) > 0) {
+                	throw new StartDateAfterEndDateException();
+            	}
             }
         }
     }

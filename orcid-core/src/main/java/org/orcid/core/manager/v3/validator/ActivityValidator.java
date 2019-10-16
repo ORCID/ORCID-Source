@@ -1,6 +1,5 @@
 package org.orcid.core.manager.v3.validator;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -27,8 +26,10 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.MissingStartDateException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.StartDateAfterEndDateException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.FuzzyDateUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Iso3166Country;
@@ -382,7 +383,12 @@ public class ActivityValidator {
                 validateFuzzyDate(affiliation.getEndDate());                
             }
             if (affiliation.getStartDate() != null) {
-                validateFuzzyDate(affiliation.getStartDate());
+                validateFuzzyDate(affiliation.getStartDate());                
+                if(affiliation.getEndDate() != null) {
+                	if(FuzzyDateUtils.compareTo(affiliation.getStartDate(), affiliation.getEndDate()) > 0) {
+                		throw new StartDateAfterEndDateException();
+                	}
+                }                                
             }
         }
     }

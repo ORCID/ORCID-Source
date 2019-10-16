@@ -18,6 +18,7 @@ import org.orcid.core.exception.InvalidFuzzyDateException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.StartDateAfterEndDateException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.jaxb.model.common_v2.Amount;
 import org.orcid.jaxb.model.common_v2.Contributor;
@@ -502,6 +503,270 @@ public class ActivityValidatorTest {
         Education education = getEducation();
         education.setVisibility(Visibility.LIMITED);
         activityValidator.validateEducation(education, null, false, true, Visibility.PUBLIC);
+    }
+    
+    @Test
+    public void validateStartDateOnEducation() {
+        Education e = getEducation();
+        try {
+        	e.setStartDate(new FuzzyDate(new Year(2010), new Month(1), new Day(1)));
+            e.setEndDate(new FuzzyDate(new Year(2009), new Month(1), new Day(1)));
+            activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }    
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2009));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(2));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(2));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        // Same day should not fail
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        } 
+        
+        // Newer dates should not fail
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2011));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(2));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(2));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEducation(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        }               
+    }
+    
+    @Test
+    public void validateStartDateOnEmployment() {
+        Employment e = getEmployment();
+        try {
+        	e.setStartDate(new FuzzyDate(new Year(2010), new Month(1), new Day(1)));
+            e.setEndDate(new FuzzyDate(new Year(2009), new Month(1), new Day(1)));
+            activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }    
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2009));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(2));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(2));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        // Same day should not fail
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        } 
+        
+        // Newer dates should not fail
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2011));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(2));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(2));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateEmployment(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        }               
     }
     
     public Employment getEmployment() {

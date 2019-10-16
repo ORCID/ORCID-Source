@@ -20,6 +20,7 @@ import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.StartDateAfterEndDateException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.common.CitationType;
@@ -513,6 +514,138 @@ public class ActivityValidatorTest {
     }
     
     @Test
+    public void validateStartDateOnEmployment() {
+        Employment e = getEmployment();
+        try {
+        	e.setStartDate(new FuzzyDate(new Year(2010), new Month(1), new Day(1)));
+            e.setEndDate(new FuzzyDate(new Year(2009), new Month(1), new Day(1)));
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }    
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2009));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(2));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(2));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
+            fail();
+        } catch(StartDateAfterEndDateException s) {
+        	
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        // Same day should not fail
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        } 
+        
+        // Newer dates should not fail
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2011));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(2));
+        	end.setDay(new Day(1));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        }
+        
+        try {
+        	FuzzyDate start = new FuzzyDate();
+        	start.setYear(new Year(2010));
+        	start.setMonth(new Month(1));
+        	start.setDay(new Day(1));
+        	FuzzyDate end = new FuzzyDate();
+        	end.setYear(new Year(2010));
+        	end.setMonth(new Month(1));
+        	end.setDay(new Day(2));
+        	e.setStartDate(start);
+        	e.setEndDate(end);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);            
+        } catch(Exception x) {
+        	fail();
+        }               
+    }
+    
+    @Test
     public void validateEducation_validEducationTest() {
         Education education = getEducation();
         activityValidator.validateAffiliation(education, null, true, true, Visibility.PUBLIC);
@@ -531,7 +664,7 @@ public class ActivityValidatorTest {
         education.setVisibility(Visibility.LIMITED);
         activityValidator.validateAffiliation(education, null, false, true, Visibility.PUBLIC);
     }
-    
+            
     @Test(expected = InvalidOrgException.class)
     public void validateEducationWithoutOrg() {
         Education e = getEducation();
