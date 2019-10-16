@@ -341,9 +341,11 @@ public class ActivityValidator {
             }
             if (employment.getStartDate() != null) {
                 validateFuzzyDate(employment.getStartDate());
-            	if(FuzzyDateUtils.compareTo(employment.getStartDate(), employment.getEndDate()) > 0) {
-            		throw new StartDateAfterEndDateException();
-            	}
+                if(employment.getEndDate() != null) {
+	            	if(FuzzyDateUtils.compareTo(employment.getStartDate(), employment.getEndDate()) > 0) {
+	            		throw new StartDateAfterEndDateException();
+	            	}
+                }
             }
         }
     }
@@ -369,9 +371,11 @@ public class ActivityValidator {
             }
             if (education.getStartDate() != null) {
                 validateFuzzyDate(education.getStartDate());
-                if(FuzzyDateUtils.compareTo(education.getStartDate(), education.getEndDate()) > 0) {
-                	throw new StartDateAfterEndDateException();
-            	}
+                if(education.getEndDate() != null) {
+	                if(FuzzyDateUtils.compareTo(education.getStartDate(), education.getEndDate()) > 0) {
+	                	throw new StartDateAfterEndDateException();
+	            	}
+                }
             }
         }
     }
