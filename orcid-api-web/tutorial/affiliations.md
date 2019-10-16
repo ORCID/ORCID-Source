@@ -60,6 +60,8 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 - **organization** _(required)_ Information about the organization the affiliation was with, a Ringgold, Grid or Crossref Funder Registry organization identifier is required in 3.0+
 
+-**address** _(required)_ Information about the physical location of the organization the affliation is with. A city, region and country are required
+
 - **url** _(optional in 3.0+ only)_ A URL to a resource about the affiliation
 
 - **external-ids** _(optional in 3.0+ only)_ An identifier for the affiliation itself
