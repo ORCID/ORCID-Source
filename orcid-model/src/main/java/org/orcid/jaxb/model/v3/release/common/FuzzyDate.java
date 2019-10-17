@@ -206,7 +206,7 @@ public class FuzzyDate implements Serializable, Comparable<FuzzyDate> {
 
         StringBuilder otherDateString = new StringBuilder();
         otherDateString.append(otherFuzzyDate.year != null ? otherFuzzyDate.year.value : "0000");
-        otherDateString.append(otherFuzzyDate.month != null ? StringUtils.leftPad(otherFuzzyDate.month.value, 2, "0"): "00");
+        otherDateString.append(otherFuzzyDate.month != null ? StringUtils.leftPad(otherFuzzyDate.month.value, 2, "0") : "00");
         otherDateString.append(otherFuzzyDate.day != null ? StringUtils.leftPad(otherFuzzyDate.day.value, 2, "0") : "00");
 
         return dateString.toString().compareTo(otherDateString.toString());

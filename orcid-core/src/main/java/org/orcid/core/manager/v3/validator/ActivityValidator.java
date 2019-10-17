@@ -1,6 +1,5 @@
 package org.orcid.core.manager.v3.validator;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -27,8 +26,10 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.MissingStartDateException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.StartDateAfterEndDateException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.FuzzyDateUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Iso3166Country;
@@ -74,7 +75,7 @@ public class ActivityValidator {
 
     @Resource
     private PIDNormalizationService norm;
-    
+
     @Resource
     private SourceEntityUtils sourceEntityUtils;
 
@@ -347,13 +348,13 @@ public class ActivityValidator {
             throw new InvalidDisambiguatedOrgException();
         }
     }
-    
+
     private void validateDisambiguatedOrg(MultipleOrganizationHolder organizationHolder) {
         if (organizationHolder.getOrganization() == null) {
             throw new InvalidOrgException();
         }
 
-        for (Organization org : organizationHolder.getOrganization()){
+        for (Organization org : organizationHolder.getOrganization()) {
             if (org.getDisambiguatedOrganization() == null) {
                 throw new InvalidDisambiguatedOrgException();
             }
@@ -374,15 +375,20 @@ public class ActivityValidator {
         if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = affiliation.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        } 
+        }
 
         if (isApiRequest) {
             validateDisambiguatedOrg(affiliation);
             if (affiliation.getEndDate() != null) {
-                validateFuzzyDate(affiliation.getEndDate());                
+                validateFuzzyDate(affiliation.getEndDate());
             }
             if (affiliation.getStartDate() != null) {
                 validateFuzzyDate(affiliation.getStartDate());
+                if (affiliation.getEndDate() != null) {
+                    if (FuzzyDateUtils.compareTo(affiliation.getStartDate(), affiliation.getEndDate()) > 0) {
+                        throw new StartDateAfterEndDateException();
+                    }
+                }
             }
         }
     }
@@ -442,24 +448,25 @@ public class ActivityValidator {
         }
     }
 
-    public void checkExternalIdentifiersForDuplicates(ExternalIdentifiersAwareActivity theNew, ExternalIdentifiersAwareActivity theExisting, Source existingSource, Source activeSource) {
+    public void checkExternalIdentifiersForDuplicates(ExternalIdentifiersAwareActivity theNew, ExternalIdentifiersAwareActivity theExisting, Source existingSource,
+            Source activeSource) {
         ExternalIDs newExtIds = theNew.getExternalIdentifiers();
         ExternalIDs existingExtIds = theExisting.getExternalIdentifiers();
-    
+
         boolean normalizeExtId = !(theNew.getClass().isAssignableFrom(Funding.class));
-        
+
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    
-                    if(normalizeExtId) {
+
+                    if (normalizeExtId) {
                         // normalize the ids before checking equality
                         newId.setNormalized(new TransientNonEmptyString(norm.normalise(newId.getType(), newId.getValue())));
                         if (existingId.getNormalized() == null)
-                            existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));                        
+                            existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));
                     }
                     if (areRelationshipsSameAndSelf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existingSource)) {
+                            && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, existingSource)) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
                         params.put("putCode", String.valueOf(theExisting.getPutCode()));
@@ -469,7 +476,7 @@ public class ActivityValidator {
             }
         }
     }
-    
+
     private static boolean areRelationshipsSameAndSelf(Relationship r1, Relationship r2) {
         if (r1 == null && r2 == null)
             return true;
@@ -477,7 +484,7 @@ public class ActivityValidator {
             return true;
         return false;
     }
-    
+
     private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {
         if (updatedVisibility != null) {
             if (originalVisibility == null) {
@@ -500,8 +507,8 @@ public class ActivityValidator {
                 throw new MissingStartDateException();
             }
         }
-        
-        for (ResearchResourceItem i:rr.getResourceItems()){
+
+        for (ResearchResourceItem i : rr.getResourceItems()) {
             if (i.getExternalIdentifiers() == null || i.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                 throw new ActivityIdentifierValidationException("Missing external ID in Research Resource Item");
             }
@@ -509,7 +516,7 @@ public class ActivityValidator {
             if (isApiRequest)
                 validateDisambiguatedOrg(i.getHosts());
         }
-        
+
         if (rr.getPutCode() != null && createFlag) {
             throw InvalidPutCodeException.forSource(activeSource);
         }
@@ -528,7 +535,7 @@ public class ActivityValidator {
                         .toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyy-MM").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").parseStrict().toFormatter() };
-        
+
         boolean valid = false;
         for (DateTimeFormatter formatter : formatters) {
             try {
@@ -551,7 +558,7 @@ public class ActivityValidator {
         String year = fuzzyDate.getYear() != null ? fuzzyDate.getYear().getValue() : null;
         String month = fuzzyDate.getMonth() != null ? fuzzyDate.getMonth().getValue() : null;
         String day = fuzzyDate.getDay() != null ? fuzzyDate.getDay().getValue() : null;
-        
+
         if (day != null) {
             return year + "-" + month + "-" + day;
         }
@@ -561,7 +568,7 @@ public class ActivityValidator {
         if (year != null) {
             return year;
         }
-        
+
         return null;
     }
 }

@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.lang.StringUtils;
+
 import io.swagger.annotations.ApiModel;
 
 /**
@@ -32,7 +34,7 @@ import io.swagger.annotations.ApiModel;
 @XmlType(name = "fuzzyDate", propOrder = { "year", "month", "day" }, namespace = "http://www.orcid.org/ns/common")
 @XmlSeeAlso({ PublicationDate.class })
 @ApiModel(value = "FuzzyDateV2_0")
-public class FuzzyDate implements Serializable {
+public class FuzzyDate implements Serializable, Comparable<FuzzyDate> {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(required = true)
@@ -193,6 +195,21 @@ public class FuzzyDate implements Serializable {
         } else if (!year.equals(other.year))
             return false;
         return true;
+    }
+
+    @Override
+    public int compareTo(FuzzyDate otherFuzzyDate) {
+        StringBuilder dateString = new StringBuilder();
+        dateString.append(year != null ? year.value : "0000");
+        dateString.append(month != null ? StringUtils.leftPad(month.value, 2, "0") : "00");
+        dateString.append(day != null ? StringUtils.leftPad(day.value, 2, "0") : "00");
+
+        StringBuilder otherDateString = new StringBuilder();
+        otherDateString.append(otherFuzzyDate.year != null ? otherFuzzyDate.year.value : "0000");
+        otherDateString.append(otherFuzzyDate.month != null ? StringUtils.leftPad(otherFuzzyDate.month.value, 2, "0") : "00");
+        otherDateString.append(otherFuzzyDate.day != null ? StringUtils.leftPad(otherFuzzyDate.day.value, 2, "0") : "00");
+
+        return dateString.toString().compareTo(otherDateString.toString());
     }
 
 }
