@@ -62,7 +62,7 @@ public class ActivityValidator {
 
     @Resource
     private ExternalIDValidator externalIDValidator;
-    
+
     @Resource
     private SourceEntityUtils sourceEntityUtils;
 
@@ -307,7 +307,7 @@ public class ActivityValidator {
             Visibility updatedVisibility = funding.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
-        
+
         if (isApiRequest) {
             if (funding.getEndDate() != null) {
                 validateFuzzyDate(funding.getEndDate());
@@ -341,10 +341,10 @@ public class ActivityValidator {
             }
             if (employment.getStartDate() != null) {
                 validateFuzzyDate(employment.getStartDate());
-                if(employment.getEndDate() != null) {
-	            	if(FuzzyDateUtils.compareTo(employment.getStartDate(), employment.getEndDate()) > 0) {
-	            		throw new StartDateAfterEndDateException();
-	            	}
+                if (employment.getEndDate() != null) {
+                    if (FuzzyDateUtils.compareTo(employment.getStartDate(), employment.getEndDate()) > 0) {
+                        throw new StartDateAfterEndDateException();
+                    }
                 }
             }
         }
@@ -364,17 +364,17 @@ public class ActivityValidator {
             Visibility updatedVisibility = education.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
-        
+
         if (isApiRequest) {
             if (education.getEndDate() != null) {
                 validateFuzzyDate(education.getEndDate());
             }
             if (education.getStartDate() != null) {
                 validateFuzzyDate(education.getStartDate());
-                if(education.getEndDate() != null) {
-	                if(FuzzyDateUtils.compareTo(education.getStartDate(), education.getEndDate()) > 0) {
-	                	throw new StartDateAfterEndDateException();
-	            	}
+                if (education.getEndDate() != null) {
+                    if (FuzzyDateUtils.compareTo(education.getStartDate(), education.getEndDate()) > 0) {
+                        throw new StartDateAfterEndDateException();
+                    }
                 }
             }
         }
@@ -410,7 +410,7 @@ public class ActivityValidator {
             Visibility updatedVisibility = peerReview.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
-        
+
         if (isApiRequest) {
             if (peerReview.getCompletionDate() != null) {
                 validateFuzzyDate(peerReview.getCompletionDate());
@@ -436,10 +436,11 @@ public class ActivityValidator {
         }
     }
 
-    public void checkExternalIdentifiersForDuplicates(ExternalIdentifiersAwareActivity theNew, ExternalIdentifiersAwareActivity theExisting, Source existingSource, SourceEntity sourceEntity) {
+    public void checkExternalIdentifiersForDuplicates(ExternalIdentifiersAwareActivity theNew, ExternalIdentifiersAwareActivity theExisting, Source existingSource,
+            SourceEntity sourceEntity) {
         ExternalIDs newExtIds = theNew.getExternalIdentifiers();
         ExternalIDs existingExtIds = theExisting.getExternalIdentifiers();
-    
+
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
@@ -453,8 +454,8 @@ public class ActivityValidator {
                 }
             }
         }
-        
-    }    
+
+    }
 
     private static boolean areRelationshipsSameButNotBothPartOf(Relationship r1, Relationship r2) {
         if (r1 == null && r2 == null)
@@ -490,7 +491,7 @@ public class ActivityValidator {
                         .toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyy-MM").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd").parseStrict().toFormatter() };
-        
+
         boolean valid = false;
         for (DateTimeFormatter formatter : formatters) {
             try {
@@ -512,7 +513,7 @@ public class ActivityValidator {
         String year = fuzzyDate.getYear() != null ? fuzzyDate.getYear().getValue() : null;
         String month = fuzzyDate.getMonth() != null ? fuzzyDate.getMonth().getValue() : null;
         String day = fuzzyDate.getDay() != null ? fuzzyDate.getDay().getValue() : null;
-        
+
         if (day != null) {
             return year + "-" + month + "-" + day;
         }
@@ -522,7 +523,7 @@ public class ActivityValidator {
         if (year != null) {
             return year;
         }
-        
+
         return null;
     }
 }
