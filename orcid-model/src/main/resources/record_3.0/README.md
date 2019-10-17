@@ -25,6 +25,10 @@
 - service/services
 - work/works
 
+#### CORS
+
+CORS is supported for the Public API,  [Implicit OAuth](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) and [Force Logout](http://members.orcid.org/api/resources/customize#logout) only. JSONP  for CORS is not supported. For more information on CORS and supported content types please visit our [Content Negotiation page](https://github.com/ORCID/ORCID-Source/blob/master/CONTENT_NEGOTIATION.md).
+
 ## XSDs and current state (all stable)
 - [activities-3.0.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/activities-3.0.xsd)
 **stable**
