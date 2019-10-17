@@ -236,7 +236,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
+                if( (this.emailService.getEmailPrimary() != null && this.emailService.getEmailPrimary().verified) || (this.emailService.getEmailPrimary() == null && this.emailService.isAnyEmailVerified()) ){
                     this.worksService.notifyOther({ work:work });
                     if(work == undefined) {
                         this.modalService.notifyOther({action:'open', moduleId: 'modalWorksForm', edit: false, bibtexWork: this.bibtexWork});
@@ -261,7 +261,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
+                if( (this.emailService.getEmailPrimary() != null && this.emailService.getEmailPrimary().verified) || (this.emailService.getEmailPrimary() == null && this.emailService.isAnyEmailVerified()) ){
                         this.modalService.notifyOther({action:'open', moduleId: 'modalExternalIdForm', externalIdType: externalIdType});                
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
@@ -458,7 +458,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
+                if( (this.emailService.getEmailPrimary() != null && this.emailService.getEmailPrimary().verified) || (this.emailService.getEmailPrimary() == null && this.emailService.isAnyEmailVerified()) ){
                     let maxSize = 100;
                     let work = this.worksService.getWork(putCode);
                     this.deletePutCode = putCode;
@@ -852,7 +852,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
+                if( (this.emailService.getEmailPrimary() != null && this.emailService.getEmailPrimary().verified) || (this.emailService.getEmailPrimary() == null && this.emailService.isAnyEmailVerified()) ){
                     this.bibtexImportLoading = false;
                     this.bibtexParsingErrorText = "";
                     this.bibtexParsingError = false;
@@ -1191,7 +1191,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                if( this.emailService.getEmailPrimary().verified ){
+                if( (this.emailService.getEmailPrimary() != null && this.emailService.getEmailPrimary().verified) || (this.emailService.getEmailPrimary() == null && this.emailService.isAnyEmailVerified()) ){
                     this.worksService.loadAllWorkGroups(this.sortKey, 
                     this.sortAsc)
                     .pipe(    

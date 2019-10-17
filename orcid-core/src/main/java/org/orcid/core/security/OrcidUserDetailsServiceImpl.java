@@ -117,6 +117,10 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     private OrcidProfileUserDetails createUserDetails(ProfileEntity profile) {
         String primaryEmail = retrievePrimaryEmail(profile);
 
+        if(StringUtils.isEmpty(primaryEmail)) {
+            primaryEmail = emailDao.findNewestVerifiedOrNewestEmail(profile.getId());
+        }
+        
         OrcidProfileUserDetails userDetails = null;
 
         if (profile.getOrcidType() != null) {
@@ -138,9 +142,9 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         } catch (javax.persistence.NoResultException nre) {
             String message = String.format("User with orcid %s have no primary email", orcid);
             LOGGER.error(message);
-            slackManager.sendSystemAlert(message);
-            throw nre;
+            slackManager.sendSystemAlert(message);            
         }
+        return null;
     }
 
     private void checkStatuses(ProfileEntity profile) {

@@ -384,4 +384,12 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setParameter("ids", ids);
         query.executeUpdate();
     }
+
+    @Override
+    public String findNewestVerifiedOrNewestEmail(String orcid) {
+        TypedQuery<String> query = entityManager.createQuery("select email from EmailEntity where orcid = :orcid order by verified desc, dateCreated desc", String.class);
+        query.setParameter("orcid", orcid);
+        List<String> emails = query.getResultList();
+        return emails == null ? null : emails.get(0);
+    }
 }
