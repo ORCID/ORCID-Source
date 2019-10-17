@@ -20,14 +20,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrcidSolrOrgsClient {
-    
+
     private static final String SOLR_ORGS_QUERY = "(org-disambiguated-name:%s)^100.0 (org-disambiguated-name-string:%s)^50.0 (org-disambiguated-country:%s)^5.0 (org-disambiguated-city:%s)^5.0 (org-names:%s)^1.0 ";
     private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0 (org-names:%s)^1.0";
-    
-    
+
     @Resource(name = "solrReadOnlyOrgsClient")
     private SolrClient solrReadOnlyOrgsClient;
-    
+
     public OrgDisambiguatedSolrDocument findById(Long id) {
         SolrQuery query = new SolrQuery();
         query.setQuery(ORG_DISAMBIGUATED_ID + ":" + id).setFields("*");
@@ -61,10 +60,11 @@ public class OrcidSolrOrgsClient {
             query.addOrUpdateSort("org-chosen-by-member", ORDER.desc);
         }
         query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
-        
-        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s AND %s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "GRID", "RINGGOLD", "FUNDREF", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI", SolrConstants.ORG_CHOSEN_BY_MEMBER, true));       
-        
-        try { 
+
+        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s AND %s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "GRID", "RINGGOLD", "FUNDREF",
+                SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI", SolrConstants.ORG_CHOSEN_BY_MEMBER, true));
+
+        try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
             return queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
         } catch (SolrServerException | IOException se) {
@@ -72,7 +72,7 @@ public class OrcidSolrOrgsClient {
             throw new NonTransientDataAccessResourceException(errorMessage, se);
         }
     }
-    
+
     public List<OrgDisambiguatedSolrDocument> getOrgsForSelfService(String searchTerm, int firstResult, int maxResult) {
         SolrQuery query = new SolrQuery();
         query.setQuery(SOLR_SELF_SERVICE_ORGS_QUERY.replace("%s", searchTerm));
@@ -85,5 +85,5 @@ public class OrcidSolrOrgsClient {
             String errorMessage = MessageFormat.format("Error when attempting to search for orgs for self-service, with search term {0}", new Object[] { searchTerm });
             throw new NonTransientDataAccessResourceException(errorMessage, se);
         }
-    }    
+    }
 }
