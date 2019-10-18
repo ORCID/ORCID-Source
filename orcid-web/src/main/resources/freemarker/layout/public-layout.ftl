@@ -76,7 +76,7 @@
         <alert-banner-ng2></alert-banner-ng2>       
         <!--OAUTH SCREEN HEADER-->
         <#if (RequestParameters['oauth'])?? || nav == "oauth-error" || nav == "oauth-error-mismatch">            
-            <div class="container" >
+            <div class="container">
                 <div id="main" role="main">
                     <div class="row top-header">
                         <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
@@ -99,7 +99,7 @@
                 <header2-ng2></header2-ng2>
             </@orcid.checkFeatureStatus>
          
-            <div class="container" id="main-content"
+            <div class="container"
              <@orcid.checkFeatureStatus 'NEW_FOOTER'> style="min-height: calc(100% - 118px);" </@orcid.checkFeatureStatus> 
              >
                 <@orcid.checkFeatureStatus featureName='ENABLE_HEADER2' enabled=false>
