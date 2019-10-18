@@ -5,6 +5,22 @@
     <body
     <@orcid.checkFeatureStatus 'WIDE_GRID'> class="wide-grid" </@orcid.checkFeatureStatus> 
     >
+    <div id="skip-link">
+        <a href="#main" class="a11yLinks">Skip to main content</a>
+    </div>
+
+    <style type="text/css">
+        .a11yLinks {
+            position: absolute !important;
+        }
+        .a11yLinks:not(:focus) {
+            clip: rect(1px 1px 1px 1px);
+            clip: rect(1px, 1px, 1px, 1px);
+            overflow: hidden;
+            height: 1px;
+        }
+    </style>    
+
     <root-cmp role="presentation">
         <style type="text/css">
             body, html {
@@ -60,7 +76,7 @@
         <alert-banner-ng2></alert-banner-ng2>       
         <!--OAUTH SCREEN HEADER-->
         <#if (RequestParameters['oauth'])?? || nav == "oauth-error" || nav == "oauth-error-mismatch">            
-            <div class="container">
+            <div class="container" >
                 <div id="main" role="main">
                     <div class="row top-header">
                         <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
@@ -83,7 +99,7 @@
                 <header2-ng2></header2-ng2>
             </@orcid.checkFeatureStatus>
          
-            <div class="container"
+            <div class="container" id="main-content"
              <@orcid.checkFeatureStatus 'NEW_FOOTER'> style="min-height: calc(100% - 118px);" </@orcid.checkFeatureStatus> 
              >
                 <@orcid.checkFeatureStatus featureName='ENABLE_HEADER2' enabled=false>
