@@ -117,10 +117,6 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     private OrcidProfileUserDetails createUserDetails(ProfileEntity profile) {
         String primaryEmail = retrievePrimaryEmail(profile);
 
-        if(StringUtils.isEmpty(primaryEmail)) {
-            primaryEmail = emailDao.findNewestVerifiedOrNewestEmail(profile.getId());
-        }
-        
         OrcidProfileUserDetails userDetails = null;
 
         if (profile.getOrcidType() != null) {
@@ -140,11 +136,15 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         try {
             return emailDao.findPrimaryEmail(orcid).getEmail();
         } catch (javax.persistence.NoResultException nre) {
-            String message = String.format("User with orcid %s have no primary email", orcid);
+            String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(profile.getId());
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            
+            String message = String.format("User with orcid %s have no primary email, so, we are setting %s as primary, since it is the newest verified email, or, the newest email in case non is verified", orcid, alternativePrimaryEmail);
             LOGGER.error(message);
-            slackManager.sendSystemAlert(message);            
-        }
-        return null;
+            
+            slackManager.sendSystemAlert(message);
+            return alternativePrimaryEmail;
+        }        
     }
 
     private void checkStatuses(ProfileEntity profile) {
