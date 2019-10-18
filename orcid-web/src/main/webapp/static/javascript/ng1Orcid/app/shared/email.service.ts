@@ -32,7 +32,6 @@ export class EmailService {
     private primaryEmail: any;
     private unverifiedSetPrimary: boolean;
     private url: string;
-    private anyEmailVerified: boolean;   
 
     notifyObservable$ = this.notify.asObservable();
 
@@ -54,7 +53,6 @@ export class EmailService {
         this.inputEmail = null;
         this.primaryEmail = null;
         this.unverifiedSetPrimary = false;
-        this.anyEmailVerified = false;
         this.url = getBaseUri() + '/account/emails.json';
     }
 
@@ -152,10 +150,6 @@ export class EmailService {
         return this.primaryEmail;
     }
 
-    isAnyEmailVerified(): boolean {
-        return this.anyEmailVerified;
-    }
-    
     getEmails(): Observable<any> {
         return this.http.get(
             this.url
@@ -167,10 +161,6 @@ export class EmailService {
                     for (let i in data['emails']){
                         if (data['emails'][i].primary == true){
                             this.primaryEmail = data['emails'][i];
-                        }
-                        
-                        if (data['emails'][i].verified == true){
-                            this.anyEmailVerified = true;
                         }
                     }                                                
                 }

@@ -91,7 +91,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                if(this.emailService.getEmailPrimary().verified){
+                if( this.emailService.getEmailPrimary().verified ){
                     this.fundingService.notifyOther({ funding:funding });
                     if(funding == undefined) {
                         this.modalService.notifyOther({action:'open', moduleId: 'modalFundingForm', edit: false});
@@ -120,7 +120,7 @@ export class FundingComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                if(this.emailService.getEmailPrimary().verified){
+                if( this.emailService.getEmailPrimary().verified ){
                     this.fundingService.notifyOther({funding:funding});
                     this.modalService.notifyOther({action:'open', moduleId: 'modalFundingDelete'});
                 }else{

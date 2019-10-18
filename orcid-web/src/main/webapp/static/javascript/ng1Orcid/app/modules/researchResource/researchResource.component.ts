@@ -97,7 +97,7 @@ export class ResearchResourceComponent implements AfterViewInit, OnDestroy, OnIn
         .subscribe(
             data => {
                 this.emails = data;
-                if(this.emailService.getEmailPrimary().verified){
+                if( this.emailService.getEmailPrimary().verified ){
                     this.researchResourceService.notifyOther({researchResource:researchResource});
                     this.modalService.notifyOther({action:'open', moduleId: 'modalResearchResourceDelete'});
                 }else{

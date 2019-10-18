@@ -97,7 +97,7 @@ export class PeerReviewComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                if(this.emailService.getEmailPrimary().verified){
+                if( this.emailService.getEmailPrimary().verified ){
                     this.peerReviewService.notifyOther({peerReview:peerReview});
                     this.modalService.notifyOther({action:'open', moduleId: 'modalPeerReviewDelete'});
                 }else{

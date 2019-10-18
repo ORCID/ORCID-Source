@@ -276,7 +276,7 @@ export class PersonComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.emails = data;
-                if(this.emailService.getEmailPrimary().verified){
+                if( this.emailService.getEmailPrimary().verified ){
                     this.genericService.open(modalId);
                 }else{
                     this.modalService.notifyOther({action:'open', moduleId: 'modalemailunverified'});
