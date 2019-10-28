@@ -1,5 +1,6 @@
 __webpack_public_path__ = window.resourceBasePath;
-
+  
+require("../../css/orcid.material.scss");
 require("../../css/glyphicons.css");
 require("../../css/social.css");
 //  require("../../css/filetypes.css");

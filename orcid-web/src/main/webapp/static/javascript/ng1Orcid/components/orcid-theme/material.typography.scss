@@ -1,0 +1,46 @@
+@import '~@angular/material/_theming';
+// .
+// .
+// MATERIAL TYPOGRAPHY
+// .
+// .
+// Setup Orcid typography
+// More info about material typography on https://github.com/angular/components/blob/75686e87fc8d5eb3d3e4a1bf6fa771c7467d328d/guides/typography.md
+$orcid-material-typography: mat-typography-config(
+  $font-family: '"Noto Sans", sans-serif',
+  $display-4: mat-typography-level(96px, 96px, 200, $letter-spacing: -1.5px),
+  $display-3: mat-typography-level(60px, normal, 300, $letter-spacing: -0.5px),
+  $display-2: mat-typography-level(48px, 48px, 400, $letter-spacing: 0px),
+  $display-1: mat-typography-level(32px, normal, 500, $letter-spacing: 0.25px),
+  $headline: mat-typography-level(24px, normal, 500, $letter-spacing: 0px),
+  $title: mat-typography-level(20px, normal, 400, $letter-spacing: 0.15px),
+  $subheading-2: mat-typography-level(16px, 28px, 400, $letter-spacing: 0.15px),
+  $subheading-1: mat-typography-level(14px, 24px, 400, $letter-spacing: 0.1px),
+  $body-2: mat-typography-level(16px, 1.75, 400),
+  $body-1: mat-typography-level(14px, 20px, 400),
+  $caption: mat-typography-level(12px, 16px, 400, $letter-spacing: 0.4px),
+  $button: mat-typography-level(14px, normal, 700, $letter-spacing: 1.3px),
+  $input: mat-typography-level(inherit, 1.125, 400, $letter-spacing: 0.2px),
+);
+
+$orcid-custom-typography: (
+  title-alt: mat-typography-level(18px, normal, 600, $letter-spacing: 1.3px),
+);
+// .
+// .
+// MATERIAL TYPOGRAPHY OVERWRITES
+// .
+// .
+// Overwrites of the mat-base-typography mixing
+// https://github.com/angular/components/blob/75686e87fc8d5eb3d3e4a1bf6fa771c7467d328d/src/material/core/typography/_typography.scss#L73
+@mixin mat-base-typography-overwrites($config) {
+  // Makes the button's font usable with a class
+  .mat-button-font {
+    font: {
+      family: mat-font-family($config, button);
+      size: mat-font-size($config, button);
+      weight: mat-font-weight($config, button);
+    }
+    letter-spacing: mat-letter-spacing($config, button) !important;
+  }
+}

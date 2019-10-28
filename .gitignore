@@ -31,3 +31,5 @@ orcid-message-listener/logs/
 orcid-web/src/main/resources/cdn_active_url.txt
 .vscode/settings.json
 orcid-web/.tern-project
+orcid-web/src/main/webapp/static/javascript/ng1Orcid/components/**/node_modules/**
+orcid-web/src/main/webapp/static/javascript/ng1Orcid/.bit/**
