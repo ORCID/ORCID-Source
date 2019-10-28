@@ -10,6 +10,7 @@ In addition to the production environment at https://orcid.org, ORCID offers a d
 * Supports XML and JSON
 * Supports [OAuth 2.0](https://oauth.net/2/)
 * Supports [OpenID Connect](http://openid.net/connect/)
+* Supports CORS (For Public API, [Implicit OAuth](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) and [Force Logout](http://members.orcid.org/api/resources/customize#logout) only) JSONP  for CORS is not supported
 
 ## Getting Credentials
 To access the API you will use a client ID and secret issued by ORCID.
