@@ -1852,6 +1852,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     line-height: 31px;
 }
 
+.lang-rl .workspace-accordion-header .popover-help-container {
+    margin-left: auto;
+    margin-right: 6px;
+}
+
 .work-bulk-actions .bulk-edit-privacy-help-container {
     margin-left: 0;
     line-height: 0;
@@ -4390,7 +4395,15 @@ ul.sources-edit-list {
     margin: 0;
     padding: 0;
     position: relative;
-    width: 100%
+    width: 100%;
+}
+
+ul.sources-edit-list > li > .row{
+    display: flex; 
+}
+
+.lang-rl ul.sources-edit-list > li > .row {
+    flex-direction: row-reverse;
 }
 
 ul.sources-edit-list>li {
@@ -4442,6 +4455,13 @@ ul.sources-edit-list>li {
     left: -246px;
 }
 
+.workspace-accordion-header.clearfix > .row {
+    display: flex;
+}
+
+.lang-rl .workspace-accordion-header.clearfix > .row {
+    flex-direction: row-reverse;
+}
 #workspace-personal span.glyphicon-pencil,.workspace-section-title div.glyphicon-pencil {
     padding: 3px 5px 5px 0;
     border-radius: 50%;
@@ -9464,6 +9484,11 @@ emails-ng2 h3.workspace-section-label {
     display: flex;
 }
 
+.lang-rl .affiliation-heading {
+    flex-direction: row-reverse;
+}
+
+
 body manage-members-find-client-ng2 .ui-chkbox .ui-chkbox-box.ui-state-active {
     background-color: white;
     border-color: white;
@@ -9850,4 +9875,12 @@ delegates-ng2, alt-signin-accounts-ng2
 /* remove red shadow on firefox required inputs  */
 input:required, input:invalid {
     box-shadow:none;
+}
+
+.lang-rl .bulkEditCheckbox {
+    float: right;
+}
+
+.workspace-publications > li.bottom-margin-small {
+    margin-bottom: 15px;
 }

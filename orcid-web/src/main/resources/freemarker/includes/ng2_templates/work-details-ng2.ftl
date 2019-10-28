@@ -48,7 +48,7 @@
                 <div class="row" *ngIf="group.activePutCode == work.putCode?.value">
                     <div class="col-md-9 col-sm-9 col-xs-7">
                         <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
-                            <div *ngIf="!isPublicPage" class="left rightBuffer"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" (change)="bulkEditSelect()" class="bulk-edit-input ng-pristine ng-valid"></div> 
+                            <div *ngIf="!isPublicPage" class="left rightBuffer bulkEditCheckbox"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" (change)="bulkEditSelect()" class="bulk-edit-input ng-pristine ng-valid"></div> 
                         </@orcid.checkFeatureStatus>
                         <h3 class="workspace-title leftBuffer">
                             <span id="work.title">{{work.title.value}}</span>
