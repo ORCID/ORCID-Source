@@ -120,7 +120,7 @@ These instructions are for Spring Tool Suite for Eclipse.
 
 * Select Configure (at the bottom) -> Select "Convert to Maven Project"
 
-* In package Explorer Right click on ORCID-Sourc 
+* In package Explorer Right click on ORCID-Source 
 
 * Select Import -> "Existing Maven Projects"
 
@@ -170,7 +170,7 @@ Do this before the '-vmargs' param
 
 * In VM Arguments add the following (changing the /Users/rcpeters/git/ORCID-Source path to your repo checkout)
 
-        -Dsolr.solr.home=/Users/rcpeters/git/ORCID-Source/orcid-solr-web/src/main/webapp/solr -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties
+         -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties
 
 * Click Ok
 
@@ -186,7 +186,7 @@ Do this before the '-vmargs' param
 
 * Right click on "Apache Tomcat Server".
 
-* Select "Add and Remove" Add orcid-api-web, orcid-pub-web, orcid-scheduler-web, orcid-solr-web and orcid-web
+* Select "Add and Remove" Add orcid-api-web, orcid-pub-web, orcid-scheduler-web and orcid-web
 
 ### Setting up Eclipse to use ORCID formatting rules
 
@@ -256,7 +256,7 @@ When this it is done, restart the server.
 
 * In VM Arguments add the following (changing org.orcid.persistence.path to the path to the directory you created above):
 
-        -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties -Dorg.orcid.persistence.solr.url=http://localhost:8080/orcid-solr-web -Dorg.orcid.persistence.solr.read.only.url=http://localhost:8080/orcid-solr-web -Dorg.orcid.persistence.messaging.enabled=true -Dorg.orcid.persistence.path="/Users/rcpeters/git/mq"
+        -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties -Dorg.orcid.persistence.messaging.enabled=true -Dorg.orcid.persistence.path="/Users/rcpeters/git/mq"
 
 * Click Ok
 
@@ -270,7 +270,27 @@ When this it is done, restart the server.
 
 * In the Servers tab, right click on "Message Listener" and click Start.
 
-### Configure frontend (Angular2)
+## Configure SOLR
+A local SOLR server is needed in order to test search functionality locally. SOLR includes its own development environment, which runs separately from the Tomact servers you created in Eclipse. 
+
+To install and configure SOLR locally, follow the steps in solr-config/README.md (https://github.com/ORCID/ORCID-Source/tree/master/solr-config)
+
+Optionally, you can connect your local environment to the QA SOLR instance by adding these to your VM Arguments
+
+* Double Click "Apache Tomcat Server"
+
+* Select Open launch configuration
+
+* Select Arguments 
+
+* In VM Arguments add the following to the existing list of arguments (don't delete the existing args!). Get the current QA SOLR machine from another developer.
+
+         -Dorg.orcid.persistence.solr.url=http://[QA SOLR machine]/qa/solr -Dorg.orcid.persistence.solr.read.only.url=http://[QA SOLR machine]/qa/solr  
+
+* Click Ok
+         
+
+## Configure frontend (Angular)
 
 Follow next instructions in order to generate the core javascript file.
 
@@ -278,8 +298,7 @@ See [How to produce angular_orcid_generated.js](https://github.com/ORCID/ORCID-S
 For background about webpack see [Webpack setup](https://github.com/ORCID/ORCID-Source/tree/master/orcid-web/src/main/webapp/static/javascript)
 .
 
-
-### Testing your set up
+## Test your setup
 
 * Right click on "Apache Tomcat Server"
 
@@ -289,7 +308,6 @@ For background about webpack see [Webpack setup](https://github.com/ORCID/ORCID-
 
 * You should see a login page.
 
-* Click OK.
 
 ## Updating
 

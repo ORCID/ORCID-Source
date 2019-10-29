@@ -47,26 +47,29 @@ You should end up with
 
 Message listener configuration will allow developers to feed the local solr instance with the public records comming from the public API
 
-Modify the file message-listener.properties, by changing the following variables: 
+If you have changed the SOLR port from the default 8983, modify the following variables in message-listener.properties: 
 
 ```
 org.orcid.persistence.solr.url=http://localhost:<SOLR_PORT>/solr
 org.orcid.persistence.solr.read.only.url=http://localhost:<SOLR_PORT>/solr
+```  
+Also check that the following properties are set in message-listener.properties:
+
+```
 org.orcid.persistence.messaging.solr_indexing.enabled=true
 org.orcid.persistence.messaging.solr_org_indexing.enabled=true
 org.orcid.persistence.messaging.solr_funding_sub_type_indexing.enabled=true
-```   
+``` 
 
 ### Web and API's configuration
 
 This will allow the web page and API's to use Solr to perform queries.
 
-Modify the file staging-persistence.properties, by changing the following variables:
+If you have changed the SOLR port from the default 8983, modify the following variables in staging-persistence.properties:
 
 ```
 org.orcid.persistence.solr.url=http://localhost:<SOLR_PORT>/solr
 org.orcid.persistence.solr.read.only.url=http://localhost:<SOLR_PORT>/solr
-org.orcid.persistence.solr.legacy.on=false
 ```
 
 ## Feed Solr
@@ -77,6 +80,7 @@ Now we need to feed solr with local data and confirm it is working as expected:
 
 ```sql
 update profile set indexing_status='REINDEX';
+update org_disambiguated set indexing_status='REINDEX';
 ```
 
 2. Start the message listener server
