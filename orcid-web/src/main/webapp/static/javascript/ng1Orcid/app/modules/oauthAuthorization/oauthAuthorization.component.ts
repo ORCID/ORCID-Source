@@ -472,10 +472,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                     return;
                 }
                 if (this.duplicates.length > 0 ) {
-                    for(var i = 0; i < this.duplicates.length; i++){
-                        this.getAffiliations(this.duplicates[i]);
-                    }
-                    this.cdr.detectChanges();
                     this.showRegisterProcessing = false;
                     this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates', duplicates: this.duplicates});
                 } else {
@@ -491,35 +487,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         } 
         );
 
-    };
-
-    getAffiliations(dup: any){
-        if(!dup['affiliationsRequestSent']){
-            dup['affiliationsRequestSent'] = true;
-            dup['affiliations'] = [];
-            var orcid = dup.orcid;
-            this.searchSrvc.getAffiliations(orcid).subscribe(
-                affiliationsResult => {
-                    if(affiliationsResult.employments){
-                        for(var i in affiliationsResult.employments['employment-summary']){
-                            if (dup['affiliations'].indexOf(affiliationsResult.employments['employment-summary'][i]['organization']['name']) < 0){
-                                dup['affiliations'].push(affiliationsResult.employments['employment-summary'][i]['organization']['name']);
-                            }
-                        }
-                    }
-                    if(affiliationsResult.educations){
-                        for(var i in affiliationsResult.educations['education-summary']){
-                            if (dup['affiliations'].indexOf(affiliationsResult.educations['education-summary'][i]['organization']['name']) < 0){
-                                dup['affiliations'].push(affiliationsResult.educations['education-summary'][i]['organization']['name']);
-                            }
-                        }
-                    }
-                },
-                error => {
-                    console.log("error getting affiliations for " + orcid);
-                } 
-            ); 
-        }  
     };
 
     sendReactivationEmail(email, $event?): void {
