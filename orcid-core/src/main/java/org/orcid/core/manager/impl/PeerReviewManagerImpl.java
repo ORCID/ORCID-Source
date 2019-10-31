@@ -166,25 +166,22 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             externalIDValidator.validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
             externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }
-        PeerReviewEntity updatedEntity = new PeerReviewEntity();        
-        
         orcidSecurityManager.checkSource(existingEntity);        
         
-        jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, updatedEntity);
-        updatedEntity.setProfile(new ProfileEntity(orcid));
-        updatedEntity.setVisibility(originalVisibility);
+        jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, existingEntity);        
+        existingEntity.setVisibility(originalVisibility);
         
         //Be sure it doesn't overwrite the source
-        updatedEntity.setSourceId(existingSourceId);
-        updatedEntity.setClientSourceId(existingClientSourceId);
-        updatedEntity.setAssertionOriginSourceId(existingAssertionOriginSourceId);
+        existingEntity.setSourceId(existingSourceId);
+        existingEntity.setClientSourceId(existingClientSourceId);
+        existingEntity.setAssertionOriginSourceId(existingAssertionOriginSourceId);
         createIssnGroupIdIfNecessary(peerReview);
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
-        updatedEntity.setOrg(updatedOrganization);
-        updatedEntity = peerReviewDao.merge(updatedEntity);
+        existingEntity.setOrg(updatedOrganization);
+        existingEntity = peerReviewDao.merge(existingEntity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(updatedEntity, ActionType.UPDATE));
-        return jpaJaxbPeerReviewAdapter.toPeerReview(updatedEntity);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE));
+        return jpaJaxbPeerReviewAdapter.toPeerReview(existingEntity);
     }
 
     private void createIssnGroupIdIfNecessary(PeerReview peerReview) {
