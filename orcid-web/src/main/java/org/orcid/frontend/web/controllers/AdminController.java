@@ -77,6 +77,7 @@ public class AdminController extends BaseController {
     private static final String OUT_STRING_SEPARATOR = "		";
     private static final String OUT_STRING_SEPARATOR_SINGLE_SPACE = " ";
     private static final String OUT_NOT_AVAILABLE = "N/A";
+    private static final String OUT_NOT_AVAILABLE_ID = "N/A                ";
     private static final String OUT_NEW_LINE = "\n";
 
     private void isAdmin(HttpServletRequest serverRequest, HttpServletResponse response) throws IllegalAccessException {
@@ -317,11 +318,16 @@ public class AdminController extends BaseController {
 
             for (String idEmail : idEmailList) {
                 idEmail = idEmail.trim();
-                boolean isOrcid = OrcidStringUtils.isValidOrcid(idEmail);
+                boolean isOrcid = false;
+                if(OrcidStringUtils.getOrcidNumber(idEmail)!=null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(idEmail))) {
+                    isOrcid= true;
+                }
                 String orcid = idEmail;
                 if (!isOrcid) {
                     Map<String, String> email = findIdByEmailHelper(idEmail);
                     orcid = email.get(idEmail);
+                } else {
+                    orcid = OrcidStringUtils.getOrcidNumber(idEmail);
                 }
 
                 try {
@@ -362,9 +368,9 @@ public class AdminController extends BaseController {
   
                     } else {
                         if (isOrcid) {
-                            builder.append(OUT_NOT_AVAILABLE).append(OUT_STRING_SEPARATOR).append(idEmail);
+                            builder.append(orcid).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
                         } else {
-                            builder.append(idEmail).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
+                            builder.append(OUT_NOT_AVAILABLE_ID).append(OUT_STRING_SEPARATOR).append(idEmail);
                         }
                     }
                 } catch (Exception e) {
