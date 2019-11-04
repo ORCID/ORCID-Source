@@ -406,13 +406,13 @@
             <label for="orcid_to_unreview"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
             <input type="text" id="orcid_to_unreview" (keyup.enter)="lookupIdOrEmails()" [(ngModel)]="csvIdsOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
         </div>
-        <div class="controls save-btns pull-left" *ngIf="!idsString.length">
+        <div class="controls save-btns pull-left">
             <span id="bottom-confirm-lookup" (click)="lookupIdOrEmails()" class="btn btn-primary"><@orcid.msg 'admin.lookup_id_email.button'/></span>
         </div>        
         <div *ngIf="idsString.length">
             <h3><@orcid.msg 'admin.lookup_id_email.results'/></h3>
             <div>
-                <textarea style="height:100px; width: 500px; resize: none;" readonly="readonly" [innerHTML]="idsString"></textarea><br>
+                <textarea style="height:100px; width: 800px; resize: none;" readonly="readonly" [innerHTML]="idsString"></textarea><br>
                 <div class="controls save-btns pull-left bottom-margin-small">
                     <a href="" class="cancel-action" (click)="noResults = false" (click)="idsString = ''" (click)="csvIdsOrEmails = ''" (click)="showLookupIdOrEmail = false"><@orcid.msg 'freemarker.btnclose'/></a>
                 </div>
