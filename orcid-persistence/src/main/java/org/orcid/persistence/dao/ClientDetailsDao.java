@@ -50,4 +50,5 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     List<String> findLegacyClientIds();
     
     void changePersistenceTokensProperty(String clientId, boolean isPersistenTokensEnabled);
+
 }

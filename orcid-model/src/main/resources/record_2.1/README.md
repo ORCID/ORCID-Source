@@ -45,7 +45,7 @@ v2.1 is a current stable release of the ORCID API.
 
 ## Changes from Version 2.0:
 
-With version 2.1, ORCID iDs are expressed in the cannonical form with the https perfix.
+With version 2.1, ORCID iDs are expressed in the canonical form with the https prefix.
 
 Example of a source ORCID iD in 2.1
 ~~~~
@@ -109,6 +109,12 @@ For working with json see [ORCID conversion util](https://github.com/ORCID/orcid
 The swagger interfaces to the API available at:
 - [member](https://api.orcid.org/v2.1/)
 - [public](https://pub.orcid.org/v2.1/)
+
+#### CORS
+CORS is supported for the Public API, [Implicit OAuth](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) and 
+and [Force Logout](http://members.orcid.org/api/resources/customize#logout) only. JSONP for CORS is not supported. For more information on CORS and supported content types please visit our [Content Negotiation page](https://github.com/ORCID/ORCID-Source/blob/master/CONTENT_NEGOTIATION.md).
+
+
 
 ### Scopes
 | Scope           | Request method | Obtain Access Token Through	| Expires In | API  |

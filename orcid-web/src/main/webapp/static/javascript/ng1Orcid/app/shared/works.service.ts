@@ -3,14 +3,15 @@ declare var bibtexParse: any;
 import { Injectable } 
     from '@angular/core';
 
-import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
+import { HttpClient, HttpHeaders, HttpParams } 
      from '@angular/common/http';
 
-import { Observable, Subject } 
+import { Observable, Subject, of } 
     from 'rxjs';
 
-import { catchError, map, tap } 
+import {  map, tap, mergeMap } 
     from 'rxjs/operators';
+import { Works } from '../../components/types';
 
 @Injectable({
     providedIn: 'root',
@@ -29,10 +30,15 @@ export class WorksService {
     public labelsMapping: any;
     public loading: boolean;
     public showLoadMore: boolean;
+
+    paginationTotalAmountOfWorks: number; 
+    paginationBatchSize = 50;
+    paginationIndex = 0; 
+    showPagination = false;
     
     notifyObservable$ = this.notify.asObservable();
 
-    constructor( private http: HttpClient ){
+    constructor( private http: HttpClient){
         this.bibtexJson = {};
         this.constants = { 
             'access_type': { 
@@ -627,5 +633,35 @@ export class WorksService {
             { headers: this.headers }
         )
     }
+
+    
+    getWorksByPage(sort, sortAsc, index, pageSize, isPublicPage) {
+        const url = `${getBaseUri()}/${isPublicPage? orcidVar.orcidId : "works"}/worksPage.json?offset=${index * pageSize}&sort=${sort}&sortAsc=${sortAsc}&pageSize=${pageSize}`
+
+        return of(true)
+          .pipe(
+            map(() => {
+              this.loading = true;
+              this.paginationIndex = index;
+              this.paginationBatchSize = pageSize;
+            })
+          )
+          .pipe(
+            mergeMap(
+              () =>
+                this.http.get(url) as Observable<Works>
+            )
+          )
+          .pipe(
+            map((data: Works) => {
+              this.loading = false;
+              this.groups = data.groups;
+              this.paginationTotalAmountOfWorks = data.totalGroups;
+              this.showPagination = this.paginationTotalAmountOfWorks > 50 ? true: false; 
+              this.groupsLabel = this.showPagination? null : this.groups.length + " of " + data.totalGroups;
+            })
+          );
+      }
+
     
 }

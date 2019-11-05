@@ -24,13 +24,12 @@ import org.orcid.jaxb.model.record_v2.Keyword;
 import org.orcid.jaxb.model.record_v2.Keywords;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
 public class ProfileKeywordManagerTest extends BaseTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
+            "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
     private String claimedOrcid = "0000-0000-0000-0002";
@@ -41,7 +40,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Resource
     private ProfileKeywordManager profileKeywordManager;
-    
+
     @Resource
     private ProfileKeywordDao profileKeywordDao;
 
@@ -52,7 +51,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(profileKeywordManager, "sourceManager", sourceManager); 
+        TargetProxyHelper.injectIntoProxy(profileKeywordManager, "sourceManager", sourceManager);
     }
 
     @AfterClass
@@ -85,55 +84,33 @@ public class ProfileKeywordManagerTest extends BaseTest {
         assertNotNull(keyword);
         assertEquals(Visibility.LIMITED, keyword.getVisibility());
     }
-    
-    @Test
-    public void testCreateKeywordWithUserOBOClient() {
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));
-        
-        Keyword keyword = getKeyword();
-        keyword = profileKeywordManager.createKeyword(claimedOrcid, keyword, true);
-
-        // check user obo info
-        ProfileKeywordEntity entity = profileKeywordDao.find(keyword.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-        
-        // check user obo info isn't lost on update
-        userOboClient.setUserOBOEnabled(false);
-        keyword.setContent("updated");
-        profileKeywordManager.updateKeyword(claimedOrcid, keyword.getPutCode(), keyword, true);
-        
-        entity = profileKeywordDao.find(keyword.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-    }
 
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Keyword keyword = getKeyword();
         keyword.setContent(keyword.getContent() + " fromUI1");
-        
+
         keyword = profileKeywordManager.createKeyword(claimedOrcid, keyword, false);
         keyword = profileKeywordManager.getKeyword(claimedOrcid, keyword.getPutCode());
 
         assertNotNull(keyword);
         assertEquals(Long.valueOf(1), keyword.getDisplayIndex());
     }
-    
+
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Keyword keyword = getKeyword();
-        keyword.setContent(keyword.getContent() + " fromAPI1");        
-        
+        keyword.setContent(keyword.getContent() + " fromAPI1");
+
         keyword = profileKeywordManager.createKeyword(claimedOrcid, keyword, true);
         keyword = profileKeywordManager.getKeyword(claimedOrcid, keyword.getPutCode());
 
         assertNotNull(keyword);
         assertEquals(Long.valueOf(0), keyword.getDisplayIndex());
     }
-    
+
     @Test
     public void getAllTest() {
         String orcid = "0000-0000-0000-0003";
@@ -142,16 +119,16 @@ public class ProfileKeywordManagerTest extends BaseTest {
         assertNotNull(elements.getKeywords());
         assertEquals(5, elements.getKeywords().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
-        for(Keyword element : elements.getKeywords()) {
-            if(9 == element.getPutCode()){
+        for (Keyword element : elements.getKeywords()) {
+            if (9 == element.getPutCode()) {
                 found1 = true;
-            } else if(10 == element.getPutCode()){
+            } else if (10 == element.getPutCode()) {
                 found2 = true;
-            } else if(11 == element.getPutCode()){
+            } else if (11 == element.getPutCode()) {
                 found3 = true;
-            } else if(12 == element.getPutCode()){
+            } else if (12 == element.getPutCode()) {
                 found4 = true;
-            } else if(13 == element.getPutCode()){
+            } else if (13 == element.getPutCode()) {
                 found5 = true;
             } else {
                 fail("Invalid put code found: " + element.getPutCode());
@@ -163,17 +140,17 @@ public class ProfileKeywordManagerTest extends BaseTest {
         assertTrue(found4);
         assertTrue(found5);
     }
-    
+
     @Test
     public void getPublicTest() {
-        String orcid = "0000-0000-0000-0003";        
+        String orcid = "0000-0000-0000-0003";
         Keywords elements = profileKeywordManager.getPublicKeywords(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getKeywords());
         assertEquals(1, elements.getKeywords().size());
         assertEquals(Long.valueOf(9), elements.getKeywords().get(0).getPutCode());
     }
-    
+
     private Keyword getKeyword() {
         Keyword keyword = new Keyword();
         keyword.setContent("keyword-1");

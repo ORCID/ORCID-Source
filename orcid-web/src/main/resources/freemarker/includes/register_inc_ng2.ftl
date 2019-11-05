@@ -41,7 +41,7 @@
                     <div *ngFor="let error of registrationForm.email.errors" [innerHTML]="error"></div>
                 </span>
                 <span role="alert" class="orcid-error" *ngIf="showDuplicateEmailError">{{errorEmail}} 
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm(errorEmail)">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm($event, errorEmail)">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmail}}
                     ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span role="alert" class="orcid-error" *ngIf="showDeactivatedError">
@@ -74,7 +74,7 @@
                     <div *ngFor="let error of registrationForm.emailsAdditional[i].errors;let i = index;trackBy:trackByIndex" [innerHTML]="error"></div>
                 </span>
                 <span role="alert" class="orcid-error" *ngIf="showEmailsAdditionalDuplicateEmailError[i]">{{errorEmailsAdditional[i]}} 
-                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm(errorEmailsAdditional[i])">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[i]}} ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
+                    ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_1_ng2")} <a (click)="switchForm($event, errorEmailsAdditional[i])">${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_2")}</a>${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_3_ng2")} {{errorEmailsAdditional[i]}} ${springMacroRequestContext.getMessage("oauth.registration.duplicate_email_4_ng2")}
                 </span>
                 <span role="alert" class="orcid-error" *ngIf="showEmailsAdditionalDeactivatedError[i]">                
                     ${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.1")}<a (click)="sendEmailsAdditionalReactivationEmail(i)">${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.2")}</a>${springMacroRequestContext.getMessage("orcid.frontend.verify.deactivated_email.3")}

@@ -25,7 +25,7 @@ A persistent identifier must be provided in the IDP metadata sent to ORCID, any 
 
 * eduPersonUniqueID (ePUID)
 
-* eduPersonTargetedID (ePTID)
+* eduPersonTargetedID (ePTIDs must be surrounded by the NameID tag, see https://www.switch.ch/aai/support/documents/attributes/edupersontargetedid/)
 
 Transient name identifiers such as ePPN will not be accepted
 

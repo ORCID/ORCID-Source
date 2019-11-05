@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -23,12 +24,15 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.TargetProxyHelper;
 
 public class ExternalIdentifierManagerTest extends BaseTest {
@@ -52,7 +56,13 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     @Resource(name = "externalIdentifierManagerV3")
     private ExternalIdentifierManager externalIdentifierManager;
-
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -61,7 +71,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     @Before
     public void before() {
         TargetProxyHelper.injectIntoProxy(externalIdentifierManager, "sourceManager", mockSourceManager);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);     
     }
 
     @After
@@ -69,6 +79,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(externalIdentifierManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
     }
+    
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
@@ -203,7 +214,8 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));    
+        
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
         PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
@@ -226,7 +238,8 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         }
         
         //make a duplicate as a different assertion origin
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));  
+        
         extId2 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId2, true);
         
         //wrong sources:

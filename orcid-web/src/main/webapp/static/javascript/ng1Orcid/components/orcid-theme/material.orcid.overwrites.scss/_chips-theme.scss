@@ -1,0 +1,56 @@
+// Overwrites for
+// https://github.com/angular/components/blob/8.1.4/src/material/chips/_chips-theme.scss
+
+@import '~@angular/material/theming';
+
+@mixin mat-chips-theme-overwrites($theme) {
+  $primary: map-get($theme, primary);
+  $foreground: map-get($theme, foreground);
+  $divider-color: mat-color($foreground, divider);
+
+  $background: map-get($theme, background);
+  $unselected-background: mat-color($background, unselected-chip);
+  $unselected-foreground: mat-color($foreground, text);
+
+  .mat-chip.mat-standard-chip.orcid-outline-chip {
+    border-color: $divider-color;
+
+    // Overwrites hover and focus states to follow material definitions
+    // https://material.io/design/interaction/states.html#anatomy
+    &:hover::after {
+      opacity: 0.04;
+    }
+    &:focus {
+      outline: none;
+
+      &::after {
+        opacity: 0.12;
+      }
+    }
+
+    &.mat-chip-disabled {
+      &::after {
+        opacity: 0;
+      }
+
+      .mat-chip-remove,
+      .mat-chip-trailing-icon {
+        cursor: default;
+      }
+    }
+  }
+
+  .mat-chip.mat-standard-chip.mat-chip-selected.orcid-outline-chip {
+    // Overwrites active states to follow material definitions
+    // https://material.io/design/interaction/states.html#anatomy
+    @include mat-chips-color($unselected-foreground, $unselected-background);
+    &.mat-primary {
+      &::after {
+        background: mat-color($primary, 700);
+        opacity: 0.12;
+      }
+      color: mat-color($primary, 700);
+      border-color: mat-color($primary, 700);
+    }
+  }
+}

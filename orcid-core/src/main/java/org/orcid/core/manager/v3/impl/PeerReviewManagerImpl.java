@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -42,7 +43,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl implements PeerReviewManager {
-    
+
     @Resource
     private ISSNNormalizer issnNormaliser;
 
@@ -75,6 +76,9 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
@@ -118,7 +122,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         entity.setProfile(profile);
         setIncomingPrivacy(entity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
-        
+
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE));
@@ -132,7 +136,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         Source activeSource = sourceManager.retrieveActiveSource();
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(existingEntity);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
 
         // If request comes from the API perform validations
         if (isApiRequest) {
@@ -244,7 +248,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     public void removeAllPeerReviews(String orcid) {
         peerReviewDao.removeAllPeerReviews(orcid);
     }
-    
+
     private void createIssnGroupIdIfNecessary(PeerReview peerReview) {
         if (IssnGroupIdPatternMatcher.isIssnGroupType(peerReview.getGroupId())) {
             String normalisedIssn = issnNormaliser.normalise("issn", peerReview.getGroupId());

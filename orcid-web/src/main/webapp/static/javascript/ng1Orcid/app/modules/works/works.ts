@@ -17,6 +17,9 @@ import { WorksComponent }
 import { WorksMergeComponent } 
     from './worksMerge.component';
 
+import {MatProgressBarModule}
+    from '@angular/material/progress-bar';
+
 //User generated filters
 import { FilterImportWizardsPipe }
     from '../../pipes/filterImportWizardsNg2'; 
@@ -26,6 +29,11 @@ export const WorksModule = angular.module(
     'WorksModule', 
     []
 );
+
+import {MatPaginatorModule} from '@angular/material/paginator'
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+
+
 
 // This is the Angular 2 part of the module
 
@@ -40,7 +48,9 @@ export const WorksModule = angular.module(
             WorksMergeComponent,
         ],
         imports: [
-            CommonNg2Module
+            CommonNg2Module,
+            MatPaginatorModule,
+            BrowserAnimationsModule
         ],
         
     }

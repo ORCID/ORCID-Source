@@ -40,7 +40,7 @@ The default test data is in the following config files:
 
 5. Click Apply, then click Run
 
-####Command Line
+#### Command Line
 
 1. Goto project directory
 
@@ -56,19 +56,19 @@ The default test data is in the following config files:
 
 This should setup the test data and then run a test that verifies the data was persisted in the database. If this process succeeds, run the blackbox test as follows.
 
-###Run the Blackbox tests
+### Run the Blackbox tests
 
 **Note:** Test data setup above must be run before each Blackbox test run, so that the data is in the correct state to start the Black box test.
 
-####Eclipse
+#### Eclipse
 
-1. Make sure that the following modules are added to Tomcat (stop Tomcat before adding modules):
+1. Make sure that SOLR is up and running on port 8983, per [solr-config/README.md](https://github.com/ORCID/ORCID-Source/blob/master/solr-config/README.md)
+2. Make sure that the following modules are added to Tomcat (stop Tomcat before adding modules):
 
         orcid-api-web
         orcid-internal-api
         orcid-pub-web
         orcid-scheduler-web
-        orcid-solr-web
         orcid-web
 
 2. Start Tomcat and wait for it to be up
@@ -93,7 +93,7 @@ This should setup the test data and then run a test that verifies the data was p
 
 7. Click Apply, then click Run
 
-####Command Line
+#### Command Line
 
 1. Goto project directory
 

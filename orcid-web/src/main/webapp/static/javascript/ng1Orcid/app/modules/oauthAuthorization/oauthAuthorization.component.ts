@@ -271,7 +271,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     switchForm($event, email): void {
-        console.log( $event)
         $event.stopPropagation()
         $event.preventDefault()
         this.showDeactivatedError = false;
@@ -284,6 +283,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         } else if(re.test(window.location.pathname)){
             window.location.href = getBaseUri() + "/signin?loginId=" + email;
         } else {
+            this.authorizationForm.userName.value = email;
             this.showRegisterForm = !this.showRegisterForm;
             if (!this.personalLogin) {
                 this.personalLogin = true;
