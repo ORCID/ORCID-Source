@@ -72,8 +72,7 @@ export class SearchComponent implements OnDestroy, OnInit {
         return getBaseUri();
     };
 
-    getFirstResults(input: any){   
-        this.input.text = this.input.text.toUpperCase();     
+    getFirstResults(input: any){       
         this.showNoResultsAlert = false;
         this.allResults = new Array();
         this.numFound = 0;
