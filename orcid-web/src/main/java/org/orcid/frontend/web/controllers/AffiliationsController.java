@@ -352,7 +352,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     @RequestMapping(value = "/disambiguated/name/{query}", method = RequestMethod.GET)
     public @ResponseBody List<Map<String, String>> searchDisambiguated(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
         List<Map<String, String>> datums = new ArrayList<>();
-        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query, 0, limit, false)) {
+        for (OrgDisambiguated orgDisambiguated : orgDisambiguatedManager.searchOrgsFromSolr(query.toLowerCase(), 0, limit, false)) {
             datums.add(orgDisambiguated.toMap());
         }
         return datums;
