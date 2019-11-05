@@ -15,7 +15,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.impl.OtherNameManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -59,8 +58,8 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
     @Transactional
     public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        // Validate the otherName
         PersonValidator.validateOtherName(otherName, sourceEntity, true, isApiRequest, null);
+
         // Validate it is not duplicated
         List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         for (OtherNameEntity existing : existingOtherNames) {
@@ -84,11 +83,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
 
         if (sourceEntity.getSourceClient() != null) {
             newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-            
-            // user obo?
-            if (sourceEntity.getSourceClient().isUserOBOEnabled() && Features.USER_OBO.isActive()) {
-                newEntity.setAssertionOriginSourceId(orcid);
-            }
         }
 
         setIncomingPrivacy(newEntity, profile);

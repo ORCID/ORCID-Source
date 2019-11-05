@@ -1,0 +1,10 @@
+// Overwrites for:
+// https://github.com/angular/components/blob/8.1.4/src/material/chips/chips.scss
+
+mat-chip-list {
+  .mat-standard-chip.orcid-outline-chip {
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+  }
+}

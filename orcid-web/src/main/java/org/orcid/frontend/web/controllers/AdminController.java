@@ -23,6 +23,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -72,8 +73,11 @@ public class AdminController extends BaseController {
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
+    private static final String OUT_EMAIL_PRIMARY = "*";
     private static final String OUT_STRING_SEPARATOR = "		";
+    private static final String OUT_STRING_SEPARATOR_SINGLE_SPACE = " ";
     private static final String OUT_NOT_AVAILABLE = "N/A";
+    private static final String OUT_NOT_AVAILABLE_ID = "N/A                ";
     private static final String OUT_NEW_LINE = "\n";
 
     private void isAdmin(HttpServletRequest serverRequest, HttpServletResponse response) throws IllegalAccessException {
@@ -314,27 +318,59 @@ public class AdminController extends BaseController {
 
             for (String idEmail : idEmailList) {
                 idEmail = idEmail.trim();
-                boolean isOrcid = OrcidStringUtils.isValidOrcid(idEmail);
+                boolean isOrcid = false;
+                if(OrcidStringUtils.getOrcidNumber(idEmail)!=null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(idEmail))) {
+                    isOrcid= true;
+                }
                 String orcid = idEmail;
                 if (!isOrcid) {
                     Map<String, String> email = findIdByEmailHelper(idEmail);
                     orcid = email.get(idEmail);
+                } else {
+                    orcid = OrcidStringUtils.getOrcidNumber(idEmail);
                 }
 
                 try {
                     if (profileEntityManager.orcidExists(orcid)) {
-                        Email email = emailManager.findPrimaryEmail(orcid);
-                        if (email != null) {
-                            builder.append(email.getEmail());
+                        builder.append(orcid).append(OUT_STRING_SEPARATOR);
+                        
+                        Email primary = emailManager.findPrimaryEmail(orcid);
+                        if (primary != null) {
+                            builder.append(OUT_EMAIL_PRIMARY).append(primary.getEmail()).append(OUT_STRING_SEPARATOR_SINGLE_SPACE);
                         } else {
                             builder.append(OUT_NOT_AVAILABLE);
                         }
-                        builder.append(OUT_STRING_SEPARATOR).append(orcid);
+                        
+                        Emails emails = emailManagerReadOnly.getEmails(orcid);
+                        if (emails.getEmails().size()>0) {
+                            for (Email email:emails.getEmails()) {
+                              if(!email.isPrimary()) {
+                                  builder.append(email.getEmail()).append(OUT_STRING_SEPARATOR_SINGLE_SPACE);
+                              }
+                            }
+                            
+                        }
+                        
+                        Name recordName = recordNameManagerReadOnly.getRecordName(orcid);
+                        if (recordName != null) {
+                            builder.append(OUT_STRING_SEPARATOR);
+                            if (recordName.getGivenNames() != null && !PojoUtil.isEmpty(recordName.getGivenNames().getContent())) {
+                                builder.append(recordName.getGivenNames().getContent()).append(OUT_STRING_SEPARATOR_SINGLE_SPACE);
+                            }
+                            if (recordName.getFamilyName() != null && !PojoUtil.isEmpty(recordName.getFamilyName().getContent())) {
+                                builder.append(recordName.getFamilyName().getContent()).append(OUT_STRING_SEPARATOR_SINGLE_SPACE);
+                            }
+                            if (recordName.getCreditName() != null && !PojoUtil.isEmpty(recordName.getCreditName().getContent())) {
+                                builder.append("(").append(recordName.getCreditName().getContent()).append(")");
+                            }
+                        }
+                        
+  
                     } else {
                         if (isOrcid) {
-                            builder.append(OUT_NOT_AVAILABLE).append(OUT_STRING_SEPARATOR).append(idEmail);
+                            builder.append(orcid).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
                         } else {
-                            builder.append(idEmail).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
+                            builder.append(OUT_NOT_AVAILABLE_ID).append(OUT_STRING_SEPARATOR).append(idEmail);
                         }
                     }
                 } catch (Exception e) {

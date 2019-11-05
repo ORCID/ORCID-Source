@@ -101,4 +101,6 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     List<String> getIdsForUserOBORecords(String clientDetailsId, int max);
 
     void revertUserOBODetails(List<String> ids);
+    
+    String findNewestVerifiedOrNewestEmail(String orcid);
 }

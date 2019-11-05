@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.BiographyManager;
@@ -88,6 +89,9 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Mock
     private EmailFrequencyManager emailFrequencyManager;

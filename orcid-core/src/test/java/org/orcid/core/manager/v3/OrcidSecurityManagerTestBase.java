@@ -108,17 +108,23 @@ public abstract class OrcidSecurityManagerTestBase {
     @Resource(name = "peerReviewManagerReadOnlyV3")
     protected PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
-    @Mock
+    @Resource
     protected ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Mock
+    @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Mock
+    protected ProfileEntityCacheManager mockProfileEntityCacheManager;
+
+    @Mock
+    protected ClientDetailsEntityCacheManager mockClientDetailsEntityCacheManager;
     
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "clientDetailsEntityCacheManager", mockClientDetailsEntityCacheManager);
         ProfileEntity p1 = new ProfileEntity();
         p1.setClaimed(true);
         p1.setId(ORCID_1);
@@ -126,8 +132,8 @@ public abstract class OrcidSecurityManagerTestBase {
         ProfileEntity p2 = new ProfileEntity();
         p2.setClaimed(true);
         p2.setId(ORCID_2);
-        when(profileEntityCacheManager.retrieve(ORCID_1)).thenReturn(p1);
-        when(profileEntityCacheManager.retrieve(ORCID_2)).thenReturn(p2);
+        when(mockProfileEntityCacheManager.retrieve(ORCID_1)).thenReturn(p1);
+        when(mockProfileEntityCacheManager.retrieve(ORCID_2)).thenReturn(p2);
         
         ClientDetailsEntity client1 = new ClientDetailsEntity();
         client1.setId(CLIENT_1);
@@ -141,13 +147,15 @@ public abstract class OrcidSecurityManagerTestBase {
         publicClient.setId(PUBLIC_CLIENT);
         publicClient.setClientType(ClientType.PUBLIC_CLIENT.name());
         
-        when(clientDetailsEntityCacheManager.retrieve(CLIENT_1)).thenReturn(client1);
-        when(clientDetailsEntityCacheManager.retrieve(CLIENT_2)).thenReturn(client2);
-        when(clientDetailsEntityCacheManager.retrieve(PUBLIC_CLIENT)).thenReturn(publicClient);
+        when(mockClientDetailsEntityCacheManager.retrieve(CLIENT_1)).thenReturn(client1);
+        when(mockClientDetailsEntityCacheManager.retrieve(CLIENT_2)).thenReturn(client2);
+        when(mockClientDetailsEntityCacheManager.retrieve(PUBLIC_CLIENT)).thenReturn(publicClient);
     }
 
     @After
     public void after() {
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "profileEntityCacheManager", profileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
         SecurityContextTestUtils.setUpSecurityContextForAnonymous();
     }
 

@@ -92,34 +92,6 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     }
     
     @Test
-    public void testCreateExternalIdentifierWithUserOboClient() {
-        ClientDetailsEntity userOboClient = new ClientDetailsEntity(CLIENT_1_ID);
-        userOboClient.setUserOBOEnabled(true);
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(userOboClient));       
-        
-        PersonExternalIdentifier extId = new PersonExternalIdentifier();
-        extId.setRelationship(Relationship.SELF);
-        extId.setType("person-ext-id-type-user-obo");
-        extId.setValue("person-ext-id-value-user-obo");
-        extId.setUrl(new Url("http://orcid.org/user/obo"));
-        extId.setVisibility(Visibility.PUBLIC);
-
-        extId = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
-        
-        // check user obo
-        ExternalIdentifierEntity entity = externalIdentifierDao.find(extId.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-        
-        // check user obo info not lost on update
-        userOboClient.setUserOBOEnabled(false);
-        extId.setValue("test");
-        externalIdentifierManager.updateExternalIdentifier(claimedOrcid, extId, true);
-        
-        externalIdentifierDao.find(extId.getPutCode());
-        assertEquals(claimedOrcid, entity.getAssertionOriginSourceId());
-    }
-
-    @Test
     public void testAddEqualsExternalIdentifiersFromDifferentSource() {
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());

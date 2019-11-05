@@ -1,0 +1,244 @@
+// Variables
+
+$size4-columns: 4 !default;
+$size8-columns: 8 !default;
+$size12-columns: 12 !default;
+
+$size4-margin: 8px !default;
+$size8-margin: 8px !default;
+$size12-margin: 12px !default;
+
+$size4-maxwidth: unset !default;
+$size8-maxwidth: unset !default;
+$size12-maxwidth: 1304px !default;
+
+$size4-up-breakpoint: 599.99px !default;
+$size8-up-breakpoint: 839.99px !default;
+
+$size8-and-up: 'only screen and (min-width : #{$size4-up-breakpoint})' !default;
+$size12-and-up: 'only screen and (min-width : #{$size8-up-breakpoint})' !default;
+
+// TEMPORALLY ALL HAVE THE SAME GUTTER
+$gutter-width: 12px !default;
+
+// GRID
+
+.container {
+  margin: 0 auto;
+  max-width: $size4-maxwidth;
+  padding: 0 $size4-margin;
+  box-sizing: border-box;
+}
+@media #{$size8-and-up} {
+  .container {
+    max-width: $size8-maxwidth;
+    padding: 0 $size8-margin;
+  }
+}
+@media #{$size12-and-up} {
+  .container {
+    max-width: $size12-maxwidth;
+    padding: 0 $size12-margin;
+  }
+}
+
+.col .row {
+  // margin-left: (-1 * $gutter-width / 2);
+  // margin-right: (-1 * $gutter-width / 2);
+}
+
+.section {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+
+  &.no-pad {
+    padding: 0;
+  }
+  &.no-pad-bot {
+    padding-bottom: 0;
+  }
+  &.no-pad-top {
+    padding-top: 0;
+  }
+}
+
+// Mixins to eliminate code repitition
+@mixin reset-offset {
+  left: auto;
+  right: auto;
+}
+@mixin grid-classes($size, $i, $perc) {
+  &.offset-#{$size}#{$i} {
+    margin-left: $perc;
+  }
+  &.pull-#{$size}#{$i} {
+    right: $perc;
+  }
+  &.push-#{$size}#{$i} {
+    left: $perc;
+  }
+  [dir='rtl'] & {
+    &.offset-#{$size}#{$i} {
+      margin-right: $perc;
+      margin-left: auto;
+    }
+    &.pull-#{$size}#{$i} {
+      right: auto;
+      left: $perc;
+    }
+    &.push-#{$size}#{$i} {
+      left: auto;
+      right: $perc;
+    }
+  }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+
+  // Clear floating children
+  &:after {
+    // content: '';
+    // display: table;
+    // clear: both;
+  }
+
+  .col {
+    display: flex;
+    flex-wrap: wrap;
+    float: left;
+    box-sizing: border-box;
+    padding: 0 $gutter-width / 2;
+    min-height: 1px;
+
+    &[class*='push-'],
+    &[class*='pull-'] {
+      position: relative;
+    }
+
+    $i: 1;
+    @while $i <= $size4-columns {
+      $perc: unquote((100 / ($size4-columns / $i)) + '%');
+      &.s#{$i} {
+        width: $perc;
+        @include reset-offset;
+      }
+      $i: $i + 1;
+    }
+
+    $i: 1;
+    @while $i <= $size4-columns {
+      $perc: unquote((100 / ($size4-columns / $i)) + '%');
+      @include grid-classes('s', $i, $perc);
+      $i: $i + 1;
+    }
+    .s-auto {
+      width: auto;
+    }
+
+    @media #{$size8-and-up} {
+      $i: 1;
+      @while $i <= $size8-columns {
+        $perc: unquote((100 / ($size8-columns / $i)) + '%');
+        &.m#{$i} {
+          width: $perc;
+          @include reset-offset;
+        }
+
+        $i: $i + 1;
+      }
+
+      $i: 1;
+      @while $i <= $size8-columns {
+        $perc: unquote((100 / ($size8-columns / $i)) + '%');
+        @include grid-classes('m', $i, $perc);
+        $i: $i + 1;
+      }
+      .m-auto {
+        width: auto;
+      }
+    }
+
+    @media #{$size12-and-up} {
+      $i: 1;
+      @while $i <= $size12-columns {
+        $perc: unquote((100 / ($size12-columns / $i)) + '%');
+        &.l#{$i} {
+          width: $perc;
+          @include reset-offset;
+        }
+        $i: $i + 1;
+      }
+
+      $i: 1;
+      @while $i <= $size12-columns {
+        $perc: unquote((100 / ($size12-columns / $i)) + '%');
+        @include grid-classes('l', $i, $perc);
+        $i: $i + 1;
+      }
+      .l-auto {
+        width: auto;
+      }
+    }
+  }
+  // This properties might be moved to work depending on the size
+  .col.no-gutters {
+    padding: 0;
+  }
+  .col.middle {
+    align-items: center;
+  }
+  .col.baseline {
+    align-items: baseline;
+  }
+  .col.horizontal-center {
+    justify-content: center;
+  }
+  .col.space-around {
+    justify-content: space-around;
+  }
+}
+.row.horizontal-center {
+  justify-content: center;
+}
+.row.baseline {
+  align-items: baseline;
+}
+.row.end {
+  align-items: flex-end;
+}
+.row.middle {
+  align-items: center;
+}
+
+.row.space-between {
+  justify-content: space-between;
+}
+
+.row.space-around {
+  justify-content: space-around;
+}
+
+.row.space-between {
+  justify-content: space-between;
+}
+
+.row.space-evenly {
+  justify-content: space-evenly;
+}
+
+.row.h-end {
+  justify-content: flex-end;
+}
+
+.row.h-baseline {
+  justify-content: baseline;
+}
+
+.no-wrap {
+  flex-wrap: nowrap;
+}

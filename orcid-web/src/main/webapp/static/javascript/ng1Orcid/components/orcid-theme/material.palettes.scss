@@ -1,0 +1,78 @@
+// .
+// .
+// MATERIAL PALETTES
+// .
+// .
+$dark-primary-text: rgba(black, 0.87);
+$dark-secondary-text: rgba(black, 0.6);
+$dark-disabled-text: rgba(black, 0.38);
+
+$light-primary-text: rgba(white, 1);
+$light-secondary-text: rgba(white, 0.6);
+$light-disabled-text: rgba(white, 0.38);
+
+$orcid-green: (
+  50: #f4f9e5,
+  100: #e3f1bf,
+  200: #cfe795,
+  300: #bade67,
+  400: #a9d63e,
+  500: #98ce00,
+  600: #87be00,
+  700: #70aa00,
+  800: #599700,
+  900: #2f7500,
+  contrast: (
+    50: $dark-secondary-text,
+    100: $dark-secondary-text,
+    200: $dark-secondary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $dark-primary-text,
+    600: $dark-primary-text,
+    700: $dark-primary-text,
+    800: $dark-primary-text,
+    900: $dark-primary-text,
+  ),
+);
+$orcid-blue: (
+  50: #d0f3ff,
+  100: #adddf2,
+  200: #8ec2db,
+  300: #6ba7c3,
+  400: #4f92b1,
+  500: #2e7f9f,
+  600: #1e708d,
+  700: #085c77,
+  800: #004961,
+  900: #003449,
+  contrast: (
+    50: $dark-secondary-text,
+    100: $dark-secondary-text,
+    200: $dark-secondary-text,
+    300: $dark-primary-text,
+    400: $light-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+  ),
+);
+// .
+// .
+// EXTRA COLORS
+// .
+// .
+// Header main menu active, highlighted background for the footer and organization members section on the home page
+$light-grey: #f5f5f5;
+// Header search bar grey backgrounds
+$dark-grey-background: rgba(128, 128, 131, 1);
+// A translucid blue layer used over hero and news images on the homepage
+$blue-overlay: rgba(19, 52, 65, 0.75);
+// .
+// .
+// NON-USED/DEPRECATED COLORS
+// .
+// .
+$dark-primary-background: #f6f6f6;

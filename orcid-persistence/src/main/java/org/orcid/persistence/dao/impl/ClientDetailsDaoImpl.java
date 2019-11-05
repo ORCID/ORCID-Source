@@ -210,4 +210,5 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         updateQuery.setParameter("isPersistenTokensEnabled", isPersistenTokensEnabled);
         updateQuery.executeUpdate();
     }
+
 }

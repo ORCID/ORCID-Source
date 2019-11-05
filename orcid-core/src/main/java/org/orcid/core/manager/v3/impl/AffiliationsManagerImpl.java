@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -59,6 +60,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
 
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
     /**
      * Add a new distinction to the given user
      * 
@@ -86,7 +90,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     public Distinction updateDistinctionAffiliation(String orcid, Distinction distinction, boolean isApiRequest) {
         return (Distinction) updateAffiliation(orcid, distinction, isApiRequest, AffiliationType.DISTINCTION);
     }
-    
+
     /**
      * Add a new education to the given user
      * 
@@ -142,7 +146,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
         return (Employment) updateAffiliation(orcid, employment, isApiRequest, AffiliationType.EMPLOYMENT);
     }
-    
+
     /**
      * Add a new invitedPosition to the given user
      * 
@@ -252,20 +256,20 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
      */
     @Override
     public Service updateServiceAffiliation(String orcid, Service service, boolean isApiRequest) {
-        return (Service) updateAffiliation(orcid, service, isApiRequest, AffiliationType.SERVICE);        
+        return (Service) updateAffiliation(orcid, service, isApiRequest, AffiliationType.SERVICE);
     }
-    
+
     private Affiliation createAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
         Source activeSource = sourceManager.retrieveActiveSource();
         activityValidator.validateAffiliation(affiliation, activeSource, true, isApiRequest, null);
 
         if (isApiRequest) {
-                checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
+            checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
         }
 
         OrgAffiliationRelationEntity entity = null;
-        
-        switch(type) {
+
+        switch (type) {
         case DISTINCTION:
             entity = jpaJaxbDistinctionAdapter.toOrgAffiliationRelationEntity((Distinction) affiliation);
             break;
@@ -288,7 +292,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             entity = jpaJaxbServiceAdapter.toOrgAffiliationRelationEntity((Service) affiliation);
             break;
         }
-        
+
         // Updates the give organization with the latest organization from
         // database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
@@ -301,12 +305,12 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         setIncomingWorkPrivacy(entity, profile, isApiRequest);
         entity.setAffiliationType(type.name());
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
-        
+
         orgAffiliationRelationDao.persist(entity);
         orgAffiliationRelationDao.flush();
 
         Affiliation result = null;
-        switch(type) {
+        switch (type) {
         case DISTINCTION:
             notificationManager.sendAmendEmail(orcid, AmendedSection.DISTINCTION, createItemList(entity, ActionType.CREATE));
             result = jpaJaxbDistinctionAdapter.toDistinction(entity);
@@ -338,14 +342,14 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         }
         return result;
     }
-    
+
     public Affiliation updateAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
         OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliation.getPutCode());
 
         Source activeSource = sourceManager.retrieveActiveSource();
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(entity);
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(entity, clientDetailsEntityCacheManager);
 
         String originalVisibility = entity.getVisibility();
         orcidSecurityManager.checkSourceAndThrow(entity);
@@ -357,7 +361,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
         }
 
-        switch(type) {
+        switch (type) {
         case DISTINCTION:
             jpaJaxbDistinctionAdapter.toOrgAffiliationRelationEntity((Distinction) affiliation, entity);
             break;
@@ -380,14 +384,14 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             jpaJaxbServiceAdapter.toOrgAffiliationRelationEntity((Service) affiliation, entity);
             break;
         }
-        
+
         if (isApiRequest) {
             entity.setVisibility(originalVisibility);
         }
-        
+
         // Populate display index in case it is missing
         DisplayIndexCalculatorHelper.setDisplayIndexOnExistingEntity(entity, isApiRequest);
-        
+
         SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, entity);
 
         // Updates the give organization with the latest organization from
@@ -395,10 +399,10 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
         entity.setOrg(updatedOrganization);
 
-        entity.setAffiliationType(type.name());            
+        entity.setAffiliationType(type.name());
         entity = orgAffiliationRelationDao.merge(entity);
         orgAffiliationRelationDao.flush();
-        
+
         Affiliation result = null;
         switch (type) {
         case DISTINCTION:
@@ -463,25 +467,24 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
                 notificationManager.sendAmendEmail(orcid, AmendedSection.QUALIFICATION, createItemList(affiliationEntity, ActionType.DELETE));
             } else if (AffiliationType.SERVICE.name().equals(affiliationEntity.getAffiliationType())) {
                 notificationManager.sendAmendEmail(orcid, AmendedSection.SERVICE, createItemList(affiliationEntity, ActionType.DELETE));
-            }            
+            }
         }
         return result;
     }
 
-
     private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile, boolean isApiRequest) {
         String incomingElementVisibility = orgAffiliationRelationEntity.getVisibility();
         String defaultElementVisibility = profile.getActivitiesVisibilityDefault();
-		if ((isApiRequest && profile.getClaimed()) || (incomingElementVisibility == null && !isApiRequest)) {
-			orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);
-		} else if (isApiRequest && !profile.getClaimed() && incomingElementVisibility == null) {
-			orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-		}
-    }    
+        if ((isApiRequest && profile.getClaimed()) || (incomingElementVisibility == null && !isApiRequest)) {
+            orgAffiliationRelationEntity.setVisibility(defaultElementVisibility);
+        } else if (isApiRequest && !profile.getClaimed() && incomingElementVisibility == null) {
+            orgAffiliationRelationEntity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
+        }
+    }
 
     private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity, ActionType type) {
         Item item = new Item();
-        if(!StringUtils.isBlank(orgAffiliationEntity.getTitle())) {
+        if (!StringUtils.isBlank(orgAffiliationEntity.getTitle())) {
             item.setItemName(orgAffiliationEntity.getTitle());
         }
         ItemType itemType = null;
@@ -509,7 +512,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         item.setAdditionalInfo(additionalInfo);
         return Arrays.asList(item);
     }
-    
+
     @Override
     public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
         return orgAffiliationRelationDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility.name());
@@ -520,7 +523,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     public boolean updateVisibilities(String orcid, ArrayList<Long> affiliationIds, Visibility visibility) {
         return orgAffiliationRelationDao.updateVisibilitiesOnOrgAffiliationRelation(orcid, affiliationIds, visibility.name());
     }
-    
+
     /**
      * Deletes an affiliation.
      * 
@@ -543,19 +546,19 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     public void removeAllAffiliations(String orcid) {
         orgAffiliationRelationDao.removeAllAffiliations(orcid);
     }
-    
+
     private void checkAffiliationExternalIDsForDuplicates(String orcid, Affiliation incoming, Source activeSource) {
         List<Affiliation> affiliations = getAffiliations(orcid);
         if (affiliations != null) {
             for (Affiliation affiliation : affiliations) {
-                //If it is the same element, ignore it, to prevent false duplicate exceptions
-                if(incoming.getPutCode() != null && incoming.getPutCode().equals(affiliation.getPutCode())) {
+                // If it is the same element, ignore it, to prevent false
+                // duplicate exceptions
+                if (incoming.getPutCode() != null && incoming.getPutCode().equals(affiliation.getPutCode())) {
                     continue;
                 }
-                
+
                 if (incoming.getClass().isAssignableFrom(affiliation.getClass())) {
-                    activityValidator.checkExternalIdentifiersForDuplicates(incoming, affiliation, affiliation.getSource(),
-                            activeSource);
+                    activityValidator.checkExternalIdentifiersForDuplicates(incoming, affiliation, affiliation.getSource(), activeSource);
                 }
             }
         }

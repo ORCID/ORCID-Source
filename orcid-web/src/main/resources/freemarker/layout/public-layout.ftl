@@ -5,6 +5,22 @@
     <body
     <@orcid.checkFeatureStatus 'WIDE_GRID'> class="wide-grid" </@orcid.checkFeatureStatus> 
     >
+    <div id="skip-link">
+        <a href="#main" class="a11yLinks">Skip to main content</a>
+    </div>
+
+    <style type="text/css">
+        .a11yLinks {
+            position: absolute !important;
+        }
+        .a11yLinks:not(:focus) {
+            clip: rect(1px 1px 1px 1px);
+            clip: rect(1px, 1px, 1px, 1px);
+            overflow: hidden;
+            height: 1px;
+        }
+    </style>    
+
     <root-cmp role="presentation">
         <style type="text/css">
             body, html {

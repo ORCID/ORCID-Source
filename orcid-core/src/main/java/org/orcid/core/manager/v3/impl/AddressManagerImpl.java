@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -30,35 +31,39 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
 
     @Resource(name = "orcidSecurityManagerV3")
     protected OrcidSecurityManager orcidSecurityManager;
-    
+
     @Resource(name = "sourceManagerV3")
-    protected SourceManager sourceManager;    
-    
+    protected SourceManager sourceManager;
+
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager; 
-    
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
     @Override
     @Transactional
     public Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility());
-        
-        //Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedEntity);
-        
-        //If it is an update from the API, check the source and preserve the original visibility
-        if(isApiRequest) {
-            orcidSecurityManager.checkSourceAndThrow(updatedEntity);            
+
+        // Save the original source
+        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedEntity, clientDetailsEntityCacheManager);
+
+        // If it is an update from the API, check the source and preserve the
+        // original visibility
+        if (isApiRequest) {
+            orcidSecurityManager.checkSourceAndThrow(updatedEntity);
         }
-        
+
         // Validate the address
         PersonValidator.validateAddress(address, activeSource, false, isApiRequest, originalVisibility);
         // Validate it is not duplicated
         List<AddressEntity> existingAddresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         for (AddressEntity existing : existingAddresses) {
-            //If it is not the same element
-            if(!existing.getId().equals(address.getPutCode())) {
+            // If it is not the same element
+            if (!existing.getId().equals(address.getPutCode())) {
                 if (isDuplicated(existing, address, activeSource)) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("type", "address");
@@ -67,19 +72,19 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                 }
             }
         }
-                        
-        adapter.toAddressEntity(address, updatedEntity);
-        updatedEntity.setLastModified(new Date());        
 
-        //Be sure it doesn't overwrite the source
+        adapter.toAddressEntity(address, updatedEntity);
+        updatedEntity.setLastModified(new Date());
+
+        // Be sure it doesn't overwrite the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedEntity);
-        
+
         addressDao.merge(updatedEntity);
         return adapter.toAddress(updatedEntity);
     }
-    
-    @Override    
-    public Address createAddress(String orcid, Address address, boolean isApiRequest) { 
+
+    @Override
+    public Address createAddress(String orcid, Address address, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the address
         PersonValidator.validateAddress(address, activeSource, true, isApiRequest, null);
@@ -91,16 +96,16 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                 params.put("type", "address");
                 params.put("value", address.getCountry().getValue().name());
                 throw new OrcidDuplicatedElementException(params);
-            }            
+            }
         }
 
         AddressEntity newEntity = adapter.toAddressEntity(address);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
-        
+
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
-        
+
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         setIncomingPrivacy(newEntity, profile);
         addressDao.persist(newEntity);
@@ -123,43 +128,44 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
 
     private boolean isDuplicated(AddressEntity existing, Address address, Source activeSource) {
         if (!existing.getId().equals(address.getPutCode())) {
-            //If they have the same source 
-            String existingSourceId = existing.getElementSourceId(); 
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource,existing)) {
-                //TODO: Not sure this works!  String vs Iso3166Country enum 
-                if(existing.getIso2Country().equals(address.getCountry().getValue())) {
+            // If they have the same source
+            String existingSourceId = existing.getElementSourceId();
+            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, existing, clientDetailsEntityCacheManager)) {
+                // TODO: Not sure this works! String vs Iso3166Country enum
+                if (existing.getIso2Country().equals(address.getCountry().getValue())) {
                     return true;
                 }
             }
         }
         return false;
-    }    
-    
+    }
+
     private void setIncomingPrivacy(AddressEntity entity, ProfileEntity profile) {
         String incomingCountryVisibility = entity.getVisibility();
-        String defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name() : profile.getActivitiesVisibilityDefault();        
+        String defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name()
+                : profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed() != null && profile.getClaimed()) {
-            entity.setVisibility(defaultCountryVisibility);            
+            entity.setVisibility(defaultCountryVisibility);
         } else if (incomingCountryVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         }
-    }    
-    
+    }
+
     @Override
     public Addresses updateAddresses(String orcid, Addresses addresses) {
         List<AddressEntity> existingAddressList = addressDao.getAddresses(orcid, getLastModified(orcid));
-        //Delete the deleted ones
-        for(AddressEntity existingAddress : existingAddressList) {
-            boolean deleteMe = true;            
-            if(addresses.getAddress() != null) {
-                for(Address updatedOrNew : addresses.getAddress()) {
-                    if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
+        // Delete the deleted ones
+        for (AddressEntity existingAddress : existingAddressList) {
+            boolean deleteMe = true;
+            if (addresses.getAddress() != null) {
+                for (Address updatedOrNew : addresses.getAddress()) {
+                    if (existingAddress.getId().equals(updatedOrNew.getPutCode())) {
                         deleteMe = false;
                         break;
                     }
                 }
             }
-            if(deleteMe) {
+            if (deleteMe) {
                 try {
                     addressDao.deleteAddress(orcid, existingAddress.getId());
                 } catch (Exception e) {
@@ -167,37 +173,37 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                 }
             }
         }
-        
-        if(addresses != null && addresses.getAddress() != null) {
-            for(Address updatedOrNew : addresses.getAddress()) {
-                if(updatedOrNew.getPutCode() != null) {
-                    //Update the existing ones
-                   for(AddressEntity existingAddress : existingAddressList) {
-                       if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
-                           existingAddress.setLastModified(new Date());
-                           existingAddress.setVisibility(updatedOrNew.getVisibility().name());
-                           existingAddress.setIso2Country(updatedOrNew.getCountry().getValue().name());
-                           existingAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
-                           addressDao.merge(existingAddress);
-                       }
-                   }
+
+        if (addresses != null && addresses.getAddress() != null) {
+            for (Address updatedOrNew : addresses.getAddress()) {
+                if (updatedOrNew.getPutCode() != null) {
+                    // Update the existing ones
+                    for (AddressEntity existingAddress : existingAddressList) {
+                        if (existingAddress.getId().equals(updatedOrNew.getPutCode())) {
+                            existingAddress.setLastModified(new Date());
+                            existingAddress.setVisibility(updatedOrNew.getVisibility().name());
+                            existingAddress.setIso2Country(updatedOrNew.getCountry().getValue().name());
+                            existingAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
+                            addressDao.merge(existingAddress);
+                        }
+                    }
                 } else {
-                    //Add the new ones
+                    // Add the new ones
                     AddressEntity newAddress = adapter.toAddressEntity(updatedOrNew);
                     Source activeSource = sourceManager.retrieveActiveSource();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newAddress.setUser(profile);
                     newAddress.setDateCreated(new Date());
-                    
+
                     SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newAddress);
-                                                            
+
                     newAddress.setVisibility(updatedOrNew.getVisibility().name());
                     newAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     addressDao.persist(newAddress);
-                    
+
                 }
             }
-        }        
+        }
         return addresses;
     }
 

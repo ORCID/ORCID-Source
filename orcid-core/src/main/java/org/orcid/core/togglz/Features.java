@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Works pagination")
+    WORKS_PAGINATION,
+
     @Label("Email status dropdown option")
     EMAIL_STATUS_DROPDOWN_OPTION,
 
