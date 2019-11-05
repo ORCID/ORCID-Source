@@ -128,7 +128,7 @@ export class SearchService {
     extractOrcidId(string: any) {
         var regexResult = this.orcidPathRegex.exec(string);
         if (regexResult) {
-            return regexResult[0];
+            return regexResult[0].toUpperCase();
         }
         return null;
     }
