@@ -25,7 +25,7 @@
                             <td>{{dup.email}}</td>
                             <td>{{dup.givenNames}}</td>
                             <td>{{dup.familyNames}}</td>
-                            <td>{{dup['affiliations'].join(", ")}}</td>
+                            <td>{{dup.institution}}</td>
                         </tr>
                     </tbody>
                 </table>

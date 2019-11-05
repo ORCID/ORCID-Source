@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
+import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
@@ -37,13 +39,19 @@ import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
+import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -94,7 +102,7 @@ public class RegistrationController extends BaseController {
     private RegistrationManager registrationManager;
 
     @Resource
-    private AuthenticationManager authenticationManager;    
+    private AuthenticationManager authenticationManager;
 
     @Resource(name = "orcidSearchManagerV3")
     private OrcidSearchManager orcidSearchManager;
@@ -117,24 +125,27 @@ public class RegistrationController extends BaseController {
     @Resource
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
 
+    @Resource(name = "affiliationsManagerReadOnlyV3")
+    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
+
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
-    
+
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
-    
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
-    
+
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
-    
+
     @Resource
     private SocialSignInUtils socialSignInUtils;
-    
+
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
         // Remove the session hash if needed
@@ -149,22 +160,22 @@ public class RegistrationController extends BaseController {
         reg.getFamilyNames().setRequired(false);
         reg.getGivenNames().setRequired(true);
         reg.getSendChangeNotifications().setValue(true);
-        reg.getSendOrcidNews().setValue(false);                   
+        reg.getSendOrcidNews().setValue(false);
         reg.getSendMemberUpdateRequests().setValue(true);
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
-        reg.getTermsOfUse().setValue(false);   
-        
+        reg.getTermsOfUse().setValue(false);
+
         registerPasswordValidate(reg);
-        
+
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-        if(isOauth2ScreensRequest != null) {
+        if (isOauth2ScreensRequest != null) {
             reg.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
         } else {
             reg.setCreationType(Text.valueOf(CreationMethod.DIRECT.value()));
         }
-        
+
         setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
-        
+
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);
         if (requestInfoForm != null) {
             if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
@@ -275,29 +286,29 @@ public class RegistrationController extends BaseController {
             return r;
         }
 
-        try {                    
+        try {
             // Locale
-            Locale locale = RequestContextUtils.getLocale(request);            
+            Locale locale = RequestContextUtils.getLocale(request);
             // Ip
-            String ip = OrcidRequestUtil.getIpAddress(request);            
+            String ip = OrcidRequestUtil.getIpAddress(request);
             createMinimalRegistrationAndLogUserIn(request, response, reg, usedCaptcha, locale, ip);
-        } catch(Exception e) {
+        } catch (Exception e) {
             r.getErrors().add(getMessage("register.error.generalError"));
             return r;
         }
-        
-        if(OrcidOauth2Constants.SOCIAL.equals(reg.getLinkType())) {
+
+        if (OrcidOauth2Constants.SOCIAL.equals(reg.getLinkType())) {
             Map<String, String> signedInData = socialSignInUtils.getSignedInData(request, response);
-            if(signedInData != null && signedInData.containsKey(OrcidOauth2Constants.PROVIDER_ID)) {
+            if (signedInData != null && signedInData.containsKey(OrcidOauth2Constants.PROVIDER_ID)) {
                 String providerId = signedInData.get(OrcidOauth2Constants.PROVIDER_ID);
-                if(OrcidOauth2Constants.FACEBOOK.equals(providerId) || OrcidOauth2Constants.GOOGLE.equals(providerId)) {
+                if (OrcidOauth2Constants.FACEBOOK.equals(providerId) || OrcidOauth2Constants.GOOGLE.equals(providerId)) {
                     ajaxAuthenticationSuccessHandlerSocial.linkSocialAccount(request, response);
                 }
             }
         } else if (OrcidOauth2Constants.SHIBBOLETH.equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
-        
+
         String redirectUrl = calculateRedirectUrl(request, response, true);
         r.setUrl(redirectUrl);
         return r;
@@ -321,10 +332,10 @@ public class RegistrationController extends BaseController {
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
-        
+
         additionalEmailsValidateOnRegister(request, reg);
-        for(Text emailAdditional : reg.getEmailsAdditional()) {
-            if(!PojoUtil.isEmpty(emailAdditional)){
+        for (Text emailAdditional : reg.getEmailsAdditional()) {
+            if (!PojoUtil.isEmpty(emailAdditional)) {
                 copyErrors(emailAdditional, reg);
             }
         }
@@ -338,17 +349,17 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/registerPasswordValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerPasswordValidate(@RequestBody Registration reg) {
-    	List<Text> emails = new ArrayList<Text> (reg.getEmailsAdditional());
-    	emails.add(reg.getEmail());
+        List<Text> emails = new ArrayList<Text>(reg.getEmailsAdditional());
+        emails.add(reg.getEmail());
         passwordChecklistValidate(reg.getPasswordConfirm(), reg.getPassword(), emails.stream().map(email -> email.getValue()).collect(Collectors.toList()));
         return reg;
-    }    
+    }
 
     @RequestMapping(value = "/registerTermsOfUseValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerTermsOfUseValidate(@RequestBody Registration reg) {
         termsOfUserValidate(reg.getTermsOfUse());
         return reg;
-    }        
+    }
 
     @RequestMapping(value = "/registerGivenNamesValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerGivenNameValidate(@RequestBody Registration reg) {
@@ -356,18 +367,17 @@ public class RegistrationController extends BaseController {
         return reg;
     }
 
-    
     @RequestMapping(value = "/registerFamilyNamesValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerFamilyNameValidate(@RequestBody Registration reg) {
         super.familyNameValidate(reg.getFamilyNames());
         return reg;
     }
-    
+
     @RequestMapping(value = "/registerActivitiesVisibilityDefaultValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration registerActivitiesVisibilityDefaultValidate(@RequestBody Registration reg) {
         activitiesVisibilityDefaultValidate(reg.getActivitiesVisibilityDefault());
         return reg;
-    } 
+    }
 
     @RequestMapping(value = "/registerEmailValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailValidate(HttpServletRequest request, @RequestBody Registration reg) {
@@ -379,7 +389,7 @@ public class RegistrationController extends BaseController {
         additionalEmailsValidateOnRegister(request, reg);
         return reg;
     }
-    
+
     public Registration regEmailValidate(HttpServletRequest request, Registration reg, boolean isOauthRequest, boolean isKeyup) {
         reg.getEmail().setErrors(new ArrayList<String>());
 
@@ -387,23 +397,23 @@ public class RegistrationController extends BaseController {
             setError(reg.getEmail(), "Email.registrationForm.email");
             return reg;
         }
-        
+
         String emailAddress = reg.getEmail().getValue();
 
-        // Validate the email address is ok        
-        if(!validateEmailAddress(emailAddress)) {
+        // Validate the email address is ok
+        if (!validateEmailAddress(emailAddress)) {
             reg.getEmail().getErrors().add(getMessage("Email.personalInfoForm.email", emailAddress));
             return reg;
-        } 
+        }
 
-        if(emailManager.emailExists(emailAddress)) {
+        if (emailManager.emailExists(emailAddress)) {
             String orcid = emailManager.findOrcidIdByEmail(emailAddress);
 
             if (profileEntityManager.isDeactivated(orcid)) {
                 reg.getEmail().getErrors().add("orcid.frontend.verify.deactivated_email");
                 return reg;
             }
-            
+
             if (profileEntityManager.isProfileClaimedByEmail(emailAddress)) {
                 reg.getEmail().getErrors().add("orcid.frontend.verify.duplicate_email");
                 return reg;
@@ -420,7 +430,7 @@ public class RegistrationController extends BaseController {
                 LOGGER.info("Email " + emailAddress + " belongs to a unclaimed record and can be auto deprecated");
             }
         }
-        
+
         // validate confirm if already field out
         if (reg.getEmailConfirm().getValue() != null) {
             regEmailConfirmValidate(reg);
@@ -428,7 +438,7 @@ public class RegistrationController extends BaseController {
 
         return reg;
     }
-    
+
     @RequestMapping(value = "/registerEmailConfirmValidate.json", method = RequestMethod.POST)
     public @ResponseBody Registration regEmailConfirmValidate(@RequestBody Registration reg) {
         reg.getEmailConfirm().setErrors(new ArrayList<String>());
@@ -459,64 +469,90 @@ public class RegistrationController extends BaseController {
     public @ResponseBody List<DupicateResearcher> getDupicateResearcher(@RequestParam("givenNames") String givenNames, @RequestParam("familyNames") String familyNames) {
         List<DupicateResearcher> drList = new ArrayList<DupicateResearcher>();
         Search potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(givenNames, familyNames);
-        if(potentialDuplicates != null) {
+        if (potentialDuplicates != null) {
             List<String> orcidIds = potentialDuplicates.getResults().stream().map(Result::getOrcidIdentifier).map(x -> x.getPath()).collect(Collectors.toList());
-            for(String orcid : orcidIds) {
+            for (String orcid : orcidIds) {
                 DupicateResearcher dr = new DupicateResearcher();
-                Email pm = emailManagerReadOnly.findPrimaryEmail(orcid);                
-                if(Visibility.PUBLIC.equals(pm.getVisibility())) {
+                Email pm = emailManagerReadOnly.findPrimaryEmail(orcid);
+                if (Visibility.PUBLIC.equals(pm.getVisibility())) {
                     dr.setEmail(pm.getEmail());
                 }
-                Name n= recordNameManagerReadOnly.getRecordName(orcid);
-                if(Visibility.PUBLIC.equals(n.getVisibility())) {
+                Name n = recordNameManagerReadOnly.getRecordName(orcid);
+                if (Visibility.PUBLIC.equals(n.getVisibility())) {
                     dr.setFamilyNames(n.getFamilyName() == null ? null : n.getFamilyName().getContent());
-                    dr.setGivenNames(n.getGivenNames() == null ? null : n.getGivenNames().getContent());                    
+                    dr.setGivenNames(n.getGivenNames() == null ? null : n.getGivenNames().getContent());
+                }
+
+                List<String> institutions = new ArrayList<String>();
+
+                Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid, true);
+                for (AffiliationType type : AffiliationType.values()) {
+                    if ((type == AffiliationType.EDUCATION || type == AffiliationType.EMPLOYMENT) && affiliationsMap.containsKey(type)) {
+                        List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
+                        IntStream.range(0, elementsList.size()).forEach(idx -> {
+                            AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), type.name() + '_' + idx, orcid);
+                            // Fill country on the default affiliation
+                            AffiliationForm defaultAffiliation = groupForm.getDefaultAffiliation();
+                            if (defaultAffiliation != null) {
+                                if (!PojoUtil.isEmpty(groupForm.getDefaultAffiliation().getAffiliationName())) {
+
+                                    if (!institutions.contains(groupForm.getDefaultAffiliation().getAffiliationName().getValue())) {
+                                        institutions.add(groupForm.getDefaultAffiliation().getAffiliationName().getValue());
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+                }
+                if (institutions.size() > 0) {
+                    dr.setInstitution(String.join(", ", institutions));
                 }
                 dr.setOrcid(orcid);
                 drList.add(dr);
-            }                        
-        }        
+            }
+        }
         return drList;
-    }            
+    }
 
     @RequestMapping(value = "/verify-email/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes)
-            throws UnsupportedEncodingException {                
-        if(PojoUtil.isEmpty(encryptedEmail) || !Base64.isBase64(encryptedEmail)) {
+    public ModelAndView verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
+            RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
+        if (PojoUtil.isEmpty(encryptedEmail) || !Base64.isBase64(encryptedEmail)) {
             LOGGER.error("Error decypting verify email from the verify email link: {} ", encryptedEmail);
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
             return new ModelAndView("redirect:/signin");
         }
         String redirect = "redirect:/signin";
-        try {            
+        try {
             String toDecrypt = new String(Base64.decodeBase64(encryptedEmail), "UTF-8");
-            String decryptedEmail = encryptionManager.decryptForExternalUse(toDecrypt);            
-            if(emailManagerReadOnly.emailExists(decryptedEmail)) {
+            String decryptedEmail = encryptionManager.decryptForExternalUse(toDecrypt);
+            if (emailManagerReadOnly.emailExists(decryptedEmail)) {
                 String orcid = emailManagerReadOnly.findOrcidIdByEmail(decryptedEmail);
                 String currentUser = getCurrentUserOrcid();
-                if(currentUser != null && !currentUser.equals(orcid)) {
+                if (currentUser != null && !currentUser.equals(orcid)) {
                     return new ModelAndView("wrong_user");
                 }
-                
+
                 boolean verified = emailManager.verifyEmail(decryptedEmail, orcid);
-                if(verified) {                    
+                if (verified) {
                     profileEntityManager.updateLocale(decryptedEmail, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
                     redirectAttributes.addFlashAttribute("emailVerified", true);
                     redirectAttributes.addFlashAttribute("verifiedEmail", decryptedEmail);
-                    
-                    if(!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
+
+                    if (!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
                             redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
                         }
-                    }                   
+                    }
                 } else {
                     redirectAttributes.addFlashAttribute("emailVerified", false);
                 }
-                
-                if(currentUser != null && currentUser.equals(orcid)) {
+
+                if (currentUser != null && currentUser.equals(orcid)) {
                     redirect = "redirect:/my-orcid";
                 }
-            }            
+            }
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
@@ -531,14 +567,15 @@ public class RegistrationController extends BaseController {
         queryForm.setGivenName(firstName);
         queryForm.setFamilyName(lastName);
         Search visibleProfiles = orcidSearchManager.findOrcidsByQuery(queryForm.deriveQueryString(), DUP_SEARCH_START, DUP_SEARCH_ROWS);
-        LOGGER.debug("Found {} potential duplicates during registration for first name={}, last name={}", new Object[] { visibleProfiles.getNumFound(), firstName, lastName });
+        LOGGER.debug("Found {} potential duplicates during registration for first name={}, last name={}",
+                new Object[] { visibleProfiles.getNumFound(), firstName, lastName });
         return visibleProfiles;
     }
 
     private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Registration registration,
             boolean usedCaptchaVerification, Locale locale, String ip) {
-    	String unencryptedPassword = registration.getPassword().getValue();
-    	String orcidId = createMinimalRegistration(request, registration, usedCaptchaVerification, locale, ip);
+        String unencryptedPassword = registration.getPassword().getValue();
+        String orcidId = createMinimalRegistration(request, registration, usedCaptchaVerification, locale, ip);
         logUserIn(request, response, orcidId, unencryptedPassword);
     }
 
@@ -562,17 +599,16 @@ public class RegistrationController extends BaseController {
 
     public String createMinimalRegistration(HttpServletRequest request, Registration registration, boolean usedCaptcha, Locale locale, String ip) {
         String sessionId = request.getSession() == null ? null : request.getSession().getId();
-        String email = registration.getEmail().getValue();                
-        
+        String email = registration.getEmail().getValue();
+
         LOGGER.debug("About to create profile from registration email={}, sessionid={}", email, sessionId);
         String newUserOrcid = registrationManager.createMinimalRegistration(registration, usedCaptcha, locale, ip);
-        
+
         processProfileHistoryEvents(registration, newUserOrcid);
         notificationManager.sendWelcomeEmail(newUserOrcid, email);
         notificationManager.sendVerificationEmailToNonPrimaryEmails(newUserOrcid);
         request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-        LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}",
-                new Object[] { newUserOrcid, email, sessionId });
+        LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { newUserOrcid, email, sessionId });
         return newUserOrcid;
     }
 
@@ -590,6 +626,6 @@ public class RegistrationController extends BaseController {
         if (Visibility.PUBLIC.equals(registration.getActivitiesVisibilityDefault().getVisibility())) {
             profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PUBLIC, newUserOrcid);
         }
-    }            
-    
+    }
+
 }
