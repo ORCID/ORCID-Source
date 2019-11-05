@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -22,9 +23,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
@@ -43,8 +49,11 @@ import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.persistence.dao.ProfileFundingDao;
+import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class ProfileFundingManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
@@ -72,6 +81,30 @@ public class ProfileFundingManagerTest extends BaseTest {
     @Resource
     private ProfileFundingDao profileFundingDao;
     
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -81,12 +114,25 @@ public class ProfileFundingManagerTest extends BaseTest {
     public void before() {
         TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", mockSourceManager);
+        
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
     }
     
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", sourceManager);
+        
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }
     
     @AfterClass
@@ -449,7 +495,8 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Test
     public void testAssertionOriginUpdate() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));                
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));   
+        
         Funding f1 = getFunding("A1");
         f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
         f1 = profileFundingManager.getFunding(claimedOrcid, f1.getPutCode());

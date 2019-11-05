@@ -13,17 +13,26 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Keyword;
 import org.orcid.jaxb.model.v3.release.record.Keywords;
+import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class ProfileKeywordManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
@@ -38,6 +47,31 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Resource(name = "profileKeywordManagerV3")
     private ProfileKeywordManager profileKeywordManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManager;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
+
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -47,8 +81,24 @@ public class ProfileKeywordManagerTest extends BaseTest {
     @Before
     public void before() {
         TargetProxyHelper.injectIntoProxy(profileKeywordManager, "sourceManager", sourceManager); 
+        
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
     }
 
+    @After
+    public void tearDown() {
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
+    }
+    
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);

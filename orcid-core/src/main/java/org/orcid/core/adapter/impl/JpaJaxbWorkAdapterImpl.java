@@ -3,13 +3,13 @@ package org.orcid.core.adapter.impl;
 import java.util.Collection;
 import java.util.List;
 
-import ma.glasnost.orika.MapperFacade;
-
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+
+import ma.glasnost.orika.MapperFacade;
 
 /**
  * 

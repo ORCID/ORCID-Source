@@ -19,15 +19,23 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
+import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class ResearcherUrlManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
@@ -51,6 +59,30 @@ public class ResearcherUrlManagerTest extends BaseTest {
 
     @Resource(name = "researcherUrlManagerV3")
     private ResearcherUrlManager researcherUrlManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManager;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -61,12 +93,25 @@ public class ResearcherUrlManagerTest extends BaseTest {
     public void before() {
         TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(researcherUrlManager, "sourceManager", mockSourceManager);
+        
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
     }
 
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(researcherUrlManager, "sourceManager", sourceManager);        
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
+        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);  
+        
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }
     @AfterClass
     public static void removeDBUnitData() throws Exception {

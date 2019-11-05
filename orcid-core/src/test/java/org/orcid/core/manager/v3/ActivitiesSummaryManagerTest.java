@@ -9,14 +9,26 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
@@ -31,9 +43,54 @@ public class ActivitiesSummaryManagerTest extends DBUnitTest {
     @Resource(name = "activitiesSummaryManagerV3")
     private ActivitiesSummaryManager activitiesSummaryManager;
     
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
+    }
+    
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+    }
+    
+    @After
+    public void tearDown() {
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }
 
     @AfterClass

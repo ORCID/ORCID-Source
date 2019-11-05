@@ -19,8 +19,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.adapter.MockSourceNameCache;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
@@ -29,6 +35,8 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -36,6 +44,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
@@ -48,14 +57,55 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbWorkAdapterV3")
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
-
+    
     @Resource
     private OrcidUrlManager orcidUrlManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
+    
     private String originalBaseUrl;
     
     @Before
     public void before(){
         originalBaseUrl = orcidUrlManager.getBaseUrl();
+        
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.eq("0000-0000-0000-0001"))).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.eq("0000-0000-0000-0001"))).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+    }
+    
+    @After
+    public void tearDown() {
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }
     
     @After
@@ -149,6 +199,64 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         // Identifier URIs should always be http, event if base url is https
         assertEquals("https://testserver.orcid.org/client/" + CLIENT_SOURCE_ID, w.getSource().retriveSourceUri());
     }
+    
+    @Test
+    public void fromWorkEntityToUserOBOWorkTest() {
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(userOBOClient);
+        
+        // Set base url to https to ensure source URI is converted to http
+        orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
+        WorkEntity work = getWorkEntity();
+        assertNotNull(work);
+        Work w = jpaJaxbWorkAdapter.toWork(work);
+        assertNotNull(w);
+        assertNotNull(w.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getCreatedDate().getValue()));
+        assertNotNull(w.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(w.getLastModifiedDate().getValue()));
+        assertEquals(Iso3166Country.CR.name(), w.getCountry().getValue().name());
+        assertEquals("work:citation", w.getWorkCitation().getCitation());
+        assertEquals("work:description", w.getShortDescription());
+        assertEquals("work:journalTitle", w.getJournalTitle().getContent());
+        assertEquals(CitationType.BIBTEX.value(), w.getWorkCitation().getWorkCitationType().value());
+        assertEquals(Long.valueOf(12345), w.getPutCode());
+        assertEquals(Visibility.LIMITED.value(), w.getVisibility().value());
+        assertEquals("work:title", w.getWorkTitle().getTitle().getContent());
+        assertEquals("work:subtitle", w.getWorkTitle().getSubtitle().getContent());
+        assertEquals("work:translatedTitle", w.getWorkTitle().getTranslatedTitle().getContent());
+        assertEquals("es", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
+        assertEquals(WorkType.ARTISTIC_PERFORMANCE.value(), w.getWorkType().value());
+        assertNotNull(w.getWorkExternalIdentifiers());
+        assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
+        assertEquals(2, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
+        
+        ExternalID workExtId1 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(workExtId1.getValue());
+        assertEquals("123", workExtId1.getValue());
+        assertNotNull(workExtId1.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
+        assertEquals(Relationship.VERSION_OF, workExtId1.getRelationship());
+        
+        ExternalID workExtId2 = w.getWorkExternalIdentifiers().getExternalIdentifier().get(1);
+        assertNotNull(workExtId2.getValue());
+        assertEquals("abc", workExtId2.getValue());
+        assertNotNull(workExtId2.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
+        assertEquals(Relationship.SELF, workExtId2.getRelationship());
+        
+        String sourcePath = w.getSource().retrieveSourcePath();
+        assertNotNull(sourcePath);
+        assertEquals(CLIENT_SOURCE_ID, sourcePath);
+        
+        // Identifier URIs should always be http, event if base url is https
+        assertEquals("https://testserver.orcid.org/client/" + CLIENT_SOURCE_ID, w.getSource().retriveSourceUri());
+        
+        // user obo work
+        assertNotNull(w.getSource().getAssertionOriginOrcid());
+    }
 
     @Test
     public void fromWorkEntityToWorkSummaryTest() {
@@ -179,6 +287,48 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         assertEquals("work:journalTitle", ws.getJournalTitle().getContent());
         assertEquals("work:url",ws.getUrl().getValue());
+        
+        // not a user obo work
+        assertNull(ws.getSource().getAssertionOriginOrcid());
+    }
+    
+    @Test
+    public void fromWorkEntityToUserOBOWorkSummaryTest() {
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.eq(CLIENT_SOURCE_ID))).thenReturn(userOBOClient);
+        
+        WorkEntity work = getWorkEntity();
+        assertNotNull(work);
+        WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
+        assertNotNull(ws);
+        assertEquals(Long.valueOf(12345), ws.getPutCode());
+        assertEquals(Visibility.LIMITED.value(), ws.getVisibility().value());
+        assertEquals("1234567890", ws.getDisplayIndex());
+        assertNotNull(ws.getExternalIdentifiers());
+        assertNotNull(ws.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(2, ws.getExternalIdentifiers().getExternalIdentifier().size());
+        ExternalID workExtId1 = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(workExtId1.getValue());
+        assertEquals("123", workExtId1.getValue());
+        assertNotNull(workExtId1.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId1.getType());
+        assertEquals(Relationship.VERSION_OF, workExtId1.getRelationship());
+        
+        ExternalID workExtId2 = ws.getExternalIdentifiers().getExternalIdentifier().get(1);
+        assertNotNull(workExtId2.getValue());
+        assertEquals("abc", workExtId2.getValue());
+        assertNotNull(workExtId2.getType());
+        assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), workExtId2.getType());
+        assertEquals(Relationship.SELF, workExtId2.getRelationship());
+        
+        
+        assertEquals("work:journalTitle", ws.getJournalTitle().getContent());
+        assertEquals("work:url",ws.getUrl().getValue());
+        
+        // user obo work
+        assertNotNull(ws.getSource().getAssertionOriginOrcid());
     }
 
     @Test
@@ -265,7 +415,6 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         assertEquals(workEntity2.getAddedToProfileDate(), workEntity.getAddedToProfileDate());
         assertEquals(workEntity2.getAssertionOriginClientSourceId(), workEntity.getAssertionOriginClientSourceId());
-        assertEquals(workEntity2.getAssertionOriginSourceId(), workEntity.getAssertionOriginSourceId());
         assertEquals(workEntity2.getClientSourceId(), workEntity.getClientSourceId());
         assertEquals(workEntity2.getContributorsJson(), workEntity.getContributorsJson());
         assertEquals(workEntity2.getDateCreated(), workEntity.getDateCreated());

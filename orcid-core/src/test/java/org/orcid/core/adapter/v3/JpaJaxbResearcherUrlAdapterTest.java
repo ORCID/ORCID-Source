@@ -11,15 +11,27 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.adapter.MockSourceNameCache;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
+import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 
@@ -32,7 +44,50 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbResearcherUrlAdapterV3")
     private JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Resource
+    private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManager;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
+    
+    @Before
+    public void setUp() {
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
+        
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+    }
 
+    @After
+    public void tearDown() {
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
+        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
+    }
+    
     @Test
     public void testToResearcherUrlEntity() throws JAXBException {
         ResearcherUrls rUrls = getResearcherUrls();
@@ -64,6 +119,35 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         assertEquals(Visibility.LIMITED, r.getVisibility());
         //Source
         assertEquals(CLIENT_SOURCE_ID, r.getSource().retrieveSourcePath());
+        
+        // no user obo
+        assertNull(r.getSource().getAssertionOriginOrcid());
+    }      
+    
+    @Test
+    public void fromResearcherUrlEntityToUserOBOResearcherUrl() {
+        // set client source to user obo enabled client
+        ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
+        userOBOClient.setUserOBOEnabled(true);
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
+        
+        ResearcherUrlEntity entity = getResearcherUrlEntity();
+        ProfileEntity profileEntity = new ProfileEntity();
+        profileEntity.setId("orcid");
+        entity.setUser(profileEntity);
+        
+        ResearcherUrl r = jpaJaxbResearcherUrlAdapter.toResearcherUrl(entity);
+        //General info
+        assertNotNull(r);
+        assertEquals(Long.valueOf(13579), r.getPutCode());
+        assertEquals("http://orcid.org", r.getUrl().getValue());
+        assertEquals("Orcid URL", r.getUrlName());
+        assertEquals(Visibility.LIMITED, r.getVisibility());
+        //Source
+        assertEquals(CLIENT_SOURCE_ID, r.getSource().retrieveSourcePath());
+        
+        // user obo
+        assertNotNull(r.getSource().getAssertionOriginOrcid());
     }      
     
     private ResearcherUrls getResearcherUrls() throws JAXBException {
