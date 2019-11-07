@@ -49,7 +49,7 @@ public class MemberChosenOrgDisambiguatedManagerImplTest {
     public void testRefreshMemberChosenOrgDisambiguatedEntities() {
         memberChosenOrgDisambiguatedManagerImpl.refreshMemberChosenOrgs();
         
-        Mockito.verify(mockMemberChosenOrgDisambiguatedDao, Mockito.times(1)).remove(Mockito.any(MemberChosenOrgDisambiguatedEntity.class));
+        Mockito.verify(mockMemberChosenOrgDisambiguatedDao, Mockito.times(1)).remove(Mockito.anyLong());
         Mockito.verify(mockMemberChosenOrgDisambiguatedDao, Mockito.times(1)).merge(Mockito.any(MemberChosenOrgDisambiguatedEntity.class));
         Mockito.verify(mockOrgDisambiguatedDao, Mockito.times(2)).merge(Mockito.any(OrgDisambiguatedEntity.class));
     }
