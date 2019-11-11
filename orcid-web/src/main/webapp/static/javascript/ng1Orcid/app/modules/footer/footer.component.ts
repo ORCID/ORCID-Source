@@ -6,12 +6,14 @@ import { CommonService }
     
 @Component({
     selector: 'footer-ng2',
-    template:  scriptTmpl("footer-ng2-template")
+    template:  scriptTmpl("footer-ng2-template"),
+    preserveWhitespaces: true
 })
 export class FooterComponent {
     
     assetsPath: String;
     aboutUri: String;
+    liveIds: String; 
     
     constructor(private commonSrvc: CommonService) {
         this.commonSrvc.configInfo$
@@ -19,6 +21,7 @@ export class FooterComponent {
             data => {
                 this.assetsPath = data.messages['STATIC_PATH'];
                 this.aboutUri = data.messages['ABOUT_URI'];
+                this.liveIds = data.messages['LIVE_IDS'];
             },
             error => {
                 console.log('footer.component.ts: unable to fetch configInfo', error);  

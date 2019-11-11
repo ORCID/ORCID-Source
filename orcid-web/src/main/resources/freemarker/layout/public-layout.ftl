@@ -127,6 +127,14 @@
         <!--hide footer if oauth login-->
         <#if !(RequestParameters['oauth'])?? && nav != "oauth-error" && nav != "oauth-error-mismatch">
             <script type="text/ng-template" id="footer-ng2-template">
+                <div class="header2-see-more container" role="Complementary" aria-label="<@orcid.msg 'aria.orcid-statistics'/>">
+                    <div>
+                    {{liveIds}} <@orcid.msg'public-layout.amount_ids'/> 
+                    <a href="{{getBaseUri()}}/statistics" title="">
+                        <@orcid.msg 'public-layout.see_more'/>
+                    </a>
+                    </div>
+                </div>
                 <@orcid.checkFeatureStatus 'NEW_FOOTER'>
                     <footer class="footer-main" aria-label="<@orcid.msg 'aria.footer'/>">
                         <div class="container" role="presentation">
