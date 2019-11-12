@@ -28,8 +28,8 @@ public class MemberChosenOrgDisambiguatedDaoImpl implements MemberChosenOrgDisam
 
     @Override
     @Transactional
-    public void remove(MemberChosenOrgDisambiguatedEntity entity) {
-        entityManager.remove(entity);
+    public void remove(Long id) {
+        entityManager.remove(entityManager.find(MemberChosenOrgDisambiguatedEntity.class, id));
     }
     
     

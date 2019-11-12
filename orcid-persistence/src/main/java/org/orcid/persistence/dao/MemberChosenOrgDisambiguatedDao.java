@@ -10,6 +10,6 @@ public interface MemberChosenOrgDisambiguatedDao {
 
     MemberChosenOrgDisambiguatedEntity merge(MemberChosenOrgDisambiguatedEntity entity);
 
-    void remove(MemberChosenOrgDisambiguatedEntity entity);
+    void remove(Long id);
 
 }
