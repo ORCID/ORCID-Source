@@ -10,6 +10,7 @@ ORCID support for content negotiation is similar to that of DOIs - [Documentatio
 
 "Content negotiation refers to mechanisms defined as a part of HTTP that make it possible to serve different versions of a document (or more generally, representations of a resource) at the same URI, so that user agents can specify which version fits their capabilities the best. " - [Wikipedia](https://en.wikipedia.org/wiki/Content_negotiation)
 
+
 It is defined by
 [RFC7231 section 5.3.2](https://tools.ietf.org/html/rfc7231#section-5.3.2) and 
 [RFC7231 section 3.4](https://tools.ietf.org/html/rfc7231#section-3.4)
@@ -30,6 +31,11 @@ ORCID supports the following types:
 | [RDF Turtle](https://www.w3.org/TR/turtle/) | text/turtle |
 | [RDF N-Triples](https://www.w3.org/TR/n-triples/) | application/n-triples |
 | [RDF/XML](https://www.w3.org/TR/rdf-syntax-grammar/) | application/rdf+xml |
+
+
+#### CORS
+
+CORS is supported for the Public API,  [Implicit OAuth](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) and [Force Logout](http://members.orcid.org/api/resources/customize#logout) only. JSONP  for CORS is not supported. 
 
 # Example
 
