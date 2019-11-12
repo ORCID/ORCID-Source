@@ -236,7 +236,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     }
 
     isValidOrcidId(): boolean{
-         return this.searchSrvc.isValidOrcidId(this.input)
+        return this.searchSrvc.isValidOrcidId(this.input)
     }
 
 }
