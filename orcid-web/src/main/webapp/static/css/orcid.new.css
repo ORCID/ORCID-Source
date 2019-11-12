@@ -9884,3 +9884,10 @@ input:required, input:invalid {
 .workspace-publications > li.bottom-margin-small {
     margin-bottom: 15px;
 }
+
+div.header2-see-more.container {
+    min-height: unset;
+    display: flex;
+}
+
+

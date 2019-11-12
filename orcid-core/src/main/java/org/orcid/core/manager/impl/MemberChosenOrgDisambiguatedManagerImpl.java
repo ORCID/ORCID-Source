@@ -45,7 +45,7 @@ public class MemberChosenOrgDisambiguatedManagerImpl implements MemberChosenOrgD
         });
         
         forRemoval.stream().forEach(e -> {
-            memberChosenOrgDisambiguatedDao.remove(e);
+            memberChosenOrgDisambiguatedDao.remove(e.getOrgDisambiguatedId());
             OrgDisambiguatedEntity org = orgDisambiguatedDao.find(e.getOrgDisambiguatedId());
             markForReindexing(org);
         });
