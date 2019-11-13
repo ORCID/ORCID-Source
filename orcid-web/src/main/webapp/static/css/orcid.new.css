@@ -8595,7 +8595,7 @@ ul.comma li:last-child:after {
     right: -25px;
 }
 
-.lang-rl .workspace-title,.lang-rl .workspace-title+.clear-fix.left,.lang-rl .workspace-title+.clear-fix.left+.info-detail,.lang-rl .workspace-title+.info-detail {
+.lang-rl .workspace-title,.lang-rl .workspace-title+.clear-fix.left,.lang-rl .workspace-title+.clear-fix.left+.info-detail,.lang-rl .workspace-title+.info-detail, .lang-rl .info-detail {
     float: right;
     margin-right: 15px
 }
