@@ -9891,3 +9891,30 @@ div.header2-see-more.container {
 }
 
 
+.mobile-menu-sign-in {
+    width: auto;
+    display: flex;
+    height: 53px;
+    padding: 0 10px;
+}
+
+.lang-rl .mobile-menu-sign-in{
+    flex-direction: row-reverse;
+}
+
+.mobile-menu-sign-in-url {
+    border: solid 1px;
+    width: auto;
+    border-radius: 4px;
+}
+
+@media (min-width:841px) { 
+    .mobile-menu-sign-in {
+        display: none;
+    }   
+}
+@media (max-width:840px) { 
+    .hide-on-mobile{
+        display: none !important;
+    }
+}
