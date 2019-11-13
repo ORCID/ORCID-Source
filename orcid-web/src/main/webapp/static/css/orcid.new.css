@@ -4353,8 +4353,13 @@ ul.sources-options {
     padding: 0;
     list-style: none;
     list-style-type: none;
-    float: right
+    float: right;
+    display: flex;
 }
+
+.lang-rl ul.sources-options {
+    padding-left: 15px;
+} 
 
 ul.sources-options li {
     display: inline-block;
@@ -4457,6 +4462,12 @@ ul.sources-edit-list>li {
 
 .workspace-accordion-header.clearfix > .row {
     display: flex;
+}
+
+@media (max-width:767px) { 
+    .workspace-accordion-header.clearfix > .row {
+        display: block;
+    }
 }
 
 .lang-rl .workspace-accordion-header.clearfix > .row {
@@ -8372,6 +8383,12 @@ ul.comma li:last-child:after {
 
 .lang-rl .action-button-bar,.lang-rl .workspace-body-list>li {
     padding-left: 0
+}
+
+@media (max-width:767px){
+    .lang-rl .action-button-bar,.lang-rl .workspace-body-list>li {
+        padding-left: 15px;
+    }
 }
 
 .lang-rl .bulk-edit ul.bulk-edit-toolbar>li.bulk-edit-toolbar-item * {
