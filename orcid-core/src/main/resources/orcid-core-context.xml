@@ -1600,7 +1600,8 @@
     <!-- redelivery policy -->
     <bean id="redeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
        <property name="maximumRedeliveries" value="-1" />
-       <property name="initialRedeliveryDelay" value="5" />
+       <property name="initialRedeliveryDelay" value="0" />
+       <property name="redeliveryDelay" value="200" />
     </bean>
     
     <bean id="emailQueueProducer" class="org.orcid.core.email.trickle.producer.EmailQueueProducer" >
