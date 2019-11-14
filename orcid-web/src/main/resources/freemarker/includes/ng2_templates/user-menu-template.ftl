@@ -2,7 +2,7 @@
 
       <div class="form-group " role="presentation">
                     <div class="search-container" role="navigation" aria-label="user menu" (mouseleave)="state = false">
-                         <a *ngIf="!userInfo"  class="top-menu-button" href="{{getBaseUri()}}/signin">  
+                         <a *ngIf="!userInfo"  class="top-menu-button hide-on-mobile" href="{{getBaseUri()}}/signin">  
                           {{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase  }}/{{'${springMacroRequestContext.getMessage("header.register")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}
                          </a>
                         <div *ngIf="userInfo && nameForm"  class="top-menu-button" (click)="state = !state" (keyup.enter)="state = !state" tabindex="0" >  
