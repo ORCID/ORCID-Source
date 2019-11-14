@@ -98,15 +98,15 @@ export class SearchService {
         console.log('notify');
     }
 
-    orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]");
+    orcidPathRegex = new RegExp("(\\d{4}-){3,}\\d{3}[\\dX]", "i");
     orcidFullRegex = new RegExp(
-            "^\\s*((http://)?([^/]*orcid\\.org|localhost.*/orcid-web)/)?(\\d{4}-){3,}\\d{3}[\\dX]\\s*$");
+            "^\\s*((http://|https://)?([^/]*orcid\\.org|localhost.*/orcid-web)/)?(\\d{4}-){3,}\\d{3}[\\dX]\\s*$", "i");
     quickSearchEDisMax = '{!edismax qf="given-and-family-names^50.0 family-name^10.0 given-names^5.0 credit-name^10.0 other-names^5.0 text^1.0" pf="given-and-family-names^50.0" mm=1}';
 
     buildUrl (input, baseUrl) {	
         if (this.hasValue(input.text)) {	
-            var orcidId = this.extractOrcidId(input.text);	
-            if (orcidId) {	
+            var orcidId = this.extractOrcidId(input.text.toUpperCase());	
+            if (this.hasValue(orcidId)) {	
                 // Search for iD specifically	
                 return baseUrl + "?q=orcid:" + orcidId + this.offset(input);	
             }	
@@ -128,7 +128,7 @@ export class SearchService {
     extractOrcidId(string: any) {
         var regexResult = this.orcidPathRegex.exec(string);
         if (regexResult) {
-            return regexResult[0].toUpperCase();
+            return regexResult[0];
         }
         return null;
     }
@@ -202,7 +202,7 @@ export class SearchService {
     }
 
     isValidOrcidId(input): any{
-        if(typeof input.text === 'undefined' || input.text === null || input.text === '' || this.orcidFullRegex.exec(input.text.toUpperCase())){
+        if(typeof input.text === 'undefined' || input.text === null || input.text === '' || this.orcidFullRegex.exec(input.text)){
             return true;
         }
         return false;

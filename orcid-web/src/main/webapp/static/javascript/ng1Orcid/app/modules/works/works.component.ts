@@ -795,7 +795,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     loadGroupingSuggestions(openSuggestionsMenuAfterLoad: boolean): void {
-        this.groupingSuggestionPresent = false;
+        
         if(this.publicView != "true") {
             this.worksService.getWorksGroupingSuggestions(
             )
@@ -810,10 +810,13 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                         if (openSuggestionsMenuAfterLoad) {
                             this.mergeSuggestionConfirm()
                         }
+                    } else {
+                        this.groupingSuggestionPresent = false;
                     }
                 },
                 error => {
                     console.log('loadGroupingSuggestions', error);
+                    this.groupingSuggestionPresent = false;
                 } 
             );
         }

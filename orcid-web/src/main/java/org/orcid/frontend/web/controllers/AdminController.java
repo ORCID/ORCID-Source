@@ -72,6 +72,11 @@ public class AdminController extends BaseController {
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
+    private static final String CLAIMED = "(claimed)";
+    private static final String DEACTIVATED = "(deactivated)";
+    private static final String DEPRECATED = "(deprecated)";
+    private static final String LOCKED = "(locked)";
+    private static final String UNCLAIMED = "(unclaimed)";
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_EMAIL_PRIMARY = "*";
     private static final String OUT_STRING_SEPARATOR = "		";
@@ -332,7 +337,17 @@ public class AdminController extends BaseController {
 
                 try {
                     if (profileEntityManager.orcidExists(orcid)) {
-                        builder.append(orcid).append(OUT_STRING_SEPARATOR);
+                        if (!profileEntityManager.isProfileClaimed(orcid)) {
+                            builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(UNCLAIMED).append(OUT_STRING_SEPARATOR);
+                        } else if (profileEntityManager.isLocked(orcid)) {
+                            builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(LOCKED).append(OUT_STRING_SEPARATOR);
+                        } else if (profileEntityManager.isProfileDeprecated(orcid)) {
+                            builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(DEPRECATED).append(OUT_STRING_SEPARATOR);
+                        } else if (profileEntityManager.isDeactivated(orcid)) {
+                            builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(DEACTIVATED).append(OUT_STRING_SEPARATOR);
+                        } else {
+                            builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(CLAIMED).append(OUT_STRING_SEPARATOR);
+                        }
                         
                         Email primary = emailManager.findPrimaryEmail(orcid);
                         if (primary != null) {

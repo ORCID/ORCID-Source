@@ -392,12 +392,19 @@
                             <a  *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin" role="menuitem">{{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>                    
                             <a *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout" role="menuitem">{{'${springMacroRequestContext.getMessage("public-layout.sign_out")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
                         </li>    
-                    </@orcid.checkFeatureStatus>                
-
+                    </@orcid.checkFeatureStatus>          
+                    
+                    <@orcid.checkFeatureStatus featureName='ENABLE_USER_MENU'>
+                    <li role="presentation" class="last leaf ${(nav=="signin")?then('open', '')} " [ngClass]="{'hover': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (focus)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
+                        <div class="mobile-menu-sign-in">
+                            <a  class="mobile-menu-sign-in-url" *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin" role="menuitem">{{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase  }}/{{'${springMacroRequestContext.getMessage("header.register")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}</a>                    
+                            <a class="mobile-menu-sign-in-url" *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout" role="menuitem">{{'${springMacroRequestContext.getMessage("public-layout.sign_out")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
+                        </div>
+                    </li>      
+                    </@orcid.checkFeatureStatus>
                 </ul>  
                 </div>
         </div>
-
     </div>   
 </div> 
 </script>
