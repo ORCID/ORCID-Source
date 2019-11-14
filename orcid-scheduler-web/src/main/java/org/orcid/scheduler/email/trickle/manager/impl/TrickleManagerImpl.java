@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.orcid.core.email.trickle.producer.EmailTrickleItem;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.v3.EmailMessage;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.dao.EmailScheduleDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -42,6 +43,9 @@ public class TrickleManagerImpl implements TrickleManager {
     @Resource
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
 
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+
     @Resource
     private MailGunManager mailGunManager;
 
@@ -53,7 +57,7 @@ public class TrickleManagerImpl implements TrickleManager {
         }
 
         if (notAlreadySent(item)) {
-            if (emailPreferencesAllowSend(item.getOrcid())) {
+            if (canStillSend(item.getOrcid(), item.getEmailMessage().getTo())) {
                 Date now = new Date();
                 LOG.info("Cleared to send at {}", now);
                 EmailMessage emailMessage = item.getEmailMessage();
@@ -92,10 +96,21 @@ public class TrickleManagerImpl implements TrickleManager {
         return event;
     }
 
-    private boolean emailPreferencesAllowSend(String orcid) {
+    private boolean canStillSend(String orcid, String email) {
+        return emailStillExists(email) && emailPreferencesAllowSend(orcid) && profileStillActive(orcid);
+    }
+
+    private boolean profileStillActive(String orcid) {
         ProfileEntity profileEntity = profileDaoReadOnly.find(orcid);
-        return emailFrequencyDaoReadOnly.findByOrcid(orcid).getSendQuarterlyTips() && profileEntity.getDeactivationDate() == null
-                && profileEntity.getDeprecatedDate() == null && profileEntity.isAccountNonLocked();
+        return profileEntity.getDeactivationDate() == null && profileEntity.getDeprecatedDate() == null && profileEntity.isAccountNonLocked();
+    }
+
+    private boolean emailStillExists(String email) {
+        return emailManagerReadOnly.emailExists(email);
+    }
+
+    private boolean emailPreferencesAllowSend(String orcid) {
+        return emailFrequencyDaoReadOnly.findByOrcid(orcid).getSendQuarterlyTips();
     }
 
     private boolean notAlreadySent(EmailTrickleItem item) {
