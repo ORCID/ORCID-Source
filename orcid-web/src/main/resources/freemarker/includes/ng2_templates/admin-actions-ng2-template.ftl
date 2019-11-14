@@ -404,7 +404,7 @@
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showLookupIdOrEmail">
         <div class="form-group">
             <label for="orcid_to_unreview"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
-            <input type="text" id="orcid_to_unreview" (keyup.enter)="lookupIdOrEmails()" [(ngModel)]="csvIdsOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
+            <textarea style="height:300px; width: 800px;" id="orcid_to_unreview" (keyup.enter)="lookupIdOrEmails()" [(ngModel)]="csvIdsOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />"></textarea>
         </div>
         <div class="controls save-btns pull-left bottomBuffer">
             <span id="bottom-confirm-lookup" (click)="lookupIdOrEmails()" class="btn btn-primary"><@orcid.msg 'admin.lookup_id_email.button'/></span>
