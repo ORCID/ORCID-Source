@@ -52,11 +52,6 @@ import { Works } from '../../../components/types';
         padding: 0;
         align-items: center;
     }
-    @media (max-width:460px) {
-        .paginatorContainer {
-            flex-direction: row-reverse;
-        }
-    }
     `]
 })
 export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {

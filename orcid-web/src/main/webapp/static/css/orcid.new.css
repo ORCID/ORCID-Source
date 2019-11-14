@@ -9906,7 +9906,15 @@ div.header2-see-more.container {
     min-height: unset;
     display: flex;
 }
+works-ng2 mat-paginator .mat-paginator-container {
+    justify-content: flex-start;
+}
 
+@media (max-width:415px) {
+    works-ng2 mat-paginator .mat-paginator-container > .mat-paginator-range-actions > .mat-paginator-range-label {
+        margin: 0;
+    }
+}
 
 .mobile-menu-sign-in {
     width: auto;
