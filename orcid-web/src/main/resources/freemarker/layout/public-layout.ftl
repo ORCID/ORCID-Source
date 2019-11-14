@@ -77,7 +77,7 @@
         <!--OAUTH SCREEN HEADER-->
         <#if (RequestParameters['oauth'])?? || nav == "oauth-error" || nav == "oauth-error-mismatch">            
             <div class="container">
-                <div id="main" role="main">
+                <div id="main" role="main" aria-label="main">
                     <div class="row top-header">
                         <div class="col-md-6 col-md-offset-3 centered logo topBuffer">
                             <a href="https://orcid.org" alt="ORCID logo">
@@ -108,7 +108,7 @@
                         <header-ng2></header-ng2>
                     </div><!-- .header -->
                 </@orcid.checkFeatureStatus>
-                <div id="main" role="main" class="main <@orcid.checkFeatureStatus 'ENABLE_HEADER2'>header2-main</@orcid.checkFeatureStatus>">
+                <div id="main" role="main" aria-label="main" class="main <@orcid.checkFeatureStatus 'ENABLE_HEADER2'>header2-main</@orcid.checkFeatureStatus>">
         </#if>
                 <script type="text/ng-template" id="maintenance-message-ng2-template">
                     <div *ngIf="maintenanceMessage!='' && visible" class="row">
