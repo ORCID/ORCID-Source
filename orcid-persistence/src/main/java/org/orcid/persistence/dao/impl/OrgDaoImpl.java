@@ -91,11 +91,13 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     @Override
     public OrgEntity findByAddressAndDisambiguatedOrg(String name, String city, String region, String country, OrgDisambiguatedEntity orgDisambiguated) {
         TypedQuery<OrgEntity> query = entityManager.createQuery(
-                "from OrgEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and (orgDisambiguated.id = :orgDisambiguatedId or (orgDisambiguated is null and :orgDisambiguatedId is null))",
+                "from OrgEntity where COALESCE(name, '') = :name and COALESCE(city, '') = :city and COALESCE(region, '') = :region and country = :country and (orgDisambiguated.id = :orgDisambiguatedId or (orgDisambiguated is null and :orgDisambiguatedId is null))",
                 OrgEntity.class);
-        query.setParameter("name", name);
-        query.setParameter("city", city);
-        query.setParameter("region", region);
+        
+        // ensure null names / cities / regions match empty strings
+        query.setParameter("name", name != null ? name : "");
+        query.setParameter("city", city != null ? city : "");
+        query.setParameter("region", region != null ? region : "");
         query.setParameter("country", country);
         query.setParameter("orgDisambiguatedId", orgDisambiguated != null ? orgDisambiguated.getId() : null);
         List<OrgEntity> results = query.getResultList();
