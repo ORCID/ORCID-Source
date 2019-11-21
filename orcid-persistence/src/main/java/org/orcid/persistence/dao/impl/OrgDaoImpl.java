@@ -40,18 +40,17 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         query.setMaxResults(maxResults);
         return query.getResultList();
     }
-    
+
     @Override
     public List<OrgEntity> getOrgsByName(String searchTerm) {
-    	TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where lower(name) like lower(:searchTerm) order by name", OrgEntity.class);
-    	query.setParameter("searchTerm", searchTerm);
-    	return query.getResultList();
+        TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where lower(name) like lower(:searchTerm) order by name", OrgEntity.class);
+        query.setParameter("searchTerm", searchTerm);
+        return query.getResultList();
     }
 
     @Override
     public OrgEntity findByNameCityRegionAndCountry(String name, String city, String region, String country) {
-        TypedQuery<OrgEntity> query = entityManager.createQuery(
-                "from OrgEntity where name = :name and city = :city and region = :region and country = :country",
+        TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where name = :name and city = :city and region = :region and country = :country",
                 OrgEntity.class);
         query.setParameter("name", name);
         query.setParameter("city", city);
@@ -60,7 +59,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         List<OrgEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
-    
+
     @Override
     public OrgEntity findByNameCityRegionCountryAndType(String name, String city, String region, String country, String sourceType) {
         TypedQuery<OrgEntity> query = entityManager.createQuery(
@@ -74,11 +73,13 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         List<OrgEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
-    
+
     /**
      * Deletes all orgs where the source matches the give app id
-     * @param clientSourceId the app id
-     * */
+     * 
+     * @param clientSourceId
+     *            the app id
+     */
     @Override
     @Transactional
     public void removeOrgsByClientSourceId(String clientSourceId) {
@@ -138,14 +139,16 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     @SuppressWarnings("unchecked")
     @Override
     public List<Object[]> findConstraintViolatingDuplicateOrgDetails() {
-        Query query = entityManager.createNativeQuery("SELECT name, CASE WHEN city IS NULL OR city = '' THEN 'nocity' ELSE city END AS citygroup, CASE WHEN region IS NULL OR region = '' THEN 'noregion' ELSE region END AS regiongroup, CASE WHEN country IS NULL OR country = '' THEN 'nocountry' ELSE country END AS countrygroup, org_disambiguated_id FROM org WHERE org_disambiguated_id IS NOT NULL GROUP BY name, citygroup, regiongroup, countrygroup, org_disambiguated_id HAVING COUNT(*) > 1");
+        Query query = entityManager.createNativeQuery(
+                "SELECT name, CASE WHEN city IS NULL OR city = '' THEN 'nocity' ELSE city END AS citygroup, CASE WHEN region IS NULL OR region = '' THEN 'noregion' ELSE region END AS regiongroup, CASE WHEN country IS NULL OR country = '' THEN 'nocountry' ELSE country END AS countrygroup, org_disambiguated_id FROM org WHERE org_disambiguated_id IS NOT NULL GROUP BY name, citygroup, regiongroup, countrygroup, org_disambiguated_id HAVING COUNT(*) > 1");
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getOrgIdsForDuplicateOrgDetails(String name, String city, String region, String country, Long orgDisambiguatedId) {
-        Query query = entityManager.createNativeQuery("SELECT id FROM org WHERE COALESCE(name, '') = :name AND COALESCE(city, '') = :city AND COALESCE(region, '') = :region AND COALESCE(country, '') = :country AND COALESCE(org_disambiguated_id, 0) = :orgDisambiguatedId");
+        Query query = entityManager.createNativeQuery(
+                "SELECT id FROM org WHERE COALESCE(name, '') = :name AND COALESCE(city, '') = :city AND COALESCE(region, '') = :region AND COALESCE(country, '') = :country AND COALESCE(org_disambiguated_id, 0) = :orgDisambiguatedId");
         query.setParameter("name", name != null ? name : "");
         query.setParameter("city", city.equals("nocity") ? "" : city);
         query.setParameter("region", region.equals("noregion") ? "" : region);
@@ -161,10 +164,14 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         Query query = entityManager.createNativeQuery("select id from org where country IS NULL");
         query.setMaxResults(batchSize);
         List<BigInteger> nullCountryIds = query.getResultList();
-        
-        query = entityManager.createNativeQuery("UPDATE org SET country = '' where id IN (:ids)");
-        query.setParameter("ids", nullCountryIds);
-        return query.executeUpdate();
+
+        if (!nullCountryIds.isEmpty()) {
+            query = entityManager.createNativeQuery("UPDATE org SET country = '' where id IN (:ids)");
+            query.setParameter("ids", nullCountryIds);
+            return query.executeUpdate();
+        } else {
+            return 0;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -174,10 +181,14 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         Query query = entityManager.createNativeQuery("select id from org where city IS NULL");
         query.setMaxResults(batchSize);
         List<BigInteger> nullCityIds = query.getResultList();
-        
-        query = entityManager.createNativeQuery("UPDATE org SET city = '' where id IN (:ids)");
-        query.setParameter("ids", nullCityIds);
-        return query.executeUpdate();
+
+        if (!nullCityIds.isEmpty()) {
+            query = entityManager.createNativeQuery("UPDATE org SET city = '' where id IN (:ids)");
+            query.setParameter("ids", nullCityIds);
+            return query.executeUpdate();
+        } else {
+            return 0;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -187,9 +198,14 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         Query query = entityManager.createNativeQuery("select id from org where region IS NULL");
         query.setMaxResults(batchSize);
         List<BigInteger> nullRegionIds = query.getResultList();
-        query = entityManager.createNativeQuery("UPDATE org SET region = '' where id IN (:ids)");
-        query.setParameter("ids", nullRegionIds);
-        return query.executeUpdate();
+
+        if (!nullRegionIds.isEmpty()) {
+            query = entityManager.createNativeQuery("UPDATE org SET region = '' where id IN (:ids)");
+            query.setParameter("ids", nullRegionIds);
+            return query.executeUpdate();
+        } else {
+            return 0;
+        }
     }
 
 }
