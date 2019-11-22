@@ -392,4 +392,12 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         List<String> emails = query.getResultList();
         return emails == null ? null : emails.get(0);
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getIdsForUserOBORecords(int max) {
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE assertion_origin_source_id IS NOT NULL");
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
 }

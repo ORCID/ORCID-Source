@@ -167,4 +167,6 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
     List<BigInteger> getIdsForUserOBORecords(String clientDetailsId, int max);
 
     void revertUserOBODetails(List<BigInteger> ids);
+
+    public List<BigInteger> getIdsForUserOBORecords(int max);
 }

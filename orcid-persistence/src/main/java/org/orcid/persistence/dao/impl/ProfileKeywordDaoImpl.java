@@ -15,8 +15,6 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
 
     private static final String PUBLIC_VISIBILITY = "PUBLIC";
 
-    private static final String PRIVATE_VISIBILITY = "PRIVATE";
-    
     public ProfileKeywordDaoImpl() {
         super(ProfileKeywordEntity.class);
     }
@@ -175,6 +173,14 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         Query query = entityManager.createNativeQuery("UPDATE profile_keyword SET assertion_origin_source_id = NULL where id IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserOBORecords(int max) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM profile_keyword WHERE assertion_origin_source_id IS NOT NULL");
+        query.setMaxResults(max);
+        return query.getResultList();
     }
 
 }

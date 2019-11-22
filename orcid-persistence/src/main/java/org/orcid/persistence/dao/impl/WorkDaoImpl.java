@@ -308,5 +308,13 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("ids", ids);
         query.executeUpdate();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserOBORecords(int max) {
+        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE assertion_origin_source_id IS NOT NULL");
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
 }
 

@@ -176,4 +176,12 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         query.setParameter("ids", ids);
         query.executeUpdate();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserOBORecords(int max) {
+        Query query = entityManager.createNativeQuery("SELECT other_name_id FROM other_name WHERE assertion_origin_source_id IS NOT NULL");
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
 }
