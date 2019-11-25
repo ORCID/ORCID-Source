@@ -678,7 +678,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.field("url.value", "url");
         fundingClassMap.fieldBToA("org.name", "organization.name");
         fundingClassMap.fieldBToA("org.city", "organization.address.city");
-        fundingClassMap.fieldMap("organization.address.region", "org.region").converter("regionConverter");
+        fundingClassMap.fieldMap("organization.address.region", "org.region").converter("regionConverter").add();
         fundingClassMap.fieldBToA("org.country", "organization.address.country");
         fundingClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         fundingClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
@@ -716,7 +716,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.field("url.value", "url");
         fundingSummaryClassMap.fieldBToA("org.name", "organization.name");
         fundingSummaryClassMap.fieldBToA("org.city", "organization.address.city");
-        fundingSummaryClassMap.fieldMap("organization.address.region", "org.region").converter("regionConverter");
+        fundingSummaryClassMap.fieldMap("organization.address.region", "org.region").converter("regionConverter").add();
         fundingSummaryClassMap.fieldBToA("org.country", "organization.address.country");
         fundingSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         fundingSummaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
@@ -821,7 +821,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         registerSourceConverters(mapperFactory, classMap);
         classMap.fieldBToA("org.name", "organization.name");
         classMap.fieldBToA("org.city", "organization.address.city");
-        classMap.fieldMap("organization.address.region", "org.region").converter("regionConverter");
+        classMap.fieldMap("organization.address.region", "org.region").converter("regionConverter").add();
         classMap.fieldBToA("org.country", "organization.address.country");
         classMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         classMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
@@ -855,7 +855,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         registerSourceConverters(mapperFactory, summaryClassMap);
         summaryClassMap.fieldBToA("org.name", "organization.name");
         summaryClassMap.fieldBToA("org.city", "organization.address.city");
-        summaryClassMap.fieldMap("organization.address.region", "org.region").converter("regionConverter");
+        summaryClassMap.fieldMap("organization.address.region", "org.region").converter("regionConverter").add();
         summaryClassMap.fieldBToA("org.country", "organization.address.country");
         summaryClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
         summaryClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
@@ -891,7 +891,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         classMap.field("url.value", "url");
         classMap.field("organization.name", "org.name");
         classMap.fieldBToA("org.city", "organization.address.city");
-        classMap.fieldMap("organization.address.region", "org.region").converter("regionConverter");
+        classMap.fieldMap("organization.address.region", "org.region").converter("regionConverter").add();
         classMap.field("organization.address.country", "org.country");
         classMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         classMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
@@ -930,7 +930,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         peerReviewSummaryClassMap.field("organization.name", "org.name");
         peerReviewSummaryClassMap.fieldBToA("org.city", "organization.address.city");
-        peerReviewSummaryClassMap.fieldMap("organization.address.region", "org.region").converter("regionConverter");
+        peerReviewSummaryClassMap.fieldMap("organization.address.region", "org.region").converter("regionConverter").add();
         peerReviewSummaryClassMap.field("organization.address.country", "org.country");
         peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
         peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
