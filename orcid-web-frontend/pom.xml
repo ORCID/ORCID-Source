@@ -77,7 +77,7 @@
                         <goals>
                             <goal>yarn</goal>
                         </goals>
-                        <phase>compile</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
                             <arguments>build:${buildEnv}</arguments>
