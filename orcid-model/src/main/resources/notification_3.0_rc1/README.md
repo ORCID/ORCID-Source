@@ -1,10 +1,11 @@
 
-#ORCID API v3.0_rc1 Notifications Permission Guide
+# ORCID API v3.0_rc1 Notifications Permission Guide
+
 Starting in v3.0_rc1, the ORCID API supports new functionality to enable member organizations to add permission requests to a user's ORCID Inbox. These requests provide a "snapshot" example of the type of activities that will be added to the user's ORCID record as a result of granting the permission.
 
 _**User-friendly implementation detail**: Several fields described below are displayed directly to the end user. The ORCID user interface is currently available in 10+ languages, and emails sent to the user are also presented in the user's language of choice. The language preference of the user is available via the ORCID API, and is always public. We strongly recommend that you read and consider the user's language when providing messages to them, providing user-displayed fields in their preferred language when feasible._
 
-##Notifications Permission XML
+## Notifications Permission XML
 XML for the ```permission``` notifications follows the [notification-permission-3.0_rc1.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/notification_3.0_rc1/notification-permission-3.0_rc1.xsd) and consists of the following sections:
 
 - **notification:notification-type**: The type of notification - for this type of notification, the value is always ```permission```. 
@@ -40,7 +41,7 @@ For an example XML file, see [notification-permission-3.0_rc1.xml](https://githu
 - **archived-date** - date that the user archived your notification
 
 
-##Notifications Permission Reference
+## Notifications Permission Reference
 ```permission``` notifications are available only in ORCID API v2.0_rcX, which uses a slightly different data structure from previous API versions. 
 
 In v2.0_rcX, items are read, added, and modified on an individual basis (rather than as a list), using a ```put-code```, which is a system-generated identifier used within the ORCID database.
@@ -51,7 +52,7 @@ Other notable differences between v2.0_rcX previous versions include:
 
 - An explicit ```DELETE``` method is used to remove record items
 
-###Request a notification access token
+### Request a notification access token
 
 Authorized client applications may obtain a notification access token from the ORCID server (using a 2-legged, or "client_credentials" OAuth flow) as described below. If your client is not yet authorized, please [contact support](http://orcid.org/help/contact-us) to request this feature to be turned on for your client. 
 
@@ -79,7 +80,8 @@ _Please note that ORCID reserves the right to limit the client applications with
 | ---- | ---- |
 | Accept<br/>_required_ | The format for the call response. Must be ```Accept: application/json``` |
 
-###REST API for notifications
+### REST API for notifications
+
 | Action                   | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
 | Add a notification | POST | /premium-notification | http://api.sandbox.orcid.org/v3.0_rc1/[ORCID]/notification-permission |
@@ -89,8 +91,8 @@ _Please note that ORCID reserves the right to limit the client applications with
 - **[ORCID]** is the ORCID iD for the record, formatted as XXXX-XXXX-XXXX-XXXX
 - **[PUT-CODE]** is the ```put-code``` attribute for the specific ```notification``` that you wish to read or modify.
 
-###Example cURL Statements
-####Request a notification access token
+### Example cURL Statements
+#### Request a notification access token
 ```
 curl -i -L -H 'Accept: application/json' \
 	-d 'client_id=APP-...' \
@@ -100,7 +102,7 @@ curl -i -L -H 'Accept: application/json' \
 	'http://api.sandbox.orcid.org/oauth/token'
 ```
 
-####Add a notification
+#### Add a notification
 ```
 curl -i -H 'Authorization: Bearer ...' \
 	-H 'Content-Type: application/orcid+xml' \
@@ -108,14 +110,14 @@ curl -i -H 'Authorization: Bearer ...' \
 	https://api.sandbox.orcid.org/v3.0_rc1/[ORCID]/notification-permission
 ```
 
-####Read a notification
+#### Read a notification
 ```
 curl -i -H 'Authorization: Bearer ...' \
 	-H 'Content-Type: application/orcid+xml' \
 	https://api.sandbox.orcid.org/v3.0_rc1/[ORCID]/notification-permission/[PUT-CODE]
 ```
 
-####Flag an unread notification as archived
+#### Flag an unread notification as archived
 ```
 curl -i -H 'Authorization: Bearer ...' \
 	-H 'Content-Type: application/orcid+xml' \
