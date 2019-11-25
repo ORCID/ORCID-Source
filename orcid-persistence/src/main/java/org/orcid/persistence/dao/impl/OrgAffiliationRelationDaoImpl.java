@@ -374,4 +374,13 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("ids", ids);
         query.executeUpdate();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsForUserOBORecords(int max) {
+        Query query = entityManager
+                .createNativeQuery("SELECT id FROM org_affiliation_relation WHERE assertion_origin_source_id IS NOT NULL");
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
 }
