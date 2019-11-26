@@ -9,10 +9,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnInit}
 import { Observable, Subject, Subscription } 
     from 'rxjs';
 
-import { takeUntil } 
-    from 'rxjs/operators';
-
-import { catchError, map, tap } 
+import { takeUntil ,  catchError, map, tap } 
     from 'rxjs/operators';
 
 import { CommonService } 

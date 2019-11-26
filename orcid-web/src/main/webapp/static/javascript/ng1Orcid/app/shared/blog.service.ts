@@ -1,3 +1,5 @@
+
+import {throwError as observableThrowError,  Observable, Subject } from 'rxjs';
 import { Injectable } 
     from '@angular/core';
 
@@ -9,9 +11,6 @@ import { CookieXSRFStrategy, HttpModule, XSRFStrategy }
 
 import { Headers, Http, Response, RequestOptions} 
     from '@angular/http';
-
-import { Observable, Subject } 
-    from 'rxjs';
 
 
 import { catchError, map, tap } 
@@ -40,7 +39,7 @@ export class BlogService {
             errMsg = error.message ? error.message : error.toString();
         }
         console.error(errMsg);
-        return Observable.throw(errMsg);
+        return observableThrowError(errMsg);
     }
 
     getBlogFeed(url): Observable<any> {

@@ -1,3 +1,5 @@
+
+import {throwError as observableThrowError,  Observable, Subject, ReplaySubject } from 'rxjs';
 declare var orcidVar: any;
 
 import { Injectable } 
@@ -8,9 +10,6 @@ import { CookieXSRFStrategy, HttpModule, XSRFStrategy, JsonpModule, Headers, Htt
 
 import { HttpClient, HttpClientModule, HttpHeaders } 
      from '@angular/common/http';
-
-import { Observable, Subject, ReplaySubject } 
-    from 'rxjs';
 
 import { catchError, map, tap, switchMap } 
     from 'rxjs/operators';
@@ -63,7 +62,7 @@ export class SearchService {
             errMsg = error.message ? error.message : error.toString();
         }
         console.error(errMsg);
-        return Observable.throw(errMsg);
+        return observableThrowError(errMsg);
     }
 
     getAffiliations(orcid): Observable<any> {
