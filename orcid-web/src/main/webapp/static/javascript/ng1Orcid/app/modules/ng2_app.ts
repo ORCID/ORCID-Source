@@ -14,9 +14,6 @@ import { Component, NgModule }
 import { FormsModule, ReactiveFormsModule } 
     from '@angular/forms';
 
-import { HttpModule, JsonpModule, Request, XSRFStrategy } 
-    from '@angular/http';
-
 import { BrowserModule } 
     from "@angular/platform-browser";
 
@@ -299,8 +296,6 @@ export class RootCmp {
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule, //angular5
-        HttpModule, //Angular2
-        JsonpModule,
         NgbTypeaheadModule.forRoot(),
         UpgradeModule,
         /* User Generated Modules */
