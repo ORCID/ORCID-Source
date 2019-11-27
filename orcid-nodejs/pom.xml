@@ -27,7 +27,7 @@
                 <!-- Use the latest released version:https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
                 <version>1.6</version>
                 <configuration>
-                   <nodeVersion>v8.11.2</nodeVersion>
+                   <nodeVersion>v10.16.0</nodeVersion>
                    <downloadRoot>https://nodejs.org/dist/</downloadRoot>
                    <workingDirectory>${nodejs.workingDirectory}</workingDirectory>
                    <installDirectory>target</installDirectory>
