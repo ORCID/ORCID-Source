@@ -1,20 +1,7 @@
-
-import {throwError as observableThrowError,  Observable, Subject } from 'rxjs';
-import { Injectable } 
-    from '@angular/core';
-
-import { HttpClient, HttpClientModule, HttpHeaders } 
-     from '@angular/common/http';
-
-import { CookieXSRFStrategy, HttpModule, XSRFStrategy } 
-    from '@angular/http';
-
-import { Headers, Http, Response, RequestOptions} 
-    from '@angular/http';
-
-
-import { catchError, map, tap } 
-    from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, Subject, throwError as observableThrowError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',
@@ -29,14 +16,13 @@ export class BlogService {
 
     }
 
-    private handleError (error: Response | any) {
+    private handleError (body) {
         let errMsg: string;
-        if (error instanceof Response) {
-            const body = error.json() || '';
+        if (body instanceof HttpErrorResponse) {
             const err = body.error || JSON.stringify(body);
-            errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+            errMsg = `${body.status} - ${body.statusText || ''} ${err}`;
         } else {
-            errMsg = error.message ? error.message : error.toString();
+            errMsg = body.message ? body.message : body.toString();
         }
         console.error(errMsg);
         return observableThrowError(errMsg);

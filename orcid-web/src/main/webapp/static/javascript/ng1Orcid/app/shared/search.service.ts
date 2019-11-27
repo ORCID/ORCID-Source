@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, Subject, throwError as observableThrowError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -43,14 +43,13 @@ export class SearchService {
         );
      }
 
-    private handleError (error) {
+    private handleError (body) {
         let errMsg: string;
-        if (error instanceof HttpResponse) {
-            const body = error.body
+        if (body instanceof HttpErrorResponse) {
             const err = body.error || JSON.stringify(body);
-            errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+            errMsg = `${body.status} - ${body.statusText || ''} ${err}`;
         } else {
-            errMsg = error.message ? error.message : error.toString();
+            errMsg = body.message ? body.message : body.toString();
         }
         console.error(errMsg);
         return observableThrowError(errMsg);
