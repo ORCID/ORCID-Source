@@ -12,7 +12,7 @@
     "@angular/platform-browser": "8.2.14",
     "@angular/platform-browser-dynamic": "8.2.14",
     "@angular/upgrade": "8.2.14",
-    "@ng-bootstrap/ng-bootstrap": "^2.2.0",
+    "@ng-bootstrap/ng-bootstrap": "^5.1.4",
     "angular": "1.7.0",
     "angular-cookies": "1.7.0",
     "angular-in-memory-web-api": "0.6.0",
