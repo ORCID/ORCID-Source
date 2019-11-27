@@ -296,7 +296,7 @@ export class RootCmp {
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule, //angular5
-        NgbTypeaheadModule.forRoot(),
+        NgbTypeaheadModule,
         UpgradeModule,
         /* User Generated Modules */
         AccountSettingsNg2Module,
