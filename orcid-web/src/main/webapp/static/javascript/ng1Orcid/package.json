@@ -15,7 +15,7 @@
     "@bit/orcid.angular.orcid-theme": "file:./components/orcid-theme",
     "@bit/orcid.angular.types": "file:./components/types",
     "@ng-bootstrap/ng-bootstrap": "^5.1.4",
-    "angular": "1.7.0",
+    "angular": "^1.7.9",
     "angular-cookies": "1.7.0",
     "angular-recaptcha": "4.1.5",
     "angular-route": "1.7.0",
