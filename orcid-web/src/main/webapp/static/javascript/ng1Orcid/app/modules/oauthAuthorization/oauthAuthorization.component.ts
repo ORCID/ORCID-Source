@@ -46,7 +46,7 @@ import { GenericService }
     template:  scriptTmpl("oauth-authorization-ng2-template")
 })
 export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, OnInit {
-    @ViewChild(ReCaptchaComponent) captcha: ReCaptchaComponent;
+    @ViewChild(ReCaptchaComponent, {static: false}) captcha: ReCaptchaComponent;
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
