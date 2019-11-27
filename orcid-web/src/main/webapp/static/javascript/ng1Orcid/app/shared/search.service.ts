@@ -1,21 +1,13 @@
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, ReplaySubject, Subject, throwError as observableThrowError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 
-import {throwError as observableThrowError,  Observable, Subject, ReplaySubject } from 'rxjs';
+import { CommonService } from './common.service.ts';
+
+
 declare var orcidVar: any;
 
-import { Injectable } 
-    from '@angular/core';
-
-import { CookieXSRFStrategy, HttpModule, XSRFStrategy, JsonpModule, Headers, Http, Response, RequestOptions, Jsonp } 
-    from '@angular/http';
-
-import { HttpClient, HttpClientModule, HttpHeaders } 
-     from '@angular/common/http';
-
-import { catchError, map, tap, switchMap } 
-    from 'rxjs/operators';
-
-import { CommonService } 
-    from './common.service.ts';       
     
 @Injectable({
     providedIn: 'root',
@@ -31,8 +23,7 @@ export class SearchService {
     
     constructor(
         private http: HttpClient,
-        private commonSrvc: CommonService,
-        private jsonp: Jsonp) {
+        private commonSrvc: CommonService) {
         this.publicApiHeaders = new HttpHeaders(
             {
                 'Content-Type': 'application/json',
@@ -52,10 +43,10 @@ export class SearchService {
         );
      }
 
-    private handleError (error: Response | any) {
+    private handleError (error) {
         let errMsg: string;
-        if (error instanceof Response) {
-            const body = error.json() || '';
+        if (error instanceof HttpResponse) {
+            const body = error.body
             const err = body.error || JSON.stringify(body);
             errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
         } else {
