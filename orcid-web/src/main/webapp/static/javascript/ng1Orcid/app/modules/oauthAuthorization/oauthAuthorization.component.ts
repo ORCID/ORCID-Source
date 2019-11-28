@@ -9,7 +9,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone  } 
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone, Inject  } 
     from '@angular/core';
 
 import { ReCaptchaComponent } 
@@ -40,6 +40,7 @@ import { SearchService }
     
 import { GenericService }
     from '../../shared/generic.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'oauth-authorization-ng2',
@@ -121,7 +122,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         private modalService: ModalService,
         private oauthService: OauthService,
         private searchSrvc: SearchService,
-        private nameService: GenericService
+        private nameService: GenericService,
+        public dialog: MatDialog
     ) {
         window['angularComponentReference'] = {
             zone: this.zone,
@@ -201,6 +203,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                   this.userInfo = {};
               } 
           );
+        this.openDialog("Test")
     }
 
     addScript(url, onLoadFunction): void {      
@@ -488,6 +491,17 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         );
 
     };
+
+    openDialog(data): void {
+        const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+            width: '250px',
+            data
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+        });
+    }
 
     sendReactivationEmail(email, $event?): void {
         if (event) {
@@ -845,3 +859,19 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         return getBaseUri();
     };
 }
+
+@Component({
+    selector: 'dialog-overview-example-dialog',
+    template: '<h1 mat-dialog-title>Hi {{data}}</h1>',
+  })
+  export class DialogOverviewExampleDialog {
+  
+    constructor(
+      public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+      @Inject(MAT_DIALOG_DATA) public data) {}
+  
+    onNoClick(): void {
+      this.dialogRef.close();
+    }
+  
+  }
