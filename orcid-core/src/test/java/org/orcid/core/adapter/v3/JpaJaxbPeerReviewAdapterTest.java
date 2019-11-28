@@ -120,14 +120,9 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertNull(pe.getSourceId());
         assertNull(pe.getClientSourceId());
         assertNull(pe.getElementSourceId());
-
-        // Check org values
-        assertEquals("common:name", pe.getOrg().getName());
-        assertEquals("common:city", pe.getOrg().getCity());
-        assertEquals("common:region", pe.getOrg().getRegion());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), pe.getOrg().getCountry());
-        assertEquals("http://dx.doi.org/10.13039/100000001", pe.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("FUNDREF", pe.getOrg().getOrgDisambiguated().getSourceType());
+        
+        // org should be null, it will be found / created based on model object of incoming data
+        assertNull(pe.getOrg());
 
         // Check subject
         assertEquals(
@@ -186,13 +181,8 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertNull(pe.getClientSourceId());
         assertNull(pe.getElementSourceId());
 
-        // Check org values
-        assertEquals("common:name", pe.getOrg().getName());
-        assertEquals("common:city", pe.getOrg().getCity());
-        assertEquals("common:region", pe.getOrg().getRegion());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), pe.getOrg().getCountry());
-        assertEquals("http://dx.doi.org/10.13039/100000001", pe.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("FUNDREF", pe.getOrg().getOrgDisambiguated().getSourceType());
+        // org should be null, it will be found / created based on model object of incoming data
+        assertNull(pe.getOrg());
 
         // Check subject
         assertEquals(

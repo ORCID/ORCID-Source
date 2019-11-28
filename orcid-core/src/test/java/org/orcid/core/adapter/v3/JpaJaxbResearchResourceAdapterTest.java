@@ -129,6 +129,11 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
 
         // no user obo
         assertNull(m.getSource().getAssertionOriginOrcid());
+        
+        assertEquals(1, m.getProposal().getHosts().getOrganization().size());
+        assertNotNull(m.getProposal().getHosts().getOrganization().get(0));
+        assertNotNull(m.getProposal().getHosts().getOrganization().get(0).getAddress());
+        assertEquals("org:city", m.getProposal().getHosts().getOrganization().get(0).getAddress().getCity());
     }
 
     @Test
@@ -199,36 +204,14 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         // assertEquals("https://orcid.org/0000-0000-0000-0000",e.getSourceId());
         // assertEquals("https://orcid.org/0000-0000-0000-0000",e.getClientSourceId());
 
-        // host 1
-        assertEquals("XSEDE", e.getHosts().get(0).getName());
-        assertEquals("city", e.getHosts().get(0).getCity());
-        assertEquals("region", e.getHosts().get(0).getRegion());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), e.getHosts().get(0).getCountry());
-        assertEquals("XX", e.getHosts().get(0).getOrgDisambiguated().getSourceId());
-        assertEquals("grid", e.getHosts().get(0).getOrgDisambiguated().getSourceType());
-        // host 2
-        assertEquals("Lasers-R-Us", e.getHosts().get(1).getName());
-        assertEquals("city", e.getHosts().get(1).getCity());
-        assertEquals("region", e.getHosts().get(1).getRegion());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), e.getHosts().get(1).getCountry());
-        assertEquals("XX", e.getHosts().get(1).getOrgDisambiguated().getSourceId());
-        assertEquals("lei", e.getHosts().get(1).getOrgDisambiguated().getSourceType());
-
         // item1
-        // assertEquals("",e.getResourceItems().get(0).getId());
         assertEquals("Giant Laser 1", e.getResourceItems().get(0).getResourceName());
         assertEquals("infrastructures", e.getResourceItems().get(0).getResourceType());
         assertEquals("http://blah.com", e.getResourceItems().get(0).getUrl());
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"RRID\",\"workExternalIdentifierId\":{\"content\":\"rrid:giantLASER\"}},{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"https://doi.org/10.123/giantlaser\"}}]}",
                 e.getResourceItems().get(0).getExternalIdentifiersJson());
-        // assertEquals(Long.valueOf(1234l),e.getResourceItems().get(0).getResearchResourceEntity().getId());
-        assertEquals("Lasers-R-US", e.getResourceItems().get(0).getHosts().get(0).getName());
-        assertEquals("city", e.getResourceItems().get(0).getHosts().get(0).getCity());
-        assertEquals("region", e.getResourceItems().get(0).getHosts().get(0).getRegion());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), e.getResourceItems().get(0).getHosts().get(0).getCountry());
-        assertEquals("XX", e.getResourceItems().get(0).getHosts().get(0).getOrgDisambiguated().getSourceId());
-        assertEquals("grid", e.getResourceItems().get(0).getHosts().get(0).getOrgDisambiguated().getSourceType());
+      
         // item2
         // assertEquals("",e.getResourceItems().get(1).getId());
         assertEquals("Moon Targets", e.getResourceItems().get(1).getResourceName());
@@ -237,13 +220,6 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"PART_OF\",\"url\":null,\"workExternalIdentifierType\":\"URI\",\"workExternalIdentifierId\":{\"content\":\"https://moon.org/targetOnTheMoon\"}}]}",
                 e.getResourceItems().get(1).getExternalIdentifiersJson());
-        // assertEquals(Long.valueOf(1234l),e.getResourceItems().get(1).getResearchResourceEntity().getId());
-        assertEquals("Moon Holdings Ltd", e.getResourceItems().get(1).getHosts().get(0).getName());
-        assertEquals("city", e.getResourceItems().get(1).getHosts().get(0).getCity());
-        assertEquals("region", e.getResourceItems().get(1).getHosts().get(0).getRegion());
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), e.getResourceItems().get(1).getHosts().get(0).getCountry());
-        assertEquals("XX", e.getResourceItems().get(1).getHosts().get(0).getOrgDisambiguated().getSourceId());
-        assertEquals("lei", e.getResourceItems().get(1).getHosts().get(0).getOrgDisambiguated().getSourceType());
     }
 
     @Test
