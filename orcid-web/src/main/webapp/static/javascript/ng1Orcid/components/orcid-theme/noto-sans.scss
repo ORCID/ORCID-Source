@@ -5,8 +5,9 @@ $notosans-fontface-path: '../fonts/noto-sans' !default;
 @mixin notosans-fontface($type, $weight, $style) {
   @font-face {
     font-family: 'Noto Sans';
-    src: url('#{$notosans-fontface-path}/NotoSans-#{$type}.woff') format('woff'),
-      url('#{$notosans-fontface-path}/NotoSans-#{$type}.woff2') format('woff');
+    src: url('#{$notosans-fontface-path}/NotoSans-#{$type}.woff2')
+        format('woff'),
+      url('#{$notosans-fontface-path}/NotoSans-#{$type}.woff') format('woff');
     font-weight: $weight;
     font-style: $style;
   }
