@@ -1,8 +1,8 @@
 {
   "name": "@bit/orcid.angular.orcid-theme",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "homepage": "https://bit.dev/orcid/angular/orcid-theme",
-  "main": "material.scss",
+  "main": "index.js",
   "dependencies": {
     "@angular/material": "^8.1.4",
     "@angular/animations": "8.2.4",

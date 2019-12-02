@@ -1,0 +1,19 @@
+{
+  "name": "@bit/orcid.angular.is-this-you",
+  "version": "0.0.5",
+  "homepage": "https://bit.dev/orcid/angular/is-this-you",
+  "main": "app/cdk/is-this-you/is-this-you.module.ts",
+  "dependencies": {
+    "@angular/material": "^8.1.4",
+    "@angular/core": "^8.2.4",
+    "@angular/common": "^8.2.4",
+    "@bit/orcid.angular.orcid-theme": "file:../orcid-theme",
+    "@bit/orcid.angular.platform-info": "file:../platform-info"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "license": "SEE LICENSE IN LICENSE",
+  "bit": {
+    "env": {}
+  }
+}

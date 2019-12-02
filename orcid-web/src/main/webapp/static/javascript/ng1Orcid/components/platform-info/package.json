@@ -1,0 +1,18 @@
+{
+  "name": "@bit/orcid.angular.platform-info",
+  "version": "0.0.1",
+  "homepage": "https://bit.dev/orcid/angular/platform-info",
+  "main": "platform-info.module.ts",
+  "dependencies": {
+    "@angular/cdk": "^8.1.4",
+    "@angular/common": "^8.2.4",
+    "@angular/core": "^8.2.4",
+    "rxjs": "~6.5.2"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "license": "SEE LICENSE IN LICENSE",
+  "bit": {
+    "env": {}
+  }
+}

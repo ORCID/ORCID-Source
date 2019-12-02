@@ -41,6 +41,7 @@ import { SearchService }
 import { GenericService }
     from '../../shared/generic.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { IsThisYouComponent } from '../../../components/is-this-you/app/cdk/is-this-you/is-this-you.component';
 
 @Component({
     selector: 'oauth-authorization-ng2',
@@ -493,8 +494,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     };
 
     openDialog(data): void {
-        const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
-            width: '250px',
+        const dialogRef = this.dialog.open(IsThisYouComponent, {
+            width: '1080px',
             data
         });
 

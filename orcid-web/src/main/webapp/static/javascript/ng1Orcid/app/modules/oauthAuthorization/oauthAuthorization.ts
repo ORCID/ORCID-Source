@@ -6,6 +6,8 @@ import { CommonNg2Module } from "./../common/common";
 import { OauthAuthorizationComponent, DialogOverviewExampleDialog } from "./oauthAuthorization.component";
 import { idBannerNg2Module } from "./../idBanner/idBanner";
 import { MatDialogModule } from '@angular/material/dialog';
+import { IsThisYouModule } from "../../../components/is-this-you/app/cdk/is-this-you/is-this-you.module";
+import { PlatformInfoModule } from "../../../components/platform-info";
 
 
 // This is the Angular 1 part of the module
@@ -19,7 +21,7 @@ export const OauthAuthorizationModule = angular.module(
 @NgModule({
     declarations: [OauthAuthorizationComponent, DialogOverviewExampleDialog],
     entryComponents: [OauthAuthorizationComponent, DialogOverviewExampleDialog],
-    imports: [CommonNg2Module, idBannerNg2Module, MatDialogModule],
+    imports: [CommonNg2Module, idBannerNg2Module, MatDialogModule, IsThisYouModule, PlatformInfoModule],
     providers: []
 })
 export class OauthAuthorizationNg2Module {}

@@ -1,0 +1,17 @@
+@import '~@angular/material/_theming';
+@import '../../../assets/scss/material.orcid-theme.scss';
+
+@mixin is-this-you($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, accent);
+  $foreground: map-get($theme, foreground);
+  $background: map-get($theme, background);
+  $overlay-color: mat-color($background, blue-overlay);
+
+  .modal-title {
+    color: mat-color($primary);
+  }
+}
+
+@include is-this-you($orcid-app-theme);
