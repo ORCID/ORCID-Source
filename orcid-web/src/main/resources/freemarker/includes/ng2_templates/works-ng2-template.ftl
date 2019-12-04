@@ -482,7 +482,7 @@
                     <mat-paginator
                     [length]="worksService.paginationTotalAmountOfWorks"
                     [pageSize]="worksService.paginationBatchSize"
-                    [pageSizeOptions]="[50, 100, 500]"
+                    [pageSizeOptions]="[10, 50, 100]"
                     [pageIndex]="worksService.paginationIndex"
                     (page)="pageEvent($event)"
                     >
@@ -501,7 +501,7 @@
                     <mat-paginator 
                     [length]="worksService.paginationTotalAmountOfWorks"
                     [pageSize]="worksService.paginationBatchSize"
-                    [pageSizeOptions]="[50, 100, 500]"
+                    [pageSizeOptions]="[10, 50, 100]"
                     [pageIndex]="worksService.paginationIndex"
                     (page)="pageEvent($event)"
                     >
