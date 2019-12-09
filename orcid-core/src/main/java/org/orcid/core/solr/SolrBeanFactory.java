@@ -2,6 +2,7 @@ package org.orcid.core.solr;
 
 import javax.annotation.Resource;
 
+import org.apache.http.client.HttpClient;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
@@ -59,5 +60,10 @@ public class SolrBeanFactory {
                 .allowCompression(allowCompression)
                 .withResponseParser(responseParser)                
                 .build();
+    }
+    
+    @Bean(name = "solrCSVProfileClient")
+    public CSVSolrClient solrCSVClient() {
+        return new CSVSolrClient(solrReadOnlyUrl + DEFAULT_COLLECTION);
     }
 }

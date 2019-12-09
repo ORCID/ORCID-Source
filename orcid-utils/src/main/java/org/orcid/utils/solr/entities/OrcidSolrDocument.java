@@ -221,6 +221,9 @@ public class OrcidSolrDocument {
     @Field(SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME)
     private List<String> currentInstitutionAffiliationNames;
     
+    @Field(SolrConstants.ORG)
+    private List<String> org = new ArrayList<String>();
+    
     public String getOrcid() {
         return orcid;
     }
@@ -1166,6 +1169,13 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!zbl.equals(other.zbl))
             return false;
+        
+        if (org == null && other.org != null) {
+            return false;
+        } else if (!org.equals(other.org)) {
+            return false;
+        }
+        
         return true;
     }
 }

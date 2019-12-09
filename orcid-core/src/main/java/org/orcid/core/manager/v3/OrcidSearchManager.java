@@ -27,4 +27,6 @@ public interface OrcidSearchManager {
     Search findOrcidIds(Map<String, List<String>> queryParameters);
     
     Search findOrcidsByQuery(String query, Integer start, Integer rows);
+
+    String findOrcidIdsAsCSV(Map<String, List<String>> solrParams);
 }
