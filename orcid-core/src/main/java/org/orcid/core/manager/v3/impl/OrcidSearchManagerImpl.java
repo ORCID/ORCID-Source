@@ -24,19 +24,19 @@ import org.slf4j.LoggerFactory;
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidSearchManagerImpl.class);
-    
+
     @Resource(name = "recordManagerReadOnlyV3")
     private RecordManagerReadOnly recordManagerReadOnly;
-    
+
     @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
     private OrcidSolrProfileClient orcidSolrProfileClient;
-    
+
     @Resource
     private CSVSolrClient csvSolrClient;
-    
+
     @Override
     public Search findOrcidIds(Map<String, List<String>> queryParameters) {
         Search search = new Search();
@@ -44,7 +44,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         setSearchResults(orcidSolrResults, search);
         return search;
     }
-    
+
     @Override
     public Search findOrcidsByQuery(String query, Integer start, Integer rows) {
         Search search = new Search();
@@ -54,7 +54,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     }
 
     private void setSearchResults(OrcidSolrResults solrResults, Search searchResults) {
-        if(solrResults != null && solrResults.getResults() != null) {
+        if (solrResults != null && solrResults.getResults() != null) {
             searchResults.setNumFound(solrResults.getNumFound());
             solrResults.getResults().stream().forEach(r -> {
                 try {
@@ -62,9 +62,9 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
                     Result result = new Result();
                     result.setOrcidIdentifier(recordManagerReadOnly.getOrcidIdentifier(r.getOrcid()));
                     searchResults.getResults().add(result);
-                } catch(OrcidNoResultException onre) {
+                } catch (OrcidNoResultException onre) {
                     LOGGER.error("ORCID id found in SOLR but not in the DB: " + r.getOrcid());
-                } catch(Exception e) {
+                } catch (Exception e) {
                     LOGGER.error("Exception for ORCID " + r.getOrcid(), e);
                 }
             });
