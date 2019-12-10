@@ -96,6 +96,4 @@ public class SolrConstants {
     public static final String RESEARCH_RESOURCE_ITEM_NAME = "research-resource-item-name";    
     public static final String RESEARCH_RESOURCE_ITEM_HOSTS_NAME = "research-resource-item-org-name";
     
-    public static final String ORG = "org";
-    
 }
