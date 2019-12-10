@@ -100,7 +100,7 @@ public class ShibbolethController extends BaseController {
         
         RemoteUser remoteUser = institutionalSignInManager.retrieveRemoteUser(headers);
         if (remoteUser == null) {
-            LOGGER.warn("RemoteUser is null for provider {} and displayName {}, with headers {}", shibIdentityProvider, displayName, headers);
+            LOGGER.warn("RemoteUser is null for provider {} and headers {}", shibIdentityProvider, headers);
             signinData.setUnsupportedInstitution(true);
             signinData.setInstitutionContactEmail(identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
             return signinData;
