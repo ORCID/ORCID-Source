@@ -1166,6 +1166,7 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!zbl.equals(other.zbl))
             return false;
+        
         return true;
     }
 }
