@@ -100,6 +100,7 @@ public class ShibbolethController extends BaseController {
         
         RemoteUser remoteUser = institutionalSignInManager.retrieveRemoteUser(headers);
         if (remoteUser == null) {
+            LOGGER.warn("RemoteUser is null for provider {} and displayName {}, with headers {}", shibIdentityProvider, displayName, headers);
             signinData.setUnsupportedInstitution(true);
             signinData.setInstitutionContactEmail(identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
             return signinData;
@@ -111,6 +112,7 @@ public class ShibbolethController extends BaseController {
             LOGGER.info("Found existing user connection: {}", userConnectionEntity);
             HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(parseOriginalHeaders(userConnectionEntity.getHeadersJson()), headers);
             if (!checkHeadersResult.isSuccess()) {
+                LOGGER.warn("checkHeadersResult.isSuccess() failed for {}", shibIdentityProvider);
                 signinData.setHeaderCheckFailed(true);
                 return signinData;
             }
@@ -132,7 +134,7 @@ public class ShibbolethController extends BaseController {
         String shibIdentityProvider = headers.get(InstitutionalSignInManager.SHIB_IDENTITY_PROVIDER_HEADER);
         RemoteUser remoteUser = institutionalSignInManager.retrieveRemoteUser(headers);
         if (remoteUser == null) {
-            LOGGER.info("Failed federated log in for {}", shibIdentityProvider);
+            LOGGER.warn("Failed federated log in for {}", shibIdentityProvider);
             identityProviderManager.incrementFailedCount(shibIdentityProvider);
             return mav;
         }
@@ -145,6 +147,7 @@ public class ShibbolethController extends BaseController {
             LOGGER.info("Found existing user connection: {}", userConnectionEntity);
             HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(parseOriginalHeaders(userConnectionEntity.getHeadersJson()), headers);
             if (!checkHeadersResult.isSuccess()) {
+                LOGGER.warn("checkHeadersResult.isSuccess() failed for {}", shibIdentityProvider);
                 return mav;
             }
             
@@ -163,6 +166,8 @@ public class ShibbolethController extends BaseController {
             }
             return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
         } 
+        
+        LOGGER.warn("Remote user was not null, however, userConnectionEntity is for {}", shibIdentityProvider);
         return mav;
     }
 
