@@ -50,7 +50,9 @@ public class IssnClient {
         IssnData issnData = new IssnData();
         for (int i = 0; i < jsonArray.length(); i++) {
             if (jsonArray.getJSONObject(i).has("mainTitle")) {
-                issnData.setMainTitle(jsonArray.getJSONObject(i).getString("mainTitle"));
+                String title = jsonArray.getJSONObject(i).getString("mainTitle");
+                String cleanTitle = cleanText(title);
+                issnData.setMainTitle(cleanTitle);
                 issnData.setIssn(jsonArray.getJSONObject(i).getString("issn"));
                 return issnData;
             } else if (jsonArray.getJSONObject(i).has("name")) {
@@ -89,5 +91,9 @@ public class IssnClient {
             output.close();
         }
     }
-
+    
+    private String cleanText(String text) {
+        return text.replaceAll("\\p{C}", "");
+    }
+    
 }
