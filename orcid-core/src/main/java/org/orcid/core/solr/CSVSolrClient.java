@@ -88,12 +88,17 @@ public class CSVSolrClient {
                     fl.append(specifiedField).append(",");
                 }
             }
-            return fl.toString();
+            return !fl.toString().isEmpty() ? fl.toString() : getDefaultFieldList();
         } else {
-            ALLOWED_FIELDS.forEach(s -> fl.append(s).append(","));
-            return fl.toString();
+            return getDefaultFieldList();
         }
 
+    }
+    
+    private String getDefaultFieldList() {
+        StringBuilder defaultFieldList = new StringBuilder(ALLOWED_FIELDS.get(0));
+        ALLOWED_FIELDS.subList(1, ALLOWED_FIELDS.size()).forEach(s -> defaultFieldList.append(",").append(s));
+        return defaultFieldList.toString();
     }
 
 }
