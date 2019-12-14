@@ -9910,9 +9910,12 @@ works-ng2 mat-paginator .mat-paginator-container {
     justify-content: flex-start;
 }
 
-@media (max-width:415px) {
+@media (max-width:500px) {
     works-ng2 mat-paginator .mat-paginator-container > .mat-paginator-range-actions > .mat-paginator-range-label {
         margin: 0;
+    }
+    works-ng2 mat-paginator .mat-paginator-container {
+        flex-direction: column;
     }
 }
 
