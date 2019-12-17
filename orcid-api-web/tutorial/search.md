@@ -119,6 +119,34 @@ Example response
 
  Like all API calls, search queries are restricted by the [API limits](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#api-limits).
 
+ ## Using ORCID search with CSV
+
+ | Item              |Parameter               |
+|-------------------|--------------------------|
+| URL 				| https://pub.sandbox.orcid.org/v3.0/csv-search/[version]/search/?=[query]&fl[csv fields]'
+| Header		|'Accept: text/csv' |
+|Method| GET|
+| Endpoint 	|csv-search |
+|Allowed CSV Fields      | orcid, email, given-names, family-name,given-and-family-names, current-institution-affiliation-name,past-institution-affiliation-name, credit-name, other-names|
+
+You can search ORCID with the API and return your search as a CSV as an alternative to JSON and XML. This can be achieved by changing the header, the endpoint and then adding the fields you wish to have returned in your CSV. The search part of the query remains the same.
+
+For example; say you want to search for records associated with the ringgold `385488` and return the results as a CSV containing the fields `orcid, given-names, family-name, current-institution-affiliation-name`. You would need to change the header to `Accept:text/csv` and add your search query as normal `?q=ringgold-org-id:385488` and then select the fields you want to return in your CSV by choosing from the above list of allowed fields as follows: `orcid, given-names, family-name, current-institution-affiliation-name`.
+
+The above query would look like
+
+```https://pub.sandbox.orcid.org/v3.0/csv-search/?q=ringgold-org-id:385488&fl=orcid,given-names,family-name,current-institution-affiliation-name'```
+
+
+The first part of the response to the above query would look something like this:
+
+```0000-0003-1481-3160,Paula,Demain,ORCID
+0000-0002-6600-9556,ma_test,16sept2016,"ORCID,ORCID,ORCID,CrossRef"
+0000-0003-1876-0369,Anjli,Narwani,
+0000-0002-9177-4161,Utib,Utib,
+0000-0002-7191-5289,Pedro,López,"ORCID,Universidad Autónoma de San Luis Potosí"
+```
+
  ## Indexed fields
 
  The entire ORCID record is indexed and can be searched using basic keyword searching. Search can also be limited to the specific fields listed below:
@@ -353,3 +381,19 @@ Description: Search for records with peer-reviews that are associated with the p
 Paging: Default
 
 URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=peer-review-group-id:%22issn\:1741-4857%22```
+
+### Example 19 
+
+Description: Search for records with Ringold "385488" and return as CSV with the fields "given-names, family-name, current-institution-affiliation-name":
+
+Paging: Default
+
+URL ```https://pub.sandbox.orcid.org/v3.0/csv-search/?q=ringgold-org-id:385488&fl=orcid,given-names,family-name,current-institution-affiliation-name```
+
+
+### Example 20 
+Description: Search for records affiliated with the organization with the exact name “Boston University” or "BU" and return results as CSV with the fields "orcid, given-names, family-name'
+
+Paging: Default
+
+URL ```https://pub.sandbox.orcid.org/v3.0/csv-search/?q=affiliation-org-name:(%22Boston%20University%22+OR+BU)&fl=orcid,given-names,family-name```
