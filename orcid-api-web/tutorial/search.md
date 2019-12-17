@@ -123,7 +123,7 @@ Example response
 
  | Item              |Parameter               |
 |-------------------|--------------------------|
-| URL 				| https://pub.sandbox.orcid.org/v3.0/csv-search/[version]/search/?=[query]&fl[csv fields]'
+| URL 				| https://pub.sandbox.orcid.org/v3.0/csv-search/[version]/search/?=[query]&fl[csv fields]
 | Header		|'Accept: text/csv' |
 |Method| GET|
 | Endpoint 	|csv-search |
