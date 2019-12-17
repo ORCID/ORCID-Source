@@ -123,13 +123,13 @@ Example response
 
  | Item              |Parameter               |
 |-------------------|--------------------------|
-| URL 				| https://pub.sandbox.orcid.org/v3.0/csv-search/[version]/search/?=[query]&fl[csv fields]
+| URL 				| https://pub.sandbox.orcid.org/v3.0/csv-search/[version]/search/?q=[query]&fl[csv fields]
 | Header		|'Accept: text/csv' |
 |Method| GET|
 | Endpoint 	|csv-search |
-|Allowed CSV Fields      | orcid, email, given-names, family-name,given-and-family-names, current-institution-affiliation-name,past-institution-affiliation-name, credit-name, other-names|
+|Allowed Fields      | orcid, email, given-names, family-name,given-and-family-names, current-institution-affiliation-name,past-institution-affiliation-name, credit-name, other-names|
 
-You can search ORCID with the API and return your search as a CSV as an alternative to JSON and XML. This can be achieved by changing the header, the endpoint and then adding the fields you wish to have returned in your CSV. The search part of the query remains the same.
+You can search ORCID with the API and return your search as a CSV as an alternative to JSON and XML. This can be achieved by changing the header, the endpoint and then specify the fields you want in the response using the fl (field list) parameter. The search part of the query remains the same.
 
 For example; say you want to search for records associated with the ringgold `385488` and return the results as a CSV containing the fields `orcid, given-names, family-name, current-institution-affiliation-name`. You would need to change the header to `Accept:text/csv` and add your search query as normal `?q=ringgold-org-id:385488` and then select the fields you want to return in your CSV by choosing from the above list of allowed fields as follows: `orcid, given-names, family-name, current-institution-affiliation-name`.
 
