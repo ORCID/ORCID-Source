@@ -6914,6 +6914,10 @@ ul.comma li:last-child:after {
     padding-left: 29px
 }
 
+footer-ng2 .footer-row-container .footer-url {
+    margin-right: 0;
+}
+
 .inline-list li {
     display: inline
 }
