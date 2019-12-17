@@ -6918,6 +6918,11 @@ footer-ng2 .footer-row-container .footer-url {
     margin-right: 0;
 }
 
+footer-ng2 .inline-list {
+    display: flex;
+    justify-content: center;
+}
+
 .inline-list li {
     display: inline
 }
