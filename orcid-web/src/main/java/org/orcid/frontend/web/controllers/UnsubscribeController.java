@@ -51,7 +51,7 @@ public class UnsubscribeController extends BaseController {
         // Disable quarterly notifications
         emailFrequencyManager.updateSendQuarterlyTips(orcid, false);
         
-        // Verify primary email address if it is not verified already
+        // Verify primary email address if it is not verified already        
         if(!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
             emailManager.verifyPrimaryEmail(orcid);
         }

@@ -40,12 +40,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     @Transactional
-    public boolean verifyPrimaryEmail(String orcid) {
-        return emailDao.verifyPrimaryEmail(orcid);
-    }
-
-    @Override
-    @Transactional
     public boolean moveEmailToOtherAccount(String email, String origin, String destination) {
         boolean moved = emailDao.moveEmailToOtherAccountAsNonPrimary(email, origin, destination);
         if (moved) {

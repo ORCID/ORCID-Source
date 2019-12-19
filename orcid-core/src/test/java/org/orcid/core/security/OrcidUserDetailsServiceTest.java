@@ -9,14 +9,19 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.EmailDao;
@@ -209,7 +214,41 @@ public class OrcidUserDetailsServiceTest {
         }
         profile.setDeactivationDate(null);
     }
+    
+    @Test
+    public void loadUserByProfile_MoreThanOnePrimaryAvailable() {
+        String email = "the_new_primary@test.orcid.org";
+        when(emailDao.findPrimaryEmail(anyString())).thenThrow(NonUniqueResultException.class);
+        when(emailDao.findNewestPrimaryEmail(anyString())).thenReturn(email);
+        
+        OrcidProfileUserDetails opud = service.loadUserByProfile(profile);
+        
+        Mockito.verify(emailDao, Mockito.times(1)).updatePrimary(Mockito.matches(ORCID), Mockito.matches(email));  
+        Mockito.verify(slackManager, Mockito.times(1)).sendSystemAlert("User with orcid " + ORCID + " have more than one primary email, so, we are setting the latest modified primary as the primary one");
+                        
+        assertNotNull(opud);
+        opud.getUsername();
+        assertEquals(email, opud.getPrimaryEmail());
+        assertEquals(ORCID, opud.getUsername());
+    }
 
+    @Test
+    public void loadUserByProfile_NoPrimaryAvailable() {
+        String email = "the_new_primary@test.orcid.org";
+        when(emailDao.findPrimaryEmail(anyString())).thenThrow(NoResultException.class);
+        when(emailDao.findNewestVerifiedOrNewestEmail(anyString())).thenReturn(email);
+        
+        OrcidProfileUserDetails opud = service.loadUserByProfile(profile);
+        
+        Mockito.verify(emailDao, Mockito.times(1)).updatePrimary(Mockito.matches(ORCID), Mockito.matches(email));     
+        Mockito.verify(slackManager, Mockito.times(1)).sendSystemAlert("User with orcid " + ORCID + " have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one");
+        
+        assertNotNull(opud);
+        opud.getUsername();
+        assertEquals(email, opud.getPrimaryEmail());
+        assertEquals(ORCID, opud.getUsername());
+    }
+    
     private EmailEntity getEmailEntity(ProfileEntity profile) {
         if (email != null) {
             return email;

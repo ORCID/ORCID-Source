@@ -30,9 +30,7 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     
     boolean verifyEmail(String email);
     
-    boolean isPrimaryEmailVerified(String orcid);
-    
-    boolean verifyPrimaryEmail(String orcid);
+    boolean isVerified(String orcid, String email);
     
     boolean moveEmailToOtherAccountAsNonPrimary(String email, String origin, String destination);
     
@@ -103,6 +101,8 @@ public interface EmailDao extends GenericDao<EmailEntity, String> {
     void revertUserOBODetails(List<String> ids);
     
     String findNewestVerifiedOrNewestEmail(String orcid);
+    
+    String findNewestPrimaryEmail(String orcid);
 
     List<String> getIdsForUserOBORecords(int max);
 }
