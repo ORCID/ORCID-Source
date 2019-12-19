@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +20,8 @@ import com.google.common.cache.LoadingCache;
 public class PIDResolverCache {
 
     //recursively follow up to 4 http->https or https->http redirects
-    public static int doProtocolRedirect(HttpURLConnection con, int count) throws IOException{
+    public static HttpURLConnection doProtocolRedirect(HttpURLConnection con, int count) throws IOException{
+        Map<String, List<String>> requestProperties = con.getRequestProperties();
         int code = con.getResponseCode();
         if ((code == HttpURLConnection.HTTP_SEE_OTHER 
                 || code == HttpURLConnection.HTTP_MOVED_PERM 
@@ -27,12 +29,18 @@ public class PIDResolverCache {
             count ++;
             //need to manually follow 3xx from one protocol to another.
             String loc = con.getHeaderField("Location");
+            
             HttpURLConnection conRedirect = (HttpURLConnection) new URL(loc).openConnection();
-            conRedirect.setRequestMethod("HEAD");
+            conRedirect.setRequestMethod(con.getRequestMethod());
+            for (String key : requestProperties.keySet()) {
+                for (String value : requestProperties.get(key)) {
+                    conRedirect.addRequestProperty(key, value);
+                }
+            }
             conRedirect.setInstanceFollowRedirects(true);
             return doProtocolRedirect(conRedirect, count);
         }
-        return code;
+        return con;
     }
     
     //these caches ensure we only attempt to resolve once if multiple requests to resolve are made.
@@ -44,8 +52,8 @@ public class PIDResolverCache {
                         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
                         con.setRequestMethod("HEAD");
                         con.setInstanceFollowRedirects(true);
-                        int code = doProtocolRedirect(con,0);
-                        return (code == HttpURLConnection.HTTP_OK);            
+                        con = doProtocolRedirect(con, 0);
+                        return (con.getResponseCode() == HttpURLConnection.HTTP_OK);            
                     } catch (IOException e) {
                         //nothing
                     }  
@@ -112,15 +120,14 @@ public class PIDResolverCache {
     
     public InputStream get(String url, String accept) throws IOException {
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-        con.setRequestProperty("User-Agent", con.getRequestProperty("User-Agent")+ " (orcid.org)");
         con.addRequestProperty("Accept", accept);
         con.setRequestMethod("GET");
         con.setInstanceFollowRedirects(true);
-        int responseCode = con.getResponseCode();
-        if(responseCode == HttpURLConnection.HTTP_OK) {
+        con = doProtocolRedirect(con, 0);
+        if(con.getResponseCode() == HttpURLConnection.HTTP_OK) {
             return con.getInputStream();
         }
         
-        throw new UnexpectedResponseCodeException(responseCode);
+        throw new UnexpectedResponseCodeException(con.getResponseCode());
     }
 }

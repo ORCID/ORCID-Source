@@ -36,10 +36,14 @@ import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DOIResolver implements LinkResolver, MetadataResolver {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(DOIResolver.class);
 
     @Resource
     PIDNormalizationService normalizationService;
@@ -138,9 +142,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 return getWork(json);
             }
         } catch (UnexpectedResponseCodeException e) {
-            // TODO: For future projects, we might want to retry when
-            // e.getReceivedCode() tell us that we can retry later, like 503 or
-            // 504
+            LOG.warn(String.format("UnexpectedResponseCode retrieving DOI %s. Expected %s, got %s", rr.getGeneratedUrl(), e.getExpectedCode(), e.getReceivedCode()), e);
         } catch (IOException | JSONException e) {
             return null;
         }

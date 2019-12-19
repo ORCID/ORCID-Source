@@ -6,6 +6,7 @@ import static org.orcid.core.api.OrcidApiConstants.API_STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
+import static org.orcid.core.api.OrcidApiConstants.CSV_SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.DISTINCTION;
 import static org.orcid.core.api.OrcidApiConstants.DISTINCTIONS;
 import static org.orcid.core.api.OrcidApiConstants.DISTINCTION_SUMMARY;
@@ -52,6 +53,7 @@ import static org.orcid.core.api.OrcidApiConstants.SERVICE;
 import static org.orcid.core.api.OrcidApiConstants.SERVICES;
 import static org.orcid.core.api.OrcidApiConstants.SERVICE_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_CSV;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
@@ -992,6 +994,17 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
         Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
         return xmlQueryResults;
+    }
+    
+    @GET
+    @Produces(TEXT_CSV)
+    @Path(CSV_SEARCH_PATH)
+    @ApiOperation( nickname="searchByQueryv3", value = "Search records")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
+    public Response searchByQueryCSV(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+        Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
+        Response csvQueryResults = serviceDelegator.searchByQueryCSV(solrParams);
+        return csvQueryResults;
     }
 
     @GET
