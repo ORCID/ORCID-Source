@@ -10,9 +10,7 @@ import org.orcid.core.manager.read_only.EmailManagerReadOnly;
  */
 public interface EmailManager extends EmailManagerReadOnly {
 
-    boolean verifyEmail(String email);
-    
-    boolean verifyPrimaryEmail(String orcid);
+    boolean verifyEmail(String email);        
     
     boolean moveEmailToOtherAccount(String email, String origin, String destination);
     
