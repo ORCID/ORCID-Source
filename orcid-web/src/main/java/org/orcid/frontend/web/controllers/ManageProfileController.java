@@ -616,7 +616,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (errors.isEmpty()) {
             // clear errors
             editEmail.setErrors(new ArrayList<String>());
-            emailManager.editEmail(orcid, editEmail.getOriginal(), editEmail.getEdited(), request);            
+            emailManager.editEmail(orcid, editEmail.getOriginal(), editEmail.getEdited().trim(), request);            
         } else {
             editEmail.setErrors(errors);
         }
