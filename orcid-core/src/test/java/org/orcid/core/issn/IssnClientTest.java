@@ -1,6 +1,8 @@
 package org.orcid.core.issn;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +54,15 @@ public class IssnClientTest {
         assertEquals("Shalom (Glyvrar)", data.getMainTitle());
         assertEquals("0906-8724", data.getIssn());
     }
+    
+    @Test
+    public void testGetIssnDataBadCharacters() throws IOException, JSONException {
+        ReflectionTestUtils.setField(issnClient, "client", getMockedClient(getJsonInputStreamBadCharacters()));
+        IssnData data = issnClient.getIssnData("doesn't matter");
+        assertFalse("\u0098The \u009CJournal of cell biology.".equals(data.getMainTitle()));
+        assertEquals("The Journal of cell biology.", data.getMainTitle());
+        assertTrue("\u0098The \u009CJournal of cell biology.".getBytes().length != data.getMainTitle().getBytes().length);
+    }
 
     private InputStream getJsonInputStream() throws IOException {
         return getClass().getResourceAsStream("/issn-response.json");
@@ -63,6 +74,10 @@ public class IssnClientTest {
     
     private InputStream getJsonInputStreamNoMainTitleNameArray() throws IOException {
         return getClass().getResourceAsStream("/issn-response-no-mainTitle-name-array.json");
+    }
+    
+    private InputStream getJsonInputStreamBadCharacters()  throws IOException {
+        return getClass().getResourceAsStream("/issn-response-bad-characters.json");
     }
     
     private Client getMockedClient(InputStream inputStream) throws IOException {

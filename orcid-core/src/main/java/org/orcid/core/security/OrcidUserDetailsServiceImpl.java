@@ -139,12 +139,21 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
             String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(profile.getId());
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
             
-            String message = String.format("User with orcid %s have no primary email, so, we are setting %s as primary, since it is the newest verified email, or, the newest email in case non is verified", orcid, alternativePrimaryEmail);
+            String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
             LOGGER.error(message);
             
             slackManager.sendSystemAlert(message);
             return alternativePrimaryEmail;
-        }        
+        } catch (javax.persistence.NonUniqueResultException nure) {
+            String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(profile.getId());
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            
+            String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
+            LOGGER.error(message);
+            
+            slackManager.sendSystemAlert(message);
+            return alternativePrimaryEmail;
+        }
     }
 
     private void checkStatuses(ProfileEntity profile) {

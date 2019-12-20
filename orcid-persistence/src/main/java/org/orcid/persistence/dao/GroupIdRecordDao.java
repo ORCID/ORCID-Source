@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
@@ -16,5 +17,5 @@ public interface GroupIdRecordDao extends GenericDao<GroupIdRecordEntity, Long> 
     
     boolean duplicateExists(Long putCode, String groupId);
     
-    List<GroupIdRecordEntity> getIssnRecordsNotSourcedBy(String clientSourceId, int pageSize);
+    List<GroupIdRecordEntity> getIssnRecordsNotModifiedSince(int batchSize, Date start);
 }

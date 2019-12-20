@@ -49,11 +49,6 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
     
     @Override
-    public boolean isPrimaryEmail(String email) {
-        return emailDao.isPrimaryEmail(email);
-    }
-    
-    @Override
     public boolean isPrimaryEmail(String orcid, String email) {
         return emailDao.isPrimaryEmail(orcid, email);
     }
@@ -90,11 +85,6 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             emailIds.put(email, orcid);
         }
         return emailIds;
-    }
-    
-    @Override
-    public boolean isPrimaryEmailVerified(String orcid) {
-        return emailDao.isPrimaryEmailVerified(orcid);
     }
         
     @Override

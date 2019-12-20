@@ -323,10 +323,13 @@ public class FundingForm extends VisibilityForm implements ErrorsInterface, Seri
             organization.setName(fundingName.getValue());
         OrganizationAddress organizationAddress = new OrganizationAddress();
         organization.setAddress(organizationAddress);
-        if (!PojoUtil.isEmpty(city))
+        if (!PojoUtil.isEmpty(city)) {
             organizationAddress.setCity(city.getValue());
+        }
         if (!PojoUtil.isEmpty(region)) {
             organizationAddress.setRegion(region.getValue());
+        } else {
+            organizationAddress.setRegion("");
         }
         if (!PojoUtil.isEmpty(country)) {
             organizationAddress.setCountry(Iso3166Country.fromValue(country.getValue()));

@@ -365,9 +365,13 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         OrganizationAddress organizationAddress = new OrganizationAddress();
         organization.setAddress(organizationAddress);
         organizationAddress.setCity(city.getValue());
+        
         if (!PojoUtil.isEmpty(region)) {
             organizationAddress.setRegion(region.getValue());
+        } else {
+            organizationAddress.setRegion("");
         }
+        
         if (!PojoUtil.isEmpty(disambiguatedAffiliationSourceId)) {
             organization.setDisambiguatedOrganization(new DisambiguatedOrganization());
             organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedAffiliationSourceId.getValue());
