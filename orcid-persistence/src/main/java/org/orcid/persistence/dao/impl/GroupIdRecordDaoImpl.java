@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -74,9 +75,9 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<GroupIdRecordEntity> getIssnRecordsNotSourcedBy(String clientSourceId, int pageSize) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g LEFT OUTER JOIN invalid_issn_group_id_record p ON g.id = p.id where p.id IS NULL AND g.group_id like 'issn:%' and g.client_source_id != :clientSourceId", GroupIdRecordEntity.class);
-        query.setParameter("clientSourceId", clientSourceId);
+    public List<GroupIdRecordEntity> getIssnRecordsNotModifiedSince(int pageSize, Date date) {
+        Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g LEFT OUTER JOIN invalid_issn_group_id_record p ON g.id = p.id where p.id IS NULL AND g.group_id like 'issn:%' and g.last_modified < :date", GroupIdRecordEntity.class);
+        query.setParameter("date", date);
         return query.getResultList();
     }
 }
