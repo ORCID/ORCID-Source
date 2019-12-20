@@ -8,7 +8,7 @@
     <description>Test utilities that can be brought in to other modules with the test scope</description>
 
     <properties>
-        <spring.version>4.3.18.RELEASE</spring.version>
+        <spring.version>5.2.2.RELEASE</spring.version>
         <security.version>4.2.13.RELEASE</security.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
