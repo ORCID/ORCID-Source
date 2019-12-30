@@ -1,6 +1,6 @@
 
 # ORCID API v3.0 Notifications Permission Guide
-Starting in v3.0, the ORCID API supports new functionality to enable member organizations to add permission requests to a user's ORCID Inbox. These requests provide a "snapshot" example of the type of activities that will be added to the user's ORCID record as a result of granting the permission.
+The ORCID API supports functionality to enable member organizations to add permission requests to a user's ORCID Inbox. These requests provide a "snapshot" example of the type of activities that will be added to the user's ORCID record as a result of granting the permission.
 
 _**User-friendly implementation detail**: Several fields described below are displayed directly to the end user. The ORCID user interface is currently available in 10+ languages, and emails sent to the user are also presented in the user's language of choice. The language preference of the user is available via the ORCID API, and is always public. We strongly recommend that you read and consider the user's language when providing messages to them, providing user-displayed fields in their preferred language when feasible._
 
