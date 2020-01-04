@@ -9,7 +9,7 @@
 
     <properties>
         <spring.version>4.3.18.RELEASE</spring.version>
-        <security.version>4.2.4.RELEASE</security.version>
+        <security.version>4.2.13.RELEASE</security.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>

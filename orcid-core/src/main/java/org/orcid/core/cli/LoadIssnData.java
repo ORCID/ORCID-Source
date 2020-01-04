@@ -1,5 +1,6 @@
 package org.orcid.core.cli;
 
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,7 +49,8 @@ public class LoadIssnData {
     }
 
     private void updateIssnGroupIdRecords() {
-        List<GroupIdRecordEntity> issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotSourcedBy(orcidSource.getId(), BATCH_SIZE);
+        Date start = new Date();
+        List<GroupIdRecordEntity> issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(BATCH_SIZE, start);
         int count = 0;
         while (!issnEntities.isEmpty()) {
             for (GroupIdRecordEntity issnEntity : issnEntities) {
@@ -75,7 +77,7 @@ public class LoadIssnData {
                     recordFailure(issnEntity.getId(), "Invalid record");
                 }
             }
-            issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotSourcedBy(orcidSource.getId(), BATCH_SIZE);
+            issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(BATCH_SIZE, start);
         }
     }
 
@@ -89,6 +91,7 @@ public class LoadIssnData {
     private void updateIssnEntity(GroupIdRecordEntity issnEntity, IssnData issnData) {
         issnEntity.setGroupName(issnData.getMainTitle());
         issnEntity.setClientSourceId(orcidSource.getId());
+        issnEntity.setLastModified(new Date());
         groupIdRecordDao.merge(issnEntity);
     }
 

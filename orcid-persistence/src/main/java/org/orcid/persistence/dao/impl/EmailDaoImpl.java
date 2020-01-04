@@ -116,18 +116,11 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override
-    public boolean isPrimaryEmailVerified(String orcid) {
-        Query query = entityManager.createNativeQuery("select is_verified from email where orcid=:orcid and is_primary=true");
+    public boolean isVerified(String orcid, String email) {
+        Query query = entityManager.createNativeQuery("select is_verified from email where orcid=:orcid and email=:email and is_primary=true");
         query.setParameter("orcid", orcid);
+        query.setParameter("email", email);
         return (Boolean)query.getSingleResult();
-    }
-    
-    @Override
-    @Transactional
-    public boolean verifyPrimaryEmail(String orcid) {
-        Query query = entityManager.createNativeQuery("update email set is_verified=true where orcid=:orcid and is_primary=true");
-        query.setParameter("orcid", orcid);
-        return query.executeUpdate() > 0;
     }
     
     @Override
@@ -388,6 +381,14 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     public String findNewestVerifiedOrNewestEmail(String orcid) {
         TypedQuery<String> query = entityManager.createQuery("select email from EmailEntity where orcid = :orcid order by verified desc, dateCreated desc", String.class);
+        query.setParameter("orcid", orcid);
+        List<String> emails = query.getResultList();
+        return emails == null ? null : emails.get(0);
+    }
+    
+    @Override
+    public String findNewestPrimaryEmail(String orcid) {
+        TypedQuery<String> query = entityManager.createQuery("select email from EmailEntity where orcid = :orcid and primary = true order by lastModified desc", String.class);
         query.setParameter("orcid", orcid);
         List<String> emails = query.getResultList();
         return emails == null ? null : emails.get(0);

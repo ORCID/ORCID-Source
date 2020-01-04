@@ -22,15 +22,11 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     
     Map<String, String> findIdsByEmails(List<String> emailList);
     
-    boolean isPrimaryEmailVerified(String orcid);
-    
     boolean haveAnyEmailVerified(String orcid);
     
     Emails getEmails(String orcid);
     
-    Emails getPublicEmails(String orcid);
-    
-    boolean isPrimaryEmail(String email);
+    Emails getPublicEmails(String orcid);    
     
     boolean isPrimaryEmail(String orcid, String email);
     

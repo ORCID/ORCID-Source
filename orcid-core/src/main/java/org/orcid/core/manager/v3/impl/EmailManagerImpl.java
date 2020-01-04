@@ -8,10 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
+import org.orcid.core.security.OrcidUserDetailsServiceImpl;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
@@ -19,6 +21,8 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -29,6 +33,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailManagerImpl.class);
+    
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
@@ -44,6 +50,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Resource(name = "encryptionManager")
     private EncryptionManager encryptionManager;   
 
+    @Resource
+    private SlackManager slackManager;
+    
     @Override
     @Transactional
     public void removeEmail(String orcid, String email) {
@@ -65,7 +74,28 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public boolean verifyPrimaryEmail(String orcid) {
-        return emailDao.verifyPrimaryEmail(orcid);
+        try {
+            String primaryEmail = emailDao.findPrimaryEmail(orcid).getEmail();
+            return emailDao.verifyEmail(primaryEmail);
+        } catch (javax.persistence.NoResultException nre) {
+            String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            
+            String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
+            LOGGER.error(message);
+            
+            slackManager.sendSystemAlert(message);
+            throw nre;
+        } catch (javax.persistence.NonUniqueResultException nure) {
+            String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            
+            String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
+            LOGGER.error(message);
+            
+            slackManager.sendSystemAlert(message);    
+            throw nure;
+        }               
     }
 
     @Override
