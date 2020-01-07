@@ -12,7 +12,9 @@
     "@angular/platform-browser": "8.2.14",
     "@angular/platform-browser-dynamic": "8.2.14",
     "@angular/upgrade": "8.2.14",
+    "@bit/orcid.angular.is-this-you": "0.0.14",
     "@bit/orcid.angular.orcid-theme": "file:./components/orcid-theme",
+    "@bit/orcid.angular.platform-info": "0.0.5",
     "@bit/orcid.angular.types": "file:./components/types",
     "@ng-bootstrap/ng-bootstrap": "^5.1.4",
     "angular": "^1.7.9",
@@ -38,9 +40,7 @@
     "url-search-params-polyfill": "^5.1.0",
     "whatwg-fetch": "^2.0.4",
     "xml2js": "0.4.19",
-    "zone.js": "0.9.1",
-    "@bit/orcid.angular.platform-info": "file:./components/platform-info",
-    "@bit/orcid.angular.is-this-you": "file:./components/is-this-you"
+    "zone.js": "0.9.1"
   },
   "description": "Angular 1.6 Orcid App",
   "devDependencies": {
