@@ -189,6 +189,7 @@ When translation status for each resource in the new language reaches 100%, the 
 
         tx push -s -r registry.[resource name]
 
+4. For this file properties to be available on FTL templates, add `classpath:i18n/[resource name]` into the `messageSource` and  `messageSourceNoFallback` basename value lists on [orcid-core-context.xml](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/orcid-core-context.xml)
 ## <a id="remove-resource"></a>Remove a Resource
 1. Remove the entry for the resource from [.tx/config](https://github.com/ORCID/ORCID-Source/blob/master/.tx/config)
 2. Remove properties files for the resource from [orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n)
