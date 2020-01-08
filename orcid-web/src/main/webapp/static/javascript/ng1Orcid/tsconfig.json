@@ -32,7 +32,9 @@
   },
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "**/*.deprecated.ts",
+    "**/*.deprecated/*",
   ],
   "awesomeTypescriptLoaderOptions": {
     "forkChecker": true,
