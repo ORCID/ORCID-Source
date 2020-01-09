@@ -144,9 +144,6 @@ import { ReactivationNg2Module }
 import { RegisterDuplicatesNg2Module } 
     from './registerDuplicates/registerDuplicates';
 
-import { RequestPasswordResetNg2Module } 
-    from './requestPasswordReset/requestPasswordReset';
-
 import { ResearchResourceNg2Module } 
     from './researchResource/researchResource';
 
@@ -343,7 +340,6 @@ export class RootCmp {
         OrgIdentifierPopoverNg2Module,
         ReactivationNg2Module,
         RegisterDuplicatesNg2Module,
-        RequestPasswordResetNg2Module,
         ResearchResourceNg2Module,
         ResearchResourceDeleteNg2Module,
         ResendClaimNg2Module,

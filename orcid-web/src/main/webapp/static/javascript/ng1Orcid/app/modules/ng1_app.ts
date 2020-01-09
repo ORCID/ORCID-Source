@@ -136,9 +136,6 @@ import { RecordCorrectionsModule }
 import { RegisterDuplicatesModule } 
     from './registerDuplicates/registerDuplicates';
 
-import { RequestPasswordResetModule } 
-    from './requestPasswordReset/requestPasswordReset';
-
 import { ResetPasswordModule }
     from './resetPassword/resetPassword';
 
@@ -274,7 +271,6 @@ export const orcidApp = angular.module(
         ReactivationModule.name,
         RecordCorrectionsModule.name,
         RegisterDuplicatesModule.name,
-        RequestPasswordResetModule.name,
         ResetPasswordModule.name,
         ResearchResourceModule.name,
         ResearchResourceDeleteModule.name,
