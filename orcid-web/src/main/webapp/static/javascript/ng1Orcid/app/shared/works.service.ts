@@ -658,7 +658,7 @@ export class WorksService {
               this.groups = data.groups;
               this.paginationTotalAmountOfWorks = data.totalGroups;
               this.showPagination = this.paginationTotalAmountOfWorks > 50 ? true: false; 
-              this.groupsLabel = this.showPagination? null : this.groups.length + " of " + data.totalGroups;
+              this.groupsLabel = this.groups.length + " of " + data.totalGroups;
             })
           );
       }

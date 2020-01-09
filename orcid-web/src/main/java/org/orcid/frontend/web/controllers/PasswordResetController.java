@@ -93,15 +93,6 @@ public class PasswordResetController extends BaseController {
 
     private static final List<String> RESET_PASSWORD_PARAMS_WHITELIST = Arrays.asList("_");
 
-    @RequestMapping(value = "/reset-password", method = RequestMethod.GET)
-    public ModelAndView resetPassword() {
-        ModelAndView mav = new ModelAndView("reset_password");
-        if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
-            mav.addObject("noIndex", true);
-        }
-        return mav;
-    }
-
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.GET)
     public @ResponseBody EmailRequest getPasswordResetRequest() {
         return new EmailRequest();

@@ -33,7 +33,12 @@
   "exclude": [
     "node_modules",
     "dist",
+<<<<<<< HEAD
     "**/*.spec.ts",
+=======
+    "**/*.deprecated.ts",
+    "**/*.deprecated/*",
+>>>>>>> origin/master
   ],
   "awesomeTypescriptLoaderOptions": {
     "forkChecker": true,
