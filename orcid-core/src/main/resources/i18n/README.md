@@ -2,12 +2,10 @@
 
 This directory contains java properties files needed for i18n support. 
 
-For each resource (api, email, messages, javascript, identifiers), a separate properties file for each language, named with the corresponding [locale code](http://www.oracle.com/technetwork/java/javase/locales-137662.html), contains translations. Additionally, we use codes xx, lr and rl for testing.
+For each resource, a separate properties file for each language, named with the corresponding [locale code](http://www.oracle.com/technetwork/java/javase/locales-137662.html), contains translations. Additionally, we use codes xx, lr and rl for testing.
 
-In most cases, only en, xx, lr, and rl files should be edited directly. We use the following tools to manage files for other lanuages:
+In most cases, only en, xx, lr, and rl files should be edited directly. We use [Transifex](https://www.transifex.com) to manage files for other languages. Translations are synced using the [Transifex Github integration](https://docs.transifex.com/transifex-github-integrations/github-tx-ui).
 
-- [**Transifex**](https://www.transifex.com) translation managment tool provides a visual interface and management tool for translators, reviewers, and translation project managers
-- [**TXGH**](https://github.com/transifex/txgh) application synchronizes Github and Transifex using the APIs for those services. TXGH runs on an internal ORCID server and is deployed via Puppet. It can also be run on Vagrant for local development - see [ORCID/registry_vagrant](https://github.com/ORCID/registry_vagrant) 
 
 ## Roles
 - **Developers** ORCID Development team
@@ -59,7 +57,7 @@ The script listed above does not work on the email\_*.properties file due to the
         git commit -m "message text"
         git push origin [branch name]
 
-When changes to any properties files are merged into master, new strings will be pulled into Transifex automatically. If Github deployment was not successful, translated property files can be pushed from Github to Transifex manually. See [Push/Pull to/from Transifex manually](#pushpull-tofrom-transifex-manually)
+When changes to any properties files are merged into master, new strings will be pulled into Transifex automatically. If the sync is not successful, translated property files can be pushed from Github to Transifex manually. See [Push/Pull to/from Transifex manually](#pushpull-tofrom-transifex-manually)
 
 ### Transifex Project Maintainer
 #### Configure Transifex notifications (first time only)
@@ -80,15 +78,13 @@ When a critical mass of untranslated strings accummulates or translation is need
 2. Contact translators and request that they log into Transifex and translate strings marked as 'Untranslated'. See [Using the Transifex Web Editor](http://docs.transifex.com/tutorials/txeditor/) 
 
 #### Review translated strings
-After translation is complete, strings _must_ be marked as reviewed in Transifex before deployment. 'Reviewed' status in Transifex triggers automatic deployment of translation code to Github.
+After translation is complete, strings _must_ be marked as reviewed in Transifex. When both translation and review status for a resource reaches 100% in a given language, the resource file for that language is pushed to the master branch of [ORCID-Source/orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n) automatically.
 
 - If translation was completed by a community translator, review must be completed by another trusted community member. 
 - If translation was completed by a vendor, review can be completed by ORCID staff.
 
 1. Add any new reviewers to Transifex - see [Invite people to a team](http://docs.transifex.com/introduction/managers/#invite-people-to-a-team)
 2. When translations are complete, contact reviewers and request that they log into Transifex and review strings marked as 'Unreviewed'. See [Using the Transifex Web Editor](http://docs.transifex.com/tutorials/txeditor/) 
-
-When review status for a resource reaches 100% in a given language, the resource properties file for that language is pushed to the master branch of [ORCID-Source/orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n) automatically via TXGH
 
 #### Verify Github deployment
 After review is complete, check to make sure that automatic deployment to Github was successful:
@@ -100,7 +96,7 @@ After review is complete, check to make sure that automatic deployment to Github
 If Github deployment was not successful, translated property files can be pushed from Transifex to Github manually. See [Push/Pull to/from Transifex manually](#pushpull-tofrom-transifex-manually)
 
 #### Release translations
-Translated properties files are pushed directly to [ORCID-Source master](https://github.com/ORCID/ORCID-Source) by TXGH, so translations become live on QA, Sandbox or Prod during the normal ORCID release process.
+Translated properties files are pushed directly to [ORCID-Source master](https://github.com/ORCID/ORCID-Source), so translations become live on QA, Sandbox or Prod during the normal ORCID release process.
 
 ## <a id="update-existing-strings-english-only"></a>Update existing string(s) -  English only OR English + other languages
 
@@ -148,27 +144,21 @@ Translated properties files are pushed directly to [ORCID-Source master](https:/
 10. Move the Trello card to the QA Testing list
 
 ## <a id="add-new-language"></a>Add new language
-### Transifex Project Maintainer
-##### Transifex API
-1. Add a language and assign Transifex users as translators using a POST request per http://docs.transifex.com/api/languages/#post
+### Add language to Transifex
 
-        curl -X POST -i -H "Content-Type: application/json" -L
-        --data '{"language_code": "es", "translators": ["username1", "username2"]}'
-        --user username:password http://www.transifex.com/api/2/orcid-inc-1/[project-slug]/languages
-
- * language code:  ISO code for the new lanaguage (see list of [Transifex supported languages](https://www.transifex.com/explore/languages/))
- * translators: list of Transifex users to assign as translators for the new language 
- * username: project owner or maintainer's Transifex username
- * password: project owner or maintaner's Transifex password
-
-##### Transifex UI
 1. Navigate to https://www.transifex.com/orcid-inc-1/registry
 2. Click Edit Langauges
 3. Enter a new language and click Apply
 4. Navigate to the translation teams at https://www.transifex.com/orcid-inc-1/teams/
 5. To add translators to the new language, visit https://www.transifex.com/orcid-inc-1/[project-slug]/language/[language-code] and click Add Collaborators
+6. Configure the new language in the [Github integration settings](https://www.transifex.com/orcid-inc-1/registry/settings/integrations/) by adding a new filter block in Edit settings > Select files
+        - filter_type: file
+          file_format: UNICODEPROPERTIES
+          source_language: en
+          source_file: orcid-core/src/main/resources/i18n/test_messages_en.properties
+          translation_files_expression: orcid-core/src/main/resources/i18n/test_messages_<lang>.properties
 
-When translation status for each resource in the new language reaches 100%, the resource properties file is pushed to the master branch of [ORCID-Source/orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n) automatically via TXGH
+When translation and reviewed status for each resource in the new language reaches 100%, the resource file is pushed to the master branch of [ORCID-Source/orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n) automatically. 
 
 #### Release new language
 1. Add a Trello card to [Current Development](https://trello.com/b/iuJwm8A6/orcid-current-development) requesting that the new language be added to the language picker (this must be done on both the Registry and Drupal sites)
@@ -205,7 +195,7 @@ When translation status for each resource in the new language reaches 100%, the 
 (or [delete via Transifex UI](https://docs.transifex.com/projects/deleting-content))
 
 ## Push/Pull to/from Transifex manually
-If automatic push/pull between Transifex and Github via TXGH fails, files can be transferred manually, via the Transifex client or the Transifex API.
+If automatic push/pull between Transifex and Github fails, files can be transferred manually, via the Transifex client or the Transifex API.
 
 ### <a id="install-tx"></a>Install/configure Transifex client
 1. [Install the Transifex client](http://docs.transifex.com/client/)
