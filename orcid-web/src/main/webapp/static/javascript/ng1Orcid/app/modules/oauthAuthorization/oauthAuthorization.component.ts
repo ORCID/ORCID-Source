@@ -41,7 +41,10 @@ import { SearchService }
 import { GenericService }
     from '../../shared/generic.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
- import { IsThisYouComponent } from '@bit/orcid.angular.is-this-you';
+
+import { IsThisYouComponent } from '@bit/orcid.angular.is-this-you';
+
+import { PlatformInfoService } from '@bit/orcid.angular.platform-info';
 
 @Component({
     selector: 'oauth-authorization-ng2',
@@ -114,6 +117,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
     aboutUri: String;
     shibbolethEnabled: boolean = false;
     theFormWasSubmittedAndHasSomeErrors = false
+    isMobileView = false
     
     constructor(
         private zone:NgZone,
@@ -124,7 +128,8 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         private oauthService: OauthService,
         private searchSrvc: SearchService,
         private nameService: GenericService,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        public _platformInfo: PlatformInfoService
     ) {
         window['angularComponentReference'] = {
             zone: this.zone,
@@ -141,7 +146,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.alreadyClaimed = false;
         this.counter = 0;
         this.currentLanguage = OrcidCookie.getCookie('locale_v3');
-        this.duplicates = {};
         this.gaString = null;
         this.enablePersistentToken = true;
         this.errorEmail = null;
@@ -181,7 +185,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         this.initReactivationRequest = { "email": null, "error": null, "success": false };
         this.nameFormUrl = '/account/names/public';
         this.isLoggedIn = false;
-        
         this.commonSrvc.configInfo$
         .subscribe(
             data => {
@@ -204,7 +207,11 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                   this.userInfo = {};
               } 
           );
-        this.openDialog("Test")
+
+        _platformInfo.get().subscribe(platformInfo => {
+            this.isMobileView = platformInfo.tabletOrHandset
+        })
+        
     }
 
     addScript(url, onLoadFunction): void {      
@@ -467,17 +474,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
-            data => {
+            duplicates => {
                 var diffDate = new Date();
-                this.duplicates = data;
                 // reg was filled out to fast reload the page
                 if (this.loadTime + 5000 > diffDate.getTime()) {
                     window.location.reload();
                     return;
                 }
-                if (this.duplicates.length > 0 ) {
+                if (duplicates.length > 0 ) {
                     this.showRegisterProcessing = false;
-                    this.modalService.notifyOther({action:'open', moduleId: 'modalRegisterDuplicates', duplicates: this.duplicates});
+                    this.openDialog(duplicates)
                 } else {
                     this.oauth2ScreensPostRegisterConfirm();                          
                 }
@@ -493,14 +499,29 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
 
     };
 
-    openDialog(data): void {
-        const dialogRef = this.dialog.open(IsThisYouComponent, {
-            width: '1080px',
-            data
-        });
 
-        dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
+    openDialog(duplicateRecords): void {
+        const dialogParams = {
+            width: `1078px`,
+            height: `600px`,
+            
+            data: {
+                duplicateRecords,
+                titleLabel: 'MY OWN TITTLE',
+            }
+        }
+          
+        if (this.isMobileView){
+            dialogParams["maxWidth"] = "95vw"
+            dialogParams["maxHeight"] = "95vh"
+        }
+
+        const dialogRef = this.dialog.open(IsThisYouComponent, dialogParams);
+
+        dialogRef.afterClosed().subscribe(confirmRegistration => {
+            if (confirmRegistration) {
+                this.oauth2ScreensPostRegisterConfirm()
+            }
         });
     }
 
