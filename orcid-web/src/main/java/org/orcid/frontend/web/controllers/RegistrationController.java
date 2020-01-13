@@ -481,6 +481,7 @@ public class RegistrationController extends BaseController {
                 if (Visibility.PUBLIC.equals(n.getVisibility())) {
                     dr.setFamilyNames(n.getFamilyName() == null ? null : n.getFamilyName().getContent());
                     dr.setGivenNames(n.getGivenNames() == null ? null : n.getGivenNames().getContent());
+                    dr.setCreatedDate(n.getCreatedDate() == null? null: n.getCreatedDate().toString());
                 }
 
                 List<String> institutions = new ArrayList<String>();
