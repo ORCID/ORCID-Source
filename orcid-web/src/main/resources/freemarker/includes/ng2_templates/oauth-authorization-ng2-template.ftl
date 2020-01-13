@@ -176,4 +176,17 @@
             <#include "/includes/register_inc_ng2.ftl" />
         </div>
     </#if>
+
+    
+    <div hidden #titleLabel>${springMacroRequestContext.getMessage("ngOrcid.signin.isThisYouTitle")} </div>
+    <div hidden #bodyLabel>${springMacroRequestContext.getMessage("ngOrcid.signin.isThisYouBody")} </div>
+    <div hidden #contactLabel>${springMacroRequestContext.getMessage("ngOrcid.signin.contact")} </div>
+    <div hidden #firstNameLabel> ${springMacroRequestContext.getMessage("ngOrcid.signin.firstName")}</div>
+    <div hidden #lastNameLabel>${springMacroRequestContext.getMessage("ngOrcid.signin.lastName")} </div>
+    <div hidden #affiliationsLabel> ${springMacroRequestContext.getMessage("ngOrcid.signin.affiliations")}</div>
+    <div hidden #dateCreatedLabel>${springMacroRequestContext.getMessage("ngOrcid.signin.dateCreated")} </div>
+    <div hidden #viewRecordLabel>${springMacroRequestContext.getMessage("ngOrcid.signin.viewRecord")} </div>
+    <div hidden #signinLabel> ${springMacroRequestContext.getMessage("ngOrcid.signin.isThisYouSignin")}</div>
+    <div hidden #continueLabel>${springMacroRequestContext.getMessage("ngOrcid.signin.isThisYouContinue")} </div>
+
 </script>

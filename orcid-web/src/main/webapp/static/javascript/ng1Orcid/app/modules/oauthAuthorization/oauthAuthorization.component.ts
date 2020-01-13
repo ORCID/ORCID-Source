@@ -9,7 +9,7 @@ declare var orcidVar: any;
 import { NgForOf, NgIf } 
     from '@angular/common'; 
 
-import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone, Inject  } 
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, ChangeDetectorRef, ViewChild, NgZone, Inject, ElementRef  } 
     from '@angular/core';
 
 import { ReCaptchaComponent } 
@@ -52,6 +52,17 @@ import { PlatformInfoService } from '@bit/orcid.angular.platform-info';
 })
 export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, OnInit {
     @ViewChild(ReCaptchaComponent, {static: false}) captcha: ReCaptchaComponent;
+
+    @ViewChild("titleLabel", {static: false}) titleLabel: ElementRef;
+    @ViewChild("bodyLabel", {static: false}) bodyLabel: ElementRef;
+    @ViewChild("contactLabel", {static: false}) contactLabel: ElementRef;
+    @ViewChild("firstNameLabel", {static: false}) firstNameLabel: ElementRef;
+    @ViewChild("lastNameLabel", {static: false}) lastNameLabel: ElementRef;
+    @ViewChild("affiliationsLabel", {static: false}) affiliationsLabel: ElementRef;
+    @ViewChild("dateCreatedLabel", {static: false}) dateCreatedLabel: ElementRef;
+    @ViewChild("viewRecordLabel", {static: false}) viewRecordLabel: ElementRef;
+    @ViewChild("signinLabel", {static: false}) signinLabel: ElementRef;
+    @ViewChild("continueLabel", {static: false}) continueLabel: ElementRef;
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
@@ -507,7 +518,16 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             
             data: {
                 duplicateRecords,
-                titleLabel: 'MY OWN TITTLE',
+                titleLabel: this.titleLabel.nativeElement.innerHTML,
+                bodyLabel:this.bodyLabel.nativeElement.innerHTML,
+                contactLabel: this.contactLabel.nativeElement.innerHTML,
+                firstNameLabel: this.firstNameLabel.nativeElement.innerHTML,
+                affiliationsLabel: this.affiliationsLabel.nativeElement.innerHTML,
+                dateCreatedLabel: this.dateCreatedLabel.nativeElement.innerHTML,
+                viewRecordLabel: this.viewRecordLabel.nativeElement.innerHTML,
+                signinLabel: this.signinLabel.nativeElement.innerHTML,
+                continueLabel: this.continueLabel.nativeElement.innerHTML,
+
             }
         }
           
