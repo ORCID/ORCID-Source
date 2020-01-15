@@ -79,4 +79,6 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
     void revertUserOBODetails(List<BigInteger> ids);
 
     List<BigInteger> getIdsForUserOBORecords(int max);
+
+    List<BigInteger> getIdsOfOtherNamesReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
 }

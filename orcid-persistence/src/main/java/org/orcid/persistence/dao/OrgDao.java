@@ -46,4 +46,6 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
 
     int convertNullRegionsToEmptyStrings(int batchSize);
 
+    List<BigInteger> getIdsOfOrgsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
+
 }

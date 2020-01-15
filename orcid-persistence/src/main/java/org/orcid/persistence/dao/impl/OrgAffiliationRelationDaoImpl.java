@@ -383,4 +383,13 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setMaxResults(max);
         return query.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsOfOrgAffiliationRelationsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM org_affiliation_relation WHERE source_id IN :ids");
+        query.setParameter("ids", clientProfileOrcidIds);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
 }

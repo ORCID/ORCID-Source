@@ -65,4 +65,6 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
     void revertUserOBODetails(List<BigInteger> ids);
 
     List<BigInteger> getIdsForUserOBORecords(int max);
+
+    List<BigInteger> getIdsOfKeywordsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
 }
