@@ -212,7 +212,7 @@ public class HomeController extends BaseController {
                     info.put("SELF_SERVICE_MENU", String.valueOf(true));
                 }                
             }
-            if(isDelegatedByAdmin()) {
+            if(sourceManager.isDelegatedByAnAdmin()) {
                 info.put("DELEGATED_BY_ADMIN", String.valueOf(true));
             }   
             ProfileEntity p = profileEntityCacheManager.retrieve(effectiveOrcid);
