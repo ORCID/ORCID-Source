@@ -160,7 +160,7 @@ public class OrgManagerImpl implements OrgManager {
         orgEntity.setName(organization.getName());
         org.orcid.jaxb.model.common_v2.OrganizationAddress address = organization.getAddress();
         orgEntity.setCity(address.getCity());
-        orgEntity.setRegion(address.getRegion());
+        orgEntity.setRegion(address.getRegion() != null ? address.getRegion() : "");
         orgEntity.setCountry(address.getCountry().value());
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
             OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.findBySourceIdAndSourceType(

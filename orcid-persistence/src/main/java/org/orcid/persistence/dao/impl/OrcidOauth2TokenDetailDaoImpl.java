@@ -191,7 +191,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
 
     @Override
     public void disableClientAccessTokensByUserOrcid(String orcid, String clientDetailsId) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE, revocationDate=now(), revokeReason = 'CLIENT_REVOKED' where clientDetailsId = :clientDetailsId and profile.id = :orcid");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE, revocationDate=now(), revokeReason = 'USER_REVOKED' where clientDetailsId = :clientDetailsId and profile.id = :orcid");
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("orcid", orcid);
         int count = query.executeUpdate();
