@@ -12,7 +12,7 @@
     "@angular/platform-browser": "8.2.14",
     "@angular/platform-browser-dynamic": "8.2.14",
     "@angular/upgrade": "8.2.14",
-    "@bit/orcid.angular.is-this-you": "0.0.21",
+    "@bit/orcid.angular.is-this-you": "0.0.22",
     "@bit/orcid.angular.orcid-theme": "file:./components/orcid-theme",
     "@bit/orcid.angular.platform-info": "0.0.6",
     "@bit/orcid.angular.types": "file:./components/types",
