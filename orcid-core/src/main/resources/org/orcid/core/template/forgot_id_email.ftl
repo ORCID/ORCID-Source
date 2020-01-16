@@ -8,4 +8,6 @@ ${baseUri}/${orcid}
 <@emailMacros.msg "email.common.warm_regards" />
 ${baseUri}/home?lang=${locale}
 
+<@emailMacros.msg "email.common.you_have_received_this_email" />	
+
 <#include "email_footer.ftl"/>
