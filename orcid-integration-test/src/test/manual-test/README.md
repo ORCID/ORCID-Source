@@ -60,7 +60,7 @@
 37. Add a country: "Afghanistan"
 38. Add a keyword: "keyword"
 39. Add a URL: name:"website" URL https://qa.orcid.org
-40. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com and change the visibility to public
+40. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com click the link to verify, return to account settings and change the visibility to public
 41. Add a biography: "Bio!"
 42. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
 43. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list)
@@ -69,6 +69,7 @@
 45. Set the work you just added to private
 46. Visit public page (https://qa.orcid.org/[orcid id])
     * Verify information added in the steps above is visible, but not the private work or email addresses
+	* Click on the public record print view, check that it displays properly
 47. Visit https://qa.orcid.org/signout
 
 ## Public API & Revoke Access check
@@ -185,32 +186,34 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 	* 3 qualifications
 	* 6 funding items
 	* 3 research-resource
-	* 14 works (8 bulk work items and one work being a group of 2) - open one to view details
+	* 16 works (8 bulk work items, 2 added via OBO, one work being a group of 2 and the rest being different api versions) - open one to view details
 	* 2 peer-review items (one with two reviews and one with three reviews) - open one to view details
 
 74. Visit https://qa.orcid.org/[orcid id] Check that the same information displays
 	* Check that the group of works with doi:1234 only displays the public version
 
-75. Go to http://qa.orcid.org/inbox check for:
+75. Attempt to merge two of the works, make sure they merge ok.
+
+76. Go to http://qa.orcid.org/inbox check for:
 	* the request for access notification
 	* notifications of updates to the record
 
-76. Archive the first notification in the list
+77. Archive the first notification in the list
 	
-77. Check there is a Member Tools tab and the page loads when you go to it
+78. Check there is a Member Tools tab and the page loads when you go to it
 
-78. Use the switch user option to change to the record created during the OAuth process
+79. Use the switch user option to change to the record created during the OAuth process
 
 
 
-79. Sign in to Browserstack.com and using IE 11 visit the follow pages and make sure everything loads
+80. Sign in to Browserstack.com and using IE 11 visit the follow pages and make sure everything loads
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
 	* https://qa.orcid.org/sign-in
 	* sign into [orcid id] account and check that it also looks as expected
 
-80. Using browserstack check the following pages on one Android and one Apple device to check load times
+81. Using browserstack check the following pages on one Android and one Apple device to check load times
 	* https://qa.orcid.org (check that blog feed loads as well as page contents)
 	* https://qa.orcid.org/[orcid id]
 	* https://qa.orcid.org/register
@@ -218,19 +221,19 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 ## Accessibility Testing
 
-81. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
+82. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
 
-82. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1TPXe50YejZ9rDrd3oac3prg0x33nZGSvjPG5QFpSXyk/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
-83. Visit https://qa.orcid.org and check errors are same or less than 37 errors
-84. Visit https://qa.orcid.org/register and check errors are same or less than 62
-85. Visit https://qa.orcid.org/signin and check errors are same or less than 39 
-86.	Stay on this page and sign in with 
+83. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1TPXe50YejZ9rDrd3oac3prg0x33nZGSvjPG5QFpSXyk/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
+84. Visit https://qa.orcid.org and check errors are same or less than 37 errors
+85. Visit https://qa.orcid.org/register and check errors are same or less than 62
+86. Visit https://qa.orcid.org/signin and check errors are same or less than 39 
+87.	Stay on this page and sign in with 
 
 	```0000-0002-7361-1027```
 	```QA password```
 
-87. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  80
-88. Visit https://qa.orcid.org/signout
+88. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  80
+89. Visit https://qa.orcid.org/signout
 
 
 
