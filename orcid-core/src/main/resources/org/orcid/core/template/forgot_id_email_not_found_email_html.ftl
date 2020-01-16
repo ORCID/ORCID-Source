@@ -25,8 +25,8 @@
 				</li>
 			</ul>
 		  	<p style="white-space: pre;">
-				<@emailMacros.msg "email.common.warm_regards" />
-				<a href='${baseUri}/home?lang=${locale}" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
+<@emailMacros.msg "email.common.warm_regards" />
+<a href='${baseUri}/home?lang=${locale}" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
 			</p>
 			<p>
 				<#include "email_footer_html.ftl"/>

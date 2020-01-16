@@ -20,8 +20,8 @@
                 <@emailMacros.msg "email.common.if_you_have_any" /><@emailMacros.space /><a href='${baseUri}/help/contact-us' target="orcid.contact_us"><@emailMacros.msg "email.common.if_you_have_any.contact_us" /></a><@emailMacros.msg "email.common.if_you_have_any2" />
 		    </p>	  
 		  	<p style="white-space: pre;">
-				<@emailMacros.msg "email.common.warm_regards" />
-				<a href='${baseUri}/home?lang=${locale}' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
+<@emailMacros.msg "email.common.warm_regards" />
+<a href='${baseUri}/home?lang=${locale}' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
 			</p>   
 			<p>	
 				<@emailMacros.msg "email.common.you_have_received_this_email" />	
