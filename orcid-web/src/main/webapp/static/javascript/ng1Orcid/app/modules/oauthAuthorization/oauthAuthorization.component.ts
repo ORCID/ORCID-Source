@@ -515,6 +515,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         const dialogParams = {
             width: `1078px`,
             height: `600px`,
+            maxWidth: `90vw`,
             
             data: {
                 duplicateRecords,
