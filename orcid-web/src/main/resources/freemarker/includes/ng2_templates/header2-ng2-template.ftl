@@ -378,7 +378,7 @@
                                 <a role="menuitem" href="{{aboutUri}}/help/contact-us" title="">{{'${springMacroRequestContext.getMessage("public-layout.contact_us")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
                             </li>
                             <li role="presentation" class="leaf">
-                                <a role="menuitem" href="https://support.orcid.org/hc/en-us/community/topics" title="">{{'${springMacroRequestContext.getMessage("public-layout.give_feedback")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
+                                <a role="menuitem" href="https://support.orcid.org/hc/en-us/articles/360006897594" title="">{{'${springMacroRequestContext.getMessage("public-layout.give_feedback")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
                             </li>
                             <li role="presentation" class="last leaf">
                                 <a role="menuitem" 
