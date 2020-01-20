@@ -183,4 +183,13 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsOfKeywordsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM profile_keyword WHERE source_id IN :ids");
+        query.setParameter("ids", clientProfileOrcidIds);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
+
 }

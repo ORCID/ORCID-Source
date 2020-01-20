@@ -837,4 +837,19 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         String description = (String) result.get(0)[1];
         return reason != null ? reason + (description != null ? " (" + description + ")" : "") : null;
     }
+
+    @Override
+    public List<ProfileEntity> findByOrcidType(String orcidType) {
+        TypedQuery<ProfileEntity> query = entityManager.createQuery("FROM ProfileEntity where orcidType = :orcidType", ProfileEntity.class);
+        query.setParameter("orcidType", orcidType); 
+        return query.getResultList();
+    }
+    
+    @Override
+    @Transactional
+    public int deleteProfilesOfType(String orcidType) {
+        Query query = entityManager.createNativeQuery("DELETE FROM profile WHERE orcid_type = :orcidType");
+        query.setParameter("orcidType", orcidType);
+        return query.executeUpdate();
+    }
 }
