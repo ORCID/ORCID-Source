@@ -49,6 +49,12 @@ source_file = orcid-core/src/main/resources/i18n/ng_orcid_signin_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
+[registry.ng_orcid_search]
+file_filter = orcid-core/src/main/resources/i18n/ng_orcid_search_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/ng_orcid_search_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
 [registry.2019-07-emailVisibilitySettings]
 file_filter = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings_en.properties
