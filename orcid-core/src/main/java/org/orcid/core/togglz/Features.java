@@ -5,6 +5,9 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
+    
+    @Label("Orcid Angular Search")
+    ORCID_ANGULAR_SEARCH,
 
     @Label("Works pagination")
     WORKS_PAGINATION,

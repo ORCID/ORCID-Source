@@ -38,6 +38,7 @@ export class Header2Component  {
     isPublicPage: boolean = false;
     profileOrcid: string = null;
     showSurvey = this.featuresService.isFeatureEnabled('SURVEY');
+    togglzOrcidAngularSearch = this.featuresService.isFeatureEnabled('ORCID_ANGULAR_SEARCH');
     assetsPath: String;
     aboutUri: String;
     liveIds: String;    
@@ -136,9 +137,16 @@ export class Header2Component  {
                 window.location.assign(getBaseUri() + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
             }
             if(this.headerSearch.searchOption=='registry'){
-                window.location.assign(getBaseUri()
-                        + "/orcid-search/quick-search/?searchQuery="
-                        + encodeURIComponent(this.headerSearch.searchInput));
+                if (this.togglzOrcidAngularSearch) {
+                    window.location.assign(getBaseUri()
+                    + "/orcid-search/search/?searchQuery="
+                    + encodeURIComponent(this.headerSearch.searchInput));
+                }
+                else {
+                    window.location.assign(getBaseUri()
+                    + "/orcid-search/quick-search/?searchQuery="
+                    + encodeURIComponent(this.headerSearch.searchInput)); 
+                }
             }
         }
     }
