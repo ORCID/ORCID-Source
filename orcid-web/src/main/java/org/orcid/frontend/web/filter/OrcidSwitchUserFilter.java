@@ -103,7 +103,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         }
         // If we are switching back to me it is OK
         if (isSwitchingBack(request)) {
-            return switchUser(request);
+            return switchBack();
         }
         
         List<GivenPermissionByEntity> givenPermissionBy = givenPermissionToDao.findByReceiver(profileEntity.getId());
@@ -112,6 +112,20 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
                 return switchUser(request);
             }
         }        
+        throw new SwitchUserAuthenticationException(localeManager.resolveMessage("web.orcid.switchuser.exception"));
+    }
+    
+    private Authentication switchBack() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        if (authorities != null) {
+            for (GrantedAuthority authority : authorities) {
+                if (authority instanceof SwitchUserGrantedAuthority) {
+                    SwitchUserGrantedAuthority switchUserGrantedAuthority = (SwitchUserGrantedAuthority) authority;
+                    return switchUserGrantedAuthority.getSource();
+                }
+            }
+        }
         throw new SwitchUserAuthenticationException(localeManager.resolveMessage("web.orcid.switchuser.exception"));
     }
 
