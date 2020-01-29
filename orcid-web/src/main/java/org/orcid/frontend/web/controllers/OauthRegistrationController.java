@@ -151,6 +151,7 @@ public class OauthRegistrationController extends OauthControllerBase {
                     String ip = OrcidRequestUtil.getIpAddress(request);  
                     registrationController.createMinimalRegistration(request, form, usedCaptcha, locale, ip);
                 } catch(Exception e) {
+                    LOGGER.error("Error registering a new user", e);
                     requestInfoForm.getErrors().add(getMessage("register.error.generalError"));
                     return requestInfoForm;
                 }
