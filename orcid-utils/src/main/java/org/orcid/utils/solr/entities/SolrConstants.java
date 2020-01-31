@@ -1,5 +1,8 @@
 package org.orcid.utils.solr.entities;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class SolrConstants {
     public static final String SCORE = "score";
     public static final String ORCID = "orcid";
@@ -15,7 +18,7 @@ public class SolrConstants {
     public static final String EXTERNAL_ID_TYPE_AND_VALUE = "external-id-type-and-value";
     public static final String EXTERNAL_ID_SOURCE = "external-id-source";
     public static final String EXTERNAL_ID_SOURCE_AND_REFERENCE = "external-id-source-and-reference";
-    public static final String EXTERNAL_ID_REFERENCES = "external-id-reference";    
+    public static final String EXTERNAL_ID_REFERENCES = "external-id-reference";
     public static final String DIGITAL_OBJECT_IDS = "digital-object-ids";
     public static final String WORK_TITLES = "work-titles";
     public static final String GRANT_NUMBERS = "grant-numbers";
@@ -65,7 +68,7 @@ public class SolrConstants {
     public static final String ORG_DISAMBIGUATED_COUNTRY = "org-disambiguated-country";
     public static final String ORG_DISAMBIGUATED_ID_FROM_SOURCE = "org-disambiguated-id-from-source";
     public static final String ORG_DISAMBIGUATED_ID_SOURCE_TYPE = "org-disambiguated-id-source-type";
-    public static final String ORG_DISAMBIGUATED_STATUS = "org-disambiguated-status";    
+    public static final String ORG_DISAMBIGUATED_STATUS = "org-disambiguated-status";
     public static final String ORG_DISAMBIGUATED_TYPE = "org-disambiguated-type";
     public static final String ORG_DISAMBIGUATED_POPULARITY = "org-disambiguated-popularity";
     public static final String ORG_DEFINED_FUNDING_TYPE = "org-defined-funding-type";
@@ -78,7 +81,7 @@ public class SolrConstants {
     public static final String DYNAMIC_ORGANISATION_ID = "-org-id";
     public static final String RINGGOLD_ORGANISATION_ID = "ringgold-org-id";
     public static final String FUNDREF_ORGANISATION_ID = "fundref-org-id";
-    public static final String GRID_ORGANISATION_ID = "grid-org-id";    
+    public static final String GRID_ORGANISATION_ID = "grid-org-id";
     public static final String DYNAMIC_ORGANISATION_NAME = "-org-name";
     public static final String AFFILIATION_ORGANISATION_NAME = "affiliation-org-name";
     public static final String FUNDING_ORGANISATION_NAME = "funding-org-name";
@@ -86,14 +89,22 @@ public class SolrConstants {
     public static final String PEER_REVIEW_TYPE = "peer-review-type";
     public static final String PEER_REVIEW_ROLE = "peer-review-role";
     public static final String PEER_REVIEW_GROUP_ID = "peer-review-group-id";
-    
+
     public static final String RINGGOLD_ORG_TYPE = "RINGGOLD";
     public static final String GRID_ORG_TYPE = "GRID";
     public static final String FUNDREF_ORG_TYPE = "FUNDREF";
-    
-    public static final String RESEARCH_RESOURCE_PROPOSAL_TITLES = "research-resource-proposal-title";    
+
+    public static final String RESEARCH_RESOURCE_PROPOSAL_TITLES = "research-resource-proposal-title";
     public static final String RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME = "research-resource-proposal-org-name";
-    public static final String RESEARCH_RESOURCE_ITEM_NAME = "research-resource-item-name";    
+    public static final String RESEARCH_RESOURCE_ITEM_NAME = "research-resource-item-name";
     public static final String RESEARCH_RESOURCE_ITEM_HOSTS_NAME = "research-resource-item-org-name";
-    
+
+    /**
+     * Fields client is allowed to specify
+     * 
+     **/
+    public static final List<String> ALLOWED_FIELDS = Arrays.asList(SolrConstants.ORCID, SolrConstants.EMAIL_ADDRESS, SolrConstants.GIVEN_NAMES,
+            SolrConstants.FAMILY_NAME, SolrConstants.GIVEN_AND_FAMILY_NAMES, SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME,
+            SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES, SolrConstants.CREDIT_NAME, SolrConstants.OTHER_NAMES);
+
 }

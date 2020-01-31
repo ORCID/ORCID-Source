@@ -2,7 +2,6 @@ package org.orcid.core.solr;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +18,6 @@ import org.orcid.utils.solr.entities.SolrConstants;
 public class CSVSolrClient {
 
     private String baseUrl;
-
-    private static final List<String> ALLOWED_FIELDS = Arrays.asList(SolrConstants.ORCID, SolrConstants.EMAIL_ADDRESS, SolrConstants.GIVEN_NAMES,
-            SolrConstants.FAMILY_NAME, SolrConstants.GIVEN_AND_FAMILY_NAMES, SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME,
-            SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES, SolrConstants.CREDIT_NAME, SolrConstants.OTHER_NAMES);
 
     public CSVSolrClient(String url) {
         this.baseUrl = url;
@@ -84,7 +79,7 @@ public class CSVSolrClient {
         if (requestedFieldList != null) {
             specifiedFields = requestedFieldList.split(",");
             for (String specifiedField : specifiedFields) {
-                if (ALLOWED_FIELDS.contains(specifiedField)) {
+                if (SolrConstants.ALLOWED_FIELDS.contains(specifiedField)) {
                     fl.append(specifiedField).append(",");
                 }
             }
@@ -96,8 +91,8 @@ public class CSVSolrClient {
     }
     
     private String getDefaultFieldList() {
-        StringBuilder defaultFieldList = new StringBuilder(ALLOWED_FIELDS.get(0));
-        ALLOWED_FIELDS.subList(1, ALLOWED_FIELDS.size()).forEach(s -> defaultFieldList.append(",").append(s));
+        StringBuilder defaultFieldList = new StringBuilder(SolrConstants.ALLOWED_FIELDS.get(0));
+        SolrConstants.ALLOWED_FIELDS.subList(1, SolrConstants.ALLOWED_FIELDS.size()).forEach(s -> defaultFieldList.append(",").append(s));
         return defaultFieldList.toString();
     }
 
