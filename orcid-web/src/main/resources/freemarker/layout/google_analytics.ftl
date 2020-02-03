@@ -6,7 +6,7 @@
 	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-	ga('create', '${googleAnalyticsTrackingId}', 'auto', {'legacyCookieDomain': 'orcid.org'});  // Replace with your property ID.
+	ga('create', 'UA-0000000-00', 'auto', {'legacyCookieDomain': 'orcid.org', 'sampleRate': '70' });
     ga('set', 'anonymizeIp', true); //Anonymize user IP
 	ga('send', 'pageview');
 
