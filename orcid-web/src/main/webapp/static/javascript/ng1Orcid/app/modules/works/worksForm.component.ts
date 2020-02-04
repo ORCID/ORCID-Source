@@ -121,6 +121,9 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         extId.relationship.value = 'self';
                     } else if (extId.externalIdentifierType.value == 'issn') {
                         extId.relationship.value = 'part-of';
+                        
+                    } else if (extId.externalIdentifierType.value == 'isbn' && ["dictionary-entry", "conference-paper","encyclopedia-entry" ].indexOf(workType.value) != -1){
+                        extId.relationship.value = 'part-of';
                     }
                 }
             }
