@@ -30,8 +30,7 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() elementWidth: any;
     @Input() setFocus?: any;
     @Input() disableclickoutside
-
-    assetsPath
+    assetsPath: string
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
