@@ -15,9 +15,6 @@ import { EmailService }
 import { ModalService } 
     from '../../shared/modal.service'; 
 
-import { CommonService } 
-    from '../../shared/common.service';
-
 @Component(
     {
         selector: '[modalngcomponent]',
@@ -29,9 +26,6 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     @Input() elementHeight: any;
     @Input() elementWidth: any;
     @Input() setFocus?: any;
-    @Input() disableclickoutside
-
-    assetsPath
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
     private subscription: Subscription;
@@ -41,26 +35,17 @@ export class ModalNgComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor( 
         private elementRef: ElementRef, 
         private emailService: EmailService, 
-        private modalService: ModalService,
-        protected commonSrvc: CommonService,
+        private modalService: ModalService 
     ){
         this.elementHeight = elementRef.nativeElement.getAttribute('elementHeight');
         this.elementId = elementRef.nativeElement.getAttribute('elementId');
         this.elementWidth = elementRef.nativeElement.getAttribute('elementWidth');
         this.setFocus = elementRef.nativeElement.getAttribute('setFocus');
         this.showModal = false;
-        this.commonSrvc.configInfo$
-        .subscribe(
-            data => {
-                this.assetsPath = data.messages['STATIC_PATH'];
-            }
-        )
     }
 
-    closeModal(mode?): void{
-        if (mode === "clickOutside" && this.disableclickoutside){
-            return
-        }
+    closeModal(): void{
+        //$('body').removeClass('overflow-hidden');
         this.showModal = false;
         this.modalService.notifyOther({action:'close-with-click-outside'});
     };

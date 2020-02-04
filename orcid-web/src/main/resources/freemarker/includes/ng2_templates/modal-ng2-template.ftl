@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="modal-ng2-template">
     <div [hidden]="!showModal" >
-        <div class="popover-ng2-bck" (click)="closeModal('clickOutside')"></div>
+        <div class="popover-ng2-bck" (click)="closeModal()"></div>
         <div
             class="popover-ng2-content"
             id="colorbox" 
@@ -47,8 +47,9 @@
                             }"
                         >
                             <div class="lightbox-container">
-                                <img class="orcidCloseButtonModal" *ngIf="disableclickoutside" (click)="closeModal()" src="{{assetsPath}}/img/svg/close-24px.svg" aria-label="Close modal"/>
+
                                 <ng-content></ng-content>
+
                             </div>
                         </div>
                     </div>

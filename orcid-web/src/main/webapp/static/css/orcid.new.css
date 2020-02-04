@@ -9960,12 +9960,3 @@ works-ng2 mat-paginator .mat-paginator-container {
         display: none !important;
     }
 }
-
-
-.orcidCloseButtonModal {
-    float: right;
-    right: 20px;
-    margin-top: 10px;
-    position: absolute;
-    width: 30px;
-}
