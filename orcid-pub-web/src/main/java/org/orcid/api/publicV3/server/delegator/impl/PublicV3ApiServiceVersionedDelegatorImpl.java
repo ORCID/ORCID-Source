@@ -255,6 +255,11 @@ public class PublicV3ApiServiceVersionedDelegatorImpl implements PublicV3ApiServ
     }
     
     @Override
+    public Response expandedSearchByQuery(Map<String, List<String>> solrParams) {
+        return processReponse(publicV3ApiServiceDelegator.expandedSearchByQuery(solrParams));
+    }
+    
+    @Override
     public Response viewBulkWorks(String orcid, String putCodes) {
         return processReponse(publicV3ApiServiceDelegator.viewBulkWorks(orcid, putCodes));
     }

@@ -1,6 +1,7 @@
 package org.orcid.api.publicV3.server;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -26,8 +27,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgExternalID;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgMBWriterV3;
@@ -105,6 +109,8 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
+import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedResult;
+import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -129,6 +135,9 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
 
     private final String ORCID = "0000-0000-0000-0003";
 
+    @Captor
+    private ArgumentCaptor<Map<String, List<String>>> searchParamsCaptor;
+    
     @Resource(name = "publicV3ApiServiceDelegator")
     PublicV3ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
 
@@ -139,6 +148,7 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
 
     @Before
     public void before() {
+        MockitoAnnotations.initMocks(this);
         ArrayList<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
         roles.add(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
         Authentication auth = new AnonymousAuthenticationToken("anonymous", "anonymous", roles);
@@ -2061,5 +2071,43 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("http://www.researcherurl.com?id=13",doc.url.get(0));
         assertEquals("public_type",doc.identifier.get(0).propertyID);
         assertEquals( "public_ref",doc.identifier.get(0).value);
+    }
+    
+    @Test
+    public void testViewClient() {
+        Response response = serviceDelegator.viewClient("APP-6666666666666666");
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof ClientSummary);
+
+        ClientSummary clientSummary = (ClientSummary) response.getEntity();
+        assertEquals("Source Client 2", clientSummary.getName());
+        assertEquals("A test source client", clientSummary.getDescription());
+    }
+    
+    @Test
+    public void testExpandedSearchByQueryNoRowsParamSet() {
+        ExpandedSearch search = new ExpandedSearch();
+        ExpandedResult result = new ExpandedResult();
+        search.getResults().add(result);
+        OrcidSearchManager mockSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
+        Mockito.when(mockSearchManager.expandedSearch(Mockito.any())).thenReturn(search);
+        OrcidSearchManager orcidSearchManager = (OrcidSearchManager) ReflectionTestUtils.getField(serviceDelegator, "orcidSearchManager");
+        ReflectionTestUtils.setField(serviceDelegator, "orcidSearchManager", mockSearchManager);
+        
+        Map<String, List<String>> searchQuery = new HashMap<>();
+        searchQuery.put("q", Arrays.asList("orcid"));
+        serviceDelegator.expandedSearchByQuery(searchQuery);
+        
+        Mockito.verify(mockSearchManager).expandedSearch(searchParamsCaptor.capture());
+        Map<String, List<String>> actualParams = searchParamsCaptor.getValue();
+        assertNotNull(actualParams);
+        assertNotNull(actualParams.keySet());
+        assertFalse(actualParams.keySet().isEmpty());
+        assertNotNull(actualParams.get("q"));
+        assertEquals("orcid", actualParams.get("q").get(0));
+        assertNotNull(actualParams.get("rows"));
+        assertEquals(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS), actualParams.get("rows").get(0));
+        
+        ReflectionTestUtils.setField(serviceDelegator, "orcidSearchManager", orcidSearchManager);
     }
 }
