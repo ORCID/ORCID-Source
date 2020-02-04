@@ -16,14 +16,12 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -36,7 +34,7 @@ import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrcidSolrProfileClient {
+public class OrcidSolrProfileClient extends OrcidSolrClient {
 
     @Resource(name = "solrReadOnlyProfileClient")
     private SolrClient solrReadOnlyProfileClient;
@@ -94,7 +92,23 @@ public class OrcidSolrProfileClient {
     }
     
     public OrcidSolrResults findExpandedByDocumentCriteria(Map<String, List<String>> queryMap) {
-        return findByDocumentCriteria(queryMap, ArrayUtils.addAll(SolrConstants.ALLOWED_FIELDS.toArray(new String[0]), new String[] { SCORE }));
+        String requestedFieldList = queryMap.get("fl") != null ? queryMap.get("fl").get(0) : null;
+        List<String> fieldList = new ArrayList<>();
+        if (requestedFieldList != null) {
+            String fields = getFieldList(requestedFieldList);
+            fieldList = new ArrayList<>();
+            for (String field : fields.split(",")) {
+                fieldList.add(field);
+            }
+            
+            if (!fieldList.contains("orcid")) {
+                fieldList.add("orcid");
+            }
+        } else {
+            fieldList.addAll(SolrConstants.ALLOWED_FIELDS);
+        }
+        fieldList.add(SCORE);
+        return findByDocumentCriteria(queryMap, fieldList.toArray(new String[0]));
     }
     
     private OrcidSolrResults findByDocumentCriteria(Map<String, List<String>> queryMap, String... fieldList) {
