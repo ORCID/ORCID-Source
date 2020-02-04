@@ -34,7 +34,7 @@ import { GenericService }
 
 export class WorksExternalIdFormComponent implements AfterViewInit {
 
-    @ViewChild('search') searchElement: ElementRef;
+    @ViewChild('search', {static: false}) searchElement: ElementRef;
 
     private ngUnsubscribe: Subject<void> = new Subject<void>();
 

@@ -7,7 +7,16 @@ public class DupicateResearcher {
     private String givenNames;
     private String familyNames;
     private String institution;
+    private String createdDate;
 
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+    
     public String getOrcid() {
         return orcid;
     }

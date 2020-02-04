@@ -1,0 +1,22 @@
+// Overwrites for:
+// https://github.com/angular/components/blob/8.2.x/src/material/menu/menu.scss
+
+.mat-menu-panel {
+  .mat-menu-item.orcid-menu-item-small {
+    max-height: 32px;
+    line-height: 32px;
+    padding: 0 8px;
+    min-width: 128px;
+  }
+
+  .mat-menu-item.orcid-menu-item-small .mat-icon {
+    margin: auto;
+    height: auto;
+  }
+
+  .orcid-mat-menu-header {
+    padding: 0 0 0 33px;
+    min-height: 32px;
+    line-height: 32px;
+  }
+}

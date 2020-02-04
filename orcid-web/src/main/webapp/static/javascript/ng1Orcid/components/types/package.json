@@ -1,15 +1,50 @@
 {
   "name": "@bit/orcid.angular.types",
-  "version": "0.0.1",
+  "version": "0.0.8",
   "homepage": "https://bit.dev/orcid/angular/types",
-  "main": "index.ts",
-  "dependencies": {
-    "rxjs": "~6.5.2"
-  },
+  "main": "dist/types/bundles/bit-orcid.angular.types.umd.js",
+  "dependencies": {},
   "devDependencies": {},
-  "peerDependencies": {},
+  "peerDependencies": {
+    "@angular/material": "^8.0.0",
+    "@angular/core": "^8.0.0",
+    "@angular/animations": "^8.0.0",
+    "@angular/common": "^8.0.0",
+    "@angular/cdk": "^8.0.0",
+    "@angular/forms": "^8.0.0",
+    "rxjs": "^6.0.0 "
+  },
   "license": "SEE LICENSE IN LICENSE",
   "bit": {
-    "env": {}
-  }
+    "env": {
+      "compiler": "bit.envs/compilers/angular@0.1.9"
+    },
+    "overrides": {
+      "dependencies": {
+        "@angular/material": "-",
+        "@angular/core": "-",
+        "@angular/animations": "-",
+        "@angular/common": "-",
+        "@angular/cdk": "-",
+        "@angular/forms": "-",
+        "rxjs": "-"
+      },
+      "peerDependencies": {
+        "@angular/material": "^8.0.0",
+        "@angular/core": "^8.0.0",
+        "@angular/animations": "^8.0.0",
+        "@angular/common": "^8.0.0",
+        "@angular/cdk": "^8.0.0",
+        "@angular/forms": "^8.0.0",
+        "rxjs": "^6.0.0 "
+      }
+    }
+  },
+  "es2015": "dist\\types\\fesm2015\\bit-orcid.angular.types.js",
+  "esm5": "dist\\types\\esm5\\bit-orcid.angular.types.js",
+  "esm2015": "dist\\types\\esm2015\\bit-orcid.angular.types.js",
+  "fesm5": "dist\\types\\fesm5\\bit-orcid.angular.types.js",
+  "fesm2015": "dist\\types\\fesm2015\\bit-orcid.angular.types.js",
+  "module": "dist\\types\\fesm5\\bit-orcid.angular.types.js",
+  "typings": "dist\\types\\bit-orcid.angular.types.d.ts"
 }

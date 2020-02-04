@@ -1,8 +1,11 @@
 @import '~@angular/material/_theming';
 @import './material.typography.scss';
 @import './material.light-theme.scss';
-@import './material.orcid.overwrites.scss/chips-theme';
 @import './material.orcid-theme.scss';
+
+@import './material.orcid.overwrites.scss/button-theme';
+@import './material.orcid.overwrites.scss/chips-theme';
+@import './material.orcid.overwrites.scss/menu-theme';
 
 // .
 // .
@@ -23,3 +26,7 @@
 @include mat-base-typography-overwrites($orcid-material-typography);
 @import './material.orcid.overwrites.scss/chips.scss';
 @include mat-chips-theme-overwrites($orcid-app-theme);
+@import './material.orcid.overwrites.scss/button.scss';
+@include mat-button-theme-overwrites($orcid-app-theme);
+@import './material.orcid.overwrites.scss/menu.scss';
+@include mat-menu-theme-overwrites($orcid-app-theme);

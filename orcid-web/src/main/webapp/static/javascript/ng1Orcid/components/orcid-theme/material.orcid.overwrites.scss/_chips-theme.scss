@@ -1,7 +1,7 @@
 // Overwrites for
 // https://github.com/angular/components/blob/8.1.4/src/material/chips/_chips-theme.scss
 
-@import '~@angular/material/theming';
+@import '~@angular/material/_theming';
 
 @mixin mat-chips-theme-overwrites($theme) {
   $primary: map-get($theme, primary);
