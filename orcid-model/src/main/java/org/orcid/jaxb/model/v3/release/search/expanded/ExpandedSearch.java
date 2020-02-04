@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.release.search;
+package org.orcid.jaxb.model.v3.release.search.expanded;
 
 import java.io.Serializable;
 import java.util.ArrayList;

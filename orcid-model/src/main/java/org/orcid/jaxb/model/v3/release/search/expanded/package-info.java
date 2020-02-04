@@ -5,9 +5,8 @@
 // Generated on: 2014.07.22 at 06:46:00 PM BST 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/search", xmlns = {
-        @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),
-        @javax.xml.bind.annotation.XmlNs(prefix = "search", namespaceURI = "http://www.orcid.org/ns/search")},
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/expanded-search", xmlns = {
+        @javax.xml.bind.annotation.XmlNs(prefix = "expanded-search", namespaceURI = "http://www.orcid.org/ns/expanded-search")},
         elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.orcid.jaxb.model.v3.release.search;
+package org.orcid.jaxb.model.v3.release.search.expanded;
 

@@ -3,8 +3,8 @@ package org.orcid.core.manager.v3;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.jaxb.model.v3.release.search.ExpandedSearch;
 import org.orcid.jaxb.model.v3.release.search.Search;
+import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 
 /**
  * Class to retrieve OrcidMessage objects (with nested Search Results) relating

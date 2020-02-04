@@ -1,4 +1,4 @@
-package org.orcid.jaxb.model.v3.release.search;
+package org.orcid.jaxb.model.v3.release.search.expanded;
 
 import java.io.Serializable;
 
@@ -28,13 +28,13 @@ public class ExpandedResult implements Serializable {
     @XmlElement(name = "creditName", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String creditName;
     
-    @XmlElement(name = "other-names", namespace = "http://www.orcid.org/ns/expanded-search")
+    @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String[] otherNames;
     
     @XmlElement(name = "email", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String email;
     
-    @XmlElement(name = "institution-names", namespace = "http://www.orcid.org/ns/expanded-search")
+    @XmlElement(name = "institution-name", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String[] institutionNames;
     
     public String getOrcidId() {
