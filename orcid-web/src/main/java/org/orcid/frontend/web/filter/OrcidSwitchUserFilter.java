@@ -47,7 +47,7 @@ import org.springframework.security.web.authentication.switchuser.SwitchUserGran
 public class OrcidSwitchUserFilter extends SwitchUserFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidSwitchUserFilter.class);
-    
+
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
@@ -56,19 +56,19 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
 
     @Resource
     private InternalSSOManager internalSSOManager;
-    
+
     @Resource
     private ProfileDao profileDao;
-    
+
     @Resource
     private GivenPermissionToDao givenPermissionToDao;
-    
+
     private OrcidUserDetailsService orcidUserDetailsService;
 
     private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
-    
+
     public void setOrcidUserDetailsService(OrcidUserDetailsService userDetailsService) {
-        this.orcidUserDetailsService = userDetailsService;        
+        this.orcidUserDetailsService = userDetailsService;
         super.setUserDetailsService(userDetailsService);
     }
 
@@ -103,15 +103,29 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         }
         // If we are switching back to me it is OK
         if (isSwitchingBack(request)) {
-            return switchUser(request);
+            return switchBack();
         }
-        
+
         List<GivenPermissionByEntity> givenPermissionBy = givenPermissionToDao.findByReceiver(profileEntity.getId());
         for (GivenPermissionByEntity gpbe : givenPermissionBy) {
             if (gpbe.getGiver().equals(targetUserOrcid)) {
                 return switchUser(request);
             }
-        }        
+        }
+        throw new SwitchUserAuthenticationException(localeManager.resolveMessage("web.orcid.switchuser.exception"));
+    }
+
+    private Authentication switchBack() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        if (authorities != null) {
+            for (GrantedAuthority authority : authorities) {
+                if (authority instanceof SwitchUserGrantedAuthority) {
+                    SwitchUserGrantedAuthority switchUserGrantedAuthority = (SwitchUserGrantedAuthority) authority;
+                    return switchUserGrantedAuthority.getSource();
+                }
+            }
+        }
         throw new SwitchUserAuthenticationException(localeManager.resolveMessage("web.orcid.switchuser.exception"));
     }
 
@@ -121,7 +135,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         if (username == null) {
             username = "";
         }
-        
+
         LOGGER.debug("Attempt to switch to user [" + username + "]");
 
         UserDetails targetUser = orcidUserDetailsService.loadUserByUsername(username);
@@ -131,7 +145,6 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         UsernamePasswordAuthenticationToken targetUserRequest = createSwitchUserToken(request, targetUser);
 
         LOGGER.debug("Switch User Token [" + targetUserRequest + "]");
-
 
         return targetUserRequest;
     }
@@ -159,7 +172,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         List<GrantedAuthority> newAuths = new ArrayList<GrantedAuthority>(orig);
         newAuths.add(switchAuthority);
 
-        // create the new authentication token       
+        // create the new authentication token
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(targetUser.getUsername(), null, newAuths);
         authentication.setDetails(generateOrcidProfileUserDetails(targetUser.getUsername()));
         return authentication;
@@ -170,7 +183,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         String realUser = sourceManager.retrieveRealUserOrcid();
         return targetUserOrcid.equals(realUser);
     }
-    
+
     private OrcidProfileUserDetails generateOrcidProfileUserDetails(String orcid) {
         ProfileEntity profileEntity = profileDao.find(orcid);
         return orcidUserDetailsService.loadUserByProfile(profileEntity);

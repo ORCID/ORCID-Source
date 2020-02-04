@@ -91,7 +91,7 @@
                                                     <!-- Active row -->
                                                     <div class="row source-line-peer-review">
                                                         <div class="col-md-3 col-sm-3 col-xs-3">
-                                                            <span *ngIf="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span *ngIf="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span *ngIf="peerReview.completionDate.day">-{{peerReview.completionDate.month}}</span>
+                                                            <span *ngIf="peerReview.completionDate.year">{{peerReview.completionDate.year}}</span><span *ngIf="peerReview.completionDate.month">-{{peerReview.completionDate.month}}</span><span *ngIf="peerReview.completionDate.day">-{{peerReview.completionDate.day}}</span>
                                                         </div>
                                                         <div *ngIf="peerReview?.type?.value" class="col-md-2 col-sm-2 col-xs-2">{{peerReview.type?.value}}</div>
                                                         <div *ngIf="peerReview?.role?.value" class="col-md-3 col-sm-3 col-xs-3">{{peerReview.role?.value}}</div>
