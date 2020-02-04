@@ -1,6 +1,7 @@
 package org.orcid.api.memberV3.server.delegator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -24,6 +25,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -70,6 +73,8 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
+import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedResult;
+import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.test.DBUnitTest;
@@ -113,6 +118,9 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     
     @Resource
     private IssnClient issnClient;
+    
+    @Captor
+    private ArgumentCaptor<Map<String, List<String>>> searchParamsCaptor;
     
     @Before
     public void before() {
@@ -883,5 +891,40 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
         ClientSummary clientSummary = (ClientSummary) response.getEntity();
         assertEquals("Source Client 2", clientSummary.getName());
         assertEquals("A test source client", clientSummary.getDescription());
+    }
+    
+    @Test
+    public void testExpandedSearchByQueryNoRowsParamSet() {
+        ExpandedSearch search = new ExpandedSearch();
+        ExpandedResult result = new ExpandedResult();
+        search.getResults().add(result);
+        OrcidSearchManager mockSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
+        Mockito.when(mockSearchManager.expandedSearch(Mockito.any())).thenReturn(search);
+        OrcidSearchManager orcidSearchManager = (OrcidSearchManager) ReflectionTestUtils.getField(serviceDelegator, "orcidSearchManager");
+        ReflectionTestUtils.setField(serviceDelegator, "orcidSearchManager", mockSearchManager);
+        
+        Map<String, List<String>> searchQuery = new HashMap<>();
+        searchQuery.put("q", Arrays.asList("orcid"));
+        serviceDelegator.expandedSearchByQuery(searchQuery);
+        
+        Mockito.verify(mockSearchManager).expandedSearch(searchParamsCaptor.capture());
+        Map<String, List<String>> actualParams = searchParamsCaptor.getValue();
+        assertNotNull(actualParams);
+        assertNotNull(actualParams.keySet());
+        assertFalse(actualParams.keySet().isEmpty());
+        assertNotNull(actualParams.get("q"));
+        assertEquals("orcid", actualParams.get("q").get(0));
+        assertNotNull(actualParams.get("rows"));
+        assertEquals(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS), actualParams.get("rows").get(0));
+        
+        ReflectionTestUtils.setField(serviceDelegator, "orcidSearchManager", orcidSearchManager);
+    }
+    
+    @Test(expected = OrcidBadRequestException.class)
+    public void testExpandedSearchByQueryRowsParamTooGreat() {
+        Map<String, List<String>> searchQuery = new HashMap<>();
+        searchQuery.put("q", Arrays.asList("orcid"));
+        searchQuery.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.MAX_SEARCH_ROWS * 2)));
+        serviceDelegator.expandedSearchByQuery(searchQuery);
     }
 }
