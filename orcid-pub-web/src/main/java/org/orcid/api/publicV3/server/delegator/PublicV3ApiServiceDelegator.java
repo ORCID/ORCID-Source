@@ -128,4 +128,6 @@ public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response viewResearchResourceSummary(String orcid, Long putCode);
 
+    Response searchByQueryCSV(Map<String, List<String>> solrParams);
+
 }

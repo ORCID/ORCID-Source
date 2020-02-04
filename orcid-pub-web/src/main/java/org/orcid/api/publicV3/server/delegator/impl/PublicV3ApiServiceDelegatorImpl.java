@@ -652,6 +652,13 @@ public class PublicV3ApiServiceDelegatorImpl
         Search search = orcidSearchManager.findOrcidIds(solrParams);
         return Response.ok(search).build();
     }
+    
+    @Override
+    public Response searchByQueryCSV(Map<String, List<String>> solrParams) {
+        validateSearchParams(solrParams);
+        String search = orcidSearchManager.findOrcidIdsAsCSV(solrParams);
+        return Response.ok(search).build();
+    }
 
     @Override
     public Response viewBulkWorks(String orcid, String putCodes) {

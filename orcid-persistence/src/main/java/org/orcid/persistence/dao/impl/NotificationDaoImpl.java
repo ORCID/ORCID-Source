@@ -10,7 +10,6 @@ import java.util.Properties;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -366,6 +365,15 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         Query query = entityManager.createNativeQuery("UPDATE notification SET source_id = client_source_id, client_source_id = NULL where id IN :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsOfNotificationsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM notification WHERE source_id IN :ids");
+        query.setParameter("ids", clientProfileOrcidIds);
+        query.setMaxResults(max);
+        return query.getResultList();
     }
 
 }

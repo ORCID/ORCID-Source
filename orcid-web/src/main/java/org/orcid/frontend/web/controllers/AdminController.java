@@ -308,7 +308,7 @@ public class AdminController extends BaseController {
         return profileDetList;
     }
 
-    @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     public @ResponseBody String lookupIdOrEmails(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvIdOrEmails)
             throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);        

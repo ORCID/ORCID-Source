@@ -293,6 +293,7 @@ public class RegistrationController extends BaseController {
             String ip = OrcidRequestUtil.getIpAddress(request);
             createMinimalRegistrationAndLogUserIn(request, response, reg, usedCaptcha, locale, ip);
         } catch (Exception e) {
+            LOGGER.error("Error registering a new user", e);
             r.getErrors().add(getMessage("register.error.generalError"));
             return r;
         }

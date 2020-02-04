@@ -316,5 +316,14 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setMaxResults(max);
         return query.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsOfWorksReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
+        Query query = entityManager.createNativeQuery("SELECT work_id FROM work WHERE source_id IN :ids");
+        query.setParameter("ids", clientProfileOrcidIds);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
 }
 

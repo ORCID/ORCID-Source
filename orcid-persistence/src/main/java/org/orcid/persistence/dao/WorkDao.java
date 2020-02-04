@@ -130,4 +130,6 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     void revertUserOBODetails(List<BigInteger> ids);
 
     List<BigInteger> getIdsForUserOBORecords(int max);
+
+    List<BigInteger> getIdsOfWorksReferencingClientProfiles(int i, List<String> clientProfileOrcidIds);
 }

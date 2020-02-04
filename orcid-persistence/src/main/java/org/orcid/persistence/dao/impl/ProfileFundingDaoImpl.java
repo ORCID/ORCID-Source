@@ -367,4 +367,13 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         query.setMaxResults(max);
         return query.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsOfFundingsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM profile_funding WHERE source_id IN :ids");
+        query.setParameter("ids", clientProfileOrcidIds);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
 }

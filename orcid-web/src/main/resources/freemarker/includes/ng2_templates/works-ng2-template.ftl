@@ -10,7 +10,7 @@
                            <i class="glyphicon-chevron-down glyphicon x075" [ngClass]="{'glyphicon-chevron-right':workspaceSrvc.displayWorks==false}"></i>
                            <h2 id="affiliationType.Works">
                                 <@orcid.msg 'workspace.Works'/> 
-                                <ng-container *ngIf="worksService.groupsLabel">
+                                <ng-container>
                                     (<span>{{worksService.groupsLabel}}</span>)
                                 </ng-container>
                            </h2>
@@ -482,7 +482,7 @@
                     <mat-paginator
                     [length]="worksService.paginationTotalAmountOfWorks"
                     [pageSize]="worksService.paginationBatchSize"
-                    [pageSizeOptions]="[50, 100, 500]"
+                    [pageSizeOptions]="[10, 50, 100]"
                     [pageIndex]="worksService.paginationIndex"
                     (page)="pageEvent($event)"
                     >
@@ -501,7 +501,7 @@
                     <mat-paginator 
                     [length]="worksService.paginationTotalAmountOfWorks"
                     [pageSize]="worksService.paginationBatchSize"
-                    [pageSizeOptions]="[50, 100, 500]"
+                    [pageSizeOptions]="[10, 50, 100]"
                     [pageIndex]="worksService.paginationIndex"
                     (page)="pageEvent($event)"
                     >

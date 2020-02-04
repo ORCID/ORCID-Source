@@ -78,5 +78,7 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
 
     void correctUserSource(List<BigInteger> ids);
 
+    List<BigInteger> getIdsOfNotificationsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
+
 
 }

@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
@@ -178,6 +179,9 @@ public class JpaJaxbFundingAdapterTest {
         
         // no user obo
         assertNull(funding.getSource().getAssertionOriginOrcid());
+        
+        assertNotNull(funding.getOrganization());
+        assertNotNull(funding.getOrganization().getAddress());
     }
 
     @Test
@@ -221,6 +225,9 @@ public class JpaJaxbFundingAdapterTest {
 
         // user obo
         assertNotNull(funding.getSource().getAssertionOriginOrcid());
+        
+        assertNotNull(funding.getOrganization());
+        assertNotNull(funding.getOrganization().getAddress());
     }
 
     @Test
@@ -242,6 +249,9 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("funding:title", summary.getTitle().getTitle().getContent());
         assertEquals(FundingType.SALARY_AWARD, summary.getType());
         assertEquals(Visibility.PRIVATE, summary.getVisibility());
+        
+        assertNotNull(summary.getOrganization());
+        assertNotNull(summary.getOrganization().getAddress());
     }
 
     @Test
@@ -271,6 +281,9 @@ public class JpaJaxbFundingAdapterTest {
         
         // user obo
         assertNotNull(summary.getSource().getAssertionOriginOrcid());
+        
+        assertNotNull(summary.getOrganization());
+        assertNotNull(summary.getOrganization().getAddress());
     }
 
     
@@ -369,6 +382,14 @@ public class JpaJaxbFundingAdapterTest {
         entity.setType(org.orcid.jaxb.model.record_v2.FundingType.SALARY_AWARD.name());
         entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         entity.setClientSourceId("client-source-id");
+        
+        OrgEntity orgEntity = new OrgEntity();
+        orgEntity.setCity("org:city");
+        orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
+        orgEntity.setName("org:name");
+        orgEntity.setRegion("org:region");
+        orgEntity.setUrl("org:url");
+        entity.setOrg(orgEntity);
         
         ProfileEntity profileEntity = new ProfileEntity();
         profileEntity.setId("orcid");

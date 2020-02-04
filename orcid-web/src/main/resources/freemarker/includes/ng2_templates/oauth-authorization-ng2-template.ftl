@@ -78,8 +78,7 @@
                                     </form>
                                 </div>
                                 <!-- RESET PASSWORD -->
-                                <request-password-reset-ng2 [authorizationForm]="authorizationForm" [showDeactivatedError]="showDeactivatedError" [showReactivationSent]="showReactivationSent" (sendReactivationEmail)="sendReactivationEmail($event)"></request-password-reset-ng2>
-
+                                <a href="/reset-password" id="reset-password-toggle-text" role="button">${springMacroRequestContext.getMessage("ngOrcid.signin.forgotYourPassword")}</a>
                                 <!-- SOCIAL LOGIN -->                               
                                 <div class="social-login">
                                     <div class="title">

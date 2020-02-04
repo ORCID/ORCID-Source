@@ -64,13 +64,9 @@
                 <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
                     <#include "/includes/login_personal_fields_inc_ng2.ftl"/>
                 </div>
+                <a href="/reset-password" class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6" id="reset-password-toggle-text" role="button">${springMacroRequestContext.getMessage("ngOrcid.signin.forgotYourPassword")}</a>
             </div>
         </form>
         <!-- RESET PASSWORD -->
-        <div *ngIf="signinData && !signinData.unsupportedInstitution && !signinData.unsupportedInstitution && loadedFeed" class="row shibboleth">
-            <div class="col-md-offset-3 col-md-6 col-sm-9 col-sm-offset-3 col-xs-12 col-lg-6">
-                <request-password-reset-ng2 [authorizationForm]="authorizationForm"></request-password-reset-ng2>
-            </div> 
-        </div>
     </div>
 </script>

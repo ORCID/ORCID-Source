@@ -86,10 +86,7 @@ import { OrgIdentifierPopoverNg2Module }
 import { PrivacytoggleNg2Module }
     from './../privacytoggle/privacyToggle';
 
-import { RequestPasswordResetNg2Module }
-    from './../requestPasswordReset/requestPasswordReset';
 
-    
 // This is the Angular 2 part of the module
 @NgModule(
     {
@@ -105,7 +102,6 @@ import { RequestPasswordResetNg2Module }
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
-            RequestPasswordResetNg2Module,
         ],
         declarations: [ 
             FocusMe,
@@ -158,7 +154,6 @@ import { RequestPasswordResetNg2Module }
             OrgIdentifierPopoverNg2Module,
             PrivacytoggleNg2Module,
             ReCaptchaModule,
-            RequestPasswordResetNg2Module,
         ]
     }
 )

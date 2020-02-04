@@ -217,4 +217,6 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response deleteResearchResource(String orcid, Long putCode);
 
+    Response searchByQueryCSV(Map<String, List<String>> solrParams);
+
 }

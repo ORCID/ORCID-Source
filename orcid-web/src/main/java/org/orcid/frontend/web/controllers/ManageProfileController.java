@@ -412,15 +412,18 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     private ProfileEntity getDeprecatingEntity(DeprecateProfile deprecateProfile) {
+        String orcidIdOrEmail = deprecateProfile.getDeprecatingOrcidOrEmail().trim();
         if (deprecateProfile.getDeprecatingOrcidOrEmail().contains("@")) {
-            EmailEntity emailEntity = emailManager.find(deprecateProfile.getDeprecatingOrcidOrEmail());
+            EmailEntity emailEntity = emailManager.find(orcidIdOrEmail);
             if (emailEntity != null) {
                 return emailEntity.getProfile();
             }
         } else {
-            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(deprecateProfile.getDeprecatingOrcidOrEmail());
-            if (profileEntity != null) {
-                return profileEntity;
+            if (OrcidStringUtils.getOrcidNumber(orcidIdOrEmail) != null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail))) {
+                ProfileEntity profileEntity = profileEntityCacheManager.retrieve(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail));
+                if (profileEntity != null) {
+                    return profileEntity;
+                }
             }
         }
         return null;
@@ -616,7 +619,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (errors.isEmpty()) {
             // clear errors
             editEmail.setErrors(new ArrayList<String>());
-            emailManager.editEmail(orcid, editEmail.getOriginal(), editEmail.getEdited(), request);            
+            emailManager.editEmail(orcid, editEmail.getOriginal(), editEmail.getEdited().trim(), request);            
         } else {
             editEmail.setErrors(errors);
         }

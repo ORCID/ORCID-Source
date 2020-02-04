@@ -5,6 +5,7 @@ import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
+import static org.orcid.core.api.OrcidApiConstants.CSV_SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.DISTINCTION;
 import static org.orcid.core.api.OrcidApiConstants.DISTINCTIONS;
 import static org.orcid.core.api.OrcidApiConstants.DISTINCTION_SUMMARY;
@@ -41,19 +42,20 @@ import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATIONS;
 import static org.orcid.core.api.OrcidApiConstants.QUALIFICATION_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCES;
+import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.SERVICE;
 import static org.orcid.core.api.OrcidApiConstants.SERVICES;
 import static org.orcid.core.api.OrcidApiConstants.SERVICE_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.TEXT_CSV;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCES;
-import static org.orcid.core.api.OrcidApiConstants.RESEARCH_RESOURCE_SUMMARY;
 
 import java.util.List;
 import java.util.Map;
@@ -460,6 +462,17 @@ public class PublicV3ApiServiceImplV3_0 {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
         Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
         return jsonQueryResults;
+    }
+    
+    @GET
+    @Produces(TEXT_CSV)
+    @Path(CSV_SEARCH_PATH)
+    @ApiOperation( nickname="searchByQueryv3", value = "Search records")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/search-2.0.xsd")
+    public Response searchByQueryCSV(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+        Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
+        Response csvQueryResults = serviceDelegator.searchByQueryCSV(solrParams);
+        return csvQueryResults;
     }
 
     @GET

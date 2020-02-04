@@ -6914,6 +6914,15 @@ ul.comma li:last-child:after {
     padding-left: 29px
 }
 
+footer-ng2 .footer-row-container .footer-url {
+    margin-right: 0;
+}
+
+footer-ng2 .inline-list {
+    display: flex;
+    justify-content: center;
+}
+
 .inline-list li {
     display: inline
 }
@@ -9792,6 +9801,7 @@ emails-form-ng2 .cancel-edit-button {
     text-align: center;
     color: #f44336;
     display: inline;
+    cursor: pointer;
 }
 
 emails-form-ng2 .settings-table .popover.show-unverified-popover {
@@ -9821,6 +9831,10 @@ emails-form-ng2 privacy-toggle-ng2 .privacy-bar-impr .popover-help-container>.pr
 emails-form-ng2 privacy-toggle-ng2 .privacy-bar-impr .privacyToggle+.popover-help-container {
     right: calc(50% - 45px);
     bottom: 31px;
+}
+
+emails-form-ng2 .glyphicon-pencil {
+    cursor: pointer;
 }
 
 footer-ng2 .footer-row-container a:hover {
@@ -9910,9 +9924,12 @@ works-ng2 mat-paginator .mat-paginator-container {
     justify-content: flex-start;
 }
 
-@media (max-width:415px) {
+@media (max-width:500px) {
     works-ng2 mat-paginator .mat-paginator-container > .mat-paginator-range-actions > .mat-paginator-range-label {
         margin: 0;
+    }
+    works-ng2 mat-paginator .mat-paginator-container {
+        flex-direction: column;
     }
 }
 
