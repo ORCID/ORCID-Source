@@ -82,6 +82,19 @@ public class SolrIndexUpdater {
             throw new NonTransientDataAccessResourceException("IOException when persisting to SOLR", ioe);
         }
     } 
+    
+    public void removeFromSolr(OrcidSolrDocument orcidSolrDocument) {
+        try {
+            solrClient.deleteById(orcidSolrDocument.getOrcid());
+            if(autoCommit) {
+                solrClient.commit();
+            }
+        } catch (SolrServerException se) {
+            throw new NonTransientDataAccessResourceException("Error deleting from SOLR Server", se);
+        } catch (IOException ioe) {
+            throw new NonTransientDataAccessResourceException("IOException when deleting from SOLR", ioe);
+        }
+    }
 
     public Date retrieveLastModified(String orcid) {
         SolrQuery query = new SolrQuery();
@@ -104,6 +117,6 @@ public class SolrIndexUpdater {
         OrcidSolrDocument doc = new OrcidSolrDocument();
         doc.setOrcid(orcid);
         doc.setProfileLastModifiedDate(retrieveLastModified(orcid));
-        this.persist(doc);
+        removeFromSolr(doc);
     }
 }
