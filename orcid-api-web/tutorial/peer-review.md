@@ -38,10 +38,12 @@ This workflow can be used with Member API credentials on sandbox or the producti
 
 ## 1. About Group-Ids
 
-**Group Ids are required to post Peer Review Items.** The correct work flow for posting new peer review items is the following:
+**Group Ids are required to post Peer Review Items.** If you know you are going to use a valid [ISSN](https://portal.issn.org/) as you group Id then you can skip this section and move straight to section 2 about posting your peer review.
+
+The correct work flow for posting new peer review items with any other than an ISSN is the following:
 * Create a read/ write token for group ID using the two step process [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Get-a-token-to-create-and-read-a-peer-review-group) 
 * Using this token to check that the group ID you would like to use exists by searching using a curl call like the [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#search-for-an-existing-peer-review-group-by-id)
-* If the ID already exists (If you are using an [ISSN](https://portal.issn.org/)  and it is valid the ID most likely will already exist)carry on to the last step, posting your Peer review.
+* If the ID already exists, carry on to the last step, posting your Peer review.
 * If the ID does not exist or you are not using ISSN, then create the Group ID using the above token and a call like [this example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Create-a-peer-review-group-id)
 * Finally you can post a peer review item with a correct group id using a [3 Step OAuth Token](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect)
 
