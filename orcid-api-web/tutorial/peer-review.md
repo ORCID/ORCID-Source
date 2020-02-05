@@ -38,7 +38,7 @@ This workflow can be used with Member API credentials on sandbox or the producti
 
 ## 1. About Group-Ids
 
-**Group Ids are required to post Peer Review Items.** If you know you are going to use a valid [ISSN](https://portal.issn.org/) as you group Id then you can skip this section and move straight to section 2 about posting your peer review.
+**Group Ids are required to post Peer Review Items.** If you know you are going to use a valid [ISSN](https://portal.issn.org/) as your group Id then you can skip this section and move straight to section 2 about posting your peer review.
 
 The correct work flow for posting new peer review items with any other than an ISSN is the following:
 * Create a read/ write token for group ID using the two step process [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Get-a-token-to-create-and-read-a-peer-review-group) 
