@@ -114,7 +114,7 @@ curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Beare
 ## Create a peer-review group-id
 Peer-review items are grouped on ORCID records based on who or what the review was done for this can be an organization, a publication or other. 
 
-**If you are not using ISSN, search first before creating new Group-ids**. You *do not* need to create a new group-id if you are using an ISSN. Post your peer review with the ISSN in the `<peer-review:review-group-id>` field  as in the example [here.](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/peer-review-full-3.0.xml) and the group id will be created when you post your peer-review. 
+**If you are not using ISSN, search first before creating new Group-ids**. You *do not* need to create a new group-id if you are using an ISSN. Post your peer review with the ISSN in the `<peer-review:review-group-id>` field  as in the example [here](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/peer-review-full-3.0.xml) and the group id will be created when you post your peer-review. 
 
 ### Get a token to create a peer-review group (Only if you are not using ISSN)
 Tokens to create peer-review groups are issued via the [2 step token process](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#generate-a-two-step-read-public-access-token).
