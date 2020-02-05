@@ -100,10 +100,6 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
             for (String field : fields.split(",")) {
                 fieldList.add(field);
             }
-            
-            if (!fieldList.contains("orcid")) {
-                fieldList.add("orcid");
-            }
         } else {
             fieldList.addAll(SolrConstants.ALLOWED_FIELDS);
         }

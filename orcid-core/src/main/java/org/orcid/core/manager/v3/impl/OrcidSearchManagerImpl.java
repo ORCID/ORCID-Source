@@ -60,16 +60,9 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         if (solrResults != null && solrResults.getResults() != null) {
             searchResults.setNumFound(solrResults.getNumFound());
             solrResults.getResults().stream().forEach(r -> {
-                try {
-                    orcidSecurityManager.checkProfile(r.getOrcid());
-                    Result result = new Result();
-                    result.setOrcidIdentifier(recordManagerReadOnly.getOrcidIdentifier(r.getOrcid()));
-                    searchResults.getResults().add(result);
-                } catch (OrcidNoResultException onre) {
-                    LOGGER.error("ORCID id found in SOLR but not in the DB: " + r.getOrcid());
-                } catch (Exception e) {
-                    LOGGER.error("Exception for ORCID " + r.getOrcid(), e);
-                }
+                Result result = new Result();
+                result.setOrcidIdentifier(recordManagerReadOnly.getOrcidIdentifier(r.getOrcid()));
+                searchResults.getResults().add(result);
             });
         } else {
             searchResults.setNumFound(0L);
@@ -96,19 +89,12 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         setExpandedSearchResults(orcidSolrResults, search);
         return search;
     }
-    
+
     private void setExpandedSearchResults(OrcidSolrResults solrResults, ExpandedSearch searchResults) {
         if (solrResults != null && solrResults.getResults() != null) {
             searchResults.setNumFound(solrResults.getNumFound());
             solrResults.getResults().stream().forEach(r -> {
-                try {
-                    orcidSecurityManager.checkProfile(r.getOrcid());
-                    searchResults.getResults().add(getExpandedResult(r));
-                } catch (OrcidNoResultException onre) {
-                    LOGGER.error("ORCID id found in SOLR but not in the DB: " + r.getOrcid());
-                } catch (Exception e) {
-                    LOGGER.error("Exception for ORCID " + r.getOrcid(), e);
-                }
+                searchResults.getResults().add(getExpandedResult(r));
             });
         } else {
             searchResults.setNumFound(0L);
@@ -122,16 +108,16 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         result.setFamilyNames(solrResult.getFamilyName());
         result.setCreditName(solrResult.getCreditName());
         result.setEmail(solrResult.getEmail());
-        
+
         if (solrResult.getOtherNames() != null) {
             result.setOtherNames(solrResult.getOtherNames().toArray(new String[0]));
         }
-        
-        if (solrResult.getInstitutionAffiliationNames() != null) { 
+
+        if (solrResult.getInstitutionAffiliationNames() != null) {
             result.setInstitutionNames(solrResult.getInstitutionAffiliationNames().toArray(new String[0]));
         }
-        
+
         return result;
     }
-    
+
 }
