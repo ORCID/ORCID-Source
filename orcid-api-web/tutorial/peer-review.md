@@ -38,9 +38,10 @@ This workflow can be used with Member API credentials on sandbox or the producti
 
 ## 1. About Group-Ids
 
-**Group Ids are required to post Peer Review Items.** If you know you are going to use a valid [ISSN](https://portal.issn.org/) as your group Id then you can skip this section and move straight to section 2 about posting your peer review.
+**Group Ids are required to post Peer Review Items.** If you know you are going to use a valid [ISSN](https://portal.issn.org/) as your group Id, then you can skip this section and move straight to section 2 about posting your peer review, this is because the group id for peer-reviews gets automatically generated if it contains a valid ISSN. 
 
-The correct work flow for posting new peer review items with any other than an ISSN is the following:
+The correct work flow for posting new peer review items with anything other than an ISSN is the following:
+
 * Create a read/ write token for group ID using the two step process [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#Get-a-token-to-create-and-read-a-peer-review-group) 
 * Using this token to check that the group ID you would like to use exists by searching using a curl call like the [example below](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#search-for-an-existing-peer-review-group-by-id)
 * If the ID already exists, carry on to the last step, posting your Peer review.
@@ -113,7 +114,7 @@ curl -i -L -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Beare
 ## Create a peer-review group-id
 Peer-review items are grouped on ORCID records based on who or what the review was done for this can be an organization, a publication or other. 
 
-**We strongly suggest searching existing peer-review groups before creating new ones**. You *do not* need to create a new group-id if you are using an ISSN. Search first to check it is there, then post your peer review with the ISSN in the `<peer-review:review-group-id>` field  as in the example [here.](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/peer-review-full-3.0.xml) 
+**If you are not using ISSN, search first before creating new Group-ids**. You *do not* need to create a new group-id if you are using an ISSN. Post your peer review with the ISSN in the `<peer-review:review-group-id>` field  as in the example [here.](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/peer-review-full-3.0.xml) and the group id will be created when you post your peer-review. 
 
 ### Get a token to create a peer-review group (Only if you are not using ISSN)
 Tokens to create peer-review groups are issued via the [2 step token process](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#generate-a-two-step-read-public-access-token).
@@ -210,7 +211,7 @@ Editing the peer-review section of a record requires a 3 step OAuth token with t
 
 - **review-group-id** _(required)_ Identifier for the group that this review should be a part of for aggregation purposes. The Group ID should usually be a valid ISSN. Should you need to assign something other than an ISSN you will need to create it using the method above (see [Create a peer-review group-id](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/peer-review.md#create-a-peer-review-group-id) 
 
-**Describing the subject of the reivew**
+**Describing the subject of the review**
 
 - **subject-external-identifier** _(optional)_ The unique ID of the object that was reviewed. *This identifier refers to the SUBJECT of the review, not of the review itself.*
 
