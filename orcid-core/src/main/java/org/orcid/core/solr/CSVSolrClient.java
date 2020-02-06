@@ -2,7 +2,6 @@ package org.orcid.core.solr;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -14,15 +13,10 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.orcid.utils.solr.entities.SolrConstants;
 
-public class CSVSolrClient {
+public class CSVSolrClient extends OrcidSolrClient {
 
     private String baseUrl;
-
-    private static final List<String> ALLOWED_FIELDS = Arrays.asList(SolrConstants.ORCID, SolrConstants.EMAIL_ADDRESS, SolrConstants.GIVEN_NAMES,
-            SolrConstants.FAMILY_NAME, SolrConstants.GIVEN_AND_FAMILY_NAMES, SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME,
-            SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES, SolrConstants.CREDIT_NAME, SolrConstants.OTHER_NAMES);
 
     public CSVSolrClient(String url) {
         this.baseUrl = url;
@@ -75,30 +69,6 @@ public class CSVSolrClient {
             return false;
         }
         return true;
-    }
-
-    // generate or filter specified fl param to only include allowed values
-    private String getFieldList(String requestedFieldList) {
-        String[] specifiedFields = new String[0];
-        StringBuilder fl = new StringBuilder();
-        if (requestedFieldList != null) {
-            specifiedFields = requestedFieldList.split(",");
-            for (String specifiedField : specifiedFields) {
-                if (ALLOWED_FIELDS.contains(specifiedField)) {
-                    fl.append(specifiedField).append(",");
-                }
-            }
-            return !fl.toString().isEmpty() ? fl.toString() : getDefaultFieldList();
-        } else {
-            return getDefaultFieldList();
-        }
-
-    }
-    
-    private String getDefaultFieldList() {
-        StringBuilder defaultFieldList = new StringBuilder(ALLOWED_FIELDS.get(0));
-        ALLOWED_FIELDS.subList(1, ALLOWED_FIELDS.size()).forEach(s -> defaultFieldList.append(",").append(s));
-        return defaultFieldList.toString();
     }
 
 }

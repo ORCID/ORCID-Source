@@ -1,0 +1,15 @@
+@import '~@angular/material/_theming';
+
+@mixin mat-button-theme-overwrites($theme) {
+  $primary: map-get($theme, primary);
+  $foreground: map-get($theme, foreground);
+  $divider-color: mat-color($foreground, divider);
+
+  $background: map-get($theme, background);
+  $unselected-background: mat-color($background, unselected-chip);
+  $unselected-foreground: mat-color($foreground, text);
+
+  .mat-button.orcid-button-light-grey {
+    background-color: map-get($background, light-grey);
+  }
+}

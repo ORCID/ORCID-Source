@@ -1,20 +1,12 @@
-import { Injectable } 
-    from '@angular/core';
-
-import { Headers, Http, RequestOptions, Response } 
-    from '@angular/http';
-
-import { Observable, Subject } 
-    from 'rxjs';
-
-import { catchError, map, tap } 
-    from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EmailFrequencyService {
-    private headers: Headers;
+    private headers: HttpHeaders ;
     private notify = new Subject<any>();
     notifyObservable$ = this.notify.asObservable();
     email_frequencies_url: string;
@@ -23,8 +15,8 @@ export class EmailFrequencyService {
     email_frequencies_member_permissions_notifications: string;
     email_frequencies_tips_notifications: string;
     
-    constructor( private http: Http ){
-        this.headers = new Headers(
+    constructor( private http: HttpClient ){
+        this.headers = new HttpHeaders (
             { 
                 'Content-Type': 'application/json' 
             }
@@ -37,15 +29,7 @@ export class EmailFrequencyService {
     }
     
     getEmailFrequencies(): Observable<any> {
-        return this.http.get(
-            this.email_frequencies_url
-        )
-        .pipe(
-            map(
-                (res:Response) => res.json()
-            )
-        );
-
+        return this.http.get(this.email_frequencies_url)
     }   
     
     updateFrequency( name, frequency ): Observable<any> {
@@ -60,15 +44,6 @@ export class EmailFrequencyService {
             url = this.email_frequencies_tips_notifications;
         }
         
-        return this.http.post( 
-            url, 
-            frequency, 
-            { headers: this.headers }
-        )
-        .pipe(
-            map(
-                (res:Response) => res.json()
-            )
-        );
+        return this.http.post(url, frequency, { headers: this.headers })
     }
 }

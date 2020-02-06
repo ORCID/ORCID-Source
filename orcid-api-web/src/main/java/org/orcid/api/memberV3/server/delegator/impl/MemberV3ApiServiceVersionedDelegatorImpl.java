@@ -545,6 +545,11 @@ public class MemberV3ApiServiceVersionedDelegatorImpl implements
     public Response searchByQueryCSV(Map<String, List<String>> solrParams) {
         return processReponse(memberV3ApiServiceDelegator.searchByQueryCSV(solrParams));
     }
+    
+    @Override
+    public Response expandedSearchByQuery(Map<String, List<String>> solrParams) {
+        return processReponse(memberV3ApiServiceDelegator.expandedSearchByQuery(solrParams));
+    }
 
     @Override
     public Response viewBulkWorks(String orcid, String putCodes) {

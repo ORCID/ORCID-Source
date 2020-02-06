@@ -3,8 +3,11 @@ import { NgModule } from "@angular/core";
 import { downgradeComponent } from "@angular/upgrade/static";
 //User generated components
 import { CommonNg2Module } from "./../common/common";
-import { OauthAuthorizationComponent } from "./oauthAuthorization.component";
+import { OauthAuthorizationComponent, DialogOverviewExampleDialog } from "./oauthAuthorization.component";
 import { idBannerNg2Module } from "./../idBanner/idBanner";
+import { MatDialogModule } from '@angular/material/dialog';
+import { IsThisYouModule, IsThisYouComponent } from "@bit/orcid.angular.is-this-you"
+
 
 // This is the Angular 1 part of the module
 export const OauthAuthorizationModule = angular.module(
@@ -15,9 +18,11 @@ export const OauthAuthorizationModule = angular.module(
 // This is the Angular 2 part of the module
 
 @NgModule({
-    declarations: [OauthAuthorizationComponent],
-    entryComponents: [OauthAuthorizationComponent],
-    imports: [CommonNg2Module, idBannerNg2Module],
+    declarations: [OauthAuthorizationComponent, DialogOverviewExampleDialog],
+    entryComponents: [OauthAuthorizationComponent, DialogOverviewExampleDialog, IsThisYouComponent],
+    imports: [CommonNg2Module, idBannerNg2Module, MatDialogModule,
+       IsThisYouModule
+       ],
     providers: []
 })
 export class OauthAuthorizationNg2Module {}

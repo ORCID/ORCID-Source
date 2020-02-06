@@ -1,22 +1,13 @@
+import { HttpClient, HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, ReplaySubject, Subject, throwError as observableThrowError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+
+import { CommonService } from './common.service.ts';
+
+
 declare var orcidVar: any;
 
-import { Injectable } 
-    from '@angular/core';
-
-import { CookieXSRFStrategy, HttpModule, XSRFStrategy, JsonpModule, Headers, Http, Response, RequestOptions, Jsonp } 
-    from '@angular/http';
-
-import { HttpClient, HttpClientModule, HttpHeaders } 
-     from '@angular/common/http';
-
-import { Observable, Subject, ReplaySubject } 
-    from 'rxjs';
-
-import { catchError, map, tap, switchMap } 
-    from 'rxjs/operators';
-
-import { CommonService } 
-    from './common.service.ts';       
     
 @Injectable({
     providedIn: 'root',
@@ -32,8 +23,7 @@ export class SearchService {
     
     constructor(
         private http: HttpClient,
-        private commonSrvc: CommonService,
-        private jsonp: Jsonp) {
+        private commonSrvc: CommonService) {
         this.publicApiHeaders = new HttpHeaders(
             {
                 'Content-Type': 'application/json',
@@ -53,17 +43,16 @@ export class SearchService {
         );
      }
 
-    private handleError (error: Response | any) {
+    private handleError (body) {
         let errMsg: string;
-        if (error instanceof Response) {
-            const body = error.json() || '';
+        if (body instanceof HttpErrorResponse) {
             const err = body.error || JSON.stringify(body);
-            errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+            errMsg = `${body.status} - ${body.statusText || ''} ${err}`;
         } else {
-            errMsg = error.message ? error.message : error.toString();
+            errMsg = body.message ? body.message : body.toString();
         }
         console.error(errMsg);
-        return Observable.throw(errMsg);
+        return observableThrowError(errMsg);
     }
 
     getAffiliations(orcid): Observable<any> {

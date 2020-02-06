@@ -13,8 +13,10 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
@@ -61,9 +64,11 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.AdminChangePassword;
+import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -138,13 +143,13 @@ public class AdminControllerTest extends BaseControllerTest {
         map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
         map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
         map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
-        
+
         when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
-        
+
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
         assertNotNull(adminController);
         assertNotNull(profileDao);
-        
+
         TargetProxyHelper.injectIntoProxy(adminController, "orcidSecurityManager", mockOrcidSecurityManager);
         when(mockOrcidSecurityManager.isAdmin()).thenReturn(true);
     }
@@ -195,6 +200,21 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNull(r.getPrimaryAccount().getEmail());
         assertNull(r.getPrimaryAccount().getFamilyName());
         assertNull(r.getPrimaryAccount().getGivenNames());        
+
+        toDeprecate.setOrcid("https://orcid.org/4444-4444-4444-4447");
+        r = adminController.checkOrcidToDeprecate(mockRequest, mockResponse, r);
+        assertNotNull(r);
+        assertEquals(1, r.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.inexisting_orcid", "4444-4444-4444-4411"), r.getErrors().get(0));
+        assertEquals("otis@reading.com", r.getDeprecatedAccount().getEmail());
+        assertEquals("Family Name", r.getDeprecatedAccount().getFamilyName());
+        assertEquals("Given Names", r.getDeprecatedAccount().getGivenNames());
+        assertEquals("4444-4444-4444-4447", r.getDeprecatedAccount().getOrcid());
+        
+        assertEquals("4444-4444-4444-4411", r.getPrimaryAccount().getOrcid());
+        assertNull(r.getPrimaryAccount().getEmail());
+        assertNull(r.getPrimaryAccount().getFamilyName());
+        assertNull(r.getPrimaryAccount().getGivenNames());
     }
 
     @Test
@@ -249,6 +269,16 @@ public class AdminControllerTest extends BaseControllerTest {
         result = adminController.deprecateProfile(mockRequest, mockResponse, r);
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", "4444-4444-4444-4443"), result.getErrors().get(0));
+        
+        // Deactivate primary record
+        adminController.deactivateOrcidRecords(mockRequest, mockResponse, "4444-4444-4444-4443");
+        
+        // Test set deactive primary account with ORCURL 
+        toDeprecate.setOrcid("https://orcid.org/4444-4444-4444-4440");
+        primary.setOrcid("4444-4444-4444-4443");
+        result = adminController.deprecateProfile(mockRequest, mockResponse, r);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", "4444-4444-4444-4443"), result.getErrors().get(0));
     }
 
     @Test
@@ -298,6 +328,16 @@ public class AdminControllerTest extends BaseControllerTest {
         proDetails = adminController.reactivateOrcidRecord(mockRequest, mockResponse, proDetails);
         assertEquals(1, proDetails.getErrors().size());
         assertEquals(adminController.getMessage("admin.profile_reactivation.errors.already_active", new ArrayList<String>()), proDetails.getErrors().get(0));
+        
+        // Test deactivate
+        result = adminController.deactivateOrcidRecords(mockRequest, mockResponse, "https://orcid.org/4444-4444-4444-4445");
+        assertEquals(1, result.get("success").size());
+
+        // Test deactivate
+        proDetails.setOrcid("https://orcid.org/4444-4444-4444-4445");
+        proDetails = adminController.reactivateOrcidRecord(mockRequest, mockResponse, proDetails);
+        assertEquals(1, result.get("success").size());
+        
     }
 
     @Test
@@ -317,7 +357,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void resetPasswordTest() throws IllegalAccessException {
+    public void resetPasswordTest() throws IllegalAccessException, UnsupportedEncodingException {
         ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4441");
         assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
         AdminChangePassword form = new AdminChangePassword();
@@ -329,7 +369,7 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void resetPasswordUsingEmailTest() throws IllegalAccessException {
+    public void resetPasswordUsingEmailTest() throws IllegalAccessException, UnsupportedEncodingException {
         ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4442");
         assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
         AdminChangePassword form = new AdminChangePassword();
@@ -337,6 +377,18 @@ public class AdminControllerTest extends BaseControllerTest {
         form.setPassword("password1");
         adminController.resetPassword(mockRequest, mockResponse, form);
         p = profileEntityManager.findByOrcid("4444-4444-4444-4442");
+        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(p.getPassword()));
+    }
+    
+    @Test
+    public void resetPasswordTestOrcidURL() throws IllegalAccessException, UnsupportedEncodingException {
+        ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4443");
+        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
+        AdminChangePassword form = new AdminChangePassword();
+        form.setOrcidOrEmail("https://orcid.org/4444-4444-4444-4443");
+        form.setPassword("password1");
+        adminController.resetPassword(mockRequest, mockResponse, form);
+        p = profileEntityManager.findByOrcid("4444-4444-4444-4443");
         assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(p.getPassword()));
     }
 
@@ -371,50 +423,54 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
-    public void testLockAccounts() throws IllegalAccessException {
+    public void testLockAccounts() throws Exception {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
         EmailManager emailManager = Mockito.mock(EmailManager.class);
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);        
 
-        AdminController adminController = new AdminController();
-        TargetProxyHelper.injectIntoProxy(adminController, "orcidSecurityManager", mockOrcidSecurityManager);
+        AdminController adminController = new AdminController();        
         ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
         ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
         ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
 
-        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with,reviewed";
+        String commaSeparatedValues = "not-found-email1@test.com,not-found-email2@test.com,record-locked-email1@test.com,record-locked-email2@test.com,successful-email1@test.com,successful-email2@test.com,successful-email3@test.com,successful-email4@test.com,reviewed-email@test.com,0000-0000-0000-0001,https://orcid.org/0000-0000-0000-0002,0000-0000-0000-0003,https://orcid.org/0000-0000-0000-0004,notAnOrcidIdOrEmail";
+
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
 
         Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(emailManager.emailExists(Mockito.eq("some"))).thenReturn(false);
-        Mockito.when(emailManager.emailExists(Mockito.eq("orcid"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put("ids", "ids");
-        map.put("or", "or");
-        map.put("emails", "emails");
-        map.put("to", "to");
-        map.put("test", "test");
-        map.put("with", "with");
-        map.put("reviewed", "reviewed");
+        map.put("record-locked-email1@test.com", "record-locked-email1@test.com");
+        map.put("record-locked-email2@test.com", "record-locked-email2@test.com");
+        map.put("successful-email1@test.com", "successful-email1@test.com");
+        map.put("successful-email2@test.com", "successful-email2@test.com");
+        map.put("successful-email3@test.com", "successful-email3@test.com");
+        map.put("successful-email4@test.com", "successful-email4@test.com");
+        map.put("reviewed-email@test.com", "reviewed-email@test.com");
 
         Mockito.when(emailManager.findOricdIdsByCommaSeparatedEmails(Mockito.anyString())).thenReturn(map);
 
         Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("some"))).thenReturn(false);
-        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("orcid"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
         Mockito.when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
             @Override
             public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
                 String ar1 = invocation.getArgument(0);
                 ProfileEntity p = new ProfileEntity();
                 p.setId(ar1);
-                if (ar1.equals("ids") || ar1.equals("or")) {
+                if (ar1.equals("record-locked-email1@test.com") || ar1.equals("record-locked-email2@test.com") 
+                        || ar1.equals("0000-0000-0000-0001") || ar1.equals("0000-0000-0000-0002")) {
                     p.setRecordLocked(true);
                 } else {
                     p.setRecordLocked(false);
                 }
 
-                if (ar1.contentEquals("reviewed")) {
+                if (ar1.contentEquals("reviewed-email@test.com")) {
                     p.setReviewed(true);
                 } else {
                     p.setReviewed(false);
@@ -429,25 +485,31 @@ public class AdminControllerTest extends BaseControllerTest {
         lockAccounts.setLockReason(LockReason.SPAM.getLabel());
 
         Map<String, Set<String>> results = adminController.lockRecords(mockRequest, mockResponse, lockAccounts);
-        assertEquals(2, results.get("notFound").size());
-        assertTrue(results.get("notFound").contains("some"));
-        assertTrue(results.get("notFound").contains("orcid"));
+        assertEquals(3, results.get("notFound").size());
+        assertTrue(results.get("notFound").contains("not-found-email1@test.com"));
+        assertTrue(results.get("notFound").contains("not-found-email2@test.com"));
+        assertTrue(results.get("notFound").contains("notAnOrcidIdOrEmail"));
 
-        assertEquals(2, results.get("alreadyLocked").size());
-        assertTrue(results.get("alreadyLocked").contains("ids"));
-        assertTrue(results.get("alreadyLocked").contains("or"));
+        assertEquals(4, results.get("alreadyLocked").size());
+        assertTrue(results.get("alreadyLocked").contains("record-locked-email1@test.com"));
+        assertTrue(results.get("alreadyLocked").contains("record-locked-email2@test.com"));
+        assertTrue(results.get("alreadyLocked").contains("0000-0000-0000-0001"));
+        assertTrue(results.get("alreadyLocked").contains("https://orcid.org/0000-0000-0000-0002"));
 
-        assertEquals(4, results.get("successful").size());
-        assertTrue(results.get("successful").contains("emails"));
-        assertTrue(results.get("successful").contains("to"));
-        assertTrue(results.get("successful").contains("test"));
-        assertTrue(results.get("successful").contains("with"));
+        assertEquals(6, results.get("successful").size());
+        assertTrue(results.get("successful").contains("successful-email1@test.com"));
+        assertTrue(results.get("successful").contains("successful-email2@test.com"));
+        assertTrue(results.get("successful").contains("successful-email3@test.com"));
+        assertTrue(results.get("successful").contains("successful-email4@test.com"));
+        assertTrue(results.get("successful").contains("0000-0000-0000-0003"));
+        assertTrue(results.get("successful").contains("https://orcid.org/0000-0000-0000-0004"));
+        
 
         assertEquals(1, results.get("reviewed").size());
-        assertTrue(results.get("reviewed").contains("reviewed"));
+        assertTrue(results.get("reviewed").contains("reviewed-email@test.com"));
 
         Mockito.verify(emailManager, Mockito.times(9)).emailExists(Mockito.anyString());
-        Mockito.verify(profileEntityManager, Mockito.times(4)).lockProfile(Mockito.anyString(), Mockito.anyString(), isNull());
+        Mockito.verify(profileEntityManager, Mockito.times(6)).lockProfile(Mockito.anyString(), Mockito.anyString(), isNull());
     }
 
     @Test
@@ -455,39 +517,43 @@ public class AdminControllerTest extends BaseControllerTest {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
         EmailManager emailManager = Mockito.mock(EmailManager.class);
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);        
 
-        AdminController adminController = new AdminController();
-        TargetProxyHelper.injectIntoProxy(adminController, "orcidSecurityManager", mockOrcidSecurityManager);
+        AdminController adminController = new AdminController();        
         ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
         ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
         ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
 
-        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        
+        String commaSeparatedValues = "not-found-email1@test.com,not-found-email2@test.com,record-unlocked-email1@test.com,record-unlocked-email2@test.com,successful-email1@test.com,successful-email2@test.com,successful-email3@test.com,successful-email4@test.com, 0000-0000-0000-0001,https://orcid.org/0000-0000-0000-0002,0000-0000-0000-0003,https://orcid.org/0000-0000-0000-0004,notAnOrcidIdOrEmail";
 
         Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(emailManager.emailExists(Mockito.eq("some"))).thenReturn(false);
-        Mockito.when(emailManager.emailExists(Mockito.eq("orcid"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put("ids", "ids");
-        map.put("or", "or");
-        map.put("emails", "emails");
-        map.put("to", "to");
-        map.put("test", "test");
-        map.put("with", "with");
+        map.put("record-unlocked-email1@test.com", "record-unlocked-email1@test.com");
+        map.put("record-unlocked-email2@test.com", "record-unlocked-email2@test.com");
+        map.put("successful-email1@test.com", "successful-email1@test.com");
+        map.put("successful-email2@test.com", "successful-email2@test.com");
+        map.put("successful-email3@test.com", "successful-email3@test.com");
+        map.put("successful-email4@test.com", "successful-email4@test.com");
 
         Mockito.when(emailManager.findOricdIdsByCommaSeparatedEmails(Mockito.anyString())).thenReturn(map);
 
         Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("some"))).thenReturn(false);
-        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("orcid"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
         Mockito.when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
             @Override
             public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
                 String ar1 = invocation.getArgument(0);
                 ProfileEntity p = new ProfileEntity();
                 p.setId(ar1);
-                if (ar1.equals("ids") || ar1.equals("or")) {
+                if (ar1.equals("record-unlocked-email1@test.com") || ar1.equals("record-unlocked-email2@test.com")
+                        || ar1.equals("0000-0000-0000-0001") || ar1.equals("0000-0000-0000-0002")) {
                     p.setRecordLocked(false);
                 } else {
                     p.setRecordLocked(true);
@@ -499,22 +565,27 @@ public class AdminControllerTest extends BaseControllerTest {
         });
 
         Map<String, Set<String>> results = adminController.unlockRecords(mockRequest, mockResponse, commaSeparatedValues);
-        assertEquals(2, results.get("notFound").size());
-        assertTrue(results.get("notFound").contains("some"));
-        assertTrue(results.get("notFound").contains("orcid"));
+        assertEquals(3, results.get("notFound").size());
+        assertTrue(results.get("notFound").contains("not-found-email1@test.com"));
+        assertTrue(results.get("notFound").contains("not-found-email2@test.com"));
+        assertTrue(results.get("notFound").contains("notAnOrcidIdOrEmail"));
 
-        assertEquals(2, results.get("alreadyUnlocked").size());
-        assertTrue(results.get("alreadyUnlocked").contains("ids"));
-        assertTrue(results.get("alreadyUnlocked").contains("or"));
+        assertEquals(4, results.get("alreadyUnlocked").size());
+        assertTrue(results.get("alreadyUnlocked").contains("record-unlocked-email1@test.com"));
+        assertTrue(results.get("alreadyUnlocked").contains("record-unlocked-email2@test.com"));
+        assertTrue(results.get("alreadyUnlocked").contains("0000-0000-0000-0001"));
+        assertTrue(results.get("alreadyUnlocked").contains("https://orcid.org/0000-0000-0000-0002"));
 
-        assertEquals(4, results.get("successful").size());
-        assertTrue(results.get("successful").contains("emails"));
-        assertTrue(results.get("successful").contains("to"));
-        assertTrue(results.get("successful").contains("test"));
-        assertTrue(results.get("successful").contains("with"));
+        assertEquals(6, results.get("successful").size());
+        assertTrue(results.get("successful").contains("successful-email1@test.com"));
+        assertTrue(results.get("successful").contains("successful-email2@test.com"));
+        assertTrue(results.get("successful").contains("successful-email3@test.com"));
+        assertTrue(results.get("successful").contains("successful-email4@test.com"));
+        assertTrue(results.get("successful").contains("0000-0000-0000-0003"));
+        assertTrue(results.get("successful").contains("https://orcid.org/0000-0000-0000-0004"));
 
         Mockito.verify(emailManager, Mockito.times(8)).emailExists(Mockito.anyString());
-        Mockito.verify(profileEntityManager, Mockito.times(4)).unlockProfile(Mockito.anyString());
+        Mockito.verify(profileEntityManager, Mockito.times(6)).unlockProfile(Mockito.anyString());
     }
 
     @Test
@@ -522,29 +593,34 @@ public class AdminControllerTest extends BaseControllerTest {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
         EmailManager emailManager = Mockito.mock(EmailManager.class);
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);        
 
-        AdminController adminController = new AdminController();
-        TargetProxyHelper.injectIntoProxy(adminController, "orcidSecurityManager", mockOrcidSecurityManager);
+        AdminController adminController = new AdminController();        
         ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
         ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
         ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
 
-        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        
+        String commaSeparatedValues = "not-found-email1@test.com,not-found-email2@test.com,record-reviewed-email1@test.com,record-reviewed-email2@test.com,successful-email1@test.com,successful-email2@test.com,successful-email3@test.com,successful-email4@test.com,0000-0000-0000-0001,https://orcid.org/0000-0000-0000-0002,0000-0000-0000-0003,https://orcid.org/0000-0000-0000-0004,notAnOrcidIdOrEmail";
 
         Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(emailManager.emailExists(Mockito.eq("some"))).thenReturn(false);
-        Mockito.when(emailManager.emailExists(Mockito.eq("orcid"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put("ids", "ids");
-        map.put("or", "or");
-        map.put("emails", "emails");
-        map.put("to", "to");
-        map.put("test", "test");
-        map.put("with", "with");
+        map.put("record-reviewed-email1@test.com", "record-reviewed-email1@test.com");
+        map.put("record-reviewed-email2@test.com", "record-reviewed-email2@test.com");
+        map.put("successful-email1@test.com", "successful-email1@test.com");
+        map.put("successful-email2@test.com", "successful-email2@test.com");
+        map.put("successful-email3@test.com", "successful-email3@test.com");
+        map.put("successful-email4@test.com", "successful-email4@test.com");              
 
         Mockito.when(emailManager.findOricdIdsByCommaSeparatedEmails(Mockito.anyString())).thenReturn(map);
         Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
         Mockito.when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
 
             @Override
@@ -552,7 +628,8 @@ public class AdminControllerTest extends BaseControllerTest {
                 String ar1 = invocation.getArgument(0);
                 ProfileEntity p = new ProfileEntity();
                 p.setId(ar1);
-                if (ar1.equals("ids") || ar1.equals("or")) {
+                if (ar1.equals("record-reviewed-email1@test.com") || ar1.equals("record-reviewed-email2@test.com")
+                        || ar1.equals("0000-0000-0000-0001") || ar1.equals("0000-0000-0000-0002")) {
                     p.setReviewed(true);
                 } else {
                     p.setReviewed(false);
@@ -562,33 +639,42 @@ public class AdminControllerTest extends BaseControllerTest {
 
         });
 
-        Mockito.when(profileEntityManager.reviewProfile("some")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
-        Mockito.when(profileEntityManager.reviewProfile("orcid")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
-        Mockito.when(profileEntityManager.reviewProfile("ids")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
-        Mockito.when(profileEntityManager.reviewProfile("or")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("not-found-email1@test.com")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
+        Mockito.when(profileEntityManager.reviewProfile("not-found-email2@test.com")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
+        Mockito.when(profileEntityManager.reviewProfile("record-reviewed-email1@test.com")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("record-reviewed-email2@test.com")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));        
 
-        Mockito.when(profileEntityManager.reviewProfile("emails")).thenReturn(true);
-        Mockito.when(profileEntityManager.reviewProfile("to")).thenReturn(true);
-        Mockito.when(profileEntityManager.reviewProfile("test")).thenReturn(true);
-        Mockito.when(profileEntityManager.reviewProfile("with")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("successful-email1@test.com")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("successful-email2@test.com")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("successful-email3@test.com")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("successful-email4@test.com")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("0000-0000-0000-0001")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("0000-0000-0000-0002")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("0000-0000-0000-0003")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("0000-0000-0000-0004")).thenReturn(true);
 
         Map<String, Set<String>> results = adminController.reviewRecords(mockRequest, mockResponse, commaSeparatedValues);
-        assertEquals(2, results.get("notFound").size());
-        assertTrue(results.get("notFound").contains("some"));
-        assertTrue(results.get("notFound").contains("orcid"));
+        assertEquals(3, results.get("notFound").size());
+        assertTrue(results.get("notFound").contains("not-found-email1@test.com"));
+        assertTrue(results.get("notFound").contains("not-found-email2@test.com"));
+        assertTrue(results.get("notFound").contains("notAnOrcidIdOrEmail"));
 
-        assertEquals(2, results.get("alreadyReviewed").size());
-        assertTrue(results.get("alreadyReviewed").contains("ids"));
-        assertTrue(results.get("alreadyReviewed").contains("or"));
+        assertEquals(4, results.get("alreadyReviewed").size());
+        assertTrue(results.get("alreadyReviewed").contains("record-reviewed-email1@test.com"));
+        assertTrue(results.get("alreadyReviewed").contains("record-reviewed-email2@test.com"));
+        assertTrue(results.get("alreadyReviewed").contains("0000-0000-0000-0001"));
+        assertTrue(results.get("alreadyReviewed").contains("https://orcid.org/0000-0000-0000-0002"));
 
-        assertEquals(4, results.get("successful").size());
-        assertTrue(results.get("successful").contains("emails"));
-        assertTrue(results.get("successful").contains("to"));
-        assertTrue(results.get("successful").contains("test"));
-        assertTrue(results.get("successful").contains("with"));
+        assertEquals(6, results.get("successful").size());
+        assertTrue(results.get("successful").contains("successful-email1@test.com"));
+        assertTrue(results.get("successful").contains("successful-email2@test.com"));
+        assertTrue(results.get("successful").contains("successful-email3@test.com"));
+        assertTrue(results.get("successful").contains("successful-email4@test.com"));
+        assertTrue(results.get("successful").contains("0000-0000-0000-0003"));
+        assertTrue(results.get("successful").contains("https://orcid.org/0000-0000-0000-0004"));
 
         Mockito.verify(emailManager, Mockito.times(8)).emailExists(Mockito.anyString());
-        Mockito.verify(profileEntityManager, Mockito.times(4)).reviewProfile(Mockito.anyString());
+        Mockito.verify(profileEntityManager, Mockito.times(6)).reviewProfile(Mockito.anyString());
     }
 
     @Test
@@ -596,29 +682,34 @@ public class AdminControllerTest extends BaseControllerTest {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
         EmailManager emailManager = Mockito.mock(EmailManager.class);
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);        
 
-        AdminController adminController = new AdminController();
-        TargetProxyHelper.injectIntoProxy(adminController, "orcidSecurityManager", mockOrcidSecurityManager);
+        AdminController adminController = new AdminController();        
         ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
         ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
         ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
 
-        String commaSeparatedValues = "some,orcid,ids,or,emails,to,test,with";
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        
+        String commaSeparatedValues = "not-found-email1@test.com,not-found-email2@test.com,record-unreviewed-email1@test.com,record-unreviewed-email2@test.com,successful-email1@test.com,successful-email2@test.com,successful-email3@test.com,successful-email4@test.com,0000-0000-0000-0001,https://orcid.org/0000-0000-0000-0002,0000-0000-0000-0003,https://orcid.org/0000-0000-0000-0004,notAnOrcidIdOrEmail";
 
         Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(emailManager.emailExists(Mockito.eq("some"))).thenReturn(false);
-        Mockito.when(emailManager.emailExists(Mockito.eq("orcid"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put("ids", "ids");
-        map.put("or", "or");
-        map.put("emails", "emails");
-        map.put("to", "to");
-        map.put("test", "test");
-        map.put("with", "with");
+        map.put("record-unreviewed-email1@test.com", "record-unreviewed-email1@test.com");
+        map.put("record-unreviewed-email2@test.com", "record-unreviewed-email2@test.com");
+        map.put("successful-email1@test.com", "successful-email1@test.com");
+        map.put("successful-email2@test.com", "successful-email2@test.com");
+        map.put("successful-email3@test.com", "successful-email3@test.com");
+        map.put("successful-email4@test.com", "successful-email4@test.com");
 
         Mockito.when(emailManager.findOricdIdsByCommaSeparatedEmails(Mockito.anyString())).thenReturn(map);
         Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
         Mockito.when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
 
             @Override
@@ -626,7 +717,8 @@ public class AdminControllerTest extends BaseControllerTest {
                 String ar1 = invocation.getArgument(0);
                 ProfileEntity p = new ProfileEntity();
                 p.setId(ar1);
-                if (ar1.equals("ids") || ar1.equals("or")) {
+                if (ar1.equals("record-unreviewed-email1@test.com") || ar1.equals("record-unreviewed-email2@test.com")
+                        || ar1.equals("0000-0000-0000-0001") || ar1.equals("0000-0000-0000-0002")) {
                     p.setReviewed(false);
                 } else {
                     p.setReviewed(true);
@@ -636,32 +728,42 @@ public class AdminControllerTest extends BaseControllerTest {
 
         });
 
-        Mockito.when(profileEntityManager.reviewProfile("some")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
-        Mockito.when(profileEntityManager.reviewProfile("orcid")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
-        Mockito.when(profileEntityManager.reviewProfile("ids")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
-        Mockito.when(profileEntityManager.reviewProfile("or")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
-        Mockito.when(profileEntityManager.reviewProfile("emails")).thenReturn(true);
-        Mockito.when(profileEntityManager.reviewProfile("to")).thenReturn(true);
-        Mockito.when(profileEntityManager.reviewProfile("test")).thenReturn(true);
-        Mockito.when(profileEntityManager.reviewProfile("with")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("not-found-email1@test.com")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
+        Mockito.when(profileEntityManager.reviewProfile("not-found-email2@test.com")).thenThrow(new RuntimeException("Controller shouldn't try to review null profile"));
+        Mockito.when(profileEntityManager.reviewProfile("record-unreviewed-email1@test.com")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("record-unreviewed-email2@test.com")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("0000-0000-0000-0001")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("0000-0000-0000-0002")).thenThrow(new RuntimeException("Controller shouldn't try to review reviewed profile"));
+        Mockito.when(profileEntityManager.reviewProfile("successful-email1@test.com")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("successful-email2@test.com")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("successful-email3@test.com")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("successful-email4@test.com")).thenReturn(true);       
+        Mockito.when(profileEntityManager.reviewProfile("0000-0000-0000-0003")).thenReturn(true);
+        Mockito.when(profileEntityManager.reviewProfile("0000-0000-0000-0004")).thenReturn(true);
 
         Map<String, Set<String>> results = adminController.unreviewRecords(mockRequest, mockResponse, commaSeparatedValues);
-        assertEquals(2, results.get("notFound").size());
-        assertTrue(results.get("notFound").contains("some"));
-        assertTrue(results.get("notFound").contains("orcid"));
+        assertEquals(3, results.get("notFound").size());
+        assertTrue(results.get("notFound").contains("not-found-email1@test.com"));
+        assertTrue(results.get("notFound").contains("not-found-email2@test.com"));
+        assertTrue(results.get("notFound").contains("notAnOrcidIdOrEmail"));
 
-        assertEquals(2, results.get("alreadyUnreviewed").size());
-        assertTrue(results.get("alreadyUnreviewed").contains("ids"));
-        assertTrue(results.get("alreadyUnreviewed").contains("or"));
+        assertEquals(4, results.get("alreadyUnreviewed").size());
+        assertTrue(results.get("alreadyUnreviewed").contains("record-unreviewed-email1@test.com"));
+        assertTrue(results.get("alreadyUnreviewed").contains("record-unreviewed-email2@test.com"));
+        assertTrue(results.get("alreadyUnreviewed").contains("0000-0000-0000-0001"));
+        assertTrue(results.get("alreadyUnreviewed").contains("https://orcid.org/0000-0000-0000-0002"));
 
-        assertEquals(4, results.get("successful").size());
-        assertTrue(results.get("successful").contains("emails"));
-        assertTrue(results.get("successful").contains("to"));
-        assertTrue(results.get("successful").contains("test"));
-        assertTrue(results.get("successful").contains("with"));
+        assertEquals(6, results.get("successful").size());
+        assertTrue(results.get("successful").contains("successful-email1@test.com"));
+        assertTrue(results.get("successful").contains("successful-email2@test.com"));
+        assertTrue(results.get("successful").contains("successful-email3@test.com"));
+        assertTrue(results.get("successful").contains("successful-email4@test.com"));
+        assertTrue(results.get("successful").contains("0000-0000-0000-0003"));
+        assertTrue(results.get("successful").contains("https://orcid.org/0000-0000-0000-0004"));
+
 
         Mockito.verify(emailManager, Mockito.times(8)).emailExists(Mockito.anyString());
-        Mockito.verify(profileEntityManager, Mockito.times(4)).unreviewProfile(Mockito.anyString());
+        Mockito.verify(profileEntityManager, Mockito.times(6)).unreviewProfile(Mockito.anyString());
     }
 
     @Test
@@ -674,6 +776,331 @@ public class AdminControllerTest extends BaseControllerTest {
         adminController.getLockReasons();
 
         Mockito.verify(adminManager, Mockito.times(1)).getLockReasons();
+    }
+
+    @Test
+    public void resendClaimEmail() throws Exception {
+        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
+        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
+        EmailManager emailManager = Mockito.mock(EmailManager.class);
+        NotificationManager notificationManager = Mockito.mock(NotificationManager.class);
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);        
+
+        AdminController adminController = new AdminController();
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);                                                                    
+        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
+        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "notificationManager", notificationManager);
+
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        
+        String commaSeparatedValues = "not-found-email1@test.com,not-found-email2@test.com,record-claimed-email1@test.com,record-claimed-email2@test.com,successful-email1@test.com,successful-email2@test.com,successful-email3@test.com,successful-email4@test.com,0000-0000-0000-0001,https://orcid.org/0000-0000-0000-0002,0000-0000-0000-0003,https://orcid.org/0000-0000-0000-0004,notAnOrcidIdOrEmail";
+        
+        Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("record-claimed-email1@test.com", "record-claimed-email1@test.com");
+        map.put("record-claimed-email2@test.com", "record-claimed-email2@test.com");
+        map.put("successful-email1@test.com", "successful-email1@test.com");
+        map.put("successful-email2@test.com", "successful-email2@test.com");
+        map.put("successful-email3@test.com", "successful-email3@test.com");
+        map.put("successful-email4@test.com", "successful-email4@test.com");              
+
+        Mockito.when(emailManager.findOricdIdsByCommaSeparatedEmails(Mockito.anyString())).thenReturn(map);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
+
+            @Override
+            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
+                String ar1 = invocation.getArgument(0);
+                ProfileEntity p = new ProfileEntity();
+                p.setId(ar1);
+                if (ar1.equals("record-claimed-email1@test.com") || ar1.equals("record-claimed-email2@test.com")
+                        || ar1.equals("0000-0000-0000-0001") || ar1.equals("0000-0000-0000-0002")) {
+                    p.setClaimed(true);
+                } else {
+                    p.setClaimed(false);
+                }
+                return p;
+            }
+
+        });              
+      
+        Map<String, List<String>> results = adminController.resendClaimEmail(mockRequest, mockResponse, commaSeparatedValues);
+        assertEquals(3, results.get("notFound").size());
+        assertTrue(results.get("notFound").contains("not-found-email1@test.com"));
+        assertTrue(results.get("notFound").contains("not-found-email2@test.com"));
+        assertTrue(results.get("notFound").contains("notAnOrcidIdOrEmail"));
+
+        assertEquals(4, results.get("alreadyClaimed").size());
+        assertTrue(results.get("alreadyClaimed").contains("record-claimed-email1@test.com"));
+        assertTrue(results.get("alreadyClaimed").contains("record-claimed-email2@test.com"));
+        assertTrue(results.get("alreadyClaimed").contains("0000-0000-0000-0001"));
+        assertTrue(results.get("alreadyClaimed").contains("https://orcid.org/0000-0000-0000-0002"));
+
+        assertEquals(6, results.get("successful").size());
+        assertTrue(results.get("successful").contains("successful-email1@test.com"));
+        assertTrue(results.get("successful").contains("successful-email2@test.com"));
+        assertTrue(results.get("successful").contains("successful-email3@test.com"));
+        assertTrue(results.get("successful").contains("successful-email4@test.com"));
+        assertTrue(results.get("successful").contains("0000-0000-0000-0003"));
+        assertTrue(results.get("successful").contains("https://orcid.org/0000-0000-0000-0004"));
+
+        Mockito.verify(emailManager, Mockito.times(8)).emailExists(Mockito.anyString());        
+        Mockito.verify(notificationManager, Mockito.times(6)).sendApiRecordCreationEmail(Mockito.nullable(String.class), Mockito.anyString());
+    }
+
+    @Test
+    public void deactivateOrcidRecords() throws Exception {
+        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
+        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
+        EmailManager emailManager = Mockito.mock(EmailManager.class);        
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+
+        AdminController adminController = new AdminController();
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
+        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);        
+
+        String commaSeparatedValues = "not-found-email1@test.com,not-found-email2@test.com,record-deactivated-email1@test.com,record-deactivated-email2@test.com,successful-email1@test.com,successful-email2@test.com,successful-email3@test.com,successful-email4@test.com,0000-0000-0000-0001,https://orcid.org/0000-0000-0000-0002,0000-0000-0000-0003,https://orcid.org/0000-0000-0000-0004,notAnOrcidIdOrEmail";
+        
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        
+        Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("record-deactivated-email1@test.com", "record-deactivated-email1@test.com");
+        map.put("record-deactivated-email2@test.com", "record-deactivated-email2@test.com");
+        map.put("successful-email1@test.com", "successful-email1@test.com");
+        map.put("successful-email2@test.com", "successful-email2@test.com");
+        map.put("successful-email3@test.com", "successful-email3@test.com");
+        map.put("successful-email4@test.com", "successful-email4@test.com");              
+
+        Mockito.when(emailManager.findOricdIdsByCommaSeparatedEmails(Mockito.anyString())).thenReturn(map);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
+
+            @Override
+            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
+                String ar1 = invocation.getArgument(0);
+                ProfileEntity p = new ProfileEntity();
+                p.setId(ar1);
+                if (ar1.equals("record-deactivated-email1@test.com") || ar1.equals("record-deactivated-email2@test.com")
+                        || ar1.equals("0000-0000-0000-0001") || ar1.equals("0000-0000-0000-0002")) {
+                    p.setDeactivationDate(new Date());
+                } else {
+                    p.setDeactivationDate(null);
+                }
+                return p;
+            }
+
+        });              
+      
+        Map<String, Set<String>> results = adminController.deactivateOrcidRecords(mockRequest, mockResponse, commaSeparatedValues);
+        assertEquals(3, results.get("notFoundList").size());
+        assertTrue(results.get("notFoundList").contains("not-found-email1@test.com"));
+        assertTrue(results.get("notFoundList").contains("not-found-email2@test.com"));
+        assertTrue(results.get("notFoundList").contains("notAnOrcidIdOrEmail"));
+
+        assertEquals(4, results.get("alreadyDeactivated").size());
+        assertTrue(results.get("alreadyDeactivated").contains("record-deactivated-email1@test.com"));
+        assertTrue(results.get("alreadyDeactivated").contains("record-deactivated-email2@test.com"));
+        assertTrue(results.get("alreadyDeactivated").contains("0000-0000-0000-0001"));
+        assertTrue(results.get("alreadyDeactivated").contains("https://orcid.org/0000-0000-0000-0002"));
+
+        assertEquals(6, results.get("success").size());
+        assertTrue(results.get("success").contains("successful-email1@test.com"));
+        assertTrue(results.get("success").contains("successful-email2@test.com"));
+        assertTrue(results.get("success").contains("successful-email3@test.com"));
+        assertTrue(results.get("success").contains("successful-email4@test.com"));
+        assertTrue(results.get("success").contains("0000-0000-0000-0003"));
+        assertTrue(results.get("success").contains("https://orcid.org/0000-0000-0000-0004"));
+
+        Mockito.verify(emailManager, Mockito.times(8)).emailExists(Mockito.anyString());        
+        Mockito.verify(profileEntityManager, Mockito.times(6)).deactivateRecord(Mockito.anyString());
+
+    }
+
+    @Test
+    public void startDelegationProcess() throws Exception {
+        
+        AdminManager adminManager = Mockito.mock(AdminManager.class);                
+        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
+        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
+        EmailManager emailManager = Mockito.mock(EmailManager.class);        
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);        
+        LocaleManager localeManager = Mockito.mock(LocaleManager.class);                                                
+        
+        AdminController adminController = new AdminController();
+        ReflectionTestUtils.setField(adminController, "adminManager", adminManager);                                                                       
+        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
+        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);        
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
+        ReflectionTestUtils.setField(adminController, "localeManager", localeManager);
+        
+        AdminDelegatesRequest adminDelegatesRequest = new AdminDelegatesRequest(); 
+        Text trusted = new Text();
+        trusted.setValue("https://orcid.org/0000-0000-0000-00020000-0000-0000-0001");
+        Text managed = new Text();
+        managed.setValue("0000-0000-0000-0002");
+        adminDelegatesRequest.setTrusted(trusted);       
+        adminDelegatesRequest.setManaged(managed);                      
+        
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        
+        Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
+                       
+        Mockito.when(localeManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenReturn("Email or ORCID iD is 0000-0000-0000-0001 invalid");                                     
+        
+        Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
+
+            @Override
+            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
+                String ar1 = invocation.getArgument(0);
+                ProfileEntity p = new ProfileEntity();
+                p.setId(ar1);
+                if (ar1.equals("0000-0000-0000-0001") || ar1.equals("0000-0000-0000-0002")) {                    
+                    p.setRecordLocked(false);                                   
+                } else {
+                    p.setRecordLocked(true);
+                }
+                return p;
+            }
+
+        });              
+      
+        adminController.startDelegationProcess(mockRequest, mockResponse, adminDelegatesRequest);
+                
+        Mockito.verify(adminManager, Mockito.times(1)).startDelegationProcess(Mockito.any(), Mockito.anyString(), Mockito.anyString());
+        
+        adminDelegatesRequest = new AdminDelegatesRequest(); 
+        trusted = new Text();
+        trusted.setValue("not-found-email1@test.com");
+        managed = new Text();
+        managed.setValue("not-found-email2@test.com");
+        adminDelegatesRequest.setTrusted(trusted);       
+        adminDelegatesRequest.setManaged(managed);   
+        
+        AdminDelegatesRequest results = adminController.startDelegationProcess(mockRequest, mockResponse, adminDelegatesRequest);
+
+        assertEquals(1, results.getManaged().getErrors().size());
+        assertEquals(1, results.getTrusted().getErrors().size());
+    }
+    
+    @Test
+    public void adminSwitchUser() throws Exception {
+        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
+        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
+        EmailManager emailManager = Mockito.mock(EmailManager.class);        
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+
+        AdminController adminController = new AdminController();
+               
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
+        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);                
+        
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        
+        Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                            
+        
+        Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                
+      
+        Map<String, String> results = adminController.adminSwitchUser(mockRequest, mockResponse, "not-found-email1@test.com");
+
+        assertEquals("Invalid id not-found-email1@test.com", results.get("errorMessg"));        
+   
+        results = adminController.adminSwitchUser(mockRequest, mockResponse, "not-found-email2@test.com");
+        
+        assertEquals("Invalid id not-found-email2@test.com", results.get("errorMessg"));
+        
+        results = adminController.adminSwitchUser(mockRequest, mockResponse, "0000-0000-0000-0001");
+        
+        assertEquals("0000-0000-0000-0001", results.get("id"));
+        
+        results = adminController.adminSwitchUser(mockRequest, mockResponse, "https://orcid.org/0000-0000-0000-0002");
+        
+        assertEquals("0000-0000-0000-0002", results.get("id"));
+
+    }     
+ 
+    @Test
+    public void resetPasswordValidateId() throws Exception {
+        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
+        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
+        EmailManager emailManager = Mockito.mock(EmailManager.class);        
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+        LocaleManager localeManager = Mockito.mock(LocaleManager.class);                                                
+        
+        AdminController adminController = new AdminController();
+               
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
+        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "localeManager", localeManager);
+        
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        
+        Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                            
+        
+        Mockito.when(localeManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenReturn("That ORCID iD is not on our records");       
+        
+        Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                
+      
+        AdminChangePassword adminChangePassword = new AdminChangePassword();
+        adminChangePassword.setOrcidOrEmail("0000-0000-0000-0001");
+        
+        AdminChangePassword results = adminController.resetPasswordValidateId(mockRequest, mockResponse, adminChangePassword);        
+
+        assertEquals(null, results.getError());        
+
+        adminChangePassword = new AdminChangePassword();
+        adminChangePassword.setOrcidOrEmail("https://orcid.org/0000-0000-0000-0002");
+        
+        results = adminController.resetPasswordValidateId(mockRequest, mockResponse, adminChangePassword);        
+
+        assertEquals(null, results.getError());   
+        
+        adminChangePassword = new AdminChangePassword();
+        adminChangePassword.setOrcidOrEmail("not-found-email1@test.com");
+        
+        results = adminController.resetPasswordValidateId(mockRequest, mockResponse, adminChangePassword);
+        
+        assertEquals("That ORCID iD is not on our records", results.getError());
+        
+        adminChangePassword = new AdminChangePassword();
+        adminChangePassword.setOrcidOrEmail("not-found-email2@test.com");
+        
+        results = adminController.resetPasswordValidateId(mockRequest, mockResponse, adminChangePassword);
+        
+        assertEquals("That ORCID iD is not on our records", results.getError());        
+
     }
 
 }

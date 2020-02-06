@@ -400,7 +400,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
             }       
             forkJoin(this.worksToMerge).subscribe(
-                dataGroup => {
+                (dataGroup: any[]) => {
                     for(var i in dataGroup){
                         if(dataGroup[i].source != orcidVar.orcidId){
                             apiWorkPresent = true;

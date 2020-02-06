@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.orcid.jaxb.model.v3.release.search.Search;
+import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 
 /**
  * Class to retrieve OrcidMessage objects (with nested Search Results) relating
@@ -18,15 +19,17 @@ import org.orcid.jaxb.model.v3.release.search.Search;
  */
 public interface OrcidSearchManager {
 
-    static final int DEFAULT_SEARCH_ROWS = 100;
+    static final int DEFAULT_SEARCH_ROWS = 1000;
     
     static final int MAX_SEARCH_START = 10000;      
 
-    static final int MAX_SEARCH_ROWS = 200; 
+    static final int MAX_SEARCH_ROWS = 1000; 
     
     Search findOrcidIds(Map<String, List<String>> queryParameters);
     
     Search findOrcidsByQuery(String query, Integer start, Integer rows);
 
     String findOrcidIdsAsCSV(Map<String, List<String>> solrParams);
+
+    ExpandedSearch expandedSearch(Map<String, List<String>> solrParams);
 }

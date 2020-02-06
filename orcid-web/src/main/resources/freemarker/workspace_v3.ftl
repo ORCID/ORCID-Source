@@ -85,7 +85,7 @@
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/affiliation-form-ng2-template.ftl"> 
-<modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700">
+<modalngcomponent elementHeight="645" elementId="modalAffiliationForm" elementWidth="700" disableClickOutside="true">
     <affiliation-form-ng2></affiliation-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
@@ -105,7 +105,7 @@
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/funding-form-ng2-template.ftl">
-<modalngcomponent elementHeight="700" elementId="modalFundingForm" elementWidth="800">
+<modalngcomponent elementHeight="700" elementId="modalFundingForm" elementWidth="800" disableClickOutside="true">
   <funding-form-ng2></funding-form-ng2>
 </modalngcomponent>
 
@@ -130,8 +130,8 @@
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/works-form-ng2-template.ftl">
-<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="820">
-    <works-form-ng2></works-form-ng2>
+<modalngcomponent elementHeight="645" elementId="modalWorksForm" elementWidth="820" [disableclickoutside]="true">
+    <works-form-ng2 ></works-form-ng2>
 </modalngcomponent><!-- Ng2 component -->
 
 <#include "/includes/ng2_templates/works-external-id-form-ng2-template.ftl">

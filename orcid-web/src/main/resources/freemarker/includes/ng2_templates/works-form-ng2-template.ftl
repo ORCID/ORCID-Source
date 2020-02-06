@@ -203,7 +203,7 @@
                             <div class="form-group workExtIdType">
                                 <label class="relative"><@orcid.msg 'manual_work_form_contents.labelIDtype'/></label>
                                 <div class="relative">
-                                    <input id="workIdType{{i}}" name="workIdType{{i}}" type="text" class="form-control" placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" [inputFormatter]="formatExtIdTypeInput" [(ngModel)]="editWork.workExternalIdentifiers[i].externalIdentifierType.value" [ngbTypeahead]="search" [resultFormatter]="formatExtIdTypeResult" (selectItem)="changeExtIdType(i, $event)" [focusFirst]=true [editable]=false /> 
+                                    <input id="workIdType{{i}}" name="workIdType{{i}}" type="text" class="form-control" placeholder="<@orcid.msg 'org.orcid.jaxb.model.record.WorkExternalIdentifierType.empty'/>" [inputFormatter]="formatExtIdTypeInput" [(ngModel)]="editWork.workExternalIdentifiers[i].externalIdentifierType.value" [ngbTypeahead]="search" [resultFormatter]="formatExtIdTypeResult" (selectItem)="changeExtIdType(i, $event)"  (ngModelChange)="updateRelationships();" [focusFirst]=true [editable]=false /> 
                                     <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.externalIdentifierType?.errors?.length > 0">
                                         <div *ngFor='let error of editWork.workExternalIdentifiers[i].externalIdentifierType.errors' [innerHtml]="error"></div>
                                     </span>

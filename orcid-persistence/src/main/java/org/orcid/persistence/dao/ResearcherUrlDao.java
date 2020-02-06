@@ -76,6 +76,8 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
     void revertUserOBODetails(List<BigInteger> ids);
 
     public List<BigInteger> getIdsForUserOBORecords(int max);
+
+    List<BigInteger> getIdsOfResearcherUrlsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
     
     
 }

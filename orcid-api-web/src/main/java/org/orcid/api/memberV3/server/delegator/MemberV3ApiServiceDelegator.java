@@ -219,4 +219,6 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response searchByQueryCSV(Map<String, List<String>> solrParams);
 
+    Response expandedSearchByQuery(Map<String, List<String>> solrParams);
+
 }

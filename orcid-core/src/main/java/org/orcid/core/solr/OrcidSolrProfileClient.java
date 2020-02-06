@@ -1,6 +1,13 @@
 package org.orcid.core.solr;
 
+import static org.orcid.utils.solr.entities.SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME;
+import static org.orcid.utils.solr.entities.SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES;
+import static org.orcid.utils.solr.entities.SolrConstants.CREDIT_NAME;
+import static org.orcid.utils.solr.entities.SolrConstants.EMAIL_ADDRESS;
+import static org.orcid.utils.solr.entities.SolrConstants.FAMILY_NAME;
+import static org.orcid.utils.solr.entities.SolrConstants.GIVEN_NAMES;
 import static org.orcid.utils.solr.entities.SolrConstants.ORCID;
+import static org.orcid.utils.solr.entities.SolrConstants.OTHER_NAMES;
 import static org.orcid.utils.solr.entities.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
 import static org.orcid.utils.solr.entities.SolrConstants.PUBLIC_PROFILE;
 import static org.orcid.utils.solr.entities.SolrConstants.SCORE;
@@ -8,6 +15,8 @@ import static org.orcid.utils.solr.entities.SolrConstants.SCORE;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +30,12 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrResult;
 import org.orcid.utils.solr.entities.OrcidSolrResults;
+import org.orcid.utils.solr.entities.SolrConstants;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrcidSolrProfileClient {
+public class OrcidSolrProfileClient extends OrcidSolrClient {
 
     @Resource(name = "solrReadOnlyProfileClient")
     private SolrClient solrReadOnlyProfileClient;
@@ -79,6 +89,26 @@ public class OrcidSolrProfileClient {
     }
 
     public OrcidSolrResults findByDocumentCriteria(Map<String, List<String>> queryMap) {
+        return findByDocumentCriteria(queryMap, new String[] { SCORE, ORCID });
+    }
+    
+    public OrcidSolrResults findExpandedByDocumentCriteria(Map<String, List<String>> queryMap) {
+        String requestedFieldList = queryMap.get("fl") != null ? queryMap.get("fl").get(0) : null;
+        List<String> fieldList = new ArrayList<>();
+        if (requestedFieldList != null) {
+            String fields = getFieldList(requestedFieldList);
+            fieldList = new ArrayList<>();
+            for (String field : fields.split(",")) {
+                fieldList.add(field);
+            }
+        } else {
+            fieldList.addAll(SolrConstants.ALLOWED_FIELDS);
+        }
+        fieldList.add(SCORE);
+        return findByDocumentCriteria(queryMap, fieldList.toArray(new String[0]));
+    }
+    
+    private OrcidSolrResults findByDocumentCriteria(Map<String, List<String>> queryMap, String... fieldList) {
         OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
         List<OrcidSolrResult> orcidSolrResultsList = new ArrayList<>();
         orcidSolrResults.setResults(orcidSolrResultsList);
@@ -88,7 +118,7 @@ public class OrcidSolrProfileClient {
             List<String> queryVals = entry.getValue();
             solrQuery.add(queryKey, queryVals.get(0));
         }
-        solrQuery.setFields(SCORE, ORCID);
+        solrQuery.setFields(fieldList);
         return querySolr(solrQuery);
     }
 
@@ -103,6 +133,12 @@ public class OrcidSolrProfileClient {
                 orcidSolrResult.setRelevancyScore((Float) solrDocument.getFieldValue(SCORE));
                 orcidSolrResult.setOrcid((String) solrDocument.getFieldValue(ORCID));
                 orcidSolrResult.setPublicProfileMessage((String) solrDocument.getFieldValue(PUBLIC_PROFILE));
+                orcidSolrResult.setCreditName((String) solrDocument.getFieldValue(CREDIT_NAME));
+                orcidSolrResult.setEmail(getEmailFromResult(solrDocument));
+                orcidSolrResult.setFamilyName((String) solrDocument.getFieldValue(FAMILY_NAME));
+                orcidSolrResult.setGivenNames((String) solrDocument.getFieldValue(GIVEN_NAMES));
+                orcidSolrResult.setInstitutionAffiliationNames(getInstitutionAffiliationNames(solrDocument));
+                orcidSolrResult.setOtherNames(getStringList(solrDocument, OTHER_NAMES));
                 orcidSolrResultsList.add(orcidSolrResult);
             }
             orcidSolrResults.setNumFound(queryResponse.getResults().getNumFound());
@@ -111,5 +147,30 @@ public class OrcidSolrProfileClient {
             throw new NonTransientDataAccessResourceException("Error retrieving from SOLR Server", se);
         }
         return orcidSolrResults;
+    }
+
+    private String getEmailFromResult(SolrDocument solrDocument) {
+        List<String> emails = getStringList(solrDocument, EMAIL_ADDRESS);
+        return emails.isEmpty() ? null : emails.get(0);
+    }
+
+    private Collection<String> getInstitutionAffiliationNames(SolrDocument solrDocument) {
+        List<String> institutionNames = new ArrayList<>();
+        institutionNames.addAll(getStringList(solrDocument, AFFILIATE_CURRENT_INSTITUTION_NAME));
+        institutionNames.addAll(getStringList(solrDocument, AFFILIATE_PAST_INSTITUTION_NAMES));
+        return institutionNames;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private List<String> getStringList(SolrDocument solrDocument, String fieldName) {
+        List<String> values = new ArrayList<>();
+        if (solrDocument.getFieldValue(fieldName) != null) {
+            if (solrDocument.getFieldValue(fieldName) instanceof String) {
+                values.add((String) solrDocument.getFieldValue(fieldName)); 
+            } else {
+                values.addAll((List<String>) solrDocument.getFieldValue(fieldName));
+            }
+        }
+        return values;
     }
 }

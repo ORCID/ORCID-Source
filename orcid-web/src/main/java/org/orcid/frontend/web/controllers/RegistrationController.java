@@ -1,7 +1,9 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -14,6 +16,7 @@ import java.util.stream.IntStream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.DateFormatter;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
@@ -293,6 +296,7 @@ public class RegistrationController extends BaseController {
             String ip = OrcidRequestUtil.getIpAddress(request);
             createMinimalRegistrationAndLogUserIn(request, response, reg, usedCaptcha, locale, ip);
         } catch (Exception e) {
+            LOGGER.error("Error registering a new user", e);
             r.getErrors().add(getMessage("register.error.generalError"));
             return r;
         }
@@ -481,7 +485,13 @@ public class RegistrationController extends BaseController {
                 if (Visibility.PUBLIC.equals(n.getVisibility())) {
                     dr.setFamilyNames(n.getFamilyName() == null ? null : n.getFamilyName().getContent());
                     dr.setGivenNames(n.getGivenNames() == null ? null : n.getGivenNames().getContent());
+                    
                 }
+                
+                Date createdDate = profileEntityCacheManager.retrieve(orcid).getDateCreated();
+                String pattern = "yyyy-MM-dd zzz";
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+                dr.setCreatedDate(createdDate == null? null: simpleDateFormat.format(createdDate));
 
                 List<String> institutions = new ArrayList<String>();
 

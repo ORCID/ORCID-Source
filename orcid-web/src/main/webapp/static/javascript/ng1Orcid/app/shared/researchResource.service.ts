@@ -1,18 +1,7 @@
-import { HttpClient, HttpClientModule, HttpHeaders } 
-     from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
-import { Injectable } 
-    from '@angular/core';
-
-import { Headers, Http, RequestOptions, Response, URLSearchParams } 
-    from '@angular/http';
-
-import { Observable, Subject } 
-    from 'rxjs';
-
-
-import { catchError, map, tap } 
-    from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',

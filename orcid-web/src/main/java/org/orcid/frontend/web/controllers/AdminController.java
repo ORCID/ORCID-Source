@@ -33,6 +33,7 @@ import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,8 +124,26 @@ public class AdminController extends BaseController {
             request.getPrimaryAccount().setErrors(new ArrayList<String>());
         }
 
-        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : request.getDeprecatedAccount().getOrcid().trim();
-        String primaryOrcid = request.getPrimaryAccount() == null ? null : request.getPrimaryAccount().getOrcid().trim();
+        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : getOrcidFromParam(request.getDeprecatedAccount().getOrcid().trim());
+        String primaryOrcid = request.getPrimaryAccount() == null ? null : getOrcidFromParam(request.getPrimaryAccount().getOrcid().trim());
+        
+        if (deprecatedOrcid != null) {
+            ProfileDetails pd = request.getDeprecatedAccount();
+            pd.setOrcid(deprecatedOrcid);
+            request.setDeprecatedAccount(pd);
+        } else {
+            deprecatedOrcid = request.getDeprecatedAccount().getOrcid().trim();
+        }
+        
+        if (primaryOrcid != null) {
+            ProfileDetails pd = request.getPrimaryAccount();            
+            pd.setOrcid(primaryOrcid);
+            request.setPrimaryAccount(pd);   
+        } else {
+            primaryOrcid = request.getPrimaryAccount().getOrcid().trim();
+        }      
+        
+        
         // Check for errors
         if (!OrcidStringUtils.isValidOrcid(deprecatedOrcid)) {
             request.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", deprecatedOrcid));
@@ -172,8 +191,24 @@ public class AdminController extends BaseController {
             request.getPrimaryAccount().setErrors(new ArrayList<String>());
         }
 
-        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : request.getDeprecatedAccount().getOrcid().trim();
-        String primaryOrcid = request.getPrimaryAccount() == null ? null : request.getPrimaryAccount().getOrcid().trim();
+        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : getOrcidFromParam(request.getDeprecatedAccount().getOrcid().trim());
+        String primaryOrcid = request.getPrimaryAccount() == null ? null : getOrcidFromParam(request.getPrimaryAccount().getOrcid().trim());
+        
+        if (deprecatedOrcid != null) {
+            ProfileDetails pd = request.getDeprecatedAccount();
+            pd.setOrcid(deprecatedOrcid);
+            request.setDeprecatedAccount(pd);
+        } else {
+            deprecatedOrcid = request.getDeprecatedAccount().getOrcid().trim();
+        }
+        
+        if (primaryOrcid != null) {
+            ProfileDetails pd = request.getPrimaryAccount();            
+            pd.setOrcid(primaryOrcid);
+            request.setPrimaryAccount(pd);   
+        } else {
+            primaryOrcid = request.getPrimaryAccount().getOrcid().trim();
+        }           
 
         if (deprecatedOrcid.equals(primaryOrcid)) {
             request.getPrimaryAccount().getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
@@ -240,7 +275,7 @@ public class AdminController extends BaseController {
         profileDetails.setErrors(new ArrayList<String>());
 
         String email = profileDetails.getEmail().trim();
-        String orcid = profileDetails.getOrcid().trim();
+        String orcid = getOrcidFromParam(profileDetails.getOrcid().trim());
 
         ProfileEntity toReactivate = null;
 
@@ -308,7 +343,7 @@ public class AdminController extends BaseController {
         return profileDetList;
     }
 
-    @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST)
+    @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     public @ResponseBody String lookupIdOrEmails(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvIdOrEmails)
             throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);        
@@ -410,21 +445,21 @@ public class AdminController extends BaseController {
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
-                String orcid = tokenizer.nextToken();
-                ProfileEntity profile = null;
-                try {
-                    profile = profileEntityCacheManager.retrieve(orcid);
-                } catch (Exception e) {
-                    // Invalid orcid id provided
-                }
-                if (profile == null) {
-                    notFoundIds.add(orcid);
+                String nextToken = tokenizer.nextToken();
+                String orcidId = getOrcidFromParam(nextToken);             
+                if (orcidId == null) {
+                    notFoundIds.add(nextToken);
                 } else {
-                    if (profile.getDeactivationDate() != null) {
-                        deactivatedIds.add(orcid);
+                    if (!profileEntityManager.orcidExists(orcidId)) {
+                        notFoundIds.add(nextToken);
                     } else {
-                        profileEntityManager.deactivateRecord(orcid);
-                        successIds.add(orcid);
+                        ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);                    
+                        if (entity.getDeactivationDate() != null) {
+                            deactivatedIds.add(nextToken);
+                        } else {
+                            profileEntityManager.deactivateRecord(orcidId);
+                            successIds.add(nextToken);
+                        }
                     }
                 }
             }
@@ -447,28 +482,18 @@ public class AdminController extends BaseController {
      * Reset password
      * 
      * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException 
      */
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
     public @ResponseBody AdminChangePassword resetPassword(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody AdminChangePassword form)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
         form.setError(null);
-        String orcidOrEmail = form.getOrcidOrEmail().trim();
+        String orcidOrEmail = URLDecoder.decode(form.getOrcidOrEmail(),"UTF-8").trim();
         String password = form.getPassword().trim();
         if (StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            String orcid = null;
-            if (StringUtils.isNotBlank(orcidOrEmail))
-                orcidOrEmail = orcidOrEmail.trim();
-            boolean isOrcid = OrcidStringUtils.isValidOrcid(orcidOrEmail);
-            // If it is not an orcid, check the value from the emails table
-            if (!isOrcid) {
-                Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
-                orcid = email.get(orcidOrEmail);
-            } else {
-                orcid = orcidOrEmail;
-            }
-
-            if (StringUtils.isNotEmpty(orcid)) {
+            String orcid = getOrcidFromParam(orcidOrEmail);
+            if (orcid != null) {
                 if (profileEntityManager.orcidExists(orcid)) {
                     profileEntityManager.updatePassword(orcid, password);
                 } else {
@@ -488,26 +513,15 @@ public class AdminController extends BaseController {
      * Reset password validate
      * 
      * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException 
      */
     @RequestMapping(value = "/reset-password/validate", method = RequestMethod.POST)
-    public @ResponseBody AdminChangePassword resetPasswordValidateId(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody AdminChangePassword form) throws IllegalAccessException {
+    public @ResponseBody AdminChangePassword resetPasswordValidateId(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody AdminChangePassword form) throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
-        form.setError(null);
-        String orcidOrEmail = form.getOrcidOrEmail().trim();
-        
-        String orcid = null;
-        if (StringUtils.isNotBlank(orcidOrEmail))
-            orcidOrEmail = orcidOrEmail.trim();
-        boolean isOrcid = OrcidStringUtils.isValidOrcid(orcidOrEmail);
-        // If it is not an orcid, check the value from the emails table
-        if (!isOrcid) {
-            Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
-            orcid = email.get(orcidOrEmail);
-        } else {
-            orcid = orcidOrEmail;
-        }
-        
-        if (StringUtils.isNotEmpty(orcid)) {
+        form.setError(null);                   
+        String orcidOrEmail = URLDecoder.decode(form.getOrcidOrEmail(),"UTF-8").trim();
+        String orcid = getOrcidFromParam(form.getOrcidOrEmail().trim());        
+        if (orcid != null || orcidOrEmail.contains("@")) {
             if (!profileEntityManager.orcidExists(orcid)) {                
                 form.setError(getMessage("admin.errors.unexisting_orcid"));
             }
@@ -526,25 +540,17 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> adminSwitchUser(HttpServletRequest serverRequest, HttpServletResponse response,
             @ModelAttribute("orcidOrEmail") String orcidOrEmail) throws IllegalAccessException, UnsupportedEncodingException {
-        isAdmin(serverRequest, response);
-        orcidOrEmail = orcidOrEmail.trim();
-        if (StringUtils.isNotBlank(orcidOrEmail))
-            orcidOrEmail = orcidOrEmail.trim();
-        boolean isOrcid = OrcidStringUtils.isValidOrcid(orcidOrEmail);
-        String orcid = null;
-        // If it is not an orcid, check the value from the emails table
-        if (!isOrcid) {
-            Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
-            orcid = email.get(orcidOrEmail);
-        } else {
-            orcid = orcidOrEmail;
-        }
-
+        isAdmin(serverRequest, response);                
         Map<String, String> result = new HashMap<String, String>();
-        if (StringUtils.isEmpty(orcid) || !profileEntityManager.orcidExists(orcid)) {            
+        String orcidId = getOrcidFromParam(orcidOrEmail);
+        if (orcidId == null) {
             result.put("errorMessg", "Invalid id " + orcidOrEmail);
-        } else {
-            result.put("id", orcid);
+        } else {            
+            if (StringUtils.isEmpty(orcidId) || !profileEntityManager.orcidExists(orcidId)) {            
+                result.put("errorMessg", "Invalid id " + orcidOrEmail);
+            } else {
+                result.put("id", orcidId);
+            }
         }
         return result;
     }
@@ -585,24 +591,20 @@ public class AdminController extends BaseController {
         request.getTrusted().setErrors(new ArrayList<String>());
         request.setSuccessMessage(null);
 
-        String trusted = request.getTrusted().getValue().trim();
-        String managed = request.getManaged().getValue().trim();
-        boolean haveErrors = false;
-
-        if (!OrcidStringUtils.isValidOrcid(trusted)) {
-            if (emailManager.emailExists(trusted)) {
-                Map<String, String> email = findIdByEmailHelper(trusted);
-                trusted = email.get(trusted);
-            } else {
-                request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
-                haveErrors = true;
-            }
+        String trusted = getOrcidFromParam(request.getTrusted().getValue().trim());
+        String managed = getOrcidFromParam(request.getManaged().getValue().trim());
+        
+        boolean haveErrors = false;                       
+        
+        if (trusted == null) {            
+            request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
+            haveErrors = true;
         } else {
-            if (!profileEntityManager.orcidExists(trusted)) {
+            if (!profileEntityManager.orcidExists(managed)) {
                 request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
                 haveErrors = true;
             } else {
-                ProfileEntity e = profileEntityCacheManager.retrieve(trusted);
+                ProfileEntity e = profileEntityCacheManager.retrieve(managed);
                 if(!e.isAccountNonLocked() || e.getPrimaryRecord() != null) {
                     request.getTrusted().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getTrusted().getValue()));
                     haveErrors = true;
@@ -610,14 +612,9 @@ public class AdminController extends BaseController {
             }
         }
 
-        if (!OrcidStringUtils.isValidOrcid(managed)) {
-            if (emailManager.emailExists(managed)) {
-                Map<String, String> email = findIdByEmailHelper(managed);
-                managed = email.get(managed);
-            } else {
-                request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
-                haveErrors = true;
-            }
+        if (managed == null) {
+            request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
+            haveErrors = true;
         } else {
             if (!profileEntityManager.orcidExists(managed)) {
                 request.getManaged().getErrors().add(getMessage("admin.delegate.error.invalid_orcid_or_email", request.getManaged().getValue()));
@@ -667,19 +664,20 @@ public class AdminController extends BaseController {
         return profileEntityManager.isProfileClaimed(orcid);
     }
 
-    private String getOrcidFromParam(String orcidOrEmail) {
-        boolean isOrcid = OrcidStringUtils.isValidOrcid(orcidOrEmail);
+    private String getOrcidFromParam(String orcidOrEmail) {  
         String orcid = null;
         ProfileDetails result = new ProfileDetails();
         result.setErrors(new ArrayList<String>());
         // If it is not an orcid, check the value from the emails table
-        if (!isOrcid) {
+        if (orcidOrEmail.contains("@")) {
             if (emailManager.emailExists(orcidOrEmail)) {
                 Map<String, String> email = findIdByEmailHelper(orcidOrEmail);
                 orcid = email.get(orcidOrEmail);
             }
         } else {
-            orcid = orcidOrEmail;
+            if (OrcidStringUtils.getOrcidNumber(orcidOrEmail) != null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(orcidOrEmail))) {
+                orcid = OrcidStringUtils.getOrcidNumber(orcidOrEmail);                        
+            } 
         }
 
         return orcid;
@@ -692,32 +690,38 @@ public class AdminController extends BaseController {
      *            The orcid of the account we want to lock
      * @return true if the account was locked, false otherwise
      * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException 
      */
     @RequestMapping(value = "/lock-records.json", method = RequestMethod.POST)
     public @ResponseBody Map<String, Set<String>> lockRecords(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody LockAccounts lockAccounts)
-            throws IllegalAccessException {
+            throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
         Set<String> lockedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
         Set<String> reviewedIds = new HashSet<String>();
-        String orcidIds = lockAccounts.getOrcidsToLock().trim();
+        String orcidIds = URLDecoder.decode(lockAccounts.getOrcidsToLock(), "UTF-8").trim();
+        
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
                 String nextToken = tokenizer.nextToken();
                 String orcidId = getOrcidFromParam(nextToken);
-                if (!profileEntityManager.orcidExists(orcidId)) {
+                if (orcidId == null) {
                     notFoundIds.add(nextToken);
                 } else {
-                    ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
-                    if (!entity.isAccountNonLocked()) {
-                        lockedIds.add(nextToken);
-                    } else if (entity.isReviewed()) {
-                        reviewedIds.add(nextToken);
+                    if (!profileEntityManager.orcidExists(orcidId)) {
+                        notFoundIds.add(nextToken);
                     } else {
-                        profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription());
-                        successIds.add(orcidId);
+                        ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
+                        if (!entity.isAccountNonLocked()) {
+                            lockedIds.add(nextToken);
+                        } else if (entity.isReviewed()) {
+                            reviewedIds.add(nextToken);
+                        } else {
+                            profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription());
+                            successIds.add(nextToken);
+                        }
                     }
                 }
             }
@@ -763,15 +767,19 @@ public class AdminController extends BaseController {
             while (tokenizer.hasMoreTokens()) {
                 String nextToken = tokenizer.nextToken();
                 String orcidId = getOrcidFromParam(nextToken);
-                if (!profileEntityManager.orcidExists(orcidId)) {
+                if (orcidId == null) {
                     notFoundIds.add(nextToken);
                 } else {
-                    ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
-                    if (entity.isAccountNonLocked()) {
-                        unlockedIds.add(nextToken);
+                    if (!profileEntityManager.orcidExists(orcidId)) {
+                        notFoundIds.add(nextToken);
                     } else {
-                        profileEntityManager.unlockProfile(orcidId);
-                        successIds.add(nextToken);
+                        ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
+                        if (entity.isAccountNonLocked()) {
+                            unlockedIds.add(nextToken);
+                        } else {
+                            profileEntityManager.unlockProfile(orcidId);
+                            successIds.add(nextToken);
+                        }
                     }
                 }
             }
@@ -797,15 +805,19 @@ public class AdminController extends BaseController {
             while (tokenizer.hasMoreTokens()) {
                 String nextToken = tokenizer.nextToken();
                 String orcidId = getOrcidFromParam(nextToken);
-                if (!profileEntityManager.orcidExists(orcidId)) {
+                if (orcidId == null) {
                     notFoundIds.add(nextToken);
                 } else {
-                    ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
-                    if (!entity.isReviewed()) {
-                        unreviewedIds.add(nextToken);
+                    if (!profileEntityManager.orcidExists(orcidId)) {
+                        notFoundIds.add(nextToken);
                     } else {
-                        profileEntityManager.unreviewProfile(orcidId);
-                        successIds.add(nextToken);
+                        ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
+                        if (!entity.isReviewed()) {
+                            unreviewedIds.add(nextToken);
+                        } else {
+                            profileEntityManager.unreviewProfile(orcidId);
+                            successIds.add(nextToken);
+                        }
                     }
                 }
             }
@@ -831,15 +843,19 @@ public class AdminController extends BaseController {
             while (tokenizer.hasMoreTokens()) {
                 String nextToken = tokenizer.nextToken();
                 String orcidId = getOrcidFromParam(nextToken);
-                if (!profileEntityManager.orcidExists(orcidId)) {
+                if (orcidId == null) {
                     notFoundIds.add(nextToken);
                 } else {
-                    ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
-                    if (entity.isReviewed()) {
-                        reviewedIds.add(nextToken);
+                    if (!profileEntityManager.orcidExists(orcidId)) {
+                        notFoundIds.add(nextToken);
                     } else {
-                        profileEntityManager.reviewProfile(orcidId);
-                        successIds.add(nextToken);
+                        ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
+                        if (entity.isReviewed()) {
+                            reviewedIds.add(nextToken);
+                        } else {
+                            profileEntityManager.reviewProfile(orcidId);
+                            successIds.add(nextToken);
+                        }
                     }
                 }
             }
@@ -880,7 +896,7 @@ public class AdminController extends BaseController {
                     if (entity.getClaimed()) {
                         claimedIds.add(emailOrOrcid);
                     } else {
-                        boolean emailSupplied = !OrcidStringUtils.isValidOrcid(emailOrOrcid);
+                        boolean emailSupplied = !OrcidStringUtils.isValidOrcid(emailOrOrcid) && emailOrOrcid.contains("@");
                         notificationManager.sendApiRecordCreationEmail(emailSupplied ? emailOrOrcid : null, orcidId);
                         successIds.add(emailOrOrcid);
                     }

@@ -1,18 +1,8 @@
-import { EventEmitter, Injectable, Output } 
-    from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { EventEmitter, Injectable, Output } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
-import { HttpClient, HttpClientModule, HttpHeaders } 
-     from '@angular/common/http';
-
-import { Headers, Http, RequestOptions, Response, URLSearchParams } 
-    from '@angular/http';
-
-import { Observable, Subject } 
-    from 'rxjs';
-
-
-import { catchError, map, tap } 
-    from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',

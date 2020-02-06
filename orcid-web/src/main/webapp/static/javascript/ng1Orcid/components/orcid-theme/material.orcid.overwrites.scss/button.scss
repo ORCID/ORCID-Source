@@ -1,0 +1,9 @@
+// Overwrites for:
+// https://github.com/angular/components/blob/8.2.x/src/material/button/button.scss
+
+button.mat-button:hover,
+button.mat-stroked-button:hover {
+  .mat-button-focus-overlay {
+    opacity: 0.08;
+  }
+}

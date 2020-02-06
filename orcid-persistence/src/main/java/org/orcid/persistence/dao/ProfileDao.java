@@ -70,6 +70,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     Long getConfirmedProfileCount();
 
     Date retrieveLastModifiedDate(String orcid);
+    
+    List<ProfileEntity> findByOrcidType(String orcidType);
 
     @Deprecated
     void updateLastModifiedDateWithoutResult(String orcid);
@@ -148,4 +150,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypeNames);
 
     public String getLockedReason(String orcid);
+
+    int deleteProfilesOfType(String orcidType);
 }

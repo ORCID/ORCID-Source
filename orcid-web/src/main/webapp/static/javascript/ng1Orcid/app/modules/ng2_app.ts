@@ -14,9 +14,6 @@ import { Component, NgModule }
 import { FormsModule, ReactiveFormsModule } 
     from '@angular/forms';
 
-import { HttpModule, JsonpModule, Request, XSRFStrategy } 
-    from '@angular/http';
-
 import { BrowserModule } 
     from "@angular/platform-browser";
 
@@ -249,6 +246,8 @@ import { Observable }
 
 import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
 
+import { PlatformInfoModule } from "@bit/orcid.angular.platform-info";
+
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -295,10 +294,9 @@ export class RootCmp {
         CommonModule, 
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule, //angular5
-        HttpModule, //Angular2
-        JsonpModule,
-        NgbTypeaheadModule.forRoot(),
+        HttpClientModule, //angular5,
+        PlatformInfoModule,
+        NgbTypeaheadModule,
         UpgradeModule,
         /* User Generated Modules */
         AccountSettingsNg2Module,

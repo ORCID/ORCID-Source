@@ -401,4 +401,13 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setMaxResults(max);
         return query.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getIdsOfEmailsReferencingClientProfiles(int max, List<String> ids) {
+        Query query = entityManager.createNativeQuery("SELECT email_hash FROM email WHERE source_id IN :ids");
+        query.setParameter("ids", ids);
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
 }

@@ -93,4 +93,13 @@ public class CreatedDate implements Serializable {
     public int hashCode() {
         return value != null ? value.hashCode() : 0;
     }
+    
+    @Override
+    public String toString() {
+        String result = new String();
+        result += value.getYear();
+        result += "-" + (value.getMonth() < 10 ? "0" + value.getMonth() : value.getMonth());               
+        result += "-" + (value.getDay() < 10 ? "0" + value.getDay() : value.getDay());            
+        return result;
+    }
 }

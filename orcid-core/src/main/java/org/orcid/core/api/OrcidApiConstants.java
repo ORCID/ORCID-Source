@@ -18,6 +18,7 @@ public class OrcidApiConstants {
     public static final String BIO_SEARCH_PATH = "/search/orcid-bio";
     public static final String SEARCH_PATH = "/search";
     public static final String CSV_SEARCH_PATH = "/csv-search";
+    public static final String EXPANDED_SEARCH_PATH = "/expanded-search";
     public static final String WEBHOOKS_PATH = "/{orcid}/webhook/{webhook_uri}";
     public static final String AUTHENTICATE_PATH = "/{orcid}/authenticate";
     public static final String CLIENT_PATH = "/client/{client_id:[^/]+}";

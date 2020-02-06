@@ -2,11 +2,13 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Query;
 
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -152,6 +154,15 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @Override
     public List<BigInteger> getIdsForUserOBORecords(int max) {
         Query query = entityManager.createNativeQuery("SELECT id FROM address WHERE assertion_origin_source_id IS NOT NULL");
+        query.setMaxResults(max);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<BigInteger> getIdsOfAddressesReferencingClientProfiles(int max, List<String> ids) {
+        Query query = entityManager.createNativeQuery("SELECT id FROM address WHERE source_id IN :ids");
+        query.setParameter("ids", ids);
         query.setMaxResults(max);
         return query.getResultList();
     }    

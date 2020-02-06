@@ -284,11 +284,6 @@ public class BaseController {
         return sourceManager.isInDelegationMode();
     }
 
-    @ModelAttribute("isDelegatedByAdmin")
-    public boolean isDelegatedByAdmin() {
-        return sourceManager.isDelegatedByAnAdmin();
-    }
-
     @ModelAttribute("isPasswordConfirmationRequired")
     public boolean isPasswordConfirmationRequired() {
         return orcidSecurityManager.isPasswordConfirmationRequired();

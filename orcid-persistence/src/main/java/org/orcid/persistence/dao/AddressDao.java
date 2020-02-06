@@ -2,8 +2,10 @@ package org.orcid.persistence.dao;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Set;
 
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 /**
  * 
@@ -49,5 +51,7 @@ public interface AddressDao extends GenericDao<AddressEntity, Long> {
     void revertUserOBODetails(List<BigInteger> ids);
 
     List<BigInteger> getIdsForUserOBORecords(int max);
+
+    List<BigInteger> getIdsOfAddressesReferencingClientProfiles(int max, List<String> ids);
     
 }
