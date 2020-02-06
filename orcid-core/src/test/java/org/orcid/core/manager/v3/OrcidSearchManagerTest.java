@@ -99,18 +99,6 @@ public class OrcidSearchManagerTest {
     }
 
     @Test
-    public void oneOrcidInDbOtherMissing() {
-        when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(multipleResultsForQuery());
-        doThrow(new OrcidNoResultException()).when(mockOrcidSecurityManager).checkProfile("6789");
-        Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
-        assertNotNull(search);
-        assertNotNull(search.getResults());
-        assertTrue(search.getResults().size() == 1);
-        Result searchResult = search.getResults().get(0);
-        assertEquals("5678", searchResult.getOrcidIdentifier().getPath());
-    }
-
-    @Test
     public void orcidMultipleOrcidsIndexed() {
         when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
@@ -123,36 +111,6 @@ public class OrcidSearchManagerTest {
 
         Result result2 = search.getResults().get(1);
         assertEquals("6789", result2.getOrcidIdentifier().getPath());
-    }
-
-    @Test
-    public void recordLockedTest() {
-        when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
-        doThrow(new LockedException()).when(mockOrcidSecurityManager).checkProfile("0000");
-
-        Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
-        assertNotNull(search);
-        assertTrue(search.getResults().isEmpty());
-    }
-
-    @Test
-    public void recordDeactivatedTest() {
-        when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
-        doThrow(new DeactivatedException()).when(mockOrcidSecurityManager).checkProfile("0000");
-
-        Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
-        assertNotNull(search);
-        assertTrue(search.getResults().isEmpty());
-    }
-
-    @Test
-    public void recordDeprecatedTest() {
-        when(mockOrcidSolrProfileClient.findByDocumentCriteria("rndQuery", 0, 0)).thenReturn(invalidRecordSearchResult());
-        doThrow(new OrcidDeprecatedException()).when(mockOrcidSecurityManager).checkProfile("0000");
-
-        Search search = orcidSearchManager.findOrcidsByQuery("rndQuery", 0, 0);
-        assertNotNull(search);
-        assertTrue(search.getResults().isEmpty());
     }
 
     @Test
