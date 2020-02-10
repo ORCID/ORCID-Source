@@ -64,6 +64,7 @@ import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.version.impl.Api3_0LastModifiedDatesHelper;
