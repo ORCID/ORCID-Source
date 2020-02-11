@@ -2359,19 +2359,18 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .settings-table .table td:nth-child(1) {
-    width: 160%
+    width: 120%
 }
 
 .settings-table .table td:nth-child(2) {
-    width: 50%;
-    min-width: 120px;
+    width: 80%
 }
 
 .settings-table .table td:nth-child(3) {
     width: 60%
 }
 .settings-table .table td:nth-child(4) {
-    width: 45%
+    width: 25%
 }
 
 .settings-table .table>tbody>tr>td {
@@ -9812,10 +9811,10 @@ emails-form-ng2 .settings-table .popover.show-unverified-popover {
 }
 
 emails-form-ng2 .border-button {
-    width: 124px;
+    min-width: 120px;
     display: block;
     text-align: center;
-    height: 30px;
+    min-height: 30px;
     line-height: 16px;
 }
 
