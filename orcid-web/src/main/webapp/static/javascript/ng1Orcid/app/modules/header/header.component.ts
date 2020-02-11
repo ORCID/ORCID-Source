@@ -43,6 +43,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     isPublicPage: boolean = false;
     profileOrcid: string = null;
     showSurvey = this.featuresService.isFeatureEnabled('SURVEY');
+    ngOrcidSearch = this.featuresService.isFeatureEnabled('ORCID_ANGULAR_SEARCH');
     assetsPath: String;
     aboutUri: String;
     liveIds: String;    
@@ -170,16 +171,26 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     searchSubmit(): void {
-        if (this.headerSearch.searchOption=='website'){
-            window.location.assign(getBaseUri() + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
+        if (this.headerSearch.searchOption == "website") {
+          window.location.assign(
+            getBaseUri() +
+              "/search/node/" +
+              encodeURIComponent(this.headerSearch.searchInput)
+          );
         }
-        if(this.headerSearch.searchOption=='registry'){
-            window.location.assign(getBaseUri()
-                    + "/orcid-search/quick-search/?searchQuery="
-                    + encodeURIComponent(this.headerSearch.searchInput));
+        if (this.headerSearch.searchOption == "registry") {
+          let searchUrl = "/orcid-search/quick-search/?searchQuery=";
+          if (this.ngOrcidSearch) {
+            searchUrl = "/orcid-search/search?searchQuery=";
+          }
+          window.location.assign(
+            getBaseUri() +
+              searchUrl +
+              encodeURIComponent(this.headerSearch.searchInput)
+          );
         }
-    }
-  
+      }
+    
     toggleMenu(): void {
         this.menuVisible = !this.menuVisible;
         this.searchVisible = false;
