@@ -34,6 +34,7 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
+import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -514,6 +515,16 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testCreateWorkWithBulk_TwoSelf_DupError() {
+        OrcidCoreExceptionMapper orcidCoreExceptionMapper = Mockito.mock(OrcidCoreExceptionMapper.class);        
+
+        ReflectionTestUtils.setField(workManager, "orcidCoreExceptionMapper", orcidCoreExceptionMapper);        
+
+        org.orcid.jaxb.model.v3.release.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.release.error.OrcidError();
+        orcidError.setErrorCode(9021);
+        orcidError.setDeveloperMessage("409 Conflict: You have already added this activity (matched by external identifiers), please see element with put-code ${putCode}. If you are trying to edit the item, please use PUT instead of POST.");
+        Mockito.when(orcidCoreExceptionMapper.getV3OrcidError(Mockito.any())).thenReturn(orcidError);
+
+        
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
@@ -571,6 +582,15 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testCreateWorkWithBulk_TwoSelf_DupError_CaseSensitive() {
+        OrcidCoreExceptionMapper orcidCoreExceptionMapper = Mockito.mock(OrcidCoreExceptionMapper.class);        
+
+        ReflectionTestUtils.setField(workManager, "orcidCoreExceptionMapper", orcidCoreExceptionMapper);        
+
+        org.orcid.jaxb.model.v3.release.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.release.error.OrcidError();
+        orcidError.setErrorCode(9021);
+        orcidError.setDeveloperMessage("409 Conflict: You have already added this activity (matched by external identifiers), please see element with put-code ${putCode}. If you are trying to edit the item, please use PUT instead of POST.");
+        Mockito.when(orcidCoreExceptionMapper.getV3OrcidError(Mockito.any())).thenReturn(orcidError);
+        
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
@@ -679,6 +699,22 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testCreateWorksWithBulkSomeOKSomeErrors() {
+        
+        OrcidCoreExceptionMapper orcidCoreExceptionMapper = Mockito.mock(OrcidCoreExceptionMapper.class);        
+
+        ReflectionTestUtils.setField(workManager, "orcidCoreExceptionMapper", orcidCoreExceptionMapper);        
+
+        org.orcid.jaxb.model.v3.release.error.OrcidError orcidErrorActivityTitleValidation = new org.orcid.jaxb.model.v3.release.error.OrcidError();
+        orcidErrorActivityTitleValidation.setErrorCode(9022);
+        
+        org.orcid.jaxb.model.v3.release.error.OrcidError orcidErrorOrcidDuplicatedActivity = new org.orcid.jaxb.model.v3.release.error.OrcidError();
+        orcidErrorOrcidDuplicatedActivity.setErrorCode(9021);
+        
+        Mockito.when(orcidCoreExceptionMapper.getV3OrcidError(Mockito.any()))
+            .thenReturn(orcidErrorOrcidDuplicatedActivity)
+            .thenReturn(orcidErrorOrcidDuplicatedActivity)
+            .thenReturn(orcidErrorActivityTitleValidation);
+        
         String orcid = "0000-0000-0000-0003";
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
 
@@ -1184,6 +1220,14 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testFindWorkBulkInvalidPutCodes() {
+        OrcidCoreExceptionMapper orcidCoreExceptionMapper = Mockito.mock(OrcidCoreExceptionMapper.class);        
+
+        ReflectionTestUtils.setField(workManager, "orcidCoreExceptionMapper", orcidCoreExceptionMapper);        
+
+        org.orcid.jaxb.model.v3.release.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.release.error.OrcidError();
+        
+        Mockito.when(orcidCoreExceptionMapper.getV3OrcidError(Mockito.any())).thenReturn(orcidError);
+
         String putCodes = "11,12,13,99999";
         WorkBulk workBulk = workManager.findWorkBulk("0000-0000-0000-0003", putCodes);
         assertNotNull(workBulk);
