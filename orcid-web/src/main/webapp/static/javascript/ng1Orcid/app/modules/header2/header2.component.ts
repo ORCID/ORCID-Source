@@ -139,7 +139,7 @@ export class Header2Component  {
             if(this.headerSearch.searchOption=='registry'){
                 if (this.togglzOrcidAngularSearch) {
                     window.location.assign(getBaseUri()
-                    + "/orcid-search/search/?searchQuery="
+                    + "/orcid-search/search?searchQuery="
                     + encodeURIComponent(this.headerSearch.searchInput));
                 }
                 else {
