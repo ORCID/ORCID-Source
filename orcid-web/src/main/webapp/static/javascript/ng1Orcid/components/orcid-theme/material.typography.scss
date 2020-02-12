@@ -36,11 +36,6 @@ $orcid-custom-typography: (
 @mixin mat-base-typography-overwrites($config) {
   // Makes the button's font usable with a class
   .mat-button-font {
-    font: {
-      family: mat-font-family($config, button);
-      size: mat-font-size($config, button);
-      weight: mat-font-weight($config, button);
-    }
-    letter-spacing: mat-letter-spacing($config, button) !important;
+    @include mat-typography-level-to-styles($config, button);
   }
 }

@@ -7,3 +7,12 @@ button.mat-stroked-button:hover {
     opacity: 0.08;
   }
 }
+
+button {
+  .wrap-text {
+    display: flex;
+    text-align: center;
+    white-space: normal;
+    padding: 9px 0;
+  }
+}

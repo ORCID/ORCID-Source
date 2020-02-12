@@ -1,28 +1,40 @@
 {
   "name": "@bit/orcid.angular.orcid-theme",
-  "version": "0.0.8",
+  "version": "0.0.17",
   "homepage": "https://bit.dev/orcid/angular/orcid-theme",
   "main": "index.js",
-  "dependencies": {
-    "@angular/material": "^8.1.4",
-    "@angular/animations": "8.2.4",
-    "@angular/cdk": "8.1.4",
-    "@angular/common": "8.2.4",
-    "@angular/core": "8.2.4",
-    "@angular/forms": "8.2.4"
-  },
+  "dependencies": {},
   "devDependencies": {},
-  "peerDependencies": {},
+  "peerDependencies": {
+    "@angular/material": "^8.0.0",
+    "@angular/core": "^8.0.0",
+    "@angular/animations": "^8.0.0",
+    "@angular/common": "^8.0.0",
+    "@angular/cdk": "^8.0.0",
+    "@angular/forms": "^8.0.0",
+    "rxjs": "^6.0.0 "
+  },
   "license": "SEE LICENSE IN LICENSE",
   "bit": {
     "env": {},
     "overrides": {
       "dependencies": {
-        "@angular/animations": "8.2.4",
-        "@angular/cdk": "8.1.4",
-        "@angular/common": "8.2.4",
-        "@angular/core": "8.2.4",
-        "@angular/forms": "8.2.4"
+        "@angular/material": "-",
+        "@angular/core": "-",
+        "@angular/animations": "-",
+        "@angular/common": "-",
+        "@angular/cdk": "-",
+        "@angular/forms": "-",
+        "rxjs": "-"
+      },
+      "peerDependencies": {
+        "@angular/material": "^8.0.0",
+        "@angular/core": "^8.0.0",
+        "@angular/animations": "^8.0.0",
+        "@angular/common": "^8.0.0",
+        "@angular/cdk": "^8.0.0",
+        "@angular/forms": "^8.0.0",
+        "rxjs": "^6.0.0 "
       }
     }
   }
