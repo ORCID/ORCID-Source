@@ -1,6 +1,6 @@
 {
   "name": "@bit/orcid.angular.orcid-theme",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "homepage": "https://bit.dev/orcid/angular/orcid-theme",
   "main": "index.js",
   "dependencies": {},
