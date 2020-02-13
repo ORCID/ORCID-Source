@@ -8,7 +8,7 @@
   * Mac - create or edit .bash_profile file in home directory, add EXPORT JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home
 
 * Install [Java JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
-  --> replace local_policy.jar and US_export_policy.jar in <JAVA_HOME>/jre/lib/security with those from JCE download
+  --> replace local_policy.jar and US_export_policy.jar in <JAVA_HOME>/jre/lib/security/policy with those from JCE download
 
 * Install [Maven](http://maven.apache.org/index.html) - ensure you add maven/bin directory to PATH environment variable. Verify installation with mvn -version
 
@@ -168,9 +168,9 @@ Do this before the '-vmargs' param
 
 * Select Arguments 
 
-* In VM Arguments add the following (changing the /Users/rcpeters/git/ORCID-Source path to your repo checkout)
+* In VM Arguments add the following
 
-         -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties
+         -Dorg.orcid.config.file=classpath:staging-persistence.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties
 
 * Click Ok
 
@@ -181,6 +181,8 @@ Do this before the '-vmargs' param
 * Under `Server Options` make sure everything is unchecked.
 
 * In Timeouts, increase the time limit of Start to 600 seconds and Stop to 100.
+
+* If you are using Tomcat 9 you have to configure the 'Tomcat admin port' 
 
 * Save and close the server configuration view.
 
@@ -230,9 +232,9 @@ When this it is done, restart the server.
 
 ### Configure Message Listener
 
-* Create a directory to be used as the message store directory for the ActiveMQ broker (changing the /Users/rcpeters/git/ path to a path on your machine)
+* Create a directory to be used as the message store directory for the ActiveMQ broker (changing the [PATH]/git/ path to a path on your machine)
 
-        mkdir /Users/rcpeters/git/mq
+        mkdir [PATH]/git/mq
 
 * Go to File -> New -> Other.
 
@@ -256,7 +258,7 @@ When this it is done, restart the server.
 
 * In VM Arguments add the following (changing org.orcid.persistence.path to the path to the directory you created above):
 
-        -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -XX:MaxPermSize=1024m -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties -Dorg.orcid.persistence.messaging.enabled=true -Dorg.orcid.persistence.path="/Users/rcpeters/git/mq"
+        -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -Dcom.mailgun.testmode=no -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties -Dorg.orcid.persistence.messaging.enabled=true -Dorg.orcid.persistence.path="[PATH]/git/mq"
 
 * Click Ok
 

@@ -22,7 +22,7 @@ Open a terminal at your workspace and run
     mkdir ~/tmp-tomcat-orcid-web
     cd ~/tmp-tomcat-orcid-web
     git clone https://github.com/ORCID/ORCID-Source.git
-    cd orcid-nodejs
+    cd ORCID-Source/orcid-nodejs
     mvn -P tmp-tomcat-orcid-web clean install
 
 review **ORCID-Source/orcid-nodejs/pom.xml** for available profiles/configurations
