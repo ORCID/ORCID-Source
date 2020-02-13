@@ -152,4 +152,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public String getLockedReason(String orcid);
 
     int deleteProfilesOfType(String orcidType);
+
+    List<String> getAllOrcidIdsForInvalidRecords();
+
+    void updateIndexingStatus(List<String> ids, IndexingStatus reindex);
 }

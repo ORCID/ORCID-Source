@@ -852,4 +852,27 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcidType", orcidType);
         return query.executeUpdate();
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getAllOrcidIdsForInvalidRecords() {
+        Query query = entityManager.createNativeQuery("SELECT orcid FROM profile WHERE profile_deactivation_date IS NOT NULL OR deprecated_date IS NOT NULL OR record_locked IS TRUE");
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public void updateIndexingStatus(List<String> ids, IndexingStatus indexingStatus) {
+        String queryString = null;
+        if (IndexingStatus.DONE.equals(indexingStatus)) {
+            queryString = "UPDATE profile SET indexing_status = :indexingStatus, last_indexed_date = now() WHERE orcid IN :ids";
+            ids.forEach(orcid -> updateWebhookProfileLastUpdate(orcid));
+        } else {
+            queryString = "UPDATE profile SET indexing_status = :indexingStatus WHERE orcid IN :ids";
+        }
+        Query query = entityManager.createNativeQuery(queryString);
+        query.setParameter("ids", ids);
+        query.setParameter("indexingStatus", indexingStatus.name());
+        query.executeUpdate();
+    }
 }
