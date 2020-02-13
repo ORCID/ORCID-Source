@@ -9963,9 +9963,10 @@ works-ng2 mat-paginator .mat-paginator-container {
 
 
 .orcidCloseButtonModal {
-    float: right;
-    right: 20px;
-    margin-top: 10px;
+    padding: 11px;
+    right: 0;
+    margin-top: 0;
     position: absolute;
-    width: 30px;
+    width: 47px;
+    cursor: pointer;
 }
