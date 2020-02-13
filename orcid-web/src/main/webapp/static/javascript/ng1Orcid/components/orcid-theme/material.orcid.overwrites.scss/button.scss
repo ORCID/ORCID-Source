@@ -8,10 +8,10 @@ button.mat-stroked-button:hover {
   }
 }
 
-button {
-  .wrap-text {
+button.mat-button-wrap-text {
+  span {
+    max-width: 100%;
     text-align: center;
     white-space: normal;
-    padding: 9px 0;
   }
 }
