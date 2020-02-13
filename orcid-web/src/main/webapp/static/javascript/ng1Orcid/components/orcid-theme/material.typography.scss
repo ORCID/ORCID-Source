@@ -35,12 +35,24 @@ $orcid-custom-typography: (
 // https://github.com/angular/components/blob/75686e87fc8d5eb3d3e4a1bf6fa771c7467d328d/src/material/core/typography/_typography.scss#L73
 @mixin mat-base-typography-overwrites($config) {
   // Makes the button's font usable with a class
-  .mat-button-font {
+
+  .mat-button-font,
+  .mat-button-font-spaced {
+    // Code from https://github.com/angular/components/blob/8.2.x/src/material/button/_button-theme.scss#L161
     font: {
       family: mat-font-family($config, button);
       size: mat-font-size($config, button);
       weight: mat-font-weight($config, button);
     }
+  }
+
+  .mat-button-font-spaced {
     letter-spacing: mat-letter-spacing($config, button) !important;
+  }
+
+  .mat-button-wrap-text {
+    // This rules are used for wrapped text only
+    line-height: 18px !important;
+    padding: 9px 16px !important;
   }
 }
