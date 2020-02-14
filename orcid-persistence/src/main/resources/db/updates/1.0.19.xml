@@ -1252,7 +1252,7 @@
         <insert tableName="country_reference_data">
 
             <column name="country_name"
-                value="MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF" />
+                value="NORTH MACEDONIA, Republic of North Macedonia" />
             <column name="country_iso_code" value="MK" />
             <column name="date_created" valueComputed="now()" />
             <column name="last_modified" valueComputed="now()" />
