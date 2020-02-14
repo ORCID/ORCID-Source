@@ -25,6 +25,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
@@ -137,8 +138,8 @@ public class HomeController extends BaseController {
         String orcid = getCurrentUserOrcid();
         
         if (logUserOut != null && logUserOut.booleanValue()) {
+            removeJSessionIdCookie(request, response);
             SecurityContextHolder.clearContext();
-            
             if(request.getSession(false) != null) {
                 request.getSession().invalidate();
             }   
@@ -174,6 +175,20 @@ public class HomeController extends BaseController {
         }                                            
     }
     
+    private void removeJSessionIdCookie(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        // Delete cookie and token associated with that cookie
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (InternalSSOManager.JSESSIONID.equals(cookie.getName())) {
+                    cookie.setValue(StringUtils.EMPTY);
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+                }
+            }
+        }
+    }
+
     @RequestMapping(value = "/userInfo.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> getUserInfo(HttpServletRequest request) {
         Map<String, String> info = new HashMap<String, String>();        
