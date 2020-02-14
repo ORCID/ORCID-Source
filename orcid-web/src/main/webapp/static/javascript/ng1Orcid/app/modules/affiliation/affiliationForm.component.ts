@@ -191,8 +191,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                 if(datum.region){
                     forDisplay += ", " + datum.region;
                 }
-                if (datum.orgType != null && datum.orgType.trim() != ''){
-                    forDisplay += ", " + datum.orgType;
+                if (datum.country != null && datum.country.trim() != ''){
+                    forDisplay += ", " + datum.country;
                 }
                 forDisplay += '</span><hr />';
                 return forDisplay;
