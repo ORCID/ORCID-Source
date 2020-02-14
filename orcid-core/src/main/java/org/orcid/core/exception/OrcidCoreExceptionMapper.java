@@ -13,7 +13,9 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.springframework.context.MessageSource;
@@ -43,6 +45,9 @@ public class OrcidCoreExceptionMapper {
     @Resource
     private LocaleManager localeManager;
     
+    @Resource(name = "sourceManagerV3")
+    private SourceManager sourceManager;
+
     private static Map<Class<? extends Throwable>, Pair<Response.Status, Integer>> HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE = new HashMap<>();
     {
         // 301
@@ -278,7 +283,10 @@ public class OrcidCoreExceptionMapper {
         orcidError.setErrorCode(errorCode);
         orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
         Map<String, String> params = null;
-        if (t instanceof ApplicationException) {
+        if (t instanceof PutCodeFormatException) {
+            params = new HashMap<String, String>();                                                               
+            params.put("clientName", SourceEntityUtils.getSourceName(sourceManager.retrieveActiveSource()));
+        } else if (t instanceof ApplicationException) {
             params = ((ApplicationException) t).getParams();
         } else if (t instanceof IllegalEnumValueException) {
             params = ((IllegalEnumValueException) t).getParams();
