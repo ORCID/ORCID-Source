@@ -1,0 +1,77 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+	            
+	<changeSet id="add_org_name_not_null_constraints_psql" author="George Nash" dbms="postgresql">
+	   <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <sqlCheck expectedResult="YES">
+	            SELECT is_nullable
+                FROM   information_schema.columns c
+                JOIN   information_schema.tables t
+                ON     c.table_schema = t.table_schema 
+                AND    c.table_name = t.table_name
+                WHERE  c.table_name = 'org' and c.column_name = 'name'
+            </sqlCheck>   
+        </preConditions>
+		<sql>ALTER TABLE org ALTER COLUMN name SET NOT NULL;</sql>
+	</changeSet>	
+	
+	<changeSet id="add_org_name_not_null_constraints_hsqldb" author="George Nash" dbms="hsqldb">
+        <sql>ALTER TABLE org ALTER COLUMN name SET NOT NULL;</sql>
+    </changeSet>    
+	
+	<changeSet id="add_org_city_not_null_constraints_psql" author="George Nash" dbms="postgresql">
+       <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <sqlCheck expectedResult="YES">
+                SELECT is_nullable
+                FROM   information_schema.columns c
+                JOIN   information_schema.tables t
+                ON     c.table_schema = t.table_schema 
+                AND    c.table_name = t.table_name
+                WHERE  c.table_name = 'org' and c.column_name = 'city'
+            </sqlCheck>   
+        </preConditions>
+		<sql>ALTER TABLE org ALTER COLUMN city SET NOT NULL;</sql>
+    </changeSet>  
+    
+    <changeSet id="add_org_city_not_null_constraints_hsqldb" author="George Nash" dbms="hsqldb">
+        <sql>ALTER TABLE org ALTER COLUMN city SET NOT NULL;</sql>
+    </changeSet>    
+
+    <changeSet id="add_org_region_not_null_constraints_psql" author="George Nash" dbms="postgresql">
+       <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <sqlCheck expectedResult="YES">
+                SELECT is_nullable
+                FROM   information_schema.columns c
+                JOIN   information_schema.tables t
+                ON     c.table_schema = t.table_schema 
+                AND    c.table_name = t.table_name
+                WHERE  c.table_name = 'org' and c.column_name = 'region'
+            </sqlCheck>   
+        </preConditions>
+        <sql>ALTER TABLE org ALTER COLUMN region SET NOT NULL;</sql>
+    </changeSet> 
+    
+    
+    <changeSet id="add_org_region_not_null_constraints_hsqldb" author="George Nash" dbms="hsqldb">
+        <sql>ALTER TABLE org ALTER COLUMN region SET NOT NULL;</sql>
+    </changeSet> 
+    
+    <changeSet id="add_org_country_not_null_constraints_psql" author="George Nash" dbms="postgresql">
+       <preConditions onFail="MARK_RAN" onError="CONTINUE">
+            <sqlCheck expectedResult="YES">
+                SELECT is_nullable
+                FROM   information_schema.columns c
+                JOIN   information_schema.tables t
+                ON     c.table_schema = t.table_schema 
+                AND    c.table_name = t.table_name
+                WHERE  c.table_name = 'org' and c.column_name = 'country'
+            </sqlCheck>   
+        </preConditions>
+        <sql>ALTER TABLE org ALTER COLUMN country SET NOT NULL;</sql>
+    </changeSet>    
+    
+    <changeSet id="add_org_country_not_null_constraints_hsqldb" author="George Nash" dbms="hsqldb">
+        <sql>ALTER TABLE org ALTER COLUMN country SET NOT NULL;</sql>
+    </changeSet>    
+</databaseChangeLog>
