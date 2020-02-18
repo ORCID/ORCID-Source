@@ -498,6 +498,8 @@
 	
 	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />
 					
+	<bean id="orcidInsecureCookiesFilter" class="org.orcid.frontend.web.filter.OrcidInsecureCookiesFilter" />
+					
 	<oauth2:resource-server id="resourceServerFilter"
 		resource-id="orcid" token-services-ref="tokenServices" />
 
