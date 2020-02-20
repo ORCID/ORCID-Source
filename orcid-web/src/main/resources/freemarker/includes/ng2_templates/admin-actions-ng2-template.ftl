@@ -73,11 +73,13 @@
             <label for="password"><@orcid.msg 'admin.reset_password.password.label' /></label>
             <input type="text" id="password" (keyup.enter)="confirmResetPassword()" [(ngModel)]="resetPasswordParams.password" placeholder="<@orcid.msg 'admin.reset_password.password.placeholder' />" class="input-xlarge" />
             <a (click)="randomString()" class="glyphicon glyphicon-random blue"></a>
-            <div *ngIf="resetPasswordParams?.error != null">
-                <span class="orcid-error">{{resetPasswordParams.error}}</span>
-            </div>
-            <div *ngIf="resetPasswordSuccess">
-                <span class="orcid-error"><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></span>
+            <div *ngIf="showResetPasswordMessages">
+                <div *ngIf="resetPasswordParams?.error != null">
+                    <span class="orcid-error">{{resetPasswordParams.error}}</span>
+                </div>
+                <div *ngIf="resetPasswordSuccess">
+                    <span class="orcid-error"><@orcid.msg 'deprecate_orcid_confirmation_modal.heading' /></span>
+                </div>
             </div>
         </div>
         <div class="controls save-btns pull-left" *ngIf="!showResetPasswordConfirm">
@@ -102,7 +104,7 @@
             <label for="email"><@orcid.msg 'admin.verify_email.title' /></label>
             <input type="text" (keyup.enter)="verifyEmail()" [(ngModel)]="emailToVerify" placeholder="<@orcid.msg 'admin.verify_email.placeholder' />" class="input-xlarge" />                                                                                    
         </div>
-        <div *ngIf="verifyEmailMessage != null">
+        <div *ngIf="verifyEmailMessage != null && verifyEmailMessageShowMessages">
             <span class="orcid-error" [innerHTML]="verifyEmailMessage"></span>
         </div>
         <div class="controls save-btns pull-left">
@@ -136,11 +138,13 @@
                 <span class="orcid-error" *ngFor='let error of addDelegateParams.trusted.errors' [innerHTML]="error"></span><br />
             </div>                          
         </div>
-        <div *ngIf="addDelegateParams.successMessage">
-            <span class="orcid-error" [innerHTML]="addDelegateParams.successMessage"></span>
-        </div>
-        <div *ngIf="addDelegateParams.errors?.length > 0">
-            <span class="orcid-error" *ngFor='let error of addDelegateParams.errors' [innerHTML]="error"></span><br />
+        <div *ngIf="showAddDelegatesMessages">
+            <div *ngIf="addDelegateParams.successMessage">
+                <span class="orcid-error" [innerHTML]="addDelegateParams.successMessage"></span>
+            </div>
+            <div *ngIf="addDelegateParams.errors?.length > 0">
+                <span class="orcid-error" *ngFor='let error of addDelegateParams.errors' [innerHTML]="error"></span><br />
+            </div>
         </div>
         <div class="controls save-btns pull-left">
             <span id="bottom-confirm-delegate-profile" (click)="addDelegate()" class="btn btn-primary"><@orcid.msg 'admin.delegate.button'/></span>
@@ -159,7 +163,7 @@
         <div class="form-group">
             <label for="deprecated"><@orcid.msg 'admin.profile_deprecation.to_deprecate' /></label>
             <input type="text" id="deprecated" [(ngModel)]="deprecateRecordParams.deprecatedAccount.orcid" (keyup.enter)="confirmDeprecate()" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.account_to_deprecate' />" class="input-xlarge">                                   
-            <div *ngIf="deprecateRecordParams.deprecatedAccount.errors?.length > 0">
+            <div *ngIf="deprecateRecordParams.deprecatedAccount.errors?.length > 0 && showDeprecateRecordMessages">
                 <span class="orcid-error" *ngFor='let error of deprecateRecordParams.deprecatedAccount.errors' [innerHTML]="error"></span><br />
             </div>
         </div>              
@@ -167,7 +171,7 @@
         <div class="form-group">
             <label for="primary"><@orcid.msg 'admin.profile_deprecation.primary' /></label>
             <input type="text" id="primary" [(ngModel)]="deprecateRecordParams.primaryAccount.orcid" (keyup.enter)="confirmDeprecate()" placeholder="<@orcid.msg 'admin.profile_deprecation.placeholder.primary_account' />" class="input-xlarge">                                    
-            <div *ngIf="deprecateRecordParams.primaryAccount.errors?.length > 0">
+            <div *ngIf="deprecateRecordParams.primaryAccount.errors?.length > 0 && showDeprecateRecordMessages">
                 <span class="orcid-error" *ngFor='let error of deprecateRecordParams.primaryAccount.errors' [innerHTML]="error"></span><br />
             </div>
         </div>        
@@ -175,7 +179,7 @@
             <span id="bottom-confirm-deprecate-record" (click)="confirmDeprecate()" class="btn btn-primary"><@orcid.msg 'admin.profile_deprecation.deprecate_account'/></span>
         </div>
         <br>
-        <div class="form-group" *ngIf="deprecateRecordParams.successMessage != null && deprecateRecordParams.successMessage != ''">
+        <div class="form-group" *ngIf="deprecateRecordParams.successMessage != null && deprecateRecordParams.successMessage != '' && showDeprecateRecordMessages">
             <h3><@orcid.msg 'admin.success'/></h3>
             <p id="success-message">{{deprecateRecordParams.successMessage}}</p>  
             <div class="control-group">
@@ -233,14 +237,16 @@
         <a *ngIf="!showDeactivateRecord" (click)="showDeactivateRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.profile_deactivation' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showDeactivateRecord">
-        <div class="alert alert-success" *ngIf="deactivateResults.success?.length > 0"><@spring.message "admin.profile_deactivation.deactivation_success"/>
-            <br>{{deactivateResults.success}}
-        </div>
-        <div class="alert alert-success" *ngIf="deactivateResults.alreadyDeactivated?.length > 0"><@spring.message "admin.profile_deactivation.already_deactivated"/>
-            <br>{{deactivateResults.alreadyDeactivated}}
-        </div>
-        <div class="alert alert-success" *ngIf="deactivateResults.notFoundList?.length > 0"><@spring.message "admin.profile_deactivation.not_found"/>
-            <br>{{deactivateResults.notFoundList}}
+        <div *ngIf="showDeactivateRecordMessages">
+            <div class="alert alert-success" *ngIf="deactivateResults.success?.length > 0"><@spring.message "admin.profile_deactivation.deactivation_success"/>
+                <br>{{deactivateResults.success}}
+            </div>
+            <div class="alert alert-success" *ngIf="deactivateResults.alreadyDeactivated?.length > 0"><@spring.message "admin.profile_deactivation.already_deactivated"/>
+                <br>{{deactivateResults.alreadyDeactivated}}
+            </div>
+            <div class="alert alert-success" *ngIf="deactivateResults.notFoundList?.length > 0"><@spring.message "admin.profile_deactivation.not_found"/>
+                <br>{{deactivateResults.notFoundList}}
+            </div>
         </div>
         <div class="form-group">
             <label for="orcidIds"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
@@ -267,11 +273,13 @@
             <label for="email"><@orcid.msg 'admin.profile_reactivation.primary_email' /></label>
             <input type="text" id="email" (keyup.enter)="showReactivateRecordConfirm = true" [(ngModel)]="elementToReactivate.email" placeholder="<@orcid.msg 'admin.profile_reactivation.placeholder.primary_email' />" class="input-xlarge" />
         </div>
-        <div *ngIf="elementToReactivate.errors?.length > 0">
-            <span class="orcid-error" *ngFor='let error of elementToReactivate.errors' [innerHTML]="error"></span><br />
-        </div>
-        <div *ngIf="elementToReactivate.status != null && elementToReactivate.status != ''">
-            <span class="orcid-error">{{elementToReactivate.status}}</span><br />
+        <div *ngIf="showReactivateRecordMessages">
+            <div *ngIf="elementToReactivate.errors?.length > 0">
+                <span class="orcid-error" *ngFor='let error of elementToReactivate.errors' [innerHTML]="error"></span><br />
+            </div>
+            <div *ngIf="elementToReactivate.status != null && elementToReactivate.status != ''">
+                <span class="orcid-error">{{elementToReactivate.status}}</span><br />
+            </div>
         </div>
         <div class="controls save-btns pull-left" *ngIf="!showReactivateRecordConfirm">
             <span id="deactivate-btn" (click)="showReactivateRecordConfirm = true" class="btn btn-primary"><@orcid.msg 'admin.profile_reactivation.reactivate_account'/></span>                       
@@ -291,17 +299,19 @@
         <a *ngIf="!showLockRecord" (click)="showLockRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lock_profile' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showLockRecord">
-        <div class="alert alert-success" *ngIf="lockResults.notFound?.length > 0"><@spring.message "admin.profile_lock.not_found"/>
-            <br>{{lockResults.notFound}}
-        </div>
-        <div class="alert alert-success" *ngIf="lockResults.alreadyLocked?.length > 0"><@spring.message "admin.profile_lock.already_locked"/>
-            <br>{{lockResults.alreadyLocked}}
-        </div>
-        <div class="alert alert-success" *ngIf="lockResults.reviewed?.length > 0"><@spring.message "admin.profile_lock.reviewed"/>
-            <br>{{lockResults.reviewed}}
-        </div>
-        <div class="alert alert-success" *ngIf="lockResults.successful?.length > 0"><@spring.message "admin.profile_lock.lock_success"/>
-            <br>{{lockResults.successful}}
+        <div *ngIf="showLockRecordMessages">
+            <div class="alert alert-success" *ngIf="lockResults.notFound?.length > 0"><@spring.message "admin.profile_lock.not_found"/>
+                <br>{{lockResults.notFound}}
+            </div>
+            <div class="alert alert-success" *ngIf="lockResults.alreadyLocked?.length > 0"><@spring.message "admin.profile_lock.already_locked"/>
+                <br>{{lockResults.alreadyLocked}}
+            </div>
+            <div class="alert alert-success" *ngIf="lockResults.reviewed?.length > 0"><@spring.message "admin.profile_lock.reviewed"/>
+                <br>{{lockResults.reviewed}}
+            </div>
+            <div class="alert alert-success" *ngIf="lockResults.successful?.length > 0"><@spring.message "admin.profile_lock.lock_success"/>
+                <br>{{lockResults.successful}}
+            </div>
         </div>
         <div class="control-group">
             <label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
@@ -324,15 +334,17 @@
         <a *ngIf="!showUnlockRecord" (click)="showUnlockRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showUnlockRecord">
-        <div class="alert alert-success" *ngIf="unlockResults.notFound?.length > 0"><@spring.message "admin.profile_unlock.not_found"/>
-            <br>{{unlockResults.notFound}}
+        <div *ngIf="showUnlockRecordMessages">
+            <div class="alert alert-success" *ngIf="unlockResults.notFound?.length > 0"><@spring.message "admin.profile_unlock.not_found"/>
+                <br>{{unlockResults.notFound}}
+            </div>
+            <div class="alert alert-success" *ngIf="unlockResults.alreadyUnlocked?.length > 0"><@spring.message "admin.profile_unlock.already_unlocked"/>
+                <br>{{unlockResults.alreadyUnlocked}}
+            </div>
+            <div class="alert alert-success" *ngIf="unlockResults.successful?.length > 0"><@spring.message "admin.profile_unlock.unlock_success"/>
+                <br>{{unlockResults.successful}}
+            </div>
         </div>
-        <div class="alert alert-success" *ngIf="unlockResults.alreadyUnlocked?.length > 0"><@spring.message "admin.profile_unlock.already_unlocked"/>
-            <br>{{unlockResults.alreadyUnlocked}}
-        </div>
-        <div class="alert alert-success" *ngIf="unlockResults.successful?.length > 0"><@spring.message "admin.profile_unlock.unlock_success"/>
-            <br>{{unlockResults.successful}}
-        </div>        
         <div class="form-group">
             <label for="orcid_to_unlock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
             <input type="text" id="orcid_to_unlock" (keyup.enter)="unlockRecords()" [(ngModel)]="ids" placeholder="<@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' />" class="input-xlarge" />
@@ -350,15 +362,17 @@
         <a *ngIf="!showReviewRecord" (click)="showReviewRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.review_profile' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showReviewRecord">
-        <div class="alert alert-success" *ngIf="reviewResults.notFound?.length > 0"><@spring.message "admin.profile_review.not_found"/>
-            <br>{{reviewResults.notFound}}
+        <div *ngIf="showReviewRecordMessages">
+            <div class="alert alert-success" *ngIf="reviewResults.notFound?.length > 0"><@spring.message "admin.profile_review.not_found"/>
+                <br>{{reviewResults.notFound}}
+            </div>
+            <div class="alert alert-success" *ngIf="reviewResults.alreadyReviewed?.length > 0"><@spring.message "admin.profile_review.already_reviewed"/>
+                <br>{{reviewResults.alreadyReviewed}}
+            </div>
+            <div class="alert alert-success" *ngIf="reviewResults.successful?.length > 0"><@spring.message "admin.profile_review.review_success"/>
+                <br>{{reviewResults.successful}}
+            </div>
         </div>
-        <div class="alert alert-success" *ngIf="reviewResults.alreadyReviewed?.length > 0"><@spring.message "admin.profile_review.already_reviewed"/>
-            <br>{{reviewResults.alreadyReviewed}}
-        </div>
-        <div class="alert alert-success" *ngIf="reviewResults.successful?.length > 0"><@spring.message "admin.profile_review.review_success"/>
-            <br>{{reviewResults.successful}}
-        </div>        
         <div class="form-group">
             <label for="orcid_to_review"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
             <input type="text" id="orcid_to_review" (keyup.enter)="reviewRecords()" [(ngModel)]="ids" placeholder="<@orcid.msg 'admin.review_profile.orcid_ids_or_emails' />" class="input-xlarge" />
@@ -376,15 +390,17 @@
         <a *ngIf="!showUnreviewRecord" (click)="showUnreviewRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showUnreviewRecord">
-        <div class="alert alert-success" *ngIf="unreviewResults.notFound?.length > 0"><@spring.message "admin.profile_unreview.not_found"/>
-            <br>{{unreviewResults.notFound}}
+        <div *ngIf="showUnreviewRecordMessages">
+            <div class="alert alert-success" *ngIf="unreviewResults.notFound?.length > 0"><@spring.message "admin.profile_unreview.not_found"/>
+                <br>{{unreviewResults.notFound}}
+            </div>
+            <div class="alert alert-success" *ngIf="unreviewResults.alreadyUnreviewed?.length > 0"><@spring.message "admin.profile_unreview.already_unreviewed"/>
+                <br>{{unreviewResults.alreadyUnreviewed}}
+            </div>
+            <div class="alert alert-success" *ngIf="unreviewResults.successful?.length > 0"><@spring.message "admin.profile_unreview.unreview_success"/>
+                <br>{{unreviewResults.successful}}
+            </div>
         </div>
-        <div class="alert alert-success" *ngIf="unreviewResults.alreadyUnreviewed?.length > 0"><@spring.message "admin.profile_unreview.already_unreviewed"/>
-            <br>{{unreviewResults.alreadyUnreviewed}}
-        </div>
-        <div class="alert alert-success" *ngIf="unreviewResults.successful?.length > 0"><@spring.message "admin.profile_unreview.unreview_success"/>
-            <br>{{unreviewResults.successful}}
-        </div>        
         <div class="form-group">
             <label for="orcid_to_unreview"><@orcid.msg 'admin.review_profile.orcid_ids_or_emails' /></label>
             <input type="text" id="orcid_to_unreview" (keyup.enter)="unreviewRecords()" [(ngModel)]="ids" placeholder="<@orcid.msg 'admin.review_profile.orcid_ids_or_emails' />" class="input-xlarge" />
@@ -427,15 +443,17 @@
         <a *ngIf="!showResendClaimEmail" (click)="showResendClaimEmail = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.resend_claim.title' /></a>
     </p>
     <div class="collapsible bottom-margin-small admin-modal" *ngIf="showResendClaimEmail">
-        <div class="alert alert-success" *ngIf="resendClaimResults.notFound?.length > 0"><@spring.message "admin.resend_claim.not_found"/>
-            <br>{{resendClaimResults.notFound}}
+        <div *ngIf="showResendClaimEmailMessages">
+            <div class="alert alert-success" *ngIf="resendClaimResults.notFound?.length > 0"><@spring.message "admin.resend_claim.not_found"/>
+                <br>{{resendClaimResults.notFound}}
+            </div>
+            <div class="alert alert-success" *ngIf="resendClaimResults.alreadyClaimed?.length > 0"><@spring.message "admin.resend_claim.already_claimed"/>
+                <br>{{resendClaimResults.alreadyClaimed}}
+            </div>
+            <div class="alert alert-success" *ngIf="resendClaimResults.successful?.length > 0"><@spring.message "admin.resend_claim.sent_success"/>
+                <br>{{resendClaimResults.successful}}
+            </div>
         </div>
-        <div class="alert alert-success" *ngIf="resendClaimResults.alreadyClaimed?.length > 0"><@spring.message "admin.resend_claim.already_claimed"/>
-            <br>{{resendClaimResults.alreadyClaimed}}
-        </div>
-        <div class="alert alert-success" *ngIf="resendClaimResults.successful?.length > 0"><@spring.message "admin.resend_claim.sent_success"/>
-            <br>{{resendClaimResults.successful}}
-        </div>        
         <div class="form-group">
             <label for="orcid_to_unreview"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
             <input type="text" id="orcid_to_unreview" (keyup.enter)="resendClaimEmail()" [(ngModel)]="ids" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />

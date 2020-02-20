@@ -71,11 +71,11 @@
 	geonames:countryCode	"MD" ;
 	rdfs:label	"Moldova" ,
 		"Republic of Moldova" .
-<http://sws.geonames.org/718075/>	geonames:name	"Republic of Macedonia" ,
-		"Macedonia" ;
+<http://sws.geonames.org/718075/>	geonames:name	"Republic of North Macedonia" ,
+		"North Macedonia" ;
 	geonames:countryCode	"MK" ;
 	rdfs:label	"Republic of Macedonia" ,
-		"Macedonia" .
+		"Republic of North Macedonia" .
 <http://sws.geonames.org/433561/>	geonames:name	"Republic of Burundi" ,
 		"Burundi" ;
 	geonames:countryCode	"BI" ;
