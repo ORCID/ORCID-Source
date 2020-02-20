@@ -429,7 +429,7 @@ $(function() {
     // foo)
     if (location == parent.location) {
         checkOrcidLoggedIn();
-        setInterval(checkOrcidLoggedIn, 15000);
+        setInterval(checkOrcidLoggedIn, 30000);
     }
 
     // track when deactived people are pushed to signin page
