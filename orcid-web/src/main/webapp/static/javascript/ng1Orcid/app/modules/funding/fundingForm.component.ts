@@ -122,8 +122,8 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 if(datum.region){
                     forDisplay += ", " + datum.region;
                 }
-                if (datum.orgType != null && datum.orgType.trim() != ''){
-                    forDisplay += ", " + datum.orgType;
+                if (datum.country != null && datum.country.trim() != ''){
+                    forDisplay += datum.city == null && datum.region == null ? " " + datum.country : ", " + datum.country;
                 }
                 forDisplay += '</span><hr />';
 

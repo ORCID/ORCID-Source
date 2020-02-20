@@ -187,12 +187,15 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                 var forDisplay =
                     '<span style=\'white-space: nowrap; font-weight: bold;\'>' + datum.value+ '</span>'
                     +'<span style=\'font-size: 80%;\'>'
-                    + ' <br />' + datum.city;
+                    + ' <br />';
+                if(datum.city){
+                    forDisplay += datum.city;
+                }
                 if(datum.region){
                     forDisplay += ", " + datum.region;
                 }
                 if (datum.country != null && datum.country.trim() != ''){
-                    forDisplay += ", " + datum.country;
+                    forDisplay += datum.city == null && datum.region == null ? " " + datum.country : ", " + datum.country;
                 }
                 forDisplay += '</span><hr />';
                 return forDisplay;
