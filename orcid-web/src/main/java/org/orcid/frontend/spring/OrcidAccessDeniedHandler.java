@@ -20,13 +20,13 @@ public class OrcidAccessDeniedHandler extends AccessDeniedHandlerImpl {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         if (accessDeniedException != null) {
             if (CsrfException.class.isAssignableFrom(accessDeniedException.getClass())) {
-                String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
                 String path = request.getRequestURL().toString();
-                LOGGER.error("Path: {} Session: {} Message: {}", new Object[] { path, sessionId, accessDeniedException.getMessage() });
                 if (path.endsWith("/userStatus.json")) {
                     response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
                     response.getWriter().println("{\"loggedIn\":false}");
                 } else {
+                    String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
+                    LOGGER.error("Path: {} Session: {} Message: {}", new Object[] { path, sessionId, accessDeniedException.getMessage() });
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.getWriter().println("<html><head><title>Oops an error happened!</title></head>");
                     response.getWriter().println("<body>403</body>");
