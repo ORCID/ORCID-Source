@@ -1,0 +1,9 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="Daniel Palafox" id="UPDATE-COUNTRY-NAME-BASED-ON-ISO" dbms="postgresql">
+        <sql>UPDATE country_reference_data SET country_name = 'NORTH MACEDONIA, Republic of North Macedonia', last_modified=now() WHERE country_iso_code = 'MK';</sql>
+    </changeSet>
+
+</databaseChangeLog>

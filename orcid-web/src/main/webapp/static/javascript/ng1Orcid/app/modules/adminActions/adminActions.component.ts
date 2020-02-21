@@ -42,17 +42,20 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showResetPasswordConfirm: boolean;
     resetPasswordSuccess: boolean;
     emailAddressVerified: boolean;
-    
+    showResetPasswordMessages: boolean;
+
     // Verify email
     showVerifyEmail: boolean;
     emailToVerify: string;
     verifyEmailMessage: string;
+    verifyEmailMessageShowMessages: boolean;
     
     // Add delegates
     showAddDelegates: boolean;
     trustedVerified: boolean;
     managedVerified: boolean;
     addDelegateParams: any;
+    showAddDelegatesMessages: boolean;
     
     orcidOrEmail: string;
     
@@ -60,41 +63,50 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showDeprecateRecord: boolean;
     showDeprecateRecordConfirm: boolean;
     deprecateRecordParams: any;
-    
+    showDeprecateRecordMessages: boolean;
+
     // Deactivate record
     showDeactivateRecord: boolean;
     deactivateResults: any;
-    
+    showDeactivateRecordMessages: boolean;
+
     // Reactivate record
     showReactivateRecord: boolean;
     showReactivateRecordConfirm: boolean;
     elementToReactivate: any;
-    
+    showReactivateRecordMessages: boolean;
+
     // Lock record
     lockReasons: any;
     showLockRecord: boolean;
     lockRecordsParams: any;
     lockResults: any;
-    
+    showLockRecordMessages: boolean;
+
     // Unlock record
     showUnlockRecord: boolean;
     unlockResults: any;
+    showUnlockRecordMessages: boolean;
 
     // Review record
     showReviewRecord: boolean;
     reviewResults: any;
-    
+    showReviewRecordMessages: boolean;
+
     // Unreview record
     showUnreviewRecord: boolean;
     unreviewResults: any;
-    
+    showUnreviewRecordMessages: boolean;
+
     // Lookup ids or emails
     showLookupIdOrEmail: boolean;
     idsString: string;
-    
+    showLookupIdOrEmailMessages: boolean;
+
     // Resend claim email
     showResendClaimEmail: boolean;
     resendClaimResults: any;
+    showResendClaimEmailMessages: boolean;
     
     // General
     ids: string;
@@ -116,45 +128,55 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showResetPasswordConfirm = false;
         this.resetPasswordSuccess = false;
         this.emailAddressVerified = false;
-    
+        this.showResetPasswordMessages = false;
+
         this.showVerifyEmail = false;
         this.verifyEmailMessage = null;
-        
+        this.verifyEmailMessageShowMessages = false;
+
         this.showAddDelegates = false;
         this.trustedVerified = false;
         this.managedVerified = false;
         this.addDelegateParams = {trusted : {errors: [], value: ''}, managed : {errors: [], value: ''}};
-        
+        this.showAddDelegatesMessages = false;
+
         this.showDeprecateRecord = false;
         this.showDeprecateRecordConfirm = false;
         this.deprecateRecordParams = {deprecatedAccount : {errors: [], orcid:''}, primaryAccount : {errors: [], orcid:''}, errors: []};
-    
+        this.showDeprecateRecordMessages = false;
         this.showDeactivateRecord = false;
         this.deactivateResults = {};
-        
+        this.showDeactivateRecordMessages = false;
+
         this.showReactivateRecord =  false;
         this.showReactivateRecordConfirm = false;
         this.elementToReactivate = {errors: [], orcid:'', email:''};
-    
+        this.showReactivateRecordMessages = false;
+
         this.showLockRecord = false;
         this.lockResults = {};
         this.lockRecordsParams = {orcidsToLock:'', lockReason:'', description:''};
-        
-        this.showUnlockRecord = false;        
+        this.showLockRecordMessages = false;
+
+        this.showUnlockRecord = false;
         this.unlockResults = {};
-        
+        this.showUnlockRecordMessages = false;
+
         this.showReviewRecord = false;
         this.reviewResults = {};
-        
+        this.showReviewRecordMessages = false;
+
         this.showUnreviewRecord = false;
         this.unreviewResults = {};
+        this.showUnreviewRecordMessages = false;
         
         this.showLookupIdOrEmail = false;
         this.idsString = '';
-        
+
         this.showResendClaimEmail = false;
         this.resendClaimResults = {};
-        
+        this.showResendClaimEmailMessages = false;
+
         // General
         this.ids = '';
         
@@ -169,7 +191,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.lockReasons = data;
-                this.lockRecordsParams.lockReason = data[0];                
+                this.lockRecordsParams.lockReason = data[0];
+                this.showLockRecordMessages = true;
+                setTimeout (() => {
+                    this.showLockRecordMessages = false;
+                }, 3000)
             },
             error => {
                 console.log('admin: getLockReasons error', error);
@@ -291,6 +317,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.resetPasswordSuccess = true;
                     this.emailAddressVerified = false;
                 }
+                this.showResetPasswordMessages = true;
+                setTimeout (() => {
+                    this.showResetPasswordMessages = false;
+                }, 3000)
             },
             error => {
                 console.log('admin: resetPassword error', error);
@@ -307,6 +337,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.emailToVerify = '';
                 this.verifyEmailMessage = data;
+                this.verifyEmailMessageShowMessages = true;
+                setTimeout (() => {
+                    this.verifyEmailMessageShowMessages = false;
+                }, 3000)
             },
             error => {
                 console.log('admin: verifyEmail error', error);
@@ -322,6 +356,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {                
                 this.addDelegateParams = data;
+                this.showAddDelegatesMessages = true;
+                setTimeout (() => {
+                    this.showAddDelegatesMessages = false;
+                }, 3000)
             },
             error => {
                 console.log('admin: verifyEmail error', error);
@@ -358,6 +396,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 if(this.deprecateRecordParams.errors.length == 0) {
                     this.showDeprecateRecordConfirm = false;                    
                 }
+                this.showDeprecateRecordMessages = true;
+                setTimeout (() => {
+                    this.showDeprecateRecordMessages = false;
+                }, 3000);
             },
             error => {
                 console.log('admin: confirmDeprecate error', error);
@@ -378,7 +420,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.deactivateResults = data;                
+                this.deactivateResults = data;
+                this.showDeactivateRecordMessages = true;
+                setTimeout (() => {
+                    this.showDeactivateRecordMessages = false;
+                }, 3000);
             },
             error => {
                 console.log('admin: deactivateRecord error', error);
@@ -394,7 +440,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.elementToReactivate = data; 
-                this.showReactivateRecordConfirm = false;                
+                this.showReactivateRecordConfirm = false;
+                this.showReactivateRecordMessages = true;
+                setTimeout (() => {
+                    this.showReactivateRecordMessages = false;
+                }, 3000);
             },
             error => {
                 console.log('admin: reactivateRecord error', error);
@@ -414,7 +464,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.lockResults = data;                              
+                this.lockResults = data;
+                this.showLockRecordMessages = true;
+                setTimeout (() => {
+                    this.showLockRecordMessages = false;
+                }, 3000);
             },
             error => {
                 console.log('admin: lockRecords error', error);
@@ -429,7 +483,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.unlockResults = data;                              
+                this.unlockResults = data;
+                this.showUnlockRecordMessages = true;
+                setTimeout (() => {
+                    this.showUnlockRecordMessages = false;
+                }, 3000);
             },
             error => {
                 console.log('admin: lockRecords error', error);
@@ -444,11 +502,15 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.reviewResults = data;                              
+                this.reviewResults = data;
+                this.showReviewRecordMessages = true;
+                setTimeout (() => {
+                    this.showReviewRecordMessages = false;
+                }, 3000);
             },
             error => {
                 console.log('admin: reviewRecords error', error);
-            } 
+            }
         );
     };
     
@@ -459,7 +521,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.unreviewResults = data;                              
+                this.unreviewResults = data;
+                this.showUnreviewRecordMessages = true;
+                setTimeout (() => {
+                    this.showUnreviewRecordMessages = false;
+                }, 3000);
             },
             error => {
                 console.log('admin: unreviewRecords error', error);
@@ -489,7 +555,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         )
         .subscribe(
             data => {
-                this.resendClaimResults = data;                
+                this.resendClaimResults = data;
+                this.showResendClaimEmailMessages = true;
+                setTimeout (() => {
+                    this.showResendClaimEmailMessages = false;
+                }, 3000);
             },
             error => {
                 console.log('admin: lookupIdOrEmails error', error);
@@ -525,7 +595,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     }
-    
+
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
