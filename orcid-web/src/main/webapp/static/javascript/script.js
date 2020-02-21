@@ -373,13 +373,13 @@ function checkOrcidLoggedIn() {
             }).fail(
             // detects server is down or CSRF mismatches
             // do to session expiration or server bounces
-            function(e) {
+            function(xhr, status, error) {
                 console.log("error with loggin check on :"
                         + window.location.href);
-                logAjaxError(e);
+                logAjaxError(xhr);
                 // for some slow OAuth code redirects this is hit while 
                 // people are signing in. Ingore if singing in.
-                if (!signinLocked)
+                if (!signinLocked && xhr.status == 205)
                      window.location.reload(true);
             });            
         }
