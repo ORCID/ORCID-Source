@@ -289,6 +289,6 @@
 	<include file="/db/updates/add_action_type_and_additional_info_to_notification_item.xml" />
 	<include file="/db/updates/add_comments_and_paused_columns_to_email_schedule.xml" />
 	<include file="/db/updates/org_unique_constraints_add_disambiguated_org_all_dbms.xml" />
-	<!-- <include file="/db/updates/org_not_null_constraints.xml" /> -->
+	<include file="/db/updates/org_not_null_constraints.xml" />
     <include file="/db/updates/update_country_name_based_on_iso.xml" />
 </databaseChangeLog>
