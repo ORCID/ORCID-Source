@@ -21,7 +21,7 @@ XML for the ```permission``` notifications follows the [notification-permission-
 
 Consists of one or more ```notification:item``` elements, which contain the following sub-elements:
 
-- **notification:item-type**: The type of ORCID item represented by this ```item``` element. Choosen from the following: ```education```, ```employment```, ```funding```, or ```work```.
+- **notification:item-type**: The type of ORCID item represented by this ```item``` element. Choosen from the following: ```education```, ```employment```, ```funding```, ```work```, or ```peer-review```.
 
 - **notification:item-name**: DISPLAYED TO END USER. The name that should be shown to the end user to describe the item. This field is usually the name of the item that might be added once permission is granted (for example, the title of an article), but it also could include other identifying information, for example, _"Article Title (as published in journal ABC)"_, where "(as published in journal ABC)" is additional infomration that the client application would like to present to the user.
 

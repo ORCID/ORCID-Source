@@ -115,7 +115,7 @@ Example response
 
  The number of matching records is returned in the num-found field in the results.
 
- 100 results are returned by default, up to 200 results can be returned with one query using paging -see examples.
+ 1000 results are returned by default, up to 1000 results can be returned with one query using paging -see examples.
 
  Like all API calls, search queries are restricted by the [API limits](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web#api-limits).
 
