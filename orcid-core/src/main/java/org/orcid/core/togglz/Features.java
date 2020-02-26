@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label ("Change language without calling the backend")
+    CHANGE_LANGUAGE_WITHOUT_EXTRA_BACKEND_CALL,
+    
     @Label("Orcid Angular Search")
     ORCID_ANGULAR_SEARCH,
 
