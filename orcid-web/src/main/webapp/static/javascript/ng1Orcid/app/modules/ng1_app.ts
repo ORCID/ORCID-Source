@@ -222,7 +222,16 @@ import { FooterModule }
 
 import { MaintenanceMessageModule } 
     from './maintenanceMessage/maintenanceMessage';
-    
+
+import { SpamModule }
+    from "./spam/spam";
+
+import { SpamSuccessMessageModule }
+    from './spamSuccessMessage/spamSuccessMessage';
+
+import { SpamErrorMessageModule }
+    from './spamErrorMessage/spamErrorMessage';
+
 export const orcidApp = angular.module(
     'orcidApp', 
     [
@@ -299,6 +308,9 @@ export const orcidApp = angular.module(
         HtmlHeadModule.name,
         OauthHeaderModule.name,
         FooterModule.name,
-        MaintenanceMessageModule.name
+        MaintenanceMessageModule.name,
+        SpamModule.name,
+        SpamSuccessMessageModule.name,
+        SpamErrorMessageModule.name
     ]
 );

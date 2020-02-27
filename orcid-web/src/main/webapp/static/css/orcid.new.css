@@ -9969,3 +9969,11 @@ works-ng2 mat-paginator .mat-paginator-container {
     width: 47px;
     cursor: pointer;
 }
+
+.spam-button {
+    float: right;
+}
+
+.spam-button-left {
+    float: left;
+}

@@ -323,4 +323,13 @@ export class CommonService {
     getEmailFrequencyOptions(): Observable<any> {
         return this.http.get(getBaseUri() + '/manage/emailFrequencyOptions.json');
     }
+
+    getPublicOrcidId(): string {
+        var path = window.location.pathname;
+        this.isPublicPage = this.publicPageRegex.test(path);
+        if(this.isPublicPage) {
+            return path.match(this.orcidRegex)[0];
+        }
+        return null;
+    }
 }
