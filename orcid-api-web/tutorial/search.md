@@ -250,19 +250,6 @@ Example response
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <expanded-search:expanded-search num-found="4" xmlns:expanded-search="http://www.orcid.org/ns/expanded-search">
     <expanded-search:expanded-result>
-        <expanded-search:orcid-id>0000-0003-1692-1499</expanded-search:orcid-id>
-        <expanded-search:given-names>Darryl</expanded-search:given-names>
-        <expanded-search:family-names>Blackburn</expanded-search:family-names>
-        <expanded-search:institution-name>Test Inst</expanded-search:institution-name>
-        <expanded-search:institution-name>Test Inst</expanded-search:institution-name>
-        <expanded-search:institution-name>Australasian Urological Foundation</expanded-search:institution-name>
-    </expanded-search:expanded-result>
-    <expanded-search:expanded-result>
-        <expanded-search:orcid-id>0000-0002-4004-8530</expanded-search:orcid-id>
-        <expanded-search:given-names>Darryl</expanded-search:given-names>
-        <expanded-search:family-names>Blackburn</expanded-search:family-names>
-    </expanded-search:expanded-result>
-    <expanded-search:expanded-result>
         <expanded-search:orcid-id>0000-0002-7024-3038</expanded-search:orcid-id>
         <expanded-search:given-names>Rob</expanded-search:given-names>
         <expanded-search:family-names>Blackburn</expanded-search:family-names>
@@ -277,12 +264,7 @@ Example response
         <expanded-search:institution-name>Stilton Manufacturing</expanded-search:institution-name>
         <expanded-search:institution-name>common:name</expanded-search:institution-name>
     </expanded-search:expanded-result>
-    <expanded-search:expanded-result>
-        <expanded-search:orcid-id>0000-0001-7198-421X</expanded-search:orcid-id>
-        <expanded-search:given-names>Elizabeth</expanded-search:given-names>
-        <expanded-search:family-names>Blackburn</expanded-search:family-names>
-    </expanded-search:expanded-result>
-</expanded-search:expanded-search>
+...
  ```
 
 ## Example search queries
