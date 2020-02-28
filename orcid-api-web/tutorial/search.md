@@ -219,6 +219,72 @@ The first part of the response to the above query would look something like this
 
 &ast; For a full list of external identifiers see the [identifiers list](https://pub.sandbox.orcid.org/v3.0/identifiers?locale=en). Some identifiers may require "-self" or "-part-of"  to return results.
 
+## Expanded search
+
+In addition to the basic search, the expanded search end point `expanded-search` is available. This is available in 3.0 API only. Using this endpoint returns the additional information 
+`orcid-id`
+`given-names`
+`family-names`
+`creditName`
+`other-name`
+`email`
+`institution-name` when using the standard search syntax. Results can be returned in either XML or JSON. 
+### Public API expanded search 
+| Option| Value        |
+|--------------------|--------------------------|
+| URL 				| https<i></i>://pub.sandbox.orcid.org/[version]/expanded-search/?=[query]|
+| method    | GET |
+| header    | Content-Type: application/orcid+xml OR  Content-Type: application/orcid+json|
+| header    | Authorization: Bearer [Your access token]|
+
+
+**Curl example:**
+
+```
+curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v3.0/expanded-search/?q=blackburn' -i
+```
+
+Example response
+
+```
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<expanded-search:expanded-search num-found="4" xmlns:expanded-search="http://www.orcid.org/ns/expanded-search">
+    <expanded-search:expanded-result>
+        <expanded-search:orcid-id>0000-0003-1692-1499</expanded-search:orcid-id>
+        <expanded-search:given-names>Darryl</expanded-search:given-names>
+        <expanded-search:family-names>Blackburn</expanded-search:family-names>
+        <expanded-search:institution-name>Test Inst</expanded-search:institution-name>
+        <expanded-search:institution-name>Test Inst</expanded-search:institution-name>
+        <expanded-search:institution-name>Australasian Urological Foundation</expanded-search:institution-name>
+    </expanded-search:expanded-result>
+    <expanded-search:expanded-result>
+        <expanded-search:orcid-id>0000-0002-4004-8530</expanded-search:orcid-id>
+        <expanded-search:given-names>Darryl</expanded-search:given-names>
+        <expanded-search:family-names>Blackburn</expanded-search:family-names>
+    </expanded-search:expanded-result>
+    <expanded-search:expanded-result>
+        <expanded-search:orcid-id>0000-0002-7024-3038</expanded-search:orcid-id>
+        <expanded-search:given-names>Rob</expanded-search:given-names>
+        <expanded-search:family-names>Blackburn</expanded-search:family-names>
+        <expanded-search:creditName>Kårlsbeârd The Gnöme</expanded-search:creditName>
+        <expanded-search:email>rob21may@mailinator.com</expanded-search:email>
+        <expanded-search:institution-name>ORCID</expanded-search:institution-name>
+        <expanded-search:institution-name>common:name</expanded-search:institution-name>
+        <expanded-search:institution-name>Museum Siam Discovery Museum</expanded-search:institution-name>
+        <expanded-search:institution-name>Highland Fine Cheeses (United Kingdom)</expanded-search:institution-name>
+        <expanded-search:institution-name>Glamorgan Cake Institute</expanded-search:institution-name>
+        <expanded-search:institution-name>Stilton Manufacturing</expanded-search:institution-name>
+        <expanded-search:institution-name>Stilton Manufacturing</expanded-search:institution-name>
+        <expanded-search:institution-name>common:name</expanded-search:institution-name>
+    </expanded-search:expanded-result>
+    <expanded-search:expanded-result>
+        <expanded-search:orcid-id>0000-0001-7198-421X</expanded-search:orcid-id>
+        <expanded-search:given-names>Elizabeth</expanded-search:given-names>
+        <expanded-search:family-names>Blackburn</expanded-search:family-names>
+    </expanded-search:expanded-result>
+</expanded-search:expanded-search>
+ ```
+
 ## Example search queries
 
 ### Example 1
@@ -261,6 +327,13 @@ Paging: First 10 rows only
 
 URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=family-name:Einstein+AND+keyword:Relativity&start=0&rows=10```
 
+Same search but with expanded search (3.0 API only)
+
+Syntax: Lucene
+
+Paging: First 10 rows only
+
+URL: ```https://pub.sandbox.orcid.org/v3.0/expanded-search/?q=family-name:Einstein+AND+keyword:Relativity&start=0&rows=10```
 ### Example 5
 
 Description: Search for records with the Family name Taylor and the given-name Michael.
@@ -300,6 +373,13 @@ Description: Search for records with the exact DOI 10.1087/20120404 set to self
 Paging: Default
 
 URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=doi-self:%2210.1087/20120404%22```
+
+The same search but with expanded search (3.0 API only):
+
+Paging: Default
+
+URL: ```https://pub.sandbox.orcid.org/v3.0/expanded-search/?q=doi-self:%2210.1087/20120404%22```
+
 
 ### Example 9
 
