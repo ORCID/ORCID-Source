@@ -221,7 +221,7 @@ The first part of the response to the above query would look something like this
 
 ## Expanded search
 
-In addition to the basic search, the expanded search end point `expanded-search` is available. This is available in 3.0 API only. Using this endpoint returns the additional information 
+In addition to the basic search, the expanded search end point `expanded-search` is available. This is available in **3.0 API only**. Using this endpoint returns the information: 
 `orcid-id`
 `given-names`
 `family-names`
@@ -232,7 +232,7 @@ In addition to the basic search, the expanded search end point `expanded-search`
 ### Public API expanded search 
 | Option| Value        |
 |--------------------|--------------------------|
-| URL 				| https<i></i>://pub.sandbox.orcid.org/[version]/expanded-search/?=[query]|
+| URL 				| https<i></i>://pub.sandbox.orcid.org/v3.0/expanded-search/?=[query]|
 | method    | GET |
 | header    | Content-Type: application/orcid+xml OR  Content-Type: application/orcid+json|
 | header    | Authorization: Bearer [Your access token]|
