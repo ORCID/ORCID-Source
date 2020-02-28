@@ -81,6 +81,7 @@ import org.orcid.jaxb.model.v3.release.record.ResearchResourceItem;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.SourceAware;
+import org.orcid.jaxb.model.v3.release.record.Spam;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
@@ -132,6 +133,7 @@ import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
+import org.orcid.persistence.jpa.entities.SpamEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -1167,6 +1169,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         return mapperFactory.getMapperFacade();
     }
 
+
+    public MapperFacade getSpamMapperFacade() {
+        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
+        ClassMapBuilder<Spam, SpamEntity> classMap = mapperFactory.classMap(Spam.class, SpamEntity.class);                       
+        classMap.fieldBToA("sourceType", "sourceType");
+        classMap.fieldBToA("spamCounter", "spamCounter");
+        classMap.field("reportedDate.value", "reportedDate");
+        addV3DateFields(classMap);
+        classMap.byDefault();
+        classMap.register();
+        return mapperFactory.getMapperFacade();
+    }
+    
+    
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
         return builder.field("createdDate", "dateCreated").field("putCode", "id").byDefault();
     }

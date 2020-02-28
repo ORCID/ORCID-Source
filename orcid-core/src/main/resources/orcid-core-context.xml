@@ -1612,4 +1612,13 @@
         
     <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser" />
 
+	<bean id="spamManager" class="org.orcid.core.manager.v3.impl.SpamManagerImpl"/>
+
+	<bean id="spamManagerReadOnly" class="org.orcid.core.manager.v3.read_only.impl.SpamManagerReadOnlyImpl"/>
+
+	<bean id="spamMapperFacade" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getSpamMapperFacade"/>
+	
+	<bean id="jpaJaxbSpamAdapter" class="org.orcid.core.adapter.v3.impl.JpaJaxbSpamAdapterImpl">
+		<property name="mapperFacade" ref="spamMapperFacade"/>
+	</bean>
 </beans>
