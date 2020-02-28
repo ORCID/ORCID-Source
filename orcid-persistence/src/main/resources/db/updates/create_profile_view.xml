@@ -1,0 +1,14 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-PROFILE-VIEW" author="Daniel Palafox">
+        <createView viewName="profile_view">
+            select orcid, date_created, last_modified, account_non_locked, profile_deactivation_date,
+            enable_developer_tools, last_login, using_2fa
+            from profile p
+            order by date_created
+        </createView>
+    </changeSet>
+
+</databaseChangeLog>
