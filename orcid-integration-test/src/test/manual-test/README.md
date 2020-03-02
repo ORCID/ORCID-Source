@@ -60,7 +60,8 @@
 37. Add a country: "Afghanistan"
 38. Add a keyword: "keyword"
 39. Add a URL: name:"website" URL https://qa.orcid.org
-40. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com click the link to verify, return to account settings and change the visibility to public
+40. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com click the link to verify it
+41. Change the visibility setting for ma_test_[DD][month][YYYY]@mailinator.com to public
 41. Add a biography: "Bio!"
 42. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
 43. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list)
