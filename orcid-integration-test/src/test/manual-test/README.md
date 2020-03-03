@@ -3,6 +3,7 @@
 ## Register/Verify
 
 0. Find and Replace [DD][month][YYYY] in this document with the current day, written month, and four digit year for example 24feb2016
+1. Visit https://qa.orcid.org and check that the cookies banner is displayed correctly in home page
 1. Visit https://qa.orcid.org/register
 2. Create new account:
     * First name: ma_test
@@ -60,11 +61,11 @@
 37. Add a country: "Afghanistan"
 38. Add a keyword: "keyword"
 39. Add a URL: name:"website" URL https://qa.orcid.org
-40. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com click the link to verify it
+40. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com; click the link to verify it
 41. Change the visibility setting for ma_test_[DD][month][YYYY]@mailinator.com to public
 41. Add a biography: "Bio!"
 42. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
-43. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NIH Clinical Center' (select from dropdown list)
+43. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NASA Exoplanet Science Institute' (select from dropdown list)
 43. Add a work by DOI: enter DOI "10.1087/20120404" and save without making change on the add manually screen
 44. Add a work manually: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value '1234' click through warning about the identifier validation
 45. Set the work you just added to private
@@ -150,9 +151,13 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 		Email: ma_test_[DD][month][YYYY]@mailinator.com
 
-66. Visit https://qa.orcid.org/signout
+66. Change the language for account 0000-0002-0517-4718
 
+67. Visit https://qa.orcid.org/signout
 
+68. Sign in again with 0000-0002-0517-4718
+
+69. Make sure the language selected in previous step is still selected.
 
 
 ## Run the automated Independent Tests
@@ -224,16 +229,17 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 82. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
 
-83. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1TPXe50YejZ9rDrd3oac3prg0x33nZGSvjPG5QFpSXyk/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
-84. Visit https://qa.orcid.org and check errors are same or less than 37 errors
-85. Visit https://qa.orcid.org/register and check errors are same or less than 62
-86. Visit https://qa.orcid.org/signin and check errors are same or less than 39 
+83. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1NPfjyqiHFGBsAEI3_L7_KVvWG1XcW3FXtc7Gg8WtXZQ/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
+84. Visit https://qa.orcid.org and check errors are same or less than 20 errors
+85. Visit https://qa.orcid.org/register and check errors are same or less than 22
+86. Visit https://qa.orcid.org/signin and check errors are same or less than 15
+87. Visit https://qa.orcid.org/reset-password and check errors are same or less than 5
 87.	Stay on this page and sign in with 
 
 	```0000-0002-7361-1027```
 	```QA password```
 
-88. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  80
+88. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  59
 89. Visit https://qa.orcid.org/signout
 
 
