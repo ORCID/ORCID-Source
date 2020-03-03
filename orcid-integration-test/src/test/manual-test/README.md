@@ -2,7 +2,7 @@
 
 ## Register/Verify
 
-0. Find and Replace [DD][month][YYYY] in this document with the current day, written month, and four digit year for example 24feb2016
+0. Find and Replace [DD][month][YYYY] in this document with the current day, written month, and four digit year (for example, 24feb2016)
 1. Visit https://qa.orcid.org and check that the cookies banner is displayed correctly in home page
 2. Visit https://qa.orcid.org/register
 3. Create new account:
@@ -18,7 +18,7 @@
 5. Attempt to edit the biography of the record- click the link to resend the verify email in the warning that comes up
 6. Visit https://qa.orcid.org/signout
 6. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
-7. Verify there are three messages, Thanks for registering and two reminders to verify your email address
+7. Verify there are three messages -- Thanks for registering and two reminders to verify your email address
 8. Open message from support@verify.orcid.org with subject [ORCID] Welcome to ORCID and click the email verification link
 9. When redirected to https://qa.orcid.org/signin, sign in using ma_test credentials created in previous steps
 10. Replace [orcid id] in this document with the 16 digit iD from the record
@@ -44,14 +44,14 @@
 ## Institutional Login
 
 25. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
-20. Visit https://qa.orcid.org/signin and use the Institutional account option to sign in using "United ID" as the institution and the UnitedID account you just created. Complete steps to link it to the Individual account the account created in steps 1 and 2.
+20. Visit https://qa.orcid.org/signin and use the Institutional account option to sign in using "United ID" as the institution and the UnitedID account you just created. Complete steps to link it to the Individual account created in steps 1 and 2.
 21. On the notification in the orange box at the top of the page to link the account to State University, click connect, you'll be taken to the OAuth page. Click 'Deny'  and return to the record.
 22. Visit https://qa.orcid.org/signout
 23. Visit https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
 24. Sign in using a Google account not linked to an existing ORCID record
 25. Complete steps to link the Google account to the account created today
-26. Check that after linking the account you are taken back to the authorize page not to my-orcid
-27. Click Deny on the authorization- check that you are taken to the Google OAuth Playground with a Deny error
+26. Check that after linking the account you are taken back to the authorize page, not to my-orcid
+27. Click Deny on the authorization -- check that you are taken to the Google OAuth Playground with a Deny error
 28. Visit https://qa.orcid.org/account and follow the steps to enable two factor authentication
 29. Visit https://qa.orcid.org/signout
 30. Sign in, check that you are asked for a 2FA code
@@ -60,7 +60,7 @@
 ## My-ORCID
 
 38. Visit https://qa.orcid.org/my-orcid
-33. Use the language selector to change the language to a different language- check that the page updates to that language
+33. Use the language selector to change the language to a different language -- check that the page updates to that language
 34. Use the language selector to set the page back to English
 35. Add a published name: "Pub Name" (Published name can be edited using the pencil icon next to the record name)
 36. Add an also know as name: "Other Name"
