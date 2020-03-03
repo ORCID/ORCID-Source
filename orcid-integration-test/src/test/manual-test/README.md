@@ -4,8 +4,8 @@
 
 0. Find and Replace [DD][month][YYYY] in this document with the current day, written month, and four digit year for example 24feb2016
 1. Visit https://qa.orcid.org and check that the cookies banner is displayed correctly in home page
-1. Visit https://qa.orcid.org/register
-2. Create new account:
+2. Visit https://qa.orcid.org/register
+3. Create new account:
     * First name: ma_test
     * Last name: [DD][month][YYYY]
     * Email: ma_test_[DD][month][YYYY]@mailinator.com (ex: ma_test_24feb2016@mailinator.com)
@@ -14,9 +14,9 @@
     * Default privacy for new activities: Everyone
     * Subscribe to quarterly emails about new features
     * Accept terms and conditions
-3. Click the link to resend the verify email message
-4. Attempt to edit the biography of the record- click the link to resend the verify email in the warning that comes up
-5. Visit https://qa.orcid.org/signout
+4. Click the link to resend the verify email message
+5. Attempt to edit the biography of the record- click the link to resend the verify email in the warning that comes up
+6. Visit https://qa.orcid.org/signout
 6. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
 7. Verify there are three messages, Thanks for registering and two reminders to verify your email address
 8. Open message from support@verify.orcid.org with subject [ORCID] Welcome to ORCID and click the email verification link
@@ -26,7 +26,7 @@
 
 ## Reset password and ORCID iD recovery
 
-12. Click the Forgotten Your Password link
+13. Click the Forgotten Your Password link
 13. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
 14. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
 15. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request and click the password reset link
@@ -42,7 +42,8 @@
 23. Verify there is a message from reset@notify.orcid.org with subject [ORCID] Your ORCID iD
 
 ## Institutional Login
-19. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
+
+25. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
 20. Visit https://qa.orcid.org/signin and use the Institutional account option to sign in using "United ID" as the institution and the UnitedID account you just created. Complete steps to link it to the Individual account the account created in steps 1 and 2.
 21. On the notification in the orange box at the top of the page to link the account to State University, click connect, you'll be taken to the OAuth page. Click 'Deny'  and return to the record.
 22. Visit https://qa.orcid.org/signout
@@ -58,7 +59,7 @@
 
 ## My-ORCID
 
-32. Visit https://qa.orcid.org/my-orcid
+38. Visit https://qa.orcid.org/my-orcid
 33. Use the language selector to change the language to a different language- check that the page updates to that language
 34. Use the language selector to set the page back to English
 35. Add a published name: "Pub Name" (Published name can be edited using the pencil icon next to the record name)
@@ -81,7 +82,7 @@
 
 ## Public API & Revoke Access check
 
-48. Go to https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground&email=pub_ma_test_[DD][month][YYYY]@mailinator.com&given_names=ma_test&family_names=[DD][month][YYYY]
+56. Go to https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground&email=pub_ma_test_[DD][month][YYYY]@mailinator.com&given_names=ma_test&family_names=[DD][month][YYYY]
 
 49. Check that the registration screen displays and first and last names and the email address are prepopulated
 
@@ -118,7 +119,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 **Check Consortium Lead Functionality**
 
-58. Go to https://qa.orcid.org/signin and sign in with
+66. Go to https://qa.orcid.org/signin and sign in with
 
 		0000-0002-3646-4021
 		Password: *QA password*. Check that there is a tab 'MEMBER TOOLS'
@@ -136,7 +137,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 **Check the Salesforce staff email to check there is a notification**
 
-61. Visit mailinator.com and enter:	
+69. Visit mailinator.com and enter:	
 
 			sfqaselfservicetest@mailinator.com
 			
@@ -144,7 +145,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 **Check that consortium member can add a contact**
 
-63.  Visit www.qa.orcid.org/signout
+71.  Visit www.qa.orcid.org/signout
 
 		Sign in with
 		0000-0002-0517-4718
@@ -167,7 +168,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 ## Run the automated Independent Tests
 
-67. Go to the CI server (https://ci.orcid.org/) and select ORCID-independent-tests-step2
+78. Go to the CI server (https://ci.orcid.org/) and select ORCID-independent-tests-step2
 
 68. Build the ORCID Independent Tests 2 with the following parameters
 	* user_login: ma_test_[DD][month][YYYY]
@@ -181,7 +182,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 ## Post ORCID Independent Tests
 
-71. Visit https://qa.orcid.org/signin
+82. Visit https://qa.orcid.org/signin
 
 72. Sign into the account created earlier
 	* ORCID: [orcid id]
@@ -232,7 +233,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 ## Accessibility Testing
 
-82. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
+93. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
 
 83. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1NPfjyqiHFGBsAEI3_L7_KVvWG1XcW3FXtc7Gg8WtXZQ/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
 84. Visit https://qa.orcid.org and check errors are same or less than 20 errors
