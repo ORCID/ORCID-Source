@@ -24,7 +24,7 @@
 10. Replace [orcid id] in this document with the 16 digit iD from the record
 11. Visit https://qa.orcid.org/signout
 
-## Reset password
+## Reset password and ORCID iD recovery
 
 12. Click the Forgotten Your Password link
 13. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
@@ -35,6 +35,11 @@
 	Email: MA_TEST_[DD][month][YYYY]@mailinator.com
 	Password: [DD][month][YYYY]
 18. Visit https://qa.orcid.org/signout
+19. Visit https://qa.orcid.org/reset-password
+20. Click on the ORCID iD button
+21. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Recover account details
+22. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
+23. Verify there is a message from reset@notify.orcid.org with subject [ORCID] Your ORCID iD
 
 ## Institutional Login
 19. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
