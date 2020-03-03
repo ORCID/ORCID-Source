@@ -114,7 +114,7 @@
 
 ## Test Self Service
 
-For this test you need to have a Consortium Lead account on QA and a Consortium Member account. For the purposes of testing you can use the accounts 0000-0002-3646-4021 for the consortium lead account and 00000-0002-0517-4718 for the consortium member account.
+For this test you need to have a Consortium Lead account on QA and a Consortium Member account. For the purposes of testing you can use the accounts 0000-0002-3646-4021 for the consortium lead account and 0000-0002-0517-4718 for the consortium member account.
 
 **Check Consortium Lead Functionality**
 
