@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
@@ -117,7 +118,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         }
 
         if (solrResult.getInstitutionAffiliationNames() != null) {
-            Set<String> affiliations = new HashSet<String>();
+            Set<String> affiliations = new TreeSet<String>();
             solrResult.getInstitutionAffiliationNames().forEach(e -> affiliations.add(e));
             result.setInstitutionNames(affiliations.toArray(new String[0]));
         }
