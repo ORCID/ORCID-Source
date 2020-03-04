@@ -40,12 +40,24 @@
         <sql>GRANT SELECT ON TABLE dw_biography to dw_user;</sql>
     </changeSet>
 
-    <changeSet id="CREATE-DW-EMAIL-VIEW" author="Daniel Palafox">
+    <changeSet id="CREATE-DW-EMAIL-VIEW" author="Daniel Palafox" dbms="postgresql">
         <preConditions onFail="MARK_RAN">
             <not><viewExists viewName="dw_email"/></not>
         </preConditions>
         <createView viewName="dw_email">
             select substring(email from '@(.*)$') as email, orcid, is_primary, is_verified, visibility,
+            date_created, last_modified
+            from email
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-EMAIL-VIEW" author="Daniel Palafox" dbms="hsqldb">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_email"/></not>
+        </preConditions>
+        <createView viewName="dw_email">
+            select substr(email, instr(email, '@') + 1) as email, orcid, is_primary, is_verified, visibility,
             date_created, last_modified
             from email
             order by date_created
