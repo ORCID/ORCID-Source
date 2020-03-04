@@ -2,11 +2,14 @@ package org.orcid.core.manager.v3.impl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidNoResultException;
@@ -114,7 +117,9 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         }
 
         if (solrResult.getInstitutionAffiliationNames() != null) {
-            result.setInstitutionNames(solrResult.getInstitutionAffiliationNames().toArray(new String[0]));
+            Set<String> affiliations = new HashSet<String>();
+            solrResult.getInstitutionAffiliationNames().forEach(e -> affiliations.add(e));
+            result.setInstitutionNames(affiliations.toArray(new String[0]));
         }
 
         return result;
