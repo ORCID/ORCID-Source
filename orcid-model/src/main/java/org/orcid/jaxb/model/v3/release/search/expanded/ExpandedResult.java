@@ -25,7 +25,7 @@ public class ExpandedResult implements Serializable {
     @XmlElement(name = "family-names", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String familyNames;
     
-    @XmlElement(name = "creditName", namespace = "http://www.orcid.org/ns/expanded-search")
+    @XmlElement(name = "credit-name", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String creditName;
     
     @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/expanded-search")

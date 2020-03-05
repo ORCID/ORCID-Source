@@ -9969,3 +9969,22 @@ works-ng2 mat-paginator .mat-paginator-container {
     width: 47px;
     cursor: pointer;
 }
+
+.maintenance-header a:hover {
+    text-decoration: underline;
+    color: rgba(0,0,0,0.87)
+    
+}
+
+.maintenance-header a {
+    font-family: "Noto Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.3px !important;
+    color: rgba(0,0,0,0.87)
+}
+
+.maintenance-header {
+    font: 400 14px/16px "Noto Sans", sans-serif;
+    color: rgba(0,0,0,0.87)
+}
