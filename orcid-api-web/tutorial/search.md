@@ -225,7 +225,7 @@ In addition to the basic search, the expanded search end point `expanded-search`
 `orcid-id`
 `given-names`
 `family-names`
-`creditName`
+`credit-name`
 `other-name`
 `email`
 `institution-name` when using the standard search syntax. Results can be returned in either XML or JSON. 
@@ -261,8 +261,6 @@ Example response
         <expanded-search:institution-name>Highland Fine Cheeses (United Kingdom)</expanded-search:institution-name>
         <expanded-search:institution-name>Glamorgan Cake Institute</expanded-search:institution-name>
         <expanded-search:institution-name>Stilton Manufacturing</expanded-search:institution-name>
-        <expanded-search:institution-name>Stilton Manufacturing</expanded-search:institution-name>
-        <expanded-search:institution-name>common:name</expanded-search:institution-name>
     </expanded-search:expanded-result>
 ...
  ```
