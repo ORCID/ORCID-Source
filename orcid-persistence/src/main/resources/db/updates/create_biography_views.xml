@@ -1,0 +1,169 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-DW-ADDRESS-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_address"/></not>
+        </preConditions>
+        <createView viewName="dw_address">
+            select id, orcid, iso2_country, visibility, source_id, client_source_id,
+            date_created, last_modified
+            from address
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-ADDRESS" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_address to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-BIOGRAPHY-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_biography"/></not>
+        </preConditions>
+        <createView viewName="dw_biography">
+            select id, orcid, biography, visibility,
+            date_created, last_modified
+            from biography
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-BIOGRAPHY" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_biography to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="POSTGRES-CREATE-DW-EMAIL-VIEW" author="Daniel Palafox" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_email"/></not>
+        </preConditions>
+        <createView viewName="dw_email">
+            select substring(email from '@(.*)$') as email, orcid, is_primary, is_verified, visibility,
+            date_created, last_modified
+            from email
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="HSQLDB-CREATE-DW-EMAIL-VIEW" author="Daniel Palafox" dbms="hsqldb">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_email"/></not>
+        </preConditions>
+        <createView viewName="dw_email">
+            select substr(email, instr(email, '@') + 1) as email, orcid, is_primary, is_verified, visibility,
+            date_created, last_modified
+            from email
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-EMAIL-VIEW" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_email to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-EXTERNAL-IDENTIFIER-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_external_identifier"/></not>
+        </preConditions>
+        <createView viewName="dw_external_identifier">
+            select id, orcid, external_id_reference, external_id_type, external_id_url, visibility, source_id, client_source_id,
+            date_created, last_modified
+            from external_identifier
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-EXTERNAL-IDENTIFIER-VIEW" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_external_identifier to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-OTHER-NAME-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_other_name"/></not>
+        </preConditions>
+        <createView viewName="dw_other_name">
+            select other_name_id , orcid, display_name, visibility, source_id, client_source_id,
+            date_created, last_modified
+            from other_name
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-OTHER-NAME" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_other_name to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-PROFILE-KEYWORD-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_profile_keyword"/></not>
+        </preConditions>
+        <createView viewName="dw_profile_keyword">
+            select id, profile_orcid, keywords_name, visibility, source_id, client_source_id,
+            date_created, last_modified
+            from profile_keyword
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-PROFILE-KEYWORD" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_keyword to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-RECORD-NAME-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_record_name"/></not>
+        </preConditions>
+        <createView viewName="dw_record_name">
+            select  id, orcid, credit_name, family_name, given_names, visibility,
+            date_created, last_modified
+            from record_name
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RECORD-NAME" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_record_name to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-RESEARCHER-URL-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_researcher_url"/></not>
+        </preConditions>
+        <createView viewName="dw_researcher_url">
+            select id, orcid, url, url_name, visibility, source_id, client_source_id,
+            date_created, last_modified
+            from researcher_url
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCHER-URL" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_researcher_url to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>
