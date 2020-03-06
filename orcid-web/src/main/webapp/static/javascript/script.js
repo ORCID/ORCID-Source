@@ -380,7 +380,7 @@ function checkOrcidLoggedIn() {
                 // for some slow OAuth code redirects this is hit while 
                 // people are signing in. Ingore if singing in.
                 if (!signinLocked && xhr.status == 205)
-                     window.location.reload(true);
+                    console.log ("xhr.status is 205")
             });            
         }
     }
