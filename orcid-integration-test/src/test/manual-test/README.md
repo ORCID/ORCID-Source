@@ -58,7 +58,7 @@
 
 ## My-ORCID
 
-38. Visit https://qa.orcid.org/my-orcid
+37. Visit https://qa.orcid.org/my-orcid
 33. Use the language selector to change the language to a different language -- check that the page updates to that language
 34. Use the language selector to set the page back to English
 35. Add a published name: "Pub Name" (Published name can be edited using the pencil icon next to the record name)
@@ -81,7 +81,7 @@
 
 ## Public API & Revoke Access check
 
-56. Go to https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground&email=pub_ma_test_[DD][month][YYYY]@mailinator.com&given_names=ma_test&family_names=[DD][month][YYYY]
+55. Go to https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground&email=pub_ma_test_[DD][month][YYYY]@mailinator.com&given_names=ma_test&family_names=[DD][month][YYYY]
 
 49. Check that the registration screen displays and first and last names and the email address are prepopulated
 
@@ -118,7 +118,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 **Check Consortium Lead Functionality**
 
-66. Go to https://qa.orcid.org/signin and sign in with
+65. Go to https://qa.orcid.org/signin and sign in with
 
 		0000-0002-3646-4021
 		Password: *QA password*. Check that there is a tab 'MEMBER TOOLS'
