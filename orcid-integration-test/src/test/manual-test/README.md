@@ -66,7 +66,7 @@
 37. Add a country: "Afghanistan"
 38. Add a keyword: "keyword"
 39. Add a URL: name:"website" URL https://qa.orcid.org
-40. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com; click the link to verify it
+40. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com
 41. Change the visibility setting for ma_test_[DD][month][YYYY]@mailinator.com to public
 41. Add a biography: "Bio!"
 42. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
@@ -150,20 +150,13 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 		0000-0002-0517-4718
 		*QA password*
 		
-64. Go to https://qa.orcid.org/self-service
+64.  Verify the language is set to Russian
+
+65.  Go to https://qa.orcid.org/self-service
 
 65.  Add a contact in the Add Member Contacts email field
 
 		Email: ma_test_[DD][month][YYYY]@mailinator.com
-
-66. Change the language for account 0000-0002-0517-4718
-
-67. Visit https://qa.orcid.org/signout
-
-68. Sign in again with 0000-0002-0517-4718
-
-69. Make sure the language selected in previous step is still selected.
-
 
 ## Run the automated Independent Tests
 
