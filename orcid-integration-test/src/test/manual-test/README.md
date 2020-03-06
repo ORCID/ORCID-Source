@@ -27,19 +27,19 @@
 ## Reset password and ORCID iD recovery
 
 13. Click the Forgotten Your Password link
-13. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Send Reset Link
-14. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
-15. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request and click the password reset link
-16. Reset password with [DD][month][YYYY] 
-17. You will be forward to the sign in page, sign in with:
+14. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Recover account details
+15. Reload the page
+16. Click on the ORCID iD button
+17. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Recover account details
+18. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
+19. Verify there is a message from reset@notify.orcid.org with subject [ORCID] Your ORCID iD
+20. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request and click the password reset link
+21. Reset password with [DD][month][YYYY] 
+22. You will be forward to the sign in page, sign in with:
 	Email: MA_TEST_[DD][month][YYYY]@mailinator.com
 	Password: [DD][month][YYYY]
-18. Visit https://qa.orcid.org/signout
-19. Visit https://qa.orcid.org/reset-password
-20. Click on the ORCID iD button
-21. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Recover account details
-22. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
-23. Verify there is a message from reset@notify.orcid.org with subject [ORCID] Your ORCID iD
+23. Visit https://qa.orcid.org/signout
+24. Visit https://qa.orcid.org/reset-password
 
 ## Institutional Login
 
