@@ -39,11 +39,10 @@
 	* Email: MA_TEST_[DD][month][YYYY]@mailinator.com
 	* Password: [DD][month][YYYY]
 23. Visit https://qa.orcid.org/signout
-24. Visit https://qa.orcid.org/reset-password
 
 ## Institutional Login
 
-25. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
+24. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
 20. Visit https://qa.orcid.org/signin and use the Institutional account option to sign in using "United ID" as the institution and the UnitedID account you just created. Complete steps to link it to the Individual account created in steps 1 and 2.
 21. On the notification in the orange box at the top of the page to link the account to State University, click connect, you'll be taken to the OAuth page. Click 'Deny'  and return to the record.
 22. Visit https://qa.orcid.org/signout
