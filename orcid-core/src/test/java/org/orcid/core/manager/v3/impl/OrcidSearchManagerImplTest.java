@@ -94,7 +94,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertEquals("institution1", institutionNames[0]);
         assertEquals("institution2", institutionNames[1]);
         
-        assertEquals("one@one.com", result1.getEmail());
+        assertEquals("one@one.com", result1.getEmails()[0]);
         
         assertEquals("orcid2", result2.getOrcidId());
         assertEquals("person2", result2.getGivenNames());
@@ -109,7 +109,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertEquals("institution3", institutionNames[0]);
         assertEquals("institution4", institutionNames[1]);
         
-        assertEquals("two@two.com", result2.getEmail());
+        assertEquals("two@two.com", result2.getEmails()[0]);
         
         assertEquals("orcid3", result3.getOrcidId());
         assertEquals("person3", result3.getGivenNames());
@@ -124,7 +124,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertEquals("institution5", institutionNames[0]);
         assertEquals("institution6", institutionNames[1]);
         
-        assertEquals("three@three.com", result3.getEmail());
+        assertEquals("three@three.com", result3.getEmails()[0]);
     }
 
     @Test
@@ -157,14 +157,14 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
         List<OrcidSolrResult> resultsList = new ArrayList<>();
         orcidSolrResults.setResults(resultsList);
-        resultsList.add(getExpandedOrcidSolrResult("orcid1", "person1", "familyName1", "creditName1", new String[] { "other1", "name1" }, new String[] { "institution1", "institution2" }, "one@one.com"));
-        resultsList.add(getExpandedOrcidSolrResult("orcid2", "person2", "familyName2", "creditName2", new String[] { "other2", "name2" }, new String[] { "institution3", "institution4" }, "two@two.com"));
-        resultsList.add(getExpandedOrcidSolrResult("orcid3", "person3", "familyName3", "creditName3", new String[] { "other3", "name3" }, new String[] { "institution5", "institution6" }, "three@three.com"));
+        resultsList.add(getExpandedOrcidSolrResult("orcid1", "person1", "familyName1", "creditName1", new String[] { "other1", "name1" }, new String[] { "institution1", "institution2" }, new String[] { "one@one.com", "erm@erm.com" }));
+        resultsList.add(getExpandedOrcidSolrResult("orcid2", "person2", "familyName2", "creditName2", new String[] { "other2", "name2" }, new String[] { "institution3", "institution4" }, new String[] { "two@two.com" }));
+        resultsList.add(getExpandedOrcidSolrResult("orcid3", "person3", "familyName3", "creditName3", new String[] { "other3", "name3" }, new String[] { "institution5", "institution6" }, new String[] { "three@three.com", "er@er.com" }));
         orcidSolrResults.setNumFound(3);
         return orcidSolrResults;
     }
 
-    private OrcidSolrResult getExpandedOrcidSolrResult(String orcid, String name, String familyName, String creditName, String[] otherNames, String[] institutionAffiliationNames, String email) {
+    private OrcidSolrResult getExpandedOrcidSolrResult(String orcid, String name, String familyName, String creditName, String[] otherNames, String[] institutionAffiliationNames, String[] emails) {
         OrcidSolrResult solrResult = new OrcidSolrResult();
         solrResult.setOrcid(orcid);
         solrResult.setGivenNames(name);
@@ -172,7 +172,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         solrResult.setCreditName(creditName);
         solrResult.setOtherNames(Arrays.asList(otherNames));
         solrResult.setInstitutionAffiliationNames(Arrays.asList(institutionAffiliationNames));
-        solrResult.setEmail(email);
+        solrResult.setEmails(Arrays.asList(emails));
         return solrResult;
     }
     
