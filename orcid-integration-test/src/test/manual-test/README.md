@@ -36,8 +36,8 @@
 20. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request and click the password reset link
 21. Reset password with [DD][month][YYYY] 
 22. You will be forward to the sign in page, sign in with:
-	Email: MA_TEST_[DD][month][YYYY]@mailinator.com
-	Password: [DD][month][YYYY]
+	* Email: MA_TEST_[DD][month][YYYY]@mailinator.com
+	* Password: [DD][month][YYYY]
 23. Visit https://qa.orcid.org/signout
 24. Visit https://qa.orcid.org/reset-password
 
