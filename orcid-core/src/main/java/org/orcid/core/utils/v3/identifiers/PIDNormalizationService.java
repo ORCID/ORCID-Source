@@ -1,6 +1,7 @@
 package org.orcid.core.utils.v3.identifiers;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -101,7 +104,35 @@ public class PIDNormalizationService {
             String prefix = type.getResolutionPrefix();
             if (!StringUtils.isEmpty(prefix)) {
                 try {
-                    return UriUtils.encodePath(prefix + norm, "UTF-8");                    
+                    String result = null;
+                    if (norm.startsWith("http")) {
+                        String compare = norm;
+                        if (compare.toLowerCase().startsWith(prefix.toLowerCase())) {
+                            result = norm;
+                        } else {                                                                                      
+                            Pattern pattern = Pattern.compile("^(http[s]?://www\\.|http[s]?://|www\\.)([^/]*)");
+                            Matcher matcher = pattern.matcher(compare);
+                            if (matcher.find()) {
+                                compare = matcher.group(1) + matcher.group(2);
+                                if (prefix.equals(compare) || prefix.contains(compare)) {
+                                    result = norm;
+                                } else {
+                                    if (norm.contains("=")) {
+                                        norm = norm.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)([^=]*)","");                               
+                                        norm = norm.substring(1);    
+                                    } else {                                        
+                                        norm = norm.substring(norm.lastIndexOf("/") + 1);
+                                    }                                    
+                                    result = prefix + norm;
+                                }
+                            } else {
+                                result = prefix + norm;
+                            }                                                                                   
+                        }
+                    } else {
+                        result = prefix + norm;
+                    }                                       
+                    return URLDecoder.decode(result, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);
                 }
