@@ -7,7 +7,7 @@
             <not><viewExists viewName="dw_address"/></not>
         </preConditions>
         <createView viewName="dw_address">
-            select id, orcid, iso2_country, visibility, source_id, client_source_id,
+            select id, orcid, iso2_country, visibility, case when orcid = source_id then true else false end as self_asserted, client_source_id,
             date_created, last_modified
             from address
             order by date_created
@@ -76,7 +76,7 @@
             <not><viewExists viewName="dw_external_identifier"/></not>
         </preConditions>
         <createView viewName="dw_external_identifier">
-            select id, orcid, external_id_reference, external_id_type, external_id_url, visibility, source_id, client_source_id,
+            select id, orcid, external_id_reference, external_id_type, external_id_url, visibility, case when orcid = source_id then true else false end as self_asserted, client_source_id,
             date_created, last_modified
             from external_identifier
             order by date_created
@@ -95,7 +95,7 @@
             <not><viewExists viewName="dw_other_name"/></not>
         </preConditions>
         <createView viewName="dw_other_name">
-            select other_name_id , orcid, display_name, visibility, source_id, client_source_id,
+            select other_name_id , orcid, display_name, visibility, case when orcid = source_id then true else false end as self_asserted, client_source_id,
             date_created, last_modified
             from other_name
             order by date_created
@@ -114,7 +114,7 @@
             <not><viewExists viewName="dw_profile_keyword"/></not>
         </preConditions>
         <createView viewName="dw_profile_keyword">
-            select id, profile_orcid, keywords_name, visibility, source_id, client_source_id,
+            select id, profile_orcid, keywords_name, visibility, case when profile_orcid = source_id then true else false end as self_asserted, client_source_id,
             date_created, last_modified
             from profile_keyword
             order by date_created
@@ -147,12 +147,12 @@
         <sql>GRANT SELECT ON TABLE dw_record_name to dw_user;</sql>
     </changeSet>
 
-    <changeSet id="CREATE-DW-RESEARCHER-URL-VIEW" author="Daniel Palafox">
+    <changeSet id="POSTGRES-CREATE-DW-RESEARCHER-URL-VIEW" author="Daniel Palafox" dbms="postgresql">
         <preConditions onFail="MARK_RAN">
             <not><viewExists viewName="dw_researcher_url"/></not>
         </preConditions>
         <createView viewName="dw_researcher_url">
-            select id, orcid, url, url_name, visibility, source_id, client_source_id,
+            select id, orcid, substring(url from '[http[s]*://]?([^/]+)') as domain, url_name, visibility,case when orcid = source_id then true else false end as self_asserted, client_source_id,
             date_created, last_modified
             from researcher_url
             order by date_created
