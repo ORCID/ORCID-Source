@@ -1,4 +1,4 @@
-# Get Authenticate iDs
+# Get Authenticated iDs
 
 This tutorial shows how to collect a user's authenticated ORCID iD using OAuth, the OAuth token can then be used to read the public record. Organizations who only need to collect authenticated iDs may want to consider the [implicit workflow](https://github.com/ORCID/ORCID-Source/blob/master/orcid-web/ORCID_AUTH_WITH_OPENID_CONNECT.md#implicit-flow).
 
