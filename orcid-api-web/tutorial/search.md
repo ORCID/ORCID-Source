@@ -221,11 +221,11 @@ The first part of the response to the above query would look something like this
 
 ## Expanded search
 
-In addition to the basic search, the expanded search end point `expanded-search` is available. This is available in **3.0 API only**. Using this endpoint returns the information: 
+In addition to the basic search, the expanded search end point `expanded-search` is available. This is available in **3.0 API only**. Using this endpoint returns the following information from Education and Employment affiliations: 
 `orcid-id`
 `given-names`
 `family-names`
-`creditName`
+`credit-name`
 `other-name`
 `email`
 `institution-name` when using the standard search syntax. Results can be returned in either XML or JSON. 
@@ -253,7 +253,7 @@ Example response
         <expanded-search:orcid-id>0000-0002-7024-3038</expanded-search:orcid-id>
         <expanded-search:given-names>Rob</expanded-search:given-names>
         <expanded-search:family-names>Blackburn</expanded-search:family-names>
-        <expanded-search:creditName>Kårlsbeârd The Gnöme</expanded-search:creditName>
+        <expanded-search:credit-name>Kårlsbeârd The Gnöme</expanded-search:credit-name>
         <expanded-search:email>rob21may@mailinator.com</expanded-search:email>
         <expanded-search:institution-name>ORCID</expanded-search:institution-name>
         <expanded-search:institution-name>common:name</expanded-search:institution-name>
@@ -261,8 +261,6 @@ Example response
         <expanded-search:institution-name>Highland Fine Cheeses (United Kingdom)</expanded-search:institution-name>
         <expanded-search:institution-name>Glamorgan Cake Institute</expanded-search:institution-name>
         <expanded-search:institution-name>Stilton Manufacturing</expanded-search:institution-name>
-        <expanded-search:institution-name>Stilton Manufacturing</expanded-search:institution-name>
-        <expanded-search:institution-name>common:name</expanded-search:institution-name>
     </expanded-search:expanded-result>
 ...
  ```
