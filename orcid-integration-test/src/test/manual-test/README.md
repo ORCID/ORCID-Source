@@ -154,7 +154,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 72.  Go to https://qa.orcid.org/self-service
 
-73.  Add a contact in the Add Member Contacts email field
+73.  Add a contact in the Add Member Contacts email field (at the bottom of the page)
 
 		Email: ma_test_[DD][month][YYYY]@mailinator.com
 
