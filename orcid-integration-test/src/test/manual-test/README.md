@@ -106,7 +106,7 @@
 
 61. Visit https://qa.orcid.org/account and revoke the public API permission
 
-62. Attempt the call in step 53 again- check that an error is returned
+62. Attempt the call in step 60 again- check that an error is returned
 
 63. On https://qa.orcid.org/account add [orcid id] as a trusted individual
 
