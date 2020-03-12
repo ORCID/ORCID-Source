@@ -221,7 +221,7 @@ The first part of the response to the above query would look something like this
 
 ## Expanded search
 
-In addition to the basic search, the expanded search end point `expanded-search` is available. This is available in **3.0 API only**. Using this endpoint returns the information: 
+In addition to the basic search, the expanded search end point `expanded-search` is available. This is available in **3.0 API only**. Using this endpoint returns the following information: 
 `orcid-id`
 `given-names`
 `family-names`
@@ -253,7 +253,7 @@ Example response
         <expanded-search:orcid-id>0000-0002-7024-3038</expanded-search:orcid-id>
         <expanded-search:given-names>Rob</expanded-search:given-names>
         <expanded-search:family-names>Blackburn</expanded-search:family-names>
-        <expanded-search:creditName>Kårlsbeârd The Gnöme</expanded-search:creditName>
+        <expanded-search:credit-name>Kårlsbeârd The Gnöme</expanded-search:credit-name>
         <expanded-search:email>rob21may@mailinator.com</expanded-search:email>
         <expanded-search:institution-name>ORCID</expanded-search:institution-name>
         <expanded-search:institution-name>common:name</expanded-search:institution-name>
