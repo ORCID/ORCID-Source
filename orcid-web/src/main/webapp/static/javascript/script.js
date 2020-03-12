@@ -460,7 +460,7 @@ $(function() {
                 wHtml = wHtml + '<p>';
                 wHtml = wHtml + om.get('common.old.browser_1');
                 wHtml = wHtml + om.get('common.old_browser_2');
-                wHtml = wHtml + ' <a href="' + om.get('common.kb_uri_default') + '360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
+                wHtml = wHtml + ' <a href="https://support.orcid.org/hc/en-us/articles/360006895074" target="common.old_browser_2">' + om.get('common.old_browser_3') + '</a>';
                 wHtml = wHtml + '</p>';
                 wHtml = wHtml + '</div>';
                 $('body').prepend(wHtml);
