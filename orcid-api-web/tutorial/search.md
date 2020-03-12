@@ -221,7 +221,7 @@ The first part of the response to the above query would look something like this
 
 ## Expanded search
 
-In addition to the basic search, the expanded search end point `expanded-search` is available. This is available in **3.0 API only**. Using this endpoint returns the following information from Education and Employment affiliations: 
+In addition to the basic search, the expanded search end point `expanded-search` is available. This is available in **3.0 API only**. Using this endpoint returns the following information: 
 `orcid-id`
 `given-names`
 `family-names`
