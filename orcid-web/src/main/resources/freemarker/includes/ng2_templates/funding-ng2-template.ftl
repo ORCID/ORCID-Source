@@ -150,8 +150,8 @@
                 <div *ngIf="fundingService?.loading == false && groups.length == 0">
                     <strong>
                         <@orcid.msg 'workspace_fundings.havenotaddaffiliation' />
-                        <a *ngIf="noLinkFlag" (click)="showFundingImportWizard()"> <@orcid.msg 'workspace_fundings_body_list.addsomenow'/></a>
-                        <span *ngIf="!noLinkFlag"><@orcid.msg 'workspace_fundings_body_list.addsomenow'/></span>
+                        <a *ngIf="noLinkFlag" (click)="showFundingImportWizard()"> <@orcid.msg 'workspace_fundings_body_list.addfundingnow'/></a>
+                        <span *ngIf="!noLinkFlag"><@orcid.msg 'workspace_fundings_body_list.addfundingnow'/></span>
                     </strong>
                 </div>
             </div>
