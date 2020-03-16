@@ -227,9 +227,9 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 89. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
 
-90. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1NPfjyqiHFGBsAEI3_L7_KVvWG1XcW3FXtc7Gg8WtXZQ/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
+90. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1jSzuH9k5KeX-OqGdltj9dJx5MorczSWhFbcbYgVWWrc/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
 91. Visit https://qa.orcid.org and check errors are same or less than 20 errors
-92. Visit https://qa.orcid.org/register and check errors are same or less than 22
+92. Visit https://qa.orcid.org/register and check errors are same or less than 19
 93. Visit https://qa.orcid.org/signin and check errors are same or less than 15
 94. Visit https://qa.orcid.org/reset-password and check errors are same or less than 5
 95.	Stay on this page and sign in with 
@@ -237,7 +237,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 	```0000-0002-7361-1027```
 	```QA password```
 
-96. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  59
+96. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  60
 97. Visit https://qa.orcid.org/signout
 
 
