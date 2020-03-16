@@ -78,7 +78,7 @@ Example response:
 ```
 
 ## Search for an existing peer-review group
-Peer-review items are grouped on ORCID records based on who or what the reivew was done for this can be an organization, a publication or other. We suggest searching existing peer-review groups before creating new ones to avoid duplicate entries.
+Peer-review items are grouped on ORCID records based on who or what the review was done for this can be an organization, a publication or other. We suggest searching existing peer-review groups before creating new ones to avoid duplicate entries.
 
 
 ### Search for an existing peer review group by ID
