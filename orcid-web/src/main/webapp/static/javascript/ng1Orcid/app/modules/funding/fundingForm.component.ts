@@ -497,7 +497,8 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     unbindTypeaheadForOrgs(): void {
-        $('#fundingName').typeahead('destroy');
+        $('#fundingName').off()
+            .data('typeahead');
     };
 
     unbindTypeaheadForSubTypes(): void {
