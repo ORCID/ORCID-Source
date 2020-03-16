@@ -1,0 +1,221 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-DW-ORG-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_org"/></not>
+        </preConditions>
+        <createView viewName="dw_org">
+            select id, name, city, region, country, url, org_disambiguated_id,
+            date_created, last_modified
+            from org
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-ORG" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_org to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-ORG-AFFILIATION-RELATION-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_org_affiliation_relation"/></not>
+        </preConditions>
+        <createView viewName="dw_org_affiliation_relation">
+            select id, org_id, orcid, org_affiliation_relation_role, org_affiliation_relation_title,
+            department, start_day, start_month, start_year, end_day, end_month, end_year, visibility,
+            case when orcid = source_id then true else false end as self_asserted, client_source_id, url, external_ids_json,
+            date_created, last_modified
+            from org_affiliation_relation
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-ORG-AFF" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_org_affiliation_relation to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-ORG-DISAMBIGUATED" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_org_disambiguated"/></not>
+        </preConditions>
+        <createView viewName="dw_org_disambiguated">
+            select id, source_id, source_url, source_type, org_type, name,
+            city, region, country, url, status, date_created, last_modified, popularity
+            from org_disambiguated
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-ORG-DISAMBIGUATED" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_org_disambiguated to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-ORG-DISAM-EXTERNAL-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_org_disambiguated_external_identifier"/></not>
+        </preConditions>
+        <createView viewName="dw_org_disambiguated_external_identifier">
+            select id, org_disambiguated_id, identifier, identifier_type, preferred,
+            date_created, last_modified
+            from org_disambiguated_external_identifier
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-EXT-ID-VIEW" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_org_disambiguated_external_identifier to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-PEER-REVIEW-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_peer_review"/></not>
+        </preConditions>
+        <createView viewName="dw_peer_review">
+            select id, orcid, peer_review_subject_id, external_identifiers_json, org_id,
+            peer_review_role, peer_review_type, completion_day, completion_month, completion_year,
+            url, visibility, subject_external_identifiers_json, subject_type, subject_container_name,
+            subject_name, subject_url, group_id, client_source_id,
+            date_created, last_modified
+            from peer_review
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-PEER-REVIEW" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_peer_review to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-PROFILE-FUNDING-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_profile_funding"/></not>
+        </preConditions>
+        <createView viewName="dw_profile_funding">
+            select id, orcid, org_id, title, type, currency_code, numeric_amount, description, start_day, start_month,
+            start_year, end_day, end_month, end_year, url, contributors_json, organization_defined_type,
+            external_identifiers_json, visibility, case when orcid = source_id then true else false end as self_asserted, client_source_id,
+            date_created, last_modified
+            from profile_funding
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-PROFILE-FUNDING" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_funding to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-RESEARCH-RESOURCE-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_research_resource"/></not>
+        </preConditions>
+        <createView viewName="dw_research_resource">
+            select id, orcid, proposal_type, external_identifiers_json, title, url, start_day,
+            start_month, start_year, end_day, end_month, end_year, visibility, client_source_id,
+            date_created, last_modified
+            from research_resource
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RESOURCE" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-RESEARCH-RESOURCE-ITEM-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_research_resource_item"/></not>
+        </preConditions>
+        <createView viewName="dw_research_resource_item">
+            select id, research_resource_id, resource_name, resource_type, external_identifiers_json, url
+            from research_resource_item
+            order by id
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RESOURCE-ITEM" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_item to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-RESEARCH-RESOURCE-ITEM-ORG-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_research_resource_item_org"/></not>
+        </preConditions>
+        <createView viewName="dw_research_resource_item_org">
+            select research_resource_item_id, org_id
+            from research_resource_item_org
+            order by research_resource_item_id
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RESOURCE-ITEM-ORG" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_item_org to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-RESEARCH-RESOURCE-ORG-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_research_resource_org"/></not>
+        </preConditions>
+        <createView viewName="dw_research_resource_org">
+            select research_resource_id, org_id
+            from research_resource_org
+            order by research_resource_id
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RESOURCE-ORG" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_org to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-WORK-VIEW" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_work"/></not>
+        </preConditions>
+        <createView viewName="dw_work">
+            select work_id, orcid, publication_day, publication_month, publication_year, title, subtitle, description,
+            work_url, citation, citation_type, work_type, contributors_json, journal_title, language_code, translated_title,
+            translated_title_language_code, iso2_country, external_ids_json, visibility, case when orcid = source_id then true else false end as self_asserted , client_source_id,
+            date_created, last_modified
+            from work
+            order by date_created
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-WORK" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_work to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>
