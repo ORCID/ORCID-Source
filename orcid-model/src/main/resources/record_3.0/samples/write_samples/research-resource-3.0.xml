@@ -10,14 +10,14 @@
 		</research-resource:title>
 		<research-resource:hosts>
 			<common:organization>
-				<common:name>XSEDE</common:name>
+				<common:name>ORCID</common:name>
 				<common:address>
-					<common:city>city</common:city>
-					<common:region>region</common:region>
+					<common:city>Bethesda</common:city>
+					<common:region>Maryland</common:region>
 					<common:country>US</common:country>
 				</common:address>
 				<common:disambiguated-organization>
-					<common:disambiguated-organization-identifier>grid.400000.c</common:disambiguated-organization-identifier>
+					<common:disambiguated-organization-identifier>grid.455335.1</common:disambiguated-organization-identifier>
 					<common:disambiguation-source>GRID</common:disambiguation-source>
 				</common:disambiguated-organization>
 			</common:organization>
@@ -57,13 +57,13 @@
 						<common:organization>
 							<common:name>Lasers-R-US</common:name>
 							<common:address>
-								<common:city>city</common:city>
-								<common:region>region</common:region>
+								<common:city>Bethesda</common:city>
+								<common:region>Maryland</common:region>
 								<common:country>US</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>1000</common:disambiguated-organization-identifier>
-								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+								<common:disambiguated-organization-identifier>grid.455335.1</common:disambiguated-organization-identifier>
+								<common:disambiguation-source>GRID</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</common:organization>
 					</research-resource:hosts>
@@ -88,13 +88,13 @@
 						<common:organization>
 							<common:name>Moon Holdings Ltd</common:name>
 							<common:address>
-								<common:city>city</common:city>
-								<common:region>region</common:region>
+								<common:city>Bethesda</common:city>
+								<common:region>Maryland</common:region>
 								<common:country>US</common:country>
 							</common:address>
 							<common:disambiguated-organization>
-								<common:disambiguated-organization-identifier>1001</common:disambiguated-organization-identifier>
-								<common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+								<common:disambiguated-organization-identifier>grid.455335.1</common:disambiguated-organization-identifier>
+								<common:disambiguation-source>GRID</common:disambiguation-source>
 							</common:disambiguated-organization>
 						</common:organization>
 					</research-resource:hosts>
