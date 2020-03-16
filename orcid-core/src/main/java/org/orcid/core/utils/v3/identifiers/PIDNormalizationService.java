@@ -113,8 +113,7 @@ public class PIDNormalizationService {
                             Pattern pattern = Pattern.compile("^(http[s]?://www\\.|http[s]?://|www\\.)([^/]*)");
                             Matcher matcher = pattern.matcher(compare);
                             if (matcher.find()) {
-                                compare = matcher.group(1) + matcher.group(2);
-                                if (prefix.equals(compare) || prefix.contains(compare)) {
+                                if (prefix.equals(matcher.group(1) + matcher.group(2)) || prefix.contains(matcher.group(2))) {
                                     result = norm;
                                 } else {
                                     if (norm.contains("=")) {
