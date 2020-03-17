@@ -172,7 +172,7 @@
         </createView>
     </changeSet>
 
-    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RESOURCE-ITEM-ORG" author="Daniel Palafox" dbms="postgresql">
+    <changeSet id="READ-PERMISSION-TO-DW-USER-ON-DW-RESEARCH-RESOURCE-ITEM-ORG" author="Daniel Palafox" dbms="postgresql">
         <preConditions>
             <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
         </preConditions>
@@ -190,7 +190,7 @@
         </createView>
     </changeSet>
 
-    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RESOURCE-ORG" author="Daniel Palafox" dbms="postgresql">
+    <changeSet id="READ-PERMISSION-TO-DW-USER-ON-DW-RESEARCH-RESOURCE-ORG" author="Daniel Palafox" dbms="postgresql">
         <preConditions>
             <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
         </preConditions>
