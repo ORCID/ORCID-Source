@@ -16,22 +16,19 @@ import java.io.Serializable;
 /**
  * <p>
  * Java class for anonymous complex type.
- * 
+ *
  * <p>
  * The following schema fragment specifies the expected content contained within
  * this class.
- * 
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "value" })
+@XmlType(propOrder = {"value"})
 @XmlRootElement(name = "reported-date", namespace = "http://www.orcid.org/ns/common")
 @ApiModel(value = "ReportedDateV3_0")
 public class ReportedDate implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     @XmlValue
@@ -48,9 +45,8 @@ public class ReportedDate implements Serializable {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return possible object is {@link XMLGregorianCalendar }
-     * 
      */
     public XMLGregorianCalendar getValue() {
         return value;
@@ -58,10 +54,8 @@ public class ReportedDate implements Serializable {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *            allowed object is {@link XMLGregorianCalendar }
-     * 
+     *
+     * @param value allowed object is {@link XMLGregorianCalendar }
      */
     public void setValue(XMLGregorianCalendar value) {
         this.value = value;
@@ -84,27 +78,27 @@ public class ReportedDate implements Serializable {
 
     @Override
     public int hashCode() {
-        return value != null ? value.hashCode() : 0;       
+        return value != null ? value.hashCode() : 0;
     }
-    
+
     public boolean after(LastModifiedDate other) {
-        if(this.value == null) {
-                return false;
+        if (this.value == null) {
+            return false;
         }
-        
-        if(other == null || other.getValue() == null) {
-                return true;
+
+        if (other == null || other.getValue() == null) {
+            return true;
         }
-        
+
         return other.getValue().compare(this.value) < 0;
     }
-    
+
     @Override
     public String toString() {
         String result = new String();
         result += value.getYear();
-        result += "-" + (value.getMonth() < 10 ? "0" + value.getMonth() : value.getMonth());               
-        result += "-" + (value.getDay() < 10 ? "0" + value.getDay() : value.getDay());            
+        result += "-" + (value.getMonth() < 10 ? "0" + value.getMonth() : value.getMonth());
+        result += "-" + (value.getDay() < 10 ? "0" + value.getDay() : value.getDay());
         return result;
     }
 }

@@ -1614,7 +1614,9 @@
 
 	<bean id="spamManager" class="org.orcid.core.manager.v3.impl.SpamManagerImpl"/>
 
-	<bean id="spamManagerReadOnly" class="org.orcid.core.manager.v3.read_only.impl.SpamManagerReadOnlyImpl"/>
+	<bean id="spamManagerReadOnly" class="org.orcid.core.manager.v3.read_only.impl.SpamManagerReadOnlyImpl">
+		<property name="spamDao" ref="spamDaoReadOnly" />
+	</bean>
 
 	<bean id="spamMapperFacade" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getSpamMapperFacade"/>
 	

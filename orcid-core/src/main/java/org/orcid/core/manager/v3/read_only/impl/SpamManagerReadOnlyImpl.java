@@ -16,8 +16,7 @@ public class SpamManagerReadOnlyImpl implements SpamManagerReadOnly {
     
     @Resource
     protected JpaJaxbSpamAdapter jpaJaxbSpamAdapter;
-    
-    @Resource
+
     protected SpamDao spamDao;        
 
     @Override

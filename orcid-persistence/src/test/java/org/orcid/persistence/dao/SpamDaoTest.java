@@ -23,12 +23,12 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = { "classpath:orcid-persistence-context.xml" })
-public class SpamDaoTest extends DBUnitTest{
+@ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = {"classpath:orcid-persistence-context.xml"})
+public class SpamDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "4444-4444-4444-4497";
-    private static String OTHER_USER_ORCID = "4444-4444-4444-4499";   
-    
+    private static String OTHER_USER_ORCID = "4444-4444-4444-4499";
+
     @Resource(name = "spamDao")
     private SpamDao spamDao;
 
@@ -45,67 +45,67 @@ public class SpamDaoTest extends DBUnitTest{
 
     @Test
     @Transactional
-    public void testfindByOrcid(){
+    public void testfindByOrcid() {
         SpamEntity spamEntity = spamDao.getSpam(OTHER_USER_ORCID);
         assertNotNull(spamEntity);
-        assertEquals(OTHER_USER_ORCID, spamEntity.getOrcid());        
+        assertEquals(OTHER_USER_ORCID, spamEntity.getOrcid());
         assertEquals(SourceType.USER, spamEntity.getSourceType());
         assertEquals(Integer.valueOf(1), spamEntity.getSpamCounter());
         assertEquals("2020-01-02 15:31:00.0", spamEntity.getReportedDate().toString());
-        
+
     }
 
     @Test
-    public void testWriteSpam(){
+    public void testWriteSpam() {
         SpamEntity spamEntity = new SpamEntity();
         spamEntity.setOrcid(USER_ORCID);
         spamEntity.setSourceType(SourceType.USER);
         spamEntity.setSpamCounter(1);
-               
+
         Date d = new Date();
         spamEntity.setReportedDate(d);
         spamEntity.setDateCreated(d);
-        spamEntity.setLastModified(d);        
+        spamEntity.setLastModified(d);
 
-        spamDao.createSpam(spamEntity);               
+        spamDao.createSpam(spamEntity);
 
-        spamEntity  = spamDao.getSpam(USER_ORCID);
+        spamEntity = spamDao.getSpam(USER_ORCID);
         assertNotNull(spamEntity);
-        assertEquals(USER_ORCID, spamEntity.getOrcid());        
+        assertEquals(USER_ORCID, spamEntity.getOrcid());
         assertEquals(SourceType.USER, spamEntity.getSourceType());
-        assertEquals(Integer.valueOf(1), spamEntity.getSpamCounter());      
+        assertEquals(Integer.valueOf(1), spamEntity.getSpamCounter());
 
     }
-   
+
     @Test
-    public void testUpdateSpamCount(){
+    public void testUpdateSpamCount() {
         SpamEntity spamEntity = spamDao.getSpam(OTHER_USER_ORCID);
         assertNotNull(spamEntity);
-        assertEquals(OTHER_USER_ORCID, spamEntity.getOrcid());        
+        assertEquals(OTHER_USER_ORCID, spamEntity.getOrcid());
         assertEquals(SourceType.USER, spamEntity.getSourceType());
-        assertEquals(Integer.valueOf(1), spamEntity.getSpamCounter());        
-                
-        spamDao.updateSpamCount(spamEntity, 2);               
+        assertEquals(Integer.valueOf(1), spamEntity.getSpamCounter());
+
+        spamDao.updateSpamCount(spamEntity, 2);
 
         SpamEntity spamEntityUpdated = spamDao.getSpam(OTHER_USER_ORCID);
-        assertEquals(Integer.valueOf(2), spamEntityUpdated.getSpamCounter());      
+        assertEquals(Integer.valueOf(2), spamEntityUpdated.getSpamCounter());
 
     }
-    
+
     @Test
-    public void testRemoveSpam() throws NoResultException{
+    public void testRemoveSpam() throws NoResultException {
         SpamEntity spamEntity = spamDao.getSpam(OTHER_USER_ORCID);
-        assertNotNull(spamEntity);       
-        spamDao.removeSpam(spamEntity.getOrcid());    
+        assertNotNull(spamEntity);
+        spamDao.removeSpam(spamEntity.getOrcid());
     }
-    
+
     @Test
     public void testExists() {
         assertTrue(spamDao.exists("0000-0000-0000-0003"));
-        assertTrue(spamDao.exists("0000-0000-0000-0004"));       
-        
+        assertTrue(spamDao.exists("0000-0000-0000-0004"));
+
         assertFalse(spamDao.exists("0000-0000-0000-0005"));
-        assertFalse(spamDao.exists("0000-0000-0000-0006"));                
+        assertFalse(spamDao.exists("0000-0000-0000-0006"));
     }
-    
+
 }
