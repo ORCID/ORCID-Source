@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
 import org.apache.http.client.ClientProtocolException;
 import org.orcid.core.exception.ApplicationException;
-import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
@@ -107,14 +108,19 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         result.setGivenNames(solrResult.getGivenNames());
         result.setFamilyNames(solrResult.getFamilyName());
         result.setCreditName(solrResult.getCreditName());
-        result.setEmail(solrResult.getEmail());
-
+        
+        if (solrResult.getEmails() != null) {
+            result.setEmails(solrResult.getEmails().toArray(new String[0]));
+        }
+        
         if (solrResult.getOtherNames() != null) {
             result.setOtherNames(solrResult.getOtherNames().toArray(new String[0]));
         }
 
         if (solrResult.getInstitutionAffiliationNames() != null) {
-            result.setInstitutionNames(solrResult.getInstitutionAffiliationNames().toArray(new String[0]));
+            Set<String> affiliations = new TreeSet<String>();
+            solrResult.getInstitutionAffiliationNames().forEach(e -> affiliations.add(e));
+            result.setInstitutionNames(affiliations.toArray(new String[0]));
         }
 
         return result;

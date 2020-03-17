@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 import io.swagger.annotations.ApiModel;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "orcidId", "givenNames", "familyNames", "creditName", "otherNames", "email", "institutionNames" })
+@XmlType(propOrder = { "orcidId", "givenNames", "familyNames", "creditName", "otherNames", "emails", "institutionNames" })
 @ApiModel(value = "ExpandedResultV3_0")
 public class ExpandedResult implements Serializable {
     
@@ -25,14 +25,14 @@ public class ExpandedResult implements Serializable {
     @XmlElement(name = "family-names", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String familyNames;
     
-    @XmlElement(name = "creditName", namespace = "http://www.orcid.org/ns/expanded-search")
+    @XmlElement(name = "credit-name", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String creditName;
     
     @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String[] otherNames;
     
     @XmlElement(name = "email", namespace = "http://www.orcid.org/ns/expanded-search")
-    protected String email;
+    protected String[] emails;
     
     @XmlElement(name = "institution-name", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String[] institutionNames;
@@ -77,12 +77,12 @@ public class ExpandedResult implements Serializable {
         this.otherNames = otherNames;
     }
 
-    public String getEmail() {
-        return email;
+    public String[] getEmails() {
+        return emails;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmails(String[] emails) {
+        this.emails = emails;
     }
 
     public String[] getInstitutionNames() {
@@ -98,7 +98,7 @@ public class ExpandedResult implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((orcidId == null) ? 0 : orcidId.hashCode());
-        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + ((emails == null) ? 0 : emails.hashCode());
         result = prime * result + ((givenNames == null) ? 0 : givenNames.hashCode());
         result = prime * result + ((familyNames == null) ? 0 : familyNames.hashCode());
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
@@ -121,10 +121,10 @@ public class ExpandedResult implements Serializable {
                 return false;
         } else if (!orcidId.equals(other.orcidId))
             return false;
-        if (email == null) {
-            if (other.email != null)
+        if (emails == null) {
+            if (other.emails != null)
                 return false;
-        } else if (!email.equals(other.email))
+        } else if (!emails.equals(other.emails))
             return false;
         if (givenNames == null) {
             if (other.givenNames != null)

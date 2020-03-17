@@ -870,7 +870,7 @@ public class WorksController extends BaseWorkspaceController {
      *         attempted to resolve it.
      */
     // TODO: move to PIDController.
-    @RequestMapping(value = "/id/{type}", method = RequestMethod.GET)
+    @RequestMapping(value = "/id/{type}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public @ResponseBody PIDResolutionResult checkIdResolution(@PathVariable("type") String type, @RequestParam("value") String value) {
         return resolverService.resolve(type, value);
     }

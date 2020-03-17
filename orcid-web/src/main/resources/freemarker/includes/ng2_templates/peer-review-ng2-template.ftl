@@ -104,7 +104,7 @@
                         <strong>
                             ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.havenotaddedanypeerreviews")} 
                             <a *ngIf="noLinkFlag" (click)="showPeerReviewImportWizard()" class="no-wrap">
-                            ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addsomenow")}
+                            ${springMacroRequestContext.getMessage("workspace_peer_review_body_list.addPeerReview")}
                             </a>
                         </strong> 
                     </div>

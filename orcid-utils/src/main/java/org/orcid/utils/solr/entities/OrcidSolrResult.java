@@ -6,7 +6,7 @@ public class OrcidSolrResult {
 
     private String orcid;
     private float relevancyScore;
-    private String email;
+    private Collection<String> emails;
     private String givenNames;
     private String familyName;
     private Collection<String> institutionAffiliationNames;
@@ -30,12 +30,12 @@ public class OrcidSolrResult {
         this.relevancyScore = relevancyScore;
     }
 
-    public String getEmail() {
-        return email;
+    public Collection<String> getEmails() {
+        return emails;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmails(Collection<String> emails) {
+        this.emails = emails;
     }
 
     public String getGivenNames() {

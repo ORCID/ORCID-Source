@@ -9970,10 +9970,27 @@ works-ng2 mat-paginator .mat-paginator-container {
     cursor: pointer;
 }
 
+.maintenance-header a:hover {
+    text-decoration: underline;
+    color: rgba(0,0,0,0.87)
+    
+}
+
+.maintenance-header a {
+    font-family: "Noto Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(0,0,0,0.87)
+}
+
+.maintenance-header {
+    font: 400 14px/16px "Noto Sans", sans-serif;
+    color: rgba(0,0,0,0.87)
+}
+
 .spam-button {
     float: right;
 }
 
 .spam-button-left {
     float: left;
-}
