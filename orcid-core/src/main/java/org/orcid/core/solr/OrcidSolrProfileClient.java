@@ -15,7 +15,6 @@ import static org.orcid.utils.solr.entities.SolrConstants.SCORE;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -134,7 +133,7 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
                 orcidSolrResult.setOrcid((String) solrDocument.getFieldValue(ORCID));
                 orcidSolrResult.setPublicProfileMessage((String) solrDocument.getFieldValue(PUBLIC_PROFILE));
                 orcidSolrResult.setCreditName((String) solrDocument.getFieldValue(CREDIT_NAME));
-                orcidSolrResult.setEmail(getEmailFromResult(solrDocument));
+                orcidSolrResult.setEmails(getStringList(solrDocument, EMAIL_ADDRESS));
                 orcidSolrResult.setFamilyName((String) solrDocument.getFieldValue(FAMILY_NAME));
                 orcidSolrResult.setGivenNames((String) solrDocument.getFieldValue(GIVEN_NAMES));
                 orcidSolrResult.setInstitutionAffiliationNames(getInstitutionAffiliationNames(solrDocument));
@@ -147,11 +146,6 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
             throw new NonTransientDataAccessResourceException("Error retrieving from SOLR Server", se);
         }
         return orcidSolrResults;
-    }
-
-    private String getEmailFromResult(SolrDocument solrDocument) {
-        List<String> emails = getStringList(solrDocument, EMAIL_ADDRESS);
-        return emails.isEmpty() ? null : emails.get(0);
     }
 
     private Collection<String> getInstitutionAffiliationNames(SolrDocument solrDocument) {

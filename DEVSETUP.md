@@ -45,6 +45,8 @@ psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE features to orcid;"
 
 psql -U postgres -c "CREATE DATABASE message_listener;"
 psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE message_listener to orcid;"
+
+psql -U postgres -c "CREATE USER dw_user WITH PASSWORD 'dw_user';"
 ```
 
 Verify user login and database exist

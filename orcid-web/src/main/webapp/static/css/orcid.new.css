@@ -9980,7 +9980,6 @@ works-ng2 mat-paginator .mat-paginator-container {
     font-family: "Noto Sans", sans-serif;
     font-size: 14px;
     font-weight: 700;
-    letter-spacing: 1.3px !important;
     color: rgba(0,0,0,0.87)
 }
 

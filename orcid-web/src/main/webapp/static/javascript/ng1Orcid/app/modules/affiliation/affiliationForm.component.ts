@@ -357,7 +357,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     }
 
     unbindTypeahead(): void {
-        $('#affiliationName').typeahead('destroy');
+        $('#affiliationName').off()
+            .data('typeahead');
     };
 
     //Default init functions provided by Angular Core
