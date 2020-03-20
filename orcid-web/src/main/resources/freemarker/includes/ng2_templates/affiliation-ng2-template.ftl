@@ -79,7 +79,7 @@
                 <div id="employments-empty" *ngIf="!employments?.length">
                     <strong>                               
                         <@orcid.msg 'workspace_affiliations_body_list.Noemploymentaddedyet' />
-                        <a (click)="addAffiliationModal('employment')"><@orcid.msg 'workspace_affiliations_body_list.addemploymentnow' /></a>
+                        <a role="button" (click)="addAffiliationModal('employment')"><@orcid.msg 'workspace_affiliations_body_list.addemployment' /></a>
                     </strong>
                 </div>
                 <ul id="employments-list" *ngIf="employments?.length > 0" class="workspace-affiliations bottom-margin-medium" id="body-employment-list">
@@ -188,9 +188,9 @@
                 <div id="educations-distinctions-empty" *ngIf="!educationsAndQualifications?.length && workspaceSrvc?.displayEducationAndQualification">
                     <strong>                              
                         <@orcid.msg 'workspace_affiliations_body_list.Noeducationnorqualificationaddedyet' />
-                        <a (click)="addAffiliationModal('education')"><@orcid.msg 'workspace_affiliations_body_list.addeducationnow' /></a>
-                        <@orcid.msg 'common.or_a' />
-                        <a (click)="addAffiliationModal('qualification')"><@orcid.msg 'workspace_affiliations_body_list.addqualificationnow' /></a>
+                        <a role="button" (click)="addAffiliationModal('education')"><@orcid.msg 'workspace_affiliations_body_list.addeducation' /></a>
+                        <@orcid.msg 'common.or' />
+                        <a role="button" (click)="addAffiliationModal('qualification')"><@orcid.msg 'workspace_affiliations_body_list.addqualification' /></a>
                     </strong>
                 </div>
                 <ul id="educations-distinctions-list" *ngIf="educationsAndQualifications?.length" class="workspace-affiliations bottom-margin-medium" id="body-education-list">
@@ -299,9 +299,9 @@
                 <div id="distinction-invited-position-empty" *ngIf="!distinctionsAndInvitedPositions?.length">
                     <strong>                              
                         <@orcid.msg 'workspace_affiliations_body_list.Nodistinctionorinvitedpositionaddedyet' />
-                        <a (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedpositionnow' /></a>
-                        <@orcid.msg 'common.or_a' />
-                        <a (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinctionnow' /></a>
+                        <a role="button" (click)="addAffiliationModal('invited-position')"><@orcid.msg 'workspace_affiliations_body_list.addinvitedposition' /></a>
+                        <@orcid.msg 'common.or' />
+                        <a role="button" (click)="addAffiliationModal('distinction')"><@orcid.msg 'workspace_affiliations_body_list.adddistinction' /></a>
                     </strong>
                 </div>
                 <ul id="distinction-invited-position-list" *ngIf="distinctionsAndInvitedPositions?.length > 0" class="workspace-affiliations bottom-margin-medium" id="body-distinction-list">
@@ -410,9 +410,9 @@
                 <div id="membership-service-empty" *ngIf="!membershipsAndServices?.length">
                     <strong>                              
                         <@orcid.msg 'workspace_affiliations_body_list.Nomembershiporserviceaddedyet' />
-                        <a (click)="addAffiliationModal('membership')"><@orcid.msg 'workspace_affiliations_body_list.addmembershipnow' /></a>
+                        <a role="button" (click)="addAffiliationModal('membership')"><@orcid.msg 'workspace_affiliations_body_list.addmembership' /></a>
                         <@orcid.msg 'common.or' />
-                        <a (click)="addAffiliationModal('service')"><@orcid.msg 'workspace_affiliations_body_list.addservicenow' /></a>
+                        <a role="button" (click)="addAffiliationModal('service')"><@orcid.msg 'workspace_affiliations_body_list.addservice' /></a>
                     </strong>
                 </div>
                 <ul id="membership-service-list" *ngIf="membershipsAndServices?.length > 0" class="workspace-affiliations bottom-margin-medium" id="body-membership-list">
