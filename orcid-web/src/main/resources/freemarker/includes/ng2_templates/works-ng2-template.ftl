@@ -518,8 +518,8 @@
             <div *ngIf="worksService?.loading == false && worksService?.groups?.length == 0">
                 <strong>
                     ${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} 
-                    <a *ngIf="noLinkFlag" (click)="showWorkImportWizard()">${springMacroRequestContext.getMessage("workspace_works_body_list.addworknow")}</a>
-                    <span *ngIf="!noLinkFlag">${springMacroRequestContext.getMessage("workspace_works_body_list.addworknow")}</span>
+                    <a role="button" *ngIf="noLinkFlag" (click)="showWorkImportWizard()">${springMacroRequestContext.getMessage("workspace_works_body_list.addwork")}</a>
+                    <span *ngIf="!noLinkFlag">${springMacroRequestContext.getMessage("workspace_works_body_list.addwork")}</span>
                 </strong>
             </div>          
         </div>
