@@ -161,8 +161,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                     this.commonSrvc.copyErrorsLeft(this.editAffiliation, data);
                 } else {
                     this.unbindTypeahead();
-                    this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationForm'});
                     this.removeDisambiguatedAffiliation();
+                    this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationForm'});
                     this.editAffiliation = this.getEmptyAffiliation();
                     this.affiliationService.notifyOther({action:'add', successful:true});
                 }
@@ -215,7 +215,6 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     cancelEdit(): void {
         this.unbindTypeahead();
         this.modalService.notifyOther({action:'close', moduleId: 'modalAffiliationForm'});
-        this.affiliationService.notifyOther({action:'cancel', successful:true});
     };
 
     getDisambiguatedAffiliation = function(id) {
@@ -279,6 +278,10 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
         
         if (this.editAffiliation != undefined && this.editAffiliation.orgDisambiguatedId != undefined) {
             this.editAffiliation.orgDisambiguatedId.value = null;
+        }
+
+        if (this.editAffiliation != undefined && this.editAffiliation.affiliationName != undefined) {
+            this.editAffiliation.affiliationName.value = null;
         }
 
         this.disambiguatedAffiliation = null;
@@ -372,11 +375,7 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
                     this.editAffiliation = res.affiliation;
                     if(this.editAffiliation.orgDisambiguatedId != null){
                         this.getDisambiguatedAffiliation(this.editAffiliation.orgDisambiguatedId.value);
-                    } else {
-                        this.editAffiliation.orgDisambiguatedId = {
-                                value: ""
-                            }
-                    }
+                    } 
                 } else {
                     this.affiliationService.getBlankAffiliation()
                     .pipe(    
@@ -410,6 +409,8 @@ export class AffiliationFormComponent implements AfterViewInit, OnDestroy, OnIni
     };
 
     ngOnDestroy() {
+        this.unbindTypeahead();
+
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
     };
