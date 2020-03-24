@@ -1612,7 +1612,9 @@
         
     <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser" />
 
-	<bean id="spamManager" class="org.orcid.core.manager.v3.impl.SpamManagerImpl"/>
+	<bean id="spamManager" class="org.orcid.core.manager.v3.impl.SpamManagerImpl">
+		<property name="spamDao" ref="spamDao" />
+	</bean>
 
 	<bean id="spamManagerReadOnly" class="org.orcid.core.manager.v3.read_only.impl.SpamManagerReadOnlyImpl">
 		<property name="spamDao" ref="spamDaoReadOnly" />
