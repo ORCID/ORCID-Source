@@ -9988,6 +9988,10 @@ works-ng2 mat-paginator .mat-paginator-container {
     color: rgba(0,0,0,0.87)
 }
 
+name-ng2 h2.full-name {
+    margin-top: 0px !important;
+}
+
 .spam-button {
     float: right;
 }
