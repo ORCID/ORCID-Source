@@ -232,8 +232,17 @@ import { FooterNg2Module }
     from './footer/footer';   
     
 import { MaintenanceMessageNg2Module } 
-    from './maintenanceMessage/maintenanceMessage';    
-        
+    from './maintenanceMessage/maintenanceMessage';
+
+import { SpamNg2Module }
+    from "./spam/spam";
+
+import { SpamSuccessMessageNg2Module }
+    from "./spamSuccessMessage/spamSuccessMessage";
+
+import { SpamErrorMessageNg2Module }
+    from "./spamErrorMessage/spamErrorMessage";
+
 ///////////////////
 import {Injectable} 
     from '@angular/core';
@@ -370,7 +379,10 @@ export class RootCmp {
         HtmlHeadNg2Module,
         OauthHeaderNg2Module,
         FooterNg2Module,
-        MaintenanceMessageNg2Module
+        MaintenanceMessageNg2Module,
+        SpamNg2Module,
+        SpamSuccessMessageNg2Module,
+        SpamErrorMessageNg2Module
     ],
     providers: [{ 
             provide: HTTP_INTERCEPTORS,
