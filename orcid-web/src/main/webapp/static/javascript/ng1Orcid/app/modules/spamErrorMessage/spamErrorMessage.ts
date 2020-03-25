@@ -10,38 +10,39 @@ import { NgModule }
 import { downgradeComponent, UpgradeModule } 
     from '@angular/upgrade/static';
 
-import { MaintenanceMessageComponent } from './maintenanceMessage.component';
+import { SpamErrorMessageComponent }
+    from './spamErrorMessage.component';
 
 // This is the Angular 1 part of the module
-export const MaintenanceMessageModule = angular.module(
-    'MaintenanceMessageModule', 
+export const SpamErrorMessageModule = angular.module(
+    'SpamErrorMessageModule',
     []
 );
 
 // This is the Angular 2 part of the module
 @NgModule(
     {
-        declarations: [ 
-            MaintenanceMessageComponent 
+        declarations: [
+            SpamErrorMessageComponent
         ],
-        entryComponents: [ 
-            MaintenanceMessageComponent 
+        entryComponents: [
+            SpamErrorMessageComponent
         ],
         imports: [
             CommonModule
         ]
     }
 )
-export class MaintenanceMessageNg2Module {}
+export class SpamErrorMessageNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
 
-MaintenanceMessageModule.directive(
-    'maintenanceNg2', 
+SpamErrorMessageModule.directive(
+    'spamErrorMessageNg2',
     <any>downgradeComponent(
         {
-            component: MaintenanceMessageComponent
+            component: SpamErrorMessageComponent
         }
     )
 );

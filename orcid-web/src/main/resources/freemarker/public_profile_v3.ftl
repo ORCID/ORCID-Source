@@ -50,12 +50,25 @@
                     </#if>
                 </#if> 
                 <#include "/includes/ng2_templates/last-modified-ng2-template.ftl">
-                <last-modified-ng2> </last-modified-ng2>
+                <last-modified-ng2></last-modified-ng2>
+                <#include "/includes/ng2_templates/spam-ng2-template.ftl">
+                <spam-ng2></spam-ng2>
             </div>
         </div>
     </div>
 </div>
 </#escape>
-<!--Org ID popover template used in v3 affiliations and research resources-->
+
+<#include "/includes/ng2_templates/spam-success-message-ng2-template.ftl">
+<modalngcomponent elementHeight="248" elementId="spamSuccess" elementWidth="500">
+    <spam-success-message-ng2></spam-success-message-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+<#include "/includes/ng2_templates/spam-error-message-ng2-template.ftl">
+<modalngcomponent elementHeight="248" elementId="spamError" elementWidth="500">
+    <spam-error-message-ng2></spam-error-message-ng2>
+</modalngcomponent><!-- Ng2 component -->
+
+    <!--Org ID popover template used in v3 affiliations and research resources-->
 <#include "/includes/ng2_templates/org-identifier-popover-ng2-template.ftl">
 </@public>

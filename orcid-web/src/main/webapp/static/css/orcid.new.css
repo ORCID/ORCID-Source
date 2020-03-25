@@ -9991,3 +9991,11 @@ works-ng2 mat-paginator .mat-paginator-container {
 name-ng2 h2.full-name {
     margin-top: 0px !important;
 }
+
+.spam-button {
+    float: right;
+}
+
+.spam-button-left {
+    float: left;
+}
