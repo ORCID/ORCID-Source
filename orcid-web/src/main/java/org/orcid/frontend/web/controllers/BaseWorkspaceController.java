@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -137,18 +138,26 @@ public class BaseWorkspaceController extends BaseController {
                 new DateTimeFormatterBuilder().appendPattern("yyyyMMdd")
                         .parseStrict().toFormatter() };
         String dateString = date.getYear();
-        if (date.getMonth() != null) {
+        
+        if(StringUtils.isBlank(date.getMonth())) {
+            if(!StringUtils.isBlank(date.getDay()))
+            {
+                return false;
+            }
+        }
+        else {
             dateString += date.getMonth();
-            if (date.getDay() != null) {
+            if (!StringUtils.isBlank(date.getDay())) {
                 dateString += date.getDay();
             }
         }
+        
         for (DateTimeFormatter formatter : formatters) {
             try {
                 LocalDate localDate = LocalDate.parse(dateString, formatter);
                 if (PojoUtil.isEmpty(date.getDay()) || localDate.getDayOfMonth() == Integer.parseInt(date.getDay())) {
                     // formatter will correct day to last valid day of month if it is too great
-                    return true;
+                     return true;
                 }
             } catch (DateTimeParseException e) {
             }
