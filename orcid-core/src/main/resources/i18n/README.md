@@ -2,6 +2,7 @@
 
 ****************************************************************************************************************************************
 **As of 2020-03-23 translators are no longer actively maintaining translations to about, admin, messages, javascript and ng_orcid files via Transifex. Translations for the Registry UI are being migrated to [orcid-angular](https://github.com/ORCID/orcid-angular/tree/master/src/locale/properties) as each page/component is migrated.**
+
 Please avoid adding or editing strings in these files. If you must add/edit strings, please edit the EN version only and be aware that they will not be translated and will appear in EN regardless of the user's language setting. For cases where translations to strings in this directory are needed urgently, please message Slack #translations to coordinate.
 ****************************************************************************************************************************************
 
