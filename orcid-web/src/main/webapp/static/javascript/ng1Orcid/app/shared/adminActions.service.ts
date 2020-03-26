@@ -172,4 +172,14 @@ export class AdminActionsService {
                 { headers: this.headers }
         )
     };
+
+    disable2FA( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/disable-2fa.json', 
+                encodeURIComponent(obj), 
+                { headers: this.headers }
+        )
+    };
+    
+
 }
