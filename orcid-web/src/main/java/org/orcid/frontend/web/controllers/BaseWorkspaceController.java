@@ -47,15 +47,15 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource(name = "visibilityFilter")
     protected VisibilityFilter visibilityFilter;
-    
+
     @Resource
     private ProfileLastModifiedAspect profileLastModifiedAspect;
-    
+
     protected long getLastModified(String orcid) {
         java.util.Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
     }
-    
+
     @ModelAttribute("years")
     public Map<String, String> retrieveYearsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
@@ -77,7 +77,6 @@ public class BaseWorkspaceController extends BaseController {
         }
         return map;
     }
-
 
     @ModelAttribute("fundingYears")
     public Map<String, String> retrieveFundingYearsAsMap() {
@@ -111,7 +110,7 @@ public class BaseWorkspaceController extends BaseController {
         }
         return map;
     }
-    
+
     @ModelAttribute("orcidIdHash")
     String getOrcidHash(HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession(false);
@@ -125,45 +124,39 @@ public class BaseWorkspaceController extends BaseController {
         }
         return hash;
     }
-    
+
     protected boolean validDate(Date date) {
         DateTimeFormatter[] formatters = {
-                new DateTimeFormatterBuilder().appendPattern("yyyy")
-                        .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
-                        .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                new DateTimeFormatterBuilder().appendPattern("yyyy").parseDefaulting(ChronoField.MONTH_OF_YEAR, 1).parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
                         .toFormatter(),
-                new DateTimeFormatterBuilder().appendPattern("yyyyMM")
-                        .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
-                        .toFormatter(),
-                new DateTimeFormatterBuilder().appendPattern("yyyyMMdd")
-                        .parseStrict().toFormatter() };
+                new DateTimeFormatterBuilder().appendPattern("yyyyMM").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter(),
+                new DateTimeFormatterBuilder().appendPattern("yyyyMMdd").parseStrict().toFormatter() };
         String dateString = date.getYear();
-        
-        //If the month is empty and day provided is an invalid date
-        if(StringUtils.isBlank(date.getMonth())) {
-            if(!StringUtils.isBlank(date.getDay()))
-            {
+
+        // If the month is empty and day provided is an invalid date
+        if (StringUtils.isBlank(date.getMonth())) {
+            if (!StringUtils.isBlank(date.getDay())) {
                 return false;
             }
-        }
-        else {
+        } else {
             dateString += date.getMonth();
             if (!StringUtils.isBlank(date.getDay())) {
                 dateString += date.getDay();
             }
         }
-        
+
         for (DateTimeFormatter formatter : formatters) {
             try {
                 LocalDate localDate = LocalDate.parse(dateString, formatter);
                 if (PojoUtil.isEmpty(date.getDay()) || localDate.getDayOfMonth() == Integer.parseInt(date.getDay())) {
-                    // formatter will correct day to last valid day of month if it is too great
-                     return true;
+                    // formatter will correct day to last valid day of month if
+                    // it is too great
+                    return true;
                 }
             } catch (DateTimeParseException e) {
             }
         }
         return false;
     }
-    
+
 }
