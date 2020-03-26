@@ -139,6 +139,7 @@ public class BaseWorkspaceController extends BaseController {
                         .parseStrict().toFormatter() };
         String dateString = date.getYear();
         
+        //If the month is empty and day provided is an invalid date
         if(StringUtils.isBlank(date.getMonth())) {
             if(!StringUtils.isBlank(date.getDay()))
             {
