@@ -31,6 +31,7 @@ import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.FuzzyDateUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.LanguageCode;
@@ -78,6 +79,9 @@ public class ActivityValidator {
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
+    
+    @Resource
+    PIDResolverService resolverService;
 
     public void validateWork(Work work, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
@@ -219,6 +223,17 @@ public class ActivityValidator {
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
                 || work.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
+        } else {
+            // Validate DOI's are resolvable 
+            for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                if(extId.getType().equals("doi")) {
+                    try {
+                        resolverService.resolve(extId.getType(), extId.getValue());
+                    } catch(IllegalArgumentException iae) {
+                        throw new ActivityIdentifierValidationException("Unable to process DOI for value: " + extId.getValue()); 
+                    }
+                }
+            }
         }
 
         if (work.getWorkContributors() != null) {

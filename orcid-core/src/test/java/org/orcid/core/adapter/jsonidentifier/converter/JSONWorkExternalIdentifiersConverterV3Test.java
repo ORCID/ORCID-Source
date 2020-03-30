@@ -3,6 +3,7 @@ package org.orcid.core.adapter.jsonidentifier.converter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -88,6 +89,28 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
         assertEquals("Cannot normalize identifier value doi:123",externalID.getNormalizedError().getErrorMessage());
         assertNotNull(externalID.getType());
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI.value(), externalID.getType());
+    }
+    
+    @Test
+    public void testConvertWithIdThatBreaksUrlValidation() {
+        WorkEntity workEntity = getWorkEntity();
+        workEntity.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}");
+        ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
+        assertNotNull(entityIDs.getExternalIdentifier());
+        ExternalID eid0 = entityIDs.getExternalIdentifier().get(0);
+        assertNotNull(eid0);
+        assertNull(eid0.getUrl());
+        assertEquals("doi", eid0.getType());
+        assertEquals("10.00000/test.v%vi%i.0000", eid0.getValue());
+        assertNotNull(eid0.getNormalized());
+        assertEquals("10.00000/test.v%vi%i.0000", eid0.getNormalized().getValue());
+        assertNull(eid0.getNormalizedUrl());
+    }
+    
+    @Test
+    public void testConvertToWithIdThatBreaksUrlValidation() {
+        //TODO: What should we test here?
+        fail();
     }
 
     private Work getWork() throws JAXBException {

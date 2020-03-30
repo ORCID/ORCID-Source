@@ -26,6 +26,7 @@ import org.orcid.core.exception.StartDateAfterEndDateException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.FuzzyDateUtils;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.common.LanguageCode;
 import org.orcid.jaxb.model.common_v2.Amount;
 import org.orcid.jaxb.model.common_v2.Contributor;
@@ -55,6 +56,7 @@ import org.orcid.jaxb.model.record_v2.WorkContributors;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 
@@ -65,6 +67,9 @@ public class ActivityValidator {
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
+    
+    @Resource
+    PIDResolverService resolverService;
 
     public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
@@ -208,6 +213,17 @@ public class ActivityValidator {
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
                 || work.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
+        } else {
+            // Validate DOI's could be transformed into a valid URL 
+            for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                if(extId.getType().equals("doi")) {
+                    try {
+                        resolverService.resolve(extId.getType(), extId.getValue());
+                    } catch(IllegalArgumentException iae) {
+                        throw new ActivityIdentifierValidationException("Unable to process DOI for value: " + extId.getValue()); 
+                    }
+                }
+            }
         }
 
         if (work.getWorkContributors() != null) {

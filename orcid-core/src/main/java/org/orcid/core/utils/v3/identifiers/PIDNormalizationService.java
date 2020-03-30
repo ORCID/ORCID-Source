@@ -131,9 +131,10 @@ public class PIDNormalizationService {
                         result = prefix + norm;
                     }                             
                     return URLDecoder.decode(result, "UTF-8");
-                } catch (UnsupportedEncodingException | IllegalArgumentException e) {
-                    // If an error happens, just return an empty string
-                    return "";
+                } catch (UnsupportedEncodingException uee) {
+                    throw new RuntimeException(uee);
+                } catch (IllegalArgumentException iae) {
+                    throw iae;
                 }
             }
         }
