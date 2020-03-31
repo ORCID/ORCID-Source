@@ -56,12 +56,15 @@ import org.orcid.jaxb.model.record_v2.WorkContributors;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ActivityValidator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActivityValidator.class);
+    
     @Resource
     private ExternalIDValidator externalIDValidator;
 
@@ -220,7 +223,7 @@ public class ActivityValidator {
                     try {
                         resolverService.resolve(extId.getType(), extId.getValue());
                     } catch(IllegalArgumentException iae) {
-                        throw new ActivityIdentifierValidationException("Unable to process DOI for value: " + extId.getValue()); 
+                        LOGGER.warn("Invalid DOI provided: " + extId.getValue());
                     }
                 }
             }
