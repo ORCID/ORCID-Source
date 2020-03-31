@@ -23,11 +23,10 @@ import org.orcid.core.utils.v3.identifiers.normalizers.NormalizerWithURLTransfor
 import org.orcid.pojo.IdentifierType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriUtils;
 
 @Component("PIDNormalizationService")
 public class PIDNormalizationService {
-
+    
     @Resource
     List<Normalizer> normalizers = new ArrayList<Normalizer>();
 
@@ -130,10 +129,12 @@ public class PIDNormalizationService {
                         }
                     } else {
                         result = prefix + norm;
-                    }                                       
+                    }                             
                     return URLDecoder.decode(result, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
+                } catch (UnsupportedEncodingException uee) {
+                    throw new RuntimeException(uee);
+                } catch (IllegalArgumentException iae) {
+                    throw iae;
                 }
             }
         }
