@@ -79,8 +79,12 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
                     id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
                 }
                 
-                id.setNormalizedUrl(new TransientNonEmptyString(norm.generateNormalisedURL(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
-                if (StringUtils.isEmpty(id.getNormalizedUrl().getValue())){
+                try {
+                    id.setNormalizedUrl(new TransientNonEmptyString(norm.generateNormalisedURL(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
+                } catch (IllegalArgumentException iae) {
+                    
+                }
+                if (id.getNormalizedUrl() == null || StringUtils.isEmpty(id.getNormalizedUrl().getValue())){
                     id.setNormalizedUrlError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
                 }
             }
