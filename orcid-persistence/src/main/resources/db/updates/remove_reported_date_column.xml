@@ -1,0 +1,11 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="REMOVE-REPORTED-DATE-COLUMN" author="Daniel Palafox" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="spam" columnName="reported_date" />
+        </preConditions>
+        <sql>ALTER TABLE spam DROP COLUMN IF EXISTS reported_date;</sql>
+    </changeSet>
+</databaseChangeLog>                   

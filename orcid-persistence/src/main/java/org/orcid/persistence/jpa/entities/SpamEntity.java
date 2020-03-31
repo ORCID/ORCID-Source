@@ -24,7 +24,6 @@ public class SpamEntity extends BaseEntity<Long> implements OrcidAware {
     private static final long serialVersionUID = 1L;
     private Long id;    
     private String orcid;
-    private Date reportedDate;
     private SourceType sourceType;
     private Integer spamCounter;
     
@@ -47,15 +46,6 @@ public class SpamEntity extends BaseEntity<Long> implements OrcidAware {
 
     public void setOrcid(String orcid) {
         this.orcid = orcid;
-    }
-
-    @Column(name = "reported_date")
-    public Date getReportedDate() {
-        return reportedDate;
-    }
-
-    public void setReportedDate(Date reportedDate) {
-        this.reportedDate = reportedDate;
     }
 
     @Basic

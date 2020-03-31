@@ -1175,7 +1175,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ClassMapBuilder<Spam, SpamEntity> classMap = mapperFactory.classMap(Spam.class, SpamEntity.class);                       
         classMap.fieldBToA("sourceType", "sourceType");
         classMap.fieldBToA("spamCounter", "spamCounter");
-        classMap.field("reportedDate.value", "reportedDate");
         addV3DateFields(classMap);
         classMap.byDefault();
         classMap.register();

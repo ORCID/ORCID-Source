@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.release.common.ReportedDate;
 
 import io.swagger.annotations.ApiModel;
 
@@ -20,7 +19,7 @@ import io.swagger.annotations.ApiModel;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "sourceType", "spamCounter", "reportedDate" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "sourceType", "spamCounter" })
 @XmlRootElement(name = "spam", namespace = "http://www.orcid.org/ns/spam")
 @ApiModel(value = "SpamV3_0")
 public class Spam implements Serializable {
@@ -30,8 +29,6 @@ public class Spam implements Serializable {
     protected SourceType sourceType;
     @XmlElement(name = "spam-counter", namespace = "http://www.orcid.org/ns/spam")
     protected Integer spamCounter;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "reported-date")
-    protected ReportedDate reportedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
@@ -47,12 +44,6 @@ public class Spam implements Serializable {
     }
     public void setSpamCounter(Integer spamCounter) {
         this.spamCounter = spamCounter;
-    }
-    public ReportedDate getReportedDate() {
-        return reportedDate;
-    }
-    public void setReportedDate(ReportedDate reportedDate) {
-        this.reportedDate = reportedDate;
     }
     public LastModifiedDate getLastModifiedDate() {
         return lastModifiedDate;
@@ -73,7 +64,6 @@ public class Spam implements Serializable {
         int result = 1;
         result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
-        result = prime * result + ((reportedDate == null) ? 0 : reportedDate.hashCode());
         result = prime * result + ((sourceType == null) ? 0 : sourceType.hashCode());
         result = prime * result + ((spamCounter == null) ? 0 : spamCounter.hashCode());
         return result;
@@ -97,11 +87,6 @@ public class Spam implements Serializable {
             if (other.lastModifiedDate != null)
                 return false;
         } else if (!lastModifiedDate.equals(other.lastModifiedDate))
-            return false;
-        if (reportedDate == null) {
-            if (other.reportedDate != null)
-                return false;
-        } else if (!reportedDate.equals(other.reportedDate))
             return false;
         if (sourceType == null) {
             if (other.sourceType != null)
