@@ -42,7 +42,6 @@ public class SpamManagerImpl extends SpamManagerReadOnlyImpl implements SpamMana
                     spamEntity.setOrcid(orcid);
                     spamEntity.setSpamCounter(1);
                     spamEntity.setSourceType(org.orcid.persistence.jpa.entities.SourceType.USER);
-                    spamEntity.setReportedDate(new Date());
                     spamDao.createSpam(spamEntity);
                 }          
                 return true;

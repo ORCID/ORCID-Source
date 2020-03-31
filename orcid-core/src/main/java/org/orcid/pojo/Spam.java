@@ -11,8 +11,6 @@ public class Spam implements Serializable {
 
     private Date lastModifiedDate;
 
-    private Date reportedDate;
-
     private String sourceType;
 
     private Integer count;
@@ -31,14 +29,6 @@ public class Spam implements Serializable {
 
     public Date getLastModifiedDate() {
         return lastModifiedDate;
-    }
-
-    public Date getReportedDate() {
-        return reportedDate;
-    }
-
-    public void setReportedDate(Date reportedDate) {
-        this.reportedDate = reportedDate;
     }
 
     public String getSourceType() {
@@ -66,8 +56,6 @@ public class Spam implements Serializable {
         s.setCount(spam.getSpamCounter());
 
         s.setSourceType(spam.getSourceType().toString());
-
-        s.setReportedDate(Date.valueOf(spam.getReportedDate()));
 
         s.setCreatedDate(Date.valueOf(spam.getCreatedDate()));
 
