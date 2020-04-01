@@ -48,6 +48,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
+import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -63,6 +64,7 @@ import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.persistence.jpa.entities.SpamEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
 import org.orcid.pojo.LockAccounts;
@@ -592,11 +594,13 @@ public class AdminControllerTest extends BaseControllerTest {
     public void testReviewAccounts() throws Exception {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
+        SpamManager spamManager = Mockito.mock(SpamManager.class);
         EmailManager emailManager = Mockito.mock(EmailManager.class);
         OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);        
 
         AdminController adminController = new AdminController();        
         ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
+        ReflectionTestUtils.setField(adminController, "spamManager", spamManager);
         ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
         ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
         ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
