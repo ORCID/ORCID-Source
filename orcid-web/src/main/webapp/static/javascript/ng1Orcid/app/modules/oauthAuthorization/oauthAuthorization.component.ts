@@ -622,7 +622,14 @@ ok: "${error.ok}"
             },
             error => {
                 // something bad is happening!
-                console.log("OauthAuthorizationController.postRegister() error");
+                console.error(`
+__Server error__
+(status:${error.status} (${error.statusText}) url: ${error.url})
+name: "${error.name}"
+message: "${error.message}"
+ok: "${error.ok}"
+            `)
+
             } 
         );
     };
