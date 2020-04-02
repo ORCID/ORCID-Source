@@ -424,7 +424,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.showDeactivateRecordMessages = true;
                 setTimeout (() => {
                     this.showDeactivateRecordMessages = false;
-                }, 3000);
+                }, 16000);
             },
             error => {
                 console.log('admin: deactivateRecord error', error);

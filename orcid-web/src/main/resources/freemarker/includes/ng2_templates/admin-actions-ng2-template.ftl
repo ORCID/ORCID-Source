@@ -247,6 +247,9 @@
             <div class="alert alert-success" *ngIf="deactivateResults.notFoundList?.length > 0"><@spring.message "admin.profile_deactivation.not_found"/>
                 <br>{{deactivateResults.notFoundList}}
             </div>
+            <div class="alert alert-success" *ngIf="deactivateResults.members?.length > 0"><@spring.message "admin.profile_deactivation.members"/>
+                <br>{{deactivateResults.members}}
+            </div>
         </div>
         <div class="form-group">
             <label for="orcidIds"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
