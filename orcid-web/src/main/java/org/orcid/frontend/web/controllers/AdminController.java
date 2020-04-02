@@ -20,6 +20,7 @@ import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.record.Email;
@@ -73,6 +74,9 @@ public class AdminController extends BaseController {
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
+    @Resource(name = "spamManager")
+    SpamManager spamManager;     
+    
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
     private static final String DEPRECATED = "(deprecated)";
@@ -854,6 +858,9 @@ public class AdminController extends BaseController {
                             reviewedIds.add(nextToken);
                         } else {
                             profileEntityManager.reviewProfile(orcidId);
+                            if (spamManager.exists(orcidId)) {
+                                spamManager.removeSpam(orcidId);
+                            }
                             successIds.add(nextToken);
                         }
                     }
