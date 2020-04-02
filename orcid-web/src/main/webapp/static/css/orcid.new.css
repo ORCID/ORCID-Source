@@ -9999,3 +9999,11 @@ name-ng2 h2.full-name {
 .spam-button-left {
     float: left;
 }
+
+.tooltip-url-websites {
+    font-size: 12px !important;
+}
+
+.input-url-websites {
+    width: 90% !important;
+}
