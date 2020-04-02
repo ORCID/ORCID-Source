@@ -71,7 +71,7 @@
         <sql>GRANT SELECT ON TABLE dw_group_id_record to dw_user;</sql>
     </changeSet>
 
-   <changeSet id="CREATE-DW-IDENTIFIER-TYPE-VIEW" author="Camelia Dumitru">
+   <changeSet id="CREATE-DW-IDENTIFIER-TYPE-VIEW" author="Camelia Dumitru"  dbms="postgresql">
         <preConditions onFail="MARK_RAN">
             <not><viewExists viewName="dw_identifier_type"/></not>
         </preConditions>
@@ -106,7 +106,7 @@
         <sql>GRANT SELECT ON TABLE dw_identity_provider to dw_user;</sql>
     </changeSet>
     
-   <changeSet id="CREATE-DW-OAUTH2-TOKEN-DETAIL-VIEW" author="Camelia Dumitru">
+   <changeSet id="CREATE-DW-OAUTH2-TOKEN-DETAIL-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <preConditions onFail="MARK_RAN">
             <not><viewExists viewName="dw_oauth2_token_detail"/></not>
         </preConditions>
