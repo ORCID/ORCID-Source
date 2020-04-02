@@ -132,7 +132,6 @@ public class BaseWorkspaceController extends BaseController {
                 new DateTimeFormatterBuilder().appendPattern("yyyyMM").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyyMMdd").parseStrict().toFormatter() };
         String dateString = date.getYear();
-        System.out.println("Get Date: " + date.toString());
         // If the month is empty and day provided is an invalid date
         if (StringUtils.isBlank(date.getMonth())) {
             if (!StringUtils.isBlank(date.getDay())) {
@@ -140,7 +139,6 @@ public class BaseWorkspaceController extends BaseController {
             }
         }
         else if (StringUtils.isBlank(date.getYear())) {
-            System.out.println("Get Year: " + date.getYear());
             if (!StringUtils.isBlank(date.getDay()) && !StringUtils.isBlank(date.getMonth())) {
                 return false;
             }
