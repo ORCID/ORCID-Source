@@ -23,6 +23,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
@@ -446,6 +447,7 @@ public class AdminController extends BaseController {
         Set<String> deactivatedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
+        Set<String> members = new HashSet<String>();
         if (StringUtils.isNotBlank(orcidIds)) {
             StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
@@ -460,6 +462,8 @@ public class AdminController extends BaseController {
                         ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);                    
                         if (entity.getDeactivationDate() != null) {
                             deactivatedIds.add(nextToken);
+                        } else if(OrcidType.GROUP.name().equals(entity.getOrcidType())) {
+                            members.add(nextToken);
                         } else {
                             profileEntityManager.deactivateRecord(orcidId);
                             successIds.add(nextToken);
@@ -473,6 +477,7 @@ public class AdminController extends BaseController {
         resendIdMap.put("notFoundList", notFoundIds);
         resendIdMap.put("success", successIds);
         resendIdMap.put("alreadyDeactivated", deactivatedIds);
+        resendIdMap.put("members", members);
         return resendIdMap;
     }
 

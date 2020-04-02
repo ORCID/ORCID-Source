@@ -341,6 +341,22 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(1, result.get("success").size());
         
     }
+    
+    @Test
+    public void preventDisablingMembersTest() throws IllegalAccessException, UnsupportedEncodingException {
+        ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
+        ProfileEntityManager profileEntityManager = (ProfileEntityManager) ReflectionTestUtils.getField(adminController, "profileEntityManager");
+        ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
+        
+        // Test deactivate
+        Map<String, Set<String>> result = adminController.deactivateOrcidRecords(mockRequest, mockResponse, "5555-5555-5555-5558");
+        assertEquals(0, result.get("notFoundList").size());
+        assertEquals(0, result.get("alreadyDeactivated").size());
+        assertEquals(0, result.get("success").size());
+        assertEquals(1, result.get("members").size());
+        assertTrue(result.get("members").contains("5555-5555-5555-5558"));
+    }
 
     @Test
     public void findIdsTest() {
