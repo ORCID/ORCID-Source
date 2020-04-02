@@ -1,0 +1,161 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-DW-CLIENT-DETAILS-VIEW" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_client_details"/></not>
+        </preConditions>
+        <createView viewName="dw_client_details">
+            select client_details_id, client_name, client_description, client_website, group_orcid,
+            client_type, date_created, last_modified
+            from client_details
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-CLIENT_DETAILS" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_client_details to dw_user;</sql>
+    </changeSet>
+    
+    <changeSet id="CREATE-DW-CLIENT-REDIRECT-URI-VIEW" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_client_redirect_uri"/></not>
+        </preConditions>
+        <createView viewName="dw_client_redirect_uri">
+            select client_details_id, redirect_uri, date_created, last_modified
+            from client_redirect_uri
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-CLIENT-REDIRECT-URI" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_client_redirect_uri to dw_user;</sql>
+    </changeSet>
+    
+   <changeSet id="CREATE-DW-GIVEN-PERMISSONS-TO-VIEW" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_given_permission_to"/></not>
+        </preConditions>
+        <createView viewName="dw_given_permission_to">
+            select given_permission_to_id, receiver_orcid, giver_orcid, approval_date, date_created, last_modified 
+            from given_permission_to
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-GIVEN-PERMISSONS-TO" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_given_permission_to to dw_user;</sql>
+    </changeSet>
+    
+   <changeSet id="CREATE-DW-GROUP-ID-RECORD-VIEW" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_group_id_record"/></not>
+        </preConditions>
+        <createView viewName="dw_group_id_record">
+            select id, group_id, group_name, group_type, client_source_id, date_created, last_modified
+            from group_id_record
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-GROUP-ID-RECORD" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_group_id_record to dw_user;</sql>
+    </changeSet>
+
+   <changeSet id="CREATE-DW-IDENTIFIER-TYPE-VIEW" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_identifier_type"/></not>
+        </preConditions>
+        <createView viewName="dw_identifier_type">
+            select id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, primary_use,
+            case_sensitive, date_created, last_modified
+            from identifier_type
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-IDENTIFIER-TYPE" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_identifier_type to dw_user;</sql>
+    </changeSet>    
+    
+   <changeSet id="CREATE-DW-IDENTITY-PROVIDER-VIEW" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_identity_provider"/></not>
+        </preConditions>
+        <createView viewName="dw_identity_provider">
+            select id, providerid, display_name, last_failed, failed_count, date_created, last_modified
+            from identity_provider
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-IDENTITY-PROVIDER" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_identity_provider to dw_user;</sql>
+    </changeSet>
+    
+   <changeSet id="CREATE-DW-OAUTH2-TOKEN-DETAIL-VIEW" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_oauth2_token_detail"/></not>
+        </preConditions>
+        <createView viewName="dw_oauth2_token_detail">
+            select id, token_type, user_orcid, client_details_id, substring(redirect_uri from  '.*://([^/]*)') as redirect_uri, scope_type, obo_client_details_id,
+            date_created, last_modified
+            from oauth2_token_detail
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-OAUTH2-TOKEN-DETAIL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_oauth2_token_detail to dw_user;</sql>
+    </changeSet>
+    
+     <changeSet id="CREATE-DW-PROFILE_HISTORY-EVENT-VIEW" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_profile_history_event"/></not>
+        </preConditions>
+        <createView viewName="dw_profile_history_event">
+            select id, orcid, event_type, date_created, last_modified
+            from profile_history_event
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-PROFILE_HISTORY-EVENT-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_history_event to dw_user;</sql>
+    </changeSet>
+    
+    <changeSet id="CREATE-DW-USERCONNECTION-VIEW" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_userconnection"/></not>
+        </preConditions>
+        <createView viewName="dw_userconnection">
+            select orcid, providerid, is_linked,last_login, id_type, date_created, last_modified
+            from userconnection
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USERCONNECTION-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_userconnection to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>
