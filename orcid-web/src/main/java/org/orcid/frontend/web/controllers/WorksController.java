@@ -872,7 +872,11 @@ public class WorksController extends BaseWorkspaceController {
     // TODO: move to PIDController.
     @RequestMapping(value = "/id/{type}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public @ResponseBody PIDResolutionResult checkIdResolution(@PathVariable("type") String type, @RequestParam("value") String value) {
-        return resolverService.resolve(type, value);
+        try {
+            return resolverService.resolve(type, value);
+        } catch (IllegalArgumentException iae) {
+            return new PIDResolutionResult(false, true, false, null);
+        }
     }
 
     @RequestMapping(value = "/resolve/{type}", method = RequestMethod.GET)
