@@ -121,7 +121,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 65. Go to https://qa.orcid.org/signin and sign in with
 
 		0000-0002-3646-4021
-		Password: *QA password*. Check that there is a tab 'MEMBER TOOLS'
+		Password: *Ask a member of the tech team!*. Check that there is a tab 'MEMBER TOOLS'
 		
 66. Click on the 'MEMBER TOOLS' tab, and check the page loads
 
