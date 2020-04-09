@@ -129,14 +129,18 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateWorks() {
         LOG.info("Updating works...");
         int corrected = 0;
+        LOG.info("Fetching {} work IDs for correction", BATCH_SIZE * 20);
         List<BigInteger> ids = workDao.getIdsOfWorksReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
+                LOG.info("Correcting client source of {} work records", subList.size());
                 workDao.correctClientSource(subList);
+                LOG.info("Corrected {} records", subList.size());
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
+            LOG.info("Fetching {} work IDs for correction", BATCH_SIZE * 20);
             ids = workDao.getIdsOfWorksReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
