@@ -1,0 +1,53 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+    <changeSet id="ALTER-DW-RESEARCH-RESOURCE-ITEM-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_research_resource_item" replaceIfExists="true">
+            select a.id, a.research_resource_id, a.resource_name, a.resource_type, a.external_identifiers_json, 
+            a.url, b.date_created, b.last_modified
+            from research_resource_item a 
+            inner join research_resource b on a.research_resource_id =b.id
+        </createView>
+    </changeSet>
+    
+    <changeSet id="GRANT-READ_PERM-TO-RESEARCH-RESOURCE-ITEM-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_item to dw_user;</sql>
+    </changeSet>
+    
+    <changeSet id="ALTER-DW-RESEARCH-RESOURCE-ITEM-ORG-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_research_resource_item_org" replaceIfExists="true">
+            select a.research_resource_item_id, a.org_id, c.date_created, c.last_modified
+            from research_resource_item_org a 
+            inner join research_resource_item b on a.research_resource_item_id =b.id
+            inner join research_resource c on b.research_resource_id =c.id
+        </createView>
+    </changeSet>
+    
+    <changeSet id="GRANT-READ_PERM-TO-RESEARCH-RESOURCE-ITEM-ORG-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_item_org to dw_user;</sql>
+    </changeSet>
+    
+        <changeSet id="ALTER-DW-RESEARCH-RESOURCE-ORG-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_research_resource_org" replaceIfExists="true">
+            select a.research_resource_id, a.org_id, b.date_created, b.last_modified
+            from research_resource_org a 
+            inner join research_resource b on a.research_resource_id =b.id
+        </createView>
+    </changeSet>
+    
+    <changeSet id="GRANT-READ_PERM-TO-RESEARCH-RESOURCE-ORG-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_org to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>
