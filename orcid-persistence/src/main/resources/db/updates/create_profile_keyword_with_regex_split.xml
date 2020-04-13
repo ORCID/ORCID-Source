@@ -9,6 +9,15 @@
             from profile_keyword, regexp_split_to_table(keywords_name, '[,;\.]') kwc
         </createView>
     </changeSet>
+    
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-PROFILE_KEYWORD-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_keyword to dw_user;</sql>
+    </changeSet>
+    
+    
       
 </databaseChangeLog>
     
