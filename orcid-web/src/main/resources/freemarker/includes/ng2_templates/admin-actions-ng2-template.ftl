@@ -439,6 +439,34 @@
     </div>
 </div>
 
+<!-- Turn off 2FA -->
+<div class="workspace-accordion-item" id="disable-2FA">
+    <p>
+        <a *ngIf="showDisable2FA" (click)="showDisable2FA = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.disable_2fa.title' /></a>
+        <a *ngIf="!showDisable2FA" (click)="showDisable2FA = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.disable_2fa.title' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showDisable2FA">
+       <div>
+            <div class="alert alert-success" *ngIf="disable2FAResults.notFound?.length > 0"><@spring.message "admin.disable_2fa.not_found"/>
+                <br>{{disable2FAResults.notFound}}
+            </div>
+            <div class="alert alert-success" *ngIf="disable2FAResults.without2FAs?.length > 0"><@spring.message "admin.disable_2fa.no_action"/>
+                <br>{{disable2FAResults.without2FAs}}
+            </div>
+            <div class="alert alert-success" *ngIf="disable2FAResults.disabledIds?.length > 0"><@spring.message "admin.disable_2fa.success"/>
+                <br>{{disable2FAResults.disabledIds}}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="orcid_to_unreview"><@orcid.msg 'admin.reset_password.orcid.label' /></label>
+            <input type="text" id="orcid_to_disable-2fa" (keyup.enter)="disable2FA()" [(ngModel)]="toDisableIdsOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_emailFA.placeholder' />" class="input-xlarge" />
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="bottom-disable-2fa" (click)="disable2FA()" class="btn btn-primary"><@orcid.msg 'admin.disable_2fa.disable_button_text'/></span>
+        </div>
+    </div>
+</div>
+
 <!-- Batch resend claim emails -->
 <div class="workspace-accordion-item" id="resend-claim-email">
     <p>
