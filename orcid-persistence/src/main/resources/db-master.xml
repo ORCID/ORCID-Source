@@ -301,4 +301,5 @@
   <include file="/db/updates/remove_reported_date_column.xml" />
   <include file="/db/updates/create_profile_keyword_with_regex_split.xml" />
   <include file="/db/updates/create_dw_research_resource_with_dates.xml" />
+  <include file="/db/updates/create_dw_other_views.xml" />
 </databaseChangeLog>
