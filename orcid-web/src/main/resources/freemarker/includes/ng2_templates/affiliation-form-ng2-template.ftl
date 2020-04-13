@@ -166,9 +166,18 @@
                     </div>
                     <!-- URL -->
                     <div class="form-group" *ngIf="editAffiliation?.url">
-                        <label><@orcid.msg 'manual_affiliation_form_contents.url'/></label>
+                        <label><@orcid.msg 'manual_affiliation_form_contents.url'/>
+                            <div class="popover-help-container">
+                                <i class="glyphicon glyphicon-question-sign"></i>
+                                <div id="widget-help" class="popover bottom">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <p><@orcid.msg 'common.url.toolip'/></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
                         <div>
-                            
                             <input name="url" type="text" class="form-control"  [(ngModel)]="editAffiliation.url.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_url'/>" (ngModelChange)="serverValidate('affiliations/affiliation/urlValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                             <span class="orcid-error" *ngIf="editAffiliation?.url?.errors?.length > 0">
                                 <div *ngFor='let error of editAffiliation.url.errors' [innerHtml]="error"></div>

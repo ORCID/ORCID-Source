@@ -236,7 +236,17 @@
                     </div>
                     <!-- URL -->
                     <div class="form-group">
-                        <label id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/></label>                            
+                        <label id="funding-ext-ids-url-label"><@orcid.msg 'manual_funding_form_contents.external_identifier.label_url'/>
+                            <div class="popover-help-container">
+                                <i class="glyphicon glyphicon-question-sign"></i>
+                                <div id="widget-help" class="popover bottom">
+                                    <div class="arrow"></div>
+                                    <div class="popover-content">
+                                        <p><@orcid.msg 'common.url.toolip'/></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </label>
                         <input name="fundingIdUrl{{i}}" id="fundingIdUrl{{i}}" type="text" class="form-control action-icon-inside" [(ngModel)]="editFunding.externalIdentifiers[i].url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.external_identifier.url'/>" />                        
                         <span class="orcid-error" *ngIf="editFunding?.externalIdentifiers[i]?.externalIdentifier?.url?.errors?.length > 0">
                             <div *ngFor='let error of editFunding.externalIdentifiers[i].externalIdentifier.url.errors' [innerHtml]="error"></div>
@@ -273,7 +283,17 @@
                     </div>
                 </div>
                 <div class="form-group" *ngIf="editFunding?.url?.value?.length >= 0">                    
-                    <label><@orcid.msg 'manual_funding_form_contents.label_url'/></label>                                        
+                    <label><@orcid.msg 'manual_funding_form_contents.label_url'/>
+                        <div class="popover-help-container">
+                            <i class="glyphicon glyphicon-question-sign"></i>
+                            <div id="widget-help" class="popover bottom">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <p><@orcid.msg 'common.url.toolip'/></p>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
                     <input id="fundingUrl" class="form-control" name="fundingUrl" type="text" [(ngModel)]="editFunding.url.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_url'/>" (ngModelChange)="serverValidate('fundings/funding/urlValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                     <span class="orcid-error" *ngIf="editFunding?.url?.errors?.length > 0">
                         <div *ngFor='let error of editFunding.url.errors' [innerHtml]="error"></div>
