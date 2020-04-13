@@ -12,7 +12,6 @@ import org.orcid.jaxb.model.v3.release.common.Day;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Month;
-import org.orcid.jaxb.model.v3.release.common.ReportedDate;
 import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.utils.DateUtils;
 
@@ -67,13 +66,6 @@ public class Date implements ErrorsInterface, Required, Serializable, Comparable
         newDate.setDay(Integer.toString(cal.get(Calendar.DAY_OF_MONTH)));
         newDate.setMonth(Integer.toString(cal.get(Calendar.MONTH) + 1));
         newDate.setYear(Integer.toString(cal.get(Calendar.YEAR)));
-        return newDate;
-    }
-    
-    public static Date valueOf(ReportedDate date) {
-        Date newDate = new Date();
-        if (date != null && date.getValue() != null)
-            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
         return newDate;
     }
 

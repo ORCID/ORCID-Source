@@ -107,6 +107,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showResendClaimEmail: boolean;
     resendClaimResults: any;
     showResendClaimEmailMessages: boolean;
+
+    // Disable 2FA
+    showDisable2FA: boolean;
+    disable2FAResults: any;
+    toDisableIdsOrEmails: string; 
     
     // General
     ids: string;
@@ -176,6 +181,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showResendClaimEmail = false;
         this.resendClaimResults = {};
         this.showResendClaimEmailMessages = false;
+
+        this.showDisable2FA = false;
+		this.disable2FAResults = {};
+		this.toDisableIdsOrEmails= '';
 
         // General
         this.ids = '';
@@ -424,7 +433,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.showDeactivateRecordMessages = true;
                 setTimeout (() => {
                     this.showDeactivateRecordMessages = false;
-                }, 3000);
+                }, 16000);
             },
             error => {
                 console.log('admin: deactivateRecord error', error);
@@ -595,6 +604,26 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     }
+
+
+    disable2FA(): void {
+        this.adminActionsService.disable2FA( this.toDisableIdsOrEmails )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.disable2FAResults = data;
+				this.showDisable2FA = true;
+                setTimeout (() => {
+                    this.showDisable2FA = false;
+                }, 10000);         
+            },
+            error => {
+                console.log('admin: disable 2FA error', error);
+            } 
+        );
+    };
 
     //Default init functions provided by Angular Core
     ngAfterViewInit() {

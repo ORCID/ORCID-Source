@@ -50,7 +50,7 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 ## Affiliations fields
 
-- **department-name** _(optional)_ The department or subdivision of the organization the affiliation is assocaited with
+- **department-name** _(optional)_ The department or subdivision of the organization the affiliation is associated with
 
 - **role-title** _(optional)_ The title given for the position, or the degree earned
 
@@ -60,7 +60,7 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 - **organization** _(required)_ Information about the organization the affiliation was with, a Ringgold, Grid or Crossref Funder Registry organization identifier is required in 3.0+
 
-- **address** _(required)_ Information about the physical location of the organization the affliation is with. A city, region and country are required
+- **address** _(required)_ Information about the physical location of the organization the affiliation is with. A city, region and country are required
 
 - **url** _(optional in 3.0+ only)_ A URL to a resource about the affiliation
 
@@ -96,7 +96,7 @@ HTTP/1.1 200 OK
 |--------------------|--------------------------|
 | URL 				| https://api.[host]/[version]/[ORCID iD]/[affiliation section]/[put-code] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 

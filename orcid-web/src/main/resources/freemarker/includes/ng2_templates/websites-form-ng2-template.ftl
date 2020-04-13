@@ -111,8 +111,19 @@
                                                 <div class="row aka-row websites" *ngFor="let website of formData['websites'].websites; let index = index; let first = first; let last = last;">
                                                     <div class="col-md-6">
                                                         <div class="aka">                                       
-                                                            <input type="text" [(ngModel)]="website.urlName" *ngIf="website.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !website.urlName}"placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}" />
-                                                            <input class="website-value" type="text" [(ngModel)]="website.url.value" *ngIf="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}" />
+                                                            <input type="text" class="input-url-websites" [(ngModel)]="website.urlName" *ngIf="website.source == orcidId" [focusMe]="newInput" [ngClass]="{'focusInput' : !website.urlName}"placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}" />
+                                                            <div class="form-inline">
+                                                                <input class="website-value input-url-websites" type="text" [(ngModel)]="website.url.value" *ngIf="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}" />
+                                                                <div class="popover-help-container tooltip-url-websites">
+                                                                    <i class="glyphicon glyphicon-question-sign"></i>
+                                                                    <div id="widget-help" class="popover bottom">
+                                                                        <div class="arrow"></div>
+                                                                        <div class="popover-content">
+                                                                            <p><@orcid.msg 'common.url.toolip'/></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow" *ngIf="website.source != orcidId" >{{website.urlName != null? website.urlName : website.url.value}}</a>
                                                         </div>
                                                         <div class="source" *ngIf="website.sourceName || website.sourceName == null">

@@ -2,6 +2,8 @@ package org.orcid.core.adapter.jsonidentifier.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -12,10 +14,12 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
+import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
@@ -45,6 +49,34 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
         assertEquals(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value(), externalID.getType());
     }
 
+    @Test
+    public void testConvertWithIdThatBreaksUrlValidation() {
+        String extIds = "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
+        ExternalIDs entityIDs = converter.convertFrom(extIds, null);
+        assertNotNull(entityIDs.getExternalIdentifier());
+        ExternalID eid0 = entityIDs.getExternalIdentifier().get(0);
+        assertNotNull(eid0);
+        assertNull(eid0.getUrl());
+        assertEquals("doi", eid0.getType());
+        assertEquals("10.00000/test.v%vi%i.0000", eid0.getValue());
+    }
+    
+    @Test
+    public void testConvertToWithIdThatBreaksUrlValidation() {
+        ExternalID eid0 = new ExternalID();
+        eid0.setRelationship(Relationship.SELF);
+        eid0.setType("doi");
+        eid0.setValue("10.00000/test.v%vi%i.0000");
+        ExternalIDs ids = new ExternalIDs();
+        ids.getExternalIdentifier().add(eid0);
+        String expected1 = "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
+        String expected2 = "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://doi.org/10.00000/test.v%vi%i.0000\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
+        assertEquals(expected1, converter.convertTo(ids, null));
+        // Set the URL
+        eid0.setUrl(new Url("http://doi.org/10.00000/test.v%vi%i.0000"));
+        assertEquals(expected2, converter.convertTo(ids, null));        
+    }
+    
     private Work getWork() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();

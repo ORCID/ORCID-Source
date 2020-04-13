@@ -4,7 +4,6 @@
           orcid="4444-4444-4444-4499"
           source_type="USER"
           spam_counter="1"
-          reported_date="2020-01-02 15:31:00.00"
           date_created="2020-01-01 15:31:00.00"
           last_modified="2020-01-01 15:31:00.00"
     />
@@ -13,7 +12,6 @@
           orcid="0000-0000-0000-0003"
           source_type="USER"
           spam_counter="1"
-          reported_date="2020-01-02 15:31:00.00"
           date_created="2020-01-01 15:31:00.00"
           last_modified="2020-01-01 15:31:00.00"
     />
@@ -22,7 +20,6 @@
           orcid="0000-0000-0000-0004"
           source_type="USER"
           spam_counter="1"
-		  reported_date="2020-01-02 15:31:00.00"
 		  date_created="2020-01-01 15:31:00.00"
           last_modified="2020-01-01 15:31:00.00"
     />

@@ -51,8 +51,6 @@ public class SpamDaoTest extends DBUnitTest {
         assertEquals(OTHER_USER_ORCID, spamEntity.getOrcid());
         assertEquals(SourceType.USER, spamEntity.getSourceType());
         assertEquals(Integer.valueOf(1), spamEntity.getSpamCounter());
-        assertEquals("2020-01-02 15:31:00.0", spamEntity.getReportedDate().toString());
-
     }
 
     @Test
@@ -63,7 +61,6 @@ public class SpamDaoTest extends DBUnitTest {
         spamEntity.setSpamCounter(1);
 
         Date d = new Date();
-        spamEntity.setReportedDate(d);
         spamEntity.setDateCreated(d);
         spamEntity.setLastModified(d);
 

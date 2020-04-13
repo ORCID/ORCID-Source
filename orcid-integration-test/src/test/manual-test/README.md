@@ -2,7 +2,7 @@
 
 ## Register/Verify
 
-0. Find and Replace [DD][month][YYYY] in this document with the current day, written month, and four digit year (for example, 24feb2016)
+0. Copy this script into a text document, and then Find and Replace [DD][month][YYYY] with the current day, written month, and four digit year (for example, 24feb2016)
 1. Visit https://qa.orcid.org and check that the cookies banner is displayed correctly in home page
 2. Visit https://qa.orcid.org/register
 3. Create new account:
@@ -121,7 +121,7 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 65. Go to https://qa.orcid.org/signin and sign in with
 
 		0000-0002-3646-4021
-		Password: *QA password*. Check that there is a tab 'MEMBER TOOLS'
+		Password: *Ask a member of the tech team!*. Check that there is a tab 'MEMBER TOOLS'
 		
 66. Click on the 'MEMBER TOOLS' tab, and check the page loads
 
@@ -232,14 +232,13 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 92. Visit https://qa.orcid.org/register and check errors are same or less than 19
 93. Visit https://qa.orcid.org/signin and check errors are same or less than 15
 94. Visit https://qa.orcid.org/reset-password and check errors are same or less than 5
-95.	Stay on this page and sign in with 
+95.	Stay on this page and sign in with
 
 	```0000-0002-7361-1027```
 	```QA password```
 
 96. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  60
 97. Visit https://qa.orcid.org/signout
-
-
+98. Upload your document to https://drive.google.com/drive/folders/1yG9ksNIGF9Iy7NU858cmuo7ReUbqSqcO 
 
 * Finally help out by improving these instructions!      

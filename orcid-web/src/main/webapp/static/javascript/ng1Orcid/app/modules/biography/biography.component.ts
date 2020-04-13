@@ -137,14 +137,12 @@ export class BiographyComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
     toggleEdit(): void {
-        console.log('edit bio clicked')
         this.emailService.getEmails()
         .pipe(    
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                console.log('email data bio', data, this.emailService.getEmailPrimary());
                 this.emails = data;
                 if( this.emailService.getEmailPrimary().verified ){
                     this.showEdit = !this.showEdit;

@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -46,15 +47,15 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource(name = "visibilityFilter")
     protected VisibilityFilter visibilityFilter;
-    
+
     @Resource
     private ProfileLastModifiedAspect profileLastModifiedAspect;
-    
+
     protected long getLastModified(String orcid) {
         java.util.Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
     }
-    
+
     @ModelAttribute("years")
     public Map<String, String> retrieveYearsAsMap() {
         Map<String, String> map = new LinkedHashMap<String, String>();
@@ -76,7 +77,6 @@ public class BaseWorkspaceController extends BaseController {
         }
         return map;
     }
-
 
     @ModelAttribute("fundingYears")
     public Map<String, String> retrieveFundingYearsAsMap() {
@@ -110,7 +110,7 @@ public class BaseWorkspaceController extends BaseController {
         }
         return map;
     }
-    
+
     @ModelAttribute("orcidIdHash")
     String getOrcidHash(HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession(false);
@@ -124,30 +124,38 @@ public class BaseWorkspaceController extends BaseController {
         }
         return hash;
     }
-    
+
     protected boolean validDate(Date date) {
         DateTimeFormatter[] formatters = {
-                new DateTimeFormatterBuilder().appendPattern("yyyy")
-                        .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
-                        .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                new DateTimeFormatterBuilder().appendPattern("yyyy").parseDefaulting(ChronoField.MONTH_OF_YEAR, 1).parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
                         .toFormatter(),
-                new DateTimeFormatterBuilder().appendPattern("yyyyMM")
-                        .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
-                        .toFormatter(),
-                new DateTimeFormatterBuilder().appendPattern("yyyyMMdd")
-                        .parseStrict().toFormatter() };
+                new DateTimeFormatterBuilder().appendPattern("yyyyMM").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter(),
+                new DateTimeFormatterBuilder().appendPattern("yyyyMMdd").parseStrict().toFormatter() };
         String dateString = date.getYear();
-        if (date.getMonth() != null) {
+        // If the month is empty and day provided is an invalid date
+        if (StringUtils.isBlank(date.getMonth())) {
+            if (!StringUtils.isBlank(date.getDay())) {
+                return false;
+            }
+        }
+        else if (StringUtils.isBlank(date.getYear())) {
+            if (!StringUtils.isBlank(date.getDay()) && !StringUtils.isBlank(date.getMonth())) {
+                return false;
+            }
+        }
+        else {
             dateString += date.getMonth();
-            if (date.getDay() != null) {
+            if (!StringUtils.isBlank(date.getDay())) {
                 dateString += date.getDay();
             }
         }
+
         for (DateTimeFormatter formatter : formatters) {
             try {
                 LocalDate localDate = LocalDate.parse(dateString, formatter);
                 if (PojoUtil.isEmpty(date.getDay()) || localDate.getDayOfMonth() == Integer.parseInt(date.getDay())) {
-                    // formatter will correct day to last valid day of month if it is too great
+                    // formatter will correct day to last valid day of month if
+                    // it is too great
                     return true;
                 }
             } catch (DateTimeParseException e) {
@@ -155,5 +163,5 @@ public class BaseWorkspaceController extends BaseController {
         }
         return false;
     }
-    
+
 }

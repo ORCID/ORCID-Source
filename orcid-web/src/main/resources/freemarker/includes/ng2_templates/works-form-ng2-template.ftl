@@ -223,7 +223,17 @@
                                 </div>                      
                             </div>      
                             <div class="form-group">
-                                <label><@orcid.msg 'manual_work_form_contents.identifierurl'/></label>
+                                <label><@orcid.msg 'manual_work_form_contents.identifierurl'/>
+                                    <div class="popover-help-container">
+                                        <i class="glyphicon glyphicon-question-sign"></i>
+                                        <div id="widget-help" class="popover bottom">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <p><@orcid.msg 'common.url.toolip'/></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
                                 <div class="relative">
                                     <input id="workIdUrl{{i}}" name="workIdUrl{{i}}" type="text" class="form-control action-icon-inside"  [(ngModel)]="editWork.workExternalIdentifiers[i].url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" [ngModelOptions]="{ updateOn: 'blur' }" />
                                     <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i]?.url?.errors?.length > 0">
@@ -274,7 +284,17 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="relative"><@orcid.msg 'common.url'/></label>
+                            <label class="relative"><@orcid.msg 'common.url'/>
+                                <div class="popover-help-container">
+                                    <i class="glyphicon glyphicon-question-sign"></i>
+                                    <div id="widget-help" class="popover bottom">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <p><@orcid.msg 'common.url.toolip'/></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
                             <div class="relative">
                                 <input name="url" type="text" class="form-control"  [(ngModel)]="editWork.url.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_URL'/>" (ngModelChange)="serverValidate('works/work/urlValidate.json')" [ngModelOptions]="{ updateOn: 'blur' }"/>
                                 <span class="orcid-error" *ngIf="editWork?.url?.errors?.length > 0">

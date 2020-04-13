@@ -473,6 +473,14 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             },
             error => {
                 console.log("An error occured initializing the registration form.");
+                console.error(`
+__Server error__
+(status:${error.status} (${error.statusText}) url: ${error.url})
+name: "${error.name}"
+message: "${error.message}"
+ok: "${error.ok}"
+            `)
+
             } 
         );
 
@@ -614,7 +622,14 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             },
             error => {
                 // something bad is happening!
-                console.log("OauthAuthorizationController.postRegister() error");
+                console.error(`
+__Server error__
+(status:${error.status} (${error.statusText}) url: ${error.url})
+name: "${error.name}"
+message: "${error.message}"
+ok: "${error.ok}"
+            `)
+
             } 
         );
     };
@@ -699,6 +714,13 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
             error => {
                 // something bad is happening!
                 console.log("oauth2ScreensRegister() error");
+                console.error(`
+__Server error__
+(status:${error.status} (${error.statusText}) url: ${error.url})
+name: "${error.name}"
+message: "${error.message}"
+ok: "${error.ok}"
+            `)
             } 
         );
     };

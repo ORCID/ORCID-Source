@@ -31,6 +31,7 @@ import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.FuzzyDateUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.LanguageCode;
@@ -67,8 +68,12 @@ import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ActivityValidator {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActivityValidator.class);
 
     @Resource(name = "externalIDValidatorV3")
     private ExternalIDValidator externalIDValidator;
@@ -78,6 +83,9 @@ public class ActivityValidator {
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
+    
+    @Resource
+    PIDResolverService resolverService;
 
     public void validateWork(Work work, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
@@ -219,6 +227,17 @@ public class ActivityValidator {
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
                 || work.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
+        } else {
+            // Validate DOI's are resolvable 
+            for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                if(extId.getType().equals("doi")) {
+                    try {
+                        resolverService.resolve(extId.getType(), extId.getValue());
+                    } catch(IllegalArgumentException iae) {
+                        LOGGER.warn("Invalid DOI provided: " + extId.getValue());
+                    }
+                }
+            }
         }
 
         if (work.getWorkContributors() != null) {
