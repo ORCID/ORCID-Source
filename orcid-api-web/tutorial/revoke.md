@@ -1,6 +1,6 @@
 # Revoke an access token
 
-This tutorial covers how to use the API to revoke an access token that has been issued to your client. You can revoke tokens created via either the two-step or three-step OAuth processes. When revoking an access token the associated refresh token is also removed, the refresh token can also be used in the steps below to revoke an access token. If you have multiple tokens, all tokens with the same scope for a given ORCID iD will be revoked when you revoke any one token, tokens with a different set of scopes or issued for another iD will not be affected.
+This tutorial covers how to use the API to revoke an access token that has been issued to your client. You can revoke tokens created via either the two-step or three-step OAuth processes. When revoking an access token the associated refresh token is also removed, the refresh token can also be used in the steps below to revoke an access token. If you have multiple tokens, you will need to revoke each token separately in order to remove all access and have your client no longer appear in the list of trusted organizations on the record.
 
 Users can also revoke access tokens at any time by [removing trusted organization permissions](https://support.orcid.org/hc/articles/360006973893) from their personal account settings.
 
