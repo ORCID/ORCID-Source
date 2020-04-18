@@ -3,7 +3,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
 
-    <changeSet id="CREATE-DW-USERCONNECTION-VIEW" author="Camelia Dumitru">
+    <changeSet id="CREATE-DW-USERCONNECTION-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_userconnection" replaceIfExists="true">
             select orcid, providerid, is_linked,last_login, id_type, date_created, last_modified
             from userconnection where TRIM(BOTH FROM orcid) &lt;&gt;''
