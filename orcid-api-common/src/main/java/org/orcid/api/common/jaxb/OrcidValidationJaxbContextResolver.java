@@ -560,8 +560,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         public boolean handleEvent(ValidationEvent event) {
             if(event.getLinkedException() != null && AccessorException.class.isAssignableFrom(event.getLinkedException().getClass()) && event.getLinkedException().getCause() != null && IllegalEnumValueException.class.isAssignableFrom(event.getLinkedException().getCause().getClass()))  {
                 throw (IllegalEnumValueException) event.getLinkedException().getCause();
-            } else if (event.getSeverity() == ValidationEvent.FATAL_ERROR || event.getSeverity() == ValidationEvent.ERROR) {
-                logger.error(event.getMessage());
+            } else if (event.getSeverity() == ValidationEvent.FATAL_ERROR || event.getSeverity() == ValidationEvent.ERROR) {                
                 throw new OrcidBadRequestException(event.getMessage());
             } else if (event.getSeverity() == ValidationEvent.WARNING) {
                 logger.warn(event.getMessage());

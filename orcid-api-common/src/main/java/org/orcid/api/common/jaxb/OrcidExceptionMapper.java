@@ -19,9 +19,11 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidApiException;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
+import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
@@ -46,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -95,6 +98,16 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof NoResultException) {
             logShortError(t, clientId); 
+        } else if (t instanceof OrcidDeprecatedException) {
+            logShortError(t, clientId);
+        } else if (t instanceof LockedException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidNonPublicElementException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidBadRequestException) {
+            logShortError(t, clientId);
+        } else if (t instanceof RedirectMismatchException) {
+            logShortError(t, clientId);
         } else {
                 LOGGER.error("An exception has occured processing request from client " + clientId, t);
         }
