@@ -3,24 +3,24 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
     <changeSet id="CREATE-DW-ACTIVE_USERS_TABLE" author="Camelia Dumitru">
-    	<preConditions onFail="MARK_RAN">
+        <preConditions onFail="MARK_RAN">
             <not><tableExists tableName="dw_active_users"/></not>
         </preConditions>
         <createTable tableName="dw_active_users">
-			<column name="date_calculated" type="TIMESTAMP WITHOUT TIME ZONE" />
-			<column name="last_day" type="INT">
-				<constraints nullable="false" />
+            <column name="date_calculated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="last_day" type="INT">
+                <constraints nullable="false" />
             </column>
-			<column name="last_thirty_days" type="INT">
-				<constraints nullable="false" />
+            <column name="last_thirty_days" type="INT">
+                <constraints nullable="false" />
             </column>
-			<column name="last_quarter" type="INT">
-				<constraints nullable="false" />
+            <column name="last_quarter" type="INT">
+                <constraints nullable="false" />
             </column>
-			<column name="last_year" type="INT">
-				<constraints nullable="false" />
+            <column name="last_year" type="INT">
+                <constraints nullable="false" />
             </column>
-		</createTable>
+        </createTable>
     </changeSet>
 
     <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-ACTIVE_USERS" author="Camelia Dumitru" dbms="postgresql">
