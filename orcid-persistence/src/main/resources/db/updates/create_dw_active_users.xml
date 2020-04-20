@@ -8,10 +8,18 @@
         </preConditions>
         <createTable tableName="dw_active_users">
 			<column name="date_calculated" type="TIMESTAMP WITHOUT TIME ZONE" />
-			<column name="last_day" type="TIMESTAMP WITHOUT TIME ZONE" />
-			<column name="last_thirty_days" type="TIMESTAMP WITHOUT TIME ZONE" />
-			<column name="last_quarter" type="TIMESTAMP WITHOUT TIME ZONE" />
-			<column name="last_year" type="TIMESTAMP WITHOUT TIME ZONE" />
+			<column name="last_day" type="INT">
+				<constraints nullable="false" />
+            </column>
+			<column name="last_thirty_days" type="INT">
+				<constraints nullable="false" />
+            </column>
+			<column name="last_quarter" type="INT">
+				<constraints nullable="false" />
+            </column>
+			<column name="last_year" type="INT">
+				<constraints nullable="false" />
+            </column>
 		</createTable>
     </changeSet>
 
