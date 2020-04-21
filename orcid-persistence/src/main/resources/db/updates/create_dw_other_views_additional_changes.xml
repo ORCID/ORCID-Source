@@ -1,0 +1,35 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+    <changeSet id="CREATE-DW-USERCONNECTION-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_userconnection" replaceIfExists="true">
+            select orcid, providerid, is_linked,last_login, id_type, date_created, last_modified
+            from userconnection where TRIM(BOTH FROM orcid) &lt;&gt;''
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USERCONNECTION-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_userconnection to dw_user;</sql>
+    </changeSet>
+    
+    <changeSet id="CREATE-DW-OAUTH2-TOKEN-DETAIL-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_oauth2_token_detail" replaceIfExists="true">
+            select id, token_type, user_orcid, client_details_id, substring(redirect_uri from  '.*://([^/]*)') as redirect_uri, scope_type, obo_client_details_id,
+            token_expiration, revocation_date, date_created, last_modified
+            from oauth2_token_detail
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-OAUTH2-TOKEN-DETAIL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_oauth2_token_detail to dw_user;</sql>
+    </changeSet>
+                   
+</databaseChangeLog>
