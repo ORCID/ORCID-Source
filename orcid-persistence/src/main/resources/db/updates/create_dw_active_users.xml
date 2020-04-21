@@ -1,0 +1,33 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-DW-ACTIVE_USERS_TABLE" author="Camelia Dumitru">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="dw_active_users"/></not>
+        </preConditions>
+        <createTable tableName="dw_active_users">
+            <column name="date_calculated" type="TIMESTAMP WITHOUT TIME ZONE" />
+            <column name="last_day" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="last_thirty_days" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="last_quarter" type="INT">
+                <constraints nullable="false" />
+            </column>
+            <column name="last_year" type="INT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-ACTIVE_USERS" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_active_users to dw_user;</sql>
+    </changeSet>
+              
+</databaseChangeLog>
