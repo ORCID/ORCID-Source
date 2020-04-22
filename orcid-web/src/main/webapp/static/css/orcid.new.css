@@ -10007,3 +10007,26 @@ name-ng2 h2.full-name {
 .input-url-websites {
     width: 90% !important;
 }
+
+.tooltip-text {
+    color: #2E7F9F !important;
+}
+
+.tooltip-edit {
+    left: -55px !important;
+    top: -37px !important;
+    min-width: 120px !important;
+}
+
+.tooltip-edit-source {
+    left: -69px !important;
+    top: -41px !important;
+    min-width: 152px !important;
+}
+
+.tooltip-delete {
+    left: -28px !important;
+    top: -37px !important;
+    min-width: 68px !important;
+}
+

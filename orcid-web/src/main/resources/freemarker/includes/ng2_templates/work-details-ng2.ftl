@@ -293,11 +293,19 @@
                                     
                                 </li>
                                 <li>
-                                    <a 
-                                        (click)="deleteWorkConfirm(work.putCode.value, false)"  
-                                        title="<@orcid.msg 'freemarker.btnDelete' /> {{work.title.value}}">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
+                                    <div class="popover-help-container">
+                                        <a
+                                            (click)="deleteWorkConfirm(work.putCode.value, false)"
+                                            title="<@orcid.msg 'freemarker.btnDelete' /> {{work.title.value}}">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                            <div class="popover top tooltip-delete tooltip-text">
+                                                <div class="arrow"></div>
+                                                <div class="popover-content">
+                                                    <span><@orcid.msg 'common.modals.delete' /></span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -333,9 +341,16 @@
                                  />
                             </li>
                             <li>
+                                <div class="popover-help-container">
                                 <a (click)="deleteWorkConfirm(work.putCode.value, false)">
                                     <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{work.title.value}}"></span>
+                                    <div class="popover top tooltip-delete tooltip-text">
+                                        <div class="arrow"></div>
+                                        <div class="popover-content">
+                                            <span><@orcid.msg 'common.modals.delete' /></span>                                        </div>
+                                    </div>
                                 </a>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -367,15 +382,29 @@
                             </li>
 
                             <li *ngIf="!(editSources[group.groupId] || group?.works?.length == 1)">
-                                <a (click)="showSources(group,$event)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
+                                <div class="popover-help-container">
+                                    <a (click)="showSources(group,$event)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                        <div class="popover top tooltip-delete tooltip-text">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@orcid.msg 'common.modals.delete' /></span>                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </li>
 
                             <li *ngIf="group?.works?.length == 1">
-                                <a (click)="deleteWorkConfirm(group.activePutCode, false)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
+                                <div class="popover-help-container">
+                                    <a (click)="deleteWorkConfirm(group.activePutCode, false)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                        <div class="popover top tooltip-delete tooltip-text">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@orcid.msg 'common.modals.delete' /></span>                                        </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </li>
                         </ul>
                     </div>

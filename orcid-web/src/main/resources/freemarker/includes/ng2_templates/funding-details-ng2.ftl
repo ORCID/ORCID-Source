@@ -218,9 +218,17 @@
                                  />
                             </li>
                             <li>
-                                <a (click)="deleteFunding(funding)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
+                                <div class="popover-help-container">
+                                    <a (click)="deleteFunding(funding)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                        <div class="popover top tooltip-delete tooltip-text">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@orcid.msg 'common.modals.delete' /></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -256,9 +264,17 @@
                                  />
                             </li>
                             <li>
-                                <a (click)="deleteFunding(funding)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
+                                <div class="popover-help-container">
+                                    <a (click)="deleteFunding(funding)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                        <div class="popover top tooltip-delete tooltip-text">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@orcid.msg 'common.modals.delete' /></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -289,15 +305,30 @@
                                  />
                             </li>
                             <li *ngIf="!(group.fundings.length == 1 || editSources[group.groupId] == true)">
-
-                                <a (click)="showSources(group, $event)">
-                                     <span class="glyphicon glyphicon-trash"></span>
-                                </a>
+                                <div class="popover-help-container">
+                                    <a (click)="showSources(group, $event)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                        <div class="popover top tooltip-delete tooltip-text">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@orcid.msg 'common.modals.delete' /></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </li>
                             <li *ngIf="group.fundings.length == 1">
-                               <a id="delete-funding_{{funding.putCode.value}}" (click)="deleteFunding(funding)">
-                                  <span class="glyphicon glyphicon-trash"></span>
-                               </a>                                 
+                                <div class="popover-help-container">
+                                    <a id="delete-funding_{{funding.putCode.value}}" (click)="deleteFunding(funding)">
+                                      <span class="glyphicon glyphicon-trash"></span>
+                                      <div class="popover top tooltip-delete tooltip-text">
+                                          <div class="arrow"></div>
+                                          <div class="popover-content">
+                                              <span><@orcid.msg 'common.modals.delete' /></span>
+                                          </div>
+                                      </div>
+                                   </a>
+                                </div>
                             </li>
                         </ul>
                     </div>

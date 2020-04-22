@@ -273,19 +273,46 @@ kind of variable. This temp value is only used in this macro lib -->
 </#macro>
 
 <#macro editActivityIconNg2 activity click toolTipSuffix toolTipClass>
-    <!--For activities without backend grouping-->
-    <!--Edit activity pencil icon-->   
-    <a aria-label="<@orcid.msg 'common.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}">
-        <span class="glyphicon glyphicon-pencil"></span>
-    </a>
-    <!--Open to see your versions--> 
-    <a *ngIf="!userIsSource(${activity}) && group.userVersionPresent" (click)="showSources(group,$event)">
-        <span class="glyphicons git_create grey"></span>
-    </a>
-    <!--Make a copy enabled--> 
-    <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0" (click)="${click}">
-        <span class="glyphicons git_create"></span>
-    </a>
+    <div class="popover-help-container">
+        <!--For activities without backend grouping-->
+        <!--Edit activity pencil icon-->
+        <a aria-label="<@orcid.msg 'common.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}">
+            <span class="glyphicon glyphicon-pencil"></span>
+             <div class="popover top tooltip-edit tooltip-text">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <span *ngIf="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>
+                </div>
+            </div>
+        </a>
+        <!--Open to see your versions-->
+        <a *ngIf="!userIsSource(${activity}) && group.userVersionPresent" (click)="showSources(group,$event)">
+            <span class="glyphicons git_create grey"></span>
+             <div class="popover top tooltip-edit-source tooltip-text">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                      <span *ngIf="!userIsSource(${activity}) && group.userVersionPresent">
+                        <@orcid.msg 'groups.common.open_source_to_1' /><br />
+                        <@orcid.msg 'groups.common.open_source_to_2' />
+                      </span>
+                </div>
+            </div>
+        </a>
+        <!--Make a copy enabled-->
+        <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0" (click)="${click}">
+            <span class="glyphicons git_create"></span>
+             <div class="popover top tooltip-edit-source tooltip-text">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
+                    <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && !group.externalIdentifiers.length > 0">
+                        <@orcid.msg 'groups.common.items_must_have_1' /><br />
+                        <@orcid.msg 'groups.common.items_must_have_2' />
+                    </span>
+                </div>
+            </div>
+        </a>
+    </div>
 </#macro>    
 
 <#macro editWorkIcon activity click toolTipSuffix toolTipClass>   
@@ -318,20 +345,52 @@ kind of variable. This temp value is only used in this macro lib -->
     </div>
 </#macro>
 
-<#macro editWorkIconNg2 activity click toolTipSuffix toolTipClass>  
-    <a aria-label="<@orcid.msg 'common.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}">
-        <span class="glyphicon glyphicon-pencil"></span>
-    </a>
-    <a *ngIf="!userIsSource(${activity}) && group.userVersionPresent" (click)="showSources(group,$event)">
-        <span class="glyphicons git_create grey"></span>
-    </a>
-    <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0" (click)="${click}">
-        <span class="glyphicons git_create"></span>
-    </a>
+<#macro editWorkIconNg2 activity click toolTipSuffix toolTipClass>
+    <div class="popover-help-container">
+        <a aria-label="<@orcid.msg 'common.edit' />" *ngIf="userIsSource(${activity})" (click)="${click}">
+            <span class="glyphicon glyphicon-pencil"></span>
+            <div class="popover top tooltip-edit tooltip-text">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                      <span *ngIf="userIsSource(${activity})"><@orcid.msg 'groups.common.edit_my' /></span>
+                </div>
+            </div>
+        </a>
+        <a *ngIf="!userIsSource(${activity}) && group.userVersionPresent" (click)="showSources(group,$event)">
+            <span class="glyphicons git_create grey"></span>
+            <div class="popover top tooltip-edit">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <span *ngIf="!userIsSource(${activity}) && group.userVersionPresent">
+                         <@orcid.msg 'groups.common.open_source_to_1' /><br />
+                         <@orcid.msg 'groups.common.open_source_to_2' />
+                    </span>
+                </div>
+            </div>
+        </a>
+        <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0" (click)="${click}">
+            <span class="glyphicons git_create"></span>
+            <div class="popover top tooltip-edit-source tooltip-text">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <span *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length > 0"><@orcid.msg 'groups.common.make_a_copy' /></span>
+                </div>
+            </div>
+        </a>
 
-    <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length == 0">
-        <span class="glyphicons git_create grey"></span>
-    </a>
+        <a *ngIf="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length == 0">
+            <span class="glyphicons git_create grey"></span>
+            <div class="popover top tooltip-edit-source tooltip-text">
+              <div class="arrow"></div>
+              <div class="popover-content">
+                <span ng-show="!userIsSource(${activity}) && !group.userVersionPresent && group.externalIdentifiers.length == 0">
+                    <@orcid.msg 'groups.common.items_must_have_1' /><br />
+                    <@orcid.msg 'groups.common.items_must_have_2' />
+                </span>
+              </div>
+            </div>
+        </a>
+    </div>
 </#macro>  
 
 <#macro privacyToggle2 angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">  
