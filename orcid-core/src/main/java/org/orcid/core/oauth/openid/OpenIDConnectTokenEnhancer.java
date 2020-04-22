@@ -6,13 +6,16 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,10 +106,16 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
             claims.claim(OrcidOauth2Constants.NONCE, nonce);
         
         ProfileEntity e = profileEntityCacheManager.retrieve(orcid);
-        
-        claims.claim(OrcidOauth2Constants.AUTH_TIME, e.getLastLogin());
-        claims.claim(OrcidOauth2Constants.AUTHENTICATION_METHODS_REFERENCES, (e.getUsing2FA() ? OrcidOauth2Constants.AMR_MFA : OrcidOauth2Constants.AMR_PWD));
 
+        claims.claim(OrcidOauth2Constants.AUTH_TIME, e.getLastLogin());
+
+        // If it is a member, include AMR
+        ClientDetailsEntity c = clientDetailsEntityCacheManager.retrieve(clientID);
+
+        if (StringUtils.isNotEmpty(c.getClientType()) && !ClientType.PUBLIC_CLIENT.equals(ClientType.valueOf(c.getClientType()))) {
+            claims.claim(OrcidOauth2Constants.AUTHENTICATION_METHODS_REFERENCES, (e.getUsing2FA() ? OrcidOauth2Constants.AMR_MFA : OrcidOauth2Constants.AMR_PWD));
+        }
+        
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         if (person.getName() != null) {
             if (person.getName().getCreditName() != null) {
