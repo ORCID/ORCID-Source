@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Orcid Angular Signin")
+    ORCID_ANGULAR_SIGNIN,
+
     @Label("Spam button")
     SPAM_BUTTON,
 
