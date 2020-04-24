@@ -6,13 +6,17 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Person;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -39,8 +43,8 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
     private String path;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
-
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Resource
     private PersonDetailsManagerReadOnly personDetailsManagerReadOnly;
 
@@ -100,8 +104,18 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         claims.jwtID(UUID.randomUUID().toString());
         if (nonce != null)
             claims.claim(OrcidOauth2Constants.NONCE, nonce);
-        claims.claim(OrcidOauth2Constants.AUTH_TIME, profileEntityManager.getLastLogin(orcid));
+        
+        ProfileEntity e = profileEntityCacheManager.retrieve(orcid);
 
+        claims.claim(OrcidOauth2Constants.AUTH_TIME, e.getLastLogin());
+
+        // If it is a member, include AMR
+        ClientDetailsEntity c = clientDetailsEntityCacheManager.retrieve(clientID);
+
+        if (StringUtils.isNotEmpty(c.getClientType()) && !ClientType.PUBLIC_CLIENT.equals(ClientType.valueOf(c.getClientType()))) {
+            claims.claim(OrcidOauth2Constants.AUTHENTICATION_METHODS_REFERENCES, (e.getUsing2FA() ? OrcidOauth2Constants.AMR_MFA : OrcidOauth2Constants.AMR_PWD));
+        }
+        
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         if (person.getName() != null) {
             if (person.getName().getCreditName() != null) {

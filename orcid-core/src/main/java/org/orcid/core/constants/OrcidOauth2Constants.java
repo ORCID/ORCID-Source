@@ -34,7 +34,10 @@ public class OrcidOauth2Constants {
     public static final Object PROMPT_LOGIN = "login";
     public static final Object PROMPT_NONE = "none";    
     public static final String AUTH_TIME = "auth_time";
-
+    public static final String AUTHENTICATION_METHODS_REFERENCES = "amr";
+    public static final String AMR_MFA = "mfa";
+    public static final String AMR_PWD = "pwd";
+    
     //OAuth 2 screens
     public static final String OAUTH_2SCREENS = "OAUTH_2SCREENS";
     public static final String OAUTH_QUERY_STRING = "queryString";
