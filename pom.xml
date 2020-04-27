@@ -44,7 +44,6 @@ the software.
 
     <modules>
         <module>orcid-test</module>
-        <module>orcid-model</module>
         <module>orcid-utils</module>
         <module>orcid-core</module>
         <module>orcid-web</module>
@@ -976,7 +975,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>${project.version}</version>
+               <version>3.0.0</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
