@@ -5,8 +5,14 @@
             <div class="row">               
                 <div class="col-md-12">
                     <div class="workspace-section-title">
-                        <div class="edit-name edit-option" *ngIf="!showEdit" id="open-edit-names">
+                        <div class="edit-name edit-option popover-help-container" *ngIf="!showEdit" id="open-edit-names">
                             <div class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'common.edit' />">
+                            </div>
+                            <div class="popover top tooltip-edit tooltip-text">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <span><@orcid.msg 'groups.common.edit_my' /></span>
+                                </div>
                             </div>
                         </div>
                     </div>
