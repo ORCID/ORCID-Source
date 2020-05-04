@@ -554,7 +554,7 @@ ok: "${error.ok}"
         });
     }
 
-    sendReactivationEmail(email, $event?): void {
+    sendReactivationEmail(email, $event?): void {        
         if (event) {
             $event.preventDefault()
         }
@@ -569,6 +569,8 @@ ok: "${error.ok}"
                     this.showDeactivatedError = false;
                     this.showReactivationSent = true;                    
                 } else {
+                    //Restore the email address
+                    this.initReactivationRequest.email = email;
                     this.showDeactivatedError = true;
                     this.showReactivationSent = false;                    
                 }
