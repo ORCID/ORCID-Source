@@ -299,11 +299,17 @@ public class PasswordResetController extends BaseController {
     public ResponseEntity<?> sendReactivation(@RequestParam("email") String email) throws UnsupportedEncodingException {
         email = URLDecoder.decode(email, "UTF-8");
         String orcid = null;
+        
         if (!email.contains("@")) {
             String error = getMessage("Email.personalInfoForm.email");
             return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
         } else {
-            orcid = emailManager.findOrcidIdByEmail(email);
+            try{
+                orcid = emailManager.findOrcidIdByEmail(email);
+            } catch(NoResultException nre) {
+                String error = getMessage("Email.resendClaim.invalidEmail");
+                return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");                
+            }
         }
 
         ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
