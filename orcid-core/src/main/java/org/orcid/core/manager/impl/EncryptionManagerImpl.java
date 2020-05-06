@@ -11,6 +11,7 @@ import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.crypto.DesEncrypter;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -219,7 +220,7 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
         }
         
         try {
-            return sha256Hash(email.trim().toLowerCase());
+            return sha256Hash(OrcidStringUtils.filterEmailAddress(email).toLowerCase());
         } catch(NoSuchAlgorithmException nsae) {
             throw new RuntimeException(nsae);
         }

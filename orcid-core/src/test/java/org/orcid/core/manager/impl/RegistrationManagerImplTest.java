@@ -427,6 +427,11 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         } 
     }
     
+    @Test
+    public void testRegisterCleanSpaceCharsOnEmailsTest() {
+        fail();
+    }
+    
     private Registration createRegistrationForm(String email, boolean claimed) {
         Registration registration = new Registration();
         registration.setPassword(Text.valueOf("password"));

@@ -39,6 +39,7 @@ import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -245,7 +246,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
-        String email = registration.getEmail().getValue().trim();
+        String email = OrcidStringUtils.filterEmailAddress(registration.getEmail().getValue());
         emailEntity.setEmail(email);
         emailEntity.setId(encryptionManager.getEmailHash(email));
         emailEntity.setProfile(newRecord);
@@ -262,7 +263,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         for(Text emailAdditional : registration.getEmailsAdditional()) {
             if(!PojoUtil.isEmpty(emailAdditional)){
                 EmailEntity emailAdditionalEntity = new EmailEntity();
-                String emailValue = emailAdditional.getValue().trim();
+                String emailValue = OrcidStringUtils.filterEmailAddress(emailAdditional.getValue());
                 emailAdditionalEntity.setEmail(emailValue);
                 emailAdditionalEntity.setId(encryptionManager.getEmailHash(emailValue));
                 emailAdditionalEntity.setProfile(newRecord);

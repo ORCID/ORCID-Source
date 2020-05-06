@@ -21,6 +21,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,8 +146,10 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         
         Email currentPrimaryEmail = findPrimaryEmail(orcid);
         
+        String newEmail = OrcidStringUtils.filterEmailAddress(email.getEmail());
+        
         // Create the new email
-        emailDao.addEmail(orcid, email.getEmail(), encryptionManager.getEmailHash(email.getEmail()), email.getVisibility().name(), sourceId, clientSourceId);
+        emailDao.addEmail(orcid, newEmail, encryptionManager.getEmailHash(newEmail), email.getVisibility().name(), sourceId, clientSourceId);
         if (email.isPrimary()) {
             // if primary email changed send notification.
             if (!StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
@@ -186,13 +189,15 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     public void editEmail(String orcid, String original, String edited, HttpServletRequest request) {
         EmailEntity originalEntity = emailDao.findByEmail(original); 
         
+        String filteredEmail = OrcidStringUtils.filterEmailAddress(edited);
+        
         EmailEntity updatedEntity = new EmailEntity();
         updatedEntity.setDateCreated(new Date());
         updatedEntity.setLastModified(new Date());
         updatedEntity.setSourceId(orcid);
-        updatedEntity.setEmail(edited);
+        updatedEntity.setEmail(filteredEmail);
         updatedEntity.setVerified(Boolean.FALSE);
-        updatedEntity.setId(encryptionManager.getEmailHash(edited));
+        updatedEntity.setId(encryptionManager.getEmailHash(filteredEmail));
         updatedEntity.setCurrent(originalEntity.getCurrent());
         updatedEntity.setVisibility(originalEntity.getVisibility());
         updatedEntity.setPrimary(originalEntity.getPrimary());
@@ -200,15 +205,15 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
         if (originalEntity.getPrimary()) {
             // if primary email changed send notification.
-            if (!StringUtils.equals(original, edited)) {
+            if (!StringUtils.equals(original, filteredEmail)) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                notificationManager.sendEmailAddressChangedNotification(orcid, edited, original);
+                notificationManager.sendEmailAddressChangedNotification(orcid, filteredEmail, original);
             }
         }
         
         emailDao.persist(updatedEntity);
         emailDao.remove(originalEntity.getId());
-        notificationManager.sendVerificationEmail(orcid, edited);
+        notificationManager.sendVerificationEmail(orcid, filteredEmail);
     }
 
     @Override

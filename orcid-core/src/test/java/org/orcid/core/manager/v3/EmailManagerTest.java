@@ -369,4 +369,9 @@ public class EmailManagerTest extends BaseTest {
         ReflectionTestUtils.setField(emailManager, "notificationManager", notificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
     }
+    
+    @Test
+    public void testEditEmailRemovesSpaceChars() {
+        fail();
+    }
 }
