@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -36,6 +37,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -429,7 +431,25 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @Test
     public void testRegisterCleanSpaceCharsOnEmailsTest() {
-        fail();
+        char[] chars = { ' ', '\n', '\t', '\u00a0', '\u0020', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008',
+                '\u2009', '\u200a', '\u202f', '\u205f', '\u3000' };
+
+        for (char c : chars) {
+            long now = System.currentTimeMillis();
+            String email = now + "name" + c + "1@test.orcid.org";
+            String fixedEmail = now + "name1@test.orcid.org";
+            Registration form = createRegistrationForm(email, true);        
+            String userOrcid = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
+            assertNotNull(userOrcid);
+            assertTrue(OrcidStringUtils.isValidOrcid(userOrcid));
+            Emails emails = emailManager.getEmails(userOrcid);
+            assertEquals(1, emails.getEmails().size());
+            assertEquals(fixedEmail, emails.getEmails().get(0).getEmail());
+            assertTrue(emailManager.emailExists(email));
+            assertTrue(emailManager.emailExists(fixedEmail));
+            System.out.println("'" + emails.getEmails().get(0).getEmail() + "': " +  emails.getEmails().get(0).getPath());
+        }
+               
     }
     
     private Registration createRegistrationForm(String email, boolean claimed) {

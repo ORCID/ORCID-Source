@@ -41,6 +41,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -371,7 +372,42 @@ public class EmailManagerTest extends BaseTest {
     }
     
     @Test
-    public void testEditEmailRemovesSpaceChars() {
+    public void addEmailRemovesSpaceCharsTest() throws NoSuchAlgorithmException {
+        TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", mockEmailDao);
+      
+        char[] chars = { ' ', '\n', '\t', '\u00a0', '\u0020', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008',
+                '\u2009', '\u200a', '\u202f', '\u205f', '\u3000' };
+
+        for (char c : chars) {
+            long now = System.currentTimeMillis();
+            String emailAddress = now + "test" + c + "@email.com";
+            String filteredEmailAddress = OrcidStringUtils.filterEmailAddress(emailAddress);
+            
+            Email email = new Email();
+            email.setEmail(emailAddress);
+            email.setPrimary(false);
+            email.setVisibility(Visibility.PUBLIC);
+            
+            emailManager.addEmail(new MockHttpServletRequest(), ORCID, email);
+            
+            ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+            Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(OrcidStringUtils.filterEmailAddress(emailAddress)), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
+            String hashValue = captor.getValue();
+            
+            assertNotEquals(hashValue, encryptionManager.sha256Hash(emailAddress));
+            assertEquals(hashValue, encryptionManager.getEmailHash(filteredEmailAddress));           
+        }
+        
+        TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", emailDao);        
+    }
+    
+    @Test
+    public void editEmailRemovesSpaceCharsTest() {
+        fail();
+    }
+    
+    @Test
+    public void reactivateOrCreateRemovesSpaceCharsTest() {
         fail();
     }
 }

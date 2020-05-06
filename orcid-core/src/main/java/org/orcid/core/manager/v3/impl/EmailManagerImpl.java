@@ -13,7 +13,6 @@ import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
-import org.orcid.core.security.OrcidUserDetailsServiceImpl;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
@@ -146,18 +145,18 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         
         Email currentPrimaryEmail = findPrimaryEmail(orcid);
         
-        String newEmail = OrcidStringUtils.filterEmailAddress(email.getEmail());
+        String filteredEmail = OrcidStringUtils.filterEmailAddress(email.getEmail());
         
         // Create the new email
-        emailDao.addEmail(orcid, newEmail, encryptionManager.getEmailHash(newEmail), email.getVisibility().name(), sourceId, clientSourceId);
+        emailDao.addEmail(orcid, filteredEmail, encryptionManager.getEmailHash(filteredEmail), email.getVisibility().name(), sourceId, clientSourceId);
         if (email.isPrimary()) {
             // if primary email changed send notification.
-            if (!StringUtils.equals(currentPrimaryEmail.getEmail(), email.getEmail())) {
+            if (!StringUtils.equals(currentPrimaryEmail.getEmail(), filteredEmail)) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                notificationManager.sendEmailAddressChangedNotification(orcid, email.getEmail(), currentPrimaryEmail.getEmail());
+                notificationManager.sendEmailAddressChangedNotification(orcid, filteredEmail, currentPrimaryEmail.getEmail());
             }
         }
-        notificationManager.sendVerificationEmail(orcid, email.getEmail());
+        notificationManager.sendVerificationEmail(orcid, filteredEmail);
     }
     
     @Override
@@ -248,15 +247,16 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     public boolean reactivateOrCreate(String orcid, String email, Visibility visibility) {
-        String hash = encryptionManager.getEmailHash(email);
+        String filteredEmail = OrcidStringUtils.filterEmailAddress(email);
+        String hash = encryptionManager.getEmailHash(filteredEmail);
         EmailEntity entity = emailDao.find(hash);
         // If email doesn't exists, create it
         if(entity == null) {
-            emailDao.addEmail(orcid, email, hash, visibility.name(), orcid, null);
+            emailDao.addEmail(orcid, filteredEmail, hash, visibility.name(), orcid, null);
             return true;
         } else {
             if(orcid.equals(entity.getProfile().getId())) {
-                entity.setEmail(email);
+                entity.setEmail(filteredEmail);
                 entity.setPrimary(false);
                 entity.setVerified(false);
                 entity.setVisibility(visibility.name());
@@ -267,7 +267,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                     return true;
                 }
             } else {
-                throw new IllegalArgumentException("Email " + email + " belongs to other record than " + orcid);
+                throw new IllegalArgumentException("Email " + filteredEmail + " belongs to other record than " + orcid);
             }
         }
         
