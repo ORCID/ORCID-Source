@@ -3,8 +3,14 @@
     <div class="workspace-section other-names" id="other-names-section">
         <div class="workspace-section-header">
             <div class="workspace-section-title">
-                <div   class="edit-other-names edit-option" id="open-edit-other-names" (click)="openEditModal('modalAlsoKnownAsForm')" aria-label="<@orcid.msg 'common.edit' />">                      
+                <div class="edit-other-names edit-option popover-help-container" id="open-edit-other-names" (click)="openEditModal('modalAlsoKnownAsForm')" aria-label="<@orcid.msg 'common.edit' />">
                     <div class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'common.edit' />">                 
+                    </div>
+                    <div class="popover top tooltip-edit tooltip-text">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <span><@orcid.msg 'groups.common.edit_my' /></span>
+                        </div>
                     </div>
                 </div>
             <h3 class="workspace-section-label"><@orcid.msg 'workspace.Alsoknownas'/></h3>
@@ -20,9 +26,15 @@
     <div class="workspace-section country">
         <div class="workspace-section-header">
             <div class="workspace-section-title">
-                <div id="country-open-edit-modal" class="edit-country edit-option" (click)="openEditModal('modalCountryForm')" title="" aria-label="<@orcid.msg 'common.edit' />"> 
+                <div id="country-open-edit-modal" class="edit-country edit-option popover-help-container" (click)="openEditModal('modalCountryForm')" title="" aria-label="<@orcid.msg 'common.edit' />">
                     <div class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'common.edit' />"> 
-                    </div>                  
+                    </div>
+                    <div class="popover top tooltip-edit tooltip-text">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <span><@orcid.msg 'groups.common.edit_my' /></span>
+                        </div>
+                    </div>
                 </div>
                 <h3 class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></h3>
             </div>
@@ -37,8 +49,14 @@
     <div class="workspace-section keywords">
         <div class="workspace-section-header">
             <div class="workspace-section-title">
-                <div  id="open-edit-keywords" class="edit-keywords edit-option" (click)="openEditModal('modalKeywordsForm')" aria-label="<@orcid.msg 'common.edit' />">
+                <div  id="open-edit-keywords" class="edit-keywords edit-option popover-help-container" (click)="openEditModal('modalKeywordsForm')" aria-label="<@orcid.msg 'common.edit' />">
                     <div class="glyphicon glyphicon-pencil"  aria-label="<@orcid.msg 'common.edit' />">
+                    </div>
+                    <div class="popover top tooltip-edit tooltip-text">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <span><@orcid.msg 'groups.common.edit_my' /></span>
+                        </div>
                     </div>
                 </div>
                 <h3 class="workspace-section-label"><@orcid.msg 'public_profile.labelKeywords'/></h3>
@@ -54,9 +72,15 @@
     <div class="workspace-section websites">
         <div class="workspace-section-header">
             <div class="workspace-section-title">
-                <div id="open-edit-websites" class="edit-websites edit-option" (click)="openEditModal('modalWebsitesForm')"  aria-label="<@orcid.msg 'common.edit' />">
+                <div id="open-edit-websites" class="edit-websites edit-option popover-help-container" (click)="openEditModal('modalWebsitesForm')"  aria-label="<@orcid.msg 'common.edit' />">
                     <div class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'common.edit' />">
-                    </div>         
+                    </div>
+                    <div class="popover top tooltip-edit tooltip-text">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <span><@orcid.msg 'groups.common.edit_my' /></span>
+                        </div>
+                    </div>
                 </div>
                 <h3 class="workspace-section-label"><@orcid.msg 'public_profile.labelWebsites'/></h3>
             </div>
@@ -71,8 +95,14 @@
     <div *ngIf="formData['externalIdentifiers']?.externalIdentifiers" class="workspace-section extIds">
         <div class="workspace-section-header">
             <div class="workspace-section-title">                 
-                <div  id="open-edit-external-identifiers" class="edit-websites edit-option" (click)="openEditModal('modalExtIdsForm')" aria-label="<@orcid.msg 'common.edit' />">
+                <div  id="open-edit-external-identifiers" class="edit-websites edit-option popover-help-container" (click)="openEditModal('modalExtIdsForm')" aria-label="<@orcid.msg 'common.edit' />">
                     <div class="glyphicon glyphicon-pencil" aria-label="<@orcid.msg 'common.edit' />">
+                    </div>
+                    <div class="popover top tooltip-edit tooltip-text">
+                        <div class="arrow"></div>
+                        <div class="popover-content">
+                            <span><@orcid.msg 'groups.common.edit_my' /></span>
+                        </div>
                     </div>
                 </div>
                 <h3 class="workspace-section-label"><@orcid.msg 'public_profile.labelOtherIDs'/></h3>

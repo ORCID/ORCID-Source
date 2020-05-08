@@ -23,8 +23,14 @@
             <div class="col-md-3 col-sm-4 col-xs-8" role="presentation">
                 <ul class="inline-list bio-edit right" role="presentation">
                     <li>
-                        <div (click)="toggleEdit()" *ngIf="!showEdit" class="edit-biography edit-option" role="Button" aria-label="<@orcid.msg 'common.edit'/>" describedby="tooltip-editBio">
+                        <div (click)="toggleEdit()" *ngIf="!showEdit" class="edit-biography edit-option popover-help-container" role="Button" aria-label="<@orcid.msg 'common.edit'/>" describedby="tooltip-editBio">
                             <span class="glyphicon glyphicon-pencil"  role="presentation"></span>
+                            <div class="popover top tooltip-edit tooltip-text">
+                                <div class="arrow"></div>
+                                <div class="popover-content">
+                                    <span><@orcid.msg 'groups.common.edit_my' /></span>
+                                </div>
+                            </div>
                         </div>
                     </li>
                     <li>
