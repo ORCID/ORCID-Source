@@ -99,7 +99,9 @@ public class EmailManagerTest extends BaseTest {
     
     @After
     public void after() throws JAXBException {
-        TargetProxyHelper.injectIntoProxy(emailManager, "sourceManager", sourceManager);
+        ReflectionTestUtils.setField(emailManager, "sourceManager", sourceManager);
+        ReflectionTestUtils.setField(emailManager, "notificationManager", notificationManager);
+        ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
     }
     
     @AfterClass
