@@ -21,7 +21,6 @@ node {
         try {
             sh "mkdir -p $EHCACHE_LOCATION"
             do_maven("versions:set -DnewVersion=${BRANCH_NAME}-${BUILD_NUMBER} -f orcid-test/pom.xml")
-            do_maven("versions:set -DnewVersion=${BRANCH_NAME}-${BUILD_NUMBER} -f orcid-model/pom.xml")
             do_maven("versions:set -DnewVersion=${BRANCH_NAME}-${BUILD_NUMBER}")
         } catch(Exception err) {
             orcid_notify("Failed to update artifact versions ${env.BRANCH_NAME}#$BUILD_NUMBER FAILED [${JOB_URL}]", 'ERROR')
@@ -44,7 +43,6 @@ node {
         try {
             parallel(
                 model:   {do_maven("test -f orcid-test/pom.xml")},
-                test:    {do_maven("test -f orcid-model/pom.xml")},
                 parent:  {do_maven("test")}
             )
         } catch(Exception err) {
