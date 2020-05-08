@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -30,6 +31,9 @@ public class RecalculateAndFixEmailHash {
     private EncryptionManager encryptionManager;
     private TransactionTemplate transactionTemplate;
 
+    @Option(name = "-l", usage = "ORCID List")
+    private String orcidIdList;
+    
     @Option(name = "-o", usage = "Offset")
     private Integer customOffset;
     
@@ -62,7 +66,7 @@ public class RecalculateAndFixEmailHash {
             
             if(element.testMode == null) {
                 element.testMode = false;
-            }
+            }                       
         } catch (CmdLineException e) {
             LOG.error(e.getMessage(), e);
             e.printStackTrace();
@@ -73,8 +77,20 @@ public class RecalculateAndFixEmailHash {
 
     private void migrate() throws NoSuchAlgorithmException {
         init();
-        process();
+        if(!StringUtils.isBlank(orcidIdList)) {
+            processGivenIds();
+        } else {
+            process();
+        }        
         System.exit(0);
+    }
+    
+    private void processGivenIds() {
+        LOG.info("Fixing email addresses: " + orcidIdList);
+        String [] orcidIds = orcidIdList.split(",");
+        for(String orcidId : orcidIds) {
+            xxxx
+        }
     }
 
     private void process() throws NoSuchAlgorithmException {
