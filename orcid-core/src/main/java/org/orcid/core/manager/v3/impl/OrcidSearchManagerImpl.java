@@ -108,6 +108,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
         result.setGivenNames(solrResult.getGivenNames());
         result.setFamilyNames(solrResult.getFamilyName());
         result.setCreditName(solrResult.getCreditName());
+        result.setGivenAndFamilyNames(solrResult.getGivenAndFamilyNames());
         
         if (solrResult.getEmails() != null) {
             result.setEmails(solrResult.getEmails().toArray(new String[0]));

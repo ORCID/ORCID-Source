@@ -9,6 +9,7 @@ public class OrcidSolrResult {
     private Collection<String> emails;
     private String givenNames;
     private String familyName;
+    private String givenAndFamilyNames;
     private Collection<String> institutionAffiliationNames;
     private String creditName;
     private Collection<String> otherNames;
@@ -52,6 +53,14 @@ public class OrcidSolrResult {
 
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
+    }
+
+    public String getGivenAndFamilyNames() {
+        return givenAndFamilyNames;
+    }
+
+    public void setGivenAndFamilyNames(String givenAndFamilyNames) {
+        this.givenAndFamilyNames = givenAndFamilyNames;
     }
 
     public Collection<String> getInstitutionAffiliationNames() {

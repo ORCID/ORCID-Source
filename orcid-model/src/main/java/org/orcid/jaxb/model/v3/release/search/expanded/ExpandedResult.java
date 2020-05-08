@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlType;
 import io.swagger.annotations.ApiModel;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "orcidId", "givenNames", "familyNames", "creditName", "otherNames", "emails", "institutionNames" })
+@XmlType(propOrder = { "orcidId", "givenNames", "familyNames", "givenAndFamilyNames", "creditName", "otherNames", "emails", "institutionNames" })
 @ApiModel(value = "ExpandedResultV3_0")
 public class ExpandedResult implements Serializable {
     
@@ -24,6 +24,9 @@ public class ExpandedResult implements Serializable {
     
     @XmlElement(name = "family-names", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String familyNames;
+       
+    @XmlElement(name = "given-and-family-names", namespace = "http://www.orcid.org/ns/expanded-search")
+    protected String givenAndFamilyNames;
     
     @XmlElement(name = "credit-name", namespace = "http://www.orcid.org/ns/expanded-search")
     protected String creditName;
@@ -55,6 +58,14 @@ public class ExpandedResult implements Serializable {
 
     public String getFamilyNames() {
         return familyNames;
+    }   
+    
+    public String getGivenAndFamilyNames() {
+        return givenAndFamilyNames;
+    }
+
+    public void setGivenAndFamilyNames(String givenAndFamilyNames) {
+        this.givenAndFamilyNames = givenAndFamilyNames;
     }
 
     public void setFamilyNames(String familyNames) {

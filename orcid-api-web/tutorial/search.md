@@ -127,7 +127,7 @@ Example response
 | Header		|'Accept: text/csv' |
 |Method| GET|
 | Endpoint 	|csv-search |
-|Allowed Fields      | orcid, email, given-names, family-name,given-and-family-names, current-institution-affiliation-name,past-institution-affiliation-name, credit-name, other-names|
+|Allowed Fields      | orcid, email, given-names, family-name, given-and-family-names, current-institution-affiliation-name,past-institution-affiliation-name, credit-name, other-names|
 
 You can search ORCID with the API and return your search as a CSV as an alternative to JSON and XML. This can be achieved by changing the header, the endpoint and then specify the fields you want in the response using the fl (field list) parameter. The search part of the query remains the same.
 
@@ -225,6 +225,7 @@ In addition to the basic search, the expanded search end point `expanded-search`
 `orcid-id`
 `given-names`
 `family-names`
+`given-and-family-names`
 `credit-name`
 `other-name`
 `email`

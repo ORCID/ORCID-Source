@@ -6,6 +6,7 @@ import static org.orcid.utils.solr.entities.SolrConstants.CREDIT_NAME;
 import static org.orcid.utils.solr.entities.SolrConstants.EMAIL_ADDRESS;
 import static org.orcid.utils.solr.entities.SolrConstants.FAMILY_NAME;
 import static org.orcid.utils.solr.entities.SolrConstants.GIVEN_NAMES;
+import static org.orcid.utils.solr.entities.SolrConstants.GIVEN_AND_FAMILY_NAMES;
 import static org.orcid.utils.solr.entities.SolrConstants.ORCID;
 import static org.orcid.utils.solr.entities.SolrConstants.OTHER_NAMES;
 import static org.orcid.utils.solr.entities.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
@@ -136,6 +137,7 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
                 orcidSolrResult.setEmails(getStringList(solrDocument, EMAIL_ADDRESS));
                 orcidSolrResult.setFamilyName((String) solrDocument.getFieldValue(FAMILY_NAME));
                 orcidSolrResult.setGivenNames((String) solrDocument.getFieldValue(GIVEN_NAMES));
+                orcidSolrResult.setGivenAndFamilyNames((String) solrDocument.getFieldValue(GIVEN_AND_FAMILY_NAMES));
                 orcidSolrResult.setInstitutionAffiliationNames(getInstitutionAffiliationNames(solrDocument));
                 orcidSolrResult.setOtherNames(getStringList(solrDocument, OTHER_NAMES));
                 orcidSolrResultsList.add(orcidSolrResult);

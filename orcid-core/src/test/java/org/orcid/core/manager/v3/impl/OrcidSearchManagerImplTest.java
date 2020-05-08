@@ -157,19 +157,20 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         OrcidSolrResults orcidSolrResults = new OrcidSolrResults();
         List<OrcidSolrResult> resultsList = new ArrayList<>();
         orcidSolrResults.setResults(resultsList);
-        resultsList.add(getExpandedOrcidSolrResult("orcid1", "person1", "familyName1", "creditName1", new String[] { "other1", "name1" }, new String[] { "institution1", "institution2" }, new String[] { "one@one.com", "erm@erm.com" }));
-        resultsList.add(getExpandedOrcidSolrResult("orcid2", "person2", "familyName2", "creditName2", new String[] { "other2", "name2" }, new String[] { "institution3", "institution4" }, new String[] { "two@two.com" }));
-        resultsList.add(getExpandedOrcidSolrResult("orcid3", "person3", "familyName3", "creditName3", new String[] { "other3", "name3" }, new String[] { "institution5", "institution6" }, new String[] { "three@three.com", "er@er.com" }));
+        resultsList.add(getExpandedOrcidSolrResult("orcid1", "person1", "familyName1", "givenAndFamilyNames1", "creditName1", new String[] { "other1", "name1" }, new String[] { "institution1", "institution2" }, new String[] { "one@one.com", "erm@erm.com" }));
+        resultsList.add(getExpandedOrcidSolrResult("orcid2", "person2", "familyName2", "givenAndFamilyNames2", "creditName2", new String[] { "other2", "name2" }, new String[] { "institution3", "institution4" }, new String[] { "two@two.com" }));
+        resultsList.add(getExpandedOrcidSolrResult("orcid3", "person3", "familyName3", "givenAndFamilyNames3", "creditName3", new String[] { "other3", "name3" }, new String[] { "institution5", "institution6" }, new String[] { "three@three.com", "er@er.com" }));
         orcidSolrResults.setNumFound(3);
         return orcidSolrResults;
     }
 
-    private OrcidSolrResult getExpandedOrcidSolrResult(String orcid, String name, String familyName, String creditName, String[] otherNames, String[] institutionAffiliationNames, String[] emails) {
+    private OrcidSolrResult getExpandedOrcidSolrResult(String orcid, String name, String familyName, String givenAndFamilyNames, String creditName, String[] otherNames, String[] institutionAffiliationNames, String[] emails) {
         OrcidSolrResult solrResult = new OrcidSolrResult();
         solrResult.setOrcid(orcid);
         solrResult.setGivenNames(name);
         solrResult.setFamilyName(familyName);
-        solrResult.setCreditName(creditName);
+        solrResult.setGivenAndFamilyNames(givenAndFamilyNames);
+        solrResult.setCreditName(creditName);       
         solrResult.setOtherNames(Arrays.asList(otherNames));
         solrResult.setInstitutionAffiliationNames(Arrays.asList(institutionAffiliationNames));
         solrResult.setEmails(Arrays.asList(emails));
