@@ -768,8 +768,8 @@ public class ActivityValidatorTest {
         pr.setVisibility(Visibility.LIMITED);
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
-
-    @Test(expected = InvalidOrgException.class)
+    
+    @Test
     public void validatePeerReviewWithoutOrg() {
         PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.setOrganization(null);
