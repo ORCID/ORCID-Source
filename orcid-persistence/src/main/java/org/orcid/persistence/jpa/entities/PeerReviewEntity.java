@@ -59,7 +59,7 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
     }
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
-    @JoinColumn(name = "org_id", nullable = false)
+    @JoinColumn(name = "org_id")
     public OrgEntity getOrg() {
         return org;
     }
