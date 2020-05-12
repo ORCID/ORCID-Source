@@ -123,4 +123,4 @@ To enable Institutional Connect you will need to send a request to [ORCID suppor
 * Your ORCID Client ID
 * Your identity provider entity ID (e.g. https://idp.example.org/idp/shibboleth)
 * Your redirect URI: The page within your ORCID-integrated system that users will be directed to after they authorise the connection. This can be the same redirect URI as used when researchers start the OAuth process from your site, or a different URI. [More about redirect URIs](https://support.orcid.org/hc/en-us/articles/360006973913-Register-a-member-API-client-application)
-* The [scopes](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1/#scopes) you need: These should be the same as requested when a researcher starts the OAuth process from your site.
+* The [scopes](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_2.1/#scopes) you need: These should be the same as requested when a researcher starts the OAuth process from your site.

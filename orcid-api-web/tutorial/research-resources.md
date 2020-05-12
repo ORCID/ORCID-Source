@@ -13,9 +13,9 @@ Research resources is available in the 3.0 and later versions of the API. These 
 **Endpoints:** ```/research-resource``` and ```/research-resources```
 
 **Sample XML files:**
-  * [reading the research resource section summary](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/research-resources-3.0.xml)
-  * [reading a research resource](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/read_samples/research-resource-3.0.xml)
-  * [writing a research resource](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/samples/write_samples/research-resource-3.0.xml)
+  * [reading the research resource section summary](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/samples/read_samples/research-resources-3.0.xml)
+  * [reading a research resource](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/samples/read_samples/research-resource-3.0.xml)
+  * [writing a research resource](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/samples/write_samples/research-resource-3.0.xml)
 
 ## Permission to edit the record
 Editing the research resources section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading research resource items. See [Authenticating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.

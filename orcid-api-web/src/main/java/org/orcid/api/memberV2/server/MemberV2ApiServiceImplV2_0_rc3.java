@@ -176,7 +176,7 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberApiServiceImplHelper {
     @Path(ACTIVITIES)
     @ApiOperation(value = "Fetch all activities", response = ActivitiesSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
-    @ExternalDocs(value = "Activities XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc3/activities-2.0_rc3.xsd")
+    @ExternalDocs(value = "Activities XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0_rc3/activities-2.0_rc3.xsd")
     public Response viewActivities(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewActivities(orcid);
     }
@@ -902,7 +902,7 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberApiServiceImplHelper {
     @Path(RECORD)
     @ApiOperation(value = "Fetch record details", authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc3/record-2.0_rc3.xsd")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0_rc3/record-2.0_rc3.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
     }

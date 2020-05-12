@@ -3,7 +3,7 @@
  xmlns:common="http://www.orcid.org/ns/common"
     xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:work="http://www.orcid.org/ns/work"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/peer-review https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/peer-review-2.0_rc2.xsd">		
+    xsi:schemaLocation="http://www.orcid.org/ns/peer-review https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0_rc2/peer-review-2.0_rc2.xsd">		
     <peer-review:reviewer-role>reviewer</peer-review:reviewer-role>
 <peer-review:review-identifiers>
     <common:external-id>
