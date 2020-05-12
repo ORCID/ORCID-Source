@@ -100,7 +100,7 @@ Example response:
 ```
 **5. Use the access token and ORCID iD to read or update the record.**
 
-See the current [XSD documentation](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/README.md#calls) for possible calls.
+See the current [XSD documentation](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_2.1/README.md#calls) for possible calls.
 
 ### Using OpenID Connect
 
@@ -131,7 +131,7 @@ Example response:
 {"access_token":"1cecf036-5ced-4d04-8eeb-61fa6e3b32ee","token_type":"bearer","refresh_token":"81hbd686-7aa9-4c52-b8db-51fd8370ccf4","expires_in":631138518,"scope":"/read-public","orcid":null}
 ```
 
-See the current [XSD documentation](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/README.md#calls) for possible calls using a read-public token.
+See the current [XSD documentation](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_2.1/README.md#calls) for possible calls using a read-public token.
 
 ## API Limits
 
@@ -159,6 +159,6 @@ Request a second - Number of request that can be made a second.
 
 * [Tutorials for reading and writing to ORCID records](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web/tutorial)
 
-* [3.0 Docs](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_3.0/README.md)
+* [3.0 Docs](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/README.md)
 
 * [2.1 Docs](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1)

@@ -365,7 +365,7 @@ public class PublicV2ApiServiceImplV2_0_rc4 {
     @GET
     @Path(RECORD)
     @ApiOperation(value = "Fetch record details")
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/record-2.0_rc4.xsd")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0_rc4/record-2.0_rc4.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
     }
@@ -374,7 +374,7 @@ public class PublicV2ApiServiceImplV2_0_rc4 {
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SEARCH_PATH)
     @ApiOperation(value = "Search records")
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/search-2.0_rc4.xsd")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0_rc4/search-2.0_rc4.xsd")
     public Response searchByQueryJSON(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
         Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
@@ -385,7 +385,7 @@ public class PublicV2ApiServiceImplV2_0_rc4 {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML })
     @Path(SEARCH_PATH)
     @ApiOperation(value = "Search records")
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/search-2.0_rc4.xsd")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0_rc4/search-2.0_rc4.xsd")
     public Response searchByQueryXML(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
         Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
         Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
@@ -396,7 +396,7 @@ public class PublicV2ApiServiceImplV2_0_rc4 {
     @Path(CLIENT_PATH)
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @ApiOperation(value = "Fetch client details")
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc4/client-2.0_rc4.xsd")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0_rc4/client-2.0_rc4.xsd")
     public Response viewClient(@PathParam("client_id") String clientId) {
         return serviceDelegator.viewClient(clientId);
     }

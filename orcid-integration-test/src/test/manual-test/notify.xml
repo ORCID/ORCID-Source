@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <notification:notification
-    xsi:schemaLocation="http://www.orcid.org/ns/notification https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/notification_2.0_rc2/notification-permission-2.0_rc2.xsd"
+    xsi:schemaLocation="http://www.orcid.org/ns/notification https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/notification_2.0_rc2/notification-permission-2.0_rc2.xsd"
     xmlns:common="http://www.orcid.org/ns/common"
     xmlns:notification="http://www.orcid.org/ns/notification"
     xmlns:activities="http://www.orcid.org/ns/activities"
