@@ -7,8 +7,8 @@ Welcome to ORCID Source. Here are some resources to get you started.
 * [ORCID API introduction](https://github.com/ORCID/ORCID-Source/tree/master/orcid-api-web)
   * [Content negotiation](https://github.com/ORCID/ORCID-Source/blob/master/CONTENT_NEGOTIATION.md)
 
-* [ORCID's API XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)
-  * [Current stable XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1)
+* [ORCID's API XSD](https://github.com/ORCID/orcid-model/tree/master/src/main/resources)
+  * [Current stable XSD](https://github.com/ORCID/orcid-model/tree/master/src/main/resources/record_2.1)
 
 * [ORCID's Localization Reference](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n)
 

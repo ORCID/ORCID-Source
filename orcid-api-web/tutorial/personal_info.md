@@ -24,8 +24,8 @@ These calls can be used with Member API credentials on sandbox or the production
 * [Examples for reading personal information sections in 2.1](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_2.1/samples/read_samples/personal-details-2.1.xml)
 * [Examples for reading personal information sections in 3.0](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/samples/read_samples/personal-details-3.0.xml)
 * [Examples for writing personal information sections in 2.1](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_2.1/samples/write_sample)
-* [Examples for reading personal information in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0/samples/read_samples)
-* [Examples writing personal information sections in 3.0](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0/samples/write_samples)
+* [Examples for reading personal information in 3.0](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/samples/read_samples)
+* [Examples writing personal information sections in 3.0](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/samples/write_samples)
 
 ## Permission to edit the record
 

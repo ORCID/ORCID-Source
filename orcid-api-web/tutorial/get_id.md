@@ -73,7 +73,7 @@ You can read public information on the ORCID record using the access token.
 
 Version is the the version of the API you are using, the latest stable release is v2.1.
 
-Endpoint is the section of the record you want to read, 'record' returns the entire record. [List of 2.1 endpoints](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1#read-sections).
+Endpoint is the section of the record you want to read, 'record' returns the entire record. [List of 2.1 endpoints](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_2.1#read-sections).
 
 ### Member API
 

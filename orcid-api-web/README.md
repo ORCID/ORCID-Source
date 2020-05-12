@@ -53,7 +53,7 @@ Generating an access token requires interacting with the Registry interface as a
 | host 				| https://sandbox.orcid.org/oauth/authorize|
 | client\_id 		| *Your client ID*|
 | response\_type	| code|
-| scope				| [*Your selected scopes*](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1#scopes)|
+| scope				| [*Your selected scopes*](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_2.1#scopes)|
 | redirect\_uri		| *Your landing page*|
 
 Example Authorization url
@@ -149,7 +149,7 @@ Request a second - Number of request that can be made a second.
 
 ## Further documentation
 
-* [About the ORCID XSD](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources)
+* [About the ORCID XSD](https://github.com/ORCID/orcid-model/blob/master/src/main/resources)
 
 * [Documentation on the latest XSD version](https://giMthub.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.1/README.md)
 
@@ -161,4 +161,4 @@ Request a second - Number of request that can be made a second.
 
 * [3.0 Docs](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/README.md)
 
-* [2.1 Docs](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.1)
+* [2.1 Docs](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_2.1)
