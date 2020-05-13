@@ -9,14 +9,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.text.DateFormatter;
 
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
@@ -53,7 +51,6 @@ import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
-import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;

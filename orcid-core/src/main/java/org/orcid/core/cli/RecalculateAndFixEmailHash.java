@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,9 @@ public class RecalculateAndFixEmailHash {
     private EncryptionManager encryptionManager;
     private TransactionTemplate transactionTemplate;
 
+    @Option(name = "-l", usage = "ORCID List")
+    private String orcidIdList;
+    
     @Option(name = "-o", usage = "Offset")
     private Integer customOffset;
     
@@ -62,7 +67,7 @@ public class RecalculateAndFixEmailHash {
             
             if(element.testMode == null) {
                 element.testMode = false;
-            }
+            }                       
         } catch (CmdLineException e) {
             LOG.error(e.getMessage(), e);
             e.printStackTrace();
@@ -73,8 +78,35 @@ public class RecalculateAndFixEmailHash {
 
     private void migrate() throws NoSuchAlgorithmException {
         init();
-        process();
+        if(!StringUtils.isBlank(orcidIdList)) {
+            processGivenIds();
+        } else {
+            process();
+        }        
         System.exit(0);
+    }
+    
+    private void processGivenIds() {
+        LOG.info("Fixing email addresses: " + orcidIdList);
+        String [] orcidIds = orcidIdList.split(",");
+        for(String orcid : orcidIds) {
+            orcid = orcid.trim();
+            List<EmailEntity> entities = emailDao.findByOrcid(orcid, System.currentTimeMillis());
+            if(entities != null && !entities.isEmpty()) {
+                for(EmailEntity e : entities) {
+                    String email = e.getEmail();
+                    String hash = e.getId();
+                    String correctedEmailHash = encryptionManager.getEmailHash(email);
+                    if(!correctedEmailHash.equals(hash)) {
+                        LOG.info(orcid + " - invalid '" + hash + "' valid '" + correctedEmailHash + "'");
+                        if(!correctedEmailHash.equals(hash)) {
+                            LOG.info(orcid + " - invalid '" + hash + "' valid '" + correctedEmailHash + "'");
+                            fixInTransaction(orcid, email, correctedEmailHash);
+                        }
+                    }
+                } 
+            }
+        }
     }
 
     private void process() throws NoSuchAlgorithmException {
@@ -96,18 +128,9 @@ public class RecalculateAndFixEmailHash {
                 
                 if(!PojoUtil.isEmpty(email)) {
                     String correctedEmailHash = encryptionManager.getEmailHash(email);
-                    
                     if(!correctedEmailHash.equals(hash)) {
                         LOG.info(orcid + " - invalid '" + hash + "' valid '" + correctedEmailHash + "'");
-                        if(fixErrors != null && fixErrors == true) {
-                            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                                @Override
-                                protected void doInTransactionWithoutResult(TransactionStatus status) {                                    
-                                    emailDao.populateEmailHash(email, correctedEmailHash);
-                                    LOG.info("Fixed: " + orcid + " " + correctedEmailHash);
-                                }
-                            });
-                        }
+                        fixInTransaction(orcid, email, correctedEmailHash);
                     }
                 }
                 if(testMode && iteration > 1) {
@@ -117,6 +140,18 @@ public class RecalculateAndFixEmailHash {
         } while (emails != null && !emails.isEmpty());
         LOG.info("Finished");
     }    
+    
+    private void fixInTransaction(String orcid, String email, String correctedEmailHash) {
+        if(fixErrors != null && fixErrors == true) {
+            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {                                    
+                    emailDao.populateEmailHash(email, correctedEmailHash);
+                    LOG.info("Fixed: " + orcid + " " + correctedEmailHash);
+                }
+            });
+        }
+    }
     
     @SuppressWarnings("resource")
     private void init() {
