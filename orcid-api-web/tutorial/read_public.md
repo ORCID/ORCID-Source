@@ -63,4 +63,4 @@ curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v2.1/0000-0001-2345-6789/personal-details' -i
 ```
 
-See the current [XSD documentation](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0#calls) for possible endpoints.
+See the current [XSD documentation](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0#calls) for possible endpoints.

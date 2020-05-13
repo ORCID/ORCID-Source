@@ -308,7 +308,7 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
     @GET
     @Path(RECORD)
     @ApiOperation(value = "Fetch record details")
-    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/record-2.0_rc2.xsd")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0_rc2/record-2.0_rc2.xsd")
     public Response viewRecord(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewRecord(orcid);
     }

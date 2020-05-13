@@ -2,7 +2,7 @@
 
 Token Delegation allows an ORCID member to transfer permissions granted to their client to another member client. This allows the second client to take an action, such as posting to the user's ORCID record on behalf of the original client.
 
-Token delegation can be used with Member API credentials on sandbox or the production servers using [version 3.0_rc2](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_3.0_rc2) or greater.
+Token delegation can be used with Member API credentials on sandbox or the production servers using [version 3.0_rc2](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0_rc2) or greater.
 
 For an example widget to collect id_tokens see [orcid-auth-widget](https://github.com/ORCID/orcid-auth-widget).
 

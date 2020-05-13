@@ -10024,6 +10024,12 @@ name-ng2 h2.full-name {
     min-width: 152px !important;
 }
 
+.tooltip-delete-peer {
+    left: 10px !important;
+    top: -38px !important;
+    min-width: 68px !important;
+}
+
 .tooltip-delete {
     left: -28px !important;
     top: -37px !important;

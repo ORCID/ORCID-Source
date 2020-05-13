@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <affiliation:education 
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.orcid.org/ns/employment https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/education-2.0_rc2.xsd"
+ xsi:schemaLocation="http://www.orcid.org/ns/employment https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0_rc2/education-2.0_rc2.xsd"
  xmlns:common="http://www.orcid.org/ns/common"
  xmlns:affiliation="http://www.orcid.org/ns/education">	
         <affiliation:organization>

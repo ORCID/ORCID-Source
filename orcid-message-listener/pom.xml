@@ -19,15 +19,13 @@
             <artifactId>orcid-utils</artifactId>
             <version>${project.version}</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-model</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-test</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -442,7 +442,9 @@ public class ActivityValidator {
         }
 
         if (isApiRequest) {
-            validateDisambiguatedOrg(peerReview);
+            if (peerReview.getOrganization() != null) {
+                validateDisambiguatedOrg(peerReview);
+            }
             if (peerReview.getCompletionDate() != null) {
                 validateFuzzyDate(peerReview.getCompletionDate());
             }
