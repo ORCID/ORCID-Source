@@ -75,6 +75,7 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -287,14 +288,6 @@ public class BaseController {
     @ModelAttribute("isPasswordConfirmationRequired")
     public boolean isPasswordConfirmationRequired() {
         return orcidSecurityManager.isPasswordConfirmationRequired();
-    } 
-
-    protected void validateEmailAddress(String email, HttpServletRequest request, BindingResult bindingResult) {
-        validateEmailAddress(email, true, false, request, bindingResult);
-    }
-
-    protected void validateEmailAddressOnRegister(String email, HttpServletRequest request, BindingResult bindingResult) {
-        validateEmailAddress(email, true, true, request, bindingResult);
     }
 
     protected void validateEmailAddress(String email, boolean ignoreCurrentUser, boolean isRegisterRequest, HttpServletRequest request, BindingResult bindingResult) {
@@ -738,9 +731,13 @@ public class BaseController {
             Iterator<Text> it = reg.getEmailsAdditional().iterator();
             while(it.hasNext()) {
                 Text additionalEmail = it.next();
+                
                 if(PojoUtil.isEmpty(additionalEmail)) {
                     it.remove();                    
                 } else {
+                    // Clean the email address so it doesn't contains any horizontal white spaces
+                    additionalEmail.setValue(OrcidStringUtils.filterEmailAddress(additionalEmail.getValue()));
+                    
                     additionalEmailValidateOnRegister(request, reg, additionalEmail); 
                 }
             }            
