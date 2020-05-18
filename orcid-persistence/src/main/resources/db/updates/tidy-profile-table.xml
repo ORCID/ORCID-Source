@@ -1,0 +1,30 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="REMOVE-UNUSED-COLUMNS-FROM-PROFILE-TABLE" author="Camelia Dumitru">
+        <dropColumn tableName="profile" columnName="account_non_locked"/>
+        <dropColumn tableName="profile" columnName="biography"/>
+        <dropColumn tableName="profile" columnName="source_id"/>
+        <dropColumn tableName="profile" columnName="biography_visibility"/>
+        <dropColumn tableName="profile" columnName="keywords_visibility"/>
+        <dropColumn tableName="profile" columnName="external_identifiers_visibility"/>
+        <dropColumn tableName="profile" columnName="researcher_urls_visibility"/>
+        <dropColumn tableName="profile" columnName="other_names_visibility"/>
+        <dropColumn tableName="profile" columnName="names_visibility"/>
+        <dropColumn tableName="profile" columnName="profile_address_visibility"/>
+        <dropColumn tableName="profile" columnName="send_member_update_requests"/>
+        <dropColumn tableName="profile" columnName="client_source_id"/>
+        <dropColumn tableName="profile" columnName="send_administrative_change_notifications"/>
+
+        <dropColumn tableName="profile" columnName="vocative_name"/>
+        <dropColumn tableName="profile" columnName="iso2_country"/> 
+        <dropColumn tableName="profile" columnName="client_type"/> 
+        <dropColumn tableName="profile" columnName="send_orcid_feature_announcements"/>  
+        
+        <dropColumn tableName="profile" columnName="send_email_frequency_days"/>
+        <dropColumn tableName="profile" columnName="send_change_notifications"/>
+        <dropColumn tableName="profile" columnName="send_orcid_news"/>
+   
+    </changeSet>
+    
+</databaseChangeLog>
