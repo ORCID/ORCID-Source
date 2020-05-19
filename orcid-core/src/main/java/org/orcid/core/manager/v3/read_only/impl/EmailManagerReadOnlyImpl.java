@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.orcid.core.adapter.v3.JpaJaxbEmailAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.SlackManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -23,6 +25,7 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.EmailFrequencyOptions;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,12 +57,14 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public boolean emailExists(String email) {
-        return emailDao.emailExists(encryptionManager.getEmailHash(email));        
+        Map<String, String> emailKeys = getEmailKeys(email);
+        return emailDao.emailExists(emailKeys.get(EmailManager.HASH));
     }
 
     @Override
     public String findOrcidIdByEmail(String email) {
-        return emailDao.findOrcidIdByEmailHash(encryptionManager.getEmailHash(email));        
+        Map<String, String> emailKeys = getEmailKeys(email);
+        return emailDao.findOrcidIdByEmailHash(emailKeys.get(EmailManager.HASH));
     }
     
     @Override
@@ -170,7 +175,8 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public EmailEntity find(String email) {
-        return emailDao.find(encryptionManager.getEmailHash(email));
+        Map<String, String> emailKeys = getEmailKeys(email);
+        return emailDao.find(emailKeys.get(EmailManager.HASH));
     }
 
     @Override
@@ -192,4 +198,13 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
         options.setEmailFrequencyKeys(new ArrayList<>(frequencies.keySet()));
         return options;
     }      
+    
+    public Map<String, String> getEmailKeys(String email) {
+        String filteredEmail = OrcidStringUtils.filterEmailAddress(email);
+        String hash = encryptionManager.getEmailHash(filteredEmail);
+        Map<String, String> result = new HashMap<String, String>();
+        result.put(EmailManager.FILTERED_EMAIL, filteredEmail);
+        result.put(EmailManager.HASH, hash);
+        return result;
+    }
 }

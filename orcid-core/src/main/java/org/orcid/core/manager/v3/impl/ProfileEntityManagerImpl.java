@@ -492,7 +492,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public boolean isProfileClaimedByEmail(String email) {
-        return profileDao.getClaimedStatusByEmailHash(encryptionManager.getEmailHash(email));
+        Map<String, String> emailKeys = emailManager.getEmailKeys(email);
+        return profileDao.getClaimedStatusByEmailHash(emailKeys.get(EmailManager.HASH));
     }
 
     @Override

@@ -271,14 +271,5 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         }
         
         return false;
-    }
-    
-    public Map<String, String> getEmailKeys(String email) {
-        String filteredEmail = OrcidStringUtils.filterEmailAddress(email);
-        String hash = encryptionManager.getEmailHash(filteredEmail);
-        Map<String, String> result = new HashMap<String, String>();
-        result.put(FILTERED_EMAIL, filteredEmail);
-        result.put(HASH, hash);
-        return result;
-    }
+    }      
 }
