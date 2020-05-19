@@ -46,6 +46,7 @@ import org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Source;
@@ -109,7 +110,7 @@ public class NotificationManagerTest extends DBUnitTest {
     private ProfileEntityCacheManager mockProfileEntityCacheManager;
     
     @Mock
-    private EmailManager mockEmailManager;
+    private EmailManagerReadOnly mockEmailManager;
     
     @Mock
     private ProfileDao mockProfileDao;
@@ -139,7 +140,7 @@ public class NotificationManagerTest extends DBUnitTest {
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Resource
-    private EmailManager emailManager;
+    private EmailManagerReadOnly emailManager;
 
     @Resource
     private JpaJaxbNotificationAdapter notificationAdapter;

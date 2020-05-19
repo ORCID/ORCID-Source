@@ -14,10 +14,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.orcid.core.manager.BiographyManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -57,7 +57,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Resource
-    private EmailManager emailManager;
+    private EmailManagerReadOnly emailManager;
     
     @Resource
     private RecordNameManager recordNameManager;
