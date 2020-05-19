@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
@@ -13,6 +15,8 @@ import org.orcid.jaxb.model.v3.release.record.Email;
  *
  */
 public interface EmailManager extends EmailManagerReadOnly {
+    public static final String FILTERED_EMAIL = "filtered_email";
+    public static final String HASH = "hash";
 
     void addEmail(HttpServletRequest request, String orcid, Email email);
     
@@ -60,4 +64,6 @@ public interface EmailManager extends EmailManagerReadOnly {
     boolean reactivateOrCreate(String orcid, String email, Visibility visibility);
 
     void editEmail(String orcid, String original, String edited, HttpServletRequest request);
+
+    Map<String, String> getEmailKeys(String email);
 }
