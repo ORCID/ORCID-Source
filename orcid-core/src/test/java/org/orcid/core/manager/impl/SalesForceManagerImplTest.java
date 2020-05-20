@@ -100,7 +100,7 @@ public class SalesForceManagerImplTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(salesForceManager, "emailManager", emailManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(salesForceManager, "emailManagerReadOnly", emailManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceDao", salesForceDao);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceConnectionDao", salesForceConnectionDao);
