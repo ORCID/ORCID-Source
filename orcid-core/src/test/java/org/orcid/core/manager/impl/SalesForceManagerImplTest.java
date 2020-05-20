@@ -88,7 +88,7 @@ public class SalesForceManagerImplTest {
     @Mock
     private Cache<String, List<Contact>> salesForceContactsCache;
 
-    @Resource
+    @Mock
     private EmailManagerReadOnly emailManagerReadOnly;
 
     @Mock
