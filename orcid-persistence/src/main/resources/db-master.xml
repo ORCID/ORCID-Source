@@ -307,4 +307,5 @@
   <include file="/db/updates/grant_read_to_dw_user_for_profile.xml" />
   <include file="/db/updates/drop_peer_review_org_not_null_constraint.xml" />
   <include file="/db/updates/remove_contributorsjson_from_dw_work_view.xml" />
+  <include file="/db/updates/grant_write_to_dw_user_for_dw_active_users.xml" />
 </databaseChangeLog>
