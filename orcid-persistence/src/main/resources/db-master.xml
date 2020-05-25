@@ -305,4 +305,5 @@
   <include file="/db/updates/create_dw_other_views_additional_changes.xml" />
   <include file="/db/updates/create_dw_active_users.xml" />
   <include file="/db/updates/drop_peer_review_org_not_null_constraint.xml" />
+  <include file="/db/updates/tidy-profile-table.xml" />
 </databaseChangeLog>
