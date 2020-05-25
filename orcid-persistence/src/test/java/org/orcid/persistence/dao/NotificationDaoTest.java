@@ -98,27 +98,6 @@ public class NotificationDaoTest extends DBUnitTest {
     }
 
     @Test
-    public void testFindRecordsWithUnsentNotificationsLegacy() {
-        ProfileEntity p1 = profileDao.find("0000-0000-0000-0002");
-        ProfileEntity p2 = profileDao.find("4444-4444-4444-4441");
-
-        List<Object[]> recordsWithNotificationsToSend = notificationDao.findRecordsWithUnsentNotificationsLegacy();
-        assertEquals(2, recordsWithNotificationsToSend.size());
-        Object[] e0 = recordsWithNotificationsToSend.get(0);
-        Object[] e1 = recordsWithNotificationsToSend.get(1);
-
-        assertEquals("0000-0000-0000-0002", e0[0]);
-        assertEquals("0.0", String.valueOf(e0[1]));
-        Timestamp e0TS = (Timestamp) e0[2];
-        assertEquals(p1.getCompletedDate().getTime(), e0TS.getTime());
-
-        assertEquals("4444-4444-4444-4441", e1[0]);
-        assertEquals("7.0", String.valueOf(e1[1]));
-        Timestamp e1TS = (Timestamp) e1[2];
-        assertEquals(p2.getCompletedDate().getTime(), e1TS.getTime());
-    }
-
-    @Test
     public void testFindNotificationsToSendLegacy() {
         String orcid1 = "0000-0000-0000-0004";
         ProfileEntity p1 = profileDao.find("0000-0000-0000-0004");
