@@ -58,7 +58,8 @@ public class MigrateEmailFrequencyData {
     private void process() {
         LOG.debug("Starting migration process");
         List<Object[]> elements = Collections.emptyList();
-        do {
+       /* 
+         do {
             elements = emailFrequencyDao.findOrcidsToMigrate(this.batchSize);
             for (final Object[] element : elements) {                
                 String orcid = (String) element[0];
@@ -106,6 +107,7 @@ public class MigrateEmailFrequencyData {
                 });
             }
         } while (elements != null && !elements.isEmpty());
+        */
 
         LOG.debug("Finished migration process");
     }

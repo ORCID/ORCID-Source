@@ -53,6 +53,7 @@ public class MigrateNamesAndBioToTheirOwnTables {
         List<Object[]> profileElements = Collections.emptyList();
         int counter = 0;
         int batchCount = 0;
+        /* 
         do {
             LOG.debug("About to fetch a batch from DB");
             profileElements = profileDao.findProfilesWhereNamesAreNotMigrated(batchSize);            
@@ -110,6 +111,8 @@ public class MigrateNamesAndBioToTheirOwnTables {
                 }
             }
         } while (profileElements != null && !profileElements.isEmpty());
+        
+        */
         
         LOG.debug("Finished migration process");
     }

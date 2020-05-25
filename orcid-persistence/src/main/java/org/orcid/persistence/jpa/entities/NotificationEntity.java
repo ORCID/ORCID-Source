@@ -26,16 +26,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "notification_type")
 // @formatter:off
-@NamedNativeQueries({ @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS, 
-        query = "SELECT DISTINCT(n.orcid), p.send_email_frequency_days, COALESCE(p.completed_date, p.date_created) " + 
-                " FROM notification n, profile p " +
-                " WHERE n.sent_date IS NULL " +
-                " AND n.orcid = p.orcid " +
-                " AND p.send_email_frequency_days < :never " +
-                " AND p.claimed = true " +
-                " AND p.profile_deactivation_date IS NULL " +
-                " AND p.primary_record IS NULL " +
-                " AND NOT p.record_locked ORDER BY n.orcid;"),
+@NamedNativeQueries({
     @NamedNativeQuery(name = NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE, 
     query = "SELECT DISTINCT(n.orcid), COALESCE(p.completed_date, p.date_created)" +
             " FROM notification n, email_frequency f, profile p " +

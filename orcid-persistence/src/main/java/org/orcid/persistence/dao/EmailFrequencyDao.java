@@ -20,6 +20,4 @@ public interface EmailFrequencyDao extends GenericDao<EmailFrequencyEntity, Stri
     boolean updateSendMemberUpdateRequests(String orcid, SendEmailFrequency frequency);
     
     boolean updateSendQuarterlyTips(String orcid, boolean enabled);
-    
-    List<Object[]> findOrcidsToMigrate(int batchSize);
 }

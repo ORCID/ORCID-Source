@@ -726,16 +726,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize) {
-        Query query = entityManager.createNativeQuery(
-                "SELECT orcid, given_names, family_name, credit_name, names_visibility, biography, biography_visibility, activities_visibility_default FROM profile p WHERE NOT EXISTS (SELECT n.orcid FROM record_name n WHERE n.orcid = p.orcid) order by orcid limit :batchSize");
-        query.setParameter("batchSize", batchSize);
-        return (List<Object[]>) query.getResultList();
-    }
-
-    @Override
     public boolean getClaimedStatusByEmailHash(String emailHash) {
         Query query = entityManager.createNativeQuery("SELECT claimed FROM profile WHERE orcid=(SELECT orcid FROM email WHERE email_hash = :emailHash)");
         query.setParameter("emailHash", emailHash);

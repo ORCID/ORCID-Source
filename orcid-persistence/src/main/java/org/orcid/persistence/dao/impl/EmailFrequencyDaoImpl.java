@@ -65,12 +65,4 @@ public class EmailFrequencyDaoImpl extends GenericDaoImpl<EmailFrequencyEntity, 
         return query.executeUpdate() > 0;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Object[]> findOrcidsToMigrate(int batchSize) {        
-        Query query = entityManager.createNativeQuery("SELECT p.orcid, p.send_email_frequency_days, p.send_change_notifications, p.send_administrative_change_notifications, p.send_member_update_requests, p.send_orcid_news FROM profile p WHERE p.orcid_type in ('USER', 'ADMIN', 'GROUP') AND NOT EXISTS (SELECT f.orcid FROM email_frequency f WHERE f.orcid = p.orcid) LIMIT :batchSize");
-        query.setParameter("batchSize", batchSize);
-        return query.getResultList();
-    }
-
 }
