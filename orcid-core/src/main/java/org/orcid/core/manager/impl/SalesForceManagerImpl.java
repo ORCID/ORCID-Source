@@ -22,9 +22,9 @@ import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
@@ -98,9 +98,6 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private SalesForceConnectionDao salesForceConnectionDao;
 
     @Resource
-    private EmailManager emailManager;
-
-    @Resource
     private SourceManager sourceManager;
     
     @Resource
@@ -108,6 +105,9 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private EmailManagerReadOnly emailManagerReadOnly;
     
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -231,7 +231,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public void addOrcidsToContacts(List<Contact> contacts) {
         List<String> emails = contacts.stream().map(c -> c.getEmail()).filter(Objects::nonNull).collect(Collectors.toList());
         if (!emails.isEmpty()) {
-            Map<String, String> emailsToOrcids = emailManager.findIdsByEmails(emails);
+            Map<String, String> emailsToOrcids = emailManagerReadOnly.findIdsByEmails(emails);
             contacts.stream().forEach(c -> {
                 String email = c.getEmail();
                 if (email != null) {
@@ -552,7 +552,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         String accountId = contact.getAccountId();
         if (StringUtils.isBlank(contact.getEmail())) {
             String contactOrcid = contact.getOrcid();
-            Email primaryEmail = emailManager.getEmails(contactOrcid).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
+            Email primaryEmail = emailManagerReadOnly.getEmails(contactOrcid).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
             contact.setEmail(primaryEmail.getEmail());
         }
         List<Contact> existingContacts = salesForceDao.retrieveAllContactsByAccountId(accountId);
@@ -587,7 +587,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         String accountId = contact.getAccountId();
         String contactOrcid = contact.getOrcid();
         if (StringUtils.isBlank(contact.getEmail())) {
-            Email primaryEmail = emailManager.getEmails(contactOrcid).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
+            Email primaryEmail = emailManagerReadOnly.getEmails(contactOrcid).getEmails().stream().filter(e -> e.isPrimary()).findFirst().get();
             contact.setEmail(primaryEmail.getEmail());
         }
 

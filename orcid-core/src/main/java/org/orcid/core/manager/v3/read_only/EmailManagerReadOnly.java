@@ -40,4 +40,6 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     EmailFrequencyOptions getEmailFrequencyOptions();
 
     Emails getVerifiedEmails(String orcid);
+    
+    Map<String, String> getEmailKeys(String email);
 }

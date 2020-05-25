@@ -201,7 +201,7 @@ Editing the peer-review section of a record requires a 3 step OAuth token with t
 
 **Describing the review**
 
-- **review-identifiers** _(required)_ Unique identifier(s) of the review. *This identifier refers to the review itself, NOT to the item that was reviewed.* At least one identifier is required. In the case where there is no persistent unique identifier for the review, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type"). This field will be checked when adding new reviews to prevent double counting of review activity. For a list of ORCID identifiers see [ORCID Identifier types](https://pub.orcid.org/3.0/identifiers)
+- **review-identifiers** _(required)_ Unique identifier(s) of the review. *This identifier refers to the review itself, NOT to the item that was reviewed.* At least one identifier is required. In the case where there is no persistent unique identifier for the review, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type"). This field will be checked when adding new reviews to prevent double counting of review activity. For a list of ORCID identifiers see [ORCID Identifier types](https://pub.orcid.org/v3.0/identifiers)
 
 - **review-url** _(optional)_ A link to a representation of the review on the web. *This URL refers to the review itself, NOT to the item that was reviewed.*
 

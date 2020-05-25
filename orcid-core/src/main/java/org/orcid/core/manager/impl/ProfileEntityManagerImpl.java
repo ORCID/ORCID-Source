@@ -3,6 +3,7 @@ package org.orcid.core.manager.impl;
 import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -13,7 +14,6 @@ import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.NotificationManager;
@@ -28,6 +28,7 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.CreditName;
@@ -87,9 +88,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource
     private ResearcherUrlManager researcherUrlManager;
-
-    @Resource
-    private EmailManager emailManager;
+    
+    @Resource(name = "emailManagerV3")
+    private EmailManager emailManagerV3;
 
     @Resource
     private OtherNameManager otherNamesManager;
@@ -240,7 +241,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Transactional
     public boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim) {
         // Verify the email
-        boolean emailVerified = emailManager.verifySetCurrentAndPrimary(orcid, email);
+        boolean emailVerified = emailManagerV3.verifySetCurrentAndPrimary(orcid, email);
         if (!emailVerified) {
             throw new InvalidParameterException("Unable to claim and verify email: " + email + " for user: " + orcid);
         }
@@ -316,7 +317,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public boolean isProfileClaimedByEmail(String email) {
-        return profileDao.getClaimedStatusByEmailHash(encryptionManager.getEmailHash(email));        
+        Map<String, String> emailKeys = emailManagerV3.getEmailKeys(email);
+        return profileDao.getClaimedStatusByEmailHash(emailKeys.get(EmailManager.HASH));
     }
 
     @Override

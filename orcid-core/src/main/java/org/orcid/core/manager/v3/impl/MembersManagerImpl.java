@@ -134,9 +134,11 @@ public class MembersManagerImpl implements MembersManager {
                 
                 // Set primary email
                 EmailEntity emailEntity = new EmailEntity();
-                String email = member.getEmail().getValue().trim();
-                emailEntity.setEmail(email);
-                emailEntity.setId(encryptionManager.getEmailHash(email));
+                
+                Map<String, String> emailKeys = emailManager.getEmailKeys(member.getEmail().getValue());
+                
+                emailEntity.setEmail(emailKeys.get(EmailManager.FILTERED_EMAIL));
+                emailEntity.setId(emailKeys.get(EmailManager.HASH));
                 emailEntity.setProfile(newRecord);
                 emailEntity.setPrimary(true);
                 emailEntity.setCurrent(true);
@@ -182,10 +184,11 @@ public class MembersManagerImpl implements MembersManager {
     public Member updateMemeber(Member member) throws IllegalArgumentException {
         String memberId = member.getGroupOrcid().getValue();
         String name = member.getGroupName().getValue();
-        String email = member.getEmail().getValue().trim();
         String salesForceId = member.getSalesforceId() == null ? null : member.getSalesforceId().getValue();
         MemberType memberType = MemberType.fromValue(member.getType().getValue());
-
+        Map<String, String> emailKeys = emailManager.getEmailKeys(member.getEmail().getValue());
+        String email = emailKeys.get(EmailManager.FILTERED_EMAIL);
+        String hash = emailKeys.get(EmailManager.HASH);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 boolean memberChangedType = false;
@@ -218,7 +221,7 @@ public class MembersManagerImpl implements MembersManager {
                     newPrimaryEmail.setLastModified(now);                    
                     newPrimaryEmail.setCurrent(true);
                     newPrimaryEmail.setEmail(email);
-                    newPrimaryEmail.setId(encryptionManager.getEmailHash(email));
+                    newPrimaryEmail.setId(hash);
                     newPrimaryEmail.setPrimary(true);
                     newPrimaryEmail.setVerified(true);
                     newPrimaryEmail.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());

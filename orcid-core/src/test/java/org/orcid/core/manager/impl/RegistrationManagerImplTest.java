@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -29,10 +28,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.common.manager.EmailFrequencyManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
@@ -65,7 +64,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     private ProfileEntityManager profileEntityManager;
 
     @Resource
-    EmailManager emailManager;    
+    EmailManagerReadOnly emailManager;    
     
     @Resource
     SourceManager sourceManager;

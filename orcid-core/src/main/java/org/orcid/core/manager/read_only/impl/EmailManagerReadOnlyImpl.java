@@ -11,8 +11,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.JpaJaxbEmailAdapter;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.jaxb.model.record_v2.Emails;
@@ -29,10 +29,10 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     @Resource
     protected JpaJaxbEmailAdapter jpaJaxbEmailAdapter;
     
-    @Resource
-    protected EncryptionManager encryptionManager;
-    
     protected EmailDao emailDao;
+    
+    @Resource(name = "emailManagerV3")
+    protected EmailManager emailManagerV3;
     
     public void setEmailDao(EmailDao emailDao) {
         this.emailDao = emailDao;
@@ -40,12 +40,16 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public boolean emailExists(String email) {
-        return emailDao.emailExists(encryptionManager.getEmailHash(email));        
+        Map<String, String> emailKeys = emailManagerV3.getEmailKeys(email);       
+        String hash = emailKeys.get(org.orcid.core.manager.v3.EmailManager.HASH);
+        return emailDao.emailExists(hash);        
     }
 
     @Override
     public String findOrcidIdByEmail(String email) {        
-        return emailDao.findOrcidIdByEmailHash(encryptionManager.getEmailHash(email));
+        Map<String, String> emailKeys = emailManagerV3.getEmailKeys(email);       
+        String hash = emailKeys.get(org.orcid.core.manager.v3.EmailManager.HASH);
+        return emailDao.findOrcidIdByEmailHash(hash);
     }
     
     @Override
@@ -135,7 +139,9 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
 
     @Override
     public EmailEntity find(String email) {
-        return emailDao.find(encryptionManager.getEmailHash(email));
+        Map<String, String> emailKeys = emailManagerV3.getEmailKeys(email);       
+        String hash = emailKeys.get(org.orcid.core.manager.v3.EmailManager.HASH);
+        return emailDao.find(hash);
     }
 
     @Override
