@@ -623,13 +623,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         return (accountExpiry == null || accountExpiry.after(new Date()));
     }
 
-    /* cami
-    @Column(name = "credentials_expiry")
-    public Date getCredentialsExpiry() {
-        return credentialsExpiry;
-    }
-    */
-
     /**
      * @param accountExpiry
      *            the accountExpiry to set
