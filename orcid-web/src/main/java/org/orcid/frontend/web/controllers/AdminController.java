@@ -35,7 +35,6 @@ import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -278,7 +277,9 @@ public class AdminController extends BaseController {
         isAdmin(serverRequest, response);
         profileDetails.setErrors(new ArrayList<String>());
 
-        String email = profileDetails.getEmail().trim();
+        // Update the profile details email with the filtered email address
+        profileDetails.setEmail(OrcidStringUtils.filterEmailAddress(profileDetails.getEmail()));
+        String email = profileDetails.getEmail();
         String orcid = getOrcidFromParam(profileDetails.getOrcid().trim());
 
         ProfileEntity toReactivate = null;
