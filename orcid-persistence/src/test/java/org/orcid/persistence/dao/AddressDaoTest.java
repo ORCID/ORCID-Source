@@ -80,19 +80,6 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(4, addresses.size());
     }
 
-    @Test
-    public void pendingToMigrateTest() {
-        List<Object[]> pendingToMigrate = dao.findAddressesToMigrate();
-        assertNotNull(pendingToMigrate);
-        assertEquals(1, pendingToMigrate.size());
-
-        for (Object[] item : pendingToMigrate) {
-            String orcid = (String) item[0];
-            String iso2Country = (String) item[1];
-            assertEquals("5555-5555-5555-5558", orcid);
-            assertEquals("GB", iso2Country);
-        }
-    }
     
     @Test
     public void removeAllTest() {

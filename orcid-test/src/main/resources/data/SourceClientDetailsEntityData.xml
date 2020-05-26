@@ -9,20 +9,10 @@
             last_indexed_date="2011-07-02 15:31:00.00"            
             last_modified="2011-07-02 15:31:00.00"           
             claimed="true"
-            profile_address_visibility="PRIVATE"
-            external_identifiers_visibility="LIMITED"
-            biography_visibility="PUBLIC"
-            keywords_visibility="REGISTERED_ONLY"
-            other_names_visibility="PRIVATE"
-            researcher_urls_visibility="PUBLIC"
             is_selectable_sponsor="false"
             encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
-            send_change_notifications="false"
-            send_orcid_news="false"
             activities_visibility_default='PRIVATE'
-            credentials_expiry="2013-02-01"
             indexing_status="DONE"
-            iso2_country="GB"
             orcid_type="GROUP"
             group_type="PREMIUM_INSTITUTION"
             />
@@ -56,8 +46,8 @@
         source_id="5555-5555-5555-5558"
     />
                                                 
-    <client_details client_details_id="APP-5555555555555555" date_created="2012-04-25" last_modified="2012-04-25" client_type="PREMIUM_CREATOR" client_name="Source Client 1" client_description="A test source client" client_website="www.5555555555555555.com" group_orcid="5555-5555-5555-5558" persistent_tokens_enabled="true" allow_auto_deprecate="true" />
-    <client_details client_details_id="APP-5555555555555556" date_created="2012-04-25" last_modified="2012-04-25" client_type="PREMIUM_CREATOR" client_name="Source Client 2" client_description="A test source client" client_website="www.5555555555555556.com" group_orcid="5555-5555-5555-5558" persistent_tokens_enabled="true" allow_auto_deprecate="false" />
+    <client_details client_details_id="APP-5555555555555555" date_created="2012-04-25" last_modified="2012-04-25"  client_name="Source Client 1" client_description="A test source client" client_website="www.5555555555555555.com"  persistent_tokens_enabled="true" allow_auto_deprecate="true" />
+    <client_details client_details_id="APP-5555555555555556" date_created="2012-04-25" last_modified="2012-04-25"  client_name="Source Client 2" client_description="A test source client" client_website="www.5555555555555556.com"  persistent_tokens_enabled="true" allow_auto_deprecate="false" />
     
     <client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="authorization_code" />
 	<client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="client_credentials" />
