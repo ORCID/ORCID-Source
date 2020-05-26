@@ -19,6 +19,7 @@ import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -168,6 +169,11 @@ public class ShibbolethController extends BaseController {
         } 
         
         LOGGER.warn("Remote user was not null, however, userConnectionEntity is for {}", shibIdentityProvider);
+
+        if (mav.getViewName().equals("social_link_signin") && Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+            return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/institutional-linking");
+        }
+        
         return mav;
     }
 
