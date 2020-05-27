@@ -21,6 +21,7 @@ import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
@@ -310,7 +311,11 @@ public class LoginController extends OauthControllerBase {
                 // Store relevant data in the session
                 socialSignInUtils.setSignedInData(request, userData);
                 // Forward to account link page
-                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                    return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/social-linking");
+                } else {
+                    view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+                }     
             }   
         } else {
             // Store relevant data in the session
@@ -319,7 +324,11 @@ public class LoginController extends OauthControllerBase {
             userConnectionId = createUserConnection(socialType, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL),
                     userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Forward to account link page
-            view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+            if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/social-linking");
+            } else {
+                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+            }
         }
         if (userConnectionId == null) {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
