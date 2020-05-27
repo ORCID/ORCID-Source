@@ -37,11 +37,17 @@ public class OrcidCookieLocaleResolver extends CookieLocaleResolver {
                 }
             }
 
+            setCookieSecure(true);
             addCookie(response, (locale != null ? toLocaleValue(locale) : "-") + (timeZone != null ? ' ' + timeZone.getID() : ""));
         } else {
             removeCookie(response);
         }
         request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, (locale != null ? locale : determineDefaultLocale(request)));
         request.setAttribute(TIME_ZONE_REQUEST_ATTRIBUTE_NAME, (timeZone != null ? timeZone : determineDefaultTimeZone(request)));
+    }
+    
+    @Override
+    public void setCookieSecure(boolean cookieSecure) {
+        super.setCookieSecure(cookieSecure);
     }
 }
