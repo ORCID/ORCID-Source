@@ -66,6 +66,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
             // must match <property name="cookieName" value="locale_v3"
             // />
             clr.setCookieName("locale_v3");
+            clr.setCookieSecure(true);
             AvailableLocales cookieLocale = AvailableLocales.fromValue(clr.resolveLocale(request).toString());
 
             // update the users preferences, so that
