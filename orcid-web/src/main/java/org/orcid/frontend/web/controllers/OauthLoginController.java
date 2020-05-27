@@ -57,7 +57,7 @@ public class OauthLoginController extends OauthControllerBase {
         String url = request.getQueryString();
         // Get and save the request information form
         RequestInfoForm requestInfoForm = oauthHelper.generateRequestInfoForm(url);
-        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
 
         // Check that the client have the required permissions
         // Get client name
@@ -102,7 +102,7 @@ public class OauthLoginController extends OauthControllerBase {
     public @ResponseBody OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
 
         boolean willBeRedirected = false;
         if (form.getApproved()) {

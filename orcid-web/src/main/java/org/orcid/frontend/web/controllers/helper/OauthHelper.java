@@ -36,6 +36,7 @@ public class OauthHelper {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthHelper.class);   
     public static final String PUBLIC_MEMBER_NAME = "PubApp";
+    public static final String REQUEST_INFO_FORM = "requestInfoForm";
     
     private final Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
     private final Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");

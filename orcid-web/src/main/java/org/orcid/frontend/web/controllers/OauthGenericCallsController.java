@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
+import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -66,8 +67,8 @@ public class OauthGenericCallsController extends OauthControllerBase {
     public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request) throws UnsupportedEncodingException {                    
         RequestInfoForm requestInfoForm = null;
     
-        if(request.getSession() != null && request.getSession().getAttribute(REQUEST_INFO_FORM) != null) {
-            requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
+        if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null) {
+            requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
         } 
         return requestInfoForm;
     }

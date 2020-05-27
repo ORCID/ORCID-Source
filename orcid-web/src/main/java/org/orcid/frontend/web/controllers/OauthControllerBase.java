@@ -25,8 +25,6 @@ import org.springframework.security.oauth2.common.util.OAuth2Utils;
 public class OauthControllerBase extends BaseController {      
     protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
             
-    protected static String REQUEST_INFO_FORM = "requestInfoForm";
-
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 

@@ -67,7 +67,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
 
         String queryString = request.getQueryString();
         RequestInfoForm requestInfoForm = oauthHelper.generateRequestInfoForm(queryString);
-        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
 
         boolean usePersistentTokens = false;
 
@@ -199,7 +199,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
     
     @RequestMapping(value = { "/oauth/custom/authorize.json" }, method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm authorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
         Map<String, String> requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());

@@ -233,7 +233,7 @@ public class LoginController extends OauthControllerBase {
             }
         }
 
-        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
         // Save a flag to indicate this is a request from the new
