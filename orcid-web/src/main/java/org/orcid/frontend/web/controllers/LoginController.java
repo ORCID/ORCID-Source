@@ -24,6 +24,7 @@ import org.orcid.core.security.aop.LockedException;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
+import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Name;
@@ -80,6 +81,9 @@ public class LoginController extends OauthControllerBase {
 
     @Resource
     private SocialSignInUtils socialSignInUtils;
+    
+    @Resource
+    private OauthHelper oauthHelper;
     
     @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
     public @ResponseBody Names getAccountNames(@PathVariable String type) {
@@ -138,7 +142,7 @@ public class LoginController extends OauthControllerBase {
         // Get and save the request information form
         RequestInfoForm requestInfoForm;
         try {
-            requestInfoForm = generateRequestInfoForm(queryString);
+            requestInfoForm = oauthHelper.generateRequestInfoForm(queryString);
         } catch (InvalidRequestException | InvalidClientException e) {
             // convert to a 400
             ModelAndView mav = new ModelAndView("oauth-error");

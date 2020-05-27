@@ -2,13 +2,10 @@ package org.orcid.frontend.web.controllers.helper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
@@ -33,7 +30,6 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Component
 public class OauthHelper {
@@ -46,9 +42,9 @@ public class OauthHelper {
     private final Pattern stateParamPattern = Pattern.compile("state=([^&]*)");
     private final Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");    
     private final Pattern noncePattern = Pattern.compile("nonce=([^&]*)");
-    private final Pattern maxAgePattern = Pattern.compile("max_age=([^&]*)");
     private final Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
     private final Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
+    private final Pattern maxAgePattern = Pattern.compile("max_age=([^&]*)");
     
     private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
@@ -69,19 +65,17 @@ public class OauthHelper {
     
     public RequestInfoForm generateRequestInfoForm(String requestUrl) throws UnsupportedEncodingException {
         RequestInfoForm infoForm = new RequestInfoForm();
-        
-        //If the user is logged in 
+
+        // If the user is logged in
         String loggedUserOrcid = getEffectiveUserOrcid();
-        if(!PojoUtil.isEmpty(loggedUserOrcid)) {
+        if (!PojoUtil.isEmpty(loggedUserOrcid)) {
             infoForm.setUserOrcid(loggedUserOrcid);
-            
-            String creditName =  recordNameManagerReadOnly.fetchDisplayableCreditName(loggedUserOrcid);
-            
-            if(!PojoUtil.isEmpty(creditName)) {
+            String creditName = recordNameManagerReadOnly.fetchDisplayableCreditName(loggedUserOrcid);
+            if (!PojoUtil.isEmpty(creditName)) {
                 infoForm.setUserName(URLDecoder.decode(creditName, "UTF-8").trim());
-            }                        
+            }
         }
-        
+
         if (!PojoUtil.isEmpty(requestUrl)) {
             Matcher matcher = clientIdPattern.matcher(requestUrl);
             if (matcher.find()) {
@@ -103,11 +97,11 @@ public class OauthHelper {
                     memberName = PUBLIC_MEMBER_NAME;
                 } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
                     Name name = recordNameManagerReadOnly.getRecordName(clientDetails.getGroupProfileId());
-                    if(name != null) {
+                    if (name != null) {
                         memberName = name.getCreditName() != null ? name.getCreditName().getContent() : "";
-                    } 
+                    }
                 }
-                
+
                 // If the group name is empty, use the same as the client
                 // name, since it should be a SSO user
                 if (StringUtils.isBlank(memberName)) {
@@ -117,71 +111,44 @@ public class OauthHelper {
                 infoForm.setClientDescription(clientDescription);
                 infoForm.setClientName(clientName);
                 infoForm.setClientEmailRequestReason(clientEmailRequestReason);
-                infoForm.setMemberName(memberName);             
+                infoForm.setMemberName(memberName);
             }
-            
-            
-            
-            if(!PojoUtil.isEmpty(email) || !PojoUtil.isEmpty(orcid)) {                        
-                // Check if orcid exists, if so, show login screen
-                if(!PojoUtil.isEmpty(orcid)) {
-                    orcid = orcid.trim();
-                    if(profileEntityManager.orcidExists(orcid)) {
-                        infoForm.setUserId(orcid);
-                    }
-                } else {
-                    // Check if email exists, if so, show login screen
-                    if(!PojoUtil.isEmpty(email)) {
-                        email = email.trim();
-                        if(emailManager.emailExists(email)) {
-                            infoForm.setUserId(email);
-                        }
+
+            Matcher orcidMatcher = orcidPattern.matcher(requestUrl);
+            boolean userIdSet = false;
+            if (orcidMatcher.find()) {
+                String orcid = orcidMatcher.group(2);
+                try {
+                    orcid = OrcidStringUtils.stripHtml(URLDecoder.decode(orcid, "UTF-8").trim());
+                } catch (UnsupportedEncodingException e) {
+                }
+                if (!PojoUtil.isEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
+                    infoForm.setUserId(orcid);
+                    userIdSet = true;
+                }
+            }
+
+            Matcher emailMatcher = RegistrationController.emailPattern.matcher(requestUrl);
+            if (emailMatcher.find()) {
+                String email = emailMatcher.group(1);
+                try {
+                    email = OrcidStringUtils.stripHtml(URLDecoder.decode(email, "UTF-8").trim());
+                } catch (UnsupportedEncodingException e) {
+                }
+
+                if (!userIdSet && !PojoUtil.isEmpty(email)) {
+                    email = OrcidStringUtils.filterEmailAddress(email);
+                    if (emailManager.emailExists(email)) {
+                        infoForm.setUserId(email);
                     }
                 }
-            }  
-            
-            infoForm.setUserEmail(email);
-            if(PojoUtil.isEmpty(loggedUserOrcid)) {
-                infoForm.setUserOrcid(orcid);
+                infoForm.setUserEmail(email);
             }
-            infoForm.setUserGivenNames(givenNames);
-            infoForm.setUserFamilyNames(familyNames);
-            infoForm.setRedirectUrl(redirectUri);
-            infoForm.setStateParam(stateParam);
-            infoForm.setResponseType(responseType);
-            infoForm.setNonce(nonce);
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
             Matcher scopeMatcher = scopesPattern.matcher(requestUrl);
             if (scopeMatcher.find()) {
                 String scopes = scopeMatcher.group(1);
-                scopesString = URLDecoder.decode(scopes, "UTF-8").trim();
+                String scopesString = URLDecoder.decode(scopes, "UTF-8").trim();
                 scopesString = scopesString.replaceAll(" +", " ");
                 for (ScopePathType theScope : ScopePathType.getScopesFromSpaceSeparatedString(scopesString)) {
                     ScopeInfoForm scopeInfoForm = new ScopeInfoForm();
@@ -190,7 +157,7 @@ public class OauthHelper {
                     try {
                         scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name()));
                         scopeInfoForm.setLongDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name() + ".longDesc"));
-                    } catch(NoSuchMessageException e) {
+                    } catch (NoSuchMessageException e) {
                         LOGGER.warn("Unable to find key message for scope: " + theScope.name() + " " + theScope.value());
                     }
                     infoForm.getScopes().add(scopeInfoForm);
@@ -198,87 +165,67 @@ public class OauthHelper {
             } else {
                 throw new InvalidRequestException("Please specify the desired scopes");
             }
-            
-            
-            
-            
-            
-            
-          
-            
-            
-            
-            
-            
+
             Matcher redirectUriMatcher = redirectUriPattern.matcher(requestUrl);
             if (redirectUriMatcher.find()) {
                 try {
-                    redirectUri = OrcidStringUtils.stripHtml(URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim());
+                    infoForm.setRedirectUrl(OrcidStringUtils.stripHtml(URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim()));
                 } catch (UnsupportedEncodingException e) {
+                    throw new InvalidRequestException("Invalid redirect URL");
+                }
+            } else {
+                throw new InvalidRequestException("Please specify a redirect URL");
+            }
+
+            Matcher stateParamMatcher = stateParamPattern.matcher(requestUrl);
+            if (stateParamMatcher.find()) {
+                try {
+                    infoForm.setStateParam(OrcidStringUtils.stripHtml(URLDecoder.decode(stateParamMatcher.group(1), "UTF-8").trim()));
+                } catch (UnsupportedEncodingException e) {
+
                 }
             }
 
             Matcher responseTypeMatcher = responseTypePattern.matcher(requestUrl);
             if (responseTypeMatcher.find()) {
                 try {
-                    responseType = OrcidStringUtils.stripHtml(URLDecoder.decode(responseTypeMatcher.group(1), "UTF-8").trim());
+                    infoForm.setResponseType(OrcidStringUtils.stripHtml(URLDecoder.decode(responseTypeMatcher.group(1), "UTF-8").trim()));
                 } catch (UnsupportedEncodingException e) {
+                    throw new InvalidRequestException("Invalid response type");
                 }
+            } else {
+                throw new InvalidRequestException("Please specify a response type");
             }
 
-            Matcher stateParamMatcher = stateParamPattern.matcher(requestUrl);
-            if (stateParamMatcher.find()) {
-                try {
-                    stateParam = OrcidStringUtils.stripHtml(URLDecoder.decode(stateParamMatcher.group(1), "UTF-8").trim());
-                } catch (UnsupportedEncodingException e) {}
-            }
-            
-            Matcher emailMatcher = RegistrationController.emailPattern.matcher(requestUrl);
-            if (emailMatcher.find()) {
-                String tempEmail = emailMatcher.group(1);
-                try {
-                    tempEmail = OrcidStringUtils.stripHtml(URLDecoder.decode(tempEmail, "UTF-8").trim());
-                } catch (UnsupportedEncodingException e) {
-                }
-                if (!PojoUtil.isEmpty(tempEmail)) {
-                    email = tempEmail;
-                }
-            }
-
-            Matcher orcidMatcher = orcidPattern.matcher(requestUrl);
-            if (orcidMatcher.find()) {
-                String tempOrcid = orcidMatcher.group(2);
-                try {
-                    tempOrcid = OrcidStringUtils.stripHtml(URLDecoder.decode(tempOrcid, "UTF-8").trim());
-                } catch (UnsupportedEncodingException e) {
-                }
-                if (profileEntityManager.orcidExists(tempOrcid)) {
-                    orcid = tempOrcid;
-                }
-            }
-            
             Matcher givenNamesMatcher = RegistrationController.givenNamesPattern.matcher(requestUrl);
-            if(givenNamesMatcher.find()) {
-                givenNames = OrcidStringUtils.stripHtml(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8").trim());
+            if (givenNamesMatcher.find()) {
+                infoForm.setUserGivenNames(OrcidStringUtils.stripHtml(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8").trim()));
             }
-            
+
             Matcher familyNamesMatcher = RegistrationController.familyNamesPattern.matcher(requestUrl);
-            if(familyNamesMatcher.find()) {
-                familyNames = OrcidStringUtils.stripHtml(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8").trim());
+            if (familyNamesMatcher.find()) {
+                infoForm.setUserFamilyNames(OrcidStringUtils.stripHtml(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8").trim()));
             }
-            
+
             Matcher nonceMatcher = noncePattern.matcher(requestUrl);
-            if(nonceMatcher.find()) {
-                nonce = OrcidStringUtils.stripHtml(URLDecoder.decode(nonceMatcher.group(1), "UTF-8").trim());
+            if (nonceMatcher.find()) {
+                infoForm.setNonce(OrcidStringUtils.stripHtml(URLDecoder.decode(nonceMatcher.group(1), "UTF-8").trim()));
             }
-            
+
             Matcher maxAgeMatcher = maxAgePattern.matcher(requestUrl);
-            if(maxAgeMatcher.find()) {
-                maxAge = OrcidStringUtils.stripHtml(URLDecoder.decode(maxAgeMatcher.group(1), "UTF-8").trim());
+            if (maxAgeMatcher.find()) {
+                String maxAge = OrcidStringUtils.stripHtml(URLDecoder.decode(maxAgeMatcher.group(1), "UTF-8").trim());
+                if(!PojoUtil.isEmpty(maxAge)) {
+                    try {
+                        Long.parseLong(maxAge);
+                    } catch(NumberFormatException nfe) {
+                        throw new InvalidRequestException("Invalid max_age param");
+                    }
+                }
+                infoForm.setMaxAge(maxAge);
             }
-                        
-        }     
-        
+        }
+
         return infoForm;
     }
     
