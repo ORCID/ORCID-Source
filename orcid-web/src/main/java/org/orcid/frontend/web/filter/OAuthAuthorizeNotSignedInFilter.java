@@ -67,6 +67,7 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
                 if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
                     RequestInfoForm rif = oauthHelper.generateRequestInfoForm(request.getQueryString());
                     request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, rif);
+                    request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
                 }
                 
                 response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);                                             
