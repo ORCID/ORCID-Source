@@ -13,7 +13,6 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -138,16 +137,6 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         Query query = entityManager.createQuery("update OrgDisambiguatedEntity set indexingStatus = 'PENDING', popularity = :popularity where id = :orgDisambiguatedId");
         query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
         query.setParameter("popularity", popularity);
-        query.executeUpdate();
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void replace(long deletedOrgDisambiguatedId, long replacementOrgDisambiguatedId) {
-        Query query = entityManager
-                .createQuery("update OrgEntity set orgDisambiguated.id = :replacementOrgDisambiguatedId where orgDisambiguated.id = :deletedOrgDisambiguatedId");
-        query.setParameter("deletedOrgDisambiguatedId", deletedOrgDisambiguatedId);
-        query.setParameter("replacementOrgDisambiguatedId", replacementOrgDisambiguatedId);
         query.executeUpdate();
     }
 
