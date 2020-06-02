@@ -163,8 +163,14 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         // Be sure it doesn't overwrite the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, existingEntity);
         createIssnGroupIdIfNecessary(peerReview);
-        OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
-        existingEntity.setOrg(updatedOrganization);
+        
+        if (peerReview.getOrganization() != null) {
+            OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
+            existingEntity.setOrg(updatedOrganization);
+        } else {
+            existingEntity.setOrg(null);
+        }
+        
         existingEntity = peerReviewDao.merge(existingEntity);
         peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE));

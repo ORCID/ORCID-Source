@@ -4,6 +4,7 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -21,6 +22,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
@@ -30,6 +32,10 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.manager.v3.validator.ActivityValidator;
+import org.orcid.core.manager.v3.validator.ExternalIDValidator;
+import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.PeerReviewType;
 import org.orcid.jaxb.model.common.Relationship;
@@ -44,6 +50,7 @@ import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
@@ -53,6 +60,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -97,6 +105,12 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Resource(name = "activityValidatorV3")
+    private ActivityValidator activityValidator;
+    
+    @Resource(name = "externalIDValidatorV3")
+    private ExternalIDValidator externalIDValidator;
     
     @Mock
     private ClientDetailsManager mockClientDetailsManager;
@@ -499,6 +513,119 @@ public class PeerReviewManagerTest extends BaseTest {
         assertTrue(foundEmptyGroup);
         assertTrue(found2);
         assertTrue(found3);
+    }
+    
+    @Test
+    public void testUpdatePeerReview() {
+        PeerReviewDao mockPeerReviewDao = Mockito.mock(PeerReviewDao.class);
+        ActivityValidator mockActivityValidator = Mockito.mock(ActivityValidator.class);
+        ExternalIDValidator mockExternalIDValidator = Mockito.mock(ExternalIDValidator.class);
+        OrcidSecurityManager mockSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+        
+        ReflectionTestUtils.setField(peerReviewManager, "peerReviewDao", mockPeerReviewDao);
+        ReflectionTestUtils.setField(peerReviewManager, "activityValidator", mockActivityValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "externalIDValidator", mockExternalIDValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "orcidSecurityManager", mockSecurityManager);
+        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID)); 
+        when(mockPeerReviewDao.getPeerReview(Mockito.eq("orcid"), Mockito.eq(1L))).thenReturn(getPeerReviewEntity(1L));
+        when(mockPeerReviewDao.merge(Mockito.any(PeerReviewEntity.class))).thenReturn(getPeerReviewEntity(1L));
+        
+        PeerReview peerReview = getPeerReview("erm");
+        peerReview.setPutCode(1L);
+        peerReviewManager.updatePeerReview("orcid", peerReview, true);
+        
+        Mockito.verify(mockPeerReviewDao, Mockito.times(1)).merge(Mockito.any(PeerReviewEntity.class));
+        
+        ReflectionTestUtils.setField(peerReviewManager, "peerReviewDao", peerReviewDao);
+        ReflectionTestUtils.setField(peerReviewManager, "activityValidator", activityValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "externalIDValidator", externalIDValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "orcidSecurityManager", orcidSecurityManager);
+        
+    }
+    
+    @Test
+    public void testUpdatePeerReviewAddingOrg() {
+        PeerReviewDao mockPeerReviewDao = Mockito.mock(PeerReviewDao.class);
+        ActivityValidator mockActivityValidator = Mockito.mock(ActivityValidator.class);
+        ExternalIDValidator mockExternalIDValidator = Mockito.mock(ExternalIDValidator.class);
+        OrcidSecurityManager mockSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+        
+        ReflectionTestUtils.setField(peerReviewManager, "peerReviewDao", mockPeerReviewDao);
+        ReflectionTestUtils.setField(peerReviewManager, "activityValidator", mockActivityValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "externalIDValidator", mockExternalIDValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "orcidSecurityManager", mockSecurityManager);
+        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID)); 
+        when(mockPeerReviewDao.getPeerReview(Mockito.eq("orcid"), Mockito.eq(1L))).thenReturn(getPeerReviewEntity(1L));
+        when(mockPeerReviewDao.merge(Mockito.any(PeerReviewEntity.class))).thenReturn(getPeerReviewEntity(1L));
+        
+        PeerReview peerReview = getPeerReview("erm");
+        peerReview.setPutCode(1L);
+        peerReviewManager.updatePeerReview("orcid", peerReview, true);
+        
+        ArgumentCaptor<PeerReviewEntity> captor = ArgumentCaptor.forClass(PeerReviewEntity.class);
+        Mockito.verify(mockPeerReviewDao, Mockito.times(1)).merge(captor.capture());
+        
+        // peer review should have been updated with an org
+        assertNotNull(captor.getValue().getOrg());
+        
+        ReflectionTestUtils.setField(peerReviewManager, "peerReviewDao", peerReviewDao);
+        ReflectionTestUtils.setField(peerReviewManager, "activityValidator", activityValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "externalIDValidator", externalIDValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "orcidSecurityManager", orcidSecurityManager);
+        
+    }
+    
+    @Test
+    public void testUpdatePeerReviewRemovingOrg() {
+        PeerReviewDao mockPeerReviewDao = Mockito.mock(PeerReviewDao.class);
+        ActivityValidator mockActivityValidator = Mockito.mock(ActivityValidator.class);
+        ExternalIDValidator mockExternalIDValidator = Mockito.mock(ExternalIDValidator.class);
+        OrcidSecurityManager mockSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+        
+        ReflectionTestUtils.setField(peerReviewManager, "peerReviewDao", mockPeerReviewDao);
+        ReflectionTestUtils.setField(peerReviewManager, "activityValidator", mockActivityValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "externalIDValidator", mockExternalIDValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "orcidSecurityManager", mockSecurityManager);
+        
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID)); 
+        when(mockPeerReviewDao.getPeerReview(Mockito.eq("orcid"), Mockito.eq(1L))).thenReturn(getPeerReviewEntityWithOrg(1L));
+        when(mockPeerReviewDao.merge(Mockito.any(PeerReviewEntity.class))).thenReturn(getPeerReviewEntity(1L));
+        
+        PeerReview peerReview = getPeerReview("erm");
+        peerReview.setPutCode(1L);
+        peerReview.setOrganization(null);
+        peerReviewManager.updatePeerReview("orcid", peerReview, true);
+        
+        ArgumentCaptor<PeerReviewEntity> captor = ArgumentCaptor.forClass(PeerReviewEntity.class);
+        Mockito.verify(mockPeerReviewDao, Mockito.times(1)).merge(captor.capture());
+        
+        // peer review should have had org removed
+        assertNull(captor.getValue().getOrg());
+        
+        ReflectionTestUtils.setField(peerReviewManager, "peerReviewDao", peerReviewDao);
+        ReflectionTestUtils.setField(peerReviewManager, "activityValidator", activityValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "externalIDValidator", externalIDValidator);
+        ReflectionTestUtils.setField(peerReviewManager, "orcidSecurityManager", orcidSecurityManager);
+    }
+    
+    private PeerReviewEntity getPeerReviewEntityWithOrg(Long id) {
+        OrgEntity orgEntity = new OrgEntity();
+        orgEntity.setName("test");
+
+        PeerReviewEntity entity = new PeerReviewEntity();
+        entity.setId(id);
+        entity.setVisibility("PUBLIC");
+        entity.setOrg(orgEntity);
+        return entity;
+    }
+    
+    private PeerReviewEntity getPeerReviewEntity(Long id) {
+        PeerReviewEntity entity = new PeerReviewEntity();
+        entity.setId(id);
+        entity.setVisibility("PUBLIC");
+        return entity;
     }
     
     @Test
