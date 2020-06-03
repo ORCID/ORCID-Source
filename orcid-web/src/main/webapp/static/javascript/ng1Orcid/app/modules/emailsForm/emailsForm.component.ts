@@ -82,6 +82,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     emailEditing
     emailEditingNewValue
     emailEditingErrors
+    emailEditingShowBoolean = false
     
     constructor( 
         private elementRef: ElementRef, 
@@ -534,12 +535,20 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     emailEdit(value){
         this.emailEditingErrors = null
         this.emailEditing = this.emailEditingNewValue = value
-
+        this.emailEditingShow(this.emailEditing)
     }
-    emailEditSave(){
-        if (this.emailEditing !==  this.emailEditingNewValue) {
+
+    emailEditSave() {
+        if (this.emailEditing !== this.emailEditingNewValue) {
             // add new email
-            let isPrimary = this.formData.emails.find((email)=>email.value === this.emailEditing).primary
+            let isPrimary;
+            for (let email of this.formData.emails) {
+                console.log(JSON.stringify(email))
+                if (email.value === this.emailEditing) {
+                    isPrimary = email.primary
+                }
+            };
+
             this.emailService.editEmail( this.emailEditing, this.emailEditingNewValue )
             .subscribe(
                 data => {           
@@ -554,12 +563,13 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         if (isPrimary) {
                             this.showUnverifiedEmailSetPrimaryBox = true
                         }
+                        this.emailEditingShowBoolean = false
                     } else {
                         this.emailEditingErrors = data.errors
                     }
                 },
                 error => {
-                    // console.log('getEmailsFormError', error);
+                    console.log('getEmailsFormError', error);
                 } 
             );
         } else {
@@ -567,6 +577,31 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             this.emailEditing = this.emailEditingNewValue = null
             this.emailEditingErrors = null
         }
+    }
+
+    emailEditingShow(emailEditing) {
+        for (let email of this.formData.emails) {
+            if (this.emailEditing === email.value) {
+                email.edit = true
+            } else {
+                email.edit = false
+            }
+        }
+    }
+
+    emailEditingCancel(email) {
+        this.emailEditing = null
+        email.edit = false
+    }
+
+    showEmailEditing(email) {
+        console.log(JSON.stringify(email))
+        return this.emailEditing !== email.value
+    }
+
+    showEmailEditing2(email) {
+        console.log(JSON.stringify(email))
+        return this.emailEditing === email.value
     }
 
     showTooltip(element): void{        

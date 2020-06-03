@@ -9792,14 +9792,27 @@ emails-form-ng2 .border-button.active {
 }
 
 emails-form-ng2 .cancel-edit-button {
-    font-size: 14px;
+     font-size: 12px;
+     font-weight: bold;
+     font-style: normal;
+     font-stretch: normal;
+     line-height: 1.14;
+     letter-spacing: 1.25px;
+     text-align: center;
+     color: #f44336;
+     display: inline;
+     cursor: pointer;
+ }
+
+emails-form-ng2 .save-edit-button {
+    font-size: 12px;
     font-weight: bold;
     font-style: normal;
     font-stretch: normal;
     line-height: 1.14;
     letter-spacing: 1.25px;
     text-align: center;
-    color: #f44336;
+    color: #9fc836;
     display: inline;
     cursor: pointer;
 }
