@@ -1114,8 +1114,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private void addV2DateFields(ClassMapBuilder<?, ?> classMap) {
-        classMap.field("createdDate.value", "dateCreated");
-        classMap.field("lastModifiedDate.value", "lastModified");
+        classMap.fieldBToA("dateCreated", "createdDate.value");
+        classMap.fieldBToA("lastModified", "lastModifiedDate.value");
     }
 
     private void mapFuzzyDateToStartDateEntityAndEndDateEntity(MapperFactory mapperFactory) {
