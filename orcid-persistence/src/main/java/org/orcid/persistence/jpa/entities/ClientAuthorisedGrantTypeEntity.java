@@ -2,6 +2,8 @@ package org.orcid.persistence.jpa.entities;
 
 import org.orcid.persistence.jpa.entities.keys.ClientAuthorisedGrantTypePk;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,6 +59,28 @@ public class ClientAuthorisedGrantTypeEntity extends BaseEntity<ClientAuthorised
         this.clientDetailsEntity = clientDetailsEntity;
     }
 
+    /**
+     * This should not be called explicitly as the {@link #updateTimeStamps()}
+     * method will be called whenever an update or persist is called
+     * 
+     * @param dateCreated
+     *            the dateCreated to set
+     */
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    /**
+     * This should not be called explicitly as the {@link #updateTimeStamps()}
+     * method will be called whenever an update or persist is called
+     * 
+     * @param lastModified
+     *            the lastModified to set
+     */
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

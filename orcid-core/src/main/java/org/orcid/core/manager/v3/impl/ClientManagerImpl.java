@@ -106,8 +106,6 @@ public class ClientManagerImpl implements ClientManager {
 
         ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
         Date now = new Date();
-        newEntity.setDateCreated(now);
-        newEntity.setLastModified(now);
         newEntity.setId(appIdGenerationManager.createNewAppId());
         newEntity.setClientSecretForJpa(encryptionManager.encryptForInternalUse(UUID.randomUUID().toString()), true);
         newEntity.setGroupProfileId(memberId);
@@ -191,8 +189,7 @@ public class ClientManagerImpl implements ClientManager {
             }
         }
 
-        jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);
-        clientDetails.setLastModified(new Date());
+        jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);        
 
         // Check if we should update client configuration values
         if (updateConfigValues) {

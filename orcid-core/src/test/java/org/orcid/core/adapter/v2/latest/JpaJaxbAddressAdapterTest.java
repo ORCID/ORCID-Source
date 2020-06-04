@@ -12,6 +12,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
@@ -32,6 +33,8 @@ import org.springframework.test.context.ContextConfiguration;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
+    private final Date now = new Date();
+    
     @Resource
     private JpaJaxbAddressAdapter adapter;        
         
@@ -49,13 +52,13 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOtherNameEntityToOtherNameTest() {                
+    public void fromOtherNameEntityToOtherNameTest() throws IllegalAccessException {                
         AddressEntity entity = getAddressEntity();
         Address address = adapter.toAddress(entity);
         assertNotNull(address);
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
-        assertNotNull(address.getCreatedDate());
-        assertNotNull(address.getLastModifiedDate());
+        assertEquals(now, address.getCreatedDate());
+        assertEquals(now, address.getLastModifiedDate());
         assertEquals(Long.valueOf(1), address.getPutCode());
         assertNotNull(address.getSource());
         assertEquals(CLIENT_SOURCE_ID, address.getSource().retrieveSourcePath());
@@ -70,11 +73,11 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         return (Address) unmarshaller.unmarshal(inputStream);
     }
     
-    private AddressEntity getAddressEntity() {
+    private AddressEntity getAddressEntity() throws IllegalAccessException {
         AddressEntity result = new AddressEntity();
+        FieldUtils.writeField(result, "dateCreated", now, true);
+        FieldUtils.writeField(result, "lastModified", now, true);
         result.setId(Long.valueOf(1));
-        result.setDateCreated(new Date());
-        result.setLastModified(new Date());
         result.setIso2Country(Iso3166Country.US.name());
         result.setUser(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(Visibility.PUBLIC.name());

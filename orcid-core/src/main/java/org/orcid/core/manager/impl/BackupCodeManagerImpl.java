@@ -49,8 +49,6 @@ public class BackupCodeManagerImpl implements BackupCodeManager {
             rawCodes.add(rawCode);
 
             BackupCodeEntity backupCode = new BackupCodeEntity();
-            backupCode.setDateCreated(new Date());
-            backupCode.setLastModified(new Date());
             backupCode.setOrcid(orcid);
             backupCode.setHashedCode(encryptionManager.hashForInternalUse(rawCode));
             backupCodeDao.merge(backupCode);

@@ -25,8 +25,8 @@ import java.util.Map;
 public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<T> {
 
     private static final long serialVersionUID = 2949008720309076230L;
-    private Date dateCreated;
-    private Date lastModified;
+    protected Date dateCreated;
+    protected Date lastModified;
 
     /**
      * The date that this entity was created.
@@ -36,18 +36,7 @@ public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<
     @Column(name = "date_created")
     public Date getDateCreated() {
         return dateCreated;
-    }
-
-    /**
-     * This should not be called explicitly as the {@link #updateTimeStamps()}
-     * method will be called whenever an update or persist is called
-     * 
-     * @param dateCreated
-     *            the dateCreated to set
-     */
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
+    }    
 
     /**
      * The date that this entity was last updated. This will be the same as the
@@ -58,17 +47,6 @@ public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<
     @Column(name = "last_modified")
     public Date getLastModified() {
         return lastModified;
-    }
-
-    /**
-     * This should not be called explicitly as the {@link #updateTimeStamps()}
-     * method will be called whenever an update or persist is called
-     * 
-     * @param lastModified
-     *            the lastModified to set
-     */
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
     }
 
     /**
