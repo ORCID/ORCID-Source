@@ -252,7 +252,7 @@
         <sql>GRANT SELECT ON TABLE dw_oauth2_token_detail to dw_user;</sql>
     </changeSet>
     
-   <changeSet id="CREATE-DW-GROUP-ID-RECORD-VIEW" author="Camelia Dumitru">
+   <changeSet id="CREATE-DW-GROUP-ID-RECORD-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_group_id_record" replaceIfExists="true">
             select id as db_id, group_id, group_name, group_type, client_source_id, date_created, last_modified
             from group_id_record
@@ -281,7 +281,7 @@
         <sql>GRANT SELECT ON TABLE dw_identifier_type to dw_user;</sql>
     </changeSet>    
     
-   <changeSet id="CREATE-DW-IDENTITY-PROVIDER-VIEW" author="Camelia Dumitru">
+   <changeSet id="CREATE-DW-IDENTITY-PROVIDER-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_identity_provider" replaceIfExists="true">
             select id as db_id, providerid, display_name, last_failed, failed_count, date_created, last_modified
             from identity_provider
@@ -295,7 +295,7 @@
         <sql>GRANT SELECT ON TABLE dw_identity_provider to dw_user;</sql>
     </changeSet>
     
-    <changeSet id="CREATE-DW-PROFILE_HISTORY-EVENT-VIEW" author="Camelia Dumitru">
+    <changeSet id="CREATE-DW-PROFILE_HISTORY-EVENT-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_profile_history_event" replaceIfExists="true">
             select id as db_id, orcid, event_type, date_created, last_modified
             from profile_history_event
