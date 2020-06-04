@@ -8,7 +8,6 @@
             select orcid, date_created, last_modified, profile_deactivation_date,
             enable_developer_tools, last_login, using_2fa
             from profile
-            order by date_created
         </createView>
     </changeSet>
 
