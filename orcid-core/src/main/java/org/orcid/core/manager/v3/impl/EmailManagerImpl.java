@@ -190,8 +190,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         EmailEntity originalEntity = emailDao.findByEmail(original); 
         Map<String, String> emailKeys = getEmailKeys(edited);        
         EmailEntity updatedEntity = new EmailEntity();
-        updatedEntity.setDateCreated(new Date());
-        updatedEntity.setLastModified(new Date());
         updatedEntity.setSourceId(orcid);
         updatedEntity.setEmail(emailKeys.get(FILTERED_EMAIL));
         updatedEntity.setId(emailKeys.get(HASH));
@@ -231,8 +229,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             entity.setEmail(emailKeys.get(FILTERED_EMAIL));
         }
         entity.setPrimary(true);
-        entity.setVerified(true);
-        entity.setLastModified(new Date());
+        entity.setVerified(true);        
         emailDao.merge(entity);  
         emailDao.flush();
     }
@@ -259,7 +256,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 entity.setPrimary(false);
                 entity.setVerified(false);
                 entity.setVisibility(visibility.name());
-                entity.setLastModified(new Date());
                 emailDao.merge(entity);  
                 emailDao.flush();
                 if(!entity.getVerified()) {

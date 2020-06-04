@@ -73,8 +73,6 @@ public class MigrateEmailFrequencyData {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         Date now = new Date();
                         EmailFrequencyEntity entity = new EmailFrequencyEntity();
-                        entity.setDateCreated(now);
-                        entity.setLastModified(now);
                         entity.setOrcid(orcid);
                         entity.setId(UUID.randomUUID().toString());
                         if (admin != null && admin) {

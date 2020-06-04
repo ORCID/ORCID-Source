@@ -21,6 +21,7 @@ import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -41,8 +42,8 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         assertNotNull(email);
         EmailEntity entity = jpaJaxbEmailAdapter.toEmailEntity(email);
         assertNotNull(entity);
-        assertNotNull(entity.getDateCreated());
-        assertNotNull(entity.getLastModified());
+        assertNull(entity.getDateCreated());
+        assertNull(entity.getLastModified());
         assertEquals("user1@email.com", entity.getEmail());
         assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());
         
@@ -53,7 +54,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromEmailToEmailEntity() {
+    public void fromEmailToEmailEntity() throws IllegalAccessException {
         EmailEntity entity = getEmailEntity();
         Email email = jpaJaxbEmailAdapter.toEmail(entity);
         assertNotNull(email);
@@ -71,15 +72,14 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         return (Email) unmarshaller.unmarshal(inputStream);
     }
     
-    private EmailEntity getEmailEntity() {
+    private EmailEntity getEmailEntity() throws IllegalAccessException {
         EmailEntity result = new EmailEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, new Date());
         result.setEmail("email@test.orcid.org");
         result.setCurrent(true);
         result.setPrimary(true);
         result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         result.setVerified(true);
-        result.setDateCreated(new Date());
-        result.setLastModified(new Date());       
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());   
         result.setClientSourceId(CLIENT_SOURCE_ID);
         
