@@ -48,8 +48,6 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
         bio.setVisibility(visibility);
         bio.setBiography(biography);
         bio.setOrcid(orcid);
-        bio.setDateCreated(new Date());
-        bio.setLastModified(new Date());
         entityManager.persist(bio);
     }
 
