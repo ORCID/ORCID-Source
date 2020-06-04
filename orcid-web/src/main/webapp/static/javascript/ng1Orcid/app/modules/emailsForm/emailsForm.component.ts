@@ -543,7 +543,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
             // add new email
             let isPrimary;
             for (let email of this.formData.emails) {
-                console.log(JSON.stringify(email))
                 if (email.value === this.emailEditing) {
                     isPrimary = email.primary
                 }
@@ -563,13 +562,12 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                         if (isPrimary) {
                             this.showUnverifiedEmailSetPrimaryBox = true
                         }
-                        this.emailEditingShowBoolean = false
                     } else {
                         this.emailEditingErrors = data.errors
                     }
                 },
                 error => {
-                    console.log('getEmailsFormError', error);
+                    // console.log('getEmailsFormError', error);
                 } 
             );
         } else {
@@ -592,16 +590,6 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     emailEditingCancel(email) {
         this.emailEditing = null
         email.edit = false
-    }
-
-    showEmailEditing(email) {
-        console.log(JSON.stringify(email))
-        return this.emailEditing !== email.value
-    }
-
-    showEmailEditing2(email) {
-        console.log(JSON.stringify(email))
-        return this.emailEditing === email.value
     }
 
     showTooltip(element): void{        
