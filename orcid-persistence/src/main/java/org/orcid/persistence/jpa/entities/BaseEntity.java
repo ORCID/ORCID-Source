@@ -73,18 +73,23 @@ public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<
 
     /**
      * Package protected method that is called by the {@link EntityManager}
-     * before update and persist. This uses the {@link PreUpdate} and
-     * {@link PrePersist} annotations
+     * before update. This uses the {@link PreUpdate} annotations
      */
     @PreUpdate
-    @PrePersist
-    void updateTimeStamps() {
+    void preUpdate() {
         lastModified = new Date();
-        if (dateCreated == null) {
-            dateCreated = new Date();
-        }
     }
 
+    /**
+     * Package protected method that is called by the {@link EntityManager}
+     * before persist. This uses the {@link PrePersist} annotations
+     */
+    @PrePersist
+    void prePersist() {
+        dateCreated = new Date();
+        lastModified = new Date();
+    }
+    
     public static <I extends Serializable, E extends OrcidEntity<I>> Map<I, E> mapById(Collection<E> entities) {
         Map<I, E> map = new HashMap<I, E>(entities.size());
         for (E entity : entities) {
