@@ -20,6 +20,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -51,7 +52,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromExternalIdentifierEntityToExternalIdentifier() {
+    public void fromExternalIdentifierEntityToExternalIdentifier() throws IllegalAccessException {
         ExternalIdentifierEntity entity = getExternalIdentifierEntity();
         PersonExternalIdentifier extId = jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(entity);
         assertNotNull(extId);
@@ -79,10 +80,9 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         return (PersonExternalIdentifier) unmarshaller.unmarshal(inputStream);
     }
     
-    private ExternalIdentifierEntity getExternalIdentifierEntity() {
+    private ExternalIdentifierEntity getExternalIdentifierEntity() throws IllegalAccessException {
         ExternalIdentifierEntity entity = new ExternalIdentifierEntity();
-        entity.setDateCreated(new Date());
-        entity.setLastModified(new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, new Date());
         entity.setExternalIdCommonName("common-name");
         entity.setExternalIdReference("id-reference");        
         entity.setExternalIdUrl("http://myurl.com");

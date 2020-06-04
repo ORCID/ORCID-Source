@@ -32,6 +32,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -128,7 +129,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromExternalIdentifierEntityToExternalIdentifier() {
+    public void fromExternalIdentifierEntityToExternalIdentifier() throws IllegalAccessException {
         ExternalIdentifierEntity entity = getExternalIdentifierEntity();
         PersonExternalIdentifier extId = jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(entity);
         assertNotNull(extId);
@@ -152,7 +153,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromExternalIdentifierEntityToUserOBOExternalIdentifier() {
+    public void fromExternalIdentifierEntityToUserOBOExternalIdentifier() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -188,10 +189,9 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         return (PersonExternalIdentifier) unmarshaller.unmarshal(inputStream);
     }
 
-    private ExternalIdentifierEntity getExternalIdentifierEntity() {
+    private ExternalIdentifierEntity getExternalIdentifierEntity() throws IllegalAccessException {
         ExternalIdentifierEntity entity = new ExternalIdentifierEntity();
-        entity.setDateCreated(new Date());
-        entity.setLastModified(new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, new Date());
         entity.setExternalIdCommonName("common-name");
         entity.setExternalIdReference("id-reference");
         entity.setExternalIdUrl("http://myurl.com");

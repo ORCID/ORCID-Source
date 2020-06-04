@@ -116,10 +116,8 @@ public class GivenPermissionToManagerTest extends BaseTest {
         for (int i = 0; i < 3; i++) {
             GivenPermissionByEntity e = new GivenPermissionByEntity();
             e.setApprovalDate(new Date());
-            e.setDateCreated(new Date());
             e.setGiver("orcid" + i);
             e.setReceiver("orcid");
-            e.setLastModified(new Date());
             permissions.add(e);
         }
         return permissions;
@@ -130,10 +128,8 @@ public class GivenPermissionToManagerTest extends BaseTest {
         for (int i = 0; i < 3; i++) {
             GivenPermissionToEntity e = new GivenPermissionToEntity();
             e.setApprovalDate(new Date());
-            e.setDateCreated(new Date());
             e.setReceiver("orcid" + i);
             e.setGiver("orcid");
-            e.setLastModified(new Date());
             permissions.add(e);
         }
         return permissions;

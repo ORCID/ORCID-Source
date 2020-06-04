@@ -66,8 +66,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
 
         ExternalIdentifierEntity newEntity = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(externalIdentifier);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        newEntity.setOwner(profile);
-        newEntity.setDateCreated(new Date());
+        newEntity.setOwner(profile);        
 
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 
@@ -99,8 +98,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
             }
         }
         orcidSecurityManager.checkSourceAndThrow(updatedExternalIdentifierEntity);
-        jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(externalIdentifier, updatedExternalIdentifierEntity);
-        updatedExternalIdentifierEntity.setLastModified(new Date());
+        jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(externalIdentifier, updatedExternalIdentifierEntity);        
 
         // Set source
         SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedExternalIdentifierEntity);
@@ -185,8 +183,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
                 if (updatedOrNew.getPutCode() != null) {
                     // Update the existing ones
                     for (ExternalIdentifierEntity existingExtId : existingExternalIdentifiersList) {
-                        if (existingExtId.getId().equals(updatedOrNew.getPutCode())) {
-                            existingExtId.setLastModified(new Date());
+                        if (existingExtId.getId().equals(updatedOrNew.getPutCode())) {                            
                             existingExtId.setVisibility(updatedOrNew.getVisibility().name());
                             existingExtId.setDisplayIndex(updatedOrNew.getDisplayIndex());
                             externalIdentifierDao.merge(existingExtId);

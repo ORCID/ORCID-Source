@@ -101,8 +101,6 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         SourceEntity source = sourceManager.retrieveSourceEntity();
         entity.setSourceClient(source.getSourceClient());
         Date now = new Date();
-        entity.setDateCreated(now);
-        entity.setLastModified(now);
         entity = idTypeDao.addIdentifierType(entity);
         return adapter.fromEntity(entity);
     }
@@ -117,7 +115,6 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         entity.setIsDeprecated(id.getDeprecated());
         entity.setResolutionPrefix(id.getResolutionPrefix());
         entity.setValidationRegex(id.getValidationRegex());
-        entity.setLastModified(new Date());
         entity.setIsCaseSensitive(id.getCaseSensitive());
         entity.setPrimaryUse(id.getPrimaryUse());
         entity = idTypeDao.updateIdentifierType(entity);

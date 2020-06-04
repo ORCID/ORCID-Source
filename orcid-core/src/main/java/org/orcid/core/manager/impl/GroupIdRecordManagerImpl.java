@@ -83,7 +83,6 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
 
         orcidSecurityManager.checkSource(existingEntity);
         GroupIdRecordEntity updatedEntity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(groupIdRecord);
-        updatedEntity.setDateCreated(existingEntity.getDateCreated());
         // Be sure it doesn't overwrite the source
         updatedEntity.setSourceId(existingSourceId);
         updatedEntity.setClientSourceId(existingClientSourceId);
