@@ -384,7 +384,6 @@ public class LoadRinggoldData {
         Date now = new Date();
         if (entity == null) {
             entity = new OrgDisambiguatedEntity();
-            entity.setDateCreated(now);
             entity.setLastIndexedDate(now);
             entity.setCity(city);
             entity.setCountry(country.name());
@@ -404,7 +403,6 @@ public class LoadRinggoldData {
             if (changed(entity, parentId, name, country, city, state, type)) {
                 entity.setCity(city);
                 entity.setCountry(country.name());
-                entity.setLastModified(now);
                 entity.setName(name);
                 entity.setOrgType(type);
                 entity.setRegion(state);
@@ -446,9 +444,6 @@ public class LoadRinggoldData {
                 //If the external identifier doesn't exists or it doesn't belong to the disambiguatedEntity, lets create it 
                 if (existingEntity == null || !existingEntity.getOrgDisambiguated().getId().equals(disambiguatedEntity.getId())) {
                     OrgDisambiguatedExternalIdentifierEntity newEntity = new OrgDisambiguatedExternalIdentifierEntity();
-                    Date now = new Date();
-                    newEntity.setDateCreated(now);
-                    newEntity.setLastModified(now);
                     newEntity.setIdentifier(value);
                     newEntity.setIdentifierType(type);
                     newEntity.setOrgDisambiguated(disambiguatedEntity);
@@ -468,7 +463,6 @@ public class LoadRinggoldData {
     }
 
     private void generateOrganizations(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> altNames) {
-        Date now = new Date();
         altNames.forEach(altName -> {
             String name = altName.get("name").asText();
             LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
@@ -478,14 +472,11 @@ public class LoadRinggoldData {
             if (existingOrg != null) {
                 if (existingOrg.getOrgDisambiguated() == null) {
                     existingOrg.setOrgDisambiguated(disambiguatedEntity);
-                    existingOrg.setLastModified(now);
                     orgDao.merge(existingOrg);
                     numUpdatedOrgs++;
                 }
             } else {
                 OrgEntity newOrg = new OrgEntity();
-                newOrg.setDateCreated(now);
-                newOrg.setLastModified(now);
                 newOrg.setCity(city);
                 newOrg.setCountry(country.name());
                 newOrg.setName(name);
@@ -502,14 +493,11 @@ public class LoadRinggoldData {
         if (existingOrg != null) {
             if (existingOrg.getOrgDisambiguated() == null) {
                 existingOrg.setOrgDisambiguated(disambiguatedEntity);
-                existingOrg.setLastModified(now);
                 orgDao.merge(existingOrg);
                 numUpdatedOrgs++;
             }
         } else {
             OrgEntity newOrg = new OrgEntity();
-            newOrg.setDateCreated(now);
-            newOrg.setLastModified(now);
             newOrg.setRegion(region);
             newOrg.setCity(city);
             newOrg.setCountry(country.name());

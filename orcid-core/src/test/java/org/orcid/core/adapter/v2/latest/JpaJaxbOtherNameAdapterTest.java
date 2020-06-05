@@ -21,6 +21,7 @@ import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -49,7 +50,7 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOtherNameEntityToOtherNameTest() {                
+    public void fromOtherNameEntityToOtherNameTest() throws IllegalAccessException {                
         OtherNameEntity entity = getOtherNameEntity();
         OtherName otherName = adapter.toOtherName(entity);
         assertNotNull(otherName);
@@ -70,11 +71,10 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         return (OtherName) unmarshaller.unmarshal(inputStream);
     }
     
-    private OtherNameEntity getOtherNameEntity() {
+    private OtherNameEntity getOtherNameEntity() throws IllegalAccessException {
         OtherNameEntity result = new OtherNameEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, new Date());
         result.setId(Long.valueOf(1));
-        result.setDateCreated(new Date());
-        result.setLastModified(new Date());
         result.setDisplayName("display-name");
         result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(Visibility.PUBLIC.name());
