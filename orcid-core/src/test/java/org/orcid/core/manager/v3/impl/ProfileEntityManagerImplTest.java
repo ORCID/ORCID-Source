@@ -136,13 +136,13 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         userConnection.setAccesstoken("blah");
         userConnection.setConnectionSatus(UserConnectionStatus.STARTED);
         userConnection.setDisplayname("blah");
-        userConnection.setDateCreated(new Date());
-        userConnection.setLastModified(new Date());
         userConnection.setEmail("blah@blah.com");
         userConnection.setOrcid("4444-4444-4444-4441");
         userConnection.setId(pk);
         userConnection.setRank(1);
         userConnectionDao.persist(userConnection);
+        assertNotNull(userConnection.getDateCreated());
+        assertNotNull(userConnection.getLastModified());
         
         ProfileEntity profileEntityToDeprecate = profileEntityCacheManager.retrieve("4444-4444-4444-4441");     
         assertNull(profileEntityToDeprecate.getPrimaryRecord());
@@ -176,13 +176,13 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         userConnection.setAccesstoken("blah");
         userConnection.setConnectionSatus(UserConnectionStatus.STARTED);
         userConnection.setDisplayname("blah");
-        userConnection.setDateCreated(new Date());
-        userConnection.setLastModified(new Date());
         userConnection.setEmail("blah@blah.com");
         userConnection.setOrcid("4444-4444-4444-4441");
         userConnection.setId(pk);
         userConnection.setRank(1);
         userConnectionDao.persist(userConnection);
+        assertNotNull(userConnection.getDateCreated());
+        assertNotNull(userConnection.getLastModified());
         
         boolean result = profileEntityManager.deactivateRecord("4444-4444-4444-4441");
         assertTrue(result);

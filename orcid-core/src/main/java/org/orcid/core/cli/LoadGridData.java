@@ -191,7 +191,6 @@ public class LoadGridData {
                 existingBySourceId.setOrgType(orgType);
                 existingBySourceId.setRegion(region);
                 existingBySourceId.setUrl(url);
-                existingBySourceId.setLastModified(new Date());
                 existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
                 orgDisambiguatedDao.merge(existingBySourceId);
                 updatedOrgs++;
@@ -332,14 +331,11 @@ public class LoadGridData {
      * org_disambiguated_external_identifier table
      */
     private boolean createExternalIdentifier(OrgDisambiguatedEntity disambiguatedOrg, String identifier, String externalIdType, Boolean preferred) {
-        LOGGER.info("Creating external identifier for {}", disambiguatedOrg.getId());
-        Date creationDate = new Date();
+        LOGGER.info("Creating external identifier for {}", disambiguatedOrg.getId());        
         OrgDisambiguatedExternalIdentifierEntity externalIdentifier = new OrgDisambiguatedExternalIdentifierEntity();
         externalIdentifier.setIdentifier(identifier);
         externalIdentifier.setIdentifierType(externalIdType);
         externalIdentifier.setOrgDisambiguated(disambiguatedOrg);
-        externalIdentifier.setDateCreated(creationDate);
-        externalIdentifier.setLastModified(creationDate);
         externalIdentifier.setPreferred(preferred);
         orgDisambiguatedExternalIdentifierDao.persist(externalIdentifier);
         addedExternalIdentifiers++;
@@ -351,15 +347,13 @@ public class LoadGridData {
      */
     private void deprecateOrg(String sourceId, String primarySourceId) {
         LOGGER.info("Deprecating org {} for {}", sourceId, primarySourceId);
-        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.GRID.name());
-        Date now = new Date();
+        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.GRID.name());        
         if (existingEntity != null) {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.DEPRECATED.name())
                     || !existingEntity.getSourceParentId().equals(primarySourceId)) {
                 existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
                 existingEntity.setSourceParentId(primarySourceId);
                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                existingEntity.setLastModified(now);
                 orgDisambiguatedDao.merge(existingEntity);
                 deprecatedOrgs++;
             }
@@ -369,8 +363,6 @@ public class LoadGridData {
             deprecatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
             deprecatedEntity.setSourceId(sourceId);
             deprecatedEntity.setSourceParentId(primarySourceId);
-            deprecatedEntity.setDateCreated(now);
-            deprecatedEntity.setLastModified(now);
             //We don't need to index it
             deprecatedEntity.setIndexingStatus(IndexingStatus.DONE);
             orgDisambiguatedDao.persist(deprecatedEntity);
@@ -389,7 +381,6 @@ public class LoadGridData {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.OBSOLETE.name())) {
                 existingEntity.setStatus(OrganizationStatus.OBSOLETE.name());
                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                existingEntity.setLastModified(now);
                 orgDisambiguatedDao.merge(existingEntity);
                 obsoletedOrgs++;
             }
@@ -398,8 +389,6 @@ public class LoadGridData {
             obsoletedEntity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
             obsoletedEntity.setStatus(OrganizationStatus.OBSOLETE.name());
             obsoletedEntity.setSourceId(sourceId);            
-            obsoletedEntity.setDateCreated(now);
-            obsoletedEntity.setLastModified(now);            
             //We don't need to index it
             obsoletedEntity.setIndexingStatus(IndexingStatus.DONE);
             orgDisambiguatedDao.persist(obsoletedEntity);
