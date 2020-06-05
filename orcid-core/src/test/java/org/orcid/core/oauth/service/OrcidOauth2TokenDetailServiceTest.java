@@ -205,8 +205,6 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);
-        token.setDateCreated(new Date());
-        token.setLastModified(new Date());
         token.setProfile(new ProfileEntity(userOrcid));
         token.setScope(scopes);
         token.setTokenDisabled(disabled);

@@ -62,8 +62,6 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);
-        token.setDateCreated(new Date());
-        token.setLastModified(new Date());
         token.setProfile(new ProfileEntity(userOrcid));
         token.setScope(scopes);
         token.setTokenDisabled(false);
@@ -72,6 +70,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         token.setTokenValue(tokenValue);
         token.setRefreshTokenValue(refreshTokenValue);
         orcidOauth2TokenDetailService.saveOrUpdate(token);
+        assertNotNull(token.getDateCreated());
+        assertNotNull(token.getLastModified());
         return token;
     }
 

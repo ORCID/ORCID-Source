@@ -63,7 +63,6 @@ public class DefaultOAuthClientVisibilityTest extends BaseTest {
 
         OrcidOauth2TokenDetail tokenDetail = new OrcidOauth2TokenDetail();
         tokenDetail.setScope("/orcid-bio/external-identifiers/create");
-        tokenDetail.setDateCreated(new Date());
         when(orcidOauth2TokenDetailService.findNonDisabledByTokenValue(any(String.class))).thenReturn(tokenDetail);
         ScopePathType scopePathType = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
         Set<Visibility> visibilitiesForClient = permissionChecker.obtainVisibilitiesForAuthentication(oAuth2Authentication, scopePathType, getOrcidMessage());

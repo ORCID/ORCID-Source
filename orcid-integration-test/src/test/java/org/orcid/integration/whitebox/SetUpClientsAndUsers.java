@@ -397,8 +397,6 @@ public class SetUpClientsAndUsers {
             token.setTokenValue(readPublicAccessToken);
             token.setApproved(true);
             token.setClientDetailsId(client1ClientId);
-            token.setDateCreated(new Date());
-            token.setLastModified(new Date());            
             token.setPersistent(true);
             token.setRedirectUri(client1RedirectUri);
             token.setResourceId("orcid");

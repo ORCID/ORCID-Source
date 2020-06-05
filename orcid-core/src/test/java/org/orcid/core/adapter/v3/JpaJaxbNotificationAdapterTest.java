@@ -29,6 +29,7 @@ import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -58,12 +59,12 @@ public class JpaJaxbNotificationAdapterTest {
     }
 
     @Test
-    public void testCustomEntityToNotification() {
+    public void testCustomEntityToNotification() throws IllegalAccessException {
         NotificationCustomEntity notificationEntity = new NotificationCustomEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(notificationEntity, DateUtils.convertToDate("2014-01-01T09:17:56"));
         notificationEntity.setId(123L);
         notificationEntity.setNotificationType(org.orcid.jaxb.model.notification_v2.NotificationType.CUSTOM.name());
-        notificationEntity.setSubject("Test subject");
-        notificationEntity.setDateCreated(DateUtils.convertToDate("2014-01-01T09:17:56"));
+        notificationEntity.setSubject("Test subject");        
         notificationEntity.setReadDate(DateUtils.convertToDate("2014-03-04T17:43:06"));
 
         Notification notification = jpaJaxbNotificationAdapter.toNotification(notificationEntity);

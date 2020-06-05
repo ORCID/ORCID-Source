@@ -13,6 +13,7 @@ import org.orcid.core.adapter.JpaJaxbInvalidRecordDataChangeAdapter;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -22,10 +23,10 @@ public class JpaJaxbInvalidRecordDataChangeAdapterTest {
     @Resource
     private JpaJaxbInvalidRecordDataChangeAdapter adapter;
     
-    private Date date = new Date();
+    private final Date date = new Date();
     
     @Test
-    public void fromEntityTest() {
+    public void fromEntityTest() throws IllegalAccessException {
         InvalidRecordDataChangeEntity entity = getEntity();
         RecordCorrection element = adapter.toInvalidRecordDataChange(entity);
         assertNotNull(element);
@@ -38,12 +39,11 @@ public class JpaJaxbInvalidRecordDataChangeAdapterTest {
         assertEquals(element.getType(), entity.getType());
     }
     
-    private InvalidRecordDataChangeEntity getEntity() {
+    private InvalidRecordDataChangeEntity getEntity() throws IllegalAccessException {
         InvalidRecordDataChangeEntity entity = new InvalidRecordDataChangeEntity();
-        entity.setDateCreated(date);
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, date);
         entity.setDescription("description");
         entity.setId(1234L);
-        entity.setLastModified(date);
         entity.setNumChanged(24816L);
         entity.setSqlUsedToUpdate("update table set data = 'value' where key = key");
         entity.setType("type");

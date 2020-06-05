@@ -376,8 +376,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);
-        token.setDateCreated(new Date());
-        token.setLastModified(new Date());
         token.setProfile(new ProfileEntity(userOrcid));
         token.setScope(scopes);
         token.setTokenDisabled(disabled);
@@ -385,6 +383,8 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         token.setTokenType("bearer");
         token.setTokenValue(tokenValue);
         orcidOauth2TokenDetailService.saveOrUpdate(token);
+        assertNotNull(token.getDateCreated());
+        assertNotNull(token.getLastModified());
         return token;
     }
     
