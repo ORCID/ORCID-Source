@@ -42,8 +42,7 @@ public class MigratePasswords {
                     String decryptedPassword = encryptionManager.legacyDecryptForInternalUse(encryptedPassword);
                     String hashedPassword = encryptionManager.hashForInternalUse(decryptedPassword);
                     profileEntity.setEncryptedPassword(hashedPassword);
-                }
-                profileEntity.setLastModified(new Date());
+                }                
                 profileDao.merge(profileEntity);
             }
         } while (!profiles.isEmpty());

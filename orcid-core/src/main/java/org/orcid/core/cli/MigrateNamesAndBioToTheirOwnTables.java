@@ -83,7 +83,7 @@ public class MigrateNamesAndBioToTheirOwnTables {
                             } else {
                                 recordName.setVisibility(namesVisibility);
                             }                            
-                            recordNameDao.createRecordName(recordName);
+                            recordNameDao.persist(recordName);
                         }
                         
                         LOG.info("Migrating biography for profile: {}", orcid);

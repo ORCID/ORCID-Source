@@ -21,6 +21,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Propagation;
@@ -76,11 +77,10 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testAddResearcherUrl() {
+    public void testAddResearcherUrl() throws IllegalAccessException {
         assertEquals(6, dao.getResearcherUrls("4444-4444-4444-4443", 0L).size());
         ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
-        newRUrl.setDateCreated(new Date());
-        newRUrl.setLastModified(new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(newRUrl, new Date());
         newRUrl.setClientSourceId("APP-5555555555555555");
         newRUrl.setUrl("www.4443.com");
         newRUrl.setUrlName("test");
@@ -112,11 +112,10 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testCannotAddDuplicatedResearcherUrl() {
+    public void testCannotAddDuplicatedResearcherUrl() throws IllegalAccessException {
         try {
             ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
-            newRUrl.setDateCreated(new Date());
-            newRUrl.setLastModified(new Date());
+            DateFieldsOnBaseEntityUtils.setDateFields(newRUrl, new Date());
             newRUrl.setClientSourceId("4444-4444-4444-4443");
             newRUrl.setUrl("http://www.researcherurl2.com?id=1");
             newRUrl.setUrlName("test");

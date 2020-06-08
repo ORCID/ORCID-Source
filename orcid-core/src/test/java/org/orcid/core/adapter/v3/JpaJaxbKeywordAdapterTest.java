@@ -31,6 +31,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -107,7 +108,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromProfileKeywordEntityToKeywordTest() {
+    public void fromProfileKeywordEntityToKeywordTest() throws IllegalAccessException {
         ProfileKeywordEntity entity = getProfileKeywordEntity();
         Keyword keyword = adapter.toKeyword(entity);
         assertNotNull(keyword);
@@ -126,7 +127,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromProfileKeywordEntityToUserOBOKeywordTest() {
+    public void fromProfileKeywordEntityToUserOBOKeywordTest() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -157,10 +158,9 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         return (Keyword) unmarshaller.unmarshal(inputStream); 
     }
     
-    private ProfileKeywordEntity getProfileKeywordEntity() {
+    private ProfileKeywordEntity getProfileKeywordEntity() throws IllegalAccessException {
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
-        entity.setDateCreated(new Date());
-        entity.setLastModified(new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, new Date());
         entity.setId(Long.valueOf(1));
         entity.setKeywordName("keyword-1");
         entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));

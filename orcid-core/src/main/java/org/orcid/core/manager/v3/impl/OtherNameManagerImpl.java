@@ -78,7 +78,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
         OtherNameEntity newEntity = jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
-        newEntity.setDateCreated(new Date());
         // Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 
@@ -112,7 +111,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
 
         orcidSecurityManager.checkSourceAndThrow(updatedOtherNameEntity);
         jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName, updatedOtherNameEntity);
-        updatedOtherNameEntity.setLastModified(new Date());
         // Be sure it doesn't overwrite the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedOtherNameEntity);
 
@@ -151,7 +149,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                     // Update the existing ones
                     for (OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
                         if (existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
-                            existingOtherName.setLastModified(new Date());
                             existingOtherName.setVisibility(updatedOrNew.getVisibility().name());
                             existingOtherName.setDisplayName(updatedOrNew.getContent());
                             existingOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
@@ -164,7 +161,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                     Source activeSource = sourceManager.retrieveActiveSource();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newOtherName.setProfile(profile);
-                    newOtherName.setDateCreated(new Date());
                     // Set the source
                     SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newOtherName);
                     newOtherName.setVisibility(updatedOrNew.getVisibility().name());

@@ -49,7 +49,6 @@ public class MigrateEncryptedData {
             profiles = profileDao.findLastModifiedBefore(start, CHUNK_SIZE);
             for (ProfileEntity profileEntity : profiles) {
                 LOG.info("Migrating encrypted data for profile: {}", profileEntity.getId());
-                profileEntity.setLastModified(new Date());
                 profileDao.merge(profileEntity);
             }
         } while (!profiles.isEmpty());
@@ -70,7 +69,6 @@ public class MigrateEncryptedData {
                         String unencryptedClientSecret = retrievedClientDetails.getClientSecret();
                         String encryptedClientSecret = encryptionManager.encryptForInternalUse(unencryptedClientSecret);
                         retrievedClientDetails.setClientSecretForJpa(encryptedClientSecret);
-                        retrievedClientDetails.setLastModified(new Date());
                         clientDetailsDao.merge(retrievedClientDetails);
                     }
                 });

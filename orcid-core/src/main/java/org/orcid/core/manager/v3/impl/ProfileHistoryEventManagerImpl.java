@@ -1,6 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -17,10 +16,7 @@ public class ProfileHistoryEventManagerImpl implements ProfileHistoryEventManage
 
     @Override
     public void recordEvent(ProfileHistoryEventType eventType, String orcid) {
-        Date eventDate = new Date();
         ProfileHistoryEventEntity profileHistoryEvent = new ProfileHistoryEventEntity();
-        profileHistoryEvent.setDateCreated(eventDate);
-        profileHistoryEvent.setLastModified(eventDate);
         profileHistoryEvent.setEventType(eventType.getLabel());
         profileHistoryEvent.setOrcid(orcid);
         profileHistoryDao.persist(profileHistoryEvent);
@@ -28,10 +24,7 @@ public class ProfileHistoryEventManagerImpl implements ProfileHistoryEventManage
     
     @Override
     public void recordEvent(ProfileHistoryEventType eventType, String orcid, String comments) {
-        Date eventDate = new Date();
         ProfileHistoryEventEntity profileHistoryEvent = new ProfileHistoryEventEntity();
-        profileHistoryEvent.setDateCreated(eventDate);
-        profileHistoryEvent.setLastModified(eventDate);
         profileHistoryEvent.setEventType(eventType.getLabel());
         profileHistoryEvent.setOrcid(orcid);
         profileHistoryEvent.setComment(comments);

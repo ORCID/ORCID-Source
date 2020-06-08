@@ -22,6 +22,7 @@ import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.google.common.collect.Lists;
@@ -90,8 +91,10 @@ public class ResearchResourceDaoTest extends DBUnitTest{
     }
     
     @Test
-    public void testWriteRR(){
+    public void testWriteRR() throws IllegalAccessException{
         ResearchResourceEntity e = new ResearchResourceEntity();
+        Date d = new Date(Date.parse("2010/07/02 15:31"));
+        DateFieldsOnBaseEntityUtils.setDateFields(e, d);
         e.setDisplayIndex(4l);
         e.setTitle("the title4");
         e.setTranslatedTitle("the translated title4");
@@ -109,9 +112,6 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         ee.setMonth(2);
         ee.setYear(2003);
         e.setEndDate(ee);
-        Date d = new Date(Date.parse("2010/07/02 15:31"));
-        e.setDateCreated(d);
-        e.setLastModified(d);
         e.setClientSourceId("4444-4444-4444-4442");
         e.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}");
         e.setProfile(pDao.find(USER_ORCID));
