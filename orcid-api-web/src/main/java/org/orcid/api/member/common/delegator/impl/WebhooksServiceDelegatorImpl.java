@@ -2,14 +2,11 @@ package org.orcid.api.member.common.delegator.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.member.common.delegator.WebhooksServiceDelegator;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -69,7 +66,6 @@ public class WebhooksServiceDelegatorImpl implements WebhooksServiceDelegator {
         if (isNew) {
             webhook = new WebhookEntity();
             webhook.setProfile(profile);
-            webhook.setDateCreated(new Date());
             webhook.setEnabled(true);
             webhook.setUri(webhookUri);
             webhook.setClientDetails(new ClientDetailsEntity(clientId));

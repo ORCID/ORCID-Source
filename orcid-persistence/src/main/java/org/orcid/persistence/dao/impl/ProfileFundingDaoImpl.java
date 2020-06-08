@@ -195,7 +195,6 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         existing.setType(updated.getType());
         existing.setUrl(updated.getUrl());
         existing.setVisibility(updated.getVisibility());   
-        existing.setLastModified(new Date());
     }
     
     @Override

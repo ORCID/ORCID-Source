@@ -79,7 +79,6 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
         if (userConnection != null) {
             Date now = new Date();
             userConnection.setLastLogin(now);
-            userConnection.setLastModified(now);
             userConnection.setAccesstoken(accessToken);
             userConnection.setExpiretime(expireTime);
             userConnectionDao.merge(userConnection);

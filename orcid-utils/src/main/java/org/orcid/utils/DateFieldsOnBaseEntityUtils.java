@@ -15,4 +15,8 @@ public final class DateFieldsOnBaseEntityUtils {
         FieldUtils.writeField(b, "dateCreated", created, true);
         FieldUtils.writeField(b, "lastModified", lastModified, true);
     }
+    
+    public static void setLastModifiedDateFields(Object b, Date lastModified) throws IllegalAccessException {
+        FieldUtils.writeField(b, "lastModified", lastModified, true);
+    }
 }

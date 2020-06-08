@@ -71,7 +71,6 @@ public class SourceNameCacheManagerTest extends BaseTest {
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
                 RecordNameEntity recordName = new RecordNameEntity();
-                recordName.setLastModified(new Date());
                 recordName.setCreditName("Credit name for " + id);
                 recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.PUBLIC.name());
@@ -84,7 +83,6 @@ public class SourceNameCacheManagerTest extends BaseTest {
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
                 RecordNameEntity recordName = new RecordNameEntity();
-                recordName.setLastModified(new Date());
                 recordName.setCreditName("Credit name for " + id);
                 recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.LIMITED.name());
@@ -97,7 +95,6 @@ public class SourceNameCacheManagerTest extends BaseTest {
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
                 RecordNameEntity recordName = new RecordNameEntity();
-                recordName.setLastModified(new Date());
                 recordName.setCreditName("Credit name for " + id);
                 recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.PRIVATE.name());
@@ -112,7 +109,6 @@ public class SourceNameCacheManagerTest extends BaseTest {
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
                 RecordNameEntity recordName = new RecordNameEntity();
-                recordName.setLastModified(new Date());
                 recordName.setCreditName("Am a USER!!!!");
                 recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.PUBLIC.name());

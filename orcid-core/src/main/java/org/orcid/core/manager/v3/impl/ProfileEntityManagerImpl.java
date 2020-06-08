@@ -406,7 +406,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
         // Update the profile entity fields
         ProfileEntity profile = profileDao.find(orcid);
-        profile.setLastModified(new Date());
         profile.setIndexingStatus(IndexingStatus.REINDEX);
         profile.setClaimed(true);
         profile.setCompletedDate(new Date());

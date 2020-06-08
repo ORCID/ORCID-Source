@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.Relationship;
@@ -45,7 +45,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
-import org.orcid.core.manager.v3.RecordNameManager;
 
 /**
  * 
@@ -85,7 +84,6 @@ public class EmailMessageSenderTest extends BaseTest {
         ProfileEntity entity = new ProfileEntity();
         entity.setId(orcid);
         entity.setLocale(AvailableLocales.EN.name());
-        entity.setLastModified(new Date());
         when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(entity);
         
         RecordNameEntity recordName = new RecordNameEntity();

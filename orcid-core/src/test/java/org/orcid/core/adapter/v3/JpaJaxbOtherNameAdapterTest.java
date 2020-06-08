@@ -104,7 +104,7 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOtherNameEntityToUserOBOOtherNameTest() {   
+    public void fromOtherNameEntityToUserOBOOtherNameTest() throws IllegalAccessException {   
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
