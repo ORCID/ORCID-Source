@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -92,9 +93,8 @@ public class ResearchResourceDaoTest extends DBUnitTest{
     
     @Test
     public void testWriteRR() throws IllegalAccessException{
+        Calendar cal = Calendar.getInstance();
         ResearchResourceEntity e = new ResearchResourceEntity();
-        Date d = new Date(Date.parse("2010/07/02 15:31"));
-        DateFieldsOnBaseEntityUtils.setDateFields(e, d);
         e.setDisplayIndex(4l);
         e.setTitle("the title4");
         e.setTranslatedTitle("the translated title4");
@@ -137,8 +137,17 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals(2003,e1.get(2).getEndDate().getYear().intValue());
         assertEquals(2,e1.get(2).getEndDate().getMonth().intValue());
         assertEquals(1,e1.get(2).getEndDate().getDay().intValue());
-        assertEquals(Date.parse("2010/07/02 15:31"),e1.get(2).getDateCreated().getTime());
-        assertNotNull(e1.get(2).getLastModified().getTime());
+        
+        assertNotNull(e1.get(2).getDateCreated());
+        assertNotNull(e1.get(2).getLastModified());
+        assertEquals(e1.get(2).getDateCreated(), e1.get(2).getLastModified());
+        
+        Calendar dateCreated = Calendar.getInstance();
+        dateCreated.setTime(e1.get(2).getDateCreated());
+        
+        assertEquals(cal.get(Calendar.YEAR), dateCreated.get(Calendar.YEAR));
+        assertEquals(cal.get(Calendar.DAY_OF_YEAR), dateCreated.get(Calendar.DAY_OF_YEAR));
+        
         assertEquals(USER_ORCID,e1.get(2).getProfile().getUsername());
         assertEquals("4444-4444-4444-4442",e1.get(2).getClientSourceId());
         assertEquals("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}",e.getExternalIdentifiersJson());

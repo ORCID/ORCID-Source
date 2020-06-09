@@ -72,8 +72,9 @@ public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<
      */
     @PrePersist
     void prePersist() {
-        dateCreated = new Date();
-        lastModified = new Date();
+        Date now = new Date();
+        dateCreated = now;
+        lastModified = now;
     }
     
     public static <I extends Serializable, E extends OrcidEntity<I>> Map<I, E> mapById(Collection<E> entities) {
