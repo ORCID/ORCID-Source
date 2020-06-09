@@ -38,6 +38,10 @@ public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<
         return dateCreated;
     }    
 
+    void setDateCreated(Date date) {
+        this.dateCreated = date;
+    }
+    
     /**
      * The date that this entity was last updated. This will be the same as the
      * {@link #getDateCreated} only on the initial creation
@@ -49,6 +53,10 @@ public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<
         return lastModified;
     }
 
+    void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+    
     /**
      * Package protected method that is called by the {@link EntityManager}
      * before update. This uses the {@link PreUpdate} annotations
