@@ -22,6 +22,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -38,10 +39,14 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     @Test
     public void fromKeywordToProfileKeywordEntityTest() throws JAXBException {
         Keyword keyword = getKeyword();
+        assertNotNull(keyword);
+        assertNotNull(keyword.getCreatedDate());
+        assertNotNull(keyword.getLastModifiedDate());
+        
         ProfileKeywordEntity entity = adapter.toProfileKeywordEntity(keyword);
         assertNotNull(entity);
-        assertNotNull(entity.getDateCreated());
-        assertNotNull(entity.getLastModified());
+        assertNull(entity.getDateCreated());
+        assertNull(entity.getLastModified());
         assertEquals(Long.valueOf(1), entity.getId());
         assertEquals("keyword1", entity.getKeywordName());        
         assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());
@@ -57,6 +62,10 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         ProfileKeywordEntity entity = getProfileKeywordEntity();
         Keyword keyword = adapter.toKeyword(entity);
         assertNotNull(keyword);
+        assertNotNull(keyword.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(keyword.getCreatedDate().getValue()));
+        assertNotNull(keyword.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(keyword.getLastModifiedDate().getValue()));
         assertEquals("keyword-1", keyword.getContent());
         assertNotNull(keyword.getCreatedDate());
         assertNotNull(keyword.getCreatedDate().getValue());
@@ -77,8 +86,9 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     }
     
     private ProfileKeywordEntity getProfileKeywordEntity() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
-        DateFieldsOnBaseEntityUtils.setDateFields(entity, new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, date);
         entity.setId(Long.valueOf(1));
         entity.setKeywordName("keyword-1");
         entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));

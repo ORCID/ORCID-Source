@@ -71,6 +71,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
+        assertNull(workEntity.getDateCreated());
+        assertNull(workEntity.getLastModified());
         assertEquals(Visibility.PRIVATE.name(), workEntity.getVisibility());
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
@@ -116,6 +118,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         // Verify values are not null
+        assertNotNull(work.getCreatedDate().getValue());
+        assertNotNull(work.getLastModifiedDate().getValue());
         assertNotNull(work.getWorkCitation());
         assertNotNull(work.getWorkCitation().getCitation());
         assertNotNull(work.getWorkCitation().getWorkCitationType());        
@@ -149,7 +153,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNull(workEntity.getJournalTitle());
         assertNull(workEntity.getTranslatedTitle());
         assertNull(workEntity.getTranslatedTitleLanguageCode());
-        assertNull(workEntity.getSubtitle());
+        assertNull(workEntity.getSubtitle());       
         
         // Verify the rest of the fields haven't changed
         WorkEntity workEntity2 = getWorkEntity();
@@ -183,7 +187,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromProfileWorkEntityToWorkTest() throws IllegalAccessException {
+    public void fromWorkEntityToWorkTest() throws IllegalAccessException {
         // Set base url to https to ensure source URI is converted to http
         orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
         WorkEntity work = getWorkEntity();

@@ -1,6 +1,7 @@
 package org.orcid.core.adapter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 
@@ -34,8 +35,8 @@ public class IdentifierTypeConverterTest extends BaseTest {
         assertEquals(true,entity.getIsDeprecated());
         assertEquals("prefix",entity.getResolutionPrefix());
         assertEquals("validation",entity.getValidationRegex());
-        assertEquals(new Date(10,10,10), entity.getDateCreated());
-        assertEquals(new Date(11,11,11), entity.getLastModified());
+        assertNull(entity.getDateCreated());
+        assertNull(entity.getLastModified());
         assertEquals("clientName",entity.getSourceClient().getClientName());
     }
     

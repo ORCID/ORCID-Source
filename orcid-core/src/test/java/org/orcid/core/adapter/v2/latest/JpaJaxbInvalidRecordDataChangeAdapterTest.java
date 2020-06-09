@@ -22,14 +22,14 @@ public class JpaJaxbInvalidRecordDataChangeAdapterTest {
 
     @Resource
     private JpaJaxbInvalidRecordDataChangeAdapter adapter;
-    
-    private final Date date = new Date();
-    
+   
     @Test
     public void fromEntityTest() throws IllegalAccessException {
         InvalidRecordDataChangeEntity entity = getEntity();
         RecordCorrection element = adapter.toInvalidRecordDataChange(entity);
         assertNotNull(element);
+        assertNotNull(element.getDateCreated());
+        assertNotNull(element.getLastModified());
         assertEquals(element.getSequence(), entity.getId());
         assertEquals(element.getDateCreated(), entity.getDateCreated());
         assertEquals(element.getDescription(), entity.getDescription());
@@ -41,7 +41,7 @@ public class JpaJaxbInvalidRecordDataChangeAdapterTest {
     
     private InvalidRecordDataChangeEntity getEntity() throws IllegalAccessException {
         InvalidRecordDataChangeEntity entity = new InvalidRecordDataChangeEntity();
-        DateFieldsOnBaseEntityUtils.setDateFields(entity, date);
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, new Date());
         entity.setDescription("description");
         entity.setId(1234L);
         entity.setNumChanged(24816L);

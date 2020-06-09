@@ -32,6 +32,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -114,8 +115,10 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         EmailEntity entity = getEmailEntity();
         Email email = jpaJaxbEmailAdapter.toEmail(entity);
         assertNotNull(email);
-        assertNotNull(email.getLastModifiedDate().getValue());
-        assertNotNull(email.getCreatedDate().getValue());
+        assertNotNull(email.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(email.getCreatedDate().getValue()));
+        assertNotNull(email.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(email.getLastModifiedDate().getValue()));
         assertEquals("email@test.orcid.org", email.getEmail());
         assertEquals(Visibility.PRIVATE, email.getVisibility());
 
@@ -133,8 +136,10 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         EmailEntity entity = getEmailEntity();
         Email email = jpaJaxbEmailAdapter.toEmail(entity);
         assertNotNull(email);
-        assertNotNull(email.getLastModifiedDate().getValue());
-        assertNotNull(email.getCreatedDate().getValue());
+        assertNotNull(email.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(email.getCreatedDate().getValue()));
+        assertNotNull(email.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(email.getLastModifiedDate().getValue()));
         assertEquals("email@test.orcid.org", email.getEmail());
         assertEquals(Visibility.PRIVATE, email.getVisibility());
 
@@ -151,8 +156,9 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
     }
 
     private EmailEntity getEmailEntity() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         EmailEntity result = new EmailEntity();
-        DateFieldsOnBaseEntityUtils.setDateFields(result, new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setEmail("email@test.orcid.org");
         result.setCurrent(true);
         result.setPrimary(true);
