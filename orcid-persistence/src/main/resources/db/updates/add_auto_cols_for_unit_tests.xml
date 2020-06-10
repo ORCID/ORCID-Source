@@ -1,0 +1,13 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE-AUTOCOLS-BACKUP_CODE" author="Angel Montenegro" dbms="hsqldb">    	
+        <addAutoIncrement tableName="backup_code" columnName="id" columnDataType="bigint"/>        
+    </changeSet>
+	
+	<changeSet id="CREATE-AUTOCOLS-PROFILE_HISTORY_EVENT" author="Angel Montenegro" dbms="hsqldb">    	
+        <addAutoIncrement tableName="profile_history_event" columnName="id" columnDataType="bigint"/>        
+    </changeSet>
+	
+</databaseChangeLog>

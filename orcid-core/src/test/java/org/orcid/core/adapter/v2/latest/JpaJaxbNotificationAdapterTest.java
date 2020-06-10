@@ -79,8 +79,8 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationCustom notificationCustom = (NotificationCustom) notification;
         assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
         assertEquals("Test subject", notificationCustom.getSubject());
-        assertEquals("2014-01-01T09:17:56.000-06:00", notification.getCreatedDate().toXMLFormat());
-        assertEquals("2014-03-04T17:43:06.000-06:00", notification.getReadDate().toXMLFormat());
+        assertTrue(notification.getCreatedDate().toXMLFormat().startsWith("2014-01-01T09:17:56"));
+        assertTrue(notification.getReadDate().toXMLFormat().startsWith("2014-03-04T17:43:06"));
     }
 
     @Test
