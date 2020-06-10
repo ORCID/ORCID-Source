@@ -12,7 +12,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +32,8 @@ import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -45,8 +46,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
 
-    private final Date now = new Date();
-    
     @Resource(name = "jpaJaxbAddressAdapterV3")
     private JpaJaxbAddressAdapter adapter;
 
@@ -114,8 +113,10 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         Address address = adapter.toAddress(entity);
         assertNotNull(address);
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
-        assertEquals(now, address.getCreatedDate());
-        assertEquals(now, address.getLastModifiedDate());
+        assertNotNull(address.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(address.getCreatedDate().getValue()));
+        assertNotNull(address.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(address.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(1), address.getPutCode());
         assertNotNull(address.getSource());
         assertEquals(CLIENT_SOURCE_ID, address.getSource().retrieveSourcePath());
@@ -135,6 +136,10 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         AddressEntity entity = getAddressEntity();
         Address address = adapter.toAddress(entity);
         assertNotNull(address);
+        assertNotNull(address.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(address.getCreatedDate().getValue()));
+        assertNotNull(address.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(address.getLastModifiedDate().getValue()));        
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
         assertNotNull(address.getCreatedDate());
         assertNotNull(address.getLastModifiedDate());
@@ -156,10 +161,10 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
     }
 
     private AddressEntity getAddressEntity() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         AddressEntity result = new AddressEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setId(Long.valueOf(1));
-        FieldUtils.writeField(result, "dateCreated", now, true);
-        FieldUtils.writeField(result, "lastModified", now, true);
         result.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name());
         result.setUser(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());

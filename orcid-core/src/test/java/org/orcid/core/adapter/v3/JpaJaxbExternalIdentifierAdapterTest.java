@@ -102,8 +102,8 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         assertEquals("A-0003", entity.getExternalIdReference());
         assertEquals("http://ext-id/A-0003", entity.getExternalIdUrl());
         assertEquals(Long.valueOf(1), entity.getId());
-        assertNotNull(entity.getDateCreated());
-        assertNotNull(entity.getLastModified());
+        assertNull(entity.getDateCreated());
+        assertNull(entity.getLastModified());
 
         // Source
         assertNull(entity.getSourceId());

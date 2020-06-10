@@ -120,8 +120,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
+        assertNull(workEntity.getDateCreated());
+        assertNull(workEntity.getLastModified());
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), workEntity.getVisibility());
-        assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
         assertTrue(PojoUtil.isEmpty(workEntity.getSubtitle()));
@@ -265,6 +266,10 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
+        assertNotNull(ws.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(ws.getCreatedDate().getValue()));
+        assertNotNull(ws.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(ws.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(12345), ws.getPutCode());
         assertEquals(Visibility.LIMITED.value(), ws.getVisibility().value());
         assertEquals("1234567890", ws.getDisplayIndex());
@@ -304,6 +309,10 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
+        assertNotNull(ws.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(ws.getCreatedDate().getValue()));
+        assertNotNull(ws.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(ws.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(12345), ws.getPutCode());
         assertEquals(Visibility.LIMITED.value(), ws.getVisibility().value());
         assertEquals("1234567890", ws.getDisplayIndex());
@@ -376,6 +385,10 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         // Verify values are not null
+        assertNotNull(work.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(work.getCreatedDate().getValue()));
+        assertNotNull(work.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(work.getLastModifiedDate().getValue()));
         assertNotNull(work.getWorkCitation());
         assertNotNull(work.getWorkCitation().getCitation());
         assertNotNull(work.getWorkCitation().getWorkCitationType());        
@@ -401,6 +414,11 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         // Update work entity
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
+        
+        // Verify date created and last modified wasn't changed
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
+        assertEquals(date, workEntity.getDateCreated());
+        assertEquals(date, workEntity.getLastModified());
         
         // Verify citation, country, journal title, url, translated title and subtitle get nullified
         assertNull(workEntity.getCitation());

@@ -33,6 +33,7 @@ import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -62,7 +63,7 @@ public class JpaJaxbClientAdapterTest {
         entities.add(entity1);
         Set<Client> clients = adapter.toClientList(entities);
         assertEquals(1, clients.size());
-        for (Client client : clients) {
+        for (Client client : clients) {            
             assertEquals(getClient(), client);
         }
     }
@@ -76,7 +77,8 @@ public class JpaJaxbClientAdapterTest {
         // Configuration values should be the default
         assertFalse(entity.isPersistentTokensEnabled());
         assertNull(entity.getAuthenticationProviderId());
-        
+        assertNull(entity.getDateCreated());
+        assertNull(entity.getLastModified());
         assertEquals(toCompare.getClientDescription(), entity.getClientDescription());
         assertEquals(toCompare.getClientId(), entity.getClientId());
         assertEquals(toCompare.getClientName(), entity.getClientName());
@@ -161,8 +163,9 @@ public class JpaJaxbClientAdapterTest {
 
     private ClientDetailsEntity getClientDetailsEntity() throws IllegalAccessException {
         Date now = new Date();
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         ClientDetailsEntity entity = new ClientDetailsEntity();
-        DateFieldsOnBaseEntityUtils.setDateFields(entity, now); 
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, date); 
         entity.setAllowAutoDeprecate(true);
         entity.setAuthenticationProviderId("authentication-provider-id");
         entity.setClientDescription("description");

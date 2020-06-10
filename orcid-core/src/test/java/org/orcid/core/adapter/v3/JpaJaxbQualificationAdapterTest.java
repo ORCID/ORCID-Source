@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -35,6 +36,8 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -100,6 +103,8 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
         OrgAffiliationRelationEntity oar = adapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
         //General info
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
         assertEquals(Long.valueOf(0), oar.getId());
         assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
         assertEquals("department-name", oar.getDepartment());
@@ -134,6 +139,8 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
         assertNull(oar.getUrl());
         
         //General info
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
         assertEquals(Long.valueOf(0), oar.getId());
         assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
         assertEquals("department-name", oar.getDepartment());
@@ -154,11 +161,15 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOrgAffiliationRelationEntityToQualification() {
+    public void fromOrgAffiliationRelationEntityToQualification() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEntity();
         assertNotNull(entity);
         Qualification qualification = adapter.toQualification(entity);
         assertNotNull(qualification);
+        assertNotNull(qualification.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(qualification.getCreatedDate().getValue()));
+        assertNotNull(qualification.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(qualification.getLastModifiedDate().getValue()));
         assertEquals("qualification:department", qualification.getDepartmentName());
         assertEquals(Long.valueOf(123456), qualification.getPutCode());
         assertEquals("qualification:title", qualification.getRoleTitle());
@@ -186,11 +197,15 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOrgAffiliationRelationEntityToQualificationSummary() {
+    public void fromOrgAffiliationRelationEntityToQualificationSummary() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEntity();
         assertNotNull(entity);
         QualificationSummary summary = adapter.toQualificationSummary(entity);
         assertNotNull(summary);
+        assertNotNull(summary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getCreatedDate().getValue()));
+        assertNotNull(summary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getLastModifiedDate().getValue()));
         assertEquals("qualification:department", summary.getDepartmentName());
         assertEquals(Long.valueOf(123456), summary.getPutCode());
         assertEquals("qualification:title", summary.getRoleTitle());
@@ -212,7 +227,7 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOrgAffiliationRelationEntityToUserOBOQualification() {
+    public void fromOrgAffiliationRelationEntityToUserOBOQualification() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -222,6 +237,10 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         Qualification qualification = adapter.toQualification(entity);
         assertNotNull(qualification);
+        assertNotNull(qualification.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(qualification.getCreatedDate().getValue()));
+        assertNotNull(qualification.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(qualification.getLastModifiedDate().getValue()));
         assertEquals("qualification:department", qualification.getDepartmentName());
         assertEquals(Long.valueOf(123456), qualification.getPutCode());
         assertEquals("qualification:title", qualification.getRoleTitle());
@@ -249,7 +268,7 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOrgAffiliationRelationEntityToUserOBOQualificationSummary() {
+    public void fromOrgAffiliationRelationEntityToUserOBOQualificationSummary() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -259,6 +278,10 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         QualificationSummary summary = adapter.toQualificationSummary(entity);
         assertNotNull(summary);
+        assertNotNull(summary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getCreatedDate().getValue()));
+        assertNotNull(summary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getLastModifiedDate().getValue()));
         assertEquals("qualification:department", summary.getDepartmentName());
         assertEquals(Long.valueOf(123456), summary.getPutCode());
         assertEquals("qualification:title", summary.getRoleTitle());
@@ -287,7 +310,7 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
         return (Qualification) unmarshaller.unmarshal(inputStream);
     }
     
-    private OrgAffiliationRelationEntity getEntity() {
+    private OrgAffiliationRelationEntity getEntity() throws IllegalAccessException {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
         orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
@@ -302,7 +325,9 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
         sourceEntity.setSourceClient(clientDetailsEntity);
         orgEntity.setSource(sourceEntity);
         
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setAffiliationType(AffiliationType.QUALIFICATION.name());
         result.setDepartment("qualification:department");
         result.setEndDate(new EndDateEntity(2020, 2, 2));

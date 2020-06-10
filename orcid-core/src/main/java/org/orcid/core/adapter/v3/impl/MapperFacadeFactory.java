@@ -570,6 +570,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.register();
 
         ClassMapBuilder<WorkSummary, WorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, WorkEntity.class);
+        addV3CommonFields(workSummaryClassMap);
         registerSourceConverters(mapperFactory, workSummaryClassMap);
         workSummaryClassMap.field("putCode", "id");
         workSummaryClassMap.field("title.title.content", "title");

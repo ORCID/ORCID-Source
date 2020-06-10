@@ -108,8 +108,6 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
-        assertNotNull(oar.getDateCreated());
-        assertNotNull(oar.getLastModified());
         // General info
         assertEquals(Long.valueOf(0), oar.getId());
         assertNull(oar.getDateCreated());
