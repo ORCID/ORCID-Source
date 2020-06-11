@@ -133,7 +133,7 @@ public class EmailDaoTest extends DBUnitTest {
     @Test
     public void mergeTest() {
         EmailEntity e = emailDao.findByEmail("teddybass2@semantico.com");
-        e.setCurrent(Boolean.TRUE);
+        e.setCurrent(Boolean.FALSE);
         Date dateCreated = e.getDateCreated();
         Date lastModified = e.getLastModified();
         emailDao.merge(e);
@@ -149,7 +149,10 @@ public class EmailDaoTest extends DBUnitTest {
         e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
         e.setEmail("testEmail@test.orcid.org");
         e.setId("HASHED_EMAIL");
-        e.setPrimary(true);
+        e.setVisibility("PUBLIC");
+        e.setCurrent(Boolean.FALSE);
+        e.setPrimary(Boolean.FALSE);
+        e.setVerified(Boolean.FALSE);
         emailDao.persist(e);
         assertNotNull(e.getId());
         assertNotNull(e.getDateCreated());
