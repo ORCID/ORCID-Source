@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -87,5 +88,39 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         assertEquals(0, finalNumberOfElementsThatBelogsToUser);
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
+    }
+    
+    @Test
+    public void mergeTest() {
+        ProfileKeywordEntity e = dao.find(16L);
+        e.setDisplayIndex(1000L);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        dao.merge(e);
+
+        ProfileKeywordEntity updated = dao.find(16L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        ProfileKeywordEntity e = new ProfileKeywordEntity();
+        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setVisibility("PRIVATE");
+        e.setKeywordName("KEYWORD");
+        
+        dao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        ProfileKeywordEntity e2 = dao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
 }

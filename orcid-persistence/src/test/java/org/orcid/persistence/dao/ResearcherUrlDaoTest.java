@@ -147,4 +147,38 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
     }
+    
+    @Test
+    public void mergeTest() {
+        ResearcherUrlEntity e = dao.find(20L);
+        e.setDisplayIndex(1000L);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        dao.merge(e);
+
+        ResearcherUrlEntity updated = dao.find(20L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        ResearcherUrlEntity e = new ResearcherUrlEntity();
+        e.setUser(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setVisibility("PUBLIC");
+        e.setUrl("https://orcid.org");
+        
+        dao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        ResearcherUrlEntity e2 = dao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
+    }
 }

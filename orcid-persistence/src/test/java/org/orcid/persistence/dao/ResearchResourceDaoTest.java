@@ -18,12 +18,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.google.common.collect.Lists;
@@ -174,5 +174,41 @@ public class ResearchResourceDaoTest extends DBUnitTest{
     public void testHasPublicResearchResources() {
         assertTrue(dao.hasPublicResearchResources("0000-0000-0000-0003"));
         assertFalse(dao.hasPublicResearchResources("0000-0000-0000-0002"));
+    }
+    
+    @Test
+    public void mergeTest() {
+        ResearchResourceEntity e = dao.find(6L);
+        e.setProposalType("PROPOSAL_TYPE");
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        dao.merge(e);
+
+        ResearchResourceEntity updated = dao.find(6L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        ResearchResourceEntity e = new ResearchResourceEntity();
+        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setVisibility("PRIVATE");
+        e.setTitle("TITLE");
+        e.setProposalType("PROPOSAL_TYPE");
+        e.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#5&quot;}}]}");
+        
+        dao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        ResearchResourceEntity e2 = dao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
 }

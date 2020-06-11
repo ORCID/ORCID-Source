@@ -29,9 +29,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -131,6 +129,7 @@ public class ProfileDaoTest extends DBUnitTest {
         profile = profileDao.find(profile.getId());
         assertNotNull(profile.getDateCreated());
         assertNotNull(profile.getLastModified());
+        assertEquals(profile.getDateCreated(), profile.getLastModified());
         
         Long count = profileDao.countAll();
         assertEquals(Long.valueOf(23), count);
