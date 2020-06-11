@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
@@ -182,6 +183,8 @@ public class EmailManagerTest extends BaseTest {
         assertFalse(element.isCurrent());
         assertFalse(element.isPrimary());
         assertFalse(element.isVerified());
+        XMLGregorianCalendar dateCreated = element.getCreatedDate().getValue();
+        XMLGregorianCalendar lastModified = element.getLastModifiedDate().getValue();
         
         emailManager.verifySetCurrentAndPrimary(orcid, email);
         
@@ -198,6 +201,11 @@ public class EmailManagerTest extends BaseTest {
         assertTrue(element.isCurrent());
         assertTrue(element.isPrimary());
         assertTrue(element.isVerified());
+
+        XMLGregorianCalendar newDateCreated = element.getCreatedDate().getValue();
+        XMLGregorianCalendar newLastModified = element.getLastModifiedDate().getValue();
+        assertEquals(dateCreated, newDateCreated);
+        assertTrue(newLastModified.getMillisecond() > lastModified.getMillisecond());
     }
     
     @Test

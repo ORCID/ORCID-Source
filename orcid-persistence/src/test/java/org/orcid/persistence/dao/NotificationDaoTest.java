@@ -583,4 +583,40 @@ public class NotificationDaoTest extends DBUnitTest {
         assertTrue(found3);
         assertEquals(1, count3);        
     }
+    
+    @Test
+    public void mergeTest() {
+        NotificationEntity e = notificationDao.find(14L);
+        e.setActionedDate(new Date());
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        notificationDao.merge(e);
+
+        NotificationEntity updated = notificationDao.find(14L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        NotificationEntity e = new NotificationAmendedEntity();
+        e.setProfile(new ProfileEntity("0000-0000-0000-0003")); 
+        e.setNotificationFamily("FAMILY");
+        e.setNotificationIntro("INTRO");
+        e.setNotificationSubject("SUBJECT");
+        e.setNotificationType("AMENDED");
+        
+        notificationDao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        NotificationEntity e2 = notificationDao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
+    }
 }
