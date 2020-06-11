@@ -38,7 +38,7 @@
                                                 <div *ngIf="email.edit">
                                                     <input autofocus [(ngModel)]="emailEditingNewValue"  (keyup.enter)="emailEditSave()">
                                                     <br/>
-                                                    <div  class="save-edit-button" (click)="emailEditSave()" style="padding-left: 5px; word-break: break-word;"> SAVE</div>
+                                                    <div  class="save-edit-button" (click)="emailEditSave(email)" style="padding-left: 5px; word-break: break-word;"> SAVE</div>
                                                     <div  class="cancel-edit-button" (click)="emailEditingCancel(email)" style="padding-left: 5px; word-break: break-word;"> CANCEL</div>
                                                 </div>
                                                 
