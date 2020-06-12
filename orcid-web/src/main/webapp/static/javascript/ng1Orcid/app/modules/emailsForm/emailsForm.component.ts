@@ -538,15 +538,10 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.emailEditingShow(this.emailEditing)
     }
 
-    emailEditSave() {
+    emailEditSave(email) {
         if (this.emailEditing !== this.emailEditingNewValue) {
             // add new email
-            let isPrimary;
-            for (let email of this.formData.emails) {
-                if (email.value === this.emailEditing) {
-                    isPrimary = email.primary
-                }
-            };
+            let isPrimary = email.primary;
 
             this.emailService.editEmail( this.emailEditing, this.emailEditingNewValue )
             .subscribe(
@@ -571,7 +566,8 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         } else {
-            // if nothing change on the email edit 
+            // if nothing change on the email edit
+            email.edit = false
             this.emailEditing = this.emailEditingNewValue = null
             this.emailEditingErrors = null
         }
