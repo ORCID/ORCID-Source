@@ -72,7 +72,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ActivityValidator {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivityValidator.class);
 
     @Resource(name = "externalIDValidatorV3")
@@ -83,7 +83,7 @@ public class ActivityValidator {
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
-    
+
     @Resource
     PIDResolverService resolverService;
 
@@ -228,12 +228,12 @@ public class ActivityValidator {
                 || work.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         } else {
-            // Validate DOI's are resolvable 
-            for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-                if(extId.getType().equals("doi")) {
+            // Validate DOI's are resolvable
+            for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                if (extId.getType().equals("doi")) {
                     try {
                         resolverService.resolve(extId.getType(), extId.getValue());
-                    } catch(IllegalArgumentException iae) {
+                    } catch (IllegalArgumentException iae) {
                         LOGGER.warn("Invalid DOI provided: " + extId.getValue());
                     }
                 }
@@ -442,7 +442,7 @@ public class ActivityValidator {
         }
 
         if (isApiRequest) {
-            if (peerReview.getOrganization() != null) {
+            if (peerReview.getOrganization() != null && peerReview.getOrganization().getDisambiguatedOrganization() != null) {
                 validateDisambiguatedOrg(peerReview);
             }
             if (peerReview.getCompletionDate() != null) {

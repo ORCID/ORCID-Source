@@ -110,10 +110,8 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
         PeerReviewEntity entity = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview);
 
-        if (peerReview.getOrganization() != null) {
-            OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
-            entity.setOrg(updatedOrganization);
-        }
+        OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
+        entity.setOrg(updatedOrganization);
 
         // Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
