@@ -119,8 +119,12 @@ public class EmailFrequencyDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         EmailFrequencyEntity e = new EmailFrequencyEntity();
-        e.setOrcid("0000-0000-0000-0002"); 
+        e.setOrcid("0000-0000-0000-0001"); 
         e.setSendQuarterlyTips(Boolean.FALSE);
+        e.setId("UUID10000");
+        e.setSendAdministrativeChangeNotifications(0.0F);
+        e.setSendChangeNotifications(0.0F);
+        e.setSendMemberUpdateRequests(0.0F);
         dao.persist(e);
         assertNotNull(e.getId());
         assertNotNull(e.getDateCreated());

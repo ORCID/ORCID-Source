@@ -102,5 +102,39 @@ public class SpamDaoTest extends DBUnitTest {
         assertFalse(spamDao.exists("0000-0000-0000-0005"));
         assertFalse(spamDao.exists("0000-0000-0000-0006"));
     }
+    
+    @Test
+    public void mergeTest() {
+        SpamEntity e = spamDao.find(3L);
+        e.setSpamCounter(2);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        spamDao.merge(e);
+
+        SpamEntity updated = spamDao.find(3L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        SpamEntity e = new SpamEntity();
+        e.setOrcid("0000-0000-0000-0002"); 
+        e.setSourceType(SourceType.USER);
+        e.setSpamCounter(1);
+        
+        spamDao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        SpamEntity e2 = spamDao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
+    }
 
 }

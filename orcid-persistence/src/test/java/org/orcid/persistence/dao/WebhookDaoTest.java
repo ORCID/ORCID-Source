@@ -27,11 +27,9 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
-@Transactional
 public class WebhookDaoTest extends DBUnitTest {
 
     @Resource
@@ -74,8 +72,13 @@ public class WebhookDaoTest extends DBUnitTest {
         webhook.setProfile(profile);
         webhook.setUri("http://semantico.com/orcid/1234");
         webhook.setClientDetails(clientDetails);
-        webhookDao.merge(webhook);
+        webhook = webhookDao.merge(webhook);
 
+        assertNotNull(webhook.getId());
+        assertNotNull(webhook.getDateCreated());
+        assertNotNull(webhook.getLastModified());
+        assertEquals(webhook.getDateCreated(), webhook.getLastModified());
+        
         WebhookEntityPk pk = new WebhookEntityPk();
         pk.setProfile(profile);
         pk.setUri("http://semantico.com/orcid/1234");
@@ -88,6 +91,11 @@ public class WebhookDaoTest extends DBUnitTest {
         assertTrue(retrieved.isEnabled());
         assertEquals(0, retrieved.getFailedAttemptCount());
         assertNull(retrieved.getLastFailed());
+        assertNotNull(retrieved.getDateCreated());
+        assertNotNull(retrieved.getLastModified());
+        assertEquals(webhook.getLastModified(), retrieved.getLastModified());
+        assertEquals(webhook.getDateCreated(), retrieved.getDateCreated());
+        assertEquals(retrieved.getDateCreated(), retrieved.getLastModified());
 
         webhookDao.remove(pk);
         retrieved = webhookDao.find(pk);
@@ -134,4 +142,19 @@ public class WebhookDaoTest extends DBUnitTest {
         assertEquals(1, count);
     }
 
+    @Test
+    public void mergeTest() {
+        ProfileEntity p = new ProfileEntity("4444-4444-4444-4444");
+        WebhookEntityPk pk = new WebhookEntityPk(p, "http://nowhere.com/orcid/4444-4444-4444-4444");
+        WebhookEntity e = webhookDao.find(pk);
+        e.setFailedAttemptCount(100);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        webhookDao.merge(e);
+
+        WebhookEntity updated = webhookDao.find(pk);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+       
 }

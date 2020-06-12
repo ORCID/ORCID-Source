@@ -147,7 +147,7 @@ public class OtherNameDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         OtherNameEntity e = new OtherNameEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0003")); 
+        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
         e.setVisibility("PUBLIC");
         e.setDisplayName("OTHER_NAME");
         
