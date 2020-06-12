@@ -776,7 +776,7 @@ public class ActivityValidatorTest {
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
 
-    @Test(expected = InvalidDisambiguatedOrgException.class)
+    @Test
     public void validatePeerReviewWithoutDisambiguatedOrg() {
         PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
         pr.getOrganization().setDisambiguatedOrganization(null);
