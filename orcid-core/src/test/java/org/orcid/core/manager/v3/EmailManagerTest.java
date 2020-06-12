@@ -44,7 +44,6 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -55,7 +54,7 @@ public class EmailManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
-    private final Date pastDate= new Date(System.currentTimeMillis() - 10000);
+    private final Date pastDate= new Date();
     
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
@@ -293,8 +292,7 @@ public class EmailManagerTest extends BaseTest {
         primaryEmailEntity.setPrimary(Boolean.TRUE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
-        primaryEmailEntity.setId("some-email-hash");
-        DateFieldsOnBaseEntityUtils.setDateFields(primaryEmailEntity, pastDate);
+        primaryEmailEntity.setId("some-email-hash");        
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("original"))).thenReturn(primaryEmailEntity);
         
@@ -310,10 +308,6 @@ public class EmailManagerTest extends BaseTest {
         assertTrue(mergedEntity.getPrimary());
         assertFalse(mergedEntity.getVerified());
         assertEquals("PRIVATE", mergedEntity.getVisibility());
-        assertEquals(pastDate, mergedEntity.getDateCreated());
-        assertNotNull(mergedEntity.getLastModified());
-        // Verify it was modified by the aspect
-        assertTrue(mergedEntity.getLastModified().after(pastDate));
     }
     
     @Test
@@ -326,8 +320,7 @@ public class EmailManagerTest extends BaseTest {
         primaryEmailEntity.setPrimary(Boolean.FALSE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
-        primaryEmailEntity.setId("some-email-hash");
-        DateFieldsOnBaseEntityUtils.setDateFields(primaryEmailEntity, pastDate);
+        primaryEmailEntity.setId("some-email-hash");        
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("original"))).thenReturn(primaryEmailEntity);
         
@@ -343,9 +336,6 @@ public class EmailManagerTest extends BaseTest {
         assertFalse(mergedEntity.getPrimary());
         assertFalse(mergedEntity.getVerified());
         assertEquals("PRIVATE", mergedEntity.getVisibility());
-        assertEquals(pastDate, mergedEntity.getDateCreated());
-        assertNotNull(mergedEntity.getLastModified());
-        assertTrue(mergedEntity.getLastModified().after(pastDate));
     }
     
     @Test
@@ -358,8 +348,7 @@ public class EmailManagerTest extends BaseTest {
         primaryEmailEntity.setPrimary(Boolean.TRUE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
-        primaryEmailEntity.setId("some-email-hash");
-        DateFieldsOnBaseEntityUtils.setDateFields(primaryEmailEntity, pastDate);
+        primaryEmailEntity.setId("some-email-hash");        
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("email"))).thenReturn(primaryEmailEntity);
         
@@ -375,9 +364,6 @@ public class EmailManagerTest extends BaseTest {
         assertTrue(mergedEntity.getPrimary());
         assertFalse(mergedEntity.getVerified());
         assertEquals("PRIVATE", mergedEntity.getVisibility());
-        assertEquals(pastDate, mergedEntity.getDateCreated());
-        assertNotNull(mergedEntity.getLastModified());
-        assertTrue(mergedEntity.getLastModified().after(pastDate));
     }
     
     @Test
@@ -422,7 +408,6 @@ public class EmailManagerTest extends BaseTest {
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
         primaryEmailEntity.setId("some-email-hash");
-        DateFieldsOnBaseEntityUtils.setDateFields(primaryEmailEntity, pastDate);
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("original"))).thenReturn(primaryEmailEntity);
         
@@ -438,9 +423,6 @@ public class EmailManagerTest extends BaseTest {
             EmailEntity entity = captor.getValue();
             assertEquals(filteredEmail, entity.getEmail());
             assertEquals(encryptionManager.getEmailHash(filteredEmail), entity.getId());
-            assertEquals(pastDate, entity.getDateCreated());
-            assertNotNull(entity.getLastModified());
-            assertTrue(entity.getLastModified().after(pastDate));
         }        
     }
     
@@ -458,7 +440,6 @@ public class EmailManagerTest extends BaseTest {
         primaryEmailEntity.setVisibility("PRIVATE");
         primaryEmailEntity.setId("some-email-hash");
         primaryEmailEntity.setProfile(new ProfileEntity(ORCID));
-        DateFieldsOnBaseEntityUtils.setDateFields(primaryEmailEntity, pastDate);
         
         Mockito.when(mockEmailDao.find(Mockito.anyString())).thenReturn(primaryEmailEntity);
         
@@ -473,10 +454,7 @@ public class EmailManagerTest extends BaseTest {
             
             EmailEntity entity = captor.getValue();
             assertEquals(filteredEmail, entity.getEmail());
-            assertEquals("some-email-hash", entity.getId());
-            assertEquals(pastDate, entity.getDateCreated());
-            assertNotNull(entity.getLastModified());
-            assertTrue(entity.getLastModified().after(pastDate));
+            assertEquals("some-email-hash", entity.getId());            
         }  
     }
     
