@@ -309,4 +309,5 @@
   <include file="/db/updates/remove_contributorsjson_from_dw_work_view.xml" />
   <include file="/db/updates/grant_write_to_dw_user_for_dw_active_users.xml" />
   <include file="/db/updates/add_auto_cols_for_unit_tests.xml" />
+  <include file="/db/updates/dw_views_to_use_db_id.xml" />
 </databaseChangeLog>
