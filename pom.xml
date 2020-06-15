@@ -27,7 +27,7 @@ the software.
 
     <properties>
         <spring.version>4.3.18.RELEASE</spring.version>
-        <security.version>4.2.13.RELEASE</security.version>
+        <security.version>5.3.3.RELEASE</security.version>
         <jersey.version>1.19.1</jersey.version>
         <swagger.version>1.5.16</swagger.version>
         <aspectj.version>1.8.4</aspectj.version>
