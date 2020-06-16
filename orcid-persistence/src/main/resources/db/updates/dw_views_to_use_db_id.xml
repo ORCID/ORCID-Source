@@ -5,7 +5,7 @@
     <changeSet id="CREATE-DW-ORG-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_org" replaceIfExists="true">
             select id as db_id, name, city, region, country, url, org_disambiguated_id,
-            date_created, last_modified
+            date_created::timestamp, last_modified::timestamp
             from org
         </createView>
     </changeSet>
@@ -16,13 +16,42 @@
         </preConditions>
         <sql>GRANT SELECT ON TABLE dw_org to dw_user;</sql>
     </changeSet>
+    
+    <changeSet id="CREATE-DW-EMAIL-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_email" replaceIfExists="true">
+            select substring(email from '@(.*)$') as email, orcid, is_primary, is_verified, visibility,
+            date_created::timestamp, last_modified::timestamp
+            from email
+        </createView>
+    </changeSet>
 
-    <changeSet id="CREATE-DW-ORG-AFFILIATION-RELATION-VIEW" author="Camelia Dumitru" dbms="postgresql">
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-EMAIL-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_email to dw_user;</sql>
+    </changeSet>
+    
+    <changeSet id="ALTER-DW-GIVEN-PERMISSONS-TO-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_given_permission_to" replaceIfExists="true">
+            select given_permission_to_id, receiver_orcid, giver_orcid, approval_date::timestamp, date_created::timestamp, last_modified::timestamp 
+            from given_permission_to
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-GIVEN-PERMISSONS-TO" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_given_permission_to to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="ALTER-DW-ORG-AFFILIATION-RELATION-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_org_affiliation_relation" replaceIfExists="true">
             select id as db_id, org_id, orcid, org_affiliation_relation_role, org_affiliation_relation_title,
             department, start_day, start_month, start_year, end_day, end_month, end_year, visibility,
             case when orcid = source_id then true else false end as self_asserted, client_source_id, url, external_ids_json,
-            date_created, last_modified
+            date_created::timestamp, last_modified::timestamp
             from org_affiliation_relation
         </createView>
     </changeSet>
@@ -37,7 +66,7 @@
     <changeSet id="CREATE-DW-ORG-DISAMBIGUATED" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_org_disambiguated" replaceIfExists="true">
             select id as db_id, source_id, source_url, source_type, org_type, name,
-            city, region, country, url, status, date_created, last_modified, popularity
+            city, region, country, url, status, date_created::timestamp, last_modified::timestamp, popularity
             from org_disambiguated
         </createView>
     </changeSet>
@@ -52,7 +81,7 @@
     <changeSet id="CREATE-DW-ORG-DISAM-EXTERNAL-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_org_disambiguated_external_identifier" replaceIfExists="true">
             select id as db_id, org_disambiguated_id, identifier, identifier_type, preferred,
-            date_created, last_modified
+            date_created::timestamp, last_modified::timestamp
             from org_disambiguated_external_identifier
         </createView>
     </changeSet>
@@ -70,7 +99,7 @@
             peer_review_role, peer_review_type, completion_day, completion_month, completion_year,
             url, visibility, subject_external_identifiers_json, subject_type, subject_container_name,
             subject_name, subject_url, group_id, client_source_id,
-            date_created, last_modified
+            date_created::timestamp, last_modified::timestamp
             from peer_review
         </createView>
     </changeSet>
@@ -87,7 +116,7 @@
             select id as db_id, orcid, org_id, title, type, currency_code, numeric_amount, description, start_day, start_month,
             start_year, end_day, end_month, end_year, url, contributors_json, organization_defined_type,
             external_identifiers_json, visibility, case when orcid = source_id then true else false end as self_asserted, client_source_id,
-            date_created, last_modified
+            date_created::timestamp, last_modified::timestamp
             from profile_funding
         </createView>
     </changeSet>
@@ -108,7 +137,7 @@
         </createView>
     </changeSet>
 
-    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RESOURCE" author="Daniel Palafox" dbms="postgresql">
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RESOURCE" author="Camelia Dumitru" dbms="postgresql">
         <preConditions>
             <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
         </preConditions>
@@ -118,7 +147,7 @@
     <changeSet id="ALTER-DW-RESEARCH-RESOURCE-ITEM-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_research_resource_item" replaceIfExists="true">
             select a.id as db_id, a.research_resource_id, a.resource_name, a.resource_type, a.external_identifiers_json, 
-            a.url, b.date_created, b.last_modified
+            a.url, b.date_created::timestamp, b.last_modified::timestamp
             from research_resource_item a 
             inner join research_resource b on a.research_resource_id =b.id
         </createView>
@@ -164,7 +193,7 @@
     <changeSet id="CREATE-DW-BIOGRAPHY-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_biography" replaceIfExists="true">
             select id as db_id, orcid, biography, visibility,
-            date_created, last_modified
+            date_created::timestamp, last_modified::timestamp
             from biography
         </createView>
     </changeSet>
@@ -209,7 +238,7 @@
     <changeSet id="CREATE-DW-RECORD-NAME-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_record_name" replaceIfExists="true">
             select id as db_id, orcid, credit_name, family_name, given_names, visibility,
-            date_created, last_modified
+            date_created::timestamp, last_modified::timestamp
             from record_name
         </createView>
     </changeSet>
@@ -254,7 +283,7 @@
     
    <changeSet id="CREATE-DW-GROUP-ID-RECORD-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_group_id_record" replaceIfExists="true">
-            select id as db_id, group_id, group_name, group_type, client_source_id, date_created, last_modified
+            select id as db_id, group_id, group_name, group_type, client_source_id, date_created::timestamp, last_modified::timestamp
             from group_id_record
         </createView>
     </changeSet>
@@ -269,7 +298,7 @@
    <changeSet id="CREATE-DW-IDENTIFIER-TYPE-VIEW" author="Camelia Dumitru"  dbms="postgresql">
         <createView viewName="dw_identifier_type" replaceIfExists="true">
             select id as db_id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, primary_use,
-            case_sensitive, date_created, last_modified
+            case_sensitive, date_created::timestamp, last_modified::timestamp
             from identifier_type
         </createView>
     </changeSet>
@@ -283,7 +312,7 @@
     
    <changeSet id="CREATE-DW-IDENTITY-PROVIDER-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_identity_provider" replaceIfExists="true">
-            select id as db_id, providerid, display_name, last_failed, failed_count, date_created, last_modified
+            select id as db_id, providerid, display_name, last_failed::timestamp, failed_count, date_created::timestamp, last_modified::timestamp
             from identity_provider
         </createView>
     </changeSet>
@@ -297,7 +326,7 @@
     
     <changeSet id="CREATE-DW-PROFILE_HISTORY-EVENT-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_profile_history_event" replaceIfExists="true">
-            select id as db_id, orcid, event_type, date_created, last_modified
+            select id as db_id, orcid, event_type, date_created::timestamp, last_modified::timestamp
             from profile_history_event
         </createView>
     </changeSet>
@@ -309,4 +338,49 @@
         <sql>GRANT SELECT ON TABLE dw_profile_history_event to dw_user;</sql>
     </changeSet>
 
+        <changeSet id="ALTER-DW-RESEARCH-RESOURCE-ORG-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_research_resource_org" replaceIfExists="true">
+            select a.research_resource_id, a.org_id, b.date_created::timestamp, b.last_modified::timestamp
+            from research_resource_org a 
+            inner join research_resource b on a.research_resource_id =b.id
+        </createView>
+    </changeSet>
+    
+    <changeSet id="GRANT-READ_PERM-TO-RESEARCH-RESOURCE-ORG-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_org to dw_user;</sql>
+    </changeSet>
+    
+    <changeSet id="CREATE-DW-USERCONNECTION-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_userconnection" replaceIfExists="true">
+            select orcid, providerid, is_linked,last_login, id_type, date_created::timestamp, last_modified::timestamp
+            from userconnection where TRIM(BOTH FROM orcid) &lt;&gt;''
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USERCONNECTION-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_userconnection to dw_user;</sql>
+    </changeSet>
+    
+    <changeSet id="REMOVE_CONTRIBUTORSJSON_FROM-DW-WORK-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_work" replaceIfExists="true">
+            select work_id, orcid, publication_day, publication_month, publication_year, title, subtitle, description,
+            work_url, citation, citation_type, work_type, journal_title, language_code, translated_title,
+            translated_title_language_code, iso2_country, visibility, case when orcid = source_id then true else false end as self_asserted , client_source_id,
+            date_created::timestamp, last_modified::timestamp
+            from work
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-WORK" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_work to dw_user;</sql>
+    </changeSet>
 </databaseChangeLog>
