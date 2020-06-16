@@ -25,8 +25,8 @@ import java.util.Map;
 public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<T> {
 
     private static final long serialVersionUID = 2949008720309076230L;
-    protected Date dateCreated;
-    protected Date lastModified;
+    private Date dateCreated;
+    private Date lastModified;
 
     /**
      * The date that this entity was created.

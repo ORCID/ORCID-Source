@@ -181,20 +181,17 @@ public class ClientManagerReadOnlyTest {
 
         HashSet<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
         ClientAuthorisedGrantTypeEntity cagt1 = new ClientAuthorisedGrantTypeEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cagt1, now);
         cagt1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cagt1.setDateCreated(now);
         cagt1.setGrantType("grant-type-1 " + randomString);
-        cagt1.setLastModified(now);
         ClientAuthorisedGrantTypeEntity cagt2 = new ClientAuthorisedGrantTypeEntity();
         cagt2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cagt2.setDateCreated(now);
-        cagt2.setGrantType("grant-type-2 " + randomString);
-        cagt2.setLastModified(now);
+        DateFieldsOnBaseEntityUtils.setDateFields(cagt2, now);        
+        cagt2.setGrantType("grant-type-2 " + randomString);        
         ClientAuthorisedGrantTypeEntity cagt3 = new ClientAuthorisedGrantTypeEntity();
         cagt3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cagt3.setDateCreated(now);
+        DateFieldsOnBaseEntityUtils.setDateFields(cagt3, now);
         cagt3.setGrantType("grant-type-3 " + randomString);
-        cagt3.setLastModified(now);
         clientAuthorisedGrantTypeEntities.add(cagt1);
         clientAuthorisedGrantTypeEntities.add(cagt2);
         clientAuthorisedGrantTypeEntities.add(cagt3);

@@ -57,29 +57,7 @@ public class ClientAuthorisedGrantTypeEntity extends BaseEntity<ClientAuthorised
 
     public void setClientDetailsEntity(ClientDetailsEntity clientDetailsEntity) {
         this.clientDetailsEntity = clientDetailsEntity;
-    }
-
-    /**
-     * This should not be called explicitly as the {@link #updateTimeStamps()}
-     * method will be called whenever an update or persist is called
-     * 
-     * @param dateCreated
-     *            the dateCreated to set
-     */
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    /**
-     * This should not be called explicitly as the {@link #updateTimeStamps()}
-     * method will be called whenever an update or persist is called
-     * 
-     * @param lastModified
-     *            the lastModified to set
-     */
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
+    }   
     
     @Override
     public int hashCode() {
