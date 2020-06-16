@@ -162,7 +162,7 @@
     
     <changeSet id="ALTER-DW-PROFILE-VIEW" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_profile" replaceIfExists="true">
-            select orcid, date_created, last_modified, profile_deactivation_date,
+            select orcid, orcid_type, record_locked, group_type, salesforce_id, date_created, last_modified, profile_deactivation_date,
             enable_developer_tools, last_login, using_2fa
             from profile
         </createView>
