@@ -25,13 +25,13 @@ Editing the personal identifiers section of a record requires a 3 step OAuth tok
 
 ## Personal identifier fields
 
-- **exteral-id-type** _(required)_ The type of identifier
+- **external-id-type** _(required)_ The type of identifier
 
-- **exteral-id-value** _(required)_ The identifier itself
+- **external-id-value** _(required)_ The identifier itself
 
-- **exteral-id-url** _(required)_ A url the identifier resolves to
+- **external-id-url** _(required)_ A url the identifier resolves to
 
-- **exteral-id-relationship** _(required)_ Personal identifiers must have this field set to 'self'
+- **external-id-relationship** _(required)_ Personal identifiers must have this field set to 'self'
 
 ## Read a summary of all personal identifiers on a record
 
