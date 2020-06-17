@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.dao.BiographyDao;
@@ -46,8 +47,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CorrectClientProfileSourceIdReferences {
 
     private static final Logger LOG = LoggerFactory.getLogger(CorrectClientProfileSourceIdReferences.class);
-
-    private static final int BATCH_SIZE = 300;
 
     @Resource
     private ProfileDao profileDao;
@@ -96,6 +95,9 @@ public class CorrectClientProfileSourceIdReferences {
 
     @Resource
     private BiographyDao biographyDao;
+    
+    @Option(name = "-b", usage = "Batch size")
+    private Integer batchSize;
 
     private List<String> clientProfileOrcidIds = new ArrayList<>();
 
@@ -103,9 +105,16 @@ public class CorrectClientProfileSourceIdReferences {
         CorrectClientProfileSourceIdReferences corrector = new CorrectClientProfileSourceIdReferences();
         CmdLineParser parser = new CmdLineParser(corrector);
         parser.parseArgument(args);
+        corrector.validateBatchSize();
         corrector.init();
         corrector.correctProfileReferences();
         System.exit(0);
+    }
+
+    private void validateBatchSize() {
+        if (batchSize == null || batchSize.equals(0)) {
+            throw new RuntimeException("Illegal batch size. Specify with -b option.");
+        }
     }
 
     public void correctProfileReferences() {
@@ -129,8 +138,8 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateWorks() {
         LOG.info("Updating works...");
         int corrected = 0;
-        LOG.info("Fetching {} work IDs for correction", BATCH_SIZE * 20);
-        List<BigInteger> ids = workDao.getIdsOfWorksReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        LOG.info("Fetching {} work IDs for correction", batchSize * 20);
+        List<BigInteger> ids = workDao.getIdsOfWorksReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -140,8 +149,8 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            LOG.info("Fetching {} work IDs for correction", BATCH_SIZE * 20);
-            ids = workDao.getIdsOfWorksReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            LOG.info("Fetching {} work IDs for correction", batchSize * 20);
+            ids = workDao.getIdsOfWorksReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
@@ -149,7 +158,7 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateResearcherUrls() {
         LOG.info("Updating researcher urls...");
         int corrected = 0;
-        List<BigInteger> ids = researcherUrlDao.getIdsOfResearcherUrlsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        List<BigInteger> ids = researcherUrlDao.getIdsOfResearcherUrlsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -157,7 +166,7 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = researcherUrlDao.getIdsOfResearcherUrlsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            ids = researcherUrlDao.getIdsOfResearcherUrlsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
@@ -165,7 +174,7 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateKeywords() {
         LOG.info("Updating keywords...");
         int corrected = 0;
-        List<BigInteger> ids = profileKeywordDao.getIdsOfKeywordsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        List<BigInteger> ids = profileKeywordDao.getIdsOfKeywordsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -173,7 +182,7 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileKeywordDao.getIdsOfKeywordsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            ids = profileKeywordDao.getIdsOfKeywordsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
@@ -181,7 +190,7 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateFundings() {
         LOG.info("Updating fundings...");
         int corrected = 0;
-        List<BigInteger> ids = profileFundingDao.getIdsOfFundingsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        List<BigInteger> ids = profileFundingDao.getIdsOfFundingsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -189,7 +198,7 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = profileFundingDao.getIdsOfFundingsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            ids = profileFundingDao.getIdsOfFundingsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
@@ -197,7 +206,7 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateOtherNames() {
         LOG.info("Updating other names...");
         int corrected = 0;
-        List<BigInteger> ids = otherNameDao.getIdsOfOtherNamesReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        List<BigInteger> ids = otherNameDao.getIdsOfOtherNamesReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -205,7 +214,7 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = otherNameDao.getIdsOfOtherNamesReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            ids = otherNameDao.getIdsOfOtherNamesReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
@@ -213,7 +222,7 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateOrgs() {
         LOG.info("Updating orgs...");
         int corrected = 0;
-        List<BigInteger> ids = orgDao.getIdsOfOrgsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        List<BigInteger> ids = orgDao.getIdsOfOrgsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -221,7 +230,7 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = orgDao.getIdsOfOrgsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            ids = orgDao.getIdsOfOrgsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
@@ -229,7 +238,7 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateOrgAffiliationRelations() {
         LOG.info("Updating org affiliation relations...");
         int corrected = 0;
-        List<BigInteger> ids = orgAffiliationRelationDao.getIdsOfOrgAffiliationRelationsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        List<BigInteger> ids = orgAffiliationRelationDao.getIdsOfOrgAffiliationRelationsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -237,7 +246,7 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = orgAffiliationRelationDao.getIdsOfOrgAffiliationRelationsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            ids = orgAffiliationRelationDao.getIdsOfOrgAffiliationRelationsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
@@ -245,7 +254,7 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateNotifications() {
         LOG.info("Updating notifications...");
         int corrected = 0;
-        List<BigInteger> ids = notificationDao.getIdsOfNotificationsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        List<BigInteger> ids = notificationDao.getIdsOfNotificationsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -253,7 +262,7 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = notificationDao.getIdsOfNotificationsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            ids = notificationDao.getIdsOfNotificationsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
@@ -261,7 +270,7 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateEmails() {
         LOG.info("Updating emails...");
         int corrected = 0;
-        List<String> ids = emailDao.getIdsOfEmailsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        List<String> ids = emailDao.getIdsOfEmailsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<String> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -269,7 +278,7 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = emailDao.getIdsOfEmailsReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            ids = emailDao.getIdsOfEmailsReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
@@ -277,7 +286,7 @@ public class CorrectClientProfileSourceIdReferences {
     private void updateAddresses() {
         LOG.info("Updating addresses...");
         int corrected = 0;
-        List<BigInteger> ids = addressDao.getIdsOfAddressesReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+        List<BigInteger> ids = addressDao.getIdsOfAddressesReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         while (!ids.isEmpty()) {
             List<BigInteger> subList = getNextIdSubset(ids);
             while (!subList.isEmpty()) {
@@ -285,14 +294,14 @@ public class CorrectClientProfileSourceIdReferences {
                 corrected += subList.size();
                 subList = getNextIdSubset(ids);
             }
-            ids = addressDao.getIdsOfAddressesReferencingClientProfiles(BATCH_SIZE * 20, clientProfileOrcidIds);
+            ids = addressDao.getIdsOfAddressesReferencingClientProfiles(batchSize * 20, clientProfileOrcidIds);
         }
         LOG.info("Updated {} records", corrected);
     }
 
     private <T> List<T> getNextIdSubset(List<T> ids) {
         List<T> subset = new ArrayList<>();
-        for (int i = 0; i < BATCH_SIZE && !ids.isEmpty(); i++) {
+        for (int i = 0; i < batchSize && !ids.isEmpty(); i++) {
             subset.add(ids.remove(0));
         }
         return subset;
