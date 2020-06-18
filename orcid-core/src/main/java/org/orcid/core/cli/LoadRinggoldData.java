@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -58,6 +59,7 @@ public class LoadRinggoldData {
     private OrgDao orgDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
+    private OrgManager orgManager;
 
     private int numAdded;
     private int numUpdated;
@@ -88,6 +90,10 @@ public class LoadRinggoldData {
 
     public void setOrgDisambiguatedDao(OrgDisambiguatedDao orgDisambiguatedDao) {
         this.orgDisambiguatedDao = orgDisambiguatedDao;
+    }
+    
+    public void setOrgManager(OrgManager orgManager) {
+        this.orgManager = orgManager;
     }
 
     public void setOrgDisambiguatedExternalIdentifierDao(OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao) {
@@ -128,6 +134,7 @@ public class LoadRinggoldData {
         orgDao = (OrgDao) context.getBean("orgDao");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
         orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
+        orgManager = (OrgManager) context.getBean("orgManagerV3");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
 
@@ -345,10 +352,7 @@ public class LoadRinggoldData {
                     }
 
                     if (replacementEntity != null) {
-                        // Replace the org disambiguated id in all org that had
-                        // the
-                        // deprecated/obsoleted entity
-                        orgDisambiguatedDao.replace(existingEntity.getId(), replacementEntity.getId());
+                        orgManager.updateDisambiguatedOrgReferences(existingEntity.getId(), replacementEntity.getId());
                     } else {
                         LOGGER.warn("Couldn't find replacement entity ringgold_id:'{}' for ringgold_id:'{}'", newId, oldId);
                     }

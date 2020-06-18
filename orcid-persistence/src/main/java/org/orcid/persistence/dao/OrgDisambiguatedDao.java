@@ -31,8 +31,6 @@ public interface OrgDisambiguatedDao extends GenericDao<OrgDisambiguatedEntity, 
 
     void updatePopularity(Long orgDisambiguatedId, Integer popularity);
 
-    void replace(long deletedOrgDisambiguatedId, long replacementOrgDisambiguatedId);
-
     void dropUniqueConstraint();
 
     void createUniqueConstraint();

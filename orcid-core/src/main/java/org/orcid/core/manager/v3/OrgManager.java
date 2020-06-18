@@ -6,7 +6,6 @@ import java.util.List;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.v3.release.common.MultipleOrganizationHolder;
 import org.orcid.jaxb.model.v3.release.common.OrganizationHolder;
-import org.orcid.jaxb.model.v3.release.record.ResearchResourceHosts;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 
@@ -32,4 +31,6 @@ public interface OrgManager {
     OrgEntity getOrgEntity(Organization org);
 
     List<OrgEntity> getOrgEntities(MultipleOrganizationHolder holder);
+    
+    void updateDisambiguatedOrgReferences(Long deprecated, Long replacement);
 }
