@@ -224,8 +224,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         }
         
         newRecord.setOrcidType(OrcidType.USER.name());
-        newRecord.setDateCreated(now);
-        newRecord.setLastModified(now);
         newRecord.setSubmissionDate(now);
         newRecord.setClaimed(true);
         newRecord.setEnableDeveloperTools(false);

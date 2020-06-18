@@ -130,4 +130,38 @@ public class OtherNameDaoTest extends DBUnitTest {
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
     }
+    
+    @Test
+    public void mergeTest() {
+        OtherNameEntity e = dao.find(20L);
+        e.setDisplayIndex(1000L);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        dao.merge(e);
+
+        OtherNameEntity updated = dao.find(20L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        OtherNameEntity e = new OtherNameEntity();
+        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setVisibility("PUBLIC");
+        e.setDisplayName("OTHER_NAME");
+        
+        dao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        OtherNameEntity e2 = dao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
+    }
 }

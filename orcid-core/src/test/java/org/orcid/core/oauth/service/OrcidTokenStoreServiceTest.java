@@ -269,13 +269,14 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     private OrcidOauth2TokenDetail createAccessToken(String tokenValue, String scope, String clientId, String userOrcid, boolean disabled) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
-        token.setClientDetailsId(clientId);
-        token.setDateCreated(new Date());
+        token.setClientDetailsId(clientId);        
         token.setProfile(new ProfileEntity(userOrcid));
         token.setScope(scope);
         token.setTokenDisabled(disabled);
         token.setTokenValue(tokenValue);        
         orcidOauth2TokenDetailService.saveOrUpdate(token);
+        assertNotNull(token.getDateCreated());
+        assertNotNull(token.getLastModified());
         return token;
     }
     

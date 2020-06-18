@@ -17,8 +17,6 @@ public class IdentifierTypePOJOConverter {
         entity.setIsDeprecated(id.getDeprecated());
         entity.setResolutionPrefix(id.getResolutionPrefix());
         entity.setValidationRegex(id.getValidationRegex());   
-        entity.setDateCreated(id.getDateCreated());
-        entity.setLastModified(id.getLastModified());
         entity.setSourceClient(id.getSourceClient());
         entity.setPrimaryUse(id.getPrimaryUse());
         entity.setIsCaseSensitive(id.getCaseSensitive());

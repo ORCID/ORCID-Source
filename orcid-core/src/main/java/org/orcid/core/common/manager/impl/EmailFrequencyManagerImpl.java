@@ -78,10 +78,7 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     @Override
     public boolean createOnClaim(String orcid, Boolean sendQuarterlyTips) {
         EmailFrequencyEntity entity = new EmailFrequencyEntity();
-        Date now = new Date();
         entity.setId(UUID.randomUUID().toString());
-        entity.setDateCreated(now);
-        entity.setLastModified(now);
         entity.setOrcid(orcid);
         entity.setSendAdministrativeChangeNotifications(SendEmailFrequency.WEEKLY.floatValue());
         entity.setSendChangeNotifications(SendEmailFrequency.WEEKLY.floatValue());
@@ -95,10 +92,7 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     private boolean createEmailFrequency(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips, boolean trackEvent) {
         EmailFrequencyEntity entity = new EmailFrequencyEntity();
-        Date now = new Date();
         entity.setId(UUID.randomUUID().toString());
-        entity.setDateCreated(now);
-        entity.setLastModified(now);
         entity.setOrcid(orcid);
         entity.setSendAdministrativeChangeNotifications(sendAdministrativeChangeNotifications.floatValue());
         entity.setSendChangeNotifications(sendChangeNotifications.floatValue());
@@ -186,7 +180,6 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     public boolean update(String orcid, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips) {
         EmailFrequencyEntity entity = emailFrequencyDao.findByOrcid(orcid);
-        entity.setLastModified(new Date());
         entity.setSendAdministrativeChangeNotifications(sendAdministrativeChangeNotifications.floatValue());
         entity.setSendChangeNotifications(sendChangeNotifications.floatValue());
         entity.setSendMemberUpdateRequests(sendMemberUpdateRequests.floatValue());
@@ -200,7 +193,6 @@ public class EmailFrequencyManagerImpl implements EmailFrequencyManager {
     public boolean updateById(String id, SendEmailFrequency sendChangeNotifications, SendEmailFrequency sendAdministrativeChangeNotifications,
             SendEmailFrequency sendMemberUpdateRequests, Boolean sendQuarterlyTips) {
         EmailFrequencyEntity entity = emailFrequencyDao.find(id);
-        entity.setLastModified(new Date());
         entity.setSendAdministrativeChangeNotifications(sendAdministrativeChangeNotifications.floatValue());
         entity.setSendChangeNotifications(sendChangeNotifications.floatValue());
         entity.setSendMemberUpdateRequests(sendMemberUpdateRequests.floatValue());

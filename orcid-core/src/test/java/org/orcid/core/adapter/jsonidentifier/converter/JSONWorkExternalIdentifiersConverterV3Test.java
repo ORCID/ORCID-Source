@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -53,7 +54,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     }
 
     @Test
-    public void testConvertFrom() {
+    public void testConvertFrom() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
         ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
         assertEquals(1, entityIDs.getExternalIdentifier().size());
@@ -66,7 +67,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     }
 
     @Test
-    public void testConvertFromNormalize() {
+    public void testConvertFromNormalize() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
         workEntity.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}");
         ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
@@ -79,7 +80,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     }
     
     @Test
-    public void testConvertFromNormalizeError() {
+    public void testConvertFromNormalizeError() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
         workEntity.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"123\"}}]}");
         ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
@@ -132,24 +133,21 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
         return (Work) unmarshaller.unmarshal(inputStream);
     }
 
-    private WorkEntity getWorkEntity() {
+    private WorkEntity getWorkEntity() throws IllegalAccessException {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         WorkEntity work = new WorkEntity();
-        work.setDateCreated(date);
-        work.setLastModified(date);
+        DateFieldsOnBaseEntityUtils.setDateFields(work, date);
         work.setOrcid("0000-0000-0000-0001");
         work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
         work.setClientSourceId("APP-5555555555555555");
         work.setCitation("work:citation");
         work.setCitationType(org.orcid.jaxb.model.record_v2.CitationType.BIBTEX.name());
-        work.setDateCreated(date);
         work.setDescription("work:description");
         work.setId(12345L);
         work.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("EN");
-        work.setLastModified(date);
         work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
         work.setSubtitle("work:subtitle");
         work.setTitle("work:title");

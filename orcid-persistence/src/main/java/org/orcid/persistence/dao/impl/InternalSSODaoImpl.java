@@ -28,8 +28,6 @@ public class InternalSSODaoImpl extends GenericDaoImpl<InternalSSOEntity, String
     @ExcludeFromProfileLastModifiedUpdate
     public InternalSSOEntity insert(String orcid, String token) {
         InternalSSOEntity entity = new InternalSSOEntity();
-        entity.setDateCreated(new Date());
-        entity.setLastModified(new Date());
         entity.setId(orcid);
         entity.setToken(token);
         entityManager.persist(entity);

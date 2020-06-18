@@ -40,6 +40,7 @@ import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -69,7 +70,7 @@ public class ClientManagerReadOnlyTest {
     }
 
     @Test
-    public void getClientTest() {
+    public void getClientTest() throws IllegalAccessException {
         String seed = RandomStringUtils.randomAlphanumeric(30);
         when(daoMock.findByClientId(anyString(), anyLong())).thenReturn(getClientDetailsEntity(seed));
         Client client = clientManagerReadOnly.get(seed);
@@ -77,7 +78,7 @@ public class ClientManagerReadOnlyTest {
     }
 
     @Test
-    public void getClientsTest() {
+    public void getClientsTest() throws IllegalAccessException {
         String seed1 = RandomStringUtils.randomAlphanumeric(30);
         String seed2 = RandomStringUtils.randomAlphanumeric(30);
         String seed3 = RandomStringUtils.randomAlphanumeric(30);
@@ -102,7 +103,7 @@ public class ClientManagerReadOnlyTest {
     }
 
     @Test
-    public void getSummaryTest() {
+    public void getSummaryTest() throws IllegalAccessException {
         String seed = RandomStringUtils.randomAlphanumeric(30);
         when(daoMock.findByClientId(anyString(), anyLong())).thenReturn(getClientDetailsEntity(seed));
         ClientSummary summary = clientManagerReadOnly.getSummary(seed);
@@ -160,20 +161,19 @@ public class ClientManagerReadOnlyTest {
         return client;
     }
 
-    private ClientDetailsEntity getClientDetailsEntity(String randomString) {
+    private ClientDetailsEntity getClientDetailsEntity(String randomString) throws IllegalAccessException {
         Date now = new Date();
         ClientDetailsEntity entity = new ClientDetailsEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, now); 
         entity.setAllowAutoDeprecate(true);
         entity.setAuthenticationProviderId("authentication-provider-id " + randomString);
         entity.setClientDescription("description " + randomString);
         entity.setClientName("client-name " + randomString);
         entity.setClientType(ClientType.CREATOR.name());
         entity.setClientWebsite("client-website " + randomString);
-        entity.setDateCreated(now);
         entity.setEmailAccessReason("email-access-reason " + randomString);
         entity.setGroupProfileId("group-profile-id " + randomString);
         entity.setId(randomString);
-        entity.setLastModified(now);
         entity.setPersistentTokensEnabled(true);
         entity.setClientSecretForJpa("secret-1 " + randomString);
         entity.setClientSecretForJpa("secret-2 " + randomString);
@@ -181,20 +181,17 @@ public class ClientManagerReadOnlyTest {
 
         HashSet<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
         ClientAuthorisedGrantTypeEntity cagt1 = new ClientAuthorisedGrantTypeEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cagt1, now);
         cagt1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cagt1.setDateCreated(now);
         cagt1.setGrantType("grant-type-1 " + randomString);
-        cagt1.setLastModified(now);
         ClientAuthorisedGrantTypeEntity cagt2 = new ClientAuthorisedGrantTypeEntity();
         cagt2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cagt2.setDateCreated(now);
-        cagt2.setGrantType("grant-type-2 " + randomString);
-        cagt2.setLastModified(now);
+        DateFieldsOnBaseEntityUtils.setDateFields(cagt2, now);        
+        cagt2.setGrantType("grant-type-2 " + randomString);        
         ClientAuthorisedGrantTypeEntity cagt3 = new ClientAuthorisedGrantTypeEntity();
         cagt3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cagt3.setDateCreated(now);
+        DateFieldsOnBaseEntityUtils.setDateFields(cagt3, now);
         cagt3.setGrantType("grant-type-3 " + randomString);
-        cagt3.setLastModified(now);
         clientAuthorisedGrantTypeEntities.add(cagt1);
         clientAuthorisedGrantTypeEntities.add(cagt2);
         clientAuthorisedGrantTypeEntities.add(cagt3);
@@ -202,20 +199,20 @@ public class ClientManagerReadOnlyTest {
 
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
         ClientGrantedAuthorityEntity cga1 = new ClientGrantedAuthorityEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cga1, now); 
         cga1.setAuthority("authority-1 " + randomString);
         cga1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cga1.setDateCreated(now);
-        cga1.setLastModified(now);
+        
         ClientGrantedAuthorityEntity cga2 = new ClientGrantedAuthorityEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cga2, now); 
         cga2.setAuthority("authority-2 " + randomString);
         cga2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cga2.setDateCreated(now);
-        cga2.setLastModified(now);
+        
         ClientGrantedAuthorityEntity cga3 = new ClientGrantedAuthorityEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cga3, now); 
         cga3.setAuthority("authority-3 " + randomString);
         cga3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cga3.setDateCreated(now);
-        cga3.setLastModified(now);
+        
         clientGrantedAuthorityEntities.add(cga1);
         clientGrantedAuthorityEntities.add(cga2);
         clientGrantedAuthorityEntities.add(cga3);
@@ -223,27 +220,24 @@ public class ClientManagerReadOnlyTest {
 
         SortedSet<ClientRedirectUriEntity> clientRegisteredRedirectUris = new TreeSet<ClientRedirectUriEntity>();
         ClientRedirectUriEntity rUri1 = new ClientRedirectUriEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(rUri1, now); 
         rUri1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        rUri1.setDateCreated(now);
-        rUri1.setLastModified(now);
         rUri1.setPredefinedClientScope(ScopePathType.ACTIVITIES_READ_LIMITED.value());
         rUri1.setRedirectUri("redirect-uri-1 " + randomString);
         rUri1.setRedirectUriType("type-1 " + randomString);
         rUri1.setUriActType("uri-act-type-1 " + randomString);
         rUri1.setUriGeoArea("uri-geo-area-1 " + randomString);
         ClientRedirectUriEntity rUri2 = new ClientRedirectUriEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(rUri2, now); 
         rUri2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        rUri2.setDateCreated(now);
-        rUri2.setLastModified(now);
         rUri2.setPredefinedClientScope(ScopePathType.ACTIVITIES_UPDATE.value());
         rUri2.setRedirectUri("redirect-uri-2 " + randomString);
         rUri2.setRedirectUriType("type-2 " + randomString);
         rUri2.setUriActType("uri-act-type-2 " + randomString);
         rUri2.setUriGeoArea("uri-geo-area-2 " + randomString);
         ClientRedirectUriEntity rUri3 = new ClientRedirectUriEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(rUri3, now); 
         rUri3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        rUri3.setDateCreated(now);
-        rUri3.setLastModified(now);
         rUri3.setPredefinedClientScope(ScopePathType.AFFILIATIONS_CREATE.value());
         rUri3.setRedirectUri("redirect-uri-3 " + randomString);
         rUri3.setRedirectUriType("type-3 " + randomString);
@@ -256,19 +250,16 @@ public class ClientManagerReadOnlyTest {
 
         Set<ClientResourceIdEntity> clientResourceIds = new HashSet<ClientResourceIdEntity>();
         ClientResourceIdEntity cri1 = new ClientResourceIdEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cri1, now); 
         cri1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cri1.setDateCreated(now);
-        cri1.setLastModified(now);
         cri1.setResourceId("resource-id-1 " + randomString);
         ClientResourceIdEntity cri2 = new ClientResourceIdEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cri2, now); 
         cri2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cri2.setDateCreated(now);
-        cri2.setLastModified(now);
         cri2.setResourceId("resource-id-2 " + randomString);
         ClientResourceIdEntity cri3 = new ClientResourceIdEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cri3, now); 
         cri3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cri3.setDateCreated(now);
-        cri3.setLastModified(now);
         cri3.setResourceId("resource-id-3 " + randomString);
         clientResourceIds.add(cri1);
         clientResourceIds.add(cri2);
@@ -277,19 +268,16 @@ public class ClientManagerReadOnlyTest {
 
         Set<ClientScopeEntity> clientScopes = new HashSet<ClientScopeEntity>();
         ClientScopeEntity cs1 = new ClientScopeEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cs1, now); 
         cs1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cs1.setDateCreated(now);
-        cs1.setLastModified(now);
         cs1.setScopeType("scope-type-1 " + randomString);
         ClientScopeEntity cs2 = new ClientScopeEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cs2, now); 
         cs2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cs2.setDateCreated(now);
-        cs2.setLastModified(now);
         cs2.setScopeType("scope-type-2 " + randomString);
         ClientScopeEntity cs3 = new ClientScopeEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(cs3, now); 
         cs3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cs3.setDateCreated(now);
-        cs3.setLastModified(now);
         cs3.setScopeType("scope-type-3 " + randomString);
         clientScopes.add(cs1);
         clientScopes.add(cs2);
@@ -298,30 +286,27 @@ public class ClientManagerReadOnlyTest {
 
         Set<CustomEmailEntity> customEmails = new HashSet<CustomEmailEntity>();
         CustomEmailEntity ce1 = new CustomEmailEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(ce1, now); 
         ce1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
         ce1.setContent("content-1 " + randomString);
-        ce1.setDateCreated(now);
         ce1.setEmailType(EmailType.ACCOUNT_DEPRECATED);
         ce1.setHtml(true);
-        ce1.setLastModified(now);
         ce1.setSender("sender-1 " + randomString);
         ce1.setSubject("subject-1 " + randomString);
         CustomEmailEntity ce2 = new CustomEmailEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(ce2, now); 
         ce2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
         ce2.setContent("content-2 " + randomString);
-        ce2.setDateCreated(now);
         ce2.setEmailType(EmailType.ACCOUNT_DEPRECATED);
         ce2.setHtml(true);
-        ce2.setLastModified(now);
         ce2.setSender("sender-2 " + randomString);
         ce2.setSubject("subject-2 " + randomString);
         CustomEmailEntity ce3 = new CustomEmailEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(ce3, now); 
         ce3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
         ce3.setContent("content-3 " + randomString);
-        ce3.setDateCreated(now);
         ce3.setEmailType(EmailType.ACCOUNT_DEPRECATED);
         ce3.setHtml(true);
-        ce3.setLastModified(now);
         ce3.setSender("sender-3 " + randomString);
         ce3.setSubject("subject-3 " + randomString);
         customEmails.add(ce1);

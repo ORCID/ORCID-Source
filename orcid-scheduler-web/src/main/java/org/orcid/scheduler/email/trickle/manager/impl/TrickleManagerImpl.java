@@ -89,8 +89,6 @@ public class TrickleManagerImpl implements TrickleManager {
 
     private ProfileEventEntity getProfileEventEntity(ProfileEventType type, String orcid) {
         ProfileEventEntity event = new ProfileEventEntity();
-        event.setDateCreated(new Date());
-        event.setLastModified(new Date());
         event.setOrcid(orcid);
         event.setType(type);
         return event;

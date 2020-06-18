@@ -175,6 +175,7 @@
          id="14"
          orcid="0000-0000-0000-0002"
          date_created="2014-07-17 13:27:14.00"
+         last_modified="2014-07-17 13:27:14.00"
          notification_type="PERMISSION"
          subject="Your ORCID record was updated (Super Institution 2)"
          body_text="Your ORCID record was updated by Super Institution 2.\n\nBest regards,\n\nORCID"

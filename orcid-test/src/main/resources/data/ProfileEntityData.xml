@@ -2333,5 +2333,22 @@
 		send_quarterly_tips="true"
 		last_modified="2016-04-01 15:00:00.00"
 		date_created="2016-04-01 15:00:00.00"		
-    />                   
+    />    
+    
+    <backup_code 
+    	id="0"
+    	orcid="0000-0000-0000-0001"
+    	hashed_code="HASHED_CODE"
+    	last_modified="2020-01-01 15:00:00.00"
+    	date_created="2020-01-01 15:00:00.00"    
+    />           
+    
+    <profile_history_event 
+    	id="0"
+    	orcid="0000-0000-0000-0001"
+    	event_type="TYPE"
+    	comment="COMMENT"    	
+    	last_modified="2020-01-01 15:00:00.00"
+    	date_created="2020-01-01 15:00:00.00"
+    />    
 </dataset>

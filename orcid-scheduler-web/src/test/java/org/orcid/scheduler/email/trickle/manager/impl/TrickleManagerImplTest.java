@@ -25,6 +25,7 @@ import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 
 public class TrickleManagerImplTest {
 
@@ -58,7 +59,7 @@ public class TrickleManagerImplTest {
     }
 
     @Test
-    public void testAttemptSendMarketingSuccess() {
+    public void testAttemptSendMarketingSuccess() throws IllegalAccessException {
         Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
         Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsEnabled());
         Mockito.when(profileDaoReadOnly.getProfileEvents(Mockito.eq("orcid"), Mockito.anyList())).thenReturn(new ArrayList<>());
@@ -96,7 +97,7 @@ public class TrickleManagerImplTest {
     }
     
     @Test
-    public void testAttemptSendSuccess() {
+    public void testAttemptSendSuccess() throws IllegalAccessException {
         Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
         Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsEnabled());
         Mockito.when(profileDaoReadOnly.getProfileEvents(Mockito.eq("orcid"), Mockito.anyList())).thenReturn(new ArrayList<>());
@@ -134,7 +135,7 @@ public class TrickleManagerImplTest {
     }
     
     @Test
-    public void testAttemptSendFailure() {
+    public void testAttemptSendFailure() throws IllegalAccessException {
         Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
         Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsEnabled());
         Mockito.when(profileDaoReadOnly.getProfileEvents(Mockito.eq("orcid"), Mockito.anyList())).thenReturn(new ArrayList<>());
@@ -172,7 +173,7 @@ public class TrickleManagerImplTest {
     }
     
     @Test
-    public void testAttemptMarketingSendFailure() {
+    public void testAttemptMarketingSendFailure() throws IllegalAccessException {
         Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
         Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsEnabled());
         Mockito.when(profileDaoReadOnly.getProfileEvents(Mockito.eq("orcid"), Mockito.anyList())).thenReturn(new ArrayList<>());
@@ -210,7 +211,7 @@ public class TrickleManagerImplTest {
     }
 
     @Test
-    public void testAttemptSendSkipped() {
+    public void testAttemptSendSkipped() throws IllegalAccessException {
         Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
         Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsDisabled());
         Mockito.when(profileDaoReadOnly.getProfileEvents(Mockito.eq("orcid"), Mockito.anyList())).thenReturn(new ArrayList<>());
@@ -236,7 +237,7 @@ public class TrickleManagerImplTest {
     }
     
     @Test
-    public void testAttemptSendSkippedAccountDeprecated() {
+    public void testAttemptSendSkippedAccountDeprecated() throws IllegalAccessException {
         ProfileEntity deprecatedProfile = new ProfileEntity();
         deprecatedProfile.setDeprecatedDate(new Date());
         
@@ -265,7 +266,7 @@ public class TrickleManagerImplTest {
     }
     
     @Test
-    public void testAttemptSendSkippedAccountLocked() {
+    public void testAttemptSendSkippedAccountLocked() throws IllegalAccessException {
         ProfileEntity deprecatedProfile = new ProfileEntity();
         deprecatedProfile.setRecordLocked(true);
         
@@ -294,7 +295,7 @@ public class TrickleManagerImplTest {
     }
     
     @Test
-    public void testAttemptSendSkippedAccountDeactivated() {
+    public void testAttemptSendSkippedAccountDeactivated() throws IllegalAccessException {
         ProfileEntity deprecatedProfile = new ProfileEntity();
         deprecatedProfile.setDeactivationDate(new Date());
         
@@ -323,7 +324,7 @@ public class TrickleManagerImplTest {
     }
     
     @Test
-    public void testAttemptSendAlreadyProcessed() {
+    public void testAttemptSendAlreadyProcessed() throws IllegalAccessException {
         Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
         Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsEnabled());
         Mockito.when(profileDaoReadOnly.getProfileEvents(Mockito.eq("orcid"), Mockito.anyList())).thenReturn(Arrays.asList(getProfileEventEntity(ProfileEventType.MARCH_2019_SENT, "orcid")));
@@ -343,7 +344,7 @@ public class TrickleManagerImplTest {
     }
     
     @Test
-    public void testAttemptSendEmailNoLongerExists() {
+    public void testAttemptSendEmailNoLongerExists() throws IllegalAccessException {
         Mockito.when(emailScheduleDaoReadOnly.getValidScheduleId()).thenReturn(2L);
         Mockito.when(emailFrequencyDaoReadOnly.findByOrcid(Mockito.eq("orcid"))).thenReturn(getEmailFrequencyQuarterlyTipsEnabled());
         Mockito.when(profileDaoReadOnly.getProfileEvents(Mockito.eq("orcid"), Mockito.anyList())).thenReturn(new ArrayList<>());
@@ -389,10 +390,9 @@ public class TrickleManagerImplTest {
         return item;
     }
 
-    private EmailFrequencyEntity getEmailFrequencyQuarterlyTipsEnabled() {
+    private EmailFrequencyEntity getEmailFrequencyQuarterlyTipsEnabled() throws IllegalAccessException {
         EmailFrequencyEntity freq = new EmailFrequencyEntity();
-        freq.setDateCreated(new Date());
-        freq.setLastModified(new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(freq, new Date());
         freq.setOrcid("orcid");
         freq.setSendAdministrativeChangeNotifications(0f);
         freq.setSendChangeNotifications(0f);
@@ -411,16 +411,15 @@ public class TrickleManagerImplTest {
         return message;
     }
     
-    private ProfileEventEntity getProfileEventEntity(ProfileEventType type, String orcid) {
+    private ProfileEventEntity getProfileEventEntity(ProfileEventType type, String orcid) throws IllegalAccessException {
         ProfileEventEntity event = new ProfileEventEntity();
-        event.setDateCreated(new Date());
-        event.setLastModified(new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(event, new Date());
         event.setOrcid(orcid);
         event.setType(type);
         return event;
     }
     
-    private EmailFrequencyEntity getEmailFrequencyQuarterlyTipsDisabled() {
+    private EmailFrequencyEntity getEmailFrequencyQuarterlyTipsDisabled() throws IllegalAccessException {
         EmailFrequencyEntity freq = getEmailFrequencyQuarterlyTipsEnabled();
         freq.setSendQuarterlyTips(Boolean.FALSE);
         return freq;

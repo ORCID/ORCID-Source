@@ -91,7 +91,6 @@ public class LoadIssnData {
     private void updateIssnEntity(GroupIdRecordEntity issnEntity, IssnData issnData) {
         issnEntity.setGroupName(issnData.getMainTitle());
         issnEntity.setClientSourceId(orcidSource.getId());
-        issnEntity.setLastModified(new Date());
         groupIdRecordDao.merge(issnEntity);
     }
 

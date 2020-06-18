@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -62,5 +63,37 @@ public class BiographyDaoTest extends DBUnitTest {
         assertNotNull(updatedBio);
         assertEquals("Updated biography", bio.getBiography());
         assertEquals("LIMITED", bio.getVisibility());
+    }
+    
+    @Test
+    public void mergeTest() {
+        BiographyEntity e = biographyDao.find(14L);
+        e.setVisibility("LIMITED");
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        biographyDao.merge(e);
+
+        BiographyEntity updated = biographyDao.find(14L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        BiographyEntity e = new BiographyEntity();
+        e.setOrcid("0000-0000-0000-0002"); 
+        e.setVisibility("PUBLIC");
+        e.setBiography("My Bio");
+        biographyDao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        BiographyEntity e2 = biographyDao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
     }
 }

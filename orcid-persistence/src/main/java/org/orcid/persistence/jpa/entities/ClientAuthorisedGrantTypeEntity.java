@@ -2,6 +2,8 @@ package org.orcid.persistence.jpa.entities;
 
 import org.orcid.persistence.jpa.entities.keys.ClientAuthorisedGrantTypePk;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,8 +57,8 @@ public class ClientAuthorisedGrantTypeEntity extends BaseEntity<ClientAuthorised
 
     public void setClientDetailsEntity(ClientDetailsEntity clientDetailsEntity) {
         this.clientDetailsEntity = clientDetailsEntity;
-    }
-
+    }   
+    
     @Override
     public int hashCode() {
         final int prime = 31;

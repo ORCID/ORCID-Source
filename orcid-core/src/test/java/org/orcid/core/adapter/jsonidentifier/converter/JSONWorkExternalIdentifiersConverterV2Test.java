@@ -3,7 +3,6 @@ package org.orcid.core.adapter.jsonidentifier.converter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -24,6 +23,7 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 
 public class JSONWorkExternalIdentifiersConverterV2Test {
@@ -38,7 +38,7 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
     }
 
     @Test
-    public void testConvertFrom() {
+    public void testConvertFrom() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
         ExternalIDs entityIDs = converter.convertFrom(workEntity.getExternalIdentifiersJson(), null);
         assertEquals(1, entityIDs.getExternalIdentifier().size());
@@ -85,24 +85,21 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
         return (Work) unmarshaller.unmarshal(inputStream);
     }
 
-    private WorkEntity getWorkEntity() {
+    private WorkEntity getWorkEntity() throws IllegalAccessException {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         WorkEntity work = new WorkEntity();
-        work.setDateCreated(date);
-        work.setLastModified(date);
+        DateFieldsOnBaseEntityUtils.setDateFields(work, date);
         work.setOrcid("0000-0000-0000-0001");
         work.setVisibility(Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
         work.setClientSourceId("APP-5555555555555555");
         work.setCitation("work:citation");
         work.setCitationType(CitationType.BIBTEX.name());
-        work.setDateCreated(date);
         work.setDescription("work:description");
         work.setId(12345L);
         work.setIso2Country(Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("EN");
-        work.setLastModified(date);
         work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
         work.setSubtitle("work:subtitle");
         work.setTitle("work:title");

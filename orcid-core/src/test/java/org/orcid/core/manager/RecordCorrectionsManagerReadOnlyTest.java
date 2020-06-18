@@ -30,6 +30,7 @@ import org.orcid.persistence.dao.InvalidRecordDataChangeDao;
 import org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -56,6 +57,7 @@ public class RecordCorrectionsManagerReadOnlyTest {
                         Long first = (Long) invocation.getArgument(0);
                         Long size = (Long) invocation.getArgument(1);
                         Boolean order = (Boolean) invocation.getArgument(2);
+                        Date now = new Date();
                         List<InvalidRecordDataChangeEntity> elements = new ArrayList<InvalidRecordDataChangeEntity>();
                         if (order) {
                             for (long i = first; i > (first - size); i--) {
@@ -63,10 +65,9 @@ public class RecordCorrectionsManagerReadOnlyTest {
                                     break;
                                 }
                                 InvalidRecordDataChangeEntity element = new InvalidRecordDataChangeEntity();
-                                element.setDateCreated(new Date());
+                                DateFieldsOnBaseEntityUtils.setDateFields(element, now);
                                 element.setDescription("description " + i);
                                 element.setId(Long.valueOf(i));
-                                element.setLastModified(new Date());
                                 element.setNumChanged(Long.valueOf(i));
                                 element.setSqlUsedToUpdate("select * from table");
                                 element.setType("type " + i);
@@ -78,10 +79,9 @@ public class RecordCorrectionsManagerReadOnlyTest {
                                     break;
                                 }
                                 InvalidRecordDataChangeEntity element = new InvalidRecordDataChangeEntity();
-                                element.setDateCreated(new Date());
+                                DateFieldsOnBaseEntityUtils.setDateFields(element, now);                                
                                 element.setDescription("description " + i);
-                                element.setId(Long.valueOf(i));
-                                element.setLastModified(new Date());
+                                element.setId(Long.valueOf(i));                                
                                 element.setNumChanged(Long.valueOf(i));
                                 element.setSqlUsedToUpdate("select * from table");
                                 element.setType("type " + i);

@@ -20,6 +20,7 @@ import org.orcid.persistence.jpa.entities.SourceType;
 import org.orcid.persistence.jpa.entities.SpamEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -54,15 +55,12 @@ public class SpamDaoTest extends DBUnitTest {
     }
 
     @Test
-    public void testWriteSpam() {
+    public void testWriteSpam() throws IllegalAccessException {
         SpamEntity spamEntity = new SpamEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(spamEntity, new Date());
         spamEntity.setOrcid(USER_ORCID);
         spamEntity.setSourceType(SourceType.USER);
         spamEntity.setSpamCounter(1);
-
-        Date d = new Date();
-        spamEntity.setDateCreated(d);
-        spamEntity.setLastModified(d);
 
         spamDao.createSpam(spamEntity);
 
@@ -103,6 +101,40 @@ public class SpamDaoTest extends DBUnitTest {
 
         assertFalse(spamDao.exists("0000-0000-0000-0005"));
         assertFalse(spamDao.exists("0000-0000-0000-0006"));
+    }
+    
+    @Test
+    public void mergeTest() {
+        SpamEntity e = spamDao.find(3L);
+        e.setSpamCounter(2);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        spamDao.merge(e);
+
+        SpamEntity updated = spamDao.find(3L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        SpamEntity e = new SpamEntity();
+        e.setOrcid("0000-0000-0000-0002"); 
+        e.setSourceType(SourceType.USER);
+        e.setSpamCounter(1);
+        
+        spamDao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        SpamEntity e2 = spamDao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
 
 }

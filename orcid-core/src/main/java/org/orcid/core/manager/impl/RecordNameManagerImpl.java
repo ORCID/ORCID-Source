@@ -31,7 +31,6 @@ public class RecordNameManagerImpl extends RecordNameManagerReadOnlyImpl impleme
         if(PojoUtil.isEmpty(entity.getOrcid())) {
             entity.setOrcid(orcid);
         }
-        entity.setLastModified(new Date());
         Boolean result = recordNameDao.updateRecordName(entity);
         // Evict the name in the source name manager
         sourceNameCacheManager.remove(orcid);
@@ -51,9 +50,6 @@ public class RecordNameManagerImpl extends RecordNameManagerReadOnlyImpl impleme
         if(PojoUtil.isEmpty(entity.getOrcid())) {
             entity.setOrcid(orcid);
         }
-        Date now = new Date();
-        entity.setDateCreated(now);
-        entity.setLastModified(now);
-        recordNameDao.createRecordName(entity);
+        recordNameDao.persist(entity);
     }
 }

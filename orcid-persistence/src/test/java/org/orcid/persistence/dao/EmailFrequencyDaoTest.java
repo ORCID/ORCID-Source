@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -100,5 +101,40 @@ public class EmailFrequencyDaoTest extends DBUnitTest {
         e = dao.findByOrcid("0000-0000-0000-0004");
         assertNotNull(e);
         assertFalse(e.getSendQuarterlyTips());
+    }
+    
+    @Test
+    public void mergeTest() {
+        EmailFrequencyEntity e = dao.find("UUID8");
+        e.setSendQuarterlyTips(Boolean.FALSE);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        dao.merge(e);
+
+        EmailFrequencyEntity updated = dao.find("UUID8");
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        EmailFrequencyEntity e = new EmailFrequencyEntity();
+        e.setOrcid("0000-0000-0000-0001"); 
+        e.setSendQuarterlyTips(Boolean.FALSE);
+        e.setId("UUID10000");
+        e.setSendAdministrativeChangeNotifications(0.0F);
+        e.setSendChangeNotifications(0.0F);
+        e.setSendMemberUpdateRequests(0.0F);
+        dao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        EmailFrequencyEntity e2 = dao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
     }
 }

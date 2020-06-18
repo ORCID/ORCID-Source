@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -30,6 +31,7 @@ import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -50,21 +52,24 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationCustom notification = new NotificationCustom();
         notification.setNotificationType(NotificationType.CUSTOM);
         notification.setSubject("Test subject");
-
+        notification.setCreatedDate(DateUtils.convertToXMLGregorianCalendar(new Date()));
+        
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
         assertNotNull(notificationEntity);
         assertEquals(NotificationType.CUSTOM.name(), notificationEntity.getNotificationType());
         assertEquals("Test subject", notification.getSubject());
+        assertNull(notificationEntity.getDateCreated());
     }
 
     @Test
-    public void testCustomEntityToNotification() {
+    public void testCustomEntityToNotification() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2014-01-01T09:17:56");
         NotificationCustomEntity notificationEntity = new NotificationCustomEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(notificationEntity, date);
         notificationEntity.setId(123L);
         notificationEntity.setNotificationType(NotificationType.CUSTOM.name());
-        notificationEntity.setSubject("Test subject");
-        notificationEntity.setDateCreated(DateUtils.convertToDate("2014-01-01T09:17:56"));
+        notificationEntity.setSubject("Test subject");        
         notificationEntity.setReadDate(DateUtils.convertToDate("2014-03-04T17:43:06"));
 
         Notification notification = jpaJaxbNotificationAdapter.toNotification(notificationEntity);
@@ -74,13 +79,14 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationCustom notificationCustom = (NotificationCustom) notification;
         assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
         assertEquals("Test subject", notificationCustom.getSubject());
-        assertEquals("2014-01-01T09:17:56.000Z", notification.getCreatedDate().toXMLFormat());
-        assertEquals("2014-03-04T17:43:06.000Z", notification.getReadDate().toXMLFormat());
+        assertTrue(notification.getCreatedDate().toXMLFormat().startsWith("2014-01-01T09:17:56"));
+        assertTrue(notification.getReadDate().toXMLFormat().startsWith("2014-03-04T17:43:06"));
     }
 
     @Test
     public void testToNotificationPermissionEntity() {
         NotificationPermission notification = new NotificationPermission();
+        notification.setCreatedDate(DateUtils.convertToXMLGregorianCalendar(new Date()));        
         notification.setNotificationType(NotificationType.PERMISSION);
         String authorizationUrlString = "https://orcid.org/oauth/authorize?client_id=APP-U4UKCNSSIM1OCVQY&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=http://somethirdparty.com";
         AuthorizationUrl url = new AuthorizationUrl();
@@ -110,6 +116,8 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAddItemsEntity addActivitiesEntity = (NotificationAddItemsEntity) notificationEntity;
         
         assertNotNull(notificationEntity);
+        assertNull(notificationEntity.getDateCreated());
+        assertNull(notificationEntity.getLastModified());
         assertEquals(NotificationType.PERMISSION.name(), notificationEntity.getNotificationType());
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
         assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());

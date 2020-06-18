@@ -35,6 +35,7 @@ import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -70,6 +71,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
+        assertNull(workEntity.getDateCreated());
+        assertNull(workEntity.getLastModified());
         assertEquals(Visibility.PRIVATE.name(), workEntity.getVisibility());
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
@@ -102,7 +105,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void clearFieldsFromWorkToWorkEntityTest() {
+    public void clearFieldsFromWorkToWorkEntityTest() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
         // Verify values are not null
         assertNotNull(workEntity.getCitation());
@@ -115,6 +118,8 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         // Verify values are not null
+        assertNotNull(work.getCreatedDate().getValue());
+        assertNotNull(work.getLastModifiedDate().getValue());
         assertNotNull(work.getWorkCitation());
         assertNotNull(work.getWorkCitation().getCitation());
         assertNotNull(work.getWorkCitation().getWorkCitationType());        
@@ -148,7 +153,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNull(workEntity.getJournalTitle());
         assertNull(workEntity.getTranslatedTitle());
         assertNull(workEntity.getTranslatedTitleLanguageCode());
-        assertNull(workEntity.getSubtitle());
+        assertNull(workEntity.getSubtitle());       
         
         // Verify the rest of the fields haven't changed
         WorkEntity workEntity2 = getWorkEntity();
@@ -182,7 +187,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromProfileWorkEntityToWorkTest() {
+    public void fromWorkEntityToWorkTest() throws IllegalAccessException {
         // Set base url to https to ensure source URI is converted to http
         orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
         WorkEntity work = getWorkEntity();
@@ -231,7 +236,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromWorkEntityToWorkSummaryTest() {
+    public void fromWorkEntityToWorkSummaryTest() throws IllegalAccessException {
         WorkEntity work = getWorkEntity();
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
@@ -258,7 +263,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void dissertationThesisToDissertationTest() {
+    public void dissertationThesisToDissertationTest() throws IllegalAccessException {
         WorkEntity work = getWorkEntity();
         work.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
         
@@ -287,7 +292,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void dissertationToDissertationTest() {
+    public void dissertationToDissertationTest() throws IllegalAccessException {
         WorkEntity work = getWorkEntity();
         work.setWorkType(WorkType.DISSERTATION.name());
         
@@ -316,24 +321,21 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         return (Work) unmarshaller.unmarshal(inputStream);
     }
 
-    private WorkEntity getWorkEntity() {
+    private WorkEntity getWorkEntity() throws IllegalAccessException {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         WorkEntity work = new WorkEntity();
-        work.setDateCreated(date);
-        work.setLastModified(date);
+        DateFieldsOnBaseEntityUtils.setDateFields(work, date);
         work.setOrcid("0000-0000-0000-0001");
         work.setVisibility(Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
         work.setClientSourceId(CLIENT_SOURCE_ID);        
         work.setCitation("work:citation");
         work.setCitationType(CitationType.BIBTEX.name());
-        work.setDateCreated(date);
         work.setDescription("work:description");
         work.setId(12345L);
         work.setIso2Country(Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("EN");
-        work.setLastModified(date);
         work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
         work.setSubtitle("work:subtitle");
         work.setTitle("work:title");

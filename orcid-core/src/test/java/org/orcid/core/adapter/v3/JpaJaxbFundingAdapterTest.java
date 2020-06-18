@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -35,6 +36,8 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -99,8 +102,12 @@ public class JpaJaxbFundingAdapterTest {
     public void toFundingEntityTest() throws JAXBException {
         Funding f = getFunding(true);
         assertNotNull(f);
+        assertNotNull(f.getCreatedDate());
+        assertNotNull(f.getLastModifiedDate());
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
+        assertNull(pfe.getDateCreated());
+        assertNull(pfe.getLastModified());
         // Enums
         assertEquals(Visibility.PRIVATE.name(), pfe.getVisibility());
         assertEquals(FundingType.GRANT.name(), pfe.getType());
@@ -144,13 +151,17 @@ public class JpaJaxbFundingAdapterTest {
     }
 
     @Test
-    public void fromFundingEntityTest() throws JAXBException {
+    public void fromFundingEntityTest() throws JAXBException, IllegalAccessException {
         ProfileFundingEntity entity = getProfileFundingEntity();
         assertNotNull(entity);
         assertEquals("123456", entity.getNumericAmount().toString());
 
         Funding funding = jpaJaxbFundingAdapter.toFunding(entity);
         assertNotNull(funding);
+        assertNotNull(funding.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(funding.getCreatedDate().getValue()));
+        assertNotNull(funding.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(funding.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(12345), funding.getPutCode());
         assertNotNull(funding.getAmount());
         assertEquals("123456", funding.getAmount().getContent());
@@ -185,7 +196,7 @@ public class JpaJaxbFundingAdapterTest {
     }
 
     @Test
-    public void fromFundingEntityToUserOBOProfileFundingTest() throws JAXBException {
+    public void fromFundingEntityToUserOBOProfileFundingTest() throws JAXBException, IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -198,6 +209,10 @@ public class JpaJaxbFundingAdapterTest {
         Funding funding = jpaJaxbFundingAdapter.toFunding(entity);
         assertNotNull(funding);
         assertEquals(Long.valueOf(12345), funding.getPutCode());
+        assertNotNull(funding.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(funding.getCreatedDate().getValue()));
+        assertNotNull(funding.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(funding.getLastModifiedDate().getValue()));
         assertNotNull(funding.getAmount());
         assertEquals("123456", funding.getAmount().getContent());
         assertEquals("CRC", funding.getAmount().getCurrencyCode());
@@ -231,13 +246,17 @@ public class JpaJaxbFundingAdapterTest {
     }
 
     @Test
-    public void fromFundingEntityToSummaryTest() throws JAXBException {
+    public void fromFundingEntityToSummaryTest() throws JAXBException, IllegalAccessException {
         ProfileFundingEntity entity = getProfileFundingEntity();
         assertNotNull(entity);
         assertEquals("123456", entity.getNumericAmount().toString());
         FundingSummary summary = jpaJaxbFundingAdapter.toFundingSummary(entity);
         assertNotNull(summary);
         assertEquals(Long.valueOf(12345), summary.getPutCode());
+        assertNotNull(summary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getCreatedDate().getValue()));
+        assertNotNull(summary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getLastModifiedDate().getValue()));
         assertNotNull(summary.getStartDate());
         assertEquals("01", summary.getStartDate().getDay().getValue());
         assertEquals("01", summary.getStartDate().getMonth().getValue());
@@ -255,7 +274,7 @@ public class JpaJaxbFundingAdapterTest {
     }
 
     @Test
-    public void fromFundingEntityToUserOBOSummaryTest() throws JAXBException {
+    public void fromFundingEntityToUserOBOSummaryTest() throws JAXBException, IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -264,9 +283,14 @@ public class JpaJaxbFundingAdapterTest {
         ProfileFundingEntity entity = getProfileFundingEntity();
         assertNotNull(entity);
         assertEquals("123456", entity.getNumericAmount().toString());
+        
         FundingSummary summary = jpaJaxbFundingAdapter.toFundingSummary(entity);
         assertNotNull(summary);
         assertEquals(Long.valueOf(12345), summary.getPutCode());
+        assertNotNull(summary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getCreatedDate().getValue()));
+        assertNotNull(summary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getLastModifiedDate().getValue()));
         assertNotNull(summary.getStartDate());
         assertEquals("01", summary.getStartDate().getDay().getValue());
         assertEquals("01", summary.getStartDate().getMonth().getValue());
@@ -364,8 +388,10 @@ public class JpaJaxbFundingAdapterTest {
         return (Funding) unmarshaller.unmarshal(inputStream);
     }
 
-    private ProfileFundingEntity getProfileFundingEntity() {
+    private ProfileFundingEntity getProfileFundingEntity() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         ProfileFundingEntity entity = new ProfileFundingEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, date);
         entity.setContributorsJson(
                 "{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:creditName\"},\"contributorEmail\":{\"value\":\"funding@contributorEmail.com\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}");
         entity.setDescription("funding:description");

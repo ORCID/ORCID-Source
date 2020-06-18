@@ -316,7 +316,6 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         
         recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
         
-        assertEquals(0, recordsWithNotificationsToSend.size());
-        
+        assertEquals(0, recordsWithNotificationsToSend.size());        
     }
 }

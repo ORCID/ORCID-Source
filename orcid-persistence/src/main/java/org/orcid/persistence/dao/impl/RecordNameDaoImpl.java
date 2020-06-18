@@ -59,12 +59,6 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     }
     
     @Override
-    @Transactional
-    public void createRecordName(RecordNameEntity recordName) {
-        entityManager.persist(recordName);
-    }
-
-    @Override
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from record_name where orcid=:orcid");
         query.setParameter("orcid", orcid);

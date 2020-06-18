@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -64,6 +63,7 @@ import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -173,12 +173,12 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
                 Set<GivenPermissionToEntity> givenPermissionTo = new HashSet<GivenPermissionToEntity>();
 
-                IntStream.range(0, 2).forEachOrdered(i -> {
+                for(int i = 0; i < 2; i++) {
                     GivenPermissionToEntity e1 = new GivenPermissionToEntity();
+                    DateFieldsOnBaseEntityUtils.setDateFields(e1, new Date());
                     e1.setId(Long.valueOf(i));
                     Date now = new Date();
-                    e1.setApprovalDate(now);
-                    e1.setDateCreated(now);
+                    e1.setApprovalDate(now);                    
                     e1.setGiver(invocation.getArgument(0));
                     String receiver = null;
                     RecordNameEntity recordName = new RecordNameEntity();
@@ -193,23 +193,22 @@ public class ManageProfileControllerTest {
                     }
                     e1.setReceiver(receiver);
                     givenPermissionTo.add(e1);
-                });
+                }
+                
                 entity.setGivenPermissionTo(givenPermissionTo);
                 EmailEntity email1 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email1, new Date());
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
-                email1.setDateCreated(new Date());
-                email1.setLastModified(new Date());
                 email1.setPrimary(true);
                 email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
                 EmailEntity email2 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email2, new Date());
                 email2.setEmail(invocation.getArgument(0) + "_2@test.orcid.org");
                 email2.setVerified(true);
                 email2.setCurrent(false);
-                email2.setDateCreated(new Date());
-                email2.setLastModified(new Date());
                 email2.setPrimary(false);
                 email2.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
@@ -299,11 +298,10 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
 
                 EmailEntity email1 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email1, new Date());                
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
-                email1.setDateCreated(new Date());
-                email1.setLastModified(new Date());
                 email1.setPrimary(true);
                 email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
@@ -345,11 +343,10 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
 
                 EmailEntity email1 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email1, new Date());
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
-                email1.setDateCreated(new Date());
-                email1.setLastModified(new Date());
                 email1.setPrimary(true);
                 email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
@@ -805,11 +802,10 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
 
                 EmailEntity email1 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email1, new Date());
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
-                email1.setDateCreated(new Date());
-                email1.setLastModified(new Date());
                 email1.setPrimary(true);
                 email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 

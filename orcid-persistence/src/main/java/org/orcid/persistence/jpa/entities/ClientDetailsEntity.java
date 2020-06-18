@@ -18,6 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -456,6 +457,15 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setUserOBOEnabled(boolean userOBOEnabled) {
         this.userOBOEnabled = userOBOEnabled;
+    }
+    
+    /*
+     * Allow manually setting the last modified day on clients since
+     * the @PreUpdate will not run unless there is a change in the table itself,
+     * which is not the case for when you add new grants or new redirect uris
+     */
+    public void manuallyUpdateLastModified() {
+        this.preUpdate();
     }
 
     @Override

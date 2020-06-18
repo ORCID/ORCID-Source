@@ -73,8 +73,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
 
         ProfileKeywordEntity newEntity = adapter.toProfileKeywordEntity(keyword);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        newEntity.setProfile(profile);
-        newEntity.setDateCreated(new Date());
+        newEntity.setProfile(profile);        
 
         // Set the source
         if (sourceEntity.getSourceProfile() != null) {
@@ -117,7 +116,6 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         orcidSecurityManager.checkSource(updatedEntity);
 
         adapter.toProfileKeywordEntity(keyword, updatedEntity);
-        updatedEntity.setLastModified(new Date());
 
         // Be sure it doesn't overwrite the source
         updatedEntity.setSourceId(existingSourceId);
@@ -157,8 +155,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                 if (updatedOrNew.getPutCode() != null) {
                     // Update the existing ones
                     for (ProfileKeywordEntity existingKeyword : existingKeywordsList) {
-                        if (existingKeyword.getId().equals(updatedOrNew.getPutCode())) {
-                            existingKeyword.setLastModified(new Date());
+                        if (existingKeyword.getId().equals(updatedOrNew.getPutCode())) {                            
                             existingKeyword.setVisibility(updatedOrNew.getVisibility().name());
                             existingKeyword.setKeywordName(updatedOrNew.getContent());
                             existingKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
@@ -171,7 +168,6 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                     SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newKeyword.setProfile(profile);
-                    newKeyword.setDateCreated(new Date());
                     // Set the source
                     if (sourceEntity.getSourceProfile() != null) {
                         newKeyword.setSourceId(sourceEntity.getSourceProfile().getId());

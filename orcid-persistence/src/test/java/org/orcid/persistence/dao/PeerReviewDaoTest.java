@@ -2,9 +2,11 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -12,6 +14,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.PeerReviewEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -60,5 +65,44 @@ public class PeerReviewDaoTest extends DBUnitTest {
     public void hasPublicPeerReviewsTest() {
         assertTrue(dao.hasPublicPeerReviews("0000-0000-0000-0003"));
         assertFalse(dao.hasPublicPeerReviews("0000-0000-0000-0002"));
+    }
+    
+    @Test
+    public void mergeTest() {
+        PeerReviewEntity e = dao.find(14L);
+        e.setSubjectName("UPDATED_SUBJECT_NAME");
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        dao.merge(e);
+
+        PeerReviewEntity updated = dao.find(14L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        OrgEntity o = new OrgEntity();
+        o.setId(2L);
+        PeerReviewEntity e = new PeerReviewEntity();
+        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setVisibility("PRIVATE");
+        e.setRole("ROLE");
+        e.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#5&quot;}}]}");
+        e.setType("TYPE");
+        e.setOrg(o);
+        
+        dao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        PeerReviewEntity e2 = dao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
 }

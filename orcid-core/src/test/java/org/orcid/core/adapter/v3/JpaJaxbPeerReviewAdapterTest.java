@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -37,6 +38,8 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -103,6 +106,8 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertNotNull(pe);
         // General info
         assertEquals(Long.valueOf(12345), pe.getId());
+        assertNull(pe.getDateCreated());
+        assertNull(pe.getLastModified());
         assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
@@ -147,6 +152,8 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertNotNull(pe);
         // General info
         assertEquals(Long.valueOf(12345), pe.getId());
+        assertNull(pe.getDateCreated());
+        assertNull(pe.getLastModified());
         assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
@@ -196,12 +203,17 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromPeerReviewEntityToPeerReview() {
+    public void fromPeerReviewEntityToPeerReview() throws IllegalAccessException {
         PeerReviewEntity entity = getPeerReviewEntity();
         assertNotNull(entity);
         PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
         assertNotNull(peerReview);
         assertEquals(Long.valueOf(12345), peerReview.getPutCode());
+        assertNotNull(peerReview.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(peerReview.getCreatedDate().getValue()));
+        assertNotNull(peerReview.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(peerReview.getLastModifiedDate().getValue()));
+
         assertEquals("private", peerReview.getVisibility().value());
         assertEquals("orcid-generated:12345", peerReview.getGroupId());
         // Subject
@@ -240,12 +252,16 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromPeerReviewEntityToPeerReviewSummary() {
+    public void fromPeerReviewEntityToPeerReviewSummary() throws IllegalAccessException {
         PeerReviewEntity entity = getPeerReviewEntity();
         assertNotNull(entity);
         PeerReviewSummary peerReviewSummary = jpaJaxbPeerReviewAdapter.toPeerReviewSummary(entity);
         assertNotNull(peerReviewSummary);
         assertEquals(Long.valueOf(12345), peerReviewSummary.getPutCode());
+        assertNotNull(peerReviewSummary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(peerReviewSummary.getCreatedDate().getValue()));
+        assertNotNull(peerReviewSummary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(peerReviewSummary.getLastModifiedDate().getValue()));
         assertEquals("private", peerReviewSummary.getVisibility().value());
         assertNotNull(peerReviewSummary.getCompletionDate());
         assertEquals("2015", peerReviewSummary.getCompletionDate().getYear().getValue());
@@ -264,7 +280,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromPeerReviewEntityToUserOBOPeerReview() {
+    public void fromPeerReviewEntityToUserOBOPeerReview() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -275,6 +291,10 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         PeerReview peerReview = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
         assertNotNull(peerReview);
         assertEquals(Long.valueOf(12345), peerReview.getPutCode());
+        assertNotNull(peerReview.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(peerReview.getCreatedDate().getValue()));
+        assertNotNull(peerReview.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(peerReview.getLastModifiedDate().getValue()));
         assertEquals("private", peerReview.getVisibility().value());
         assertEquals("orcid-generated:12345", peerReview.getGroupId());
         // Subject
@@ -313,7 +333,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromPeerReviewEntityToUserOBOPeerReviewSummary() {
+    public void fromPeerReviewEntityToUserOBOPeerReviewSummary() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -324,6 +344,10 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         PeerReviewSummary peerReviewSummary = jpaJaxbPeerReviewAdapter.toPeerReviewSummary(entity);
         assertNotNull(peerReviewSummary);
         assertEquals(Long.valueOf(12345), peerReviewSummary.getPutCode());
+        assertNotNull(peerReviewSummary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(peerReviewSummary.getCreatedDate().getValue()));
+        assertNotNull(peerReviewSummary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(peerReviewSummary.getLastModifiedDate().getValue()));
         assertEquals("private", peerReviewSummary.getVisibility().value());
         assertNotNull(peerReviewSummary.getCompletionDate());
         assertEquals("2015", peerReviewSummary.getCompletionDate().getYear().getValue());
@@ -352,7 +376,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         return (PeerReview) unmarshaller.unmarshal(inputStream);
     }
 
-    private PeerReviewEntity getPeerReviewEntity() {
+    private PeerReviewEntity getPeerReviewEntity() throws IllegalAccessException {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
         orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
@@ -367,7 +391,9 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         sourceEntity.setSourceClient(clientDetailsEntity);
         orgEntity.setSource(sourceEntity);
 
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         PeerReviewEntity result = new PeerReviewEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setOrg(orgEntity);
         result.setCompletionDate(new CompletionDateEntity(2015, 1, 1));
         result.setExternalIdentifiersJson(

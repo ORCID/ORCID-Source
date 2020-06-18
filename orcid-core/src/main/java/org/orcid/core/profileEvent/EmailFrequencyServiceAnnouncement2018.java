@@ -159,8 +159,6 @@ public class EmailFrequencyServiceAnnouncement2018 {
             entity.setBodyHtml(html);
             entity.setBodyText(text);
             entity.setSubject(subject);
-            entity.setDateCreated(now);
-            entity.setLastModified(now);
             entity.setNotificationType(NotificationType.SERVICE_ANNOUNCEMENT.name());
             entity.setNotificationFamily(NOTIFICATION_FAMILY);
             entity.setProfile(new ProfileEntity(orcid));

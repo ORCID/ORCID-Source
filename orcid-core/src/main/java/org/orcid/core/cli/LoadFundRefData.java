@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -149,7 +148,6 @@ public class LoadFundRefData {
                         existingEntity.setSourceId(rdfOrganization.doi);
                         existingEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
                         existingEntity.setSourceUrl(rdfOrganization.doi);
-                        existingEntity.setLastModified(new Date());
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                         existingEntity.setStatus(rdfOrganization.status);
                         orgDisambiguatedDao.merge(existingEntity); 
@@ -157,7 +155,6 @@ public class LoadFundRefData {
                     } else if(statusChanged(rdfOrganization, existingEntity)) {
                         //If the status changed, update the status
                         existingEntity.setStatus(rdfOrganization.status);
-                        existingEntity.setLastModified(new Date());
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                         orgDisambiguatedDao.merge(existingEntity); 
                         depreciatedOrgs += 1;
@@ -167,7 +164,6 @@ public class LoadFundRefData {
                             if(!rdfOrganization.isReplacedBy.equals(existingEntity.getSourceParentId())) {
                                 existingEntity.setSourceParentId(rdfOrganization.isReplacedBy);
                                 existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
-                                existingEntity.setLastModified(new Date());
                                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                                 orgDisambiguatedDao.merge(existingEntity); 
                                 depreciatedOrgs += 1;

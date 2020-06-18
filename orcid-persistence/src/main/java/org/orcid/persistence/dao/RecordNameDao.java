@@ -19,8 +19,6 @@ public interface RecordNameDao extends GenericDao<RecordNameEntity, Long> {
 
     boolean updateRecordName(RecordNameEntity recordName);
 
-    void createRecordName(RecordNameEntity recordName);
-    
     Date getLastModified(String orcid);
 
     List<RecordNameEntity> getRecordNames(List<String> orcids);

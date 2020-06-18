@@ -100,7 +100,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
                     // Update the existing ones
                     for (ResearcherUrlEntity existingEntity : existingEntities) {
                         if (existingEntity.getId().equals(updatedOrNew.getPutCode())) {
-                            existingEntity.setLastModified(new Date());
                             existingEntity.setVisibility(updatedOrNew.getVisibility().name());
                             existingEntity.setUrl(updatedOrNew.getUrl().getValue());
                             existingEntity.setUrlName(updatedOrNew.getUrlName());
@@ -114,8 +113,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
                     Source activeSource = sourceManager.retrieveActiveSource();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newResearcherUrl.setUser(profile);
-                    newResearcherUrl.setDateCreated(new Date());
-                    newResearcherUrl.setLastModified(new Date());
 
                     SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newResearcherUrl);
 
@@ -155,7 +152,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
 
         orcidSecurityManager.checkSourceAndThrow(updatedResearcherUrlEntity);
         jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl, updatedResearcherUrlEntity);
-        updatedResearcherUrlEntity.setLastModified(new Date());
 
         // Be sure it doesn't overwrite the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedResearcherUrlEntity);
@@ -183,7 +179,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
         ResearcherUrlEntity newEntity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
-        newEntity.setDateCreated(new Date());
 
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 

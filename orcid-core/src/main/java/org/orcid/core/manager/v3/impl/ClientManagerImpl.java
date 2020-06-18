@@ -106,8 +106,6 @@ public class ClientManagerImpl implements ClientManager {
 
         ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
         Date now = new Date();
-        newEntity.setDateCreated(now);
-        newEntity.setLastModified(now);
         newEntity.setId(appIdGenerationManager.createNewAppId());
         newEntity.setClientSecretForJpa(encryptionManager.encryptForInternalUse(UUID.randomUUID().toString()), true);
         newEntity.setGroupProfileId(memberId);
@@ -191,9 +189,9 @@ public class ClientManagerImpl implements ClientManager {
             }
         }
 
-        jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);
-        clientDetails.setLastModified(new Date());
-
+        jpaJaxbClientAdapter.toEntity(existingClient, clientDetails);        
+        clientDetails.manuallyUpdateLastModified();
+        
         // Check if we should update client configuration values
         if (updateConfigValues) {
             // Authentication provider id
@@ -244,7 +242,7 @@ public class ClientManagerImpl implements ClientManager {
             if (OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(g.getGrantType())) {
                 oboAlreadyEnabled = true;
                 if (!enableObo) {
-                    grantTypes.remove();
+                    grantTypes.remove();                    
                 }
                 break;
             }
@@ -254,9 +252,7 @@ public class ClientManagerImpl implements ClientManager {
             ClientAuthorisedGrantTypeEntity obo = new ClientAuthorisedGrantTypeEntity();
             obo.setGrantType(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);
             obo.setClientDetailsEntity(clientDetails);
-            obo.setDateCreated(new Date());
-            obo.setLastModified(new Date());
-            clientDetails.getClientAuthorizedGrantTypes().add(obo);
+            clientDetails.getClientAuthorizedGrantTypes().add(obo);            
         }
     }
     
