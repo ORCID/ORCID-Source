@@ -16,7 +16,7 @@ These calls can be used with Member API credentials on sandbox or the production
 * For other names ```/other-names```
 * For country: ```/address```
 * For keywords: ```/keywords```
-* For websites: ```/research-urls```
+* For websites: ```/researcher-urls```
 * For [personal identifiers](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/tutorial/personal_identifiers.md): ```/external-identifiers```
 * For reading email addresses: ```/email```
 
