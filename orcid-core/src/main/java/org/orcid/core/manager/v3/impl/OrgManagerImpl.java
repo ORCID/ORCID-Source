@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.io.Writer;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -228,10 +229,11 @@ public class OrgManagerImpl implements OrgManager {
     }
     
     private void updateResearchResourcesOrgReferences(OrgEntity orgToReference, Long previousOrgIdReference) {
-        List<ResearchResourceEntity> researchResources = researchResourceDao.getResearchResourcesReferencingOrgs(Arrays.asList(previousOrgIdReference));
-        researchResources.forEach(r -> {
+        List<BigInteger> researchResourceIds = researchResourceDao.getResearchResourcesReferencingOrgs(Arrays.asList(previousOrgIdReference));;
+        researchResourceIds.forEach(id -> {
+            ResearchResourceEntity r = researchResourceDao.find(id.longValue());
             for (int i = 0; i < r.getHosts().size(); i++) {
-                if (previousOrgIdReference.equals(r.getHosts().get(i).getId())) {
+                if (r.getHosts().get(i) != null && previousOrgIdReference.equals(r.getHosts().get(i).getId())) {
                     r.getHosts().remove(i);
                     r.getHosts().add(i, orgToReference);
                 }
@@ -239,7 +241,7 @@ public class OrgManagerImpl implements OrgManager {
             List<ResearchResourceItemEntity> researchResourceItems = r.getResourceItems();
             researchResourceItems.forEach(i -> {
                 for (int x = 0; x < i.getHosts().size(); x++) {
-                    if (previousOrgIdReference.equals(i.getHosts().get(x).getId())) {
+                    if (i.getHosts().get(x) != null && previousOrgIdReference.equals(i.getHosts().get(x).getId())) {
                         i.getHosts().remove(x);
                         i.getHosts().add(x, orgToReference);
                     }

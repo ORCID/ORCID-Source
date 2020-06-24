@@ -92,10 +92,10 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ResearchResourceEntity> getResearchResourcesReferencingOrgs(List<Long> orgIds) {
-        Query query = entityManager.createQuery("from ResearchResourceEntity r join r.hosts r_host join r.resourceItems items join items.hosts items_host where r_host.id in (:orgIds) or items_host.id in (:orgIds)");
+    public List<BigInteger> getResearchResourcesReferencingOrgs(List<Long> orgIds) {
+        Query query = entityManager.createNativeQuery("SELECT distinct rr.id FROM research_resource rr LEFT JOIN research_resource_org rro ON rr.id = rro.research_resource_id LEFT JOIN research_resource_item rri ON rr.id = rri.research_resource_id LEFT JOIN research_resource_item_org rrio ON rri.id = rrio.research_resource_item_id WHERE rro.org_id IN (:orgIds) OR rrio.org_id IN (:orgIds)");
         query.setParameter("orgIds", orgIds);
         return query.getResultList();
-    }        
+    }
 
 }
