@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,10 @@ import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.jaxb.model.common_v2.CreatedDate;
+import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
+import org.orcid.model.utils.DateUtils;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -74,6 +78,9 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         g1 = groupIdRecordManager.createGroupIdRecord(g1);
         Long putCode = g1.getPutCode();
         assertNotNull(g1.getSource());
+        assertNotNull(g1.getCreatedDate());
+        assertNotNull(g1.getLastModifiedDate());
+        assertEquals(g1.getCreatedDate().getValue(), g1.getLastModifiedDate().getValue());
         assertNotNull(g1.getSource().getSourceClientId());
         assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
         
@@ -121,6 +128,9 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         assertTrue(!g2.getPutCode().equals(putCode));
         assertEquals("orcid-generated:valid-group-id#2", g2.getGroupId());
         assertNotNull(g2.getSource());
+        assertNotNull(g2.getCreatedDate());
+        assertNotNull(g2.getLastModifiedDate());
+        assertEquals(g2.getCreatedDate().getValue(), g2.getLastModifiedDate().getValue());        
         assertNotNull(g2.getSource().getSourceClientId());
         assertEquals(CLIENT_ID, g2.getSource().getSourceClientId().getPath());
         
@@ -166,6 +176,11 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         assertNotNull(g1.getSource());
         assertNotNull(g1.getSource().getSourceClientId());
         assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
+        assertNotNull(g1.getCreatedDate());
+        assertNotNull(g1.getLastModifiedDate());
+        assertEquals(g1.getCreatedDate().getValue(), g1.getLastModifiedDate().getValue());
+        CreatedDate g1Created = g1.getCreatedDate();
+        LastModifiedDate g1Modified = g1.getLastModifiedDate();
         
         //Create another one
         g1.setPutCode(null);
@@ -175,6 +190,9 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         assertNotNull(g1.getSource());
         assertNotNull(g1.getSource().getSourceClientId());
         assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
+        assertNotNull(g1.getCreatedDate());
+        assertNotNull(g1.getLastModifiedDate());
+        assertEquals(g1.getCreatedDate().getValue(), g1.getLastModifiedDate().getValue());
         
         //Create another one
         g1.setPutCode(null);
@@ -184,7 +202,10 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         assertNotNull(g1.getSource());
         assertNotNull(g1.getSource().getSourceClientId());
         assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
-        
+        assertNotNull(g1.getCreatedDate());
+        assertNotNull(g1.getLastModifiedDate());
+        assertEquals(g1.getCreatedDate().getValue(), g1.getLastModifiedDate().getValue());
+       
         //Update #1 with an existing group id
         try {
             GroupIdRecord existingOne = groupIdRecordManager.findByGroupId("orcid-generated:valid-group-id#1").get();
@@ -224,6 +245,11 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         assertNotNull(existingOne.getSource());
         assertNotNull(existingOne.getSource().getSourceClientId());
         assertEquals(CLIENT_ID, existingOne.getSource().getSourceClientId().getPath());
+        assertNotNull(existingOne.getCreatedDate());
+        assertEquals(g1Created, existingOne.getCreatedDate());
+        assertNotNull(existingOne.getLastModifiedDate());
+        Date lastModifiedForUpdated = DateUtils.convertToDate(existingOne.getLastModifiedDate().getValue());
+        assertTrue(lastModifiedForUpdated.after(DateUtils.convertToDate(g1Modified.getValue())));
         
         //Delete them
         groupIdRecordManager.deleteGroupIdRecord(putCode1);
@@ -243,9 +269,14 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         g1 = groupIdRecordManager.createGroupIdRecord(g1);        
         Long putCode = g1.getPutCode();
         assertNotNull(putCode);
+        assertNotNull(g1.getCreatedDate());
+        assertNotNull(g1.getLastModifiedDate());
+        assertEquals(g1.getCreatedDate().getValue(), g1.getLastModifiedDate().getValue());
         assertNotNull(g1.getSource());
         assertNotNull(g1.getSource().getSourceClientId());
         assertEquals(CLIENT_ID, g1.getSource().getSourceClientId().getPath());
+        Date g1Created = DateUtils.convertToDate(g1.getCreatedDate().getValue());
+        Date g1Modified = DateUtils.convertToDate(g1.getLastModifiedDate().getValue());
         
         //Test find
         assertTrue(groupIdRecordManager.exists(g1.getGroupId()));
@@ -253,6 +284,8 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         Optional<GroupIdRecord> existingByGroupId = groupIdRecordManager.findByGroupId(g1.getGroupId());
         assertTrue(existingByGroupId.isPresent());
         assertNotNull(existingByGroupId.get().getPutCode());
+        assertEquals(g1.getCreatedDate(), existingByGroupId.get().getCreatedDate());
+        assertEquals(g1.getLastModifiedDate(), existingByGroupId.get().getLastModifiedDate());
         assertEquals(putCode, existingByGroupId.get().getPutCode());
         assertEquals(g1.getGroupId(), existingByGroupId.get().getGroupId());
         assertNotNull(existingByGroupId.get().getSource());
@@ -263,6 +296,8 @@ public class GroupIdRecordManagerTest extends BaseTest  {
         assertNotNull(existingByPutCode);
         assertNotNull(existingByPutCode.getPutCode());
         assertEquals(putCode, existingByPutCode.getPutCode());
+        assertEquals(g1.getCreatedDate(), existingByPutCode.getCreatedDate());
+        assertEquals(g1.getLastModifiedDate(), existingByPutCode.getLastModifiedDate());
         assertEquals(g1.getGroupId(), existingByPutCode.getGroupId()); 
         assertNotNull(existingByPutCode.getSource());
         assertNotNull(existingByPutCode.getSource().getSourceClientId());
@@ -285,6 +320,8 @@ public class GroupIdRecordManagerTest extends BaseTest  {
             g1 = groupIdRecordManager.updateGroupIdRecord(g1.getPutCode(), g1);
             assertNotNull(g1);
             assertEquals("orcid-generated:other-valid-group-id", g1.getGroupId());
+            assertEquals(g1Created, DateUtils.convertToDate(g1.getCreatedDate().getValue()));
+            assertTrue(DateUtils.convertToDate(g1.getLastModifiedDate().getValue()).after(g1Modified));            
         } catch(Exception e) {
             fail();
         }
