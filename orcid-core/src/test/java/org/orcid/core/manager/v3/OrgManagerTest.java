@@ -140,15 +140,20 @@ public class OrgManagerTest extends BaseTest {
 
         Mockito.when(mockOrgDao.findByOrgDisambiguatedId(Mockito.eq(deprecatedOrg))).thenReturn(referencingDeprecated);
         Mockito.when(mockOrgDao.findByOrgDisambiguatedId(Mockito.eq(replacementOrg))).thenReturn(getListOfOrgs(replacementOrg));
-        
+
         Mockito.doNothing().when(mockOrgDao).remove(Mockito.anyLong());
         Mockito.when(mockOrgDao.merge(Mockito.any(OrgEntity.class))).thenReturn(null);
-        
+
         Mockito.when(researchResourceDao.getResearchResourcesReferencingOrgs(Mockito.anyList())).thenReturn(getListOfResearchResourceIds());
+        Mockito.when(researchResourceDao.find(Mockito.eq(0L))).thenReturn(getResearchResource(0));
+        Mockito.when(researchResourceDao.find(Mockito.eq(1L))).thenReturn(getResearchResource(1));
+        Mockito.when(researchResourceDao.find(Mockito.eq(2L))).thenReturn(getResearchResource(2));
+        Mockito.when(researchResourceDao.find(Mockito.eq(3L))).thenReturn(getResearchResource(3));
+        Mockito.when(researchResourceDao.find(Mockito.eq(4L))).thenReturn(getResearchResource(4));
         Mockito.when(profileFundingDao.getFundingsReferencingOrgs(Mockito.anyList())).thenReturn(getListOfProfileFundings());
         Mockito.when(peerReviewDao.getPeerReviewsReferencingOrgs(Mockito.anyList())).thenReturn(getListOfPeerReviews());
         Mockito.when(orgAffiliationRelationDao.getOrgAffiliationRelationsReferencingOrgs(Mockito.anyList())).thenReturn(getListOfOrgAffiliationRelations());
-        
+
         // referencingDeprecated list of orgs should be examined individually to
         // check for potential duplicates
         for (int i = 0; i < referencingDeprecated.size(); i++) {
@@ -159,22 +164,34 @@ public class OrgManagerTest extends BaseTest {
             if (i == 1 || i == 4) {
                 org = null;
             }
-            
+
             Mockito.when(mockOrgDao.findByAddressAndDisambiguatedOrg(Mockito.eq(entity.getName()), Mockito.eq(entity.getCity()), Mockito.eq(entity.getRegion()),
                     Mockito.eq(entity.getCountry()), Mockito.any(OrgDisambiguatedEntity.class))).thenReturn(org);
         }
 
         orgManager.updateDisambiguatedOrgReferences(deprecatedOrg, replacementOrg);
 
-        Mockito.verify(mockOrgDao, Mockito.times(8)).remove(Mockito.anyLong()); // where duplicate found
-        Mockito.verify(mockOrgDao, Mockito.times(2)).merge(Mockito.any(OrgEntity.class)); // no duplicate found
-        
+        Mockito.verify(mockOrgDao, Mockito.times(8)).remove(Mockito.anyLong()); // where
+                                                                                // duplicate
+                                                                                // found
+        Mockito.verify(mockOrgDao, Mockito.times(2)).merge(Mockito.any(OrgEntity.class)); // no
+                                                                                          // duplicate
+                                                                                          // found
+
         Mockito.verify(researchResourceDao, Mockito.times(5 * 8)).merge(Mockito.any(ResearchResourceEntity.class));
         Mockito.verify(profileFundingDao, Mockito.times(5 * 8)).merge(Mockito.any(ProfileFundingEntity.class));
         Mockito.verify(peerReviewDao, Mockito.times(5 * 8)).merge(Mockito.any(PeerReviewEntity.class));
         Mockito.verify(orgAffiliationRelationDao, Mockito.times(5 * 8)).merge(Mockito.any(OrgAffiliationRelationEntity.class));
 
         ReflectionTestUtils.setField(orgManager, "orgDao", orgDao);
+    }
+
+    private ResearchResourceEntity getResearchResource(int i) {
+        ResearchResourceEntity entity = new ResearchResourceEntity();
+        entity.setHosts(new ArrayList<>());
+        entity.setResourceItems(new ArrayList<>());
+        entity.setId(Long.valueOf(i));
+        return entity;
     }
 
     private List<BigInteger> getListOfResearchResourceIds() {
@@ -184,7 +201,7 @@ public class OrgManagerTest extends BaseTest {
         }
         return ids;
     }
-    
+
     private List<PeerReviewEntity> getListOfPeerReviews() {
         List<PeerReviewEntity> entities = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -195,7 +212,6 @@ public class OrgManagerTest extends BaseTest {
         return entities;
     }
 
-    
     private List<ProfileFundingEntity> getListOfProfileFundings() {
         List<ProfileFundingEntity> entities = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -205,7 +221,7 @@ public class OrgManagerTest extends BaseTest {
         }
         return entities;
     }
-    
+
     private List<OrgAffiliationRelationEntity> getListOfOrgAffiliationRelations() {
         List<OrgAffiliationRelationEntity> entities = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -215,7 +231,7 @@ public class OrgManagerTest extends BaseTest {
         }
         return entities;
     }
-    
+
     private List<OrgEntity> getListOfOrgs(Long orgDisambiguatedId) {
         List<OrgEntity> orgs = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
