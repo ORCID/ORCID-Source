@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -143,7 +144,7 @@ public class OrgManagerTest extends BaseTest {
         Mockito.doNothing().when(mockOrgDao).remove(Mockito.anyLong());
         Mockito.when(mockOrgDao.merge(Mockito.any(OrgEntity.class))).thenReturn(null);
         
-        Mockito.when(researchResourceDao.getResearchResourcesReferencingOrgs(Mockito.anyList())).thenReturn(getListOfResearchResources());
+        Mockito.when(researchResourceDao.getResearchResourcesReferencingOrgs(Mockito.anyList())).thenReturn(getListOfResearchResourceIds());
         Mockito.when(profileFundingDao.getFundingsReferencingOrgs(Mockito.anyList())).thenReturn(getListOfProfileFundings());
         Mockito.when(peerReviewDao.getPeerReviewsReferencingOrgs(Mockito.anyList())).thenReturn(getListOfPeerReviews());
         Mockito.when(orgAffiliationRelationDao.getOrgAffiliationRelationsReferencingOrgs(Mockito.anyList())).thenReturn(getListOfOrgAffiliationRelations());
@@ -176,16 +177,12 @@ public class OrgManagerTest extends BaseTest {
         ReflectionTestUtils.setField(orgManager, "orgDao", orgDao);
     }
 
-    private List<ResearchResourceEntity> getListOfResearchResources() {
-        List<ResearchResourceEntity> entities = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            ResearchResourceEntity entity = new ResearchResourceEntity();
-            entity.setHosts(new ArrayList<>());
-            entity.setResourceItems(new ArrayList<>());
-            entity.setId(Long.valueOf(i));
-            entities.add(entity);
+    private List<BigInteger> getListOfResearchResourceIds() {
+        List<BigInteger> ids = new ArrayList<>();
+        for (long i = 0; i < 5; i++) {
+            ids.add(BigInteger.valueOf(i));
         }
-        return entities;
+        return ids;
     }
     
     private List<PeerReviewEntity> getListOfPeerReviews() {

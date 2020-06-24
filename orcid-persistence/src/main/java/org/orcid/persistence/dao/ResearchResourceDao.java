@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,5 +22,6 @@ public interface ResearchResourceDao extends GenericDao<ResearchResourceEntity, 
 
     Boolean hasPublicResearchResources(String orcid);
 
-    List<ResearchResourceEntity> getResearchResourcesReferencingOrgs(List<Long> orgIds);
+    List<BigInteger> getResearchResourcesReferencingOrgs(List<Long> orgIds);
+
 }
