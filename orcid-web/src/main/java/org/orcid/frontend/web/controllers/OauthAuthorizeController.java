@@ -12,6 +12,7 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
@@ -48,6 +49,9 @@ public class OauthAuthorizeController extends OauthControllerBase {
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
     
+    @Resource
+    private OauthHelper oauthHelper;
+    
     /** This is called if user is already logged in.  
      * Checks permissions have been granted to client and generates access code.
      * 
@@ -61,9 +65,10 @@ public class OauthAuthorizeController extends OauthControllerBase {
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         //Get and save the request information form
 
-        RequestInfoForm requestInfoForm = generateRequestInfoForm(request);
-        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
-                
+        String queryString = request.getQueryString();
+        RequestInfoForm requestInfoForm = oauthHelper.generateRequestInfoForm(queryString);
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+
         boolean usePersistentTokens = false;
 
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());        
@@ -84,7 +89,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
             error.setView(rView);
             return error;
         } 
-        
+
         //implicit id_token requests must have nonce.
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) 
                 && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) 
@@ -97,7 +102,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
             error.setView(rView);
             return error;
         }
-        
+
         //Check for prompt=login and max_age. This is a MUST in the openid spec.
         //If found redirect back to the signin page.
         //Add check for prompt=confirm here. This is a SHOULD in the openid spec.
@@ -174,7 +179,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
                 return authCodeView;
             }
         }                                
-        
+
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
             if (prompt!=null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
@@ -191,10 +196,10 @@ public class OauthAuthorizeController extends OauthControllerBase {
         mav.setViewName("confirm-oauth-access");        
         return mav;
     }    
-
+    
     @RequestMapping(value = { "/oauth/custom/authorize.json" }, method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm authorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
         Map<String, String> requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());

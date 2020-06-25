@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.filter;
 
 import java.io.IOException;
-import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.Filter;
@@ -18,7 +17,8 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
-import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.frontend.web.controllers.helper.OauthHelper;
+import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
@@ -29,11 +29,14 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
  */
 public class OAuthAuthorizeNotSignedInFilter implements Filter {    
     
-    BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
+    private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
     
     @Resource
-    protected OrcidUrlManager orcidUrlManager;
+    private OrcidUrlManager orcidUrlManager;
 
+    @Resource
+    private OauthHelper oauthHelper;
+    
     @Override
     public void destroy() {
         // Do nothing
@@ -57,12 +60,18 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
             if (session != null)
                 sci = (SecurityContext)session.getAttribute("SPRING_SECURITY_CONTEXT");
             if (forceLogin || baseControllerUtil.getCurrentUser(sci) == null) {
-                
-                if (session != null)
+                if (session != null) {
                     new HttpSessionRequestCache().saveRequest(request, response);
+                }
+                
+                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                    RequestInfoForm rif = oauthHelper.generateRequestInfoForm(request.getQueryString());
+                    request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, rif);
+                    request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
+                }
                 
                 response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);                                             
-                return;
+                return;                              
             }
         }
         chain.doFilter(req, res);

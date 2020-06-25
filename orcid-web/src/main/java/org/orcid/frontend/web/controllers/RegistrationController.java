@@ -35,6 +35,7 @@ import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
+import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
@@ -176,7 +177,7 @@ public class RegistrationController extends BaseController {
 
         setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
 
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
         if (requestInfoForm != null) {
             if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
                 reg.getEmail().setValue(requestInfoForm.getUserEmail());
