@@ -225,65 +225,6 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(3, profile.getKeywords().size());
     }
 
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testInsertGroupWithClients() {
-        String groupOrcid = "4444-1111-6666-4444";
-        ProfileEntity groupProfile = new ProfileEntity();
-        groupProfile.setId(groupOrcid);
-        groupProfile.setOrcidType("GROUP");
-        groupProfile.setGroupType("BASIC");
-
-        SortedSet<ClientDetailsEntity> clients = new TreeSet<>(new OrcidEntityIdComparator<String>());
-        String clientOrcid1 = "4444-4444-4444-4442";
-        ClientDetailsEntity clientProfile1 = new ClientDetailsEntity();
-        clientProfile1.setId(clientOrcid1);
-        clients.add(clientProfile1);
-        String clientOrcid2 = "4444-4444-4444-4443";
-        ClientDetailsEntity clientProfile2 = new ClientDetailsEntity();
-        clientProfile2.setId(clientOrcid2);
-        clients.add(clientProfile2);
-        groupProfile.setClients(clients);
-
-        profileDao.persist(groupProfile);
-        profileDao.flush();
-
-        groupProfile = profileDao.find(groupOrcid);
-
-        assertNotNull(groupProfile);
-        assertEquals(groupOrcid, groupProfile.getId());
-        assertEquals("BASIC", groupProfile.getGroupType());
-        assertNotNull(groupProfile.getClients());
-        assertEquals(2, groupProfile.getClients().size());
-        Map<String, ClientDetailsEntity> map = ProfileEntity.mapById(groupProfile.getClients());
-        assertTrue(map.containsKey(clientOrcid1));
-        assertTrue(map.containsKey(clientOrcid2));
-    }
-
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testInsertClient() {
-        String clientOrcid = "4444-1111-6666-4444";
-        ClientDetailsEntity client = new ClientDetailsEntity();
-        client.setId(clientOrcid);
-        String groupOrcid = "4444-4444-4444-4441";
-        client.setGroupProfileId(groupOrcid);
-
-        clientDetailsDao.persist(client);
-        clientDetailsDao.flush();
-
-        client = clientDetailsDao.find(clientOrcid);
-        assertNotNull(client);
-        assertEquals(clientOrcid, client.getId());
-
-        ProfileEntity groupProfile = profileDao.find(groupOrcid);
-        assertNotNull(groupProfile);
-        assertNotNull(groupProfile.getClients());
-        assertEquals(1, groupProfile.getClients().size());
-        assertEquals(clientOrcid, groupProfile.getClients().iterator().next().getId());
-    }
 
     @Test
     @Rollback(true)

@@ -126,8 +126,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean reviewProfile(String orcid);
 
     boolean unreviewProfile(String orcid);
-    
-    List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize);
         
     boolean updateDefaultVisibility(String orcid, String visibility);
     

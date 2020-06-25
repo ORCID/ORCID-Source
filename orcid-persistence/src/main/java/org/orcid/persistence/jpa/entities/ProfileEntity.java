@@ -623,11 +623,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         return (accountExpiry == null || accountExpiry.after(new Date()));
     }
 
-    @Column(name = "credentials_expiry")
-    public Date getCredentialsExpiry() {
-        return credentialsExpiry;
-    }
-
     /**
      * @param accountExpiry
      *            the accountExpiry to set
@@ -647,13 +642,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     @Transient
     public boolean isEnabled() {
         return enabled != null ? enabled : Boolean.TRUE;
-    }
-
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_orcid")
-    @Sort(type = SortType.COMPARATOR, comparator = OrcidEntityIdComparator.class)
-    public SortedSet<ClientDetailsEntity> getClients() {
-        return clients;
     }
 
     public void setClients(SortedSet<ClientDetailsEntity> clients) {
