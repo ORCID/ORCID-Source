@@ -1,6 +1,5 @@
 package org.orcid.core.manager.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +95,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
                     // Update the existing ones
                     for (ResearcherUrlEntity existingEntity : existingEntities) {
                         if (existingEntity.getId().equals(updatedOrNew.getPutCode())) {
-                            existingEntity.setLastModified(new Date());
                             existingEntity.setVisibility(updatedOrNew.getVisibility().name());
                             existingEntity.setUrl(updatedOrNew.getUrl().getValue());
                             existingEntity.setUrlName(updatedOrNew.getUrlName());
@@ -110,9 +108,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
                     SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newResearcherUrl.setUser(profile);
-                    newResearcherUrl.setDateCreated(new Date());
-                    newResearcherUrl.setLastModified(new Date());
-
+                    
                     if (sourceEntity.getSourceProfile() != null) {
                         newResearcherUrl.setSourceId(sourceEntity.getSourceProfile().getId());
                     }
@@ -157,7 +153,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
 
         orcidSecurityManager.checkSource(updatedResearcherUrlEntity);
         jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl, updatedResearcherUrlEntity);
-        updatedResearcherUrlEntity.setLastModified(new Date());
 
         // Be sure it doesn't overwrite the source
         updatedResearcherUrlEntity.setSourceId(existingSourceId);
@@ -186,7 +181,6 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
         ResearcherUrlEntity newEntity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
-        newEntity.setDateCreated(new Date());
 
         // Set the source
         if (sourceEntity.getSourceProfile() != null) {

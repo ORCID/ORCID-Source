@@ -3,7 +3,6 @@ package org.orcid.scheduler.validation;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -106,8 +105,6 @@ public class PublicProfileValidator {
     private ValidatedPublicProfileEntity getValidation(String orcid) {
         ValidatedPublicProfileEntity validation = new ValidatedPublicProfileEntity();
         validation.setId(orcid);
-        validation.setDateCreated(new Date());
-        validation.setLastModified(new Date());
         return validation;
     }
 

@@ -406,7 +406,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
         // Update the profile entity fields
         ProfileEntity profile = profileDao.find(orcid);
-        profile.setLastModified(new Date());
         profile.setIndexingStatus(IndexingStatus.REINDEX);
         profile.setClaimed(true);
         profile.setCompletedDate(new Date());
@@ -492,7 +491,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public boolean isProfileClaimedByEmail(String email) {
-        return profileDao.getClaimedStatusByEmailHash(encryptionManager.getEmailHash(email));
+        Map<String, String> emailKeys = emailManager.getEmailKeys(email);
+        return profileDao.getClaimedStatusByEmailHash(emailKeys.get(EmailManager.HASH));
     }
 
     @Override

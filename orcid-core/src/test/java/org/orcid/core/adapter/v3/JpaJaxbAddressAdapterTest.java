@@ -32,7 +32,8 @@ import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -98,8 +99,8 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         Address address = getAddress();
         AddressEntity addressEntity = adapter.toAddressEntity(address);
         assertNotNull(addressEntity);
-        assertNotNull(addressEntity.getDateCreated());
-        assertNotNull(addressEntity.getLastModified());
+        assertNull(addressEntity.getDateCreated());
+        assertNull(addressEntity.getLastModified());
         assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name(), addressEntity.getIso2Country());
         assertNull(addressEntity.getSourceId());
         assertNull(addressEntity.getClientSourceId());
@@ -107,13 +108,15 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromAddressEntityToAddressTest() {
+    public void fromAddressEntityToAddressTest() throws IllegalAccessException {
         AddressEntity entity = getAddressEntity();
         Address address = adapter.toAddress(entity);
         assertNotNull(address);
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
         assertNotNull(address.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(address.getCreatedDate().getValue()));
         assertNotNull(address.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(address.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(1), address.getPutCode());
         assertNotNull(address.getSource());
         assertEquals(CLIENT_SOURCE_ID, address.getSource().retrieveSourcePath());
@@ -124,7 +127,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromAddressEntityToUserOBOAddressTest() {
+    public void fromAddressEntityToUserOBOAddressTest() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -133,6 +136,10 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         AddressEntity entity = getAddressEntity();
         Address address = adapter.toAddress(entity);
         assertNotNull(address);
+        assertNotNull(address.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(address.getCreatedDate().getValue()));
+        assertNotNull(address.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(address.getLastModifiedDate().getValue()));        
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
         assertNotNull(address.getCreatedDate());
         assertNotNull(address.getLastModifiedDate());
@@ -153,11 +160,11 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         return (Address) unmarshaller.unmarshal(inputStream);
     }
 
-    private AddressEntity getAddressEntity() {
+    private AddressEntity getAddressEntity() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         AddressEntity result = new AddressEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setId(Long.valueOf(1));
-        result.setDateCreated(new Date());
-        result.setLastModified(new Date());
         result.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name());
         result.setUser(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());

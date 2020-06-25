@@ -455,8 +455,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         if (!userVersions.isEmpty()) {
             for (MinimizedWorkEntity userVersion : userVersions) {
                 WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
-                userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);
-                userVersionFullEntity.setLastModified(new Date());
+                userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);                
                 workDao.merge(userVersionFullEntity);
             }
         } else {
@@ -474,13 +473,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setCitation(preferredFullData.getCitation());
         workEntity.setCitationType(preferredFullData.getCitationType());
         workEntity.setContributorsJson(preferredFullData.getContributorsJson());
-        workEntity.setDateCreated(new Date());
         workEntity.setDescription(preferredFullData.getDescription());
         workEntity.setDisplayIndex(preferredFullData.getDisplayIndex() -1);
         workEntity.setIso2Country(preferredFullData.getIso2Country());
         workEntity.setJournalTitle(preferredFullData.getJournalTitle());
-        workEntity.setLanguageCode(preferredFullData.getLanguageCode());
-        workEntity.setLastModified(new Date());
+        workEntity.setLanguageCode(preferredFullData.getLanguageCode());        
         workEntity.setOrcid(preferredFullData.getOrcid());
         workEntity.setPublicationDate(preferredFullData.getPublicationDate());
         workEntity.setSourceId(preferredFullData.getOrcid());

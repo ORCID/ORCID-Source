@@ -152,8 +152,6 @@ public abstract class QuarterlyNotificationsManager {
             entity.setSubject(getSubject(locale));
             entity.setBodyHtml(html);
             entity.setBodyText(text);
-            entity.setDateCreated(now);
-            entity.setLastModified(now);
             entity.setNotificationType(NotificationType.TIP.name());
             entity.setNotificationFamily(NOTIFICATION_FAMILY);
             entity.setProfile(new ProfileEntity(orcid));

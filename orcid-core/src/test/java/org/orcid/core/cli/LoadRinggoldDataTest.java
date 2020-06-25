@@ -25,9 +25,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDao;
@@ -49,6 +51,8 @@ public class LoadRinggoldDataTest {
     private OrgDisambiguatedDao mockOrgDisambiguatedDao;
     @Mock
     private OrgDao mockOrgDao;
+    @Mock
+    private OrgManager mockOrgManager;
     
     private TransactionTemplate mockTransactionTemplate = new TransactionTemplateStub();
 
@@ -60,6 +64,7 @@ public class LoadRinggoldDataTest {
         loader.setOrgDao(mockOrgDao);
         loader.setOrgDisambiguatedDao(mockOrgDisambiguatedDao);
         loader.setOrgDisambiguatedExternalIdentifierDao(mockOrgDisambiguatedExternalIdentifierDao);
+        loader.setOrgManager(mockOrgManager);
         loader.setTransactionTemplate(mockTransactionTemplate);
     }
 
@@ -470,6 +475,7 @@ public class LoadRinggoldDataTest {
 
         verify(mockOrgDao, times(0)).persist(any());
         verify(mockOrgDao, times(0)).merge(any());
+        verify(mockOrgManager, times(1)).updateDisambiguatedOrgReferences(Mockito.anyLong(), Mockito.anyLong());
     }
 
     @Test

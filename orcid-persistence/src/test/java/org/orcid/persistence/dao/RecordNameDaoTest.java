@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -98,5 +99,40 @@ public class RecordNameDaoTest extends DBUnitTest {
         assertFalse(recordNameDao.exists("0000-0000-0000-1000"));
         assertFalse(recordNameDao.exists("0000-0000-0000-1001"));
         assertFalse(recordNameDao.exists("0000-0000-0000-1002"));
+    }
+    
+    @Test
+    public void mergeTest() {
+        RecordNameEntity e = recordNameDao.find(18L);
+        e.setCreditName("UPDATED_CREDIT_NAME");
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        recordNameDao.merge(e);
+
+        RecordNameEntity updated = recordNameDao.find(18L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        RecordNameEntity e = new RecordNameEntity();
+        e.setOrcid("0000-0000-0000-0002"); 
+        e.setVisibility("PUBLIC");
+        e.setGivenNames("GIVEN_NAME");
+        e.setFamilyName("FAMILY_NAME");
+        
+        recordNameDao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        RecordNameEntity e2 = recordNameDao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
 }

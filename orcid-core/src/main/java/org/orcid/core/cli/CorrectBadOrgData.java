@@ -113,9 +113,10 @@ public class CorrectBadOrgData {
 
     private void updateResearchResourcesReferences(OrgEntity orgToReference, List<Long> orgIds) {
         LOG.info("Pointing research resources to org {}", orgToReference.getId());
-        List<ResearchResourceEntity> researchResources = researchResourceDao.getResearchResourcesReferencingOrgs(orgIds);
-        LOG.info("Found {} research resources referencing org", researchResources.size());
-        researchResources.forEach(r -> {
+        List<BigInteger> researchResourceIds = researchResourceDao.getResearchResourcesReferencingOrgs(orgIds);
+        LOG.info("Found {} research resources referencing org", researchResourceIds.size());
+        researchResourceIds.forEach(id -> {
+            ResearchResourceEntity r = researchResourceDao.find(id.longValue());
             LOG.info("Examining research resource {}...", r.getId());
             List<Long> orgIdsAsLongs = orgIds.stream().map(o -> o.longValue()).collect(Collectors.toList());
             for (int i = 0; i < r.getHosts().size(); i++) {

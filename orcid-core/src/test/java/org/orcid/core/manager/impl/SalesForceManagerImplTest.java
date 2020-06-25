@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.io.IOUtils;
 import org.ehcache.Cache;
 import org.junit.Before;
@@ -30,9 +32,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManagerImpl;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Consortium;
@@ -87,7 +89,7 @@ public class SalesForceManagerImplTest {
     private Cache<String, List<Contact>> salesForceContactsCache;
 
     @Mock
-    private EmailManager emailManager;
+    private EmailManagerReadOnly emailManagerReadOnly;
 
     @Mock
     private ProfileLastModifiedAspect profileLastModifiedAspect;
@@ -98,7 +100,7 @@ public class SalesForceManagerImplTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(salesForceManager, "emailManager", emailManager);
+        TargetProxyHelper.injectIntoProxy(salesForceManager, "emailManagerReadOnly", emailManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceDao", salesForceDao);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "sourceManager", sourceManager);
         TargetProxyHelper.injectIntoProxy(salesForceManager, "salesForceConnectionDao", salesForceConnectionDao);
@@ -153,7 +155,7 @@ public class SalesForceManagerImplTest {
         emails.getEmails().add(email);
         salesForceManager.setProfileLastModifiedAspect(profileLastModifiedAspect);
         when(profileLastModifiedAspect.retrieveLastModifiedDate("0000-0000-0000-0001")).thenReturn(null);
-        when(emailManager.getEmails("0000-0000-0000-0001")).thenReturn(emails);
+        when(emailManagerReadOnly.getEmails("0000-0000-0000-0001")).thenReturn(emails);
     }
 
     private void setUpOrcidUrlManager() {

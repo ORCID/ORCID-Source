@@ -59,8 +59,6 @@ public class MigrateAddressData {
                             visibility = Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value());
                         }
                         AddressEntity address = new AddressEntity();
-                        address.setDateCreated(new Date());
-                        address.setLastModified(new Date());                        
                         address.setUser(new ProfileEntity(orcid));
                         address.setIso2Country(countryCode);
                         address.setSourceId(orcid);

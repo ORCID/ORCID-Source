@@ -67,8 +67,6 @@ public class PopulateTestWorksForClientAndUser {
 
     private WorkEntity getWork(int i) {
         WorkEntity entity = new WorkEntity();
-        entity.setDateCreated(new Date());
-        entity.setLastModified(new Date());
         entity.setTitle("test " + i);
         entity.setOrcid(orcidId);
         if (clientDetailsId != null) {

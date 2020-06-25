@@ -36,19 +36,12 @@ public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<
     @Column(name = "date_created")
     public Date getDateCreated() {
         return dateCreated;
-    }
+    }    
 
-    /**
-     * This should not be called explicitly as the {@link #updateTimeStamps()}
-     * method will be called whenever an update or persist is called
-     * 
-     * @param dateCreated
-     *            the dateCreated to set
-     */
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
+    void setDateCreated(Date date) {
+        this.dateCreated = date;
     }
-
+    
     /**
      * The date that this entity was last updated. This will be the same as the
      * {@link #getDateCreated} only on the initial creation
@@ -60,31 +53,30 @@ public abstract class BaseEntity<T extends Serializable> implements OrcidEntity<
         return lastModified;
     }
 
-    /**
-     * This should not be called explicitly as the {@link #updateTimeStamps()}
-     * method will be called whenever an update or persist is called
-     * 
-     * @param lastModified
-     *            the lastModified to set
-     */
-    public void setLastModified(Date lastModified) {
+    void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+    
+    /**
+     * Package protected method that is called by the {@link EntityManager}
+     * before update. This uses the {@link PreUpdate} annotations
+     */
+    @PreUpdate
+    void preUpdate() {
+        lastModified = new Date();
     }
 
     /**
      * Package protected method that is called by the {@link EntityManager}
-     * before update and persist. This uses the {@link PreUpdate} and
-     * {@link PrePersist} annotations
+     * before persist. This uses the {@link PrePersist} annotations
      */
-    @PreUpdate
     @PrePersist
-    void updateTimeStamps() {
-        lastModified = new Date();
-        if (dateCreated == null) {
-            dateCreated = new Date();
-        }
+    void prePersist() {
+        Date now = new Date();
+        dateCreated = now;
+        lastModified = now;
     }
-
+    
     public static <I extends Serializable, E extends OrcidEntity<I>> Map<I, E> mapById(Collection<E> entities) {
         Map<I, E> map = new HashMap<I, E>(entities.size());
         for (E entity : entities) {

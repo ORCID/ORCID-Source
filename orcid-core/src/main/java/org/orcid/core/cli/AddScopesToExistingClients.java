@@ -1,6 +1,5 @@
 package org.orcid.core.cli;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -130,8 +129,6 @@ public class AddScopesToExistingClients {
                 ClientScopeEntity clientScope = new ClientScopeEntity();
                 clientScope.setClientDetailsEntity(clientDetails);
                 clientScope.setScopeType(scope.value());
-                clientScope.setDateCreated(new Date());
-                clientScope.setLastModified(new Date());
                 clientDetails.getClientScopes().add(clientScope);
                 clientDetailsManager.merge(clientDetails);
                 clientsUpdated += 1;

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
@@ -90,7 +92,8 @@ public class ResearchResourceDaoTest extends DBUnitTest{
     }
     
     @Test
-    public void testWriteRR(){
+    public void testWriteRR() throws IllegalAccessException{
+        Calendar cal = Calendar.getInstance();
         ResearchResourceEntity e = new ResearchResourceEntity();
         e.setDisplayIndex(4l);
         e.setTitle("the title4");
@@ -109,9 +112,6 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         ee.setMonth(2);
         ee.setYear(2003);
         e.setEndDate(ee);
-        Date d = new Date(Date.parse("2010/07/02 15:31"));
-        e.setDateCreated(d);
-        e.setLastModified(d);
         e.setClientSourceId("4444-4444-4444-4442");
         e.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}");
         e.setProfile(pDao.find(USER_ORCID));
@@ -137,8 +137,17 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals(2003,e1.get(2).getEndDate().getYear().intValue());
         assertEquals(2,e1.get(2).getEndDate().getMonth().intValue());
         assertEquals(1,e1.get(2).getEndDate().getDay().intValue());
-        assertEquals(Date.parse("2010/07/02 15:31"),e1.get(2).getDateCreated().getTime());
-        assertNotNull(e1.get(2).getLastModified().getTime());
+        
+        assertNotNull(e1.get(2).getDateCreated());
+        assertNotNull(e1.get(2).getLastModified());
+        assertEquals(e1.get(2).getDateCreated(), e1.get(2).getLastModified());
+        
+        Calendar dateCreated = Calendar.getInstance();
+        dateCreated.setTime(e1.get(2).getDateCreated());
+        
+        assertEquals(cal.get(Calendar.YEAR), dateCreated.get(Calendar.YEAR));
+        assertEquals(cal.get(Calendar.DAY_OF_YEAR), dateCreated.get(Calendar.DAY_OF_YEAR));
+        
         assertEquals(USER_ORCID,e1.get(2).getProfile().getUsername());
         assertEquals("4444-4444-4444-4442",e1.get(2).getClientSourceId());
         assertEquals("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}",e.getExternalIdentifiersJson());
@@ -165,5 +174,41 @@ public class ResearchResourceDaoTest extends DBUnitTest{
     public void testHasPublicResearchResources() {
         assertTrue(dao.hasPublicResearchResources("0000-0000-0000-0003"));
         assertFalse(dao.hasPublicResearchResources("0000-0000-0000-0002"));
+    }
+    
+    @Test
+    public void mergeTest() {
+        ResearchResourceEntity e = dao.find(6L);
+        e.setProposalType("PROPOSAL_TYPE");
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        dao.merge(e);
+
+        ResearchResourceEntity updated = dao.find(6L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        ResearchResourceEntity e = new ResearchResourceEntity();
+        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setVisibility("PRIVATE");
+        e.setTitle("TITLE");
+        e.setProposalType("PROPOSAL_TYPE");
+        e.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#5&quot;}}]}");
+        
+        dao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        ResearchResourceEntity e2 = dao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
 }

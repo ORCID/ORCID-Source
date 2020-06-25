@@ -96,6 +96,20 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
+    urlPreCheck() {
+        // https://regex101.com/r/bKJ5Ua/4
+        const regexpURL = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/;
+        if (regexpURL.test("http://" + this.editFunding.url.value)) {
+          this.editFunding.url.value = "http://" + this.editFunding.url.value;
+        }
+        this.editFunding.externalIdentifiers && 
+        this.editFunding.externalIdentifiers.forEach((externalIdentifier) => {
+          if (regexpURL.test("http://" + externalIdentifier.url.value)) {
+            externalIdentifier.url.value = "http://" + externalIdentifier.url.value;
+          }
+        });
+    }
+
     bindTypeaheadForOrgs(): void {
         let numOfResults = 100;
         (<any>$("#fundingName")).typeahead({
@@ -337,6 +351,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     putFunding(): void {
         console.log("put funding:");
         console.log(this.editFunding);
+        this.urlPreCheck()
         if (this.addingFunding){    
             return; // don't process if adding funding
         } 
@@ -412,6 +427,7 @@ export class FundingFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     serverValidate(relativePath): void {
+        this.urlPreCheck()
         if( relativePath == 'fundings/funding/datesValidate.json' ){
             if( this.editFunding.startDate.month == "" 
                 || this.editFunding.startDate.day == ""

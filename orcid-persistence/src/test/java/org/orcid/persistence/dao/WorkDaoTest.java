@@ -2,11 +2,12 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -76,5 +77,38 @@ public class WorkDaoTest extends DBUnitTest {
     public void testHasPublicWorks() {
         assertTrue(dao.hasPublicWorks("0000-0000-0000-0003"));
         assertFalse(dao.hasPublicWorks("0000-0000-0000-0002"));
+    }
+    
+    @Test
+    public void mergeTest() {
+        WorkEntity e = dao.find(18L);
+        e.setDescription("UPDATED_DESCRIPTION");
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        dao.merge(e);
+
+        WorkEntity updated = dao.find(18L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        WorkEntity e = new WorkEntity();
+        e.setOrcid("0000-0000-0000-0002"); 
+        e.setVisibility("PRIVATE");
+        
+        dao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        WorkEntity e2 = dao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
 }

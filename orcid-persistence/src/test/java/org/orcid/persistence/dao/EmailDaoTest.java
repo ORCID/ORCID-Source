@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -15,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -127,4 +129,40 @@ public class EmailDaoTest extends DBUnitTest {
         assertNotNull(email);
         assertEquals("private_0000-0000-0000-0004@test.orcid.org", email.getEmail());
     }    
+    
+    @Test
+    public void mergeTest() {
+        EmailEntity e = emailDao.findByEmail("teddybass2@semantico.com");
+        e.setCurrent(Boolean.FALSE);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        emailDao.merge(e);
+
+        EmailEntity updated = emailDao.findByEmail("teddybass2@semantico.com");
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        EmailEntity e = new EmailEntity();
+        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setEmail("testEmail@test.orcid.org");
+        e.setId("HASHED_EMAIL");
+        e.setVisibility("PUBLIC");
+        e.setCurrent(Boolean.FALSE);
+        e.setPrimary(Boolean.FALSE);
+        e.setVerified(Boolean.FALSE);
+        emailDao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        EmailEntity e2 = emailDao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+    }
 }

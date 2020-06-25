@@ -398,6 +398,8 @@ public class RegistrationController extends BaseController {
             setError(reg.getEmail(), "Email.registrationForm.email");
             return reg;
         }
+        // Clean the email address so it doesn't contains any horizontal white spaces
+        reg.getEmail().setValue(OrcidStringUtils.filterEmailAddress(reg.getEmail().getValue()));
 
         String emailAddress = reg.getEmail().getValue();
 

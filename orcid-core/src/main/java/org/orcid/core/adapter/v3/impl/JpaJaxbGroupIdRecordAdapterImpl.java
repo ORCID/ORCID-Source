@@ -34,6 +34,15 @@ public class JpaJaxbGroupIdRecordAdapterImpl implements JpaJaxbGroupIdRecordAdap
     }
 
     @Override
+    public GroupIdRecordEntity toGroupIdRecordEntity(GroupIdRecord groupIdRecord, GroupIdRecordEntity existing) {
+        if (groupIdRecord == null) {
+            return null;
+        }
+        mapperFacade.map(groupIdRecord, existing);
+        return existing;
+    }
+    
+    @Override
     public List<GroupIdRecord> toGroupIdRecords(Collection<GroupIdRecordEntity> entities) {
         if (entities == null) {
             return null;

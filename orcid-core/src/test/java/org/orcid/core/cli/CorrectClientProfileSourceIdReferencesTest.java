@@ -28,6 +28,7 @@ import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class CorrectClientProfileSourceIdReferencesTest {
     
@@ -116,6 +117,7 @@ public class CorrectClientProfileSourceIdReferencesTest {
         Mockito.when(orgDao.getIdsOfOrgsReferencingClientProfiles(Mockito.eq(6000), Mockito.anyList())).thenReturn(getListOfIds(0));
         Mockito.doNothing().when(orgDao).correctClientSource(Mockito.anyList());
         
+        ReflectionTestUtils.setField(corrector, "batchSize", 300);
         corrector.correctProfileReferences();
         
         Mockito.verify(researcherUrlDao, Mockito.times(2)).getIdsOfResearcherUrlsReferencingClientProfiles(Mockito.eq(6000), Mockito.anyList());

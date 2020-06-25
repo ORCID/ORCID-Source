@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
@@ -137,6 +138,46 @@ public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
             List<OrcidOauth2TokenDetail> allForClient = orcidOauth2TokenDetailDao.findByClientId(detail.getClientDetailsId());
             assertEquals(1, allForClient.size());
         }
+    }
+    
+    @Test
+    @Transactional
+    @Rollback
+    public void mergeTest() {
+        OrcidOauth2TokenDetail e = orcidOauth2TokenDetailDao.find(1L);
+        e.setState("updated-state");
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        orcidOauth2TokenDetailDao.merge(e);
+
+        OrcidOauth2TokenDetail updated = orcidOauth2TokenDetailDao.find(1L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    @Transactional
+    @Rollback
+    public void persistTest() {
+        OrcidOauth2TokenDetail e = new OrcidOauth2TokenDetail();
+        e.setAuthenticationKey("AUTH_KEY");
+        e.setClientDetailsId("4444-4444-4444-4445");
+        e.setPersistent(Boolean.FALSE);
+        e.setProfile(new ProfileEntity("4444-4444-4444-4445"));
+        e.setScope("/read-limited");
+        
+        orcidOauth2TokenDetailDao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        OrcidOauth2TokenDetail e2 = orcidOauth2TokenDetailDao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());        
     }
 
 }

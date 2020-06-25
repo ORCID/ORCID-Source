@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
@@ -53,6 +54,8 @@ public class EmailManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
+    private final Date pastDate= new Date();
+    
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
     
@@ -179,6 +182,8 @@ public class EmailManagerTest extends BaseTest {
         assertFalse(element.isCurrent());
         assertFalse(element.isPrimary());
         assertFalse(element.isVerified());
+        XMLGregorianCalendar dateCreated = element.getCreatedDate().getValue();
+        XMLGregorianCalendar lastModified = element.getLastModifiedDate().getValue();
         
         emailManager.verifySetCurrentAndPrimary(orcid, email);
         
@@ -195,6 +200,11 @@ public class EmailManagerTest extends BaseTest {
         assertTrue(element.isCurrent());
         assertTrue(element.isPrimary());
         assertTrue(element.isVerified());
+
+        XMLGregorianCalendar newDateCreated = element.getCreatedDate().getValue();
+        XMLGregorianCalendar newLastModified = element.getLastModifiedDate().getValue();
+        assertEquals(dateCreated, newDateCreated);
+        assertTrue(newLastModified.getMillisecond() > lastModified.getMillisecond());
     }
     
     @Test
@@ -273,18 +283,16 @@ public class EmailManagerTest extends BaseTest {
     }
     
     @Test
-    public void testEditPrimaryEmail() {
+    public void testEditPrimaryEmail() throws IllegalAccessException {
         ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
         
         EmailEntity primaryEmailEntity = new EmailEntity();
         primaryEmailEntity.setEmail("original");
-        primaryEmailEntity.setDateCreated(new Date());
-        primaryEmailEntity.setLastModified(new Date());
         primaryEmailEntity.setPrimary(Boolean.TRUE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
-        primaryEmailEntity.setId("some-email-hash");
+        primaryEmailEntity.setId("some-email-hash");        
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("original"))).thenReturn(primaryEmailEntity);
         
@@ -299,22 +307,20 @@ public class EmailManagerTest extends BaseTest {
         assertEquals("edited", mergedEntity.getEmail());
         assertTrue(mergedEntity.getPrimary());
         assertFalse(mergedEntity.getVerified());
-        assertEquals("PRIVATE", mergedEntity.getVisibility());        
+        assertEquals("PRIVATE", mergedEntity.getVisibility());
     }
     
     @Test
-    public void testEditSecondaryEmail() {       
+    public void testEditSecondaryEmail() throws IllegalAccessException {       
         ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
         EmailEntity primaryEmailEntity = new EmailEntity();
         primaryEmailEntity.setEmail("original");
         primaryEmailEntity.setCurrent(true);
-        primaryEmailEntity.setDateCreated(new Date());
-        primaryEmailEntity.setLastModified(new Date());
         primaryEmailEntity.setPrimary(Boolean.FALSE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
-        primaryEmailEntity.setId("some-email-hash");
+        primaryEmailEntity.setId("some-email-hash");        
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("original"))).thenReturn(primaryEmailEntity);
         
@@ -333,18 +339,16 @@ public class EmailManagerTest extends BaseTest {
     }
     
     @Test
-    public void testEditPrimaryEmailNoAddressChange() {
+    public void testEditPrimaryEmailNoAddressChange() throws IllegalAccessException {
         ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
         
         EmailEntity primaryEmailEntity = new EmailEntity();
         primaryEmailEntity.setEmail("original");
-        primaryEmailEntity.setDateCreated(new Date());
-        primaryEmailEntity.setLastModified(new Date());
         primaryEmailEntity.setPrimary(Boolean.TRUE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
-        primaryEmailEntity.setId("some-email-hash");
+        primaryEmailEntity.setId("some-email-hash");        
         
         Mockito.when(mockEmailDao.findByEmail(Mockito.eq("email"))).thenReturn(primaryEmailEntity);
         
@@ -391,7 +395,7 @@ public class EmailManagerTest extends BaseTest {
     }
     
     @Test
-    public void editEmailRemovesSpaceCharsTest() {
+    public void editEmailRemovesSpaceCharsTest() throws IllegalAccessException {
         char[] chars = { ' ', '\n', '\t', '\u00a0', '\u0020', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008',
                 '\u2009', '\u200a', '\u202f', '\u205f', '\u3000' };
         
@@ -400,8 +404,6 @@ public class EmailManagerTest extends BaseTest {
         
         EmailEntity primaryEmailEntity = new EmailEntity();
         primaryEmailEntity.setEmail("original");
-        primaryEmailEntity.setDateCreated(new Date());
-        primaryEmailEntity.setLastModified(new Date());
         primaryEmailEntity.setPrimary(Boolean.TRUE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
@@ -425,7 +427,7 @@ public class EmailManagerTest extends BaseTest {
     }
     
     @Test
-    public void reactivateOrCreateRemovesSpaceChars_ReactivateTest() {
+    public void reactivateOrCreateRemovesSpaceChars_ReactivateTest() throws IllegalAccessException {
         char[] chars = { ' ', '\n', '\t', '\u00a0', '\u0020', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008',
                 '\u2009', '\u200a', '\u202f', '\u205f', '\u3000' };        
         ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
@@ -433,8 +435,6 @@ public class EmailManagerTest extends BaseTest {
         
         EmailEntity primaryEmailEntity = new EmailEntity();
         primaryEmailEntity.setEmail("original");
-        primaryEmailEntity.setDateCreated(new Date());
-        primaryEmailEntity.setLastModified(new Date());
         primaryEmailEntity.setPrimary(Boolean.TRUE);
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
@@ -454,7 +454,7 @@ public class EmailManagerTest extends BaseTest {
             
             EmailEntity entity = captor.getValue();
             assertEquals(filteredEmail, entity.getEmail());
-            assertEquals("some-email-hash", entity.getId());
+            assertEquals("some-email-hash", entity.getId());            
         }  
     }
     

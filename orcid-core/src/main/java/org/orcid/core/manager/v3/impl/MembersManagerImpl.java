@@ -120,11 +120,9 @@ public class MembersManagerImpl implements MembersManager {
                 newRecord.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
                 newRecord.setClaimed(true);
                 newRecord.setCreationMethod(CreationMethod.DIRECT.value());
-                newRecord.setDateCreated(now);
                 newRecord.setEnableDeveloperTools(false);       
                 newRecord.setEncryptedPassword(null);
                 newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()).name());
-                newRecord.setLastModified(now);
                 newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN.name());
                 newRecord.setRecordLocked(false);
                 newRecord.setReviewed(true);
@@ -134,9 +132,11 @@ public class MembersManagerImpl implements MembersManager {
                 
                 // Set primary email
                 EmailEntity emailEntity = new EmailEntity();
-                String email = member.getEmail().getValue().trim();
-                emailEntity.setEmail(email);
-                emailEntity.setId(encryptionManager.getEmailHash(email));
+                
+                Map<String, String> emailKeys = emailManager.getEmailKeys(member.getEmail().getValue());
+                
+                emailEntity.setEmail(emailKeys.get(EmailManager.FILTERED_EMAIL));
+                emailEntity.setId(emailKeys.get(EmailManager.HASH));
                 emailEntity.setProfile(newRecord);
                 emailEntity.setPrimary(true);
                 emailEntity.setCurrent(true);
@@ -182,10 +182,11 @@ public class MembersManagerImpl implements MembersManager {
     public Member updateMemeber(Member member) throws IllegalArgumentException {
         String memberId = member.getGroupOrcid().getValue();
         String name = member.getGroupName().getValue();
-        String email = member.getEmail().getValue().trim();
         String salesForceId = member.getSalesforceId() == null ? null : member.getSalesforceId().getValue();
         MemberType memberType = MemberType.fromValue(member.getType().getValue());
-
+        Map<String, String> emailKeys = emailManager.getEmailKeys(member.getEmail().getValue());
+        String email = emailKeys.get(EmailManager.FILTERED_EMAIL);
+        String hash = emailKeys.get(EmailManager.HASH);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 boolean memberChangedType = false;
@@ -199,7 +200,6 @@ public class MembersManagerImpl implements MembersManager {
                 
                 // Update member info
                 ProfileEntity memberEntity = profileDao.find(member.getGroupOrcid().getValue());
-                memberEntity.setLastModified(new Date());
                 memberEntity.setIndexingStatus(IndexingStatus.PENDING);                
                 memberEntity.setSalesforeId(salesForceId);
 
@@ -215,10 +215,9 @@ public class MembersManagerImpl implements MembersManager {
                     }
                     Date now = new Date();
                     EmailEntity newPrimaryEmail = new EmailEntity();
-                    newPrimaryEmail.setLastModified(now);                    
                     newPrimaryEmail.setCurrent(true);
                     newPrimaryEmail.setEmail(email);
-                    newPrimaryEmail.setId(encryptionManager.getEmailHash(email));
+                    newPrimaryEmail.setId(hash);
                     newPrimaryEmail.setPrimary(true);
                     newPrimaryEmail.setVerified(true);
                     newPrimaryEmail.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
@@ -346,8 +345,6 @@ public class MembersManagerImpl implements MembersManager {
                 ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
                 clientScopeEntity.setClientDetailsEntity(client);
                 clientScopeEntity.setScopeType(newScope);
-                clientScopeEntity.setDateCreated(now);
-                clientScopeEntity.setLastModified(now);
                 clientScopeDao.persist(clientScopeEntity);
             }
 

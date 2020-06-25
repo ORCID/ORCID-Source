@@ -1,6 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +75,6 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         ProfileKeywordEntity newEntity = adapter.toProfileKeywordEntity(keyword);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
-        newEntity.setDateCreated(new Date());
 
         // Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
@@ -113,7 +111,6 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         orcidSecurityManager.checkSourceAndThrow(updatedEntity);
 
         adapter.toProfileKeywordEntity(keyword, updatedEntity);
-        updatedEntity.setLastModified(new Date());
 
         // Be sure it doesn't overwrite the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedEntity);
@@ -153,7 +150,6 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                     // Update the existing ones
                     for (ProfileKeywordEntity existingKeyword : existingKeywordsList) {
                         if (existingKeyword.getId().equals(updatedOrNew.getPutCode())) {
-                            existingKeyword.setLastModified(new Date());
                             existingKeyword.setVisibility(updatedOrNew.getVisibility().name());
                             existingKeyword.setKeywordName(updatedOrNew.getContent());
                             existingKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
@@ -166,7 +162,6 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                     Source activeSource = sourceManager.retrieveActiveSource();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newKeyword.setProfile(profile);
-                    newKeyword.setDateCreated(new Date());
                     // Set the source
                     SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newKeyword);
                     newKeyword.setVisibility(updatedOrNew.getVisibility().name());

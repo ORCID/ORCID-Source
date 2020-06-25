@@ -36,6 +36,7 @@ import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -76,7 +77,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
     @Mock
     private RecordNameManagerReadOnly mockRecordNameManager;
 
-    private Date createdDate = new Date();
+    private Date createdDate = DateUtils.convertToDate("2015-06-05T10:15:20");
 
     @Before
     public void setUp() {
@@ -98,11 +99,13 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void testEntityToModel() throws JAXBException {
+    public void testEntityToModel() throws JAXBException, IllegalAccessException {
         ResearchResourceEntity e = getResearchResourceEntity();
         ResearchResource m = jpaJaxbResearchResourceAdapter.toModel(e);
-        assertNotNull(m.getCreatedDate().getValue());
-        assertNotNull(m.getLastModifiedDate().getValue());
+        assertNotNull(m.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(m.getCreatedDate().getValue()));
+        assertNotNull(m.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(m.getLastModifiedDate().getValue()));
         assertEquals("title", m.getProposal().getTitle().getTitle().getContent());
         assertEquals("translatedTitle", m.getProposal().getTitle().getTranslatedTitle().getContent());
         assertEquals("en", m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
@@ -137,7 +140,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void testEntityToUserOBOModel() throws JAXBException {
+    public void testEntityToUserOBOModel() throws JAXBException, IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -145,8 +148,10 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
 
         ResearchResourceEntity e = getResearchResourceEntity();
         ResearchResource m = jpaJaxbResearchResourceAdapter.toModel(e);
-        assertNotNull(m.getCreatedDate().getValue());
-        assertNotNull(m.getLastModifiedDate().getValue());
+        assertNotNull(m.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(m.getCreatedDate().getValue()));
+        assertNotNull(m.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(m.getLastModifiedDate().getValue()));
         assertEquals("title", m.getProposal().getTitle().getTitle().getContent());
         assertEquals("translatedTitle", m.getProposal().getTitle().getTranslatedTitle().getContent());
         assertEquals("en", m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
@@ -180,6 +185,8 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
     public void testModelToEntity() throws JAXBException {
         ResearchResource r = getResearchResource();
         ResearchResourceEntity e = jpaJaxbResearchResourceAdapter.toEntity(r);
+        assertNull(e.getDateCreated());
+        assertNull(e.getLastModified());
         StartDateEntity start = new StartDateEntity(1999, 2, 2);
         EndDateEntity end = new EndDateEntity(2012, 2, 2);
         assertEquals(start.getYear(), e.getStartDate().getYear());
@@ -189,8 +196,6 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         assertEquals(end.getMonth(), e.getEndDate().getMonth());
         assertEquals(end.getDay(), e.getEndDate().getDay());
         assertEquals(Long.valueOf(1234l), e.getId());
-        assertEquals(DateUtils.convertToDate("2015-06-25T16:01:12"), e.getDateCreated());
-        assertEquals(DateUtils.convertToDate("2017-09-08T13:31:19"), e.getLastModified());
         assertEquals("proposal", e.getProposalType());
         assertEquals("Giant Laser Award", e.getTitle());
         assertEquals("Giant Laser Award2", e.getTranslatedTitle());
@@ -223,10 +228,12 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void testEntityToSummary() {
+    public void testEntityToSummary() throws IllegalAccessException {
         ResearchResourceSummary m = jpaJaxbResearchResourceAdapter.toSummary(getResearchResourceEntity());
-        assertNotNull(m.getCreatedDate().getValue());
-        assertNotNull(m.getLastModifiedDate().getValue());
+        assertNotNull(m.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(m.getCreatedDate().getValue()));
+        assertNotNull(m.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(m.getLastModifiedDate().getValue()));
         assertEquals("title", m.getProposal().getTitle().getTitle().getContent());
         assertEquals("translatedTitle", m.getProposal().getTitle().getTranslatedTitle().getContent());
         assertEquals("en", m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
@@ -247,15 +254,17 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void testEntityToUserOBOSummary() {
+    public void testEntityToUserOBOSummary() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
 
         ResearchResourceSummary m = jpaJaxbResearchResourceAdapter.toSummary(getResearchResourceEntity());
-        assertNotNull(m.getCreatedDate().getValue());
-        assertNotNull(m.getLastModifiedDate().getValue());
+        assertNotNull(m.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(m.getCreatedDate().getValue()));
+        assertNotNull(m.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(m.getLastModifiedDate().getValue()));
         assertEquals("title", m.getProposal().getTitle().getTitle().getContent());
         assertEquals("translatedTitle", m.getProposal().getTitle().getTranslatedTitle().getContent());
         assertEquals("en", m.getProposal().getTitle().getTranslatedTitle().getLanguageCode());
@@ -283,16 +292,15 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         return (ResearchResource) unmarshaller.unmarshal(inputStream);
     }
 
-    private ResearchResourceEntity getResearchResourceEntity() {
+    private ResearchResourceEntity getResearchResourceEntity() throws IllegalAccessException {
         ResearchResourceEntity rre = new ResearchResourceEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(rre, createdDate);
         rre.setEndDate(new EndDateEntity(2020, 2, 2));
         rre.setStartDate(new StartDateEntity(2019, 1, 1));
         rre.setTitle("title");
         rre.setTranslatedTitle("translatedTitle");
         rre.setTranslatedTitleLanguageCode("en");
         rre.setProfile(new ProfileEntity("0000-0001-0002-0003"));
-        rre.setDateCreated(createdDate);
-        rre.setLastModified(createdDate);
         rre.setDisplayIndex(1l);
         rre.setClientSourceId(CLIENT_SOURCE_ID);
         rre.setUrl("http://blah.com");

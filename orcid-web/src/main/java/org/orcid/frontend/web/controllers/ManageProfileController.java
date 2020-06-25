@@ -510,6 +510,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+        // Clean the email address so it doesn't contains any horizontal white spaces
+        email.setValue(OrcidStringUtils.filterEmailAddress(email.getValue()));
+        
         // make sure there are no dups
         validateEmailAddress(email.getValue(), false, false, request, mbr);
 
@@ -606,6 +609,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+        
+        //Clean the edited email address so it doesn't contains any horizontal white spaces
+        editEmail.setEdited(OrcidStringUtils.filterEmailAddress(editEmail.getEdited()));
+                
         validateEmailAddress(editEmail.getEdited(), false, false, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
@@ -619,7 +626,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (errors.isEmpty()) {
             // clear errors
             editEmail.setErrors(new ArrayList<String>());
-            emailManager.editEmail(orcid, editEmail.getOriginal(), editEmail.getEdited().trim(), request);            
+            String original = editEmail.getOriginal();
+            String edited = editEmail.getEdited();
+            emailManager.editEmail(orcid, original, edited, request);            
         } else {
             editEmail.setErrors(errors);
         }

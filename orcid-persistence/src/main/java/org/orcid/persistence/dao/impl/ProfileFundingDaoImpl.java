@@ -2,7 +2,6 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -195,7 +194,6 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         existing.setType(updated.getType());
         existing.setUrl(updated.getUrl());
         existing.setVisibility(updated.getVisibility());   
-        existing.setLastModified(new Date());
     }
     
     @Override

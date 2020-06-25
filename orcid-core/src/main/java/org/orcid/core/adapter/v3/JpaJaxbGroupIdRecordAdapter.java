@@ -11,6 +11,8 @@ public interface JpaJaxbGroupIdRecordAdapter {
     GroupIdRecord toGroupIdRecord(GroupIdRecordEntity groupIdRecordEntity);
 
     GroupIdRecordEntity toGroupIdRecordEntity(GroupIdRecord groupIdRecord);
+    
+    GroupIdRecordEntity toGroupIdRecordEntity(GroupIdRecord groupIdRecord, GroupIdRecordEntity existing);
 
     List<GroupIdRecord> toGroupIdRecords(Collection<GroupIdRecordEntity> entities);
 }

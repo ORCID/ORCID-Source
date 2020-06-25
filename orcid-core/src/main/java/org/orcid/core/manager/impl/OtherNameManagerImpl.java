@@ -1,6 +1,5 @@
 package org.orcid.core.manager.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,8 +73,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
         OtherNameEntity newEntity = jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
-        newEntity.setDateCreated(new Date());
-
+        
         // Set the source
         if (sourceEntity.getSourceProfile() != null) {
             newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
@@ -116,7 +114,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
 
         orcidSecurityManager.checkSource(updatedOtherNameEntity);
         jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName, updatedOtherNameEntity);
-        updatedOtherNameEntity.setLastModified(new Date());
         // Be sure it doesn't overwrite the source
         updatedOtherNameEntity.setSourceId(existingSourceId);
         updatedOtherNameEntity.setClientSourceId(existingClientSourceId);
@@ -156,7 +153,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                     // Update the existing ones
                     for (OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
                         if (existingOtherName.getId().equals(updatedOrNew.getPutCode())) {
-                            existingOtherName.setLastModified(new Date());
                             existingOtherName.setVisibility(updatedOrNew.getVisibility().name());
                             existingOtherName.setDisplayName(updatedOrNew.getContent());
                             existingOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
@@ -169,7 +165,6 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                     SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newOtherName.setProfile(profile);
-                    newOtherName.setDateCreated(new Date());
                     // Set the source
                     if (sourceEntity.getSourceProfile() != null) {
                         newOtherName.setSourceId(sourceEntity.getSourceProfile().getId());

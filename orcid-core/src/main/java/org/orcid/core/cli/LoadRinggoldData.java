@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -58,6 +59,7 @@ public class LoadRinggoldData {
     private OrgDao orgDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
+    private OrgManager orgManager;
 
     private int numAdded;
     private int numUpdated;
@@ -88,6 +90,10 @@ public class LoadRinggoldData {
 
     public void setOrgDisambiguatedDao(OrgDisambiguatedDao orgDisambiguatedDao) {
         this.orgDisambiguatedDao = orgDisambiguatedDao;
+    }
+    
+    public void setOrgManager(OrgManager orgManager) {
+        this.orgManager = orgManager;
     }
 
     public void setOrgDisambiguatedExternalIdentifierDao(OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao) {
@@ -128,6 +134,7 @@ public class LoadRinggoldData {
         orgDao = (OrgDao) context.getBean("orgDao");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
         orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
+        orgManager = (OrgManager) context.getBean("orgManagerV3");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
     }
 
@@ -345,10 +352,7 @@ public class LoadRinggoldData {
                     }
 
                     if (replacementEntity != null) {
-                        // Replace the org disambiguated id in all org that had
-                        // the
-                        // deprecated/obsoleted entity
-                        orgDisambiguatedDao.replace(existingEntity.getId(), replacementEntity.getId());
+                        orgManager.updateDisambiguatedOrgReferences(existingEntity.getId(), replacementEntity.getId());
                     } else {
                         LOGGER.warn("Couldn't find replacement entity ringgold_id:'{}' for ringgold_id:'{}'", newId, oldId);
                     }
@@ -384,7 +388,6 @@ public class LoadRinggoldData {
         Date now = new Date();
         if (entity == null) {
             entity = new OrgDisambiguatedEntity();
-            entity.setDateCreated(now);
             entity.setLastIndexedDate(now);
             entity.setCity(city);
             entity.setCountry(country.name());
@@ -404,7 +407,6 @@ public class LoadRinggoldData {
             if (changed(entity, parentId, name, country, city, state, type)) {
                 entity.setCity(city);
                 entity.setCountry(country.name());
-                entity.setLastModified(now);
                 entity.setName(name);
                 entity.setOrgType(type);
                 entity.setRegion(state);
@@ -446,9 +448,6 @@ public class LoadRinggoldData {
                 //If the external identifier doesn't exists or it doesn't belong to the disambiguatedEntity, lets create it 
                 if (existingEntity == null || !existingEntity.getOrgDisambiguated().getId().equals(disambiguatedEntity.getId())) {
                     OrgDisambiguatedExternalIdentifierEntity newEntity = new OrgDisambiguatedExternalIdentifierEntity();
-                    Date now = new Date();
-                    newEntity.setDateCreated(now);
-                    newEntity.setLastModified(now);
                     newEntity.setIdentifier(value);
                     newEntity.setIdentifierType(type);
                     newEntity.setOrgDisambiguated(disambiguatedEntity);
@@ -468,7 +467,6 @@ public class LoadRinggoldData {
     }
 
     private void generateOrganizations(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> altNames) {
-        Date now = new Date();
         altNames.forEach(altName -> {
             String name = altName.get("name").asText();
             LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
@@ -478,14 +476,11 @@ public class LoadRinggoldData {
             if (existingOrg != null) {
                 if (existingOrg.getOrgDisambiguated() == null) {
                     existingOrg.setOrgDisambiguated(disambiguatedEntity);
-                    existingOrg.setLastModified(now);
                     orgDao.merge(existingOrg);
                     numUpdatedOrgs++;
                 }
             } else {
                 OrgEntity newOrg = new OrgEntity();
-                newOrg.setDateCreated(now);
-                newOrg.setLastModified(now);
                 newOrg.setCity(city);
                 newOrg.setCountry(country.name());
                 newOrg.setName(name);
@@ -502,14 +497,11 @@ public class LoadRinggoldData {
         if (existingOrg != null) {
             if (existingOrg.getOrgDisambiguated() == null) {
                 existingOrg.setOrgDisambiguated(disambiguatedEntity);
-                existingOrg.setLastModified(now);
                 orgDao.merge(existingOrg);
                 numUpdatedOrgs++;
             }
         } else {
             OrgEntity newOrg = new OrgEntity();
-            newOrg.setDateCreated(now);
-            newOrg.setLastModified(now);
             newOrg.setRegion(region);
             newOrg.setCity(city);
             newOrg.setCountry(country.name());

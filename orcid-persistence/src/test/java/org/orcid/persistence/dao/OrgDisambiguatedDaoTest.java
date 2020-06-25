@@ -2,9 +2,11 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -71,4 +73,39 @@ public class OrgDisambiguatedDaoTest extends DBUnitTest {
         assertEquals("GB",e.getCountry());
     }
     
+    @Test
+    public void mergeTest() {
+        OrgDisambiguatedEntity e = orgDisambiguatedDao.find(2L);
+        e.setPopularity(10000);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        orgDisambiguatedDao.merge(e);
+
+        OrgDisambiguatedEntity updated = orgDisambiguatedDao.find(2L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        OrgDisambiguatedEntity e = new OrgDisambiguatedEntity();
+        e.setSourceType("TYPE");
+        e.setSourceId("00001");
+        e.setName("ORG_NAME");
+        e.setCountry("US");
+        e.setCity("NY");
+        
+        orgDisambiguatedDao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        OrgDisambiguatedEntity e2 = orgDisambiguatedDao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
+    }
 }

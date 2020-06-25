@@ -59,7 +59,12 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         e1.setPrimaryUse("pu");
         IdentifierTypeEntity e2 = idTypeDao.addIdentifierType(e1);
         assertNotNull(e2.getId());
-
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        Date dateCreated = e2.getDateCreated();
+        Date lastModified = e2.getLastModified();
+        
+        
         e1 = idTypeDao.getEntityByName("TEST_A");
         assertEquals("TEST_A",e1.getName());
         assertEquals("http://whatever.com/{id}",e1.getResolutionPrefix());
@@ -72,10 +77,11 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         assertEquals("APP-6666666666666666",e1.getSourceClient().getId());
         assertTrue(e1.getIsCaseSensitive());
         assertEquals("pu",e1.getPrimaryUse());
+        assertEquals(dateCreated, e1.getDateCreated());
+        assertEquals(lastModified, e1.getLastModified());
         
         //update
         //e1 = idTypeDao.getEntityByName("TEST_A");
-        Date last = e1.getLastModified();
         e1.setResolutionPrefix("http://whatever2.com/{id}");
         e1.setValidationRegex("blah2");
         e1.setIsDeprecated(true);
@@ -86,10 +92,8 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         assertTrue(e1.getIsDeprecated());
         assertNotNull(e1.getId());
         assertEquals("APP-6666666666666666",e1.getSourceClient().getClientId());
-        assertTrue((new Date()).after(e1.getDateCreated()));
-        assertTrue(last.before(e1.getLastModified()));
-        e1 = idTypeDao.getEntityByName("TEST_A");
-        e1 = idTypeDao.getEntityByName("TEST_A");
+        assertEquals(dateCreated, e1.getDateCreated());
+        assertTrue(lastModified.before(e1.getLastModified()));        
     }
     
     @Test
@@ -104,6 +108,5 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         idTypeDao.addIdentifierType(e1);
         list = idTypeDao.getEntities();
         assertEquals(startSize+1, list.size());        
-    }
-    
+    }    
 }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -30,6 +31,8 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -98,6 +101,8 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         //General info
         assertEquals(Long.valueOf(1248), entity.getId());
+        assertNull(entity.getDateCreated());
+        assertNull(entity.getLastModified());
         assertEquals(Visibility.PUBLIC.name(), entity.getVisibility());        
         assertEquals("http://site1.com/", entity.getUrl());
         assertEquals("Site # 1", entity.getUrlName());                
@@ -108,11 +113,15 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromResearcherUrlEntityToResearcherUrl() {
+    public void fromResearcherUrlEntityToResearcherUrl() throws IllegalAccessException {
         ResearcherUrlEntity entity = getResearcherUrlEntity();
         ResearcherUrl r = jpaJaxbResearcherUrlAdapter.toResearcherUrl(entity);
         //General info
         assertNotNull(r);
+        assertNotNull(r.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(r.getCreatedDate().getValue()));
+        assertNotNull(r.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(r.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(13579), r.getPutCode());
         assertEquals("http://orcid.org", r.getUrl().getValue());
         assertEquals("Orcid URL", r.getUrlName());
@@ -125,7 +134,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
     }      
     
     @Test
-    public void fromResearcherUrlEntityToUserOBOResearcherUrl() {
+    public void fromResearcherUrlEntityToUserOBOResearcherUrl() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -139,6 +148,10 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         ResearcherUrl r = jpaJaxbResearcherUrlAdapter.toResearcherUrl(entity);
         //General info
         assertNotNull(r);
+        assertNotNull(r.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(r.getCreatedDate().getValue()));
+        assertNotNull(r.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(r.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(13579), r.getPutCode());
         assertEquals("http://orcid.org", r.getUrl().getValue());
         assertEquals("Orcid URL", r.getUrlName());
@@ -158,8 +171,10 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         return (ResearcherUrls) unmarshaller.unmarshal(inputStream);
     }
     
-    private ResearcherUrlEntity getResearcherUrlEntity() {
+    private ResearcherUrlEntity getResearcherUrlEntity() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         ResearcherUrlEntity entity = new ResearcherUrlEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, date);
         entity.setId(13579L);
         entity.setClientSourceId(CLIENT_SOURCE_ID);
         entity.setUrl("http://orcid.org");

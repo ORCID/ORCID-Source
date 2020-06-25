@@ -21,17 +21,17 @@ These calls can be used with Member API credentials on sandbox or the production
   * [writing a personal identifier item in 3.0](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/samples/write_samples/external-identifier-3.0.xml)
 
 ## Permission to edit the record
-Editing the personal identifiers section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading funding items. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
+Editing the personal identifiers section of a record requires a 3 step OAuth token with the ```/person/update``` scope, the ```/read-limited``` scope should also be requested for reading funding items. See [Authenticating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
 
 ## Personal identifier fields
 
-- **exteral-id-type** _(required)_ The type of identifier
+- **external-id-type** _(required)_ The type of identifier
 
-- **exteral-id-value** _(required)_ The identifier itself
+- **external-id-value** _(required)_ The identifier itself
 
-- **exteral-id-url** _(required)_ A url the identifier resolves to
+- **external-id-url** _(required)_ A url the identifier resolves to
 
-- **exteral-id-relationship** _(required)_ Personal identifiers must have this field set to 'self'
+- **external-id-relationship** _(required)_ Personal identifiers must have this field set to 'self'
 
 ## Read a summary of all personal identifiers on a record
 
@@ -39,7 +39,7 @@ Editing the personal identifiers section of a record requires a 3 step OAuth tok
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/external-identifiers |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -55,7 +55,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/external-identifiers/[put-code] |
 | Method    | GET |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Accept: application/vnd.orcid+json or /vnd.orcid+xml|
 
 
@@ -71,7 +71,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/external-identifiers |
 | Method    | POST |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the work you are posting in json or xml format |
 
@@ -92,7 +92,7 @@ Location: http://api.qa.orcid.org/v2.1/0000-0002-9227-8514/external-identifiers/
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/external-identifiers/[put-code] |
 | Method    | PUT |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 | data        | the updated work in json or xml format |
 
@@ -107,7 +107,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.[host]/[version]/[ORCID iD]/external-identifiers/[put-code] |
 | Method    | DELETE |
-| header      | Authorication: Bearer [Your authorization code] |
+| header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
 
 **Example request in curl**

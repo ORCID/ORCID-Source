@@ -337,8 +337,6 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
 
         newToken.setApproved(true);
         newToken.setClientDetailsId(clientId);
-        newToken.setDateCreated(new Date());
-        newToken.setLastModified(new Date());
         newToken.setPersistent(parentToken.isPersistent());
         newToken.setProfile(profileEntity);
         newToken.setRedirectUri(parentToken.getRedirectUri());

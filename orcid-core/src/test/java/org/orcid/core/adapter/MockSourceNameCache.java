@@ -23,6 +23,7 @@ import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 
 /**
  * 
@@ -64,7 +65,7 @@ public class MockSourceNameCache {
             public RecordNameEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
                 RecordNameEntity recordName = new RecordNameEntity();
-                recordName.setLastModified(new Date());
+                DateFieldsOnBaseEntityUtils.setLastModifiedDateFields(recordName, new Date());
                 recordName.setCreditName("Credit name");
                 recordName.setOrcid(id);
                 recordName.setVisibility(Visibility.PUBLIC.name());
@@ -78,7 +79,7 @@ public class MockSourceNameCache {
             public ClientDetailsEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
                 ClientDetailsEntity client = new ClientDetailsEntity(id);
-                client.setLastModified(new Date());
+                DateFieldsOnBaseEntityUtils.setLastModifiedDateFields(client, new Date());
                 client.setClientName("Client name");
                 return client;
             }            

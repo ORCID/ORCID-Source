@@ -25,7 +25,6 @@ import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.record.FamilyName;
 import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.Name;
@@ -34,7 +33,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
@@ -226,8 +224,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         }
         
         newRecord.setOrcidType(OrcidType.USER.name());
-        newRecord.setDateCreated(now);
-        newRecord.setLastModified(now);
         newRecord.setSubmissionDate(now);
         newRecord.setClaimed(true);
         newRecord.setEnableDeveloperTools(false);
@@ -246,9 +242,13 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
         // Set primary email
         EmailEntity emailEntity = new EmailEntity();
-        String email = OrcidStringUtils.filterEmailAddress(registration.getEmail().getValue());
+        
+        Map<String, String> emailKeys = emailManager.getEmailKeys(registration.getEmail().getValue());
+        String email = emailKeys.get(EmailManager.FILTERED_EMAIL);
+        String hash = emailKeys.get(EmailManager.HASH);
+        
         emailEntity.setEmail(email);
-        emailEntity.setId(encryptionManager.getEmailHash(email));
+        emailEntity.setId(hash);
         emailEntity.setProfile(newRecord);
         emailEntity.setPrimary(true);
         emailEntity.setCurrent(true);
@@ -262,10 +262,13 @@ public class RegistrationManagerImpl implements RegistrationManager {
         // Set additional emails
         for(Text emailAdditional : registration.getEmailsAdditional()) {
             if(!PojoUtil.isEmpty(emailAdditional)){
+                Map<String, String> aEmailKeys = emailManager.getEmailKeys(emailAdditional.getValue());
+                String aEmail = aEmailKeys.get(EmailManager.FILTERED_EMAIL);
+                String aHash = aEmailKeys.get(EmailManager.HASH);
+                
                 EmailEntity emailAdditionalEntity = new EmailEntity();
-                String emailValue = OrcidStringUtils.filterEmailAddress(emailAdditional.getValue());
-                emailAdditionalEntity.setEmail(emailValue);
-                emailAdditionalEntity.setId(encryptionManager.getEmailHash(emailValue));
+                emailAdditionalEntity.setEmail(aEmail);
+                emailAdditionalEntity.setId(aHash);
                 emailAdditionalEntity.setProfile(newRecord);
                 emailAdditionalEntity.setPrimary(false);
                 emailAdditionalEntity.setCurrent(true);

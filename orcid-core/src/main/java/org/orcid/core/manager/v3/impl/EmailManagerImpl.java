@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,6 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -133,7 +133,8 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         if (PojoUtil.isEmpty(email)) {
             return false;
         }
-        return emailDao.isAutoDeprecateEnableForEmailUsingHash(encryptionManager.getEmailHash(email));        
+        Map<String, String> emailKeys = getEmailKeys(email);
+        return emailDao.isAutoDeprecateEnableForEmailUsingHash(emailKeys.get(HASH));        
     }
 
     @Override
@@ -142,21 +143,19 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
         String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();        
-        
         Email currentPrimaryEmail = findPrimaryEmail(orcid);
-        
-        String filteredEmail = OrcidStringUtils.filterEmailAddress(email.getEmail());
+        Map<String, String> emailKeys = getEmailKeys(email.getEmail());
         
         // Create the new email
-        emailDao.addEmail(orcid, filteredEmail, encryptionManager.getEmailHash(filteredEmail), email.getVisibility().name(), sourceId, clientSourceId);
+        emailDao.addEmail(orcid, emailKeys.get(FILTERED_EMAIL), emailKeys.get(HASH), email.getVisibility().name(), sourceId, clientSourceId);
         if (email.isPrimary()) {
             // if primary email changed send notification.
-            if (!StringUtils.equals(currentPrimaryEmail.getEmail(), filteredEmail)) {
+            if (!StringUtils.equals(currentPrimaryEmail.getEmail(), emailKeys.get(FILTERED_EMAIL))) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                notificationManager.sendEmailAddressChangedNotification(orcid, filteredEmail, currentPrimaryEmail.getEmail());
+                notificationManager.sendEmailAddressChangedNotification(orcid, emailKeys.get(FILTERED_EMAIL), currentPrimaryEmail.getEmail());
             }
         }
-        notificationManager.sendVerificationEmail(orcid, filteredEmail);
+        notificationManager.sendVerificationEmail(orcid, emailKeys.get(FILTERED_EMAIL));
     }
     
     @Override
@@ -187,16 +186,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     public void editEmail(String orcid, String original, String edited, HttpServletRequest request) {
         EmailEntity originalEntity = emailDao.findByEmail(original); 
-        
-        String filteredEmail = OrcidStringUtils.filterEmailAddress(edited);
-        
+        Map<String, String> emailKeys = getEmailKeys(edited);        
         EmailEntity updatedEntity = new EmailEntity();
-        updatedEntity.setDateCreated(new Date());
-        updatedEntity.setLastModified(new Date());
         updatedEntity.setSourceId(orcid);
-        updatedEntity.setEmail(filteredEmail);
+        updatedEntity.setEmail(emailKeys.get(FILTERED_EMAIL));
+        updatedEntity.setId(emailKeys.get(HASH));
         updatedEntity.setVerified(Boolean.FALSE);
-        updatedEntity.setId(encryptionManager.getEmailHash(filteredEmail));
         updatedEntity.setCurrent(originalEntity.getCurrent());
         updatedEntity.setVisibility(originalEntity.getVisibility());
         updatedEntity.setPrimary(originalEntity.getPrimary());
@@ -204,21 +199,22 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
         if (originalEntity.getPrimary()) {
             // if primary email changed send notification.
-            if (!StringUtils.equals(original, filteredEmail)) {
+            if (!StringUtils.equals(original, emailKeys.get(FILTERED_EMAIL))) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                notificationManager.sendEmailAddressChangedNotification(orcid, filteredEmail, original);
+                notificationManager.sendEmailAddressChangedNotification(orcid, emailKeys.get(FILTERED_EMAIL), original);
             }
         }
         
         emailDao.persist(updatedEntity);
         emailDao.remove(originalEntity.getId());
-        notificationManager.sendVerificationEmail(orcid, filteredEmail);
+        notificationManager.sendVerificationEmail(orcid, emailKeys.get(FILTERED_EMAIL));
     }
 
     @Override
     @Transactional
     public void reactivatePrimaryEmail(String orcid, String email) {
-        String hash = encryptionManager.getEmailHash(email);
+        Map<String, String> emailKeys = getEmailKeys(email);       
+        String hash = emailKeys.get(HASH);
         EmailEntity entity = emailDao.find(hash);
         if(!orcid.equals(entity.getProfile().getId())) {
             throw new IllegalArgumentException("Email with hash {}" + hash + " doesn't belong to " + orcid);
@@ -228,11 +224,10 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         }
         // Update the email just in case the email is empty
         if(PojoUtil.isEmpty(entity.getEmail())) {
-            entity.setEmail(email);
+            entity.setEmail(emailKeys.get(FILTERED_EMAIL));
         }
         entity.setPrimary(true);
-        entity.setVerified(true);
-        entity.setLastModified(new Date());
+        entity.setVerified(true);        
         emailDao.merge(entity);  
         emailDao.flush();
     }
@@ -247,30 +242,28 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     public boolean reactivateOrCreate(String orcid, String email, Visibility visibility) {
-        String filteredEmail = OrcidStringUtils.filterEmailAddress(email);
-        String hash = encryptionManager.getEmailHash(filteredEmail);
-        EmailEntity entity = emailDao.find(hash);
+        Map<String, String> emailKeys = getEmailKeys(email);
+        EmailEntity entity = emailDao.find(emailKeys.get(HASH));
         // If email doesn't exists, create it
         if(entity == null) {
-            emailDao.addEmail(orcid, filteredEmail, hash, visibility.name(), orcid, null);
+            emailDao.addEmail(orcid, emailKeys.get(FILTERED_EMAIL), emailKeys.get(HASH), visibility.name(), orcid, null);
             return true;
         } else {
             if(orcid.equals(entity.getProfile().getId())) {
-                entity.setEmail(filteredEmail);
+                entity.setEmail(emailKeys.get(FILTERED_EMAIL));
                 entity.setPrimary(false);
                 entity.setVerified(false);
                 entity.setVisibility(visibility.name());
-                entity.setLastModified(new Date());
                 emailDao.merge(entity);  
                 emailDao.flush();
                 if(!entity.getVerified()) {
                     return true;
                 }
             } else {
-                throw new IllegalArgumentException("Email " + filteredEmail + " belongs to other record than " + orcid);
+                throw new IllegalArgumentException("Email " + emailKeys.get(FILTERED_EMAIL) + " belongs to other record than " + orcid);
             }
         }
         
         return false;
-    }
+    }      
 }

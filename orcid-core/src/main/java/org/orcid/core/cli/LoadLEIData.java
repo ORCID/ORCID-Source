@@ -227,7 +227,6 @@ public class LoadLEIData {
                 existingDO.setOrgType(org.type);
                 existingDO.setRegion(org.hqAddres.region);
                 existingDO.setUrl("https://www.gleif.org/lei/" + org.id);
-                existingDO.setLastModified(now);
                 existingDO.setIndexingStatus(IndexingStatus.PENDING);
                 // Is it replaced?
                 if (!PojoUtil.isEmpty(org.successorLEI)) {
@@ -275,8 +274,6 @@ public class LoadLEIData {
                 // do nothing (nothing to update!)
             } else {
                 OrgEntity newOrg = new OrgEntity();
-                newOrg.setDateCreated(now);
-                newOrg.setLastModified(now);
                 newOrg.setCity(otherOrg.hqAddres.city);
                 newOrg.setCountry(otherOrg.hqAddres.country.name());
                 newOrg.setRegion(otherOrg.hqAddres.region);

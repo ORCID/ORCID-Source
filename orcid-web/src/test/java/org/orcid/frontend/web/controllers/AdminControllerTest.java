@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
@@ -314,9 +315,14 @@ public class AdminControllerTest extends BaseControllerTest {
         
         // Test reactivate using empty primary email
         proDetails.setEmail("");
-        proDetails = adminController.reactivateOrcidRecord(mockRequest, mockResponse, proDetails);
-        assertEquals(1, proDetails.getErrors().size());
-        assertEquals(adminController.getMessage("admin.errors.deactivated_account.primary_email_required"), proDetails.getErrors().get(0));
+        try {
+            proDetails = adminController.reactivateOrcidRecord(mockRequest, mockResponse, proDetails);
+            fail();
+        } catch(RuntimeException re) {
+            assertEquals("Unable to filter empty email address", re.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
         
         // Test reactivate
         proDetails.setEmail("aNdReW@tImOtHy.com");
