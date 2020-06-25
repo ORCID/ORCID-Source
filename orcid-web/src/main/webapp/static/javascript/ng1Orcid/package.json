@@ -17,7 +17,7 @@
     "@bit/orcid.angular.platform-info": "0.0.7",
     "@bit/orcid.angular.types": "file:./components/types",
     "@ng-bootstrap/ng-bootstrap": "^5.1.4",
-    "angular": "^1.7.9",
+    "angular": "^1.8.0",
     "angular-cookies": "1.7.0",
     "angular-recaptcha": "4.1.5",
     "angular-route": "1.7.0",
