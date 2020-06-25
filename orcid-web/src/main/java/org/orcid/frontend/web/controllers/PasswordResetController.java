@@ -297,7 +297,7 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
     public ResponseEntity<?> sendReactivation(@RequestParam("email") String email) throws UnsupportedEncodingException {
-        email = OrcidStringUtils.filterEmailAddress(URLDecoder.decode(email, "UTF-8"));
+        email = OrcidStringUtils.filterEmailAddress(email);
         String orcid = null;
         
         if (!email.contains("@")) {
