@@ -30,6 +30,8 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     //OpenID Connect
     private String nonce;
     private String maxAge;
+    private String error;
+    private String errorDescription;
 
     public String getNonce() {
         return nonce;
@@ -183,6 +185,22 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
 
     public void setMaxAge(String maxAge) {
         this.maxAge = maxAge;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getErrorDescription() {
+        return errorDescription;
+    }
+
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
     }
 
     public String getScopesAsString() {
