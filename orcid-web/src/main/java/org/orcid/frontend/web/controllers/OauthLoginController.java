@@ -20,15 +20,19 @@ import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.utils.OrcidRequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
+import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -96,6 +100,59 @@ public class OauthLoginController extends OauthControllerBase {
         mav.addObject("hideSupportWidget", true);
         mav.setViewName("oauth_login");
         return mav;
+    }
+
+    @RequestMapping(value = { "/oauth/custom/declare.json" }, method = RequestMethod.POST)
+    public @ResponseBody RequestInfoForm loginGetHandler(HttpServletRequest request, HttpServletResponse response, @RequestBody AdminChangePassword form) throws UnsupportedEncodingException {
+        String url = request.getQueryString();
+        RequestInfoForm requestInfoForm = new RequestInfoForm();
+        try {
+        // Get and save the request information form
+            requestInfoForm = oauthHelper.generateRequestInfoForm(url);
+        } catch (InvalidRequestException | InvalidClientException e) {
+            requestInfoForm.setError("oauth_error");
+            requestInfoForm.setErrorDescription(e.getMessage());
+        }
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);       
+        // Save also the original query string
+        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, url);
+        // Save a flag to indicate this is a request from the new
+        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
+        // Check that the client have the required permissions
+        // Get client name
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
+
+        // validate client scopes
+        try {
+            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails,requestInfoForm.getResponseType());
+            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
+        } catch (InvalidScopeException | LockedException e) {
+            String redirectUriWithParams = requestInfoForm.getRedirectUrl();
+            if (e instanceof InvalidScopeException) {
+                redirectUriWithParams += "?error=invalid_scope&error_description=" + e.getMessage();
+                requestInfoForm.setError("invalid_scope");
+                requestInfoForm.setErrorDescription(e.getMessage());
+            } else {
+                redirectUriWithParams += "?error=client_locked&error_description=" + e.getMessage();
+                requestInfoForm.setError("client_locked");
+                requestInfoForm.setErrorDescription(e.getMessage());
+            }
+            return requestInfoForm;
+        }
+
+        //handle openID behaviour
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()) && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID) ){
+            String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
+            if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_NONE)){
+                requestInfoForm.setError("login_required");
+                return requestInfoForm;
+            }
+        }
+
+        // todo missing validations from handleOauthSignIn method
+
+
+        return requestInfoForm;
     }
 
     @RequestMapping(value = { "/oauth/custom/signin.json", "/oauth/custom/login.json" }, method = RequestMethod.POST)
