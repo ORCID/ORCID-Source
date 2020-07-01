@@ -9,6 +9,12 @@ import java.util.stream.Collectors;
 
 import org.orcid.jaxb.model.message.ScopePathType;
 
+/**
+ * @deprecated 
+ * 
+ * Use request.getSession().getAttribute("authorizationRequest") instead
+ * */
+@Deprecated
 public class RequestInfoForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
     private List<String> errors = new ArrayList<String>();
