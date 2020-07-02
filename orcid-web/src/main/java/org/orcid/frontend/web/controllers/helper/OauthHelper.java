@@ -229,7 +229,19 @@ public class OauthHelper {
 
         return infoForm;
     }
-    
+
+    public RequestInfoForm setUserRequestInfoForm(RequestInfoForm requestInfoForm) throws UnsupportedEncodingException {
+        String loggedUserOrcid = getEffectiveUserOrcid();
+        if (!PojoUtil.isEmpty(loggedUserOrcid)) {
+            requestInfoForm.setUserOrcid(loggedUserOrcid);
+            String creditName = recordNameManagerReadOnly.fetchDisplayableCreditName(loggedUserOrcid);
+            if (!PojoUtil.isEmpty(creditName)) {
+                requestInfoForm.setUserName(URLDecoder.decode(creditName, "UTF-8").trim());
+            }
+        }
+        return requestInfoForm;
+    }
+
     private String getEffectiveUserOrcid() {
         OrcidProfileUserDetails currentUser = baseControllerUtil.getCurrentUser(SecurityContextHolder.getContext());
         if (currentUser == null) {

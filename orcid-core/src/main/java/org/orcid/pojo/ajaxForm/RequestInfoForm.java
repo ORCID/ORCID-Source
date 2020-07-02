@@ -36,6 +36,8 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     //OpenID Connect
     private String nonce;
     private String maxAge;
+
+    private boolean forceLogin;
     private String error;
     private String errorDescription;
 
@@ -191,6 +193,14 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
 
     public void setMaxAge(String maxAge) {
         this.maxAge = maxAge;
+    }
+
+    public boolean isForceLogin() {
+        return forceLogin;
+    }
+
+    public void setForceLogin(boolean forceLogin) {
+        this.forceLogin = forceLogin;
     }
 
     public String getError() {

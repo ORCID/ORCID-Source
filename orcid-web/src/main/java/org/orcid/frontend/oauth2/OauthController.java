@@ -1,6 +1,7 @@
 package org.orcid.frontend.oauth2;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.Principal;
 import java.util.Map;
 
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("oauthController")
 public class OauthController {
@@ -49,12 +53,14 @@ public class OauthController {
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
-    @RequestMapping(value = { "/oauth/custom/declare.json" }, method = RequestMethod.POST)
+    @Resource
+    protected OrcidUrlManager orcidUrlManager;
+
+    @RequestMapping(value = { "/oauth/custom/init.json" }, method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm loginGetHandler(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
-
         // Populate the request info form
-        RequestInfoForm requestInfoForm = generateRequestInfoForm(request);
+        RequestInfoForm requestInfoForm = generateRequestInfoForm(request, request.getQueryString());
 
         // validate client scopes
         try {
@@ -79,7 +85,16 @@ public class OauthController {
         return requestInfoForm;
     }
 
-    private RequestInfoForm generateRequestInfoForm(HttpServletRequest request) throws UnsupportedEncodingException {
+    @RequestMapping(value = { "/oauth/custom/authorize.json" }, method = RequestMethod.GET)
+    public @ResponseBody RequestInfoForm requestInfoForm(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
+            SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
+        RequestInfoForm requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal);
+        return requestInfoForm;
+    }
+
+    private RequestInfoForm generateRequestInfoForm(HttpServletRequest request, String queryString) throws UnsupportedEncodingException {
         // Generate the request info form
         String url = request.getQueryString();
         RequestInfoForm requestInfoForm = new RequestInfoForm();
@@ -99,6 +114,47 @@ public class OauthController {
                 requestInfoForm.setError("login_required");
             }
         }
+
+        // force a login even if the user is already logged in if openid
+        // prompt=login param present
+        boolean forceLogin = false;
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString())
+                && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID)) {
+            String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
+            if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)) {
+                forceLogin = true;
+            }
+        }
+
+        // Check if user is already logged in, if so, redirect it to
+        // oauth/authorize
+        SecurityContext sci = getSecurityContext(request);
+        OrcidProfileUserDetails userDetails = baseControllerUtil.getCurrentUser(sci);
+        if (!forceLogin && userDetails != null) {
+            requestInfoForm.setForceLogin(true);
+            return requestInfoForm;
+        }
+
+        // Check that the client have the required permissions
+        // Get client name
+        String clientId = requestInfoForm.getClientId();
+        if (PojoUtil.isEmpty(clientId)) {
+            requestInfoForm.setError("invalid_client");
+            requestInfoForm.setErrorDescription("invalid client_id");
+            return requestInfoForm;
+        }
+
+        // Validate client details
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
+        try {
+            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
+        } catch (LockedException e) {
+            requestInfoForm.setError("client_locked");
+            requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
+        }
+
+
         return requestInfoForm;
     }
 
@@ -117,10 +173,7 @@ public class OauthController {
     
     private void setAuthorizationRequest(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal) {
-        SecurityContext sci = null;
-        if (request.getSession() != null) {
-            sci = (SecurityContext) request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-        }
+        SecurityContext sci = getSecurityContext(request);
         // TODO: Check if the authorizationRequest is already in the session
         if (baseControllerUtil.getCurrentUser(sci) != null) {
             // Authorize the request
@@ -128,6 +181,14 @@ public class OauthController {
             AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
             request.getSession().setAttribute("authorizationRequest", authRequest);
         }
+    }
+
+    private SecurityContext getSecurityContext(HttpServletRequest request) {
+        SecurityContext sci = null;
+        if (request.getSession() != null) {
+            sci = (SecurityContext) request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+        }
+        return sci;
     }
 
 }

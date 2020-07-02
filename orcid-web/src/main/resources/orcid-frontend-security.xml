@@ -189,12 +189,14 @@
 		<sec:intercept-url pattern="/oauth/custom/register.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />for
 		<sec:intercept-url pattern="/oauth/jwks"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/declare.*?"
+		<sec:intercept-url pattern="/oauth/custom/init.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/authorize.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />	
 			
