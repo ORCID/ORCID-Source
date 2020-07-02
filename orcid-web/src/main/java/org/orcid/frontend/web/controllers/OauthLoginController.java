@@ -96,7 +96,7 @@ public class OauthLoginController extends OauthControllerBase {
         mav.addObject("hideSupportWidget", true);
         mav.setViewName("oauth_login");
         return mav;
-    }
+    }    
 
     @RequestMapping(value = { "/oauth/custom/signin.json", "/oauth/custom/login.json" }, method = RequestMethod.POST)
     public @ResponseBody OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {

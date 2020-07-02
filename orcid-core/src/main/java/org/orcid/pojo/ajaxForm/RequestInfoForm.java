@@ -9,6 +9,12 @@ import java.util.stream.Collectors;
 
 import org.orcid.jaxb.model.message.ScopePathType;
 
+/**
+ * @deprecated 
+ * 
+ * Use request.getSession().getAttribute("authorizationRequest") instead
+ * */
+@Deprecated
 public class RequestInfoForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
     private List<String> errors = new ArrayList<String>();
@@ -30,6 +36,10 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     //OpenID Connect
     private String nonce;
     private String maxAge;
+
+    private boolean forceLogin;
+    private String error;
+    private String errorDescription;
 
     public String getNonce() {
         return nonce;
@@ -183,6 +193,30 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
 
     public void setMaxAge(String maxAge) {
         this.maxAge = maxAge;
+    }
+
+    public boolean isForceLogin() {
+        return forceLogin;
+    }
+
+    public void setForceLogin(boolean forceLogin) {
+        this.forceLogin = forceLogin;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getErrorDescription() {
+        return errorDescription;
+    }
+
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
     }
 
     public String getScopesAsString() {
