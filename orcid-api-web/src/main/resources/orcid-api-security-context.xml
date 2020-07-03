@@ -138,10 +138,8 @@
         <property name="feature" value="MEMBER_API_DEFAULT_TO_V3" />
     </bean>        
     
-    <bean id="disable12Filter" class="org.orcid.api.common.filter.Disable12ApiFilter">
-        	<property name="feature" value="DISABLE_1_2_ON_MEMBER_API" />
-    </bean>
-    
     <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
+    
+    <bean id="disable20RCApiFilter" class="org.orcid.api.common.filter.Disable20RCApiFilter" />
         
 </beans>

@@ -88,22 +88,13 @@ public enum Features implements Feature {
     SELF_SERVICE_ORG_IDS,
 
     @Label("Disable reCAPTCHA")
-    DISABLE_RECAPTCHA,
-
-    @Label("Disable 1.2 API from the public API")
-    DISABLE_1_2_ON_PUB_API,
-
-    @Label("Disable 1.2 API from the member API")
-    DISABLE_1_2_ON_MEMBER_API,
+    DISABLE_RECAPTCHA,    
 
     @Label("Check external id resolution in UI")
     EX_ID_RESOLVER,
 
     @Label("Remove https://orcid.org from OpenID id_tokens")
     OPENID_SIMPLE_SUBJECT,
-    
-    @Label("Disable 1.1 version from any API")
-    DISABLE_1_1,
     
     @Label("Enable group affiliations")
     GROUP_AFFILIATIONS,
@@ -136,7 +127,10 @@ public enum Features implements Feature {
     PUB_API_DEFAULT_TO_V3,
 
     @Label("Set the 3.0 API as the default one in the members API")
-    MEMBER_API_DEFAULT_TO_V3;
+    MEMBER_API_DEFAULT_TO_V3,
+    
+    @Label("Disable the 2.0 release candidates")
+    V2_DISABLE_RELEASE_CANDIDATES;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

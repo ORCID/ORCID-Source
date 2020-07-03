@@ -122,24 +122,24 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
-    
+       
     <filter>
-        <filter-name>disable12Filter</filter-name>
+        <filter-name>clientIdAttributeFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>clientIdAttributeFilter</filter-name>
+        <url-pattern>*</url-pattern>
+    </filter-mapping>
+
+	<filter>
+        <filter-name>disable20RCApiFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
     <filter-mapping>
-        <filter-name>disable12Filter</filter-name>
-        <url-pattern>*</url-pattern>
-    </filter-mapping>
-    
-    <filter>
-        <filter-name>clientIdAttributeFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    
-    <filter-mapping>
-        <filter-name>clientIdAttributeFilter</filter-name>
+        <filter-name>disable20RCApiFilter</filter-name>
         <url-pattern>*</url-pattern>
     </filter-mapping>
 
