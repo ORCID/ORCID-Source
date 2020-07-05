@@ -124,6 +124,7 @@ public class OauthController {
             if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)) {
                 forceLogin = true;
             }
+            requestInfoForm.setForceLogin(forceLogin);
         }
 
         // Check if user is already logged in, if so, redirect it to
@@ -131,7 +132,6 @@ public class OauthController {
         SecurityContext sci = getSecurityContext(request);
         OrcidProfileUserDetails userDetails = baseControllerUtil.getCurrentUser(sci);
         if (!forceLogin && userDetails != null) {
-            requestInfoForm.setForceLogin(true);
             return requestInfoForm;
         }
 
