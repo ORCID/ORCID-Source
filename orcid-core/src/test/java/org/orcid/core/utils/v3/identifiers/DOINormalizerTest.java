@@ -38,6 +38,8 @@ public class DOINormalizerTest {
             "https://doi.org/10.1049/el:20000645",
             "https://doi.org/10.1016/S0920-5632(02)80001-9",
             "10.1016/j.ijom.2013.05.017.",
+            "10.978.962201/9270", 
+            "10.978.98878270/23",
             //these do not match
             "ijiv11i2a8",
             "doi:10.1038",
@@ -71,6 +73,8 @@ public class DOINormalizerTest {
             "10.1049/el:20000645",
             "10.1016/S0920-5632(02)80001-9",
             "10.1016/j.ijom.2013.05.017",
+            "10.978.962201/9270", 
+            "10.978.98878270/23", 
             //these do not match
             "","","",""/*
             "ijiv11i2a8",
