@@ -68,19 +68,21 @@ public class Disable20RCApiFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String version = (String) request.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME);
+        
         if (PojoUtil.isEmpty(version)) {
             filterChain.doFilter(request, response);
         } else if (version.startsWith(API_20_RC) && Features.V2_DISABLE_RELEASE_CANDIDATES.isActive()) {
             String v20Location;
-            String requestUri = request.getRequestURI();
+            String fullPath = request.getRequestURL() == null ? "" : request.getRequestURL().toString();
             
-            if(requestUri.startsWith("https://localhost")) {
-                v20Location = requestUri.replaceFirst("_(rc1|rc2|rc3|rc4)", "");                  
+            if(fullPath.startsWith("https://localhost:")) {
+                v20Location = fullPath.replaceFirst("_(rc1|rc2|rc3|rc4)", "");
             } else {
                 String path = OrcidUrlManager.getPathWithoutContextPath(request);
-                v20Location = path.replaceFirst("_(rc1|rc2|rc3|rc4)", "");                
+                v20Location = path.replaceFirst("_(rc1|rc2|rc3|rc4)", "");
             }
-            LOGGER.info("Redirecting request '{}' to '{}'", requestUri, v20Location);
+            
+            LOGGER.info("Redirecting request '{}' to '{}'", fullPath, v20Location);
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.setHeader("Location", v20Location);
             String accept = request.getHeader("Accept") == null ? null : request.getHeader("Accept").toLowerCase();

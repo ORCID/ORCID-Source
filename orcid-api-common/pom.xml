@@ -123,6 +123,13 @@
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Togglz testing support -->
+	    <dependency>
+		    <groupId>org.togglz</groupId>
+		    <artifactId>togglz-junit</artifactId>
+		    <version>2.4.1.Final</version>
+    		<scope>test</scope>
+	    </dependency>
 
     </dependencies>
     <build>
