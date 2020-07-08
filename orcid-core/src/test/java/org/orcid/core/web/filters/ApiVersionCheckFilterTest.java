@@ -179,6 +179,55 @@ public class ApiVersionCheckFilterTest {
     }
     
     @Test
+    public void api1_1VersionTest() {
+        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
+        URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
+        URI requestUri = URI.create("http://localhost:8443/orcid-api-web/v1.1/0000-0001-7510-9252/activities");
+        InBoundHeaders headers = new InBoundHeaders();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
+        try {
+            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
+            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
+            filter.filter(containerRequest);
+            fail();
+        } catch (OrcidBadRequestException e) {
+            // We expect this
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
+            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
+            filter.filter(containerRequest);            
+        } catch (OrcidBadRequestException e) {
+            // We expect this
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
+            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
+            filter.filter(containerRequest);            
+        } catch (OrcidBadRequestException e) {
+            // We expect this
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
+            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
+            filter.filter(containerRequest);
+        } catch (OrcidBadRequestException e) {
+            // We expect this
+        } catch (Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
     public void api1_2VersionTest() {
         WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
         URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
@@ -189,6 +238,9 @@ public class ApiVersionCheckFilterTest {
             ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);
+            fail();
+        } catch (OrcidBadRequestException e) {
+            // We expect this
         } catch (Exception e) {
             fail();
         }
@@ -197,6 +249,8 @@ public class ApiVersionCheckFilterTest {
             ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);            
+        } catch (OrcidBadRequestException e) {
+            // We expect this
         } catch (Exception e) {
             fail();
         }
@@ -205,6 +259,8 @@ public class ApiVersionCheckFilterTest {
             ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);            
+        } catch (OrcidBadRequestException e) {
+            // We expect this
         } catch (Exception e) {
             fail();
         }
@@ -213,6 +269,8 @@ public class ApiVersionCheckFilterTest {
             ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);
+        } catch (OrcidBadRequestException e) {
+            // We expect this
         } catch (Exception e) {
             fail();
         }
