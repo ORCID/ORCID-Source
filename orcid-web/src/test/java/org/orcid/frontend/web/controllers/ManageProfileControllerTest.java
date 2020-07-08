@@ -131,6 +131,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(controller, "encryptionManager", mockEncryptionManager);
         TargetProxyHelper.injectIntoProxy(controller, "emailManager", mockEmailManager);
+        TargetProxyHelper.injectIntoProxy(controller, "emailManagerReadOnly", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
         TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager); 
