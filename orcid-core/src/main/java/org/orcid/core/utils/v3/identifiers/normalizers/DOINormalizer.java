@@ -9,13 +9,12 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
-import com.google.common.html.HtmlEscapers;
 
 @Component
 public class DOINormalizer implements Normalizer {
 
     private static final List<String> canHandle = Lists.newArrayList("doi");
-    private static final Pattern pattern = Pattern.compile("(10\\.[0-9a-zA-Z]+\\/(?:(?![\"&\\'])\\S)+)\\b");
+    private static final Pattern pattern = Pattern.compile("(10(\\.[0-9a-zA-Z]+)+\\/(?:(?![\"&\\'])\\S)+)\\b");
     
     @Override
     public List<String> canHandle() {
