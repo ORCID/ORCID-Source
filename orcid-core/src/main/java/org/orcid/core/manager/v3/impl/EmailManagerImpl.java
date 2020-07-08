@@ -19,6 +19,7 @@ import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -56,7 +57,15 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public void removeEmail(String orcid, String email) {
+        if (isPrimaryEmail(orcid, email)) {
+            throw new IllegalArgumentException("Can't mark primary email as deleted");
+        }
+        
+        if (isUsersOnlyEmail(orcid, email)) {
+            throw new IllegalArgumentException("Can't mark user's only email as deleted");
+        }
         emailDao.removeEmail(orcid, email);
+
     }
 
     @Override
@@ -265,5 +274,14 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         }
         
         return false;
+    }
+
+    @Override
+    public void removeUnclaimedEmail(String orcid, String emailAddress) {
+        ProfileEntity entity = profileDao.find(orcid);
+        if (entity.getClaimed() != null && entity.getClaimed()) {
+            throw new IllegalArgumentException("Profile is claimed");
+        }
+        emailDao.removeEmail(orcid, emailAddress);
     }      
 }

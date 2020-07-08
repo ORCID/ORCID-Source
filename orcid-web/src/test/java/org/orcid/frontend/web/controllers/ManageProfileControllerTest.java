@@ -60,6 +60,7 @@ import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
@@ -963,6 +964,73 @@ public class ManageProfileControllerTest {
     	assertFalse(controller.validateEmailAddress("john.doe@example..com"));
     	assertFalse(controller.validateEmailAddress("john..doe@example.com"));
     	assertFalse(controller.validateEmailAddress("a\"b(c)d,e:f;g<h>i[j\\k]l@example.com"));
+    }
+    
+    @Test
+    public void testDeleteEmailJsonBlankEmail() {
+        Errors errors = controller.deleteEmailJson("");
+        assertNotNull(errors);
+        assertEquals(1, errors.getErrors().size());
+    }
+    
+    @Test
+    public void testDeleteEmailJsonWrongOwner() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        Mockito.when(mockEmailManager.findOrcidIdByEmail(Mockito.eq("email@email.com"))).thenReturn("another-orcid-id");
+        
+        Errors errors = controller.deleteEmailJson("email@email.com");
+        assertNotNull(errors);
+        assertEquals(1, errors.getErrors().size());
+        
+        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(Mockito.eq("email@email.com"));
+    }
+    
+    @Test
+    public void testDeleteEmailPrimaryEmail() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        Mockito.when(mockEmailManager.findOrcidIdByEmail(Mockito.eq("email@email.com"))).thenReturn(USER_ORCID);
+        Mockito.when(mockEmailManager.isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(true);
+        
+        Errors errors = controller.deleteEmailJson("email@email.com");
+        assertNotNull(errors);
+        assertEquals(1, errors.getErrors().size());
+        
+        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+    }
+    
+    @Test
+    public void testDeleteEmailOnlyEmail() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        Mockito.when(mockEmailManager.findOrcidIdByEmail(Mockito.eq("email@email.com"))).thenReturn(USER_ORCID);
+        Mockito.when(mockEmailManager.isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(false);
+        Mockito.when(mockEmailManager.isUsersOnlyEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(true);
+        
+        Errors errors = controller.deleteEmailJson("email@email.com");
+        assertNotNull(errors);
+        assertEquals(1, errors.getErrors().size());
+        
+        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+    }
+    
+    @Test
+    public void testDeleteEmail() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        Mockito.when(mockEmailManager.findOrcidIdByEmail(Mockito.eq("email@email.com"))).thenReturn(USER_ORCID);
+        Mockito.when(mockEmailManager.isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(false);
+        Mockito.when(mockEmailManager.isUsersOnlyEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(false);
+        Mockito.doNothing().when(mockEmailManager).removeEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+        
+        Errors errors = controller.deleteEmailJson("email@email.com");
+        assertNotNull(errors);
+        assertEquals(0, errors.getErrors().size());
+        
+        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).removeEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));        
     }
     
     protected Authentication getAuthentication(String orcid) {

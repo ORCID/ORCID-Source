@@ -66,4 +66,6 @@ public interface EmailManager extends EmailManagerReadOnly {
     void editEmail(String orcid, String original, String edited, HttpServletRequest request);
 
     Map<String, String> getEmailKeys(String email);
+
+    void removeUnclaimedEmail(String orcid, String emailAddress);
 }
