@@ -154,8 +154,8 @@
                                                                 ></privacy-toggle-ng2> 
                                                             </li>
                                                         </ul>
-                                                        <span class="created-date pull-right" *ngIf="keyword.createdDate" [ngClass]="{'hidden-xs' : keyword.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
-                                                        <span class="created-date pull-left" *ngIf="keyword.createdDate" [ngClass]="{'visible-xs' : keyword.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
+                                                        <span class="created-date pull-right" *ngIf="keyword.createdDate" [ngClass]="{'hidden-xs' : keyword.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{keyword.createdDate | ajaxFormDateToISO8601}}</span>
+                                                        <span class="created-date pull-left" *ngIf="keyword.createdDate" [ngClass]="{'visible-xs' : keyword.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{keyword.createdDate | ajaxFormDateToISO8601}}</span>
                                                     </div>                                  
                                                 </div>                                          
                                             </div>
