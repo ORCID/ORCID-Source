@@ -871,4 +871,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("indexingStatus", indexingStatus.name());
         query.executeUpdate();
     }
+    
+    @Override
+    @Transactional
+    public List<String> registeredBetween(Date startDate, Date endDate) {
+        Query query = entityManager.createNativeQuery("SELECT orcid FROM profile WHERE date_created between :startDate and :endDate");
+        query.setParameter("startDate", startDate); 
+        query.setParameter("endDate", endDate);
+        return query.getResultList();
+    }
 }
