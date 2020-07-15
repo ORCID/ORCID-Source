@@ -46,13 +46,11 @@ public class SendWelcomeEmails {
             parser.parseArgument(args);
             // If it is null sets the default
             if (element.startDate == null) {
-                //element.startDate = "2020-07-13 10:47:00";
-                element.startDate = "2020-03-18 17:14:45";
+                element.startDate = "2020-07-13 10:47:00";
             }
             
             if (element.endDate == null) {
-                //element.endDate = "2020-07-13 15:56:00";
-                element.endDate = "2020-03-18 17:14:46";
+                element.endDate = "2020-07-13 15:56:00";
             }
             
             element.init();
