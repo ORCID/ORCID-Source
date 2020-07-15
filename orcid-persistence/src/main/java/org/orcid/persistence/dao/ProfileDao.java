@@ -155,5 +155,5 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateIndexingStatus(List<String> ids, IndexingStatus reindex);
     
-    public List<ProfileEntity> registeredBetween(Date startDate, Date endDate);
+    public List<String> registeredBetween(Date startDate, Date endDate);
 }

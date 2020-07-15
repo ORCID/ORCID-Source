@@ -68,11 +68,11 @@ public class SendWelcomeEmails {
         long startTime = System.currentTimeMillis();
         LOG.debug("Starting sending welcome emails process: " + startTime);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        List<ProfileEntity> profiles = profileDao.registeredBetween(formatter.parse(startDate), formatter.parse(endDate));
+        List<String> profiles = profileDao.registeredBetween(formatter.parse(startDate), formatter.parse(endDate));
         if(profiles != null) {
-            for(ProfileEntity profile: profiles) {
+            for(String orcid: profiles) {
                 try {
-                    notificationManager.sendWelcomeEmail(profile.getId(), emailDao.findNewestPrimaryEmail(profile.getId()));
+                    notificationManager.sendWelcomeEmail(orcid, emailDao.findNewestPrimaryEmail(orcid));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

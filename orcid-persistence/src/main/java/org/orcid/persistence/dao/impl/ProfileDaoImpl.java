@@ -874,8 +874,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     
     @Override
     @Transactional
-    public List<ProfileEntity> registeredBetween(Date startDate, Date endDate) {
-        TypedQuery<ProfileEntity> query = entityManager.createQuery("FROM ProfileEntity where date_created between :startDate and :endDate", ProfileEntity.class);
+    public List<String> registeredBetween(Date startDate, Date endDate) {
+        Query query = entityManager.createNativeQuery("SELECT orcid FROM profile WHERE date_created between :startDate and :endDate");
         query.setParameter("startDate", startDate); 
         query.setParameter("endDate", endDate);
         return query.getResultList();
