@@ -153,8 +153,8 @@
                                                                 ></privacy-toggle-ng2> 
                                                             </li>
                                                         </ul>
-                                                        <span class="created-date pull-right" *ngIf="externalIdentifier.createdDate" [ngClass]="{'hidden-xs' : externalIdentifier.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{externalIdentifier.createdDate.year + '-' + externalIdentifier.createdDate.month + '-' + externalIdentifier.createdDate.day}}</span>
-                                                        <span class="created-date pull-left" *ngIf="externalIdentifier.createdDate" [ngClass]="{'visible-xs' : externalIdentifier.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{externalIdentifier.createdDate.year + '-' + externalIdentifier.createdDate.month + '-' + externalIdentifier.createdDate.day}}</span>
+                                                        <span class="created-date pull-right" *ngIf="externalIdentifier.createdDate" [ngClass]="{'hidden-xs' : externalIdentifier.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{externalIdentifier.createdDate | ajaxFormDateToISO8601}}</span>
+                                                        <span class="created-date pull-left" *ngIf="externalIdentifier.createdDate" [ngClass]="{'visible-xs' : externalIdentifier.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{externalIdentifier.createdDate | ajaxFormDateToISO8601}}</span>
                                                     </div>                              
                                                     <div *ngIf="externalIdentifier?.errors?.length > 0" class="col-md-12">                                 
                                                         <div *ngFor="let error of externalIdentifier.errors">
