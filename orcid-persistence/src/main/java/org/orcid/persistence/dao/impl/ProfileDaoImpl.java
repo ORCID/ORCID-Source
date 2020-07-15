@@ -855,6 +855,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createNativeQuery("SELECT orcid FROM profile WHERE profile_deactivation_date IS NOT NULL OR deprecated_date IS NOT NULL OR record_locked IS TRUE");
         return query.getResultList();
     }
+    
+    @Override
+    @Transactional
+    public List<String> registeredBetween(Date startDate, Date endDate) {
+        Query query = entityManager.createNativeQuery("SELECT orcid FROM profile WHERE date_created between :startDate and :endDate");
+        query.setParameter("startDate", startDate); 
+        query.setParameter("endDate", endDate);
+        return query.getResultList();
+    }
 
     @Override
     @Transactional
@@ -872,12 +881,4 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
     }
     
-    @Override
-    @Transactional
-    public List<String> registeredBetween(Date startDate, Date endDate) {
-        Query query = entityManager.createNativeQuery("SELECT orcid FROM profile WHERE date_created between :startDate and :endDate");
-        query.setParameter("startDate", startDate); 
-        query.setParameter("endDate", endDate);
-        return query.getResultList();
-    }
 }

@@ -153,7 +153,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<String> getAllOrcidIdsForInvalidRecords();
 
+    public List<String> registeredBetween(Date startDate, Date endDate);
+    
     void updateIndexingStatus(List<String> ids, IndexingStatus reindex);
     
-    public List<String> registeredBetween(Date startDate, Date endDate);
+    
 }
