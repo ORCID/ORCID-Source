@@ -12,6 +12,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.togglz.OrcidTogglzConfiguration;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -19,6 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.togglz.core.context.ContextClassLoaderFeatureManagerProvider;
+import org.togglz.core.manager.FeatureManager;
+import org.togglz.core.manager.FeatureManagerBuilder;
 
 /**
  * 
@@ -70,9 +74,13 @@ public class SendWelcomeEmails {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<String> profiles = profileDao.registeredBetween(formatter.parse(startDate), formatter.parse(endDate));
         if(profiles != null) {
+            LOG.info("Total profiles found:" +  profiles.size());
             for(String orcid: profiles) {
+                LOG.info("Orcid: " + orcid);
                 try {
-                    notificationManager.sendWelcomeEmail(orcid, emailDao.findNewestPrimaryEmail(orcid));
+                    String pEmail =  emailDao.findNewestPrimaryEmail(orcid);
+                    LOG.info("Sending welcome email to " + pEmail + " with orcid " + orcid);
+                    notificationManager.sendWelcomeEmail(orcid, pEmail);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -86,7 +94,15 @@ public class SendWelcomeEmails {
     @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        profileDao = (ProfileDao) context.getBean("profileDao");
+        notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
         emailDao = (EmailDao) context.getBean("emailDao");
+        profileDao = (ProfileDao) context.getBean("profileDao");
+        bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
+        
+    }
+    
+    private static void bootstrapTogglz(OrcidTogglzConfiguration togglzConfig) {
+        FeatureManager featureManager = new FeatureManagerBuilder().togglzConfig(togglzConfig).build();
+        ContextClassLoaderFeatureManagerProvider.bind(featureManager);  
     }
 }
