@@ -80,7 +80,7 @@ public class SendWelcomeEmails {
                 try {
                     String pEmail =  emailDao.findNewestPrimaryEmail(orcid);
                     LOG.info("Sending welcome email to " + pEmail + " with orcid " + orcid);
-                    notificationManager.sendWelcomeEmail(orcid, emailDao.findNewestPrimaryEmail(orcid));
+                    notificationManager.sendWelcomeEmail(orcid, pEmail);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
