@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 public class JsonUtils {
 
+    static final String NULL_UNICODE = "\\u0000";
     static ObjectMapper mapper = new ObjectMapper(); // thread safe!
     static ObjectMapper prettyMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     static ObjectMapper mapperFromJSON = new ObjectMapper(); // thread safe!
@@ -27,8 +28,12 @@ public class JsonUtils {
     }
     
     public static String convertToJsonStringPrettyPrint(Object object) {
-        try {            
-            return prettyMapper.writeValueAsString(object);
+        try {
+            String jsonString = prettyMapper.writeValueAsString(object);
+            if(stripNullUnicode(object) && jsonString != null && jsonString.contains(NULL_UNICODE)) {
+                jsonString = jsonString.replace(NULL_UNICODE, "");
+            }
+            return jsonString;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -36,7 +41,11 @@ public class JsonUtils {
 
     public static String convertToJsonString(Object object) {
         try {            
-            return mapper.writeValueAsString(object);
+            String jsonString = mapper.writeValueAsString(object);
+            if(stripNullUnicode(object) && jsonString != null && jsonString.contains(NULL_UNICODE)) {
+                jsonString = jsonString.replace(NULL_UNICODE, "");
+            }
+            return jsonString;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -117,5 +126,26 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException("Error extracting JsonNode from file", e);
         }
+    }
+    
+    private static boolean stripNullUnicode(Object o) {
+        return (o instanceof org.orcid.jaxb.model.message.FundingContributors ||
+                o instanceof org.orcid.jaxb.model.record_rc1.FundingContributors ||
+                o instanceof org.orcid.jaxb.model.record_rc2.FundingContributors ||
+                o instanceof org.orcid.jaxb.model.record_rc3.FundingContributors ||
+                o instanceof org.orcid.jaxb.model.record_rc4.FundingContributors ||
+                o instanceof org.orcid.jaxb.model.record_v2.FundingContributors ||
+                o instanceof org.orcid.jaxb.model.v3.rc1.record.FundingContributors ||
+                o instanceof org.orcid.jaxb.model.v3.rc2.record.FundingContributors ||
+                o instanceof org.orcid.jaxb.model.v3.release.record.FundingContributors ||
+                o instanceof org.orcid.jaxb.model.message.WorkContributors ||
+                o instanceof org.orcid.jaxb.model.record_rc1.WorkContributors ||
+                o instanceof org.orcid.jaxb.model.record_rc2.WorkContributors ||
+                o instanceof org.orcid.jaxb.model.record_rc3.WorkContributors ||
+                o instanceof org.orcid.jaxb.model.record_rc4.WorkContributors ||
+                o instanceof org.orcid.jaxb.model.record_v2.WorkContributors ||
+                o instanceof org.orcid.jaxb.model.v3.rc1.record.WorkContributors ||
+                o instanceof org.orcid.jaxb.model.v3.rc2.record.WorkContributors ||
+                o instanceof org.orcid.jaxb.model.v3.release.record.WorkContributors);
     }
 }
