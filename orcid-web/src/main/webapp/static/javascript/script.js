@@ -567,7 +567,7 @@ $(function() {
                                                         } else if(data.invalidUserType) {
                                                             messagesPromise.then(function() {
                                                                 message = om.get('orcid.frontend.security.invalid_user_type_1');
-                                                                message = message + ' <a href="https://orcid.org/help/contact-us">';
+                                                                message = message + ' <a href="https://support.orcid.org/hc/en-us/requests/new">';
                                                                 message = message + om.get('orcid.frontend.security.invalid_user_type_2');
                                                                 message = message + '</a>';
                                                                 showLoginError(message);
