@@ -410,7 +410,7 @@
                             <a href="{{aboutUri}}/faq-page" title=""><@orcid.msg 'public-layout.faq'/></a>
                         </li>
                         <li class="leaf">
-                            <a href="{{aboutUri}}/help/contact-us" title=""><@orcid.msg 'public-layout.contact_us'/></a>
+                            <a href="https://support.orcid.org/hc/en-us/requests/new" title=""><@orcid.msg 'public-layout.contact_us'/></a>
                         </li>
                         <li class="leaf">
                             <a href="https://support.orcid.org/hc/en-us/community/topics" title=""><@orcid.msg 'public-layout.give_feedback'/></a>
