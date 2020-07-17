@@ -103,8 +103,8 @@
                                                                 <a (click)="showMoreDetails(peerReview.putCode.value,$event)" *ngIf="showPeerReviewDetails[peerReview.putCode.value]">
                                                                     <span class="glyphicons collapse_top"></span>       <span class="hidden-xs"><@orcid.msg 'common.details.hide_details_lc' /></span>
                                                                 </a> |
+                                                                <a href="{{peerReview.url?.value}}" *ngIf="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span *ngIf="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
                                                                 <div class="popover-help-container">
-                                                                    <a href="{{peerReview.url?.value}}" *ngIf="peerReview.url != null" target="peer_review.view"><span><@orcid.msg 'peer_review.view' /></span></a><span *ngIf="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
                                                                     <div *ngIf="!isPublicPage" (click)="deletePeerReviewConfirm(peerReview)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
                                                                     </div>
                                                                     <div class="popover top tooltip-delete-peer tooltip-text">
