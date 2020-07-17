@@ -16,7 +16,7 @@ ${baseUri}${deactivateUrlEndpoint}?lang=${locale}
 <@emailMacros.msg "email.deactivate.more_info" />    
 https://support.orcid.org/hc/articles/360006973813
 
-<@emailMacros.msg "email.deactivate.if_you_did" /> https://orcid.org/help/contact-us <@emailMacros.msg "email.deactivate.gdpr_or_by_replying" />
+<@emailMacros.msg "email.deactivate.if_you_did" />https://support.orcid.org/hc/en-us/requests/new <@emailMacros.msg "email.deactivate.gdpr_or_by_replying" />
 
 <@emailMacros.msg "email.common.warm_regards" />
 <@emailMacros.msg "email.common.need_help.description.2.href" />
