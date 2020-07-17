@@ -53,7 +53,7 @@
             <small role="alert" >
                 <@spring.message 'orcid.frontend.deactivated' /><br />
                 <@spring.message 'reset_password.enterEmail_2' />
-                <a href="https://orcid.org/help/contact-us"><@spring.message 'resend_claim.labelorg' /></a>
+                <a href="https://support.orcid.org/hc/en-us/requests/new"><@spring.message 'resend_claim.labelorg' /></a>
             </small>
         </p>
         <div id="reactivate" name="emailAddressForm">            
