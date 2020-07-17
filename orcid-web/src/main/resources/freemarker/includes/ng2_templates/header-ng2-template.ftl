@@ -80,7 +80,7 @@
                     'public-layout.edit_your_record'/></a></li>
                 <li><a href="{{getBaseUri()}}/about"><@orcid.msg
                     'public-layout.about_orcid'/></a></li>
-                <li><a href="{{getBaseUri()}}/help/contact-us"><@orcid.msg
+                <li><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg
                     'public-layout.contact_us'/></a></li>
                 <li><a href="{{getBaseUri()}}/help"><@orcid.msg
                     'public-layout.help'/></a></li>
