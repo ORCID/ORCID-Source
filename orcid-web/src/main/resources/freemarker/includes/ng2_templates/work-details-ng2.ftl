@@ -238,7 +238,8 @@
                                 <div class="bottomBuffer">          
                                     <strong> Contributor </strong>
                                     <div *ngFor="let contributor of worksService.details[work.putCode.value].contributors; let index = index; let first = first; let last = last;">
-                                        {{contributor.creditName?.value}} <span>{{contributor | contributorFilter}}</span>
+                                        <ng-container *ngIf="!userIsContributor(contributor)">{{contributor.creditName?.value}} <span>{{contributor | contributorFilter}}</span></ng-container>
+                                        <ng-container *ngIf="userIsContributor(contributor)"><span>{{contributor.orcid.value}}</span></ng-container>
                                     </div>
                                 </div>                                      
                             </div> 
