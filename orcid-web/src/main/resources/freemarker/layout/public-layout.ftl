@@ -164,7 +164,7 @@
                                             <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
                                             <li><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
                                             <li><a href="https://orcid.org/orcid-dispute-procedures">Dispute procedures</a></li>
-                                            <li><a href="{{aboutUri}}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
+                                            <li><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'public-layout.contact_us'/></a></li>
                                             <li><a href="https://orcid.org/trademark-and-id-display-guidelines">Trademark &amp; iD display guidelines</a></li>
                                         </ul>
                                     </nav>
@@ -180,7 +180,7 @@
                             <div class="row">
                                 <div class="col-md-11 col-md-offset-1">
                                     <ul class="col-md-11 col-md-offset-1">
-                                        <li class=""><a href="{{aboutUri}}/help/contact-us"><@orcid.msg 'public-layout.contact_us'/></a></li>
+                                        <li class=""><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'public-layout.contact_us'/></a></li>
                                         <li class=""><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
                                         <li class=""><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
                                         <li class=""><a href="{{aboutUri}}/open-source-license"><@orcid.msg 'footer.openSource'/></a></li>

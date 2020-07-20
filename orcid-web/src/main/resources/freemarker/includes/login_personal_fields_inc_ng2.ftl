@@ -34,7 +34,7 @@
 <div id="2FAInstructions" style="display:none">
     <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
     <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device1")} <a href='#' id='enterRecoveryCode'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device2")}</a></p>
-    <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device_or_recovery")} <a href='https://orcid.org/help/contact-us'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.contact_support")}</a></p>
+    <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device_or_recovery")} <a href='https://support.orcid.org/hc/en-us/requests/new'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.contact_support")}</a></p>
 </div>
 <div id="recoveryCodeSignin" class="form-group" style="display:none">
     <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>                                       
@@ -53,7 +53,7 @@
             <small role="alert" >
                 <@spring.message 'orcid.frontend.deactivated' /><br />
                 <@spring.message 'reset_password.enterEmail_2' />
-                <a href="https://orcid.org/help/contact-us"><@spring.message 'resend_claim.labelorg' /></a>
+                <a href="https://support.orcid.org/hc/en-us/requests/new"><@spring.message 'resend_claim.labelorg' /></a>
             </small>
         </p>
         <div id="reactivate" name="emailAddressForm">            
@@ -70,7 +70,7 @@
         </div>         
     </span> 
     <span *ngIf="showReactivationSent">
-        <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /> <a href="https://orcid.org/help/contact-us"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />
+        <@spring.message 'orcid.frontend.verify.reactivation_sent.1' /> <a href="https://support.orcid.org/hc/en-us/requests/new"><@spring.message 'orcid.frontend.verify.reactivation_sent.2' /></a><@spring.message 'orcid.frontend.verify.reactivation_sent.3' />
     </span>
 </div>
 <div id="loginErrors"></div>

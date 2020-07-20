@@ -3,7 +3,7 @@
     <div class="workspace-inner workspace-header row" *ngIf="userInfo['LOCKED'] == 'true'">
         <div class="col-md-12 col-sm-12 col-xs-12 alert alert-error readme">
             <strong><@orcid.msg 'workspace.locked.header'/></strong>
-            <p><@orcid.msg 'workspace.locked.message_1'/><a href="http://orcid.org/help/contact-us" target="Orcid_support"><@orcid.msg 'workspace.locked.message_2'/></a><@orcid.msg 'workspace.locked.message_3'/></p>
+            <p><@orcid.msg 'workspace.locked.message_1'/><a href="https://support.orcid.org/hc/en-us/requests/new" target="Orcid_support"><@orcid.msg 'workspace.locked.message_2'/></a><@orcid.msg 'workspace.locked.message_3'/></p>
         </div>
     </div>                
     <div class="biography-controller" id="bio-section" aria-labelledby="labelbiography">

@@ -55,7 +55,7 @@ your ORCID Record [6].
 
 Regards,
 The ORCID Team
-https://orcid.org/help/contact-us
+https://support.orcid.org/hc/en-us/requests/new
 
 You have received this email as a service announcement related to your ORCID 
 Account. Your ORCID iD: http://orcid.org/${orcid}
