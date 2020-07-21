@@ -5036,6 +5036,10 @@ ul.sources-actions li {
     color: #2E7F9F
 }
 
+.sources-actions .git_create:hover:before,.sources-actions .git_pull_request:hover:before,.sources-options .git_create:hover:before,.sources-options .git_pull_request:hover:before {
+    color: #a6ce39
+}
+
 .source-line, .source{
     font-size: 13px;  
     line-height: normal;
@@ -10041,7 +10045,7 @@ name-ng2 h2.full-name {
 }
 
 .tooltip-delete-peer {
-    left: 10px !important;
+    left: -15px !important;
     top: -38px !important;
     min-width: 68px !important;
 }

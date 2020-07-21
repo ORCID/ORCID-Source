@@ -817,7 +817,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 error => {
                     console.log('loadGroupingSuggestions', error);
                     this.groupingSuggestionPresent = false;
-                } 
+                }
             );
         }
     };
@@ -1297,6 +1297,13 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
 
     userIsSource(work): boolean {
         if (work.source == orcidVar.orcidId){
+            return true;
+        }
+        return false;
+    };
+
+    userIsContributor(contributor): boolean {
+        if (contributor.orcid && contributor.orcid.value == orcidVar.orcidId){
             return true;
         }
         return false;

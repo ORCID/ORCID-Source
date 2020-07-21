@@ -24,7 +24,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 
 
 
- For additional help please contact https://orcid.org/help/contact-us.
+ For additional help please contact https://support.orcid.org/hc/en-us/requests/new.
 
  ## List of Error codes and solutions
 
