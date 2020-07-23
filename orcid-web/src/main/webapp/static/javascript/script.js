@@ -892,7 +892,12 @@ bibToWorkTypeMap['unpublished'] = [ 'other_output', 'other' ];
 
 function externalIdentifierId(work, idType, value) {
 	
-	//Define relationship type based on work type
+    if(!value) {
+        console.warn("Empty value for ext id: " + idType);
+        return;
+    }
+    
+    //Define relationship type based on work type
 	var relationship = 'self';
 	if(idType === 'issn') {
 		if(work.workType.value != 'book') {
@@ -969,6 +974,9 @@ function populateWorkAjaxForm(bibJson, work) {
         if (lowerKeyTags.hasOwnProperty('isbn'))
             externalIdentifierId(work, 'isbn', lowerKeyTags['isbn']);
 
+        if (lowerKeyTags.hasOwnProperty('issn'))
+            externalIdentifierId(work, 'issn', lowerKeyTags['issn']);
+        
         if (lowerKeyTags.hasOwnProperty('url'))
             externalIdentifierId(work, 'uri', lowerKeyTags['url']);
 
