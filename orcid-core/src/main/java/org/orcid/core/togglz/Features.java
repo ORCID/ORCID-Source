@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Disable Badges")
+    DISABLE_BADGES,
+
     @Label("New Info Site")
     NEW_INFO_SITE,
 
