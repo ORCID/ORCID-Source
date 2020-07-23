@@ -40,7 +40,8 @@
 	                </p>                  
 	            </div> 
 	            <hr />
-	            <div class="col-md-12 col-sm-12 col-xs-12">   
+	            <div class="col-md-12 col-sm-12 col-xs-12">
+					<ng-container *ngIf="!badgesDisabled">
 	                <h3><@orcid.msg 'member_details.integrations'/></h3>
 	                <div  *ngIf="currentMemberDetails.integrations">
 		                <div *ngFor="let integration of currentMemberDetails.integrations">
@@ -144,6 +145,7 @@
 	            </div>
 	            <hr />
 	        </div>
+					</ng-container>
 	        <div class="col-md-12 col-sm-12 col-xs-12" *ngIf="currentMemberDetails.subMembers.length">
 	            <h3><@orcid.msg 'member_details.consortium_members'/></h3>
 	            <table *ngIf="currentMemberDetails.subMembers">
