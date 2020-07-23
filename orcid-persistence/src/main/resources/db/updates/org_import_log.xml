@@ -21,6 +21,9 @@
 			<column name="source_type" type="VARCHAR(19)">
 				<constraints nullable="false" />
 			</column>
+			<column name="file" type="VARCHAR(55)">
+                <constraints nullable="false" />
+            </column>
 			<column name="successful" type="boolean">
 				<constraints nullable="false" />
 			</column>
