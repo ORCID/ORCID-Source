@@ -53,6 +53,8 @@ import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
@@ -951,7 +953,35 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             }
         } while (!notificationsToDelete.isEmpty());
     }
+    
+   public void send2FADisabledEmail(String userOrcid) {
+     ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+     Locale userLocale = getUserLocaleFromProfileEntity(profile);
+     Emails emails = emailManager.getEmails(userOrcid);
+     Map<String, Object> templateParams = new HashMap<String, Object>();
 
+     String subject = getSubject("email.2fa_disabled.subject", userLocale);
+    
+
+     String emailFriendlyName = deriveEmailFriendlyName(userOrcid);
+     templateParams.put("emailName", emailFriendlyName);
+     templateParams.put("orcid", userOrcid);
+     templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+     templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+     templateParams.put("subject", subject);
+
+     addMessageParams(templateParams, userLocale);
+
+     // Generate body from template
+     String body = templateManager.processTemplate("email_2fa_disabled.ftl", templateParams);
+     // Generate html from template
+     String html = templateManager.processTemplate("email_2fa_disabled_html.ftl", templateParams);
+    
+     for(Email email: emails.getEmails()) {
+        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+     }
+    }
+   
     @Override
     public void removeNotification(Long notificationId) {
         notificationDao.remove(notificationId);

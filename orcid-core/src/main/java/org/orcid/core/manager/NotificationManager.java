@@ -94,4 +94,6 @@ public interface NotificationManager {
     String createUpdateEmailFrequencyUrl(String email);
     
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
+    
+    public void send2FADisabledEmail(String userOrcid);
 }

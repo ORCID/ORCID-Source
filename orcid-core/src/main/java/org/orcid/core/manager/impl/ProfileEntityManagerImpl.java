@@ -48,6 +48,8 @@ import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -55,6 +57,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Declan Newman (declan) Date: 10/02/2012
  */
 public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl implements ProfileEntityManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
 
     @Resource
     private AffiliationsManager affiliationsManager;
@@ -377,7 +380,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public void disable2FA(String orcid) {
+        LOGGER.info("disabling 2FA for " + orcid);
         profileDao.disable2FA(orcid);
+        notificationManager.send2FADisabledEmail(orcid);
     }
 
     @Override
