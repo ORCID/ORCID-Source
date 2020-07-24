@@ -1,8 +1,6 @@
 package org.orcid.core.orgs.load.manager.impl;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -32,14 +30,12 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
     @Value("${org.orcid.core.orgs.loadBaseDir}")
     private String loadBaseDir;
     
-    private DateFormat importFileDateFormat = new SimpleDateFormat("-yyyy-MM-dd");
-
     @Override
     public void loadOrgs() {
+        checkBaseDir();
         OrgLoadSource loader = getNextOrgLoader();
-        File importFile = getImportFile(loader);
-        OrgImportLogEntity importLog = getOrgImportLogEntity(loader, importFile);
-        boolean success = loader.loadLatestOrgs(importFile);
+        OrgImportLogEntity importLog = getOrgImportLogEntity(loader);
+        boolean success = loader.loadLatestOrgs();
         logImport(importLog, success);
     }
 
@@ -49,19 +45,17 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
         orgImportLogDao.persist(importLog);
     }
 
-    private File getImportFile(OrgLoadSource loader) {
-        File sourceBaseDir = new File(new File(loadBaseDir), loader.getSourceName());
-        if (!sourceBaseDir.exists()) {
-            LOGGER.info("Creating import directory {}", sourceBaseDir.getAbsolutePath());
-            sourceBaseDir.mkdirs();
+    private void checkBaseDir() {
+        File baseDir = new File(loadBaseDir);
+        if (!baseDir.exists()) {
+            LOGGER.info("Creating org import base directory {}", loadBaseDir);
+            baseDir.mkdirs();
         }
-        return new File(sourceBaseDir, loader.getSourceName() + importFileDateFormat.format(new Date()));
     }
 
-    private OrgImportLogEntity getOrgImportLogEntity(OrgLoadSource loader, File importFile) {
+    private OrgImportLogEntity getOrgImportLogEntity(OrgLoadSource loader) {
         OrgImportLogEntity log = new OrgImportLogEntity();
         log.setSource(loader.getSourceName());
-        log.setFile(importFile.getName());
         log.setStart(new Date());
         return log;
     }

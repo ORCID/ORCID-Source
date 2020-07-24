@@ -25,8 +25,6 @@ public class OrgImportLogEntity extends BaseEntity<Long> implements Serializable
     
     private Long id;
     
-    private String file;
-    
     private boolean successful;
     
     @Id
@@ -77,13 +75,4 @@ public class OrgImportLogEntity extends BaseEntity<Long> implements Serializable
         this.successful = successful;
     }
 
-    @Column
-    public String getFile() {
-        return file;
-    }
-
-    public void setFile(String file) {
-        this.file = file;
-    }
-    
 }

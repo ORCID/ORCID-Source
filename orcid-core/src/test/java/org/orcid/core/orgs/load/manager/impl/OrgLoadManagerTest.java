@@ -28,7 +28,7 @@ public class OrgLoadManagerTest {
     private OrgImportLogDao importLogDao;
 
     @Mock
-    private RinggoldOrgLoadSource ringgoldOrgLoader;
+    private RinggoldOrgLoadSource ringgoldOrgLoadSource;
     
     @InjectMocks
     private OrgLoadManagerImpl orgLoadManager;
@@ -45,10 +45,10 @@ public class OrgLoadManagerTest {
         loadBaseDir = File.createTempFile("orgs-imports", "-test");
         loadBaseDir.delete();
         
-        Mockito.when(ringgoldOrgLoader.getSourceName()).thenReturn("RINGGOLD");
+        Mockito.when(ringgoldOrgLoadSource.getSourceName()).thenReturn("RINGGOLD");
         
         ReflectionTestUtils.setField(orgLoadManager, "loadBaseDir", loadBaseDir.getAbsolutePath());
-        ReflectionTestUtils.setField(orgLoadManager, "orgLoaders", Arrays.asList(ringgoldOrgLoader));
+        ReflectionTestUtils.setField(orgLoadManager, "orgLoadSources", Arrays.asList(ringgoldOrgLoadSource));
     }
     
     @After
@@ -59,12 +59,12 @@ public class OrgLoadManagerTest {
     @Test
     public void testLoadOrgs() {
         Mockito.when(importLogDao.getNextImportSourceName()).thenReturn("RINGGOLD");
-        Mockito.when(ringgoldOrgLoader.loadLatestOrgs(Mockito.any(File.class))).thenReturn(Boolean.TRUE);
+        Mockito.when(ringgoldOrgLoadSource.loadLatestOrgs()).thenReturn(Boolean.TRUE);
         Mockito.doNothing().when(importLogDao).persist(Mockito.any(OrgImportLogEntity.class));
         
         orgLoadManager.loadOrgs();
         
-        Mockito.verify(ringgoldOrgLoader, Mockito.times(1)).loadLatestOrgs(Mockito.any(File.class));
+        Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).loadLatestOrgs();
         Mockito.verify(importLogDao, Mockito.times(1)).persist(captor.capture());
         OrgImportLogEntity importLog = captor.getValue();
         assertNotNull(importLog);
