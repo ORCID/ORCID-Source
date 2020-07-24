@@ -3,12 +3,9 @@ package org.orcid.core.orgs.load.manager.impl;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,24 +33,11 @@ public class OrgLoadManagerTest {
     @Captor
     private ArgumentCaptor<OrgImportLogEntity> captor;
     
-    private File loadBaseDir;
-    
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
-        
-        loadBaseDir = File.createTempFile("orgs-imports", "-test");
-        loadBaseDir.delete();
-        
         Mockito.when(ringgoldOrgLoadSource.getSourceName()).thenReturn("RINGGOLD");
-        
-        ReflectionTestUtils.setField(orgLoadManager, "loadBaseDir", loadBaseDir.getAbsolutePath());
         ReflectionTestUtils.setField(orgLoadManager, "orgLoadSources", Arrays.asList(ringgoldOrgLoadSource));
-    }
-    
-    @After
-    public void tearDown() throws IOException {
-        FileUtils.deleteDirectory(loadBaseDir);
     }
     
     @Test
@@ -71,7 +55,6 @@ public class OrgLoadManagerTest {
         assertNotNull(importLog.getStart());
         assertNotNull(importLog.getEnd());
         assertTrue(importLog.isSuccessful());
-        
     }
 
 }

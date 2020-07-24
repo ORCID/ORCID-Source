@@ -1,6 +1,5 @@
 package org.orcid.core.orgs.load.manager.impl;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +12,6 @@ import org.orcid.persistence.dao.OrgImportLogDao;
 import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,12 +25,8 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
     @Resource
     private List<OrgLoadSource> orgLoadSources;
     
-    @Value("${org.orcid.core.orgs.loadBaseDir}")
-    private String loadBaseDir;
-    
     @Override
     public void loadOrgs() {
-        checkBaseDir();
         OrgLoadSource loader = getNextOrgLoader();
         OrgImportLogEntity importLog = getOrgImportLogEntity(loader);
         boolean success = loader.loadLatestOrgs();
@@ -43,14 +37,6 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
         importLog.setEnd(new Date());
         importLog.setSuccessful(success);
         orgImportLogDao.persist(importLog);
-    }
-
-    private void checkBaseDir() {
-        File baseDir = new File(loadBaseDir);
-        if (!baseDir.exists()) {
-            LOGGER.info("Creating org import base directory {}", loadBaseDir);
-            baseDir.mkdirs();
-        }
     }
 
     private OrgImportLogEntity getOrgImportLogEntity(OrgLoadSource loader) {
