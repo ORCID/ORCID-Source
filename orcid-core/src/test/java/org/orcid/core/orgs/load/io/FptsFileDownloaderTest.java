@@ -1,4 +1,4 @@
-package org.orcid.core.orgs.loader;
+package org.orcid.core.orgs.load.io;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.orgs.load.io.FtpsFileDownloader;
 
 public class FptsFileDownloaderTest {
     
