@@ -15,25 +15,28 @@
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 		    	<@emailMacros.msg "email.2fa_disabled.two_factor_auth_disabled" />
 		    </p>
+		 
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-          <@emailMacros.msg "email.2fa_disabled.if_you_received" />
+          <@emailMacros.msg "email.2fa_disabled.if_you_received.html" />
         </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		  		<@emailMacros.msg "email.2fa_disabled.more_info" />
+		  		<@emailMacros.msg "email.2fa_disabled.more_info.html" />
 		    </p>	
-		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
-<@emailMacros.msg "email.common.warm_regards" />
-<a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
-			</p>
-			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
-				<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
-			</p>
-			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
+		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
+          <@emailMacros.msg "email.common.warm_regards" /> 
+        </p>
+        <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
+          <a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
+			  </p>
+			  <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
+				  <a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
+			 </p>
+			 <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />
-			</p>
-			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
+			 </p>
+			 <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 			   <#include "email_footer_html.ftl"/>
-			</p>
+			 </p>
 		 </div>
 	 </body>
  </html>
