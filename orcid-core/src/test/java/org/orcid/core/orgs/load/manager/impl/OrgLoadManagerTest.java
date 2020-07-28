@@ -43,7 +43,7 @@ public class OrgLoadManagerTest {
     @Test
     public void testLoadOrgs() {
         Mockito.when(importLogDao.getNextImportSourceName()).thenReturn("RINGGOLD");
-        Mockito.when(ringgoldOrgLoadSource.loadLatestOrgs()).thenReturn(Boolean.TRUE);
+        Mockito.when(ringgoldOrgLoadSource.loadLatestOrgs()).thenReturn(true);
         Mockito.doNothing().when(importLogDao).persist(Mockito.any(OrgImportLogEntity.class));
         
         orgLoadManager.loadOrgs();

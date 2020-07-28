@@ -1620,4 +1620,13 @@
 	<bean id="jpaJaxbSpamAdapter" class="org.orcid.core.adapter.v3.impl.JpaJaxbSpamAdapterImpl">
 		<property name="mapperFacade" ref="spamMapperFacade"/>
 	</bean>
+	
+	<bean id="ringgoldFtpsFileDownloader" class="org.orcid.core.orgs.load.io.FtpsFileDownloader">
+	    <property name="host" value="${org.orcid.core.orgs.ringgold.fptHost}" />
+	    <property name="port" value="${org.orcid.core.orgs.ringgold.fptPort}" />
+	    <property name="localFilePath" value="${org.orcid.core.orgs.ringgold.fptLocalFilePath}" />
+	     <property name="remoteFilePath" value="${org.orcid.core.orgs.ringgold.ftpRemoteFilePath}" />
+        <property name="ftpUsername" value="${org.orcid.core.orgs.ringgold.fptUsername}" />
+        <property name="ftpPassword" value="${org.orcid.core.orgs.ringgold.fptPassword}" />
+	</bean>
 </beans>
