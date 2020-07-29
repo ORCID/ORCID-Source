@@ -85,7 +85,7 @@ public class Disable20RCApiFilter extends OncePerRequestFilter {
             LOGGER.info("Redirecting request '{}' to '{}'", fullPath, v20Location);
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             response.setHeader("Location", v20Location);
-            String accept = request.getHeader("Accept") == null ? null : request.getHeader("Accept").toLowerCase();
+            String accept = request.getHeader("Accept") == null ? "" : request.getHeader("Accept").toLowerCase();
             if (accept.contains("json")) {
                 response.getWriter().println(getJsonResponse());
             } else {
