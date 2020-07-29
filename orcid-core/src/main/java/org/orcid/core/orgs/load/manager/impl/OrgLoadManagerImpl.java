@@ -6,15 +6,15 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.SlackManager;
 import org.orcid.core.orgs.load.manager.OrgLoadManager;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
 import org.orcid.persistence.dao.OrgImportLogDao;
 import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
-@Service
 public class OrgLoadManagerImpl implements OrgLoadManager {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(OrgLoadManagerImpl.class);
@@ -25,12 +25,27 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
     @Resource
     private List<OrgLoadSource> orgLoadSources;
     
+    @Resource
+    private SlackManager slackManager;
+    
+    @Value("org.orcid.core.orgs.load.slackChannel")
+    private String slackChannel;
+    
+    @Value("org.orcid.core.orgs.load.slackUser")
+    private String slackUser;
+    
     @Override
     public void loadOrgs() {
         OrgLoadSource loader = getNextOrgLoader();
         OrgImportLogEntity importLog = getOrgImportLogEntity(loader);
         boolean success = loader.loadLatestOrgs();
         logImport(importLog, success);
+        
+        if (success) {
+            slackManager.sendAlert(String.format("Orgs successfully imported from %s", loader.getSourceName()), slackChannel, slackUser);
+        } else {
+            slackManager.sendAlert(String.format("Org import FAILURE from %s", loader.getSourceName()), slackChannel, slackUser);
+        }
     }
 
     private void logImport(OrgImportLogEntity importLog, boolean success) {
