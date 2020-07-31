@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.orgs.load.manager.OrgLoadManager;
@@ -14,33 +15,37 @@ import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Service;
 
+@Service("orgLoadManager")
 public class OrgLoadManagerImpl implements OrgLoadManager {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrgLoadManagerImpl.class);
-    
+
     @Resource
     private OrgImportLogDao orgImportLogDao;
-    
+
     @Resource
     private List<OrgLoadSource> orgLoadSources;
-    
+
     @Resource
     private SlackManager slackManager;
-    
-    @Value("org.orcid.core.orgs.load.slackChannel")
+
+    @Value("${org.orcid.core.orgs.load.slackChannel}")
     private String slackChannel;
-    
-    @Value("org.orcid.core.orgs.load.slackUser")
+
+    @Value("${org.orcid.core.orgs.load.slackUser}")
     private String slackUser;
-    
+
     @Override
     public void loadOrgs() {
         OrgLoadSource loader = getNextOrgLoader();
         OrgImportLogEntity importLog = getOrgImportLogEntity(loader);
         boolean success = loader.loadLatestOrgs();
         logImport(importLog, success);
-        
+
         if (success) {
             slackManager.sendAlert(String.format("Orgs successfully imported from %s", loader.getSourceName()), slackChannel, slackUser);
         } else {
@@ -62,13 +67,24 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
     }
 
     private OrgLoadSource getNextOrgLoader() {
-        String nextImportSourceName = orgImportLogDao.getNextImportSourceName();
-        Optional<OrgLoadSource> nextOrgLoader = orgLoadSources.stream().filter(l -> nextImportSourceName.equals(l.getSourceName())).findAny();
-        if (!nextOrgLoader.isPresent()) {
-            LOGGER.error("No org loader found for source name {}!", nextImportSourceName);
-            throw new RuntimeException("No org loader found");
+        try {
+            String nextImportSourceName = orgImportLogDao.getNextImportSourceName();
+            Optional<OrgLoadSource> nextOrgLoader = orgLoadSources.stream().filter(l -> nextImportSourceName.equals(l.getSourceName())).findAny();
+            if (!nextOrgLoader.isPresent()) {
+                LOGGER.error("No org loader found for source name {}!", nextImportSourceName);
+                throw new RuntimeException("No org loader found");
+            }
+            return nextOrgLoader.get();
+        } catch (NoResultException e) {
+            // automated org import never run before
+            return orgLoadSources.get(0);
         }
-        return nextOrgLoader.get();
+    }
+    
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        OrgLoadManager orgLoadManager = (OrgLoadManager) context.getBean("orgLoadManager");
+        orgLoadManager.loadOrgs();
     }
 
 }

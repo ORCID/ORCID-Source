@@ -61,7 +61,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     
-    @Resource
+    @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
     
     @Resource
