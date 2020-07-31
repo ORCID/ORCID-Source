@@ -3,21 +3,18 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>orcid-activemq</artifactId>
   <packaging>war</packaging>
-  <version>1.1.5-SNAPSHOT</version>
   <name>ORCID - ActiveMQ</name>
-  <url>http://maven.apache.org</url>
   
-    <properties>    	
-    	<main.basedir>${project.parent.basedir}</main.basedir>
-        <branchVersion>1.1.5-SNAPSHOT</branchVersion>
-    </properties>
-    
   <parent>
-  	<groupId>org.orcid</groupId>
-  	<artifactId>orcid-parent</artifactId>
-  	<version>1.1.5-SNAPSHOT</version>
-  	<relativePath>../pom.xml</relativePath>
-  </parent>
+		<groupId>org.orcid</groupId>
+		<artifactId>orcid-parent</artifactId>        
+		<relativePath>../pom.xml</relativePath>
+		<version>1.1.5-SNAPSHOT</version>
+	</parent>
+  
+	<properties>    	
+		<main.basedir>${project.parent.basedir}</main.basedir>
+	</properties>      
   
   <dependencies>
       <dependency>
@@ -51,7 +48,7 @@
   </dependencies>
   
   <build>
-     <finalName>orcid-activemq</finalName>
+     <finalName>${project.artifactId}-${project.version}</finalName>
      <plugins>
              <plugin>
                 <groupId>org.codehaus.mojo</groupId>

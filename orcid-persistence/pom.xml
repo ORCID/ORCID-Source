@@ -15,10 +15,11 @@
 
     <properties>
         <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
-        <main.basedir>${project.parent.basedir}</main.basedir>
+        <main.basedir>${project.parent.basedir}</main.basedir>        
     </properties>
 
     <build>
+    	<finalName>${project.artifactId}-${project.version}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -57,11 +58,6 @@
             <artifactId>orcid-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.orcid</groupId>
-            <artifactId>orcid-utils</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- ##External dependencies## -->
 

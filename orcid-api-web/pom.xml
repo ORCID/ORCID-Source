@@ -1,25 +1,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>orcid-api-web</artifactId>
+	<packaging>war</packaging>
+	<name>ORCID - Tier 2 Services Web</name>
+	<description>REST Service endpoints for the ORCID tier 2 API.</description>
 
-    <parent>
-        <groupId>org.orcid</groupId>
-        <artifactId>orcid-parent</artifactId>
-        <version>1.1.5-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+	<parent>
+		<groupId>org.orcid</groupId>
+		<artifactId>orcid-parent</artifactId>
+		<version>1.1.5-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
-    <artifactId>orcid-api-web</artifactId>
-    <packaging>war</packaging>
-
-    <name>ORCID - Tier 2 Services Web</name>
-    <description>REST Service endpoints for the ORCID tier 2 API.</description>
-
-    <properties>
-        <main.basedir>${project.parent.basedir}</main.basedir>
-    </properties>
+	<properties>
+		<main.basedir>${project.parent.basedir}</main.basedir>
+	</properties>
 
     <dependencies>
-
         <!-- Internal dependencies -->
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
@@ -92,7 +89,7 @@
 
     </dependencies>
     <build>
-        <finalName>orcid-api-web</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
              <plugin>
                 <groupId>org.codehaus.mojo</groupId>
