@@ -1,22 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>orcid-web</artifactId>
+	<packaging>war</packaging>
+	<name>ORCID - Web</name>
+	<description>The web application that serves the HTML and allows the invitation, confirmation and registration of ORCID owners.</description>
 
     <parent>
-        <groupId>org.orcid</groupId>
-        <artifactId>orcid-parent</artifactId>
-        <version>1.1.5-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+		<groupId>org.orcid</groupId>
+		<artifactId>orcid-parent</artifactId>        
+		<relativePath>../pom.xml</relativePath>
+		<version>1.1.5-SNAPSHOT</version>
+	</parent>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <main.basedir>${project.parent.basedir}</main.basedir>
-    </properties>
-
-    <artifactId>orcid-web</artifactId>
-    <packaging>war</packaging>
-    <name>ORCID - Web</name>
-    <description>The web application that serves the HTML and allows the invitation, confirmation and registration of ORCID owners.</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<main.basedir>${project.parent.basedir}</main.basedir>
+	</properties>
 
     <dependencies>
         <dependency>
@@ -217,7 +216,7 @@
     </dependencies>
 
     <build>
-        <finalName>orcid-web</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
              <plugin>
                 <groupId>org.codehaus.mojo</groupId>
