@@ -9,7 +9,7 @@
             <div class="topBuffer">
                 <h3 class="topBuffer" *ngIf="memberDetails?.consortiumLead"><@spring.message "manage_consortium.public_display"/></h3>
                 <h3 class="topBuffer" *ngIf="!memberDetails?.consortiumLead"><@spring.message "self_serve.public_display_heading"/></h3>
-                <p><@spring.message "self_serve.public_display_text"/> <a href="{{getBaseUri()}}/members" rel="noopener noreferrer" target="manage_consortium.member_list_link"><@spring.message "manage_consortium.member_list_link"/></a></p>
+                <p><@spring.message "self_serve.public_display_text"/> <a href="{{getBaseUri()}}/members" target="manage_consortium.member_list_link"><@spring.message "manage_consortium.member_list_link"/></a></p>
                 <!-- Name -->
                 <div class="row">
                     <div class="col-md-9 col-sm-12 col-xs-12">
