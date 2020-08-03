@@ -21,13 +21,13 @@
     {{displayType}}: {{value}}
 </span>
 <span *ngIf="link" class="url-popover">
-    {{displayType}}: <a href="{{link}}" class="truncate-anchor" target="orcid.blank" rel="noopener norefferer" (mouseenter)="showURLPopOver(putCode)" (mouseleave)="hideURLPopOver(putCode)">{{value}}</a>
+    {{displayType}}: <a rel="noopener noreferrer"  href="{{link}}" class="truncate-anchor" target="orcid.blank" rel="noopener norefferer" (mouseenter)="showURLPopOver(putCode)" (mouseleave)="hideURLPopOver(putCode)">{{value}}</a>
     <div class="popover-pos">
         <div class="popover-help-container">
             <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver[putCode] == true}">
                 <div class="arrow"></div>
                 <div class="popover-content">
-                    <a href="{{link}}" target="orcid.blank" class="ng-binding">{{link}}</a>
+                    <a rel="noopener noreferrer"  href="{{link}}" target="orcid.blank" class="ng-binding">{{link}}</a>
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
 
     <!--Org disambiguated URL-->
     <span *ngIf="commonSrvc.orgDisambiguatedDetails[type+value]?.url"><br>
-        <a href="{{commonSrvc.orgDisambiguatedDetails[type+value]?.url}}" target="url">
+        <a rel="noopener noreferrer"  href="{{commonSrvc.orgDisambiguatedDetails[type+value]?.url}}" target="url">
         <span>{{commonSrvc.orgDisambiguatedDetails[type+value]?.url}}</span></a>
     </span> 
 
@@ -66,14 +66,14 @@
             <li *ngFor="let orgDisambiguatedExternalIdentifier of commonSrvc.orgDisambiguatedDetails[type+value]?.orgDisambiguatedExternalIdentifiers">
                 {{orgDisambiguatedExternalIdentifier.identifierType}}:
                 <span *ngIf="orgDisambiguatedExternalIdentifier.preferred && !isUrl(orgDisambiguatedExternalIdentifier.preferred)">{{orgDisambiguatedExternalIdentifier.preferred}} <@orcid.msg 'workspace_affiliations.external_ids_preferred'/></span>
-                <span *ngIf="orgDisambiguatedExternalIdentifier.preferred && isUrl(orgDisambiguatedExternalIdentifier.preferred)"> <a  target="orcid.blank" href="{{orgDisambiguatedExternalIdentifier.preferred}}">{{orgDisambiguatedExternalIdentifier.preferred}} </a>  <@orcid.msg 'workspace_affiliations.external_ids_preferred'/></span>
+                <span *ngIf="orgDisambiguatedExternalIdentifier.preferred && isUrl(orgDisambiguatedExternalIdentifier.preferred)"> <a rel="noopener noreferrer"  target="orcid.blank" href="{{orgDisambiguatedExternalIdentifier.preferred}}">{{orgDisambiguatedExternalIdentifier.preferred}} </a>  <@orcid.msg 'workspace_affiliations.external_ids_preferred'/></span>
                 <!-- Put the ',' only if there is more than one ext id or if the only one is not the same as the preferred one -->
                 <span *ngIf="orgDisambiguatedExternalIdentifier.all && (orgDisambiguatedExternalIdentifier.all.length > 1 || (orgDisambiguatedExternalIdentifier.preferred && (orgDisambiguatedExternalIdentifier.all[0] != orgDisambiguatedExternalIdentifier.preferred)))">,</span>   
                 <span *ngIf="orgDisambiguatedExternalIdentifier.all">
                     <span *ngFor="let orgDisambiguatedExternalIdentifierAll of orgDisambiguatedExternalIdentifier.all;let last = last">
                         <span *ngIf="orgDisambiguatedExternalIdentifierAll != orgDisambiguatedExternalIdentifier.preferred">
                         <ng-container *ngIf="isUrl(orgDisambiguatedExternalIdentifierAll)">
-                            <a target="orcid.blank" href="{{orgDisambiguatedExternalIdentifierAll}}">{{orgDisambiguatedExternalIdentifierAll}} </a>{{last ? '' : ', '}}
+                            <a rel="noopener noreferrer"  target="orcid.blank" href="{{orgDisambiguatedExternalIdentifierAll}}">{{orgDisambiguatedExternalIdentifierAll}} </a>{{last ? '' : ', '}}
                         </ng-container>
                         <ng-container *ngIf="!isUrl(orgDisambiguatedExternalIdentifierAll)">
                             {{orgDisambiguatedExternalIdentifierAll}}{{last ? '' : ', '}}

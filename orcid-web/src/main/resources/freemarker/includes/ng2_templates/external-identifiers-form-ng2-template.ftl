@@ -113,7 +113,7 @@
                                                         <div class="aka">                                       
                                                             <p>
                                                                 <span *ngIf="!externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
-                                                                <span *ngIf="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="externalIdentifier.commonName">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
+                                                                <span *ngIf="externalIdentifier.url"><a rel="noopener noreferrer" href="{{externalIdentifier.url}}" target="externalIdentifier.commonName">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
                                                             </p> 
                                                         </div>
                                                         <div class="source">
