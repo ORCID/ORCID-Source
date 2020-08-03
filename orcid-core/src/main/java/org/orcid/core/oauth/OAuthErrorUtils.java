@@ -9,6 +9,7 @@ import org.orcid.core.security.aop.LockedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 
 public class OAuthErrorUtils {
@@ -41,6 +42,9 @@ public class OAuthErrorUtils {
             error.setError(OAuthError.UNAUTHORIZED_CLIENT);
             error.setResponseStatus(Status.BAD_REQUEST);
         } else if(OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
+            error.setError(OAuthError.UNAUTHORIZED_CLIENT);
+            error.setResponseStatus(Status.BAD_REQUEST);
+        } else if (InvalidTokenException.class.isAssignableFrom(t.getClass())) {
             error.setError(OAuthError.UNAUTHORIZED_CLIENT);
             error.setResponseStatus(Status.BAD_REQUEST);
         } else {
