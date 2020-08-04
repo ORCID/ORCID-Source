@@ -46,38 +46,40 @@
 
 ## Institutional Login
 
-24. Create a UnitedID account if you do not already have one at https://app.unitedid.org/signup/ and enable a way to get a security token by going to 'Manage security tokens' after signing up
-25. Visit https://qa.orcid.org/signin and use the Institutional account option to sign in using "United ID" as the institution and the UnitedID account you just created. Complete steps to link it to the Individual account created in steps 1 and 2.
-26. On the notification in the orange box at the top of the page to link the account to State University, click connect, you'll be taken to the OAuth page. Click 'Deny'  and return to the record.
-27. Visit https://qa.orcid.org/signout
-28. Visit https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
-29. Sign in using a Google account not linked to an existing ORCID record
-30. Complete steps to link the Google account to the account created today
-31. Check that after linking the account you are taken back to the authorize page, not to my-orcid
-32. Click Deny on the authorization -- check that you are taken to the Google OAuth Playground with a Deny error
-33. Visit https://qa.orcid.org/account and follow the steps to enable two factor authentication
-34. Visit https://qa.orcid.org/signout
-35. Sign in, check that you are asked for a 2FA code
-36. Visit https://qa.orcid.org/account disable 2FA and revoke the Google and United ID access
+24. Visit https://qa.orcid.org/signin and select the option "Institutional account"
+25. Select "SALMtest IdP" from the list of organizations. You will then be taken to https://samltest.id/
+26. Sign in using the test account with username "sheldon" and password "bazinga", after which you'll be taken to a page where you can select which "Information to be Provided to Service"
+27. Select the default option "ask me again if information to be provided to this service changes" and click the "accept" button
+28. Sign in with the ORCID credentials created at the start (ma_test_[DD][month][YYYY]@mailinator.com)
+29. Visit https://qa.orcid.org/signout
+30. Visit https://qa.orcid.org/oauth/authorize?client_id=APP-6QJHHJ6OH7I9Z5XO&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
+31. Click the button "Sign in with Google" and use a Google account that's not linked to an existing ORCID record
+32. Complete the steps to link the Google account to the ORCID account created at the start (ma_test_[DD][month][YYYY]@mailinator.com)
+33. Check that after linking the accounts you are taken back to the authorize page, not to https://qa.orcid.org/my-orcid
+34. Click "Deny" on the authorization page -- check that you are taken to the Google OAuth Playground with a deny error (expect to see "?error=access_denied&error_description=User denied access" appended in the browser address bar)
+35. Visit https://qa.orcid.org/account and follow the steps to enable two factor authentication
+36. Visit https://qa.orcid.org/signout
+37. Sign in, check that you are asked for a 2FA code
+38. Visit https://qa.orcid.org/account, disable 2FA, and remove the Google and SAMLtest entries from the "alternate signin accounts" section
 
 ## My-ORCID
 
 37. Visit https://qa.orcid.org/my-orcid
-38. Use the language selector to change the language to a different language -- check that the page updates to that language
+38. Use the language selector to change the language to Spanish -- check that the page updates to that language
 39. Use the language selector to set the page back to English
 40. Add a published name: "Pub Name" (Published name can be edited using the pencil icon next to the record name)
-41. Add an also know as name: "Other Name"
+41. Add an also known as name: "Other Name"
 42. Add a country: "Afghanistan"
 43. Add a keyword: "keyword"
-44. Add a URL: name:"website" URL https://qa.orcid.org
-45. Add a second email address: 01_ma_test_[DD][month][YYYY]@mailinator.com
-46. Change the visibility setting for ma_test_[DD][month][YYYY]@mailinator.com to public
+44. Add an entry in the "Websites & Social Links" section with the name "website" and the URL "https://qa.orcid.org"
+45. Add an email address: 01_ma_test_[DD][month][YYYY]@mailinator.com
+46. Change the visibility setting for ma_test_[DD][month][YYYY]@mailinator.com to public (select "everyone")
 47. Add a biography: "Bio!"
 48. Add an education item: 'ORCID' (select from dropdown list) start date '2018'
 49. Add a funding item: type 'grant', title 'ma_fund_test', funding agency 'NASA Exoplanet Science Institute' (select from dropdown list)
 50. Add a work by DOI: enter DOI "10.1087/20120404" and save without making change on the add manually screen
-51. Add a work manually: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value '1234' click through warning about the identifier validation
-52. Set the work you just added to private
+51. Add a work manually: category: "publication', type: 'journal article', title 'ma_test_work', identifier type 'DOI', identifier value '1234'. Ignore the warning about the identifier and click the button "add to list"
+52. Set the work you just added to private (select "only me")
 53. Visit public page (https://qa.orcid.org/[orcid id])
     * Verify information added in the steps above is visible, but not the private work or email addresses
 	* Click on the public record print view, check that it displays properly
