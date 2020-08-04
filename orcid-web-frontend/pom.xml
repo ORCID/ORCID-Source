@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>orcid-web-frontend</artifactId>
-	<packaging>war</packaging>
-	<name>ORCID - Web frontend</name>
-	<description>A web application the serves the Angular frontend of the ORCID Registry</description>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>orcid-web-frontend</artifactId>
+    <packaging>war</packaging>
+    <name>ORCID - Web frontend</name>
+    <description>A web application the serves the Angular frontend of the ORCID Registry</description>
 
-	<parent>
-		<groupId>org.orcid</groupId>
-		<artifactId>orcid-parent</artifactId>        
-		<relativePath>../pom.xml</relativePath>
-		<version>1.1.5-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>org.orcid</groupId>
+        <artifactId>orcid-parent</artifactId>
+        <version>1.1.5-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
