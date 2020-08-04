@@ -1,5 +1,9 @@
 # Manual Tests
 
+* These tests use the public email inbox service https://www.mailinator.com/. Sometimes emails sent by the ORCID Registry don't arrive into mailinator. If that happens, just repeat the step to trigger a new email. Please note you do not need a mailinator account -- just enter the email address you want to check at the top in the mailinator website.
+
+* It is recommended that you use a private browser window to complete these tests (except the axe accessibility tests), or otherwise a browser you don't normally use, to ensure you can complete all the steps.
+
 ## Register/Verify
 
 0. Copy this script into a text document, and then Find and Replace [DD][month][YYYY] with the current day, written month, and four digit year (for example, 24feb2016)
@@ -14,29 +18,29 @@
     * Default privacy for new activities: Everyone
     * Subscribe to quarterly emails about new features
     * Accept terms and conditions
-4. Click the link to resend the verify email message
+4. Click the button "Resend verification email" (located inside the yellow banner above the biography section)
 5. Attempt to edit the biography of the record- click the link to resend the verify email in the warning that comes up
 6. Visit https://qa.orcid.org/signout
 7. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
-8. Verify there are three messages -- Thanks for registering and two reminders to verify your email address
-9. Open message from support@verify.orcid.org with subject [ORCID] Welcome to ORCID and click the email verification link
-10. When redirected to https://qa.orcid.org/signin, sign in using ma_test credentials created in previous steps
+8. Verify there are three messages -- one with the subject "Welcome to ORCID - verify your email address" and two with the subject "Reminder to verify your primary email address"
+9. Open the message from support@verify.orcid.org with subject "Welcome to ORCID - verify your email address" and click the email verification link
+10. When redirected to https://qa.orcid.org/signin, ensure there is a banner confirming the email address was verified successfully, and sign in using the credentials created at the start (ma_test_[DD][month][YYYY]@mailinator.com)
 11. Replace [orcid id] in this document with the 16 digit iD from the record
 12. Visit https://qa.orcid.org/signout
 
 ## Reset password and ORCID iD recovery
 
-13. Click the Forgotten Your Password link
-14. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Recover account details
+13. Click the link "Forgot your password or ORCID iD?"
+14. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Recover account details (uppercase is intentional)
 15. Reload the page
 16. Click on the ORCID iD button
-17. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Recover account details
+17. Enter MA_test_[DD][month][YYYY]@mailinator.com in the form and click Recover account details (uppercase is intentional)
 18. Visit https://www.mailinator.com and check the inbox for ma_test_[DD][month][YYYY]@mailinator.com
 19. Verify there is a message from reset@notify.orcid.org with subject [ORCID] Your ORCID iD
 20. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request and click the password reset link
 21. Reset password with [DD][month][YYYY] 
 22. You will be forward to the sign in page, sign in with:
-	* Email: MA_TEST_[DD][month][YYYY]@mailinator.com
+	* Email: MA_TEST_[DD][month][YYYY]@mailinator.com (uppercase is intentional)
 	* Password: [DD][month][YYYY]
 23. Visit https://qa.orcid.org/signout
 
