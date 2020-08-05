@@ -16,7 +16,7 @@
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
     <build>
-        <finalName>orcid-nodejs</finalName>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>com.github.eirslett</groupId>

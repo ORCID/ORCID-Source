@@ -131,7 +131,7 @@
 
     </dependencies>
     <build>
-        <finalName>${project.artifactId}-${project.version}</finalName>        
+        <finalName>${project.artifactId}</finalName>        
          <plugins>
             <!-- plugin>               
                 <groupId>com.mycila.maven-license-plugin</groupId>               
