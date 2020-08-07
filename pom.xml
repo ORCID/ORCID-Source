@@ -19,7 +19,7 @@ the software.
 
     <groupId>org.orcid</groupId>
     <artifactId>orcid-parent</artifactId>
-    <version>angel-war-release-0.0.0.0</version>
+    <version>angel-test-0.0.bit.1</version>
     <packaging>pom</packaging>
     <name>ORCID - Parent</name>
     <description>The parent ORCID pom that all sub-projects reside under</description>
