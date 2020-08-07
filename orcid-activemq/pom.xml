@@ -9,7 +9,7 @@
 		<groupId>org.orcid</groupId>
 		<artifactId>orcid-parent</artifactId>        
 		<relativePath>../pom.xml</relativePath>
-		<version>angel-test-0.0.bit.1</version>
+		<version>1.1.5-SNAPSHOT</version>
 	</parent>
   
 	<properties>    	
