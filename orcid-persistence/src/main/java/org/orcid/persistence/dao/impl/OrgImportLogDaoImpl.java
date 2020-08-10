@@ -1,5 +1,7 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.Query;
 
 import org.orcid.persistence.dao.OrgImportLogDao;
@@ -11,10 +13,11 @@ public class OrgImportLogDaoImpl extends GenericDaoImpl<OrgImportLogEntity, Long
         super(OrgImportLogEntity.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public String getNextImportSourceName() {
-        Query query = entityManager.createNativeQuery("SELECT source FROM (SELECT MAX(start_time) AS start, source_type AS source from org_import_log GROUP BY source_type) AS dr ORDER BY start ASC LIMIT 1;");
-        return (String) query.getSingleResult();
+    public List<String> getImportSourceOrder() {
+        Query query = entityManager.createNativeQuery("SELECT source FROM (SELECT MAX(start_time) AS start, source_type AS source from org_import_log GROUP BY source_type) AS dr ORDER BY start ASC;");
+        return (List<String>) query.getResultList();
     }
 
     

@@ -6,6 +6,9 @@ public interface OrgLoadSource {
     
     boolean loadLatestOrgs();
     
-    
+    boolean isEnabled();
+
+    void setEnabled(boolean enabled);
+
 
 }

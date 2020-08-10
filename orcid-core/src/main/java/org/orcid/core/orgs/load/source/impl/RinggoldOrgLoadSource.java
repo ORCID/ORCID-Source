@@ -24,6 +24,7 @@ import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.FtpsFileDownloader;
+import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -37,6 +38,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEnti
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -69,6 +71,9 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     
     @Resource
     private TransactionTemplate transactionTemplate;
+    
+    @Value("${org.orcid.core.orgs.ringgold.enabled}")
+    private boolean enabled;
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     
@@ -83,6 +88,10 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
     @Override
     public boolean loadLatestOrgs() {
+        if (!enabled) {
+            throw new LoadSourceDisabledException("RINGGOLD");
+        }
+        
         try {
             downloadData();
         } catch (IOException e) {
@@ -419,6 +428,16 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
 }
