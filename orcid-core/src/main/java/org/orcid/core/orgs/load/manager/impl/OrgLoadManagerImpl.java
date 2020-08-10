@@ -87,10 +87,4 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
         return null;
     }
 
-    public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        OrgLoadManager orgLoadManager = (OrgLoadManager) context.getBean("orgLoadManager");
-        orgLoadManager.loadOrgs();
-    }
-
 }
