@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-public class FptsFileDownloaderTest {
+public class FtpsFileDownloaderTest {
     
     @Mock
     private FTPSClient client;

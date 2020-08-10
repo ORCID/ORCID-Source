@@ -3,10 +3,8 @@ package org.orcid.core.orgs.load.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.slf4j.Logger;
@@ -43,7 +41,6 @@ public class FtpsFileDownloader {
         validateProps();
 
         OutputStream outputStream = null;
-        InputStream inputStream = null;
         try {
             LOGGER.info("Connecting to host {}, port {}...", host, port);
             client.connect(host, port);
@@ -59,11 +56,15 @@ public class FtpsFileDownloader {
 
             LOGGER.info("Retrieving file {}", remoteFilePath);
             outputStream = new FileOutputStream(new File(localFilePath));
-            inputStream = client.retrieveFileStream(remoteFilePath);
+            boolean copied = client.retrieveFile(remoteFilePath, outputStream);
 
-            IOUtils.copy(inputStream, outputStream);
-            LOGGER.info("File written successfully to  {}", localFilePath);
-            return true;
+            if (copied) {
+                LOGGER.info("File written successfully to  {}", localFilePath);
+                return true;
+            } else {
+                LOGGER.warn("FTP download failed");
+                return false;
+            }
         } catch (IOException e) {
             LOGGER.error("Error downloading file from FTP server", e);
             logConfiguration();
@@ -71,10 +72,6 @@ public class FtpsFileDownloader {
             try {
                 client.logout();
                 client.disconnect();
-
-                if (inputStream != null) {
-                    inputStream.close();
-                }
 
                 if (outputStream != null) {
                     outputStream.flush();
