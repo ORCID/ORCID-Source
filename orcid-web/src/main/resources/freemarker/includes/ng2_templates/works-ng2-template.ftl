@@ -369,13 +369,13 @@
                                         </li>
 
                                         <li *ngIf="work.url?.value" class="url-popover url-work">
-                                            <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver('bibtexWork'+index)" (mouseleave)="hideURLPopOver('bibtexWork'+index)" [ngClass]="{'truncate-anchor' : moreInfo[group?.groupId] == false || moreInfo[group?.groupId] == undefined}" target="work.url.value">{{work.url.value}}</a>
+                                            <@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" (mouseenter)="showURLPopOver('bibtexWork'+index)" (mouseleave)="hideURLPopOver('bibtexWork'+index)" [ngClass]="{'truncate-anchor' : moreInfo[group?.groupId] == false || moreInfo[group?.groupId] == undefined}" rel="noopener noreferrer" target="work.url.value">{{work.url.value}}</a>
                                             <div class="popover-pos">                                   
                                                 <div class="popover-help-container">
                                                     <div class="popover bottom" [ngClass]="{'block' : displayURLPopOver['bibtexWork'+index] == true}">
                                                         <div class="arrow"></div>
                                                         <div class="popover-content">
-                                                            <a href="{{work.url.value}}" target="work.url.value">{{work.url.value}}</a>
+                                                            <a href="{{work.url.value}}" rel="noopener noreferrer" target="work.url.value">{{work.url.value}}</a>
                                                         </div>                
                                                     </div>                              
                                                 </div>

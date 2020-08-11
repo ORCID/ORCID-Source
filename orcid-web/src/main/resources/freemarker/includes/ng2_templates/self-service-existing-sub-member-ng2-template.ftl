@@ -3,7 +3,7 @@
     	    <h3><@orcid.msg 'manage_consortium.add_submember_existing_org_heading'/></h3>
         <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text1'/></p>
         <p class="bold">{{newSubMemberExistingOrg?.publicDisplayName}}<br>
-        <a href="{{newSubMemberExistingOrg?.websiteUrl}}" target="newSubMemberExistingOrg.member.websiteUrl">{{newSubMemberExistingOrg?.websiteUrl}}</a>
+        <a href="{{newSubMemberExistingOrg?.websiteUrl}}" rel="noopener noreferrer" target="newSubMemberExistingOrg.member.websiteUrl">{{newSubMemberExistingOrg?.websiteUrl}}</a>
         </p>
         
         <p><@orcid.msg 'manage_consortium.add_submember_existing_org_text2'/></p>
