@@ -24,7 +24,7 @@ public class OAuthErrorUtils {
             error.setResponseStatus(Status.BAD_REQUEST);
         } else if (OrcidInvalidScopeException.class.isAssignableFrom(t.getClass())) {
             error.setError(OAuthError.INVALID_SCOPE);
-            error.setResponseStatus(Status.BAD_REQUEST);
+            error.setResponseStatus(Status.UNAUTHORIZED);
         } else if (InvalidScopeException.class.isAssignableFrom(t.getClass())) {
             error.setError(OAuthError.INVALID_SCOPE);
             error.setResponseStatus(Status.BAD_REQUEST);
