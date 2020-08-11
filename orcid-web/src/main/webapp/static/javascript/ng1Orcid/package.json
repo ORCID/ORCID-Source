@@ -31,7 +31,7 @@
     "jquery": "^3.5.0",
     "mdn-polyfills": "5.8.0",
     "node-sass": "^4.12.0",
-    "npm": "^6.13.4",
+    "npm": "^6.14.6",
     "primeicons": "^1.0.0",
     "primeng": "7.0.0-beta.1",
     "promise-polyfill": "8.1.0",
