@@ -37,6 +37,7 @@ import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.FtpsFileDownloader;
+import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -78,8 +79,15 @@ public class RinggoldOrgLoadSourceTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
+        ringgoldLoadSource.setEnabled(true);
         ReflectionTestUtils.setField(ringgoldLoadSource, "transactionTemplate", mockTransactionTemplate);
         setupInitialMocks();
+    }
+    
+    @Test(expected = LoadSourceDisabledException.class)
+    public void testSetDisabled() {
+        ringgoldLoadSource.setEnabled(false);
+        ringgoldLoadSource.loadLatestOrgs();
     }
     
     @Test
