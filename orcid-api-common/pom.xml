@@ -1,22 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>orcid-api-common</artifactId>
+	<name>ORCID - API Commons</name>
+	<description>Common classes and resources shared between the two API tiers.</description>
 
     <parent>
-        <groupId>org.orcid</groupId>
-        <artifactId>orcid-parent</artifactId>
-        <version>1.1.5-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
-
-    <artifactId>orcid-api-common</artifactId>
-
-    <name>ORCID - API Commons</name>
-    <description>Common classes and resources shared between the two API tiers.</description>
-
-    <properties>
-        <main.basedir>${project.parent.basedir}</main.basedir>
-        <jena.dir>${project.build.directory}/generated-sources/jena</jena.dir>
-    </properties>
+		<groupId>org.orcid</groupId>
+		<artifactId>orcid-parent</artifactId>        
+		<relativePath>../pom.xml</relativePath>
+		<version>1.1.5-SNAPSHOT</version>
+	</parent>
+    
+	<properties>
+		<main.basedir>${project.parent.basedir}</main.basedir>
+		<jena.dir>${project.build.directory}/generated-sources/jena</jena.dir>
+	</properties>
 
 	<repositories>
 	  <repository>
@@ -133,7 +131,7 @@
 
     </dependencies>
     <build>
-        <finalName>orcid-api-common</finalName>        
+        <finalName>${project.artifactId}</finalName>        
          <plugins>
             <!-- plugin>               
                 <groupId>com.mycila.maven-license-plugin</groupId>               
