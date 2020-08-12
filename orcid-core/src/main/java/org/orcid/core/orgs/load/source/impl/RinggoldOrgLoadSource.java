@@ -72,7 +72,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     @Resource
     private TransactionTemplate transactionTemplate;
     
-    @Value("${org.orcid.core.orgs.ringgold.enabled}")
+    @Value("${org.orcid.core.orgs.ringgold.enabled:true}")
     private boolean enabled;
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
