@@ -27,9 +27,9 @@ export class MemberDetailsComponent {
     showMemberDetailsLoader: boolean = true;
     showGetMemberDetailsError: boolean = false;
     currentMemberDetails: any = null;
-    newBadgesEnabled : boolean;
     badgesAwarded: any = {}
-    assetsPath: String;    
+    assetsPath: String;
+    badgesDisabled: boolean;
 
     constructor(
         protected commonSrvc: CommonService,
@@ -109,7 +109,7 @@ export class MemberDetailsComponent {
     }
     
     ngOnInit(): void {
-        this.newBadgesEnabled = this.featuresService.isFeatureEnabled('NEW_BADGES');
+        this.badgesDisabled = this.featuresService.isFeatureEnabled('DISABLE_BADGES');
         this.getCommunityTypes();
         this.getBadges();
         this.getCurrentMemberDetails();   

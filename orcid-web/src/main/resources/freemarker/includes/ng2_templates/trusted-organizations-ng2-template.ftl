@@ -30,7 +30,7 @@
                     <tbody>
                         <tr *ngFor="let applicationSummary of applicationSummaryList">
                             <td class="revokeApplicationName">{{applicationSummary.name}}<br />
-                                <a *ngIf="applicationSummary.websiteValue" href="{{applicationSummary.href}}" target="applicationSummary.websiteValue">{{applicationSummary.websiteValue}}</a>
+                                <a *ngIf="applicationSummary.websiteValue" href="{{applicationSummary.href}}" rel="noopener noreferrer"  target="applicationSummary.websiteValue">{{applicationSummary.websiteValue}}</a>
                             </td>
                             <td width="35%">{{applicationSummary.approvalDate | date:'yyyy-MM-dd'}}</td>
                             <td width="5%">
