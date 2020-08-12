@@ -18,10 +18,14 @@ import javax.persistence.NoResultException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class EmailManagerReadOnlyTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
@@ -128,4 +132,43 @@ public class EmailManagerReadOnlyTest extends BaseTest {
             fail();
         }
     }
+    
+    @Test
+    public void testIsUsersOnlyEmailMultipleEmails() {
+        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
+        EmailDao original = (EmailDao) ReflectionTestUtils.getField(emailManagerReadOnly, "emailDao");
+        ReflectionTestUtils.setField(emailManagerReadOnly, "emailDao", mockEmailDao);
+        Mockito.when(mockEmailDao.findByOrcid(Mockito.eq("orcid"), Mockito.anyLong())).thenReturn(Arrays.asList(getEmailEntity("email@email.com"), getEmailEntity("something@email.com")));
+        assertFalse(emailManagerReadOnly.isUsersOnlyEmail("orcid", "email@email.com"));
+        ReflectionTestUtils.setField(emailManagerReadOnly, "emailDao", original);
+    }
+    
+    @Test
+    public void testIsUsersOnlyEmailNoMatch() {
+        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
+        EmailDao original = (EmailDao) ReflectionTestUtils.getField(emailManagerReadOnly, "emailDao");
+        ReflectionTestUtils.setField(emailManagerReadOnly, "emailDao", mockEmailDao);
+        Mockito.when(mockEmailDao.findByOrcid(Mockito.eq("orcid"), Mockito.anyLong())).thenReturn(Arrays.asList(getEmailEntity("email@email.com")));
+        assertFalse(emailManagerReadOnly.isUsersOnlyEmail("orcid", "erm@email.com"));
+        ReflectionTestUtils.setField(emailManagerReadOnly, "emailDao", original);
+    }
+    
+    @Test
+    public void testIsUsersOnlyEmail() {
+        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
+        EmailDao original = (EmailDao) ReflectionTestUtils.getField(emailManagerReadOnly, "emailDao");
+        ReflectionTestUtils.setField(emailManagerReadOnly, "emailDao", mockEmailDao);
+        Mockito.when(mockEmailDao.findByOrcid(Mockito.eq("orcid"), Mockito.anyLong())).thenReturn(Arrays.asList(getEmailEntity("email@email.com")));
+        assertTrue(emailManagerReadOnly.isUsersOnlyEmail("orcid", "email@email.com"));
+        ReflectionTestUtils.setField(emailManagerReadOnly, "emailDao", original);
+    }
+
+    private EmailEntity getEmailEntity(String email) {
+        EmailEntity entity = new EmailEntity();
+        entity.setEmail(email);
+        return entity;
+    }
+
+    
+    
 }

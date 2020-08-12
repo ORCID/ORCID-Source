@@ -111,7 +111,7 @@
                                 </ul>
                             </li>
                             <li *ngIf="funding?.url?.value" class="url-popover">
-                                <@orcid.msg 'common.url' />: <a href="{{funding?.url?.value | urlProtocol}}" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="funding.url.value">{{funding?.url?.value}}</a>
+                                <@orcid.msg 'common.url' />: <a rel="noopener noreferrer" href="{{funding?.url?.value | urlProtocol}}" [ngClass]="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" rel="noopener noreferrer" target="funding.url.value">{{funding?.url?.value}}</a>
                             </li>
                         </ul>
                     </div>

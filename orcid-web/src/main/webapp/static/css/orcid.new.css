@@ -2541,7 +2541,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .popover-pos .popover-help-container .popover {
-    min-width: 250px
+    min-width: 250px;
+    max-width: 650px;
 }
 
 .workspace-top .popover.bottom .arrow {
@@ -4200,7 +4201,7 @@ ul#body-membership-list>li {
     display: block;
     float: left;
     font-size: 13px;
-    word-break: break-word;
+    word-break: break-all;
 }
 
 .id-details a,.validations li,.versions li {
@@ -5035,6 +5036,10 @@ ul.sources-actions li {
     color: #2E7F9F
 }
 
+.sources-actions .git_create:hover:before,.sources-actions .git_pull_request:hover:before,.sources-options .git_create:hover:before,.sources-options .git_pull_request:hover:before {
+    color: #a6ce39
+}
+
 .source-line, .source{
     font-size: 13px;  
     line-height: normal;
@@ -5708,7 +5713,8 @@ ul.oauth-scopes li {
 
 .url-popover .popover-help-container .popover {
     left: 0;
-    top: 15px
+    top: 15px;
+    word-break: break-all;
 }
 
 .url-popover .popover.bottom .arrow {
@@ -10039,7 +10045,7 @@ name-ng2 h2.full-name {
 }
 
 .tooltip-delete-peer {
-    left: 10px !important;
+    left: -15px !important;
     top: -38px !important;
     min-width: 68px !important;
 }

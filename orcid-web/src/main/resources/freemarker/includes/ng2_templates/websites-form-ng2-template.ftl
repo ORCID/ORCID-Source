@@ -124,7 +124,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow" *ngIf="website.source != orcidId" >{{website.urlName != null? website.urlName : website.url.value}}</a>
+                                                            <a href="{{website.url.value}}" target="website.urlName" rel="noopener noreferrer me nofollow" *ngIf="website.source != orcidId" >{{website.urlName != null? website.urlName : website.url.value}}</a>
                                                         </div>
                                                         <div class="source" *ngIf="website.sourceName || website.sourceName == null">
                                                             <b><@orcid.msg 'manage_bio_settings.source'/>: </b> <span *ngIf="website.sourceName">
@@ -164,8 +164,8 @@
                                                                 ></privacy-toggle-ng2> 
                                                             </li>
                                                         </ul>
-                                                        <span class="created-date pull-right" *ngIf="website.createdDate" [ngClass]="{'hidden-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
-                                                        <span class="created-date pull-left" *ngIf="website.createdDate" [ngClass]="{'visible-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
+                                                        <span class="created-date pull-right" *ngIf="website.createdDate" [ngClass]="{'hidden-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate | ajaxFormDateToISO8601}}</span>
+                                                        <span class="created-date pull-left" *ngIf="website.createdDate" [ngClass]="{'visible-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate | ajaxFormDateToISO8601}}</span>
                                                     </div>                              
                                                     <div *ngIf="website?.errors?.length > 0" class="col-md-12">                                 
                                                         <div *ngFor="let error of website.errors">

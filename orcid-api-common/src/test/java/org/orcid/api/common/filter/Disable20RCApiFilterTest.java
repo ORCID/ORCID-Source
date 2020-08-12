@@ -241,7 +241,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc1" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, times(1)).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, times(1)).setStatus(308);
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
         verify(response, times(1)).setHeader("Location", "/v2.0" + PATH);
     }
@@ -254,7 +254,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc2" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, times(1)).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, times(1)).setStatus(308);
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
         verify(response, times(1)).setHeader("Location", "/v2.0" + PATH);
     }
@@ -267,7 +267,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc3" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, times(1)).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, times(1)).setStatus(308);
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
         verify(response, times(1)).setHeader("Location", "/v2.0" + PATH);
     }
@@ -280,7 +280,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc4" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, times(1)).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, times(1)).setStatus(308);
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
         verify(response, times(1)).setHeader("Location", "/v2.0" + PATH);
     }
@@ -293,7 +293,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc1" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, times(1)).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, times(1)).setStatus(308);
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
         verify(response, times(1)).setHeader("Location", LOCALHOST_URL + CONTEXT_PATH + "/v2.0" + PATH);
     }
@@ -306,7 +306,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc2" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, times(1)).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, times(1)).setStatus(308);
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
         verify(response, times(1)).setHeader("Location", LOCALHOST_URL + CONTEXT_PATH + "/v2.0" + PATH);
     }
@@ -319,7 +319,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc3" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, times(1)).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, times(1)).setStatus(308);
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
         verify(response, times(1)).setHeader("Location", LOCALHOST_URL + CONTEXT_PATH + "/v2.0" + PATH);
     }
@@ -332,7 +332,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc4" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, times(1)).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, times(1)).setStatus(308);
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
         verify(response, times(1)).setHeader("Location", LOCALHOST_URL + CONTEXT_PATH + "/v2.0" + PATH);
     }
@@ -348,7 +348,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc1" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, never()).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, never()).setStatus(308);
         verify(chain, times(1)).doFilter(Mockito.any(), Mockito.any());
         verify(response, never()).setHeader(Mockito.matches("Location"), Mockito.anyString());
     }
@@ -361,7 +361,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc2" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, never()).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, never()).setStatus(308);
         verify(chain, times(1)).doFilter(Mockito.any(), Mockito.any());
         verify(response, never()).setHeader(Mockito.matches("Location"), Mockito.anyString());
     }
@@ -374,7 +374,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc3" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, never()).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, never()).setStatus(308);
         verify(chain, times(1)).doFilter(Mockito.any(), Mockito.any());
         verify(response, never()).setHeader(Mockito.matches("Location"), Mockito.anyString());
     }
@@ -387,7 +387,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc4" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, never()).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, never()).setStatus(308);
         verify(chain, times(1)).doFilter(Mockito.any(), Mockito.any());
         verify(response, never()).setHeader(Mockito.matches("Location"), Mockito.anyString());
     }
@@ -400,7 +400,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc1" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, never()).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, never()).setStatus(308);
         verify(chain, times(1)).doFilter(Mockito.any(), Mockito.any());
         verify(response, never()).setHeader(Mockito.matches("Location"), Mockito.anyString());
     }
@@ -413,7 +413,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc2" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, never()).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, never()).setStatus(308);
         verify(chain, times(1)).doFilter(Mockito.any(), Mockito.any());
         verify(response, never()).setHeader(Mockito.matches("Location"), Mockito.anyString());
     }
@@ -426,7 +426,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc3" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, never()).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, never()).setStatus(308);
         verify(chain, times(1)).doFilter(Mockito.any(), Mockito.any());
         verify(response, never()).setHeader(Mockito.matches("Location"), Mockito.anyString());
     }
@@ -439,7 +439,7 @@ public class Disable20RCApiFilterTest {
         String requestUri = CONTEXT_PATH + "/v2.0_rc4" + PATH;
         when(request.getRequestURI()).thenReturn(requestUri);        
         filter.doFilter(request, response, chain);        
-        verify(response, never()).setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        verify(response, never()).setStatus(308);
         verify(chain, times(1)).doFilter(Mockito.any(), Mockito.any());
         verify(response, never()).setHeader(Mockito.matches("Location"), Mockito.anyString());
     }

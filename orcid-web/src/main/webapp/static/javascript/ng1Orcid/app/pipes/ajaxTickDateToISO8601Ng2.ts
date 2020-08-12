@@ -14,11 +14,11 @@ export class AjaxTickDateToISO8601Pipe implements PipeTransform {
             input = new Date(input)
             var str = '';
             if (input.getFullYear()) str += input.getFullYear();
-            if (input.getUTCMonth()) {
+            if (input.getUTCMonth() != undefined) {
                 str += '-';
                 str += Number(input.getUTCMonth() + 1).pad(2);
             }
-            if (input.getDay()) {
+            if (input.getUTCDate()) {
                 str += '-';
                 str += Number(input.getUTCDate()).pad(2);
             }

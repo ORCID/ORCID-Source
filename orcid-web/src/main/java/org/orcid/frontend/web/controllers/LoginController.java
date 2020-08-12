@@ -316,7 +316,7 @@ public class LoginController extends OauthControllerBase {
                 socialSignInUtils.setSignedInData(request, userData);
                 // Forward to account link page
                 if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                    return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/social-linking");
+                    view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() +"/social-linking", true));
                 } else {
                     view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
                 }     
@@ -329,7 +329,7 @@ public class LoginController extends OauthControllerBase {
                     userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Forward to account link page
             if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/social-linking");
+                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() +"/social-linking", true));
             } else {
                 view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
             }

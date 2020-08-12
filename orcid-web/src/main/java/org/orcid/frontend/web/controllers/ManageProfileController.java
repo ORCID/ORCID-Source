@@ -536,15 +536,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
-    public @ResponseBody Errors deleteEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
+    public @ResponseBody Errors deleteEmailJson(@RequestParam("email") String email) {
         Errors errors = new Errors();
-        String currentUserOrcid = getCurrentUserOrcid();
-
-        // if blank
         if (PojoUtil.isEmpty(email)) {
             errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
+            return errors;
         }
 
+        String currentUserOrcid = getCurrentUserOrcid();
         String owner = null;
 
         try {
@@ -555,17 +554,21 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         if (!currentUserOrcid.equals(owner)) {
             errors.getErrors().add(getMessage("Email.personalInfoForm.email"));
+            return errors;
         }
 
         // Don't allow the user to delete a primary email
         if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {
             errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
-        } else {
-            if (errors.getErrors().size() == 0) {
-                emailManager.removeEmail(currentUserOrcid, email);
-            }
-        }
+            return errors;
+        } 
         
+        if (emailManager.isUsersOnlyEmail(currentUserOrcid, email)) {
+            errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
+            return errors;
+        } 
+        
+        emailManager.removeEmail(currentUserOrcid, email);
         return errors;
     }
     

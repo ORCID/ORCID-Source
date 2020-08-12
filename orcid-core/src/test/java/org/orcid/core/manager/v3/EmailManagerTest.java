@@ -114,7 +114,7 @@ public class EmailManagerTest extends BaseTest {
         removeDBUnitData(reversedDataFiles);
     }        
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void removeEmailTest() {
         assertTrue(emailManager.emailExists("billie@holiday.com"));
         emailManager.removeEmail("4444-4444-4444-4446", "billie@holiday.com");
@@ -481,5 +481,112 @@ public class EmailManagerTest extends BaseTest {
             assertEquals(filteredEmail, emailUsed);
         }  
     }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveEmailPrimaryEmailPrimaryEmail() {
+        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
+        EmailDao original = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+
+        Mockito.when(mockEmailDao.isPrimaryEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"))).thenReturn(true);
+        
+        emailManager.removeEmail("orcid", "email@email.com");
+        
+        ReflectionTestUtils.setField(emailManager, "emailDao", original);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveEmailOnlyEmail() {
+        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
+        EmailDao original = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+
+        Mockito.when(mockEmailDao.isPrimaryEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"))).thenReturn(false);
+        Mockito.when(mockEmailDao.findByOrcid(Mockito.eq("orcid"), Mockito.anyLong())).thenReturn(Arrays.asList(getEmailEntity("email@email.com")));
+        
+        emailManager.removeEmail("orcid", "email@email.com");
+        
+        ReflectionTestUtils.setField(emailManager, "emailDao", original);
+    }
+    
+    @Test
+    public void testRemoveEmail() {
+        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
+        EmailDao original = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+
+        Mockito.when(mockEmailDao.isPrimaryEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"))).thenReturn(false);
+        Mockito.when(mockEmailDao.findByOrcid(Mockito.eq("orcid"), Mockito.anyLong())).thenReturn(Arrays.asList(getEmailEntity("email@email.com"), getEmailEntity("another@email.com")));
+        Mockito.doNothing().when(mockEmailDao).removeEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"));
+        
+        emailManager.removeEmail("orcid", "email@email.com");
+        
+        Mockito.verify(mockEmailDao, Mockito.times(1)).removeEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"));
+        
+        ReflectionTestUtils.setField(emailManager, "emailDao", original);
+    }
+    
+    private EmailEntity getEmailEntity(String email) {
+        EmailEntity entity = new EmailEntity();
+        entity.setEmail(email);
+        return entity;
+    }
+    
+    @Test
+    public void testRemoveUnclaimedEmail() {
+        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
+        ProfileDao mockProfileDao = Mockito.mock(ProfileDao.class);
+        EmailDao emailDao = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+        ProfileDao profileDao = (ProfileDao) ReflectionTestUtils.getField(emailManager, "profileDao");
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+        ReflectionTestUtils.setField(emailManager, "profileDao", mockProfileDao);
+
+        Mockito.when(mockProfileDao.find(Mockito.eq("orcid"))).thenReturn(getUnclaimedProfile("orcid"));
+        Mockito.doNothing().when(mockEmailDao).removeEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"));
+        
+        emailManager.removeUnclaimedEmail("orcid", "email@email.com");
+        
+        Mockito.verify(mockEmailDao, Mockito.times(1)).removeEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"));
+        
+        ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
+        ReflectionTestUtils.setField(emailManager, "profileDao", profileDao);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveUnclaimedEmailForClaimedProfile() {
+        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
+        ProfileDao mockProfileDao = Mockito.mock(ProfileDao.class);
+        EmailDao emailDao = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+        ProfileDao profileDao = (ProfileDao) ReflectionTestUtils.getField(emailManager, "profileDao");
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+        ReflectionTestUtils.setField(emailManager, "profileDao", mockProfileDao);
+
+        Mockito.when(mockProfileDao.find(Mockito.eq("orcid"))).thenReturn(getClaimedProfile("orcid"));
+        Mockito.doNothing().when(mockEmailDao).removeEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"));
+        
+        emailManager.removeUnclaimedEmail("orcid", "email@email.com");
+        
+        Mockito.verify(mockEmailDao, Mockito.never()).removeEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"));
+        
+        ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
+        ReflectionTestUtils.setField(emailManager, "profileDao", profileDao);
+    }
+
+    private ProfileEntity getClaimedProfile(String orcid) {
+        ProfileEntity unclaimed = new ProfileEntity();
+        unclaimed.setId(orcid);
+        unclaimed.setClaimed(Boolean.TRUE);
+        return unclaimed;
+    }
+
+    private ProfileEntity getUnclaimedProfile(String orcid) {
+        ProfileEntity unclaimed = new ProfileEntity();
+        unclaimed.setId(orcid);
+        unclaimed.setClaimed(Boolean.FALSE);
+        return unclaimed;
+    }
+
+  
+
     
 }

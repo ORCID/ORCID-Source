@@ -34,7 +34,7 @@
                                 </tr>   
                                 <tr *ngFor="let client of clients">
                                     <td colspan="8">
-                                        {{client.displayName.value}} (<a href="{{getClientUrl(client)}}" target="client.website.value">{{client.website.value}}</a>)
+                                        {{client.displayName.value}} (<a href="{{getClientUrl(client)}}" rel="noopener noreferrer" target="client.website.value">{{client.website.value}}</a>)
                                     </td>                                               
                                     <td colspan="4" class="pull-right">                                     
                                         <ul class="client-options">
@@ -201,7 +201,7 @@
                     <span><strong><@orcid.msg 'manage.developer_tools.group.website'/></strong></span>
                 </div>
                 <div class="col-md-9 col-sm-9 col-xs-12 dt-website">
-                    <p><a href="{{getClientUrl(clientDetails)}}" target="clientDetails.website.value">{{clientDetails.website.value}}</a></p>
+                    <p><a href="{{getClientUrl(clientDetails)}}" rel="noopener noreferrer" target="clientDetails.website.value">{{clientDetails.website.value}}</a></p>
                 </div>                          
             </div>
             <div class="row bottomBuffer">
@@ -290,7 +290,7 @@
                             <span *ngIf="selectedRedirectUri.value.value == swaggerMemberUri"><@orcid.msg 'manage.developer_tools.view.example.swagger_member'/></span>
                         </a></span><br/>
                         <span class="col-md-9 col-sm-9 col-xs-12" *ngIf="selectedRedirectUri.value.value == googleUri">
-                            <a href="{{googleExampleLinkOpenID}}" target="'manage.developer_tools.view.example.google">
+                            <a rel="noopener noreferrer" href="{{googleExampleLinkOpenID}}" target="'manage.developer_tools.view.example.google">
                                 <@orcid.msg 'manage.developer_tools.view.example.googleOIDC'/>
                             </a>
                         </span>

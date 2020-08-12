@@ -42,4 +42,6 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     Emails getVerifiedEmails(String orcid);
     
     Map<String, String> getEmailKeys(String email);
+
+    boolean isUsersOnlyEmail(String orcid, String email);
 }

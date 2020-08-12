@@ -31,6 +31,9 @@ public class Disable20RCApiFilter extends OncePerRequestFilter {
     private String JSON_RESPONSE;
 
     private String XML_RESPONSE;
+    
+    // https://tools.ietf.org/html/rfc7538#section-3
+    private static final int PERMANENT_REDIRECT = 308;
 
     @Resource
     private LocaleManager localeManager;
@@ -40,7 +43,7 @@ public class Disable20RCApiFilter extends OncePerRequestFilter {
             OrcidError error = new OrcidError();
             error.setDeveloperMessage(localeManager.resolveMessage("apiError.9056.developerMessage"));
             error.setUserMessage(localeManager.resolveMessage("apiError.9056.userMessage"));
-            error.setResponseCode(HttpServletResponse.SC_MOVED_PERMANENTLY);
+            error.setResponseCode(PERMANENT_REDIRECT);
             error.setErrorCode(9056);
 
             JAXBContext context = JAXBContext.newInstance(error.getClass());
@@ -83,9 +86,9 @@ public class Disable20RCApiFilter extends OncePerRequestFilter {
             }
             
             LOGGER.info("Redirecting request '{}' to '{}'", fullPath, v20Location);
-            response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+            response.setStatus(PERMANENT_REDIRECT);
             response.setHeader("Location", v20Location);
-            String accept = request.getHeader("Accept") == null ? null : request.getHeader("Accept").toLowerCase();
+            String accept = request.getHeader("Accept") == null ? "" : request.getHeader("Accept").toLowerCase();
             if (accept.contains("json")) {
                 response.getWriter().println(getJsonResponse());
             } else {
