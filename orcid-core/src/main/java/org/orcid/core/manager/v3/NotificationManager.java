@@ -38,6 +38,8 @@ public interface NotificationManager {
 
     void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
 
+    void sendNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission);
+
     Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
 
     void sendOrcidDeactivateEmail(String userOrcid);

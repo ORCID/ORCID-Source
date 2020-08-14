@@ -556,10 +556,13 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
-        String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
+        String emailName = deriveEmailFriendlyName(userReceivingPermission);
+        String emailNameGrantingPermission = deriveEmailFriendlyName(userGrantingPermission);
         String assetsUrl = getAssetsUrl();
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailNameForDelegate", emailNameForDelegate);
+        templateParams.put("emailName", emailName);
+        templateParams.put("orcidValue", userReceivingPermission);
+        templateParams.put("emailNameGrantingPermission", emailNameGrantingPermission);
         templateParams.put("grantingOrcidValue", userGrantingPermission);
         templateParams.put("grantingOrcidName", deriveEmailFriendlyName(userGrantingPermission));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -575,12 +578,70 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         // Generate html from template
         String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
 
+        if (Features.ENABLE_NEW_NOTIFICATIONS.isActive()) {
+            text = templateManager.processTemplate("delegate_recipient_notification.ftl", templateParams);
+            // Generate html from template
+            html = templateManager.processTemplate("delegate_recipient_notification_html.ftl", templateParams);
+        }
+
+            System.out.println("##### TEXT #####");
+        System.out.println(text);
+
+        System.out.println("##### HTML #####");
+        System.out.println(html);
+
         NotificationAdministrative notification = new NotificationAdministrative();
         notification.setNotificationType(NotificationType.ADMINISTRATIVE);
         notification.setSubject(subject);
         notification.setBodyHtml(html);
         notification.setBodyText(text);
         createNotification(userReceivingPermission, notification);        
+    }
+
+    @Override
+    public void sendNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission) {
+        ProfileEntity userGrantingProfileEntity = profileEntityCacheManager.retrieve(userGrantingPermission);
+        String emailName = deriveEmailFriendlyName(userGrantingPermission);
+
+        Locale userLocale = getUserLocaleFromProfileEntity(userGrantingProfileEntity);
+
+        String subject = getSubject("email.subject.delegate.recipient", userLocale);
+        String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
+
+        org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
+        String grantingOrcidEmail = primaryEmail.getEmail();
+        String assetsUrl = getAssetsUrl();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", emailName);
+        templateParams.put("orcidValue", userGrantingPermission);
+        templateParams.put("emailNameForDelegate", emailNameForDelegate);
+        templateParams.put("grantingOrcidValue", userGrantingPermission);
+        templateParams.put("grantingOrcidName", deriveEmailFriendlyName(userGrantingPermission));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
+        templateParams.put("subject", subject);
+        templateParams.put("assetsUrl", assetsUrl);
+
+        addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String text = templateManager.processTemplate("delegate_notification.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("delegate_notification_html.ftl", templateParams);
+
+        System.out.println("##### TEXT #####");
+        System.out.println(text);
+
+        System.out.println("##### HTML #####");
+        System.out.println(html);
+
+        NotificationAdministrative notification = new NotificationAdministrative();
+        notification.setNotificationType(NotificationType.ADMINISTRATIVE);
+        notification.setSubject(subject);
+        notification.setBodyHtml(html);
+        notification.setBodyText(text);
+        createNotification(userGrantingPermission, notification);
     }
 
     @Override
@@ -793,6 +854,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         addMessageParams(templateParams, userLocale);
         
         String htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
+
+        // todo
+        System.out.println(htmlBody);
+
+        htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
@@ -1247,7 +1313,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         String htmlBody = templateManager.processTemplate("forgot_id_email_not_found_email_html.ftl", templateParams);
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email, getSubject("email.subject.forgotten_id", locale), body, htmlBody);
     }
-    
+
     @Override
     public void send2FADisabledEmail(String userOrcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
@@ -1256,7 +1322,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
         String subject = getSubject("email.2fa_disabled.subject", userLocale);
-        
+
 
         String emailFriendlyName = deriveEmailFriendlyName(userOrcid);
         templateParams.put("emailName", emailFriendlyName);
@@ -1271,7 +1337,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         String body = templateManager.processTemplate("email_2fa_disabled.ftl", templateParams);
         // Generate html from template
         String html = templateManager.processTemplate("email_2fa_disabled_html.ftl", templateParams);
-        
+
         for(Email email: emails.getEmails()) {
             mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
         }
