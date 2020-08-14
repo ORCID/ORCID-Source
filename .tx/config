@@ -66,3 +66,9 @@ file_filter = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings
 source_file = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
+
+[registry.notification]
+file_filter = orcid-core/src/main/resources/i18n/notification_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_en.properties
+source_lang = en
+type = UNICODEPROPERTIES

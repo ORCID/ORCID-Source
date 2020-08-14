@@ -256,8 +256,14 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("baseUri", orcidUrlManager.getBaseUrl());
         params.put("subject", subject);
         params.put("verboseNotifications", false);
+        params.put("orcidValue", record.getId());
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
+
+        if (Features.ENABLE_NEW_NOTIFICATIONS.isActive()) {
+            bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
+            bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
+        }
 
         EmailMessage emailMessage = new EmailMessage();
 
