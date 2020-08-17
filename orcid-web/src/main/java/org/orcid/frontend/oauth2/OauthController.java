@@ -60,7 +60,16 @@ public class OauthController {
     public @ResponseBody RequestInfoForm loginGetHandler(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
         // Populate the request info form
-        RequestInfoForm requestInfoForm = generateRequestInfoForm(request, request.getQueryString());
+
+        RequestInfoForm requestInfoForm = null;
+        if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null &&
+            request.getSession().getAttribute("authorizationRequest") != null) {
+            requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
+            return requestInfoForm;
+        } else {
+            requestInfoForm = generateRequestInfoForm(request, request.getQueryString());
+            request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        }
 
         // validate client scopes
         try {
