@@ -69,9 +69,8 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
 
     private OrgLoadSource getNextOrgLoader() {
         List<String> nextImportSourceNames = orgImportLogDao.getImportSourceOrder();
-        if (nextImportSourceNames.isEmpty()) {
-            return orgLoadSources.get(0);
-        }
+        addOrgLoadSourcesNeverRun(nextImportSourceNames);
+
         for (String name : nextImportSourceNames) {
             Optional<OrgLoadSource> nextOrgLoader = orgLoadSources.stream().filter(l -> name.equals(l.getSourceName()) && l.isEnabled()).findAny();
             if (!nextOrgLoader.isPresent()) {
@@ -83,6 +82,14 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
 
         LOGGER.info("No enabled org import source found");
         return null;
+    }
+
+    private void addOrgLoadSourcesNeverRun(List<String> nextImportSourceNames) {
+        orgLoadSources.forEach(s -> {
+            if (!nextImportSourceNames.contains(s.getSourceName())) {
+                nextImportSourceNames.add(0, s.getSourceName());
+            }
+        });
     }
 
 }
