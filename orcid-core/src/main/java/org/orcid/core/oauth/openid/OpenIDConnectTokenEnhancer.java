@@ -1,5 +1,6 @@
 package org.orcid.core.oauth.openid;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -98,9 +99,10 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         }
         claims.issuer(path);
         claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
+        
         Date now = new Date();
-        claims.expirationTime(accessToken.getExpiration());
         claims.issueTime(now);
+        claims.expirationTime(accessToken.getExpiration());
         claims.jwtID(UUID.randomUUID().toString());
         if (nonce != null)
             claims.claim(OrcidOauth2Constants.NONCE, nonce);
