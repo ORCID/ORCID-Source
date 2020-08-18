@@ -107,7 +107,13 @@
     
     <include file="/db/updates/funding-external-identifiers-as-json.xml" />
     
-    <include file="/db/updates/change_external_identifier_primary_key.xml" />
+    <!-- 
+         Please leave the following script commented out as it breaks unit tests using hsqldb. it is still here because it has 
+         already run on production. The following 'hsqldb_safe' script replaces it for the purpose of running unit tests.
+         GN - 2020-07-17
+    -->
+    <!-- <include file="/db/updates/change_external_identifier_primary_key.xml" /> -->
+    <include file="/db/updates/change_external_identifier_primary_key_hsqldb_safe.xml" />
     <include file="/db/updates/resize_external_id_url.xml" />
     
     <include file="/db/updates/migrate-wosuid.xml" />
@@ -186,7 +192,15 @@
     <include file="/db/updates/fix_null_visibility_on_bio_elements.xml"/>
     <include file="/db/updates/identifier-type-fixed.xml" />
     <include file="/db/updates/clean-duplicated-delegates.xml" />
-    <include file="/db/updates/update-external-identifiers-unique-constraint.xml" />
+    
+    <!-- 
+         Please leave the following script commented out as it breaks unit tests using hsqldb. it is still here because it has 
+         already run on production. The following 'hsqldb_safe' script replaces it for the purpose of running unit tests.
+         GN - 2020-07-17
+    -->
+    <!-- <include file="/db/updates/update-external-identifiers-unique-constraint.xml" /> -->
+    <include file="/db/updates/update-external-identifiers-unique-constraint-hsqldb-safe.xml" />
+    
     <include file="/db/updates/tidy_org_ext_ids.xml" />
     <include file="/db/updates/fix_bios_without_visibility.xml" />
     <include file="/db/updates/fix_display_indexs_for_bio.xml" />
@@ -263,7 +277,15 @@
 	<include file="/db/updates/add_email_hash_column_to_email_table.xml" />
 	<include file="/db/updates/init_display_index_on_affiliations.xml" />
 	<include file="/db/updates/use_email_hash_as_email_primary_key.xml" />
-	<include file="/db/updates/drop_not_null_constraint_on_email.xml" />
+	
+	<!-- 
+         Please leave the following script commented out as it breaks unit tests using hsqldb. it is still here because it has 
+         already run on production. The following 'hsqldb_safe' script replaces it for the purpose of running unit tests.
+         GN - 2020-07-17
+    -->
+	<!-- <include file="/db/updates/drop_not_null_constraint_on_email.xml" /> -->
+	<include file="/db/updates/drop_not_null_constraint_on_email_hsqldb_safe.xml" />
+	
 	<include file="/db/updates/fix-public-client-redirect-uri-type.xml" />
 	<include file="/db/updates/find-my-stuff-history.xml" />
 	<include file="/db/updates/grant_select_grouping_suggestion.xml" />
@@ -310,4 +332,5 @@
   <include file="/db/updates/grant_write_to_dw_user_for_dw_active_users.xml" />
   <include file="/db/updates/add_auto_cols_for_unit_tests.xml" />
   <include file="/db/updates/dw_views_to_use_db_id.xml" />
+  <include file="/db/updates/org_import_log.xml" />
 </databaseChangeLog>

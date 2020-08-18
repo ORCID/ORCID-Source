@@ -1,0 +1,21 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	
+    <changeSet id="UPDATE_EXTERNAL_IDENTIFIER_UNIQUE_CONSTRAINT" author="Angel Montenegro" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from information_schema.constraint_column_usage where table_name = 'external_identifier' and constraint_name = 'unique_external_identifiers_allowing_multiple_sources';</sqlCheck>
+        </preConditions>
+    	<sql>ALTER TABLE external_identifier ADD CONSTRAINT unique_external_identifiers_allowing_multiple_sources UNIQUE (orcid, external_id_reference, external_id_type, source_id, client_source_id);</sql>
+    	<sql>ALTER TABLE external_identifier DROP CONSTRAINT IF EXISTS external_identifier_orcid_external_id_reference_external_id_key;</sql>
+	</changeSet>
+	
+	
+	<changeSet id="UPDATE_EXTERNAL_IDENTIFIER_UNIQUE_CONSTRAINT_HSQL" author="Angel Montenegro" dbms="hsqldb">
+	    <preConditions>
+            <dbms type="hsqldb"/>
+        </preConditions>
+		<addUniqueConstraint tableName="external_identifier" columnNames="orcid, external_id_reference, external_id_type, source_id, client_source_id" constraintName="unique_external_identifiers_allowing_multiple_sources"/>    	
+    </changeSet>
+	
+</databaseChangeLog>

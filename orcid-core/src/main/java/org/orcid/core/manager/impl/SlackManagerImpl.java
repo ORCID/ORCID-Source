@@ -37,13 +37,27 @@ public class SlackManagerImpl implements SlackManager {
             Map<String, String> bodyMap = new HashMap<>();
             bodyMap.put("text", message);
             bodyMap.put("channel", channel);
-            String bodyJson = JsonUtils.convertToJsonString(bodyMap);
-            WebResource resource = client.resource(webhookUrl);
-            ClientResponse response = resource.entity(bodyJson).post(ClientResponse.class);
-            int status = response.getStatus();
-            if (status != 200) {
-                LOGGER.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.getEntity(String.class), message });
-            }
+            send(JsonUtils.convertToJsonString(bodyMap));
+        }
+    }
+    
+    @Override
+    public void sendAlert(String message, String customChannel, String from) {
+        if (StringUtils.isNotBlank(webhookUrl)) {
+            Map<String, String> bodyMap = new HashMap<>();
+            bodyMap.put("text", message);
+            bodyMap.put("channel", customChannel);
+            bodyMap.put("username", from);
+            send(JsonUtils.convertToJsonString(bodyMap));
+        }
+    }
+    
+    private void send(String bodyJson) {
+        WebResource resource = client.resource(webhookUrl);
+        ClientResponse response = resource.entity(bodyJson).post(ClientResponse.class);
+        int status = response.getStatus();
+        if (status != 200) {
+            LOGGER.warn("Unable to send message to Slack: \n{}", bodyJson);
         }
     }
 

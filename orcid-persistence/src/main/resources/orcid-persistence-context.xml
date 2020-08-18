@@ -261,6 +261,8 @@
     
     <bean id="backupCodeDao" class="org.orcid.persistence.dao.impl.BackupCodeDaoImpl" />
     
+    <bean id="orgImportLogDao" class="org.orcid.persistence.dao.impl.OrgImportLogDaoImpl" />
+    
     <bean id="emailScheduleDao" class="org.orcid.persistence.dao.impl.EmailScheduleDaoImpl" />
     
     <bean id="emailScheduleDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailScheduleDaoImpl" >
