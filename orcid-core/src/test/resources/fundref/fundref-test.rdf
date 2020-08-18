@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:dct="http://purl.org/dc/terms/" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:skosxl="http://www.w3.org/2008/05/skos-xl#" xmlns:svf="http://data.crossref.org/fundingdata/xml/schema/grant/grant-1.2/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fref="http://data.crossref.org/fundingdata/terms">
+   <fref:registry>
+      <dct:created>2020-07-09</dct:created>
+      <dct:creator>Crossref</dct:creator>
+      <fref:schemaVersion>1.0</fref:schemaVersion>
+   </fref:registry>
+   <skos:ConceptScheme rdf:about="http://data.crossref.org/fundingdata/vocabulary/SciValFunders">
+      <dct:title>SciVal Funding Bodies</dct:title>
+      <skos:hasTopConcept rdf:resource="http://dx.doi.org/10.13039/100000001" />
+      <skos:hasTopConcept rdf:resource="http://dx.doi.org/10.13039/100000002" />
+      <skos:hasTopConcept rdf:resource="http://dx.doi.org/10.13039/100000003" />
+   </skos:ConceptScheme>
+   <skos:Concept rdf:about="http://dx.doi.org/10.13039/100000001">
+      <skos:inScheme rdf:resource="http://data.crossref.org/fundingdata/vocabulary" />
+      <skosxl:prefLabel>
+         <skosxl:Label rdf:about="http://data.crossref.org/fundingdata/vocabulary/Label-36515">
+            <skosxl:literalForm xml:lang="en">National Science Foundation</skosxl:literalForm>
+         </skosxl:Label>
+      </skosxl:prefLabel>
+      <skosxl:altLabel>
+         <skosxl:Label rdf:about="http://data.crossref.org/fundingdata/vocabulary/Label-878039">
+            <skosxl:literalForm xml:lang="en">The National Science Foundation</skosxl:literalForm>
+         </skosxl:Label>
+      </skosxl:altLabel>
+      <skosxl:altLabel>
+         <skosxl:Label rdf:about="http://data.crossref.org/fundingdata/vocabulary/Label-21846106">
+            <skosxl:literalForm xml:lang="en">NSF</skosxl:literalForm>
+            <fref:usageFlag rdf:resource="http://data.crossref.org/fundingdata/vocabulary/acronym" />
+         </skosxl:Label>
+      </skosxl:altLabel>
+      <skosxl:altLabel>
+         <skosxl:Label rdf:about="http://data.crossref.org/fundingdata/vocabulary/Label-952985">
+            <skosxl:literalForm xml:lang="en">US NSF</skosxl:literalForm>
+            <fref:usageFlag rdf:resource="http://data.crossref.org/fundingdata/vocabulary/acronym" />
+         </skosxl:Label>
+      </skosxl:altLabel>
+      <skosxl:altLabel>
+         <skosxl:Label rdf:about="http://data.crossref.org/fundingdata/vocabulary/Label-20677577">
+            <skosxl:literalForm xml:lang="en">USA NSF</skosxl:literalForm>
+            <fref:usageFlag rdf:resource="http://data.crossref.org/fundingdata/vocabulary/acronym" />
+         </skosxl:Label>
+      </skosxl:altLabel>
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100014072" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100014073" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100014071" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000085" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000088" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000179" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000081" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100005441" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100014074" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100005447" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100014591" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100005716" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000076" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000083" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100014411" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100010608" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100015815" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000086" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000084" />
+      <dct:modified>2020-06-16T21:22:33.000000</dct:modified>
+      <dct:created>2009-07-06T18:53:11.000000</dct:created>
+      <svf:fundingBodyType>gov</svf:fundingBodyType>
+      <svf:region>Americas</svf:region>
+      <svf:country rdf:resource="http://sws.geonames.org/6252001/" />
+      <schema:address xmlns:schema="http://schema.org/">
+         <schema:postalAddress>
+            <schema:addressCountry>usa</schema:addressCountry>
+         </schema:postalAddress>
+      </schema:address>
+      <svf:state rdf:resource="http://sws.geonames.org/6254928/" />
+      <svf:fundingBodySubType>National government</svf:fundingBodySubType>
+   </skos:Concept>
+   <skos:Concept rdf:about="http://dx.doi.org/10.13039/100000002">
+      <skos:inScheme rdf:resource="http://data.crossref.org/fundingdata/vocabulary" />
+      <skosxl:prefLabel>
+         <skosxl:Label rdf:about="http://data.crossref.org/fundingdata/vocabulary/Label-36519">
+            <skosxl:literalForm xml:lang="en">National Institutes of Health</skosxl:literalForm>
+         </skosxl:Label>
+      </skosxl:prefLabel>
+      <skosxl:altLabel>
+         <skosxl:Label rdf:about="http://data.crossref.org/fundingdata/vocabulary/Label-21844396">
+            <skosxl:literalForm xml:lang="en">NIH</skosxl:literalForm>
+            <fref:usageFlag rdf:resource="http://data.crossref.org/fundingdata/vocabulary/acronym" />
+         </skosxl:Label>
+      </skosxl:altLabel>
+      <skos:broader rdf:resource="http://dx.doi.org/10.13039/100000016" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000055" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000065" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100008460" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000069" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000064" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000093" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100006545" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000066" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000098" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000124" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000027" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000072" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100006108" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000070" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000054" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000057" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000097" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000026" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100006084" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000096" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000053" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000049" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000060" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000061" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000071" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000092" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100005440" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000062" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000135" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000118" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100012893" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000056" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100006086" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000050" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000051" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000025" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100006955" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100000052" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100009633" />
+      <skos:narrower rdf:resource="http://dx.doi.org/10.13039/100006085" />
+      <dct:modified>2020-04-09T00:17:12.000000</dct:modified>
+      <dct:created>2009-07-06T18:53:11.000000</dct:created>
+      <svf:fundingBodyType>gov</svf:fundingBodyType>
+      <svf:region>Americas</svf:region>
+      <svf:country rdf:resource="http://sws.geonames.org/6252001/" />
+      <schema:address xmlns:schema="http://schema.org/">
+         <schema:postalAddress>
+            <schema:addressCountry>usa</schema:addressCountry>
+         </schema:postalAddress>
+      </schema:address>
+      <svf:state rdf:resource="http://sws.geonames.org/4361885/" />
+      <svf:fundingBodySubType>National government</svf:fundingBodySubType>
+   </skos:Concept>
+   <skos:Concept rdf:about="http://dx.doi.org/10.13039/100000003">
+      <skos:inScheme rdf:resource="http://data.crossref.org/fundingdata/vocabulary" />
+      <skosxl:prefLabel>
+         <skosxl:Label rdf:about="http://data.crossref.org/fundingdata/vocabulary/Label-36509">
+            <skosxl:literalForm xml:lang="en">Boeing</skosxl:literalForm>
+         </skosxl:Label>
+      </skosxl:prefLabel>
+      <skosxl:altLabel>
+         <skosxl:Label rdf:about="http://data.crossref.org/fundingdata/vocabulary/Label-449232">
+            <skosxl:literalForm xml:lang="en">Boeing Company</skosxl:literalForm>
+         </skosxl:Label>
+      </skosxl:altLabel>
+      <dct:modified>2020-04-23T21:20:10.000000</dct:modified>
+      <dct:created>2009-07-06T18:53:11.000000</dct:created>
+      <svf:fundingBodyType>pri</svf:fundingBodyType>
+      <svf:region>Americas</svf:region>
+      <svf:country rdf:resource="http://sws.geonames.org/6252001/" />
+      <schema:address xmlns:schema="http://schema.org/">
+         <schema:postalAddress>
+            <schema:addressCountry>usa</schema:addressCountry>
+         </schema:postalAddress>
+      </schema:address>
+      <svf:state rdf:resource="http://sws.geonames.org/4896861/" />
+      <svf:fundingBodySubType>For-profit companies (industry)</svf:fundingBodySubType>
+   </skos:Concept>
+</rdf:RDF>
+
