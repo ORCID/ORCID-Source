@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Disable Badges")
+    DISABLE_BADGES,
+
     @Label("Orcid Angular Inbox")
     ORCID_ANGULAR_INBOX,
 
@@ -51,9 +54,6 @@ public enum Features implements Feature {
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
 
-    @Label("New style badges on member details")
-    NEW_BADGES,
-    
     @Label("Enable Hotjar tracking")
     HOTJAR,
     

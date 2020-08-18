@@ -21,7 +21,7 @@
 	    		<@emailMacros.msg "email.deactivate.gdpr_if_you_do_not" />
 		    </p>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		        <@emailMacros.msg "email.deactivate.please_note.1" /> <a href="https://en.wikipedia.org/wiki/Cryptographic_hash_function" target="_blank"><@emailMacros.msg "email.deactivate.please_note.2" /></a> <@emailMacros.msg "email.deactivate.please_note.3" />
+		        <@emailMacros.msg "email.deactivate.please_note.1" /> <a href="https://en.wikipedia.org/wiki/Cryptographic_hash_function" rel="noopener noreferrer" target="_blank"><@emailMacros.msg "email.deactivate.please_note.2" /></a> <@emailMacros.msg "email.deactivate.please_note.3" />
 		    </p>
 	        <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 		        <@emailMacros.msg "email.deactivate.more_info" /><br/><a href="https://support.orcid.org/hc/articles/360006973813" target="_blank">https://support.orcid.org/hc/articles/360006973813</a>

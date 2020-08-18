@@ -1,5 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <artifactId>orcid-persistence</artifactId>
+    <name>ORCID - Persistence</name>
+    <description>Holds all data layer logic and implementations</description>
 
     <parent>
         <groupId>org.orcid</groupId>
@@ -8,17 +11,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>orcid-persistence</artifactId>
-
-    <name>ORCID - Persistence</name>
-    <description>Holds all data layer logic and implementations</description>
-
     <properties>
         <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
-        <main.basedir>${project.parent.basedir}</main.basedir>
+        <main.basedir>${project.parent.basedir}</main.basedir>        
     </properties>
 
     <build>
+    	<finalName>${project.artifactId}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -57,11 +56,6 @@
             <artifactId>orcid-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.orcid</groupId>
-            <artifactId>orcid-utils</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <!-- ##External dependencies## -->
 

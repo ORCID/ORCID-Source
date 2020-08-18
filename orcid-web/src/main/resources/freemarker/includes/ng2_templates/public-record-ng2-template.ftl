@@ -72,7 +72,7 @@
                     </ul>
                     <div id="public-researcher-urls-div" class="public-content">
                         <ng-container  *ngFor="let url of objectKeys(personData.publicGroupedResearcherUrls); let lastUrl = last;">
-                            <a href="{{personData.publicGroupedResearcherUrls[url].content || url}}" target="{{personData.publicGroupedResearcherUrls[url].urlName || url}}" rel="me nofollow">
+                            <a href="{{personData.publicGroupedResearcherUrls[url].content || url}}" target="{{personData.publicGroupedResearcherUrls[url].urlName || url}}" rel="me nofollow noopener noreferrer">
                                 {{personData.publicGroupedResearcherUrls[url][0].urlName || url}}
                             </a>                                
                             <div *ngIf="showSources['websites']" class="source-line separator">                                        
@@ -225,7 +225,7 @@
                                 <ng-container *ngIf="firstExternalIdentifier">
 
                                     <a href="{{externalIdentifier.url.value}}" 
-                                        target="externalIdentifier.value">
+                                        rel="noopener noreferrer" target="externalIdentifier.value">
                                         {{externalIdentifier.type}}: {{externalIdentifier.value}}
                                     </a>
 
