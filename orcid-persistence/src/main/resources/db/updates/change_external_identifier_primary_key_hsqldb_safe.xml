@@ -1,0 +1,17 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CHANGE-EXTERNAL-IDENTIFIER-PRIMARY-KEY" author="Angel Montenegro" dbms="hsqldb">
+        <preConditions>
+  			<primaryKeyExists tableName="external_identifier" primaryKeyName="external_identifier_pkey"/>
+		</preConditions>
+		<dropPrimaryKey tableName="external_identifier"
+            constraintName="external_identifier_pkey" />
+		<addColumn tableName="external_identifier">
+	        <column name="id" type="bigint" autoIncrement="true" >
+	        	<constraints nullable="false" primaryKey="true" primaryKeyName="external_identifier_numeric_pkey"/>
+	        </column>
+        </addColumn>  
+    </changeSet>
+</databaseChangeLog>	
