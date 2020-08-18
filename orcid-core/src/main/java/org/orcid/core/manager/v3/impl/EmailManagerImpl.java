@@ -1,7 +1,6 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -20,9 +19,9 @@ import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +57,15 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public void removeEmail(String orcid, String email) {
+        if (isPrimaryEmail(orcid, email)) {
+            throw new IllegalArgumentException("Can't mark primary email as deleted");
+        }
+        
+        if (isUsersOnlyEmail(orcid, email)) {
+            throw new IllegalArgumentException("Can't mark user's only email as deleted");
+        }
         emailDao.removeEmail(orcid, email);
+
     }
 
     @Override
@@ -190,8 +197,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         EmailEntity originalEntity = emailDao.findByEmail(original); 
         Map<String, String> emailKeys = getEmailKeys(edited);        
         EmailEntity updatedEntity = new EmailEntity();
-        updatedEntity.setDateCreated(new Date());
-        updatedEntity.setLastModified(new Date());
         updatedEntity.setSourceId(orcid);
         updatedEntity.setEmail(emailKeys.get(FILTERED_EMAIL));
         updatedEntity.setId(emailKeys.get(HASH));
@@ -231,8 +236,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             entity.setEmail(emailKeys.get(FILTERED_EMAIL));
         }
         entity.setPrimary(true);
-        entity.setVerified(true);
-        entity.setLastModified(new Date());
+        entity.setVerified(true);        
         emailDao.merge(entity);  
         emailDao.flush();
     }
@@ -259,7 +263,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 entity.setPrimary(false);
                 entity.setVerified(false);
                 entity.setVisibility(visibility.name());
-                entity.setLastModified(new Date());
                 emailDao.merge(entity);  
                 emailDao.flush();
                 if(!entity.getVerified()) {
@@ -271,5 +274,14 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         }
         
         return false;
+    }
+
+    @Override
+    public void removeUnclaimedEmail(String orcid, String emailAddress) {
+        ProfileEntity entity = profileDao.find(orcid);
+        if (entity.getClaimed() != null && entity.getClaimed()) {
+            throw new IllegalArgumentException("Profile is claimed");
+        }
+        emailDao.removeEmail(orcid, emailAddress);
     }      
 }

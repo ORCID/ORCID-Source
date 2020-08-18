@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -23,6 +24,8 @@ import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -41,6 +44,8 @@ public class JpaJaxbFundingAdapterTest {
     public void toFundingEntityTest() throws JAXBException {
         Funding f = getFunding(true);
         assertNotNull(f);
+        assertNotNull(f.getCreatedDate().getValue());
+        assertNotNull(f.getLastModifiedDate().getValue());
         ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
         assertNotNull(pfe);
         // Enums
@@ -49,6 +54,8 @@ public class JpaJaxbFundingAdapterTest {
 
         // General info
         assertEquals(Long.valueOf(0), pfe.getId());
+        assertNull(pfe.getDateCreated());
+        assertNull(pfe.getLastModified());
         assertEquals("common:title", pfe.getTitle());
         assertEquals("common:translated-title", pfe.getTranslatedTitle());
         assertEquals("en", pfe.getTranslatedTitleLanguageCode());
@@ -86,13 +93,19 @@ public class JpaJaxbFundingAdapterTest {
     }
 
     @Test
-    public void fromFundingEntityTest() throws JAXBException {
+    public void fromFundingEntityTest() throws JAXBException, IllegalAccessException {
         ProfileFundingEntity entity = getProfileFundingEntity();
         assertNotNull(entity);
+        assertNotNull(entity.getDateCreated());
+        assertNotNull(entity.getLastModified());
         assertEquals("123456", entity.getNumericAmount().toString());
 
         Funding funding = jpaJaxbFundingAdapter.toFunding(entity);
         assertNotNull(funding);
+        assertNotNull(funding.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(funding.getCreatedDate().getValue()));
+        assertNotNull(funding.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(funding.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(12345), funding.getPutCode());
         assertNotNull(funding.getAmount());
         assertEquals("123456", funding.getAmount().getContent());
@@ -121,12 +134,16 @@ public class JpaJaxbFundingAdapterTest {
     }
 
     @Test
-    public void fromFundingEntityToSummaryTest() throws JAXBException {
+    public void fromFundingEntityToSummaryTest() throws JAXBException, IllegalAccessException {
         ProfileFundingEntity entity = getProfileFundingEntity();
         assertNotNull(entity);
         assertEquals("123456", entity.getNumericAmount().toString());
         FundingSummary summary = jpaJaxbFundingAdapter.toFundingSummary(entity);
         assertNotNull(summary);
+        assertNotNull(summary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getCreatedDate().getValue()));
+        assertNotNull(summary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(12345), summary.getPutCode());
         assertNotNull(summary.getStartDate());
         assertEquals("01", summary.getStartDate().getDay().getValue());
@@ -217,8 +234,10 @@ public class JpaJaxbFundingAdapterTest {
         return (Funding) unmarshaller.unmarshal(inputStream);
     }
 
-    private ProfileFundingEntity getProfileFundingEntity() {
+    private ProfileFundingEntity getProfileFundingEntity() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         ProfileFundingEntity result = new ProfileFundingEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setContributorsJson("{\"contributor\":[{\"contributorOrcid\":{\"value\":null,\"valueAsString\":null,\"uri\":\"http://orcid.org/8888-8888-8888-8880\",\"path\":\"8888-8888-8888-8880\",\"host\":\"orcid.org\"},\"creditName\":{\"content\":\"funding:creditName\"},\"contributorEmail\":{\"value\":\"funding@contributorEmail.com\"},\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}");
         result.setDescription("funding:description");
         result.setEndDate(new EndDateEntity(2020, 1, 1));

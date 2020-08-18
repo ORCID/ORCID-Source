@@ -131,6 +131,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     addWork(): any{
+        this.urlPreCheck()
         this.addingWork = true;
         this.editWork.errors.length = 0;
         this.worksService.postWork( this.editWork)
@@ -432,6 +433,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
     };
 
     serverValidate(relativePath): void {
+        this.urlPreCheck()
         this.worksService.serverValidate(this.editWork, relativePath)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -446,6 +448,20 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log('Error validating' + relativePath, error);
             } 
         );
+    }
+
+    urlPreCheck() {
+        // https://regex101.com/r/bKJ5Ua/4
+        const regexpURL = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/;
+        if (regexpURL.test("http://" + this.editWork.url.value)) {
+          this.editWork.url.value = "http://" + this.editWork.url.value;
+        }
+        this.editWork.workExternalIdentifiers.forEach((externalIdentifier) => {
+         if (regexpURL.test("http://" + externalIdentifier.url.value)) {
+              externalIdentifier.url.value = "http://" + externalIdentifier.url.value;
+            }
+        });
+
     }
 
     toggleTranslatedTitle(): void{

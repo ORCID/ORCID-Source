@@ -30,7 +30,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
@@ -68,6 +67,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -1301,7 +1301,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void testCreateNewWorkGroup() throws MissingGroupableExternalIDException {
+    public void testCreateNewWorkGroup() throws MissingGroupableExternalIDException, IllegalAccessException {
         WorkDao mockDao = Mockito.mock(WorkDao.class);
         WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
         WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
@@ -1361,7 +1361,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test(expected = MissingGroupableExternalIDException.class)
-    public void testCreateNewWorkGroupNoGroupableExternalIDs() throws MissingGroupableExternalIDException {
+    public void testCreateNewWorkGroupNoGroupableExternalIDs() throws MissingGroupableExternalIDException, IllegalAccessException {
         WorkDao mockDao = Mockito.mock(WorkDao.class);
         WorkEntityCacheManager mockCacheManager = Mockito.mock(WorkEntityCacheManager.class);
         WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
@@ -1437,7 +1437,7 @@ public class WorkManagerTest extends BaseTest {
         }
     }
 
-    public void testCreateNewWorkGroupUserSourceWorks() throws MissingGroupableExternalIDException {
+    public void testCreateNewWorkGroupUserSourceWorks() throws MissingGroupableExternalIDException, IllegalAccessException {
         WorkDao mockDao = Mockito.mock(WorkDao.class);
         WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
         WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
@@ -1486,7 +1486,7 @@ public class WorkManagerTest extends BaseTest {
         return userPreferred;
     }
 
-    private List<MinimizedWorkEntity> getMinimizedWorksListForGrouping() {
+    private List<MinimizedWorkEntity> getMinimizedWorksListForGrouping() throws IllegalAccessException {
         List<MinimizedWorkEntity> minWorks = new ArrayList<>();
 
         for (long l = 1; l <= 4; l++) {
@@ -1506,7 +1506,7 @@ public class WorkManagerTest extends BaseTest {
         return minWorks;
     }
 
-    private List<MinimizedWorkEntity> getMinimizedWorksListForGroupingNoExternalIDs() {
+    private List<MinimizedWorkEntity> getMinimizedWorksListForGroupingNoExternalIDs() throws IllegalAccessException {
         List<MinimizedWorkEntity> minWorks = new ArrayList<>();
 
         for (long l = 1; l <= 4; l++) {
@@ -1520,17 +1520,14 @@ public class WorkManagerTest extends BaseTest {
         return minWorks;
     }
 
-    private MinimizedWorkEntity getBasicMinimizedWork() {
+    private MinimizedWorkEntity getBasicMinimizedWork() throws IllegalAccessException {
         Date date = DateUtils.convertToDate("2018-01-01T10:15:20");
         MinimizedWorkEntity work = new MinimizedWorkEntity();
-        work.setDateCreated(date);
-        work.setLastModified(date);
+        DateFieldsOnBaseEntityUtils.setDateFields(work, date);
         work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
-        work.setDateCreated(date);
         work.setDescription("work:description");
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("EN");
-        work.setLastModified(date);
         work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
         work.setSubtitle("work:subtitle");
         work.setTitle("work:title");

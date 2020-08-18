@@ -182,8 +182,8 @@
                                                                 </privacy-toggle-ng2>
                                                             </li>
                                                         </ul>
-                                                        <span class="created-date pull-right hidden-xs" *ngIf="country.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
-                                                        <span class="created-date pull-left visible-xs" *ngIf="country.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+                                                        <span class="created-date pull-right hidden-xs" *ngIf="country.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate | ajaxFormDateToISO8601}}</span>
+                                                        <span class="created-date pull-left visible-xs" *ngIf="country.createdDate"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate | ajaxFormDateToISO8601}}</span>
                                                     </div>                                  
                                                 </div>
                                             </div>         

@@ -82,6 +82,7 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     emailEditing
     emailEditingNewValue
     emailEditingErrors
+    emailEditingShowBoolean = false
     
     constructor( 
         private elementRef: ElementRef, 
@@ -534,12 +535,14 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
     emailEdit(value){
         this.emailEditingErrors = null
         this.emailEditing = this.emailEditingNewValue = value
-
+        this.emailEditingShow(this.emailEditing)
     }
-    emailEditSave(){
-        if (this.emailEditing !==  this.emailEditingNewValue) {
+
+    emailEditSave(email) {
+        if (this.emailEditing !== this.emailEditingNewValue) {
             // add new email
-            let isPrimary = this.formData.emails.find((email)=>email.value === this.emailEditing).primary
+            let isPrimary = email.primary;
+
             this.emailService.editEmail( this.emailEditing, this.emailEditingNewValue )
             .subscribe(
                 data => {           
@@ -563,10 +566,26 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         } else {
-            // if nothing change on the email edit 
+            // if nothing change on the email edit
+            email.edit = false
             this.emailEditing = this.emailEditingNewValue = null
             this.emailEditingErrors = null
         }
+    }
+
+    emailEditingShow(emailEditing) {
+        for (let email of this.formData.emails) {
+            if (this.emailEditing === email.value) {
+                email.edit = true
+            } else {
+                email.edit = false
+            }
+        }
+    }
+
+    emailEditingCancel(email) {
+        this.emailEditing = null
+        email.edit = false
     }
 
     showTooltip(element): void{        

@@ -37,7 +37,6 @@ import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -154,7 +153,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                     if (duplicatePrimaryEmail && !duplicateAdditionalEmail) {
                         checkAutoDeprecateIsEnabledForEmail(emailAddress);
                         String unclaimedOrcid = getOrcidIdFromEmail(emailAddress);       
-                        emailManager.removeEmail(unclaimedOrcid, emailAddress);
+                        emailManager.removeUnclaimedEmail(unclaimedOrcid, emailAddress);
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
                         adminManager.autoDeprecateProfile(result, unclaimedOrcid, newUserOrcid);
@@ -165,7 +164,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                     } else if (!duplicatePrimaryEmail && duplicateAdditionalEmail && duplicateCount < 2) {
                         checkAutoDeprecateIsEnabledForEmail(duplicateAdditionalAddress);
                         String unclaimedOrcid = getOrcidIdFromEmail(duplicateAdditionalAddress);
-                        emailManager.removeEmail(unclaimedOrcid, duplicateAdditionalAddress);
+                        emailManager.removeUnclaimedEmail(unclaimedOrcid, duplicateAdditionalAddress);
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
                         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
                         adminManager.autoDeprecateProfile(result, unclaimedOrcid, newUserOrcid);
@@ -176,10 +175,10 @@ public class RegistrationManagerImpl implements RegistrationManager {
                     } else if (duplicatePrimaryEmail && duplicateAdditionalEmail && duplicateCount < 2) {
                         checkAutoDeprecateIsEnabledForEmail(emailAddress);
                         String unclaimedOrcid01 = getOrcidIdFromEmail(emailAddress);
-                        emailManager.removeEmail(unclaimedOrcid01, emailAddress);
+                        emailManager.removeUnclaimedEmail(unclaimedOrcid01, emailAddress);
                         checkAutoDeprecateIsEnabledForEmail(duplicateAdditionalAddress);
                         String unclaimedOrcid02 = getOrcidIdFromEmail(duplicateAdditionalAddress);
-                        emailManager.removeEmail(unclaimedOrcid02, emailAddress);
+                        emailManager.removeUnclaimedEmail(unclaimedOrcid02, emailAddress);
                         String newUserOrcid = createMinimalProfile(registration, usedCaptcha, locale, ip);
                         ProfileDeprecationRequest result01 = new ProfileDeprecationRequest();
                         adminManager.autoDeprecateProfile(result01, unclaimedOrcid01, newUserOrcid);
@@ -224,8 +223,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         }
         
         newRecord.setOrcidType(OrcidType.USER.name());
-        newRecord.setDateCreated(now);
-        newRecord.setLastModified(now);
         newRecord.setSubmissionDate(now);
         newRecord.setClaimed(true);
         newRecord.setEnableDeveloperTools(false);

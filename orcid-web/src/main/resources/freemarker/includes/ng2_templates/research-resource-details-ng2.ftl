@@ -163,7 +163,7 @@
                                         'common.url'/>
                                     </strong>
                                     <div>
-                                        <a href="{{researchResourceService.details[researchResource.putCode].url | urlProtocol}}" target="proposal.url">{{researchResourceService.details[researchResource.putCode].url}}</a>
+                                        <a rel="noopener noreferrer"  href="{{researchResourceService.details[researchResource.putCode].url | urlProtocol}}" rel="noopener noreferrer"  target="proposal.url">{{researchResourceService.details[researchResource.putCode].url}}</a>
                                     </div>              
                                 </div>
                             </div>          
@@ -262,7 +262,7 @@
                                                         'common.url'/>
                                                     </strong>
                                                     <div>
-                                                        <a href="{{resourceItem.url | urlProtocol}}" target="resourceItem.value">{{resourceItem.url}}</a>
+                                                        <a href="{{resourceItem.url | urlProtocol}}" rel="noopener noreferrer"  target="resourceItem.value">{{resourceItem.url}}</a>
                                                     </div>              
                                                 </div> 
                                             </div>

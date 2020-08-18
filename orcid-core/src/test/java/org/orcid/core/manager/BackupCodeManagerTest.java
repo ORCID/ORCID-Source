@@ -70,8 +70,6 @@ public class BackupCodeManagerTest {
         
         assertEquals(persistedEntities.size(), codes.size());
         for (BackupCodeEntity entity : persistedEntities) {
-            assertNotNull(entity.getDateCreated());
-            assertNotNull(entity.getLastModified());
             assertNotNull(entity.getHashedCode());
             assertNotNull(entity.getOrcid());
             assertNull(entity.getUsedDate());

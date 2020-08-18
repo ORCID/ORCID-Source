@@ -18,6 +18,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.dbunit.dataset.DataSetException;
@@ -28,7 +30,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -68,6 +69,9 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Resource
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    
+    @Resource(name="entityManager")
+    protected EntityManager entityManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -119,15 +123,14 @@ public class ProfileDaoTest extends DBUnitTest {
         profile.setId(newOrcid);
 
         profileDao.persist(profile);
-
-        Date dateCreated = new Date();
-        profile.setDateCreated(dateCreated);
         profileDao.merge(profile);
 
         profileDao.flush();
         profile = profileDao.find(profile.getId());
-        assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
-
+        assertNotNull(profile.getDateCreated());
+        assertNotNull(profile.getLastModified());
+        assertEquals(profile.getDateCreated(), profile.getLastModified());
+        
         Long count = profileDao.countAll();
         assertEquals(Long.valueOf(23), count);
         profile = profileDao.find(newOrcid);
@@ -145,14 +148,12 @@ public class ProfileDaoTest extends DBUnitTest {
         profile.setId(newOrcid);
 
         profileDao.persist(profile);
-
-        Date dateCreated = new Date();
-        profile.setDateCreated(dateCreated);
         profileDao.merge(profile);
 
         profileDao.flush();
         profile = profileDao.find(profile.getId());
-        assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
+        assertNotNull(profile.getDateCreated());
+        assertNotNull(profile.getLastModified());
 
         Long count = profileDao.countAll();
         assertEquals(Long.valueOf(23), count);
@@ -171,16 +172,14 @@ public class ProfileDaoTest extends DBUnitTest {
         profile.setId(newOrcid);
 
         profileDao.persist(profile);
-
-        Date dateCreated = new Date();
-        profile.setDateCreated(dateCreated);
         profileDao.merge(profile);
         profileDao.flush();
 
         ProfileEntity retrievedProfile = profileDao.find(newOrcid);
         assertNotNull(retrievedProfile);
         assertEquals(newOrcid, retrievedProfile.getId());
-        assertEquals(dateCreated.getTime(), retrievedProfile.getDateCreated().getTime());
+        assertNotNull(retrievedProfile.getDateCreated());
+        assertNotNull(retrievedProfile.getLastModified());
 
         Long count = profileDao.countAll();
         assertEquals(Long.valueOf(23), count);
@@ -414,78 +413,29 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     @Transactional
     @Rollback(true)
-    public void findEmailsUnverfiedDaysTest() {
+    public void findEmailsUnverfiedDaysTest() throws IllegalAccessException {
         String orcid = "9999-9999-9999-999X";
         ProfileEntity profile = new ProfileEntity();
         profile.setId(orcid);
         profile.setClaimed(true);
         profileDao.persist(profile);
+        profileDao.flush();
+        emailDao.removeAll();
         
         // Created today
-        EmailEntity unverified_1 = new EmailEntity();
-        unverified_1.setDateCreated(new Date());
-        unverified_1.setLastModified(new Date());
-        unverified_1.setProfile(profile);
-        unverified_1.setVerified(false);
-        unverified_1.setVisibility("PUBLIC");
-        unverified_1.setPrimary(false);
-        unverified_1.setCurrent(true);
-        unverified_1.setEmail("unverified_1@test.orcid.org");
-        unverified_1.setId("bd22086b65b6259fe79f7844a6b6a369441733b9ef04eff762f3d640957b78f5");
+        assertEquals(1, insertEmailWithDateCreated("unverified_1@test.orcid.org", "bd22086b65b6259fe79f7844a6b6a369441733b9ef04eff762f3d640957b78f5", orcid, false, new Date()));
         
         // Created a week ago
-        EmailEntity unverified_2 = new EmailEntity();
-        unverified_2.setDateCreated(LocalDateTime.now().minusDays(7).toDate());
-        unverified_2.setLastModified(LocalDateTime.now().minusDays(7).toDate());
-        unverified_2.setProfile(profile);
-        unverified_2.setVerified(false);
-        unverified_2.setVisibility("PUBLIC");
-        unverified_2.setPrimary(false);
-        unverified_2.setCurrent(true);
-        unverified_2.setEmail("unverified_2@test.orcid.org");
-        unverified_2.setId("95770578974f683fb05c179a84f57c3fc7d4b260f8079fbc590080e51873bb67");
-        
+        assertEquals(1, insertEmailWithDateCreated("unverified_2@test.orcid.org", "95770578974f683fb05c179a84f57c3fc7d4b260f8079fbc590080e51873bb67", orcid, false, LocalDateTime.now().minusDays(7).toDate()));
+           
         // Created 15 days ago
-        EmailEntity unverified_3 = new EmailEntity();
-        unverified_3.setDateCreated(LocalDateTime.now().minusDays(15).toDate());
-        unverified_3.setLastModified(LocalDateTime.now().minusDays(15).toDate());
-        unverified_3.setProfile(profile);
-        unverified_3.setVerified(false);
-        unverified_3.setVisibility("PUBLIC");
-        unverified_3.setPrimary(false);
-        unverified_3.setCurrent(true);
-        unverified_3.setEmail("unverified_3@test.orcid.org");
-        unverified_3.setId("3cbebfc1de2500494fc95553c956e757cb1998149d366afb71888cdeb1550719");
+        assertEquals(1, insertEmailWithDateCreated("unverified_3@test.orcid.org", "3cbebfc1de2500494fc95553c956e757cb1998149d366afb71888cdeb1550719", orcid, false, LocalDateTime.now().minusDays(15).toDate()));
         
         // Created 7 days ago and verified
-        EmailEntity verified_1 = new EmailEntity();
-        verified_1.setDateCreated(LocalDateTime.now().minusDays(7).toDate());
-        verified_1.setLastModified(LocalDateTime.now().minusDays(7).toDate());
-        verified_1.setProfile(profile);
-        verified_1.setVerified(true);
-        verified_1.setVisibility("PUBLIC");
-        verified_1.setPrimary(false);
-        verified_1.setCurrent(true);
-        verified_1.setEmail("verified_1@test.orcid.org");
-        verified_1.setId("2f4812b9c675e9803a4bb616dd1bc241c8c9302ba5690a1ea9d48049a32e7c5f");
+        assertEquals(1, insertEmailWithDateCreated("verified_1@test.orcid.org", "2f4812b9c675e9803a4bb616dd1bc241c8c9302ba5690a1ea9d48049a32e7c5f", orcid, true, LocalDateTime.now().minusDays(7).toDate()));
         
         // Created 15 days ago and verified
-        EmailEntity verified_2 = new EmailEntity();
-        verified_2.setDateCreated(LocalDateTime.now().minusDays(15).toDate());
-        verified_2.setLastModified(LocalDateTime.now().minusDays(15).toDate());
-        verified_2.setProfile(profile);
-        verified_2.setVerified(true);
-        verified_2.setVisibility("PUBLIC");
-        verified_2.setPrimary(false);
-        verified_2.setCurrent(true);
-        verified_2.setEmail("verified_2@test.orcid.org");
-        verified_2.setId("896dea808bbf69bde1b177f27800e84d17763860bffde1dfd8ef200e79ff9971");
-        emailDao.removeAll();
-        emailDao.persist(unverified_1);
-        emailDao.persist(unverified_2);
-        emailDao.persist(unverified_3);
-        emailDao.persist(verified_1);
-        emailDao.persist(verified_2);
+        assertEquals(1, insertEmailWithDateCreated("verified_2@test.orcid.org", "896dea808bbf69bde1b177f27800e84d17763860bffde1dfd8ef200e79ff9971", orcid, true, LocalDateTime.now().minusDays(15).toDate()));
         
         List<Pair<String, Date>> results = profileDao.findEmailsUnverfiedDays(7, 100);
         assertNotNull(results);
@@ -520,5 +470,22 @@ public class ProfileDaoTest extends DBUnitTest {
         results = profileDao.findEmailsUnverfiedDays(7, 100);
         assertNotNull(results);
         assertTrue(results.isEmpty());        
+    }
+    
+    private int insertEmailWithDateCreated(String email, String emailHash, String orcid, boolean isVerified, Date dateCreated) {
+        Query q = entityManager.createNativeQuery(
+        "INSERT INTO email(email,email_hash,orcid,source_id,visibility,is_primary,is_current,is_verified,date_created,last_modified) "
+        + "values(:email, :emailHash, :orcid, :sourceId, :visibility, :isPrimary, :isCurrent, :isVerified, :dateCreated, :lastModified)");
+        q.setParameter("email", email);
+        q.setParameter("emailHash", emailHash);
+        q.setParameter("orcid", orcid);
+        q.setParameter("sourceId", orcid);
+        q.setParameter("visibility", "PUBLIC");
+        q.setParameter("isPrimary", false);
+        q.setParameter("isCurrent", false);
+        q.setParameter("isVerified", isVerified);
+        q.setParameter("dateCreated", dateCreated);
+        q.setParameter("lastModified", dateCreated);
+        return q.executeUpdate();
     }
 }

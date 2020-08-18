@@ -168,7 +168,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public boolean updateVerifySetCurrentAndPrimary(String orcid, String email) {
-        Query query = entityManager.createQuery("update EmailEntity set current = true, primary = true, verified = true where orcid = :orcid and email = :email");
+        Query query = entityManager.createQuery("update EmailEntity set current = true, primary = true, verified = true, lastModified=now() where orcid = :orcid and email = :email");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);
         return query.executeUpdate() > 0;

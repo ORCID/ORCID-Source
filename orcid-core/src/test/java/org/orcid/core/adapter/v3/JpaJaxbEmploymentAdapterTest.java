@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -39,6 +40,8 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -107,6 +110,8 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(oar);
         // General info
         assertEquals(Long.valueOf(0), oar.getId());
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("employment:department-name", oar.getDepartment());
         assertEquals("employment:role-title", oar.getTitle());
@@ -132,7 +137,9 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(e);
         OrgAffiliationRelationEntity oar = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
-
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
+        
         e.setUrl(null);
         jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(e, oar);
 
@@ -141,6 +148,8 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
 
         // General info
         assertEquals(Long.valueOf(0), oar.getId());
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
         assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("employment:department-name", oar.getDepartment());
         assertEquals("employment:role-title", oar.getTitle());
@@ -160,11 +169,15 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromOrgAffiliationRelationEntityToEmployment() {
+    public void fromOrgAffiliationRelationEntityToEmployment() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEmploymentEntity();
         assertNotNull(entity);
         Employment employment = jpaJaxbEmploymentAdapter.toEmployment(entity);
         assertNotNull(employment);
+        assertNotNull(employment.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(employment.getCreatedDate().getValue()));
+        assertNotNull(employment.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(employment.getLastModifiedDate().getValue()));
         assertEquals("employment:department", employment.getDepartmentName());
         assertEquals(Long.valueOf(123456), employment.getPutCode());
         assertEquals("employment:title", employment.getRoleTitle());
@@ -192,11 +205,15 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromOrgAffiliationRelationEntityToEmploymentSummary() {
+    public void fromOrgAffiliationRelationEntityToEmploymentSummary() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEmploymentEntity();
         assertNotNull(entity);
         EmploymentSummary employmentSummary = jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
         assertNotNull(employmentSummary);
+        assertNotNull(employmentSummary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(employmentSummary.getCreatedDate().getValue()));
+        assertNotNull(employmentSummary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(employmentSummary.getLastModifiedDate().getValue()));
         assertEquals("employment:department", employmentSummary.getDepartmentName());
         assertEquals(Long.valueOf(123456), employmentSummary.getPutCode());
         assertEquals("employment:title", employmentSummary.getRoleTitle());
@@ -218,7 +235,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromOrgAffiliationRelationEntityToUserOBOEmployment() {
+    public void fromOrgAffiliationRelationEntityToUserOBOEmployment() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -228,6 +245,10 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         Employment employment = jpaJaxbEmploymentAdapter.toEmployment(entity);
         assertNotNull(employment);
+        assertNotNull(employment.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(employment.getCreatedDate().getValue()));
+        assertNotNull(employment.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(employment.getLastModifiedDate().getValue()));
         assertEquals("employment:department", employment.getDepartmentName());
         assertEquals(Long.valueOf(123456), employment.getPutCode());
         assertEquals("employment:title", employment.getRoleTitle());
@@ -255,7 +276,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromOrgAffiliationRelationEntityToUserOBOEmploymentSummary() {
+    public void fromOrgAffiliationRelationEntityToUserOBOEmploymentSummary() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -265,6 +286,10 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         EmploymentSummary employmentSummary = jpaJaxbEmploymentAdapter.toEmploymentSummary(entity);
         assertNotNull(employmentSummary);
+        assertNotNull(employmentSummary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(employmentSummary.getCreatedDate().getValue()));
+        assertNotNull(employmentSummary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(employmentSummary.getLastModifiedDate().getValue()));
         assertEquals("employment:department", employmentSummary.getDepartmentName());
         assertEquals(Long.valueOf(123456), employmentSummary.getPutCode());
         assertEquals("employment:title", employmentSummary.getRoleTitle());
@@ -303,7 +328,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         return e;
     }
 
-    private OrgAffiliationRelationEntity getEmploymentEntity() {
+    private OrgAffiliationRelationEntity getEmploymentEntity() throws IllegalAccessException {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
         orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
@@ -318,7 +343,9 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         sourceEntity.setSourceClient(clientDetailsEntity);
         orgEntity.setSource(sourceEntity);
 
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setAffiliationType(AffiliationType.EMPLOYMENT.name());
         result.setDepartment("employment:department");
         result.setEndDate(new EndDateEntity(2020, 2, 2));

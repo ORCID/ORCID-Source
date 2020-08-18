@@ -1,7 +1,6 @@
 package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -45,8 +44,6 @@ public class ProfileHistoryEventManagerTest {
         ProfileHistoryEventEntity entity = captor.getValue();
 
         assertEquals("some-orcid", entity.getOrcid());
-        assertNotNull(entity.getDateCreated());
-        assertNotNull(entity.getLastModified());
         assertNull(entity.getComment());
         assertEquals(ProfileHistoryEventType.ACCEPTED_TERMS_CONDITIONS.getLabel(), entity.getEventType());
     }
@@ -61,8 +58,6 @@ public class ProfileHistoryEventManagerTest {
         ProfileHistoryEventEntity entity = captor.getValue();
 
         assertEquals("some-orcid", entity.getOrcid());
-        assertNotNull(entity.getDateCreated());
-        assertNotNull(entity.getLastModified());
         assertEquals("deprecated/deactivated", entity.getComment());
         assertEquals(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE.getLabel(), entity.getEventType());
     }

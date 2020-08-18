@@ -276,8 +276,7 @@ public class GetMyDataControllerTest {
                 List<WorkLastModifiedEntity> works = new ArrayList<WorkLastModifiedEntity>();
                 WorkLastModifiedEntity w = new WorkLastModifiedEntity();
                 w.setId(1L);
-                w.setOrcid(ORCID);
-                w.setLastModified(new Date());
+                w.setOrcid(ORCID);                
                 works.add(w);
                 return works;
             }

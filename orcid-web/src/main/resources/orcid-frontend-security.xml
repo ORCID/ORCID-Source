@@ -176,8 +176,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/playground(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/confirm_access(\?.*)?"
-			access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/oauth/custom/login.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/signin.*?"
@@ -195,6 +193,10 @@
 		<sec:intercept-url pattern="/oauth/jwks"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/init.*?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/oauth/custom/authorize.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />	
 			
@@ -382,8 +384,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/disco(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/confirm_access(\?.*)?"
-			access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/oauth-signup(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth-complete-signup(\?.*)?"

@@ -1,0 +1,13 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="ADD-PEER-REVIEW-ORG-NOT-NULL" author="George Nash" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck  expectedResult="YES">select is_nullable from information_schema.columns where table_name = 'peer_review' and column_name = 'org_id';</sqlCheck>
+        </preConditions>
+	    <addNotNullConstraint
+	            columnName="org_id"
+	            tableName="peer_review"/>
+    </changeSet>
+</databaseChangeLog>

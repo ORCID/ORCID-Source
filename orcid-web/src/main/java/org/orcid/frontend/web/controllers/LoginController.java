@@ -21,9 +21,11 @@ import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
+import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Name;
@@ -80,6 +82,9 @@ public class LoginController extends OauthControllerBase {
 
     @Resource
     private SocialSignInUtils socialSignInUtils;
+    
+    @Resource
+    private OauthHelper oauthHelper;
     
     @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
     public @ResponseBody Names getAccountNames(@PathVariable String type) {
@@ -138,7 +143,7 @@ public class LoginController extends OauthControllerBase {
         // Get and save the request information form
         RequestInfoForm requestInfoForm;
         try {
-            requestInfoForm = generateRequestInfoForm(queryString);
+            requestInfoForm = oauthHelper.generateRequestInfoForm(queryString);
         } catch (InvalidRequestException | InvalidClientException e) {
             // convert to a 400
             ModelAndView mav = new ModelAndView("oauth-error");
@@ -229,7 +234,7 @@ public class LoginController extends OauthControllerBase {
             }
         }
 
-        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
         // Save a flag to indicate this is a request from the new
@@ -310,7 +315,11 @@ public class LoginController extends OauthControllerBase {
                 // Store relevant data in the session
                 socialSignInUtils.setSignedInData(request, userData);
                 // Forward to account link page
-                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                    view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() +"/social-linking", true));
+                } else {
+                    view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+                }     
             }   
         } else {
             // Store relevant data in the session
@@ -319,7 +328,11 @@ public class LoginController extends OauthControllerBase {
             userConnectionId = createUserConnection(socialType, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL),
                     userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Forward to account link page
-            view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+            if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() +"/social-linking", true));
+            } else {
+                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+            }
         }
         if (userConnectionId == null) {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);

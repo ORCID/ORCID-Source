@@ -40,68 +40,68 @@
 	                </p>                  
 	            </div> 
 	            <hr />
-	            <div class="col-md-12 col-sm-12 col-xs-12">   
+	            <div class="col-md-12 col-sm-12 col-xs-12">
+					<ng-container *ngIf="!badgesDisabled">
 	                <h3><@orcid.msg 'member_details.integrations'/></h3>
 	                <div  *ngIf="currentMemberDetails.integrations">
 		                <div *ngFor="let integration of currentMemberDetails.integrations">
 		                    <p><b>{{integration.name}}</b>&nbsp;<em>{{integration.stage}}</em></p>
-		                    <div *ngIf="!newBadgesEnabled && integration.badgeAwarded">
-		                        <div class="cc-badge authenticate popover-help-container" *ngIf="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
-		                            <img src="{{assetsPath}}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" />
-		                            <div id="cc-authenticate-help" class="popover bottom">
-		                              <div class="arrow"></div>
-		                              <div class="popover-content">
-		                                <p><@orcid.msg 'member_list.details.authenticate_help_text'/></p>
-		                              </div>
-		                            </div>
-		                        </div>
-		                        <div class="cc-badge collect popover-help-container" *ngIf="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
-		                            <img src="{{assetsPath}}/img/cc_collect.png" height="34" width="34" alt="ORCID Collect badge" />
-		                            <div id="cc-collect-help" class="popover bottom">
-		                              <div class="arrow"></div>
-		                              <div class="popover-content">
-		                                <p><@orcid.msg 'member_list.details.collect_help_text'/></p>
-		                              </div>
-		                            </div>
-		                        </div>
-		                        <div class="cc-badge display popover-help-container" *ngIf="integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
-		                            <img src="{{assetsPath}}/img/cc_display.png" height="34" width="34" alt="ORCID Display badge" />
-		                            <div id="cc-display-help" class="popover bottom">
-		                              <div class="arrow"></div>
-		                              <div class="popover-content">
-		                                <p><@orcid.msg 'member_list.details.display_help_text'/></p>
-		                              </div>
-		                            </div>
-		                        </div>
-		                        <div class="cc-badge connect popover-help-container" *ngIf="integration.level=='Connect'||integration.level=='Sync'">
-		                            <img src="{{assetsPath}}/img/cc_connect.png" height="34" width="34" alt="ORCID Connect badge" />
-		                            <div id="cc-connect-help" class="popover bottom">
-		                              <div class="arrow"></div>
-		                              <div class="popover-content">
-		                                <p><@orcid.msg 'member_list.details.connect_help_text'/></p>
-		                              </div>
-		                            </div>
-		                        </div>
-		                        <div class="cc-badge sync popover-help-container" *ngIf="integration.level=='Sync'">
-		                            <img src="{{assetsPath}}/img/cc_sync.png" height="34" width="34" alt="ORCID Sync badge" />
-		                            <div id="cc-sync-help" class="popover bottom">
-		                                <div class="arrow"></div>
-		                                <div class="popover-content">
-		                                <p><@orcid.msg 'member_list.details.sync_help_text'/></p>
-		                            </div>
-		                        </div>
-		                    </div>
-		                </div>
-		                <div *ngIf="newBadgesEnabled">
 	                        <div class="cc-badge authenticate popover-help-container" *ngIf="badgesAwarded[integration.id] && badgesAwarded[integration.id]['AUTHENTICATE']">
-	                            <img src="{{assetsPath}}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" />
-	                            <div id="cc-authenticate-help" class="popover bottom">
-	                              <div class="arrow"></div>
-	                              <div class="popover-content">
-	                                <p><@orcid.msg 'member_list.details.authenticate_help_text'/></p>
-	                              </div>
+	                        <img src="{{assetsPath}}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" />
+	                          <div id="cc-authenticate-help" class="popover bottom">
+	                            <div class="arrow"></div>
+	                            <div class="popover-content">
+	                              <p><@orcid.msg 'member_list.details.authenticate_help_text'/></p>
+	                            </div>
 	                            </div>
 	                        </div>
+							<div *ngIf="integration.badgeAwarded">
+								<div class="cc-badge authenticate popover-help-container" *ngIf="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
+									<img src="{{assetsPath}}/img/cc_authenticate.png" height="34" width="34" alt="ORCID Authenticate badge" />
+									<div id="cc-authenticate-help" class="popover bottom">
+										<div class="arrow"></div>
+										<div class="popover-content">
+											<p><@orcid.msg 'member_list.details.authenticate_help_text'/></p>
+										</div>
+									</div>
+								</div>
+								<div class="cc-badge collect popover-help-container" *ngIf="integration.level=='Collect'||integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
+									<img src="{{assetsPath}}/img/cc_collect.png" height="34" width="34" alt="ORCID Collect badge" />
+									<div id="cc-collect-help" class="popover bottom">
+										<div class="arrow"></div>
+										<div class="popover-content">
+											<p><@orcid.msg 'member_list.details.collect_help_text'/></p>
+										</div>
+									</div>
+								</div>
+								<div class="cc-badge display popover-help-container" *ngIf="integration.level=='Display'||integration.level=='Connect'||integration.level=='Sync'">
+									<img src="{{assetsPath}}/img/cc_display.png" height="34" width="34" alt="ORCID Display badge" />
+									<div id="cc-display-help" class="popover bottom">
+										<div class="arrow"></div>
+										<div class="popover-content">
+											<p><@orcid.msg 'member_list.details.display_help_text'/></p>
+										</div>
+									</div>
+								</div>
+								<div class="cc-badge connect popover-help-container" *ngIf="integration.level=='Connect'||integration.level=='Sync'">
+									<img src="{{assetsPath}}/img/cc_connect.png" height="34" width="34" alt="ORCID Connect badge" />
+									<div id="cc-connect-help" class="popover bottom">
+										<div class="arrow"></div>
+										<div class="popover-content">
+											<p><@orcid.msg 'member_list.details.connect_help_text'/></p>
+										</div>
+									</div>
+								</div>
+								<div class="cc-badge sync popover-help-container" *ngIf="integration.level=='Sync'">
+									<img src="{{assetsPath}}/img/cc_sync.png" height="34" width="34" alt="ORCID Sync badge" />
+									<div id="cc-sync-help" class="popover bottom">
+										<div class="arrow"></div>
+										<div class="popover-content">
+											<p><@orcid.msg 'member_list.details.sync_help_text'/></p>
+										</div>
+									</div>
+								</div>
+							</div>
 	                        <div class="cc-badge display popover-help-container" *ngIf="badgesAwarded[integration.id] && badgesAwarded[integration.id]['DISPLAY']">
 	                            <img src="{{assetsPath}}/img/cc_display.png" height="34" width="34" alt="ORCID Display badge" />
 	                            <div id="cc-display-help" class="popover bottom">
@@ -137,7 +137,6 @@
 	                                <p><@orcid.msg 'member_list.details.sync_help_text'/></p>
 	                            </div>
 	                        </div>
-		                </div>
 		                <p [innerHtml]="integration.description" *ngIf="integration.description"></p>
 		            </div>
 		        </div>
@@ -146,6 +145,7 @@
 	            </div>
 	            <hr />
 	        </div>
+					</ng-container>
 	        <div class="col-md-12 col-sm-12 col-xs-12" *ngIf="currentMemberDetails.subMembers.length">
 	            <h3><@orcid.msg 'member_details.consortium_members'/></h3>
 	            <table *ngIf="currentMemberDetails.subMembers">

@@ -222,6 +222,7 @@ public class JSONInputValidator {
             params.put("error", e.getCause().getCause().getMessage());
             throw new InvalidJSONException(params);
         } catch (Exception e) {
+            LOGGER.error("General exception from json validator", e);
             throw new ApplicationException(e);
         } 
     }

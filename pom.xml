@@ -21,7 +21,6 @@ the software.
     <artifactId>orcid-parent</artifactId>
     <version>1.1.5-SNAPSHOT</version>
     <packaging>pom</packaging>
-
     <name>ORCID - Parent</name>
     <description>The parent ORCID pom that all sub-projects reside under</description>
 
@@ -42,7 +41,7 @@ the software.
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
 
-    <modules>
+    <modules>	
         <module>orcid-test</module>
         <module>orcid-utils</module>
         <module>orcid-core</module>
@@ -399,7 +398,7 @@ the software.
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.8.3</version>
+                <version>1.9.4</version>
                 <scope>compile</scope>
             </dependency>
 
@@ -975,7 +974,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.0.1</version>
+               <version>3.0.3-SNAPSHOT</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>

@@ -18,6 +18,8 @@
             resource_id="orcid"
             authentication_key="an-authentication-key-1"
             persistent="false"
+            date_created="2020-01-01 00:00:00.00"            
+            last_modified="2020-01-01 00:00:00.00"  
             />
     <oauth2_token_detail
             id="2"

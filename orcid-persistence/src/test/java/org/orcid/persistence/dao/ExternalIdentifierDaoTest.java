@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -150,5 +151,39 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
         assertEquals(0, finalNumberOfElementsThatBelogsToUser);
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
+    }
+    
+    @Test
+    public void mergeTest() {
+        ExternalIdentifierEntity e = dao.find(20L);
+        e.setDisplayIndex(1000L);
+        Date dateCreated = e.getDateCreated();
+        Date lastModified = e.getLastModified();
+        dao.merge(e);
+
+        ExternalIdentifierEntity updated = dao.find(20L);
+        assertEquals(dateCreated, updated.getDateCreated());
+        assertTrue(updated.getLastModified().after(lastModified));
+    }
+    
+    @Test
+    public void persistTest() {
+        ExternalIdentifierEntity e = new ExternalIdentifierEntity();
+        e.setOwner(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setVisibility("PUBLIC");
+        e.setExternalIdReference("ext-id-0001");
+        
+        dao.persist(e);
+        assertNotNull(e.getId());
+        assertNotNull(e.getDateCreated());
+        assertNotNull(e.getLastModified());
+        assertEquals(e.getDateCreated(), e.getLastModified());
+        
+        ExternalIdentifierEntity e2 = dao.find(e.getId());
+        assertNotNull(e2.getDateCreated());
+        assertNotNull(e2.getLastModified());
+        assertEquals(e.getLastModified(), e2.getLastModified());
+        assertEquals(e.getDateCreated(), e2.getDateCreated());
+        assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
 }

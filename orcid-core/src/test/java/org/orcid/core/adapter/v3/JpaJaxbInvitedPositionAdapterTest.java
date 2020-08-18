@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -35,6 +36,8 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -102,6 +105,8 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         assertNotNull(oar);
         //General info
         assertEquals(Long.valueOf(0), oar.getId());
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
         assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
         assertEquals("department-name", oar.getDepartment());
         assertEquals("role-title", oar.getTitle());
@@ -136,6 +141,8 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         
         //General info
         assertEquals(Long.valueOf(0), oar.getId());
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
         assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());        
         assertEquals("department-name", oar.getDepartment());
         assertEquals("role-title", oar.getTitle());
@@ -155,11 +162,15 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOrgAffiliationRelationEntityToInvitedPosition() {
+    public void fromOrgAffiliationRelationEntityToInvitedPosition() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEntity();
         assertNotNull(entity);
         InvitedPosition invitedPosition = adapter.toInvitedPosition(entity);
         assertNotNull(invitedPosition);
+        assertNotNull(invitedPosition.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(invitedPosition.getCreatedDate().getValue()));
+        assertNotNull(invitedPosition.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(invitedPosition.getLastModifiedDate().getValue()));
         assertEquals("invited-position:department", invitedPosition.getDepartmentName());
         assertEquals(Long.valueOf(123456), invitedPosition.getPutCode());
         assertEquals("invited-position:title", invitedPosition.getRoleTitle());
@@ -187,11 +198,15 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOrgAffiliationRelationEntityToInvitedPositionSummary() {
+    public void fromOrgAffiliationRelationEntityToInvitedPositionSummary() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEntity();
         assertNotNull(entity);
         InvitedPositionSummary summary = adapter.toInvitedPositionSummary(entity);
         assertNotNull(summary);
+        assertNotNull(summary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getCreatedDate().getValue()));
+        assertNotNull(summary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getLastModifiedDate().getValue()));
         assertEquals("invited-position:department", summary.getDepartmentName());
         assertEquals(Long.valueOf(123456), summary.getPutCode());
         assertEquals("invited-position:title", summary.getRoleTitle());
@@ -213,7 +228,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOrgAffiliationRelationEntityToUserOBOInvitedPosition() {
+    public void fromOrgAffiliationRelationEntityToUserOBOInvitedPosition() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -223,6 +238,10 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         InvitedPosition invitedPosition = adapter.toInvitedPosition(entity);
         assertNotNull(invitedPosition);
+        assertNotNull(invitedPosition.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(invitedPosition.getCreatedDate().getValue()));
+        assertNotNull(invitedPosition.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(invitedPosition.getLastModifiedDate().getValue()));
         assertEquals("invited-position:department", invitedPosition.getDepartmentName());
         assertEquals(Long.valueOf(123456), invitedPosition.getPutCode());
         assertEquals("invited-position:title", invitedPosition.getRoleTitle());
@@ -250,7 +269,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOrgAffiliationRelationEntityToUserOBOInvitedPositionSummary() {
+    public void fromOrgAffiliationRelationEntityToUserOBOInvitedPositionSummary() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -260,6 +279,10 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         InvitedPositionSummary summary = adapter.toInvitedPositionSummary(entity);
         assertNotNull(summary);
+        assertNotNull(summary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getCreatedDate().getValue()));
+        assertNotNull(summary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(summary.getLastModifiedDate().getValue()));
         assertEquals("invited-position:department", summary.getDepartmentName());
         assertEquals(Long.valueOf(123456), summary.getPutCode());
         assertEquals("invited-position:title", summary.getRoleTitle());
@@ -288,7 +311,7 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         return (InvitedPosition) unmarshaller.unmarshal(inputStream);
     }
     
-    private OrgAffiliationRelationEntity getEntity() {
+    private OrgAffiliationRelationEntity getEntity() throws IllegalAccessException {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
         orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
@@ -303,7 +326,9 @@ public class JpaJaxbInvitedPositionAdapterTest extends MockSourceNameCache {
         sourceEntity.setSourceClient(clientDetailsEntity);
         orgEntity.setSource(sourceEntity);
         
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setAffiliationType(AffiliationType.INVITED_POSITION.name());
         result.setDepartment("invited-position:department");
         result.setEndDate(new EndDateEntity(2020, 2, 2));

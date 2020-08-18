@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
@@ -70,9 +71,17 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
     
+    @Resource
+    private SlackManager slackManager;
+    
     private int claimReminderAfterDays = 8;
     
     protected int claimWaitPeriodDays = 10;
+    
+    @Value("${org.orcid.indexer.slack.notification.interval:10}")
+    private Integer slackIntervalMinutes;
+    
+    private Date lastSlackNotification;
 
     public void setClaimWaitPeriodDays(int claimWaitPeriodDays) {
         this.claimWaitPeriodDays = claimWaitPeriodDays;
@@ -139,10 +148,22 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         String v2ActivitiesQueue = (IndexingStatus.REINDEX.equals(status) ? reindexActivitiesQueueName : updateActivitiesQueueName);
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
         do {
-            if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
-                orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
-            } else {
-                orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);
+            
+            try {
+                if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
+                    orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
+                } else {
+                    orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);
+                }
+                lastSlackNotification = null;
+            } catch(Exception e) {
+                LOG.error("Exception fetching records to index", e);
+                // Send a slack notification every 'slackIntervalMinutes' minutes
+                if(lastSlackNotification == null || System.currentTimeMillis() > (lastSlackNotification.getTime() + (slackIntervalMinutes * 60 * 1000))) {
+                    String message = String.format("Unable to fetch records with indexing status: %s, this causes that SOLR and S3 might be falling behind. For troubleshooting please refere to https://github.com/ORCID/ORCID-Internal/wiki/Problems-with-record-indexing-in-the-scheduler", status);                
+                    slackManager.sendSystemAlert(message);
+                    lastSlackNotification = new Date();
+                }                
             }
             LOG.info("processing batch of " + orcidsForIndexing.size());
 

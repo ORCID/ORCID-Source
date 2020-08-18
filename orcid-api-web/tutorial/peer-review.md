@@ -38,7 +38,7 @@ This workflow can be used with Member API credentials on sandbox or the producti
 
 ## 1. About Group-Ids
 
-**Group Ids are required to post Peer Review Items.** If you know you are going to use a valid [ISSN](https://portal.issn.org/) as your group Id, then you can skip this section and move straight to section 2 about posting your peer review, this is because the group id for peer-reviews gets automatically generated if it contains a valid ISSN. 
+**Group Ids are required to post Peer Review Items.** **If you know you are going to use a valid [ISSN](https://portal.issn.org/) as your group Id, then you can skip this section and move straight to section 2 about posting your peer review, this is because the group id for peer-reviews gets automatically generated if it contains a valid ISSN.** 
 
 The correct work flow for posting new peer review items with anything other than an ISSN is the following:
 
@@ -225,7 +225,7 @@ Editing the peer-review section of a record requires a 3 step OAuth token with t
 
 **Describing the organization the review was done for**
 
-- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc.). The organization must be identified by a RINGOLD, GRID, FUNDREF or LEI identifier.
+- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc.). The organization identifiers such as RINGOLD, GRID, FUNDREF or LEI identifier _are not required_.
 
 
 ## Read a summary of all peer-review items on a record

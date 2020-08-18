@@ -20,6 +20,8 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -37,12 +39,12 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
     public void testToExternalIdentifierEntity() throws JAXBException {
         ExternalIdentifierEntity entity = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(getExternalIdentifier());
         assertNotNull(entity);
+        assertNull(entity.getDateCreated());
+        assertNull(entity.getLastModified());
         assertEquals("A-0003", entity.getExternalIdCommonName());
         assertEquals("A-0003", entity.getExternalIdReference());
         assertEquals("http://ext-id/A-0003", entity.getExternalIdUrl());
         assertEquals(Long.valueOf(1), entity.getId());
-        assertNotNull(entity.getDateCreated());
-        assertNotNull(entity.getLastModified());        
         
         // Source
         assertNull(entity.getSourceId());        
@@ -51,14 +53,14 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromExternalIdentifierEntityToExternalIdentifier() {
+    public void fromExternalIdentifierEntityToExternalIdentifier() throws IllegalAccessException {
         ExternalIdentifierEntity entity = getExternalIdentifierEntity();
         PersonExternalIdentifier extId = jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(entity);
         assertNotNull(extId);
         assertNotNull(extId.getCreatedDate());
-        assertNotNull(extId.getCreatedDate().getValue());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(extId.getCreatedDate().getValue()));
         assertNotNull(extId.getLastModifiedDate());
-        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(extId.getLastModifiedDate().getValue()));
         assertEquals("common-name", extId.getType());               
         assertEquals("id-reference", extId.getValue());
         assertNotNull(extId.getUrl());
@@ -79,10 +81,11 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         return (PersonExternalIdentifier) unmarshaller.unmarshal(inputStream);
     }
     
-    private ExternalIdentifierEntity getExternalIdentifierEntity() {
+    private ExternalIdentifierEntity getExternalIdentifierEntity() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
+
         ExternalIdentifierEntity entity = new ExternalIdentifierEntity();
-        entity.setDateCreated(new Date());
-        entity.setLastModified(new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(entity, date);
         entity.setExternalIdCommonName("common-name");
         entity.setExternalIdReference("id-reference");        
         entity.setExternalIdUrl("http://myurl.com");

@@ -155,7 +155,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
         this.externalIdentifiersJson = externalIdentifiersJson;
     }
     
-    @OneToMany(mappedBy="researchResourceEntity", cascade = CascadeType.ALL,fetch=FetchType.LAZY, orphanRemoval =true )
+    @OneToMany(mappedBy="researchResourceEntity", cascade = CascadeType.ALL,fetch=FetchType.EAGER, orphanRemoval =true )
     @OrderColumn(name="item_index")
     public List<ResearchResourceItemEntity> getResourceItems() {
         return resourceItems;

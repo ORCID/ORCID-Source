@@ -42,6 +42,7 @@ import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -119,8 +120,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
+        assertNull(workEntity.getDateCreated());
+        assertNull(workEntity.getLastModified());
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), workEntity.getVisibility());
-        assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
         assertTrue(PojoUtil.isEmpty(workEntity.getSubtitle()));
@@ -151,7 +153,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromWorkEntityToWorkTest() {
+    public void fromWorkEntityToWorkTest() throws IllegalAccessException {
         // Set base url to https to ensure source URI is converted to http
         orcidUrlManager.setBaseUrl("https://testserver.orcid.org");
         WorkEntity work = getWorkEntity();
@@ -201,7 +203,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromWorkEntityToUserOBOWorkTest() {
+    public void fromWorkEntityToUserOBOWorkTest() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -259,11 +261,15 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromWorkEntityToWorkSummaryTest() {
+    public void fromWorkEntityToWorkSummaryTest() throws IllegalAccessException {
         WorkEntity work = getWorkEntity();
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
+        assertNotNull(ws.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(ws.getCreatedDate().getValue()));
+        assertNotNull(ws.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(ws.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(12345), ws.getPutCode());
         assertEquals(Visibility.LIMITED.value(), ws.getVisibility().value());
         assertEquals("1234567890", ws.getDisplayIndex());
@@ -293,7 +299,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromWorkEntityToUserOBOWorkSummaryTest() {
+    public void fromWorkEntityToUserOBOWorkSummaryTest() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -303,6 +309,10 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(work);
         WorkSummary ws = jpaJaxbWorkAdapter.toWorkSummary(work);
         assertNotNull(ws);
+        assertNotNull(ws.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(ws.getCreatedDate().getValue()));
+        assertNotNull(ws.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(ws.getLastModifiedDate().getValue()));
         assertEquals(Long.valueOf(12345), ws.getPutCode());
         assertEquals(Visibility.LIMITED.value(), ws.getVisibility().value());
         assertEquals("1234567890", ws.getDisplayIndex());
@@ -332,7 +342,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void dissertationThesisToDissertationThesisTest() {
+    public void dissertationThesisToDissertationThesisTest() throws IllegalAccessException {
         WorkEntity work = getWorkEntity();
         work.setWorkType(WorkType.DISSERTATION_THESIS.name());
         
@@ -362,7 +372,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     }        
     
     @Test
-    public void clearFieldsFromWorkToWorkEntityTest() {
+    public void clearFieldsFromWorkToWorkEntityTest() throws IllegalAccessException {
         WorkEntity workEntity = getWorkEntity();
         // Verify values are not null
         assertNotNull(workEntity.getCitation());
@@ -375,6 +385,10 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         // Verify values are not null
+        assertNotNull(work.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(work.getCreatedDate().getValue()));
+        assertNotNull(work.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(work.getLastModifiedDate().getValue()));
         assertNotNull(work.getWorkCitation());
         assertNotNull(work.getWorkCitation().getCitation());
         assertNotNull(work.getWorkCitation().getWorkCitationType());        
@@ -400,6 +414,11 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         
         // Update work entity
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
+        
+        // Verify date created and last modified wasn't changed
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
+        assertEquals(date, workEntity.getDateCreated());
+        assertEquals(date, workEntity.getLastModified());
         
         // Verify citation, country, journal title, url, translated title and subtitle get nullified
         assertNull(workEntity.getCitation());
@@ -447,24 +466,21 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         return (Work) unmarshaller.unmarshal(inputStream);
     }
 
-    private WorkEntity getWorkEntity() {
+    private WorkEntity getWorkEntity() throws IllegalAccessException {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         WorkEntity work = new WorkEntity();
-        work.setDateCreated(date);
-        work.setLastModified(date);
+        DateFieldsOnBaseEntityUtils.setDateFields(work, date);
         work.setOrcid("0000-0000-0000-0001");
         work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         work.setDisplayIndex(1234567890L);
         work.setClientSourceId(CLIENT_SOURCE_ID);        
         work.setCitation("work:citation");
         work.setCitationType(org.orcid.jaxb.model.record_v2.CitationType.BIBTEX.name());
-        work.setDateCreated(date);
         work.setDescription("work:description");
         work.setId(12345L);
         work.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.CR.name());
         work.setJournalTitle("work:journalTitle");
         work.setLanguageCode("en");
-        work.setLastModified(date);
         work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
         work.setSubtitle("work:subtitle");
         work.setTitle("work:title");

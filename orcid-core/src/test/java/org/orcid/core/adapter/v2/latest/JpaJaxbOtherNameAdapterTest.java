@@ -21,6 +21,8 @@ import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -37,10 +39,13 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
     @Test
     public void fromOtherNameToOtherNameEntityTest() throws JAXBException {                
         OtherName otherName = getOtherName();
+        assertNotNull(otherName);
+        assertNotNull(otherName.getCreatedDate());
+        assertNotNull(otherName.getLastModifiedDate());
         OtherNameEntity otherNameEntity = adapter.toOtherNameEntity(otherName);
         assertNotNull(otherNameEntity);
-        assertNotNull(otherNameEntity.getDateCreated());
-        assertNotNull(otherNameEntity.getLastModified());
+        assertNull(otherNameEntity.getDateCreated());
+        assertNull(otherNameEntity.getLastModified());
         assertEquals("Other Name #1", otherNameEntity.getDisplayName());        
         // Source
         assertNull(otherNameEntity.getSourceId());        
@@ -49,10 +54,14 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
     }
     
     @Test
-    public void fromOtherNameEntityToOtherNameTest() {                
+    public void fromOtherNameEntityToOtherNameTest() throws IllegalAccessException {                
         OtherNameEntity entity = getOtherNameEntity();
         OtherName otherName = adapter.toOtherName(entity);
         assertNotNull(otherName);
+        assertNotNull(otherName.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(otherName.getCreatedDate().getValue()));
+        assertNotNull(otherName.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(otherName.getLastModifiedDate().getValue()));
         assertEquals("display-name", otherName.getContent());
         assertNotNull(otherName.getCreatedDate());
         assertNotNull(otherName.getLastModifiedDate());
@@ -70,11 +79,11 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         return (OtherName) unmarshaller.unmarshal(inputStream);
     }
     
-    private OtherNameEntity getOtherNameEntity() {
+    private OtherNameEntity getOtherNameEntity() throws IllegalAccessException {
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         OtherNameEntity result = new OtherNameEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setId(Long.valueOf(1));
-        result.setDateCreated(new Date());
-        result.setLastModified(new Date());
         result.setDisplayName("display-name");
         result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(Visibility.PUBLIC.name());

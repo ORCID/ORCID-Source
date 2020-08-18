@@ -1,6 +1,5 @@
 package org.orcid.core.manager.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,8 +70,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         }
 
         adapter.toAddressEntity(address, updatedEntity);
-        updatedEntity.setLastModified(new Date());
-
+        
         // Be sure it doesn't overwrite the source
         updatedEntity.setSourceId(existingSourceId);
         updatedEntity.setClientSourceId(existingClientSourceId);
@@ -100,8 +98,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         AddressEntity newEntity = adapter.toAddressEntity(address);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
-        newEntity.setDateCreated(new Date());
-
+        
         if (sourceEntity.getSourceProfile() != null) {
             newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
         }
@@ -181,8 +178,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                 if (updatedOrNew.getPutCode() != null) {
                     // Update the existing ones
                     for (AddressEntity existingAddress : existingAddressList) {
-                        if (existingAddress.getId().equals(updatedOrNew.getPutCode())) {
-                            existingAddress.setLastModified(new Date());
+                        if (existingAddress.getId().equals(updatedOrNew.getPutCode())) {                            
                             existingAddress.setVisibility(updatedOrNew.getVisibility().name());
                             existingAddress.setIso2Country(updatedOrNew.getCountry().getValue().name());
                             existingAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
@@ -194,8 +190,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                     AddressEntity newAddress = adapter.toAddressEntity(updatedOrNew);
                     SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
                     ProfileEntity profile = new ProfileEntity(orcid);
-                    newAddress.setUser(profile);
-                    newAddress.setDateCreated(new Date());
+                    newAddress.setUser(profile);                    
 
                     // Set the source id
                     if (sourceEntity.getSourceProfile() != null) {

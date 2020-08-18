@@ -2541,7 +2541,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
 }
 
 .popover-pos .popover-help-container .popover {
-    min-width: 250px
+    min-width: 250px;
+    max-width: 650px;
 }
 
 .workspace-top .popover.bottom .arrow {
@@ -4199,7 +4200,8 @@ ul#body-membership-list>li {
     clear: both;
     display: block;
     float: left;
-    font-size: 13px
+    font-size: 13px;
+    word-break: break-all;
 }
 
 .id-details a,.validations li,.versions li {
@@ -5034,6 +5036,10 @@ ul.sources-actions li {
     color: #2E7F9F
 }
 
+.sources-actions .git_create:hover:before,.sources-actions .git_pull_request:hover:before,.sources-options .git_create:hover:before,.sources-options .git_pull_request:hover:before {
+    color: #a6ce39
+}
+
 .source-line, .source{
     font-size: 13px;  
     line-height: normal;
@@ -5707,7 +5713,8 @@ ul.oauth-scopes li {
 
 .url-popover .popover-help-container .popover {
     left: 0;
-    top: 15px
+    top: 15px;
+    word-break: break-all;
 }
 
 .url-popover .popover.bottom .arrow {
@@ -9791,14 +9798,27 @@ emails-form-ng2 .border-button.active {
 }
 
 emails-form-ng2 .cancel-edit-button {
-    font-size: 14px;
+     font-size: 12px;
+     font-weight: bold;
+     font-style: normal;
+     font-stretch: normal;
+     line-height: 1.14;
+     letter-spacing: 1.25px;
+     text-align: center;
+     color: #f44336;
+     display: inline;
+     cursor: pointer;
+ }
+
+emails-form-ng2 .save-edit-button {
+    font-size: 12px;
     font-weight: bold;
     font-style: normal;
     font-stretch: normal;
     line-height: 1.14;
     letter-spacing: 1.25px;
     text-align: center;
-    color: #f44336;
+    color: #9fc836;
     display: inline;
     cursor: pointer;
 }
@@ -10025,7 +10045,7 @@ name-ng2 h2.full-name {
 }
 
 .tooltip-delete-peer {
-    left: 10px !important;
+    left: -15px !important;
     top: -38px !important;
     min-width: 68px !important;
 }

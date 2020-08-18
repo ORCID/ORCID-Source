@@ -48,4 +48,8 @@ public interface OrgDao extends GenericDao<OrgEntity, Long> {
 
     List<BigInteger> getIdsOfOrgsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
 
+    List<OrgEntity> findByOrgDisambiguatedId(Long deprecated);
+
+    void updateOrgDisambiguatedId(long deletedOrgDisambiguatedId, long replacementOrgDisambiguatedId);
+
 }

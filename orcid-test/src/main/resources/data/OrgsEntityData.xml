@@ -20,6 +20,8 @@
             source_id="def456"
             source_type="WDB"
             popularity="0"
+            date_created="2020-01-01 00:00:00.00"
+            last_modified="2020-01-01 00:00:00.00"           
             />
     
     <org

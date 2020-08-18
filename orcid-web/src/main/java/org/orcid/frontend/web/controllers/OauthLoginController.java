@@ -14,6 +14,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.frontend.spring.OrcidWebAuthenticationDetails;
+import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
@@ -25,7 +26,6 @@ import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.utils.OrcidRequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -48,13 +48,16 @@ public class OauthLoginController extends OauthControllerBase {
 
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private OauthHelper oauthHelper;
 
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         String url = request.getQueryString();
         // Get and save the request information form
-        RequestInfoForm requestInfoForm = generateRequestInfoForm(url);
-        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+        RequestInfoForm requestInfoForm = oauthHelper.generateRequestInfoForm(url);
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
 
         // Check that the client have the required permissions
         // Get client name
@@ -93,13 +96,13 @@ public class OauthLoginController extends OauthControllerBase {
         mav.addObject("hideSupportWidget", true);
         mav.setViewName("oauth_login");
         return mav;
-    }
+    }    
 
     @RequestMapping(value = { "/oauth/custom/signin.json", "/oauth/custom/login.json" }, method = RequestMethod.POST)
     public @ResponseBody OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
 
         boolean willBeRedirected = false;
         if (form.getApproved()) {

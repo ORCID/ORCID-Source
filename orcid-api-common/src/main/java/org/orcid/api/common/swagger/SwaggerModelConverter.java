@@ -17,6 +17,7 @@ import org.orcid.jaxb.model.record_v2.CitationType;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JavaType;
 
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.models.Model;
@@ -132,6 +133,7 @@ public class SwaggerModelConverter implements ModelConverter {
     public class Citation implements Serializable {
         private static final long serialVersionUID = 1L;
         @XmlElement(name = "citation-type", required = true, namespace = "http://www.orcid.org/ns/work")
+        @ApiModelProperty(dataType = "string", allowableValues = "formatted-unspecified, bibtex, formatted-apa, formatted-harvard, formatted-ieee, formatted-mla, formatted-vancouver, formatted-chicago, ris")
         protected CitationType citationType;
         @XmlElement(name = "citation-value", required = true, namespace = "http://www.orcid.org/ns/work")
         protected String citation;

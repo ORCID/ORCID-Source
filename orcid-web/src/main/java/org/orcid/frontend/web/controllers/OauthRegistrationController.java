@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -64,7 +65,7 @@ public class OauthRegistrationController extends OauthControllerBase {
     @RequestMapping(value = "/oauth/custom/register.json", method = RequestMethod.POST)
     public @ResponseBody OauthRegistrationForm checkRegisterForm(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistrationForm form) {
         form.setErrors(new ArrayList<String>());
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
         
         if (form.getApproved()) {
             registrationController.validateRegistrationFields(request, form);
@@ -84,7 +85,7 @@ public class OauthRegistrationController extends OauthControllerBase {
 
     @RequestMapping(value = "/oauth/custom/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm registerAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistrationForm form) {
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
         if (form.getApproved()) {
             boolean usedCaptcha = false;            
             

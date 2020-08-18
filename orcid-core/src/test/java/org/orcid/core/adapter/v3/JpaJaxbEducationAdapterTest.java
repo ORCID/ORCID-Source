@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -36,6 +37,8 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -103,6 +106,8 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         OrgAffiliationRelationEntity oar = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
         // General info
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
         assertEquals(Long.valueOf(0), oar.getId());
         assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("education:department-name", oar.getDepartment());
@@ -130,6 +135,8 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         OrgAffiliationRelationEntity oar = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(e);
         assertNotNull(oar);
         assertEquals("http://tempuri.org", oar.getUrl());
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
 
         // Clear the url
         e.setUrl(null);
@@ -142,6 +149,8 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
 
         // General info
         assertEquals(Long.valueOf(0), oar.getId());
+        assertNull(oar.getDateCreated());
+        assertNull(oar.getLastModified());
         assertEquals(Visibility.PRIVATE.name(), oar.getVisibility());
         assertEquals("education:department-name", oar.getDepartment());
         assertEquals("education:role-title", oar.getTitle());
@@ -161,11 +170,15 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromOrgAffiliationRelationEntityToEducation() {
+    public void fromOrgAffiliationRelationEntityToEducation() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEducationEntity();
         assertNotNull(entity);
         Education education = jpaJaxbEducationAdapter.toEducation(entity);
         assertNotNull(education);
+        assertNotNull(education.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(education.getCreatedDate().getValue()));
+        assertNotNull(education.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(education.getLastModifiedDate().getValue()));
         assertEquals("education:department", education.getDepartmentName());
         assertEquals(Long.valueOf(123456), education.getPutCode());
         assertEquals("education:title", education.getRoleTitle());
@@ -193,7 +206,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromOrgAffiliationRelationEntityToUserOBOEducation() {
+    public void fromOrgAffiliationRelationEntityToUserOBOEducation() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -203,6 +216,10 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         Education education = jpaJaxbEducationAdapter.toEducation(entity);
         assertNotNull(education);
+        assertNotNull(education.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(education.getCreatedDate().getValue()));
+        assertNotNull(education.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(education.getLastModifiedDate().getValue()));
         assertEquals("education:department", education.getDepartmentName());
         assertEquals(Long.valueOf(123456), education.getPutCode());
         assertEquals("education:title", education.getRoleTitle());
@@ -230,11 +247,15 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromOrgAffiliationRelationEntityToEducationSummary() {
+    public void fromOrgAffiliationRelationEntityToEducationSummary() throws IllegalAccessException {
         OrgAffiliationRelationEntity entity = getEducationEntity();
         assertNotNull(entity);
         EducationSummary educationSummary = jpaJaxbEducationAdapter.toEducationSummary(entity);
         assertNotNull(educationSummary);
+        assertNotNull(educationSummary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(educationSummary.getCreatedDate().getValue()));
+        assertNotNull(educationSummary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(educationSummary.getLastModifiedDate().getValue()));
         assertEquals("education:department", educationSummary.getDepartmentName());
         assertEquals(Long.valueOf(123456), educationSummary.getPutCode());
         assertEquals("education:title", educationSummary.getRoleTitle());
@@ -256,7 +277,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
     }
 
     @Test
-    public void fromOrgAffiliationRelationEntityToUserOBOEducationSummary() {
+    public void fromOrgAffiliationRelationEntityToUserOBOEducationSummary() throws IllegalAccessException {
         // set client source to user obo enabled client
         ClientDetailsEntity userOBOClient = new ClientDetailsEntity();
         userOBOClient.setUserOBOEnabled(true);
@@ -266,6 +287,10 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         EducationSummary educationSummary = jpaJaxbEducationAdapter.toEducationSummary(entity);
         assertNotNull(educationSummary);
+        assertNotNull(educationSummary.getCreatedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(educationSummary.getCreatedDate().getValue()));
+        assertNotNull(educationSummary.getLastModifiedDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(educationSummary.getLastModifiedDate().getValue()));
         assertEquals("education:department", educationSummary.getDepartmentName());
         assertEquals(Long.valueOf(123456), educationSummary.getPutCode());
         assertEquals("education:title", educationSummary.getRoleTitle());
@@ -297,7 +322,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         return (Education) unmarshaller.unmarshal(inputStream);
     }
 
-    private OrgAffiliationRelationEntity getEducationEntity() {
+    private OrgAffiliationRelationEntity getEducationEntity() throws IllegalAccessException {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setCity("org:city");
         orgEntity.setCountry(org.orcid.jaxb.model.message.Iso3166Country.US.name());
@@ -312,7 +337,9 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         sourceEntity.setSourceClient(clientDetailsEntity);
         orgEntity.setSource(sourceEntity);
 
+        Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         OrgAffiliationRelationEntity result = new OrgAffiliationRelationEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setAffiliationType(AffiliationType.EDUCATION.name());
         result.setDepartment("education:department");
         result.setEndDate(new EndDateEntity(2020, 2, 2));

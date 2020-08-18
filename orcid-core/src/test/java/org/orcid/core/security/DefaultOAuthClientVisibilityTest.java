@@ -1,11 +1,11 @@
 package org.orcid.core.security;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.Date;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
@@ -63,7 +64,7 @@ public class DefaultOAuthClientVisibilityTest extends BaseTest {
 
         OrcidOauth2TokenDetail tokenDetail = new OrcidOauth2TokenDetail();
         tokenDetail.setScope("/orcid-bio/external-identifiers/create");
-        tokenDetail.setDateCreated(new Date());
+        DateFieldsOnBaseEntityUtils.setDateFields(tokenDetail, new Date());
         when(orcidOauth2TokenDetailService.findNonDisabledByTokenValue(any(String.class))).thenReturn(tokenDetail);
         ScopePathType scopePathType = ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE;
         Set<Visibility> visibilitiesForClient = permissionChecker.obtainVisibilitiesForAuthentication(oAuth2Authentication, scopePathType, getOrcidMessage());

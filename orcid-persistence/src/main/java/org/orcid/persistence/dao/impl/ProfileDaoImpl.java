@@ -23,6 +23,7 @@ import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
@@ -30,6 +31,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     private static final String PUBLIC_VISIBILITY = "PUBLIC";
 
     private static final String PRIVATE_VISIBILITY = "PRIVATE";
+    
+    @Value("${org.orcid.postgres.query.timeout:30000}")
+    private Integer queryTimeout;
     
     public ProfileDaoImpl() {
         super(ProfileEntity.class);
@@ -111,6 +115,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
         query.setMaxResults(maxResults);
+        // Sets a timeout for this query
+        query.setHint("javax.persistence.query.timeout", queryTimeout);
         List<Object[]> dbInfo = query.getResultList();
         List<Pair<String, IndexingStatus>> results = new ArrayList<Pair<String, IndexingStatus>>();
         dbInfo.stream().forEach(element -> {
@@ -864,5 +870,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("ids", ids);
         query.setParameter("indexingStatus", indexingStatus.name());
         query.executeUpdate();
+    }
+    
+    @Override
+    @Transactional
+    public List<String> registeredBetween(Date startDate, Date endDate) {
+        Query query = entityManager.createNativeQuery("SELECT orcid FROM profile WHERE date_created between :startDate and :endDate");
+        query.setParameter("startDate", startDate); 
+        query.setParameter("endDate", endDate);
+        return query.getResultList();
     }
 }

@@ -50,7 +50,7 @@ public class OAuthErrorUtilsTest {
     public void testGetOAuthErrorForOrcidInvalidScopeException() {
         OAuthError error = OAuthErrorUtils.getOAuthError(new OrcidInvalidScopeException("message here"));
         assertEquals(OAuthError.INVALID_SCOPE, error.getError());
-        assertEquals(Status.BAD_REQUEST, error.getResponseStatus());
+        assertEquals(Status.UNAUTHORIZED, error.getResponseStatus());
         assertEquals("message here", error.getErrorDescription());
     }
     

@@ -8,7 +8,8 @@ OpenID connect is a standardised way of implementing OAuth and sharing informati
 
 ## **What does ORCID support?**
 
-ORCID supports the Basic OpenID Provider conformance profile, which is an extension of the OAuth authorization code flow.   ORCID also supports the implicit token flow for the "/authenticate" and "openid" scopes.
+ORCID supports the Basic OpenID Provider conformance profile, which is an extension of the OAuth authorization code flow.   ORCID also supports the implicit token flow for the "/authenticate" and "openid" scopes. In addition, for the Member API only,  ORCID provides data about the authentication method set up and used by ORCID users.
+
 
 This means that ORCID:
 
@@ -16,6 +17,7 @@ This means that ORCID:
 *   Supports the implicit flow when using 'token' or 'token id_token' response_types and the 'openid' scope. 
 *   Supports the 'prompt', 'nonce' and 'max_age' parameters for authorisation requests that include the 'openid' scope.
 *   Supports Openid Connect discovery and userinfo endpoints
+*   The payload from the id_token now contains a new data field called “amr” in which the value is “mfa” for users who have enabled two-factor authentication on their ORCID account, and “pwd” for users who haven’t. ( This data is not returned by the Public API only the Member API)
 
 ## **How does it work?**
 
@@ -81,10 +83,10 @@ The  id token can be used in the same way as described above.
 
 ## **What is an id_token?** 
 
-The id_token value is a JSON web token ([JWT](https://jwt.io/)) that has been signed and base64 encoded. The string is in three parts, separated by a period.  The first section is the header and contains information on how the JWT was signed.  The middle section contains useful information such as the subject (in our case, the ORCID ID), audience, issuer, issue time, expiry time and authentication time.  It will also include a nonce if this was in the original request.  The final section is the signature.  There are many client libraries that will take the jwks key we provide and validate the token.  The middle part of the id_token shown above looks like this when decoded:
+The id_token value is a JSON web token ([JWT](https://jwt.io/)) that has been signed and base64 encoded. The string is in three parts, separated by a period.  The first section is the header and contains information on how the JWT was signed.  The middle section contains useful information such as the subject (in our case, the ORCID ID), audience, issuer, issue time, expiry time and authentication time and, if requested using the member API, information about the users authentication method.  It will also include a nonce if this was in the original request.  The final section is the signature.  There are many client libraries that will take the jwks key we provide and validate the token.  The middle part of the id_token shown above looks like this when decoded:
 
 ```
-    {"aud":"4444-4444-4444-4445","sub":"0000-0002-2601-8132","auth_time":1495707257,"iss":"https:\/\/orcid.org","exp":1495707873,"iat":1495707273,"nonce":"n1","jti":"eaa4d563-be63-47ee-8976-dc7cc3b7be61"}
+    {"aud":"4444-4444-4444-4445","sub":"0000-0002-2601-8132","auth_time":1495707257,"amr":"pwd","iss":"https:\/\/orcid.org","exp":1495707873,"iat":1495707273,"nonce":"n1","jti":"eaa4d563-be63-47ee-8976-dc7cc3b7be61"}
 ```
 
 ## **Query parameters** 

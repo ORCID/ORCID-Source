@@ -176,7 +176,6 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         existing.setStartDate(updated.getStartDate());
         existing.setTitle(updated.getTitle());
         existing.setVisibility(updated.getVisibility());
-        existing.setLastModified(new Date());
     }
 
     /**

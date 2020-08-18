@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -61,9 +60,11 @@ import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -130,6 +131,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(controller, "encryptionManager", mockEncryptionManager);
         TargetProxyHelper.injectIntoProxy(controller, "emailManager", mockEmailManager);
+        TargetProxyHelper.injectIntoProxy(controller, "emailManagerReadOnly", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
         TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager); 
@@ -173,12 +175,12 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
                 Set<GivenPermissionToEntity> givenPermissionTo = new HashSet<GivenPermissionToEntity>();
 
-                IntStream.range(0, 2).forEachOrdered(i -> {
+                for(int i = 0; i < 2; i++) {
                     GivenPermissionToEntity e1 = new GivenPermissionToEntity();
+                    DateFieldsOnBaseEntityUtils.setDateFields(e1, new Date());
                     e1.setId(Long.valueOf(i));
                     Date now = new Date();
-                    e1.setApprovalDate(now);
-                    e1.setDateCreated(now);
+                    e1.setApprovalDate(now);                    
                     e1.setGiver(invocation.getArgument(0));
                     String receiver = null;
                     RecordNameEntity recordName = new RecordNameEntity();
@@ -193,23 +195,22 @@ public class ManageProfileControllerTest {
                     }
                     e1.setReceiver(receiver);
                     givenPermissionTo.add(e1);
-                });
+                }
+                
                 entity.setGivenPermissionTo(givenPermissionTo);
                 EmailEntity email1 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email1, new Date());
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
-                email1.setDateCreated(new Date());
-                email1.setLastModified(new Date());
                 email1.setPrimary(true);
                 email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
                 EmailEntity email2 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email2, new Date());
                 email2.setEmail(invocation.getArgument(0) + "_2@test.orcid.org");
                 email2.setVerified(true);
                 email2.setCurrent(false);
-                email2.setDateCreated(new Date());
-                email2.setLastModified(new Date());
                 email2.setPrimary(false);
                 email2.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
@@ -299,11 +300,10 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
 
                 EmailEntity email1 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email1, new Date());                
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
-                email1.setDateCreated(new Date());
-                email1.setLastModified(new Date());
                 email1.setPrimary(true);
                 email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
@@ -345,11 +345,10 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
 
                 EmailEntity email1 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email1, new Date());
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
-                email1.setDateCreated(new Date());
-                email1.setLastModified(new Date());
                 email1.setPrimary(true);
                 email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
@@ -805,11 +804,10 @@ public class ManageProfileControllerTest {
                 entity.setId(invocation.getArgument(0));
 
                 EmailEntity email1 = new EmailEntity();
+                DateFieldsOnBaseEntityUtils.setDateFields(email1, new Date());
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setVerified(true);
                 email1.setCurrent(true);
-                email1.setDateCreated(new Date());
-                email1.setLastModified(new Date());
                 email1.setPrimary(true);
                 email1.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
 
@@ -967,6 +965,73 @@ public class ManageProfileControllerTest {
     	assertFalse(controller.validateEmailAddress("john.doe@example..com"));
     	assertFalse(controller.validateEmailAddress("john..doe@example.com"));
     	assertFalse(controller.validateEmailAddress("a\"b(c)d,e:f;g<h>i[j\\k]l@example.com"));
+    }
+    
+    @Test
+    public void testDeleteEmailJsonBlankEmail() {
+        Errors errors = controller.deleteEmailJson("");
+        assertNotNull(errors);
+        assertEquals(1, errors.getErrors().size());
+    }
+    
+    @Test
+    public void testDeleteEmailJsonWrongOwner() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        Mockito.when(mockEmailManager.findOrcidIdByEmail(Mockito.eq("email@email.com"))).thenReturn("another-orcid-id");
+        
+        Errors errors = controller.deleteEmailJson("email@email.com");
+        assertNotNull(errors);
+        assertEquals(1, errors.getErrors().size());
+        
+        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(Mockito.eq("email@email.com"));
+    }
+    
+    @Test
+    public void testDeleteEmailPrimaryEmail() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        Mockito.when(mockEmailManager.findOrcidIdByEmail(Mockito.eq("email@email.com"))).thenReturn(USER_ORCID);
+        Mockito.when(mockEmailManager.isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(true);
+        
+        Errors errors = controller.deleteEmailJson("email@email.com");
+        assertNotNull(errors);
+        assertEquals(1, errors.getErrors().size());
+        
+        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+    }
+    
+    @Test
+    public void testDeleteEmailOnlyEmail() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        Mockito.when(mockEmailManager.findOrcidIdByEmail(Mockito.eq("email@email.com"))).thenReturn(USER_ORCID);
+        Mockito.when(mockEmailManager.isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(false);
+        Mockito.when(mockEmailManager.isUsersOnlyEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(true);
+        
+        Errors errors = controller.deleteEmailJson("email@email.com");
+        assertNotNull(errors);
+        assertEquals(1, errors.getErrors().size());
+        
+        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+    }
+    
+    @Test
+    public void testDeleteEmail() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        Mockito.when(mockEmailManager.findOrcidIdByEmail(Mockito.eq("email@email.com"))).thenReturn(USER_ORCID);
+        Mockito.when(mockEmailManager.isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(false);
+        Mockito.when(mockEmailManager.isUsersOnlyEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"))).thenReturn(false);
+        Mockito.doNothing().when(mockEmailManager).removeEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+        
+        Errors errors = controller.deleteEmailJson("email@email.com");
+        assertNotNull(errors);
+        assertEquals(0, errors.getErrors().size());
+        
+        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));
+        Mockito.verify(mockEmailManager, Mockito.times(1)).removeEmail(Mockito.eq(USER_ORCID), Mockito.eq("email@email.com"));        
     }
     
     protected Authentication getAuthentication(String orcid) {

@@ -48,19 +48,19 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDaoReadOnly;
-    
+
     @Resource
     private OrcidSolrOrgsClient orcidSolrOrgsClient;
 
     @Resource
     private TransactionTemplate transactionTemplate;
-    
+
     @Value("${org.orcid.persistence.messaging.updated.disambiguated_org.solr:indexDisambiguatedOrgs}")
-    private String updateSolrQueueName;    
+    private String updateSolrQueueName;
 
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
-    
+
     @Override
     synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
@@ -84,15 +84,15 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         });
     }
 
-    private void processDisambiguatedOrg(OrgDisambiguatedEntity entity)  {
+    private void processDisambiguatedOrg(OrgDisambiguatedEntity entity) {
         LOGGER.info("About to index disambiguated org, id={}", entity.getId());
         OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
         // Send message to the message listener
         if (!messaging.send(document, updateSolrQueueName)) {
-            LOGGER.error("Unable to send orgs disambiguated message for org: " + document.getOrgDisambiguatedName() + "(" + document.getOrgDisambiguatedId() + ")");            
+            LOGGER.error("Unable to send orgs disambiguated message for org: " + document.getOrgDisambiguatedName() + "(" + document.getOrgDisambiguatedId() + ")");
             orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.FAILED);
             return;
-        }    
+        }
         orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.DONE);
     }
 
@@ -123,10 +123,10 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         } else {
             document.setFundingOrg(false);
         }
-        
+
         document.setOrgChosenByMember(entity.getMemberChosenOrgDisambiguatedEntity() != null);
         document.setOrgDisambiguatedStatus(entity.getStatus());
-        
+
         return document;
     }
 
@@ -146,22 +146,23 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Override
     public List<OrgDisambiguated> searchOrgsFromSolr(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
-        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgs(searchTerm, firstResult, maxResult, fundersOnly, Features.ENABLE_PROMOTION_OF_CHOSEN_ORGS.isActive());
+        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgs(searchTerm, firstResult, maxResult, fundersOnly,
+                Features.ENABLE_PROMOTION_OF_CHOSEN_ORGS.isActive());
         List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
-        for (OrgDisambiguatedSolrDocument doc: docs){
+        for (OrgDisambiguatedSolrDocument doc : docs) {
             OrgDisambiguated org = convertSolrDocument(doc);
-            ret.add(org);            
+            ret.add(org);
         }
         return ret;
     }
-    
+
     @Override
     public List<OrgDisambiguated> searchOrgsFromSolrForSelfService(String searchTerm, int firstResult, int maxResult) {
         List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgsForSelfService(searchTerm, firstResult, maxResult);
         List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
-        for (OrgDisambiguatedSolrDocument doc: docs){
+        for (OrgDisambiguatedSolrDocument doc : docs) {
             OrgDisambiguated org = convertSolrDocument(doc);
-            ret.add(org);            
+            ret.add(org);
         }
         return ret;
     }
@@ -200,11 +201,11 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         OrgDisambiguated org = new OrgDisambiguated();
         org.setValue(orgDisambiguatedEntity.getName());
         org.setCity(orgDisambiguatedEntity.getCity());
-        org.setRegion(orgDisambiguatedEntity.getRegion());        
+        org.setRegion(orgDisambiguatedEntity.getRegion());
         org.setCountry(orgDisambiguatedEntity.getCountry() != null ? orgDisambiguatedEntity.getCountry() : null);
         org.setOrgType(orgDisambiguatedEntity.getOrgType());
         org.setSourceId(orgDisambiguatedEntity.getSourceId());
-        org.setSourceType(orgDisambiguatedEntity.getSourceType()); 
+        org.setSourceType(orgDisambiguatedEntity.getSourceType());
         org.setUrl(orgDisambiguatedEntity.getUrl());
         Map<String, OrgDisambiguatedExternalIdentifiers> externalIdsMap = new HashMap<String, OrgDisambiguatedExternalIdentifiers>();
         if (orgDisambiguatedEntity.getExternalIdentifiers() != null && !orgDisambiguatedEntity.getExternalIdentifiers().isEmpty()) {
@@ -232,7 +233,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
             if (!externalIdsMap.isEmpty()) {
                 List<OrgDisambiguatedExternalIdentifiers> extIds = new ArrayList<OrgDisambiguatedExternalIdentifiers>();
-                externalIdsMap.keySet().stream().sorted().collect(Collectors.toList()).forEach(k -> {extIds.add(externalIdsMap.get(k));});                
+                externalIdsMap.keySet().stream().sorted().collect(Collectors.toList()).forEach(k -> {
+                    extIds.add(externalIdsMap.get(k));
+                });
                 org.setOrgDisambiguatedExternalIdentifiers(extIds);
             }
 

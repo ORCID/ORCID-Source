@@ -120,11 +120,9 @@ public class MembersManagerImpl implements MembersManager {
                 newRecord.setActivitiesVisibilityDefault(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
                 newRecord.setClaimed(true);
                 newRecord.setCreationMethod(CreationMethod.DIRECT.value());
-                newRecord.setDateCreated(now);
                 newRecord.setEnableDeveloperTools(false);       
                 newRecord.setEncryptedPassword(null);
                 newRecord.setGroupType(MemberType.fromValue(member.getType().getValue()).name());
-                newRecord.setLastModified(now);
                 newRecord.setLocale(org.orcid.jaxb.model.common_v2.Locale.EN.name());
                 newRecord.setRecordLocked(false);
                 newRecord.setReviewed(true);
@@ -202,7 +200,6 @@ public class MembersManagerImpl implements MembersManager {
                 
                 // Update member info
                 ProfileEntity memberEntity = profileDao.find(member.getGroupOrcid().getValue());
-                memberEntity.setLastModified(new Date());
                 memberEntity.setIndexingStatus(IndexingStatus.PENDING);                
                 memberEntity.setSalesforeId(salesForceId);
 
@@ -218,7 +215,6 @@ public class MembersManagerImpl implements MembersManager {
                     }
                     Date now = new Date();
                     EmailEntity newPrimaryEmail = new EmailEntity();
-                    newPrimaryEmail.setLastModified(now);                    
                     newPrimaryEmail.setCurrent(true);
                     newPrimaryEmail.setEmail(email);
                     newPrimaryEmail.setId(hash);
@@ -349,8 +345,6 @@ public class MembersManagerImpl implements MembersManager {
                 ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
                 clientScopeEntity.setClientDetailsEntity(client);
                 clientScopeEntity.setScopeType(newScope);
-                clientScopeEntity.setDateCreated(now);
-                clientScopeEntity.setLastModified(now);
                 clientScopeDao.persist(clientScopeEntity);
             }
 

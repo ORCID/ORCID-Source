@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 
 import javax.annotation.Resource;
@@ -56,14 +57,6 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
         orcidOauth2AuthoriziationCodeDetailDao.persist(detail);
         OrcidOauth2AuthoriziationCodeDetail anotherDetail = orcidOauth2AuthoriziationCodeDetailDao.find(detail.getId());
         assertNotNull(anotherDetail);
-        checkValues(anotherDetail);
-        anotherDetail = orcidOauth2AuthoriziationCodeDetailDao.removeAndReturn(anotherDetail.getId());
-        assertNotNull(anotherDetail);
-        anotherDetail = orcidOauth2AuthoriziationCodeDetailDao.find(anotherDetail.getId());
-        assertNull(anotherDetail);
-    }
-
-    private void checkValues(OrcidOauth2AuthoriziationCodeDetail anotherDetail) {
         assertEquals("a-code", anotherDetail.getId());
         assertEquals("a-session-id", anotherDetail.getSessionId());
         assertEquals(true, anotherDetail.getApproved());
@@ -72,7 +65,26 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
         assertEquals(2, anotherDetail.getResourceIds().size());
         assertEquals(2, anotherDetail.getScopes().size());
         assertEquals("4444-4444-4444-4441", anotherDetail.getProfileEntity().getId());
-
+        assertNotNull(anotherDetail.getDateCreated());
+        assertNotNull(anotherDetail.getLastModified());
+        
+        Date dateCreated = anotherDetail.getDateCreated();
+        Date lastModified = anotherDetail.getLastModified();
+        
+        // Update it to verify the last modified changes
+        anotherDetail.setApproved(Boolean.FALSE);
+        orcidOauth2AuthoriziationCodeDetailDao.merge(anotherDetail);
+        
+        OrcidOauth2AuthoriziationCodeDetail anotherDetail2 = orcidOauth2AuthoriziationCodeDetailDao.find(detail.getId());
+        assertNotNull(anotherDetail2.getDateCreated());
+        assertNotNull(anotherDetail2.getLastModified());
+        assertEquals(dateCreated, anotherDetail2.getDateCreated());
+        assertTrue(anotherDetail2.getLastModified().after(lastModified));
+        
+        anotherDetail = orcidOauth2AuthoriziationCodeDetailDao.removeAndReturn(anotherDetail.getId());
+        assertNotNull(anotherDetail);
+        anotherDetail = orcidOauth2AuthoriziationCodeDetailDao.find(anotherDetail.getId());
+        assertNull(anotherDetail);
     }
 
     public OrcidOauth2AuthoriziationCodeDetail getOrcidOauth2AuthoriziationCodeDetail() {

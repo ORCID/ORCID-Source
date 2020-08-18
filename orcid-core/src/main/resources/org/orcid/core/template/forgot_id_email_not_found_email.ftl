@@ -6,7 +6,7 @@
 ${baseUri}/reset-password
 
 <@emailMacros.msg "email.forgotten_id.contact_us" /> <@emailMacros.msg "email.common.if_you_have_any.contact_us"/><@emailMacros.msg "email.service_announcement.dot_bottom"/>
-${baseUri}/help/contact-us
+https://support.orcid.org/hc/en-us/requests/new
 
 <@emailMacros.msg "email.forgotten_id.certain_not_regiser" /> <@emailMacros.msg "email.forgotten_id.certain_not_regiser_url" /><@emailMacros.msg "email.service_announcement.dot_bottom"/>
 ${baseUri}/register

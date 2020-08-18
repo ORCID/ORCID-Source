@@ -34,12 +34,14 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
         List<GivenPermissionToEntity> list = givenPermissionToDaoReadOnly.findByGiver(giverOrcid);
         for (GivenPermissionToEntity element : list) {
             DelegateForm form = new DelegateForm();
+            
             form.setApprovalDate(DateUtils.convertToXMLGregorianCalendar(element.getApprovalDate()));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getGiver()));
+            
 
             String orcid = element.getReceiver();
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(orcid));
-            form.setReceiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(orcid)));
+            form.setReceiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid)));
             delegates.add(form);
         }
 
@@ -57,7 +59,7 @@ public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImp
             form.setReceiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(element.getReceiver()));
 
             String giverOrcid = element.getGiver();
-            form.setGiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayableDisplayName(giverOrcid)));
+            form.setGiverName(Text.valueOf(recordNameManagerReadOnlyV3.fetchDisplayablePublicName(giverOrcid)));
             form.setGiverOrcid(orcidIdentifierUtils.buildOrcidIdentifier(giverOrcid));
             delegates.add(form);
         }

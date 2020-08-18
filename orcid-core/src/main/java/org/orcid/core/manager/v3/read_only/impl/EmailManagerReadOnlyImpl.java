@@ -186,6 +186,16 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
         }
         return jpaJaxbEmailAdapter.toEmail(emailDao.findPrimaryEmail(orcid));
     }
+    
+    @Override
+    public boolean isUsersOnlyEmail(String orcid, String email) {
+        List<EmailEntity> emails = emailDao.findByOrcid(orcid, getLastModified(orcid));
+        if (emails.size() != 1) {
+            return false;
+        }
+        
+        return email.equals(emails.get(0).getEmail());
+    }
 
     @Override
     public EmailFrequencyOptions getEmailFrequencyOptions() {

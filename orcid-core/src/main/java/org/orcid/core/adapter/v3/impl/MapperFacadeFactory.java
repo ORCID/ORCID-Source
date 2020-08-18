@@ -3,7 +3,6 @@ package org.orcid.core.adapter.v3.impl;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -571,6 +570,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.register();
 
         ClassMapBuilder<WorkSummary, WorkEntity> workSummaryClassMap = mapperFactory.classMap(WorkSummary.class, WorkEntity.class);
+        addV3CommonFields(workSummaryClassMap);
         registerSourceConverters(mapperFactory, workSummaryClassMap);
         workSummaryClassMap.field("putCode", "id");
         workSummaryClassMap.field("title.title.content", "title");
@@ -1072,7 +1072,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(cru.getRedirectUri(), cru.getRedirectUriType());
                         if (existingRedirectUriEntitiesMap.containsKey(rUriKey)) {
                             ClientRedirectUriEntity existingEntity = existingRedirectUriEntitiesMap.get(rUriKey);
-                            existingEntity.setLastModified(new Date());
                             existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
                             existingEntity.setUriActType(cru.getUriActType());
                             existingEntity.setUriGeoArea(cru.getUriGeoArea());
@@ -1081,8 +1080,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         } else {
                             ClientRedirectUriEntity newEntity = new ClientRedirectUriEntity();
                             newEntity.setClientDetailsEntity(b);
-                            newEntity.setDateCreated(new Date());
-                            newEntity.setLastModified(new Date());
                             newEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
                             newEntity.setRedirectUri(cru.getRedirectUri());
                             newEntity.setRedirectUriType(cru.getRedirectUriType());
@@ -1192,8 +1189,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private void addV3DateFields(ClassMapBuilder<?, ?> classMap) {
-        classMap.field("createdDate.value", "dateCreated");
-        classMap.field("lastModifiedDate.value", "lastModified");
+        classMap.fieldBToA("dateCreated", "createdDate.value");
+        classMap.fieldBToA("lastModified", "lastModifiedDate.value");
     }
 
     private void mapFuzzyDateToStartDateEntityAndEndDateEntity(MapperFactory mapperFactory) {

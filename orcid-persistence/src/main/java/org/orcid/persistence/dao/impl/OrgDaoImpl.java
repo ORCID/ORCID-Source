@@ -10,6 +10,7 @@ import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -93,7 +94,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         TypedQuery<OrgEntity> query = entityManager.createQuery(
                 "from OrgEntity where COALESCE(name, '') = :name and COALESCE(city, '') = :city and COALESCE(region, '') = :region and country = :country and (orgDisambiguated.id = :orgDisambiguatedId or (orgDisambiguated is null and :orgDisambiguatedId is null))",
                 OrgEntity.class);
-        
+
         // ensure null names / cities / regions match empty strings
         query.setParameter("name", name != null ? name : "");
         query.setParameter("city", city != null ? city : "");
@@ -217,6 +218,23 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
         query.setParameter("ids", clientProfileOrcidIds);
         query.setMaxResults(max);
         return query.getResultList();
+    }
+
+    @Override
+    public List<OrgEntity> findByOrgDisambiguatedId(Long orgDisambiguatedId) {
+        TypedQuery<OrgEntity> query = entityManager.createQuery("from OrgEntity where orgDisambiguated.id = :orgDisambiguatedId", OrgEntity.class);
+        query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
+        return query.getResultList();
+    }
+    
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void updateOrgDisambiguatedId(long deletedOrgDisambiguatedId, long replacementOrgDisambiguatedId) {
+        Query query = entityManager
+                .createQuery("update OrgEntity set orgDisambiguated.id = :replacementOrgDisambiguatedId where orgDisambiguated.id = :deletedOrgDisambiguatedId");
+        query.setParameter("deletedOrgDisambiguatedId", deletedOrgDisambiguatedId);
+        query.setParameter("replacementOrgDisambiguatedId", replacementOrgDisambiguatedId);
+        query.executeUpdate();
     }
 
 }

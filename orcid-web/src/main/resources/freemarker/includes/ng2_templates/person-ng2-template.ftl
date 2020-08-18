@@ -87,7 +87,7 @@
         </div>  
         <div class="workspace-section-content">
             <div *ngFor="let website of formData['websites']?.websites" class="wrap">
-                <a href="{{website.url.value}}" target="website.urlName" rel="me nofollow">{{website.urlName != null? website.urlName : website.url.value}}</a>
+                <a rel="noopener noreferrer"  href="{{website.url.value}}" target="website.urlName" rel="me nofollow noopener noreferrer">{{website.urlName != null? website.urlName : website.url.value}}</a>
             </div>
         </div>
     </div>
@@ -111,7 +111,7 @@
         <div class="workspace-section-content">
             <div *ngFor="let externalIdentifier of formData['externalIdentifiers']?.externalIdentifiers">
                 <span *ngIf="!(externalIdentifier.url)">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</span>
-                <span *ngIf="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="externalIdentifier.commonName">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>
+                <span *ngIf="externalIdentifier.url"><a href="{{externalIdentifier.url}}" rel="noopener noreferrer" target="externalIdentifier.commonName">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>
             </div>
         </div>
     </div> 
