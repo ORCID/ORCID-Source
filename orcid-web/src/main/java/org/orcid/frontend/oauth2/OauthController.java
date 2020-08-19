@@ -72,16 +72,32 @@ public class OauthController {
     public @ResponseBody RequestInfoForm loginGetHandler(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
         // Populate the request info form
-        RequestInfoForm requestInfoForm = generateRequestInfoForm(request, request.getQueryString());
 
+        RequestInfoForm requestInfoForm = null;
+        if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null &&
+            request.getSession().getAttribute("authorizationRequest") != null) {
+            requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
+            return requestInfoForm;
+        } else {
+            requestInfoForm = generateRequestInfoForm(request, request.getQueryString());
+            request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        }
+
+        if (requestInfoForm.getError() != null) {
+            return requestInfoForm;
+        }
+        
         // validate client scopes
         try {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
             authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails, requestInfoForm.getResponseType());
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-        } catch (InvalidScopeException | LockedException e) {
+        } catch (InvalidScopeException | LockedException | InvalidClientException e) {
             if (e instanceof InvalidScopeException) {
                 requestInfoForm.setError("invalid_scope");
+                requestInfoForm.setErrorDescription(e.getMessage());
+            } else if (e instanceof InvalidClientException) {
+                requestInfoForm.setError("invalid_client");
                 requestInfoForm.setErrorDescription(e.getMessage());
             } else {
                 requestInfoForm.setError("client_locked");
@@ -116,6 +132,7 @@ public class OauthController {
         } catch (InvalidRequestException | InvalidClientException e) {
             requestInfoForm.setError("oauth_error");
             requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
         }
 
         // handle openID behaviour
@@ -129,6 +146,8 @@ public class OauthController {
                 } else {
                     requestInfoForm.setError("login_required");
                 }
+               
+                return requestInfoForm;
             }
         }
 

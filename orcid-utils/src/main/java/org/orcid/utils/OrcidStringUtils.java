@@ -23,6 +23,7 @@ public class OrcidStringUtils {
     public static String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";
     public static String ORCID_URI_STRING = "http://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
     public static String ORCID_URI_2_1_STRING = "https://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
+    public static String EMAIL_REGEXP = "^([^@\\s]|(\".+\"))+@([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]+\\.)*([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]{2,})+$";
 
     private static String LT = "&lt;";
     private static String GT = "&gt;";
@@ -40,6 +41,7 @@ public class OrcidStringUtils {
     private static final Pattern orcidUriPattern = Pattern.compile(ORCID_URI_STRING);
     private static final Pattern orcidUri2_1Pattern = Pattern.compile(ORCID_URI_2_1_STRING);
     private static final Pattern clientIdPattern = Pattern.compile("APP-[\\dA-Z]{16}");
+    private static final Pattern emailPattern = Pattern.compile(EMAIL_REGEXP);
 
     private static final Pattern invalidXMLCharactersPattern = Pattern.compile("(\u0000|\uFFFE|\uFFFF)");
 
@@ -153,5 +155,13 @@ public class OrcidStringUtils {
         }
 
         return email.trim().replaceAll("((\\h)|(\\s))", "");
+    }
+
+    public static boolean isEmailValid(String email) {
+        if (StringUtils.isBlank(email)) {
+            throw new RuntimeException("Unable to valid email address");
+        }
+
+        return emailPattern.matcher(email).matches();
     }
 }
