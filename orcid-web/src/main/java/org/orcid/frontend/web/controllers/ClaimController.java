@@ -22,6 +22,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -197,7 +198,7 @@ public class ClaimController extends BaseController {
         List<String> errors = new ArrayList<>();
         resendClaimRequest.setErrors(errors);
         
-        if (!validateEmailAddress(email)) {
+        if (!OrcidStringUtils.isEmailValid(email)) {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
             return resendClaimRequest;
         }

@@ -909,7 +909,7 @@ public class AdminController extends BaseController {
                     if (entity.getClaimed()) {
                         claimedIds.add(emailOrOrcid);
                     } else {
-                        boolean emailSupplied = !OrcidStringUtils.isValidOrcid(emailOrOrcid) && emailOrOrcid.contains("@");
+                        boolean emailSupplied = !OrcidStringUtils.isValidOrcid(emailOrOrcid) && OrcidStringUtils.isEmailValid(emailOrOrcid);
                         notificationManager.sendApiRecordCreationEmail(emailSupplied ? emailOrOrcid : null, orcidId);
                         successIds.add(emailOrOrcid);
                     }
