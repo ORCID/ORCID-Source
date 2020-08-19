@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.orcid</groupId>
         <artifactId>orcid-parent</artifactId>
-        <version>angel-final-0.6</version>
+        <version>release-1.288.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
