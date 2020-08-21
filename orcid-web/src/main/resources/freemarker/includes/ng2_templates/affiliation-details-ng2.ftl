@@ -133,7 +133,7 @@
                             <div class="col-md-6" *ngIf="affiliationService.details[affiliation.putCode.value]?.url?.value">
                                 <div class="bottomBuffer">
                                     <strong><@orcid.msg 'common.url'/></strong><br> 
-                                    <a href="{{affiliationService.details[affiliation.putCode.value]?.url?.value}}" target="affiliation.url.value">{{affiliationService.details[affiliation.putCode.value]?.url?.value}}</a>
+                                    <a href="{{affiliationService.details[affiliation.putCode.value]?.url?.value}}" target="affiliation.url.value" rel="noopener noreferrer">{{affiliationService.details[affiliation.putCode.value]?.url?.value}}</a>
                                 </div>
                             </div>          
                         </div><!--row--> 
