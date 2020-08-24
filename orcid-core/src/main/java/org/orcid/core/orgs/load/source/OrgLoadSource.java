@@ -8,7 +8,4 @@ public interface OrgLoadSource {
     
     boolean isEnabled();
 
-    void setEnabled(boolean enabled);
-
-
 }

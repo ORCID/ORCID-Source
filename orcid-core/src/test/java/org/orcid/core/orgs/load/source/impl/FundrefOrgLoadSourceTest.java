@@ -51,8 +51,7 @@ public class FundrefOrgLoadSourceTest {
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
-        fundrefOrgLoadSource.setEnabled(true);
-        
+        ReflectionTestUtils.setField(fundrefOrgLoadSource, "enabled", true);
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "geoNamesApiClient", getMockedGeoNamesClientWithSuccessfulResponse());
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "geonamesApiUrl", "https://test/url");
     }
@@ -64,7 +63,7 @@ public class FundrefOrgLoadSourceTest {
     
     @Test(expected = LoadSourceDisabledException.class)
     public void testSetDisabled() {
-        fundrefOrgLoadSource.setEnabled(false);
+        ReflectionTestUtils.setField(fundrefOrgLoadSource, "enabled", false);
         fundrefOrgLoadSource.loadLatestOrgs();
     }
     

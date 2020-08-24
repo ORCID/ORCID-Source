@@ -433,9 +433,4 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         return enabled;
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
 }

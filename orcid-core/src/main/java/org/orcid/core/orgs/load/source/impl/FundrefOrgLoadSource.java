@@ -482,11 +482,6 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         return enabled;
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    
     private class RDFOrganization {
         String doi, name, country, stateCode, city, type, subtype, status, isReplacedBy;
     }

@@ -79,14 +79,14 @@ public class RinggoldOrgLoadSourceTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        ringgoldLoadSource.setEnabled(true);
+        ReflectionTestUtils.setField(ringgoldLoadSource, "enabled", true);
         ReflectionTestUtils.setField(ringgoldLoadSource, "transactionTemplate", mockTransactionTemplate);
         setupInitialMocks();
     }
     
     @Test(expected = LoadSourceDisabledException.class)
     public void testSetDisabled() {
-        ringgoldLoadSource.setEnabled(false);
+        ReflectionTestUtils.setField(ringgoldLoadSource, "enabled", false);
         ringgoldLoadSource.loadLatestOrgs();
     }
     
