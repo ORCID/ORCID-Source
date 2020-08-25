@@ -107,10 +107,10 @@
             <ul class="menu" *ngIf="menuVisible == true"  resize>
                 <!-- FOR RESEARCHERS -->
                 <li class="first expanded active-trail">
-                    <a href="{{aboutUri}}/about/what-is-orcid/mission" (click)="handleMobileMenuOption($event)" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
+                    <a href="{{getBaseUri()}}/help" (click)="handleMobileMenuOption($event)" title=""><@orcid.msg 'public-layout.for_researchers'/></a>
                     <ul class="menu lang-fixes" *ngIf="!userInfo['REAL_USER_ORCID']">
                         <!-- Mobile view Only -->
-                        <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="{{getBaseUri()}}" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
+                        <li class="leaf hidden-md hidden-lg hidden-sm visible-xs"><a href="{{getBaseUri()}}/help" title=""><@orcid.msg 'public-layout.for_researchers'/></a></li>
                 
                         <!-- Menu -->
                         <li class="leaf last"><a ${(nav=="signin")?then('class="active" ', '')} href="{{getBaseUri()}}/signin"><@orcid.msg 'public-layout.sign_in'/></a></li>                                   
