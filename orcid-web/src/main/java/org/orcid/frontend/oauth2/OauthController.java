@@ -109,8 +109,7 @@ public class OauthController {
         // Populate session data
         populateSession(request, requestInfoForm);
         // Authorize the request if needed
-        setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal);
-        return requestInfoForm;
+        return setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
     }
 
     @RequestMapping(value = { "/oauth/custom/authorize.json" }, method = RequestMethod.GET)
@@ -118,8 +117,7 @@ public class OauthController {
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
         RequestInfoForm requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
-        setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal);
-        return requestInfoForm;
+        return setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
     }
 
     private RequestInfoForm generateRequestInfoForm(HttpServletRequest request, String queryString) throws UnsupportedEncodingException {
@@ -287,16 +285,24 @@ public class OauthController {
         // Get client name
     }
     
-    private void setAuthorizationRequest(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
-            SessionStatus sessionStatus, Principal principal) {
+    private RequestInfoForm setAuthorizationRequest(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
+            SessionStatus sessionStatus, Principal principal, RequestInfoForm requestInfoForm) {
         SecurityContext sci = getSecurityContext(request);
         // TODO: Check if the authorizationRequest is already in the session
         if (baseControllerUtil.getCurrentUser(sci) != null) {
             // Authorize the request
             ModelAndView mav = authorizationEndpoint.authorize(model, requestParameters, sessionStatus, principal);
+            RedirectView rev = (RedirectView) mav.getView();
+            String url = rev.getUrl();
+            String errorDescription = "error_description=";
+            if (url.contains("error")) {
+                requestInfoForm.setError("invalid_scope");
+                requestInfoForm.setErrorDescription(url.substring(url.indexOf("error_description=") + errorDescription.length()));
+            }
             AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
-            request.getSession().setAttribute("authorizationRequest", authRequest);
+            request.getSession().setAttribute("authorizationRequest", authRequest);            
         }
+        return requestInfoForm;
     }
 
     private SecurityContext getSecurityContext(HttpServletRequest request) {
