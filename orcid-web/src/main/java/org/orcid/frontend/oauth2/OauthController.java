@@ -77,11 +77,13 @@ public class OauthController {
         if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null &&
             request.getSession().getAttribute("authorizationRequest") != null) {
             requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
-            return requestInfoForm;
-        } else {
-            requestInfoForm = generateRequestInfoForm(request, request.getQueryString());
-            request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+            if (isRequestInfoFormDifferent(requestInfoForm, request)) {
+                return requestInfoForm;
+            }
         }
+        requestInfoForm = generateRequestInfoForm(request, request.getQueryString());
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        request.getSession().setAttribute("authorizationRequest", null);
 
         if (requestInfoForm.getError() != null) {
             return requestInfoForm;
@@ -144,7 +146,7 @@ public class OauthController {
                 } else {
                     requestInfoForm.setError("login_required");
                 }
-               
+
                 return requestInfoForm;
             }
         }
@@ -267,7 +269,7 @@ public class OauthController {
                 //note this will also handle generting implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));
                 authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
             }
-        } 
+        }
 
         return requestInfoForm;
     }
@@ -339,5 +341,9 @@ public class OauthController {
                     params.put(key, values[0]);
             }
         }
+    }
+    private boolean isRequestInfoFormDifferent(RequestInfoForm requestInfoForm, HttpServletRequest request) throws UnsupportedEncodingException {
+        RequestInfoForm newRequestInfoForm = generateRequestInfoForm(request, request.getQueryString());
+        return requestInfoForm.equals(newRequestInfoForm);
     }
 }
