@@ -292,7 +292,7 @@ public class BaseController {
 
     protected void validateEmailAddress(String email, boolean ignoreCurrentUser, boolean isRegisterRequest, HttpServletRequest request, BindingResult bindingResult) {
         if (StringUtils.isNotBlank(email)) {
-            if (!validateEmailAddress(email)) {
+            if (!OrcidStringUtils.isEmailValid(email)) {
                 String[] codes = { "Email.personalInfoForm.email" };
                 String[] args = { email };
                 bindingResult.addError(new FieldError("email", "email", email, false, codes, args, "Not vaild"));

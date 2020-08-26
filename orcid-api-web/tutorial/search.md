@@ -65,13 +65,13 @@ Query is the terms you are searching for.
 |--------------------|--------------------------|
 | URL 				| https<i></i>://api.sandbox.orcid.org/[version]/search/?=[query]|
 | method    | GET |
-| header    | Content-Type: application/vnd.orcid+xml OR  Content-Type: application/vnd.orcid+json|
+| header    | Accept: application/vnd.orcid+xml OR  Accept: application/vnd.orcid+json|
 | header    | Authorization: Bearer [Your access token]|
 
 **Curl example:**
 
 ```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://api.sandbox.orcid.org/v3.0/search/?q=orcid' -i
+curl -H 'Accept: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://api.sandbox.orcid.org/v3.0/search/?q=orcid' -i
 ```
 
 ### Public API
@@ -80,13 +80,13 @@ curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c
 |--------------------|--------------------------|
 | URL 				| https<i></i>://pub.sandbox.orcid.org/[version]/search/?=[query]|
 | method    | GET |
-| header    | Content-Type: application/orcid+xml OR  Content-Type: application/orcid+json|
+| header    | Accept: application/orcid+xml OR  Accept: application/orcid+json|
 | header    | Authorization: Bearer [Your access token]|
 
 **Curl example:**
 
 ```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v3.0/search/?q=orcid' -i
+curl -H 'Accept: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v3.0/search/?q=orcid' -i
 ```
 
 Example response
@@ -234,14 +234,14 @@ In addition to the basic search, the expanded search end point `expanded-search`
 |--------------------|--------------------------|
 | URL 				| https<i></i>://pub.sandbox.orcid.org/v3.0/expanded-search/?=[query]|
 | method    | GET |
-| header    | Content-Type: application/orcid+xml OR  Content-Type: application/orcid+json|
+| header    | Accept: application/orcid+xml OR  Accept: application/orcid+json|
 | header    | Authorization: Bearer [Your access token]|
 
 
 **Curl example:**
 
 ```
-curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v3.0/expanded-search/?q=blackburn' -i
+curl -H 'Accept: application/orcid+xml' -H 'Authorization: Bearer 89f0181c-168b-4d7d-831c-1fdda2d7bbbb' 'https://pub.sandbox.orcid.org/v3.0/expanded-search/?q=blackburn' -i
 ```
 
 Example response
