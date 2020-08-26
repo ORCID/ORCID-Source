@@ -1629,4 +1629,10 @@
         <property name="username" value="${org.orcid.core.orgs.ringgold.fptUsername:username}" />
         <property name="password" value="${org.orcid.core.orgs.ringgold.fptPassword:password}" />
 	</bean>
+	
+	<bean id="fundrefHttpFileDownloader" class="org.orcid.core.orgs.load.io.HttpFileDownloader">
+        <property name="url" value="${org.orcid.core.orgs.fundref.latestReleaseUrl:url}" />
+        <property name="localFilePath" value="${org.orcid.core.orgs.ringgold.fptLocalFilePath:/tmp/ringgold/fundref.rdf}" />
+    </bean>
+    
 </beans>

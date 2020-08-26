@@ -48,37 +48,37 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 @Component
 public class RinggoldOrgLoadSource implements OrgLoadSource {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RinggoldOrgLoadSource.class);
-    
+
     @Resource(name = "ringgoldFtpsFileDownloader")
     private FtpsFileDownloader ftpsFileDownloader;
-    
+
     @Resource
     private OrgDao orgDao;
-    
+
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
+
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
-    
+
     @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
-    
+
     @Resource
     private FileRotator fileRotator;
-    
+
     @Resource
     private TransactionTemplate transactionTemplate;
-    
+
     @Value("${org.orcid.core.orgs.ringgold.enabled:true}")
     private boolean enabled;
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    
+
     private static final String RINGGOLD_CHARACTER_ENCODING = "UTF-8";
-    
+
     private static final List<String> ALLOWED_EXTERNAL_IDENTIFIERS = Arrays.asList("ISNI", "IPED", "NCES", "OFR");
 
     @Override
@@ -89,33 +89,28 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     @Override
     public boolean loadLatestOrgs() {
         if (!enabled) {
-            throw new LoadSourceDisabledException("RINGGOLD");
+            throw new LoadSourceDisabledException(getSourceName());
         }
-        
-        try {
-            downloadData();
-        } catch (IOException e) {
-            LOGGER.error("Error downloading Ringgold data", e);
+
+        if (downloadData()) {
+            importData();
+            return true;
+        } else {
             return false;
         }
-        importData();
-        return true;
     }
 
-    private void downloadData() throws IOException {
+    private boolean downloadData() {
         fileRotator.removeFileIfExists(ftpsFileDownloader.getLocalFilePath());
-
-        if (!ftpsFileDownloader.downloadFile()) {
-            throw new IOException("Failed to download file from ftp server");
-        }
+        return ftpsFileDownloader.downloadFile();
     }
-    
+
     private void importData() {
         Map<Integer, List<JsonNode>> altNamesMap = new HashMap<>();
         Map<Integer, List<JsonNode>> identifiersMap = new HashMap<>();
         Map<Integer, JsonNode> dnNameMap = new HashMap<>();
         Map<Integer, Integer> deletedElementsMap = new HashMap<>();
-        
+
         try (ZipFile zip = new ZipFile(ftpsFileDownloader.getLocalFilePath())) {
             processAltNamesFile(zip, altNamesMap, dnNameMap);
             processIdentifiersFile(zip, identifiersMap);
@@ -128,20 +123,21 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             LOGGER.info("Ringgold import completed");
         }
     }
-    
+
     private JsonNode getJsonNode(ZipFile zip, ZipEntry entry) throws IOException, UnsupportedEncodingException {
         LOGGER.info("Generating json node for: " + entry.getName());
         InputStream is = zip.getInputStream(entry);
         Reader reader = new InputStreamReader(is, RINGGOLD_CHARACTER_ENCODING);
         return JsonUtils.read(reader);
     }
-    
-    private void processAltNamesFile(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap) throws UnsupportedEncodingException, IOException {
+
+    private void processAltNamesFile(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap)
+            throws UnsupportedEncodingException, IOException {
         LOGGER.info("Processing alt names");
         JsonNode altNames = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_alt_names.json"));
         processAltNames(altNames, altNamesMap, dnNameMap);
     }
-    
+
     private void processAltNames(JsonNode altNames, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap) {
         altNames.forEach(altName -> {
             Integer ringgoldId = altName.get("ringgold_id").asInt();
@@ -180,13 +176,13 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         JsonNode identifiers = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_identifiers.json"));
         processIdentifiers(identifiers, identifiersMap);
     }
-    
+
     private void processIdentifiers(JsonNode identifiers, Map<Integer, List<JsonNode>> identifiersMap) {
         LOGGER.info("Processing identifiers");
         identifiers.forEach(identifier -> {
             Integer ringgoldId = identifier.get("ringgold_id").asInt();
             String identifierType = identifier.get("identifier_type").asText();
-            if(ALLOWED_EXTERNAL_IDENTIFIERS.contains(identifierType)) {
+            if (ALLOWED_EXTERNAL_IDENTIFIERS.contains(identifierType)) {
                 identifiersMap.computeIfAbsent(ringgoldId, element -> new ArrayList<>()).add(identifier);
             } else {
                 LOGGER.info("Ignoring identifier {} of type {}", ringgoldId, identifierType);
@@ -198,7 +194,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         JsonNode deletedIds = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_deleted_ids.json"));
         processDeletedElements(deletedIds, deletedElementsMap);
     }
-    
+
     private void processDeletedElements(JsonNode deletedIds, Map<Integer, Integer> deletedElementsMap) {
         LOGGER.info("Processing deleted elements");
         deletedIds.forEach(element -> {
@@ -208,14 +204,16 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         });
     }
 
-    private void processInstitutions(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, List<JsonNode>> identifiersMap, Map<Integer, JsonNode> dnNameMap) throws UnsupportedEncodingException, IOException {
+    private void processInstitutions(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, List<JsonNode>> identifiersMap,
+            Map<Integer, JsonNode> dnNameMap) throws UnsupportedEncodingException, IOException {
         JsonNode institutions = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_institutions.json"));
         processInstitutions(institutions, altNamesMap, identifiersMap, dnNameMap);
     }
-    
-    private void processInstitutions(JsonNode institutions, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, List<JsonNode>> identifiersMap, Map<Integer, JsonNode> dnNameMap) {
+
+    private void processInstitutions(JsonNode institutions, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, List<JsonNode>> identifiersMap,
+            Map<Integer, JsonNode> dnNameMap) {
         LOGGER.info("Processing institutions");
-        institutions.forEach(institution -> {            
+        institutions.forEach(institution -> {
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -223,13 +221,13 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                     Integer ringgoldId = institution.get("ringgold_id").asInt();
                     // Create external identifiers
                     generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
-                    
+
                     // Create orgs based on the alt names information
                     if (altNamesMap.containsKey(ringgoldId)) {
                         generateOrganizations(entity, altNamesMap.get(ringgoldId));
                     }
-                }                
-            });                        
+                }
+            });
         });
     }
 
@@ -253,7 +251,6 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                         existingEntity.setSourceParentId(String.valueOf(newId));
                     }
                     orgDisambiguatedDao.merge(existingEntity);
-                    
 
                     if (replacementEntity != null) {
                         orgManager.updateDisambiguatedOrgReferences(existingEntity.getId(), replacementEntity.getId());
@@ -298,8 +295,8 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             entity.setOrgType(type);
             entity.setRegion(state);
             entity.setSourceId(String.valueOf(ringgoldId));
-            if(parentId != null && parentId > 0) {
-                entity.setSourceParentId(String.valueOf(parentId));                
+            if (parentId != null && parentId > 0) {
+                entity.setSourceParentId(String.valueOf(parentId));
             }
             entity.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
             entity.setIndexingStatus(IndexingStatus.PENDING);
@@ -314,7 +311,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 entity.setRegion(state);
                 entity.setIndexingStatus(IndexingStatus.REINDEX);
                 orgDisambiguatedDao.merge(entity);
-            } 
+            }
         }
 
         // If the original name was replaces by the DN name, lets create an org
@@ -329,22 +326,23 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     private void generateExternalIdentifiers(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> identifiers) {
         Set<OrgDisambiguatedExternalIdentifierEntity> existingExternalIdentifiers = disambiguatedEntity.getExternalIdentifiers();
         Map<Pair<String, String>, OrgDisambiguatedExternalIdentifierEntity> existingExternalIdentifiersMap = new HashMap<>();
-        
-        if(existingExternalIdentifiers != null) {
-            for(OrgDisambiguatedExternalIdentifierEntity entity : existingExternalIdentifiers) {
+
+        if (existingExternalIdentifiers != null) {
+            for (OrgDisambiguatedExternalIdentifierEntity entity : existingExternalIdentifiers) {
                 Pair<String, String> id = Pair.of(entity.getIdentifierType(), entity.getIdentifier());
                 existingExternalIdentifiersMap.put(id, entity);
             }
         }
-        
-        if(identifiers != null && !identifiers.isEmpty()) {
+
+        if (identifiers != null && !identifiers.isEmpty()) {
             identifiers.forEach(identifierNode -> {
                 String type = identifierNode.get("identifier_type").asText();
                 LOGGER.info("Processing external identifier {} for {}", type, disambiguatedEntity.getId());
                 String value = identifierNode.get("value").asText();
                 Pair<String, String> id = Pair.of(type, value);
                 OrgDisambiguatedExternalIdentifierEntity existingEntity = existingExternalIdentifiersMap.get(id);
-                //If the external identifier doesn't exists or it doesn't belong to the disambiguatedEntity, lets create it 
+                // If the external identifier doesn't exists or it doesn't
+                // belong to the disambiguatedEntity, lets create it
                 if (existingEntity == null || !existingEntity.getOrgDisambiguated().getId().equals(disambiguatedEntity.getId())) {
                     OrgDisambiguatedExternalIdentifierEntity newEntity = new OrgDisambiguatedExternalIdentifierEntity();
                     newEntity.setIdentifier(value);
@@ -356,10 +354,11 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                     existingExternalIdentifiersMap.remove(id);
                 }
             });
-        }        
-        
-        // Then, remove all existing external identifiers that are not present in the ringgold data anymore
-        for(OrgDisambiguatedExternalIdentifierEntity extIdToBeRemoved : existingExternalIdentifiersMap.values()) {
+        }
+
+        // Then, remove all existing external identifiers that are not present
+        // in the ringgold data anymore
+        for (OrgDisambiguatedExternalIdentifierEntity extIdToBeRemoved : existingExternalIdentifiersMap.values()) {
             orgDisambiguatedExternalIdentifierDao.remove(extIdToBeRemoved.getId());
         }
     }
@@ -406,18 +405,17 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     }
 
     private boolean changed(OrgDisambiguatedEntity entity, Integer parentId, String name, Iso3166Country country, String city, String state, String type) {
-        if (!name.equals(entity.getName()) || !country.name().equals(entity.getCountry())
-                || !city.equals(entity.getCity()) || !type.equals(entity.getOrgType())) {
+        if (!name.equals(entity.getName()) || !country.name().equals(entity.getCountry()) || !city.equals(entity.getCity()) || !type.equals(entity.getOrgType())) {
             return true;
         }
-        if(parentId == null) {
-            if(entity.getSourceParentId() != null) {
+        if (parentId == null) {
+            if (entity.getSourceParentId() != null) {
                 return true;
             }
-        } else if(entity.getSourceParentId() == null || !parentId.equals(Integer.valueOf(entity.getSourceParentId()))) {
+        } else if (entity.getSourceParentId() == null || !parentId.equals(Integer.valueOf(entity.getSourceParentId()))) {
             return true;
         }
-        
+
         String existingRegion = entity.getRegion();
         if (state == null) {
             if (existingRegion != null) {
@@ -434,7 +432,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     public boolean isEnabled() {
         return enabled;
     }
-    
+
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
