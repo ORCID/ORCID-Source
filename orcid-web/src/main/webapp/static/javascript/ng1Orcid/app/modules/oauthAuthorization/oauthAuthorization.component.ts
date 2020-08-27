@@ -555,7 +555,7 @@ ok: "${error.ok}"
     }
 
     sendReactivationEmail(email, $event?): void {        
-        if (event) {
+        if ($event) {
             $event.preventDefault()
         }
         this.oauthService.sendReactivationEmail(email)
