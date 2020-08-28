@@ -78,6 +78,13 @@ public class OauthController {
             request.getSession().getAttribute("authorizationRequest") != null) {
             requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
             if (isRequestInfoFormDifferent(requestInfoForm, request)) {
+                Map<String, String> approvalParams = new HashMap<String, String>();
+                approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+                SimpleSessionStatus status = new SimpleSessionStatus();
+                Map<String, Object> modelAuth = new HashMap<String, Object>();
+                modelAuth.put("authorizationRequest", request.getSession().getAttribute("authorizationRequest"));
+                RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, modelAuth, status, principal);
+                requestInfoForm.setRedirectUrl(view.getUrl());
                 return requestInfoForm;
             }
         }
@@ -230,44 +237,46 @@ public class OauthController {
             usePersistentTokens = true;
         }
 
-        if (!forceConfirm && usePersistentTokens) {
+        if (!forceConfirm && usePersistentTokens && baseControllerUtil.getCurrentUser(sci) != null) {
             boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), baseControllerUtil.getCurrentUser(sci).getOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
             if (tokenLongLifeAlreadyExists) {
                 AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                Map<String, String> requestParams = new HashMap<String, String>();
-                copyRequestParameters(request, requestParams);
-                Map<String, String> approvalParams = new HashMap<String, String>();
-
-                requestParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-                approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-
-                requestParams.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);
-
-                boolean hasPersistent = hasPersistenTokensEnabled(requestInfoForm.getClientId(), requestInfoForm);
-                // Don't let non persistent clients persist
-                if (!hasPersistent && "true".equals(requestParams.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN))){
-                    requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
-                }
-                //default to client default if not set
-                if (requestParams.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN) == null) {
-                    if (hasPersistent)
-                        requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
-                    else
+                if (authorizationRequest != null) {
+                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    Map<String, String> requestParams = new HashMap<String, String>();
+                    copyRequestParameters(request, requestParams);
+                    Map<String, String> approvalParams = new HashMap<String, String>();
+    
+                    requestParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+    
+                    requestParams.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);
+    
+                    boolean hasPersistent = hasPersistenTokensEnabled(requestInfoForm.getClientId(), requestInfoForm);
+                    // Don't let non persistent clients persist
+                    if (!hasPersistent && "true".equals(requestParams.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN))){
                         requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
+                    }
+                    //default to client default if not set
+                    if (requestParams.get(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN) == null) {
+                        if (hasPersistent)
+                            requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
+                        else
+                            requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
+                    }
+    
+                    // Session status
+                    SimpleSessionStatus status = new SimpleSessionStatus();
+    
+                    authorizationRequest.setRequestParameters(requestParams);
+                    // Authorization request model
+                    Map<String, Object> model = new HashMap<String, Object>();
+                    model.put("authorizationRequest", authorizationRequest);
+    
+                    // Approve using the spring authorization endpoint code.
+                    //note this will also handle generting implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));
+                    authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
                 }
-
-                // Session status
-                SimpleSessionStatus status = new SimpleSessionStatus();
-
-                authorizationRequest.setRequestParameters(requestParams);
-                // Authorization request model
-                Map<String, Object> model = new HashMap<String, Object>();
-                model.put("authorizationRequest", authorizationRequest);
-
-                // Approve using the spring authorization endpoint code.
-                //note this will also handle generting implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));
-                authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
             }
         }
 
@@ -295,12 +304,14 @@ public class OauthController {
             // Authorize the request
             ModelAndView mav = authorizationEndpoint.authorize(model, requestParameters, sessionStatus, principal);
             RedirectView rev = (RedirectView) mav.getView();
-            String url = rev.getUrl();
-            String errorDescription = "error_description=";
-            if (url.contains("error")) {
-                requestInfoForm.setError("invalid_scope");
-                requestInfoForm.setErrorDescription(url.substring(url.indexOf("error_description=") + errorDescription.length()));
-            }
+            if (rev != null) {
+                String url = rev.getUrl();
+                String errorDescription = "error_description=";
+                if (url.contains("error")) {
+                    requestInfoForm.setError("invalid_scope");
+                    requestInfoForm.setErrorDescription(url.substring(url.indexOf("error_description=") + errorDescription.length()));
+                }   
+            }            
             AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
             request.getSession().setAttribute("authorizationRequest", authRequest);            
         }
