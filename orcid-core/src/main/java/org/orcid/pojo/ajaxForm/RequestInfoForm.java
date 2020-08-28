@@ -1,10 +1,7 @@
 package org.orcid.pojo.ajaxForm;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -240,4 +237,45 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
         scopes = scopes.stream().filter(s -> !ScopePathType.EMAIL_READ_PRIVATE.name().equals(s.getName())).collect(Collectors.toSet());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RequestInfoForm that = (RequestInfoForm) o;
+        return isForceLogin() == that.isForceLogin() &&
+                getClientHavePersistentTokens() == that.getClientHavePersistentTokens() &&
+                validateScopes(getScopes(), that.getScopes()) &&               
+                Objects.equals(getClientDescription(), that.getClientDescription()) &&
+                Objects.equals(getClientId(), that.getClientId()) &&
+                Objects.equals(getClientName(), that.getClientName()) &&
+                Objects.equals(getClientEmailRequestReason(), that.getClientEmailRequestReason()) &&
+                Objects.equals(getMemberName(), that.getMemberName()) &&
+                getRedirectUrl().startsWith(that.getRedirectUrl()) &&
+                Objects.equals(getResponseType(), that.getResponseType()) &&
+                Objects.equals(getStateParam(), that.getStateParam()) &&
+                Objects.equals(getUserId(), that.getUserId()) &&
+                Objects.equals(getUserName(), that.getUserName()) &&
+                Objects.equals(getUserOrcid(), that.getUserOrcid()) &&
+                Objects.equals(getUserEmail(), that.getUserEmail()) &&
+                Objects.equals(getUserGivenNames(), that.getUserGivenNames()) &&
+                Objects.equals(getUserFamilyNames(), that.getUserFamilyNames()) &&
+                Objects.equals(getNonce(), that.getNonce()) &&
+                Objects.equals(getMaxAge(), that.getMaxAge());
+    }
+    
+    private boolean validateScopes(Set<ScopeInfoForm> scope, Set<ScopeInfoForm> newScope) {
+        if (scope.size() == newScope.size()) {
+            for ( ScopeInfoForm scopeInfoForm : scope ) {
+                if (!newScope.remove( scopeInfoForm )) {
+                    return false;
+                }
+            }
+        }
+        return newScope.isEmpty();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getScopes(), getClientDescription(), getClientId(), getClientName(), getClientEmailRequestReason(), getMemberName(), getRedirectUrl(), getResponseType(), getStateParam(), getUserId(), getUserName(), getUserOrcid(), getUserEmail(), getUserGivenNames(), getUserFamilyNames(), getNonce(), getMaxAge(), isForceLogin(), getClientHavePersistentTokens());
+    }
 }
