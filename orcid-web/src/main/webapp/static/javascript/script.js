@@ -974,9 +974,19 @@ function populateWorkAjaxForm(bibJson, work) {
         if (lowerKeyTags.hasOwnProperty('isbn'))
             externalIdentifierId(work, 'isbn', lowerKeyTags['isbn']);
 
-        if (lowerKeyTags.hasOwnProperty('issn') || lowerKeyTags.hasOwnProperty('pissn') || lowerKeyTags.hasOwnProperty('eissn') || lowerKeyTags.hasOwnProperty('lissn'))
+        if (lowerKeyTags.hasOwnProperty('issn'))
             externalIdentifierId(work, 'issn', lowerKeyTags['issn']);
         
+        // pissn, eissn and lissn are all issn's
+        if(lowerKeyTags.hasOwnProperty('pissn'))
+            externalIdentifierId(work, 'issn', lowerKeyTags['pissn']);
+
+        if(lowerKeyTags.hasOwnProperty('eissn'))
+            externalIdentifierId(work, 'issn', lowerKeyTags['eissn']);
+        
+        if(lowerKeyTags.hasOwnProperty('lissn'))
+            externalIdentifierId(work, 'issn', lowerKeyTags['lissn']);
+                
         if (lowerKeyTags.hasOwnProperty('url'))
             externalIdentifierId(work, 'uri', lowerKeyTags['url']);
 
