@@ -347,7 +347,7 @@ public class BaseController {
      */
     protected boolean validateEmailAddress(String email) {
         if (StringUtils.isNotBlank(email)) {
-        	return EmailValidator.getInstance().isValid(email);
+        	return OrcidStringUtils.isEmailValid(email);
         }
         return false;
     }
