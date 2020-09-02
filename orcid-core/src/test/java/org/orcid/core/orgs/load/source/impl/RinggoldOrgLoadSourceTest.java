@@ -38,6 +38,7 @@ import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.FtpsFileDownloader;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
+import org.orcid.core.orgs.load.source.ringgold.RinggoldOrgLoadSource;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;

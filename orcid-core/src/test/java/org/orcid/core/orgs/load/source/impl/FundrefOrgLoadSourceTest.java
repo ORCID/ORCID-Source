@@ -24,8 +24,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
-import org.orcid.core.orgs.load.io.HttpFileDownloader;
+import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
+import org.orcid.core.orgs.load.source.fundref.FundrefOrgLoadSource;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -40,7 +41,7 @@ public class FundrefOrgLoadSourceTest {
     private FileRotator mockFileRotator;
 
     @Mock
-    private HttpFileDownloader mockHttpFileDownloader;
+    private OrgDataClient orgDataClient;
     
     @Mock
     private OrgDisambiguatedDao mockOrgDisambiguatedDao;
@@ -48,12 +49,18 @@ public class FundrefOrgLoadSourceTest {
     @InjectMocks
     private FundrefOrgLoadSource fundrefOrgLoadSource;
     
+    private String localFilePath = "/something/random";
+    
+    
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "enabled", true);
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "geoNamesApiClient", getMockedGeoNamesClientWithSuccessfulResponse());
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "geonamesApiUrl", "https://test/url");
+        ReflectionTestUtils.setField(fundrefOrgLoadSource, "localFilePath", localFilePath);
+        ReflectionTestUtils.setField(fundrefOrgLoadSource, "userAgent", "userAgent");
+        ReflectionTestUtils.setField(fundrefOrgLoadSource, "fundrefDataUrl", "url");
     }
 
     @Test
@@ -69,13 +76,9 @@ public class FundrefOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsDownloadFailed() {
-        when(mockHttpFileDownloader.getLocalFilePath()).thenReturn("/something/random");
-        when(mockHttpFileDownloader.downloadFile()).thenReturn(false);
-        
+        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath))).thenReturn(false);
         assertFalse(fundrefOrgLoadSource.loadLatestOrgs());
-        
-        verify(mockHttpFileDownloader).getLocalFilePath();
-        verify(mockHttpFileDownloader).downloadFile();
+        verify(orgDataClient).downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath));
     }
     
     @Test
@@ -83,9 +86,9 @@ public class FundrefOrgLoadSourceTest {
         Path path = Paths.get(getClass().getResource("/fundref/fundref-test.rdf").toURI());
         File data = path.toFile();
         assertTrue(data.exists());
+        ReflectionTestUtils.setField(fundrefOrgLoadSource, "localFilePath", data.getAbsolutePath());
         
-        when(mockHttpFileDownloader.getLocalFilePath()).thenReturn(data.getAbsolutePath());
-        when(mockHttpFileDownloader.downloadFile()).thenReturn(true);
+        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(data.getAbsolutePath()))).thenReturn(true);
         
         fundrefOrgLoadSource.loadLatestOrgs();
         
@@ -107,10 +110,9 @@ public class FundrefOrgLoadSourceTest {
         Path path = Paths.get(getClass().getResource("/fundref/fundref-test.rdf").toURI());
         File data = path.toFile();
         assertTrue(data.exists());
+        ReflectionTestUtils.setField(fundrefOrgLoadSource, "localFilePath", data.getAbsolutePath());
         
-        when(mockHttpFileDownloader.getLocalFilePath()).thenReturn(data.getAbsolutePath());
-        when(mockHttpFileDownloader.downloadFile()).thenReturn(true);
-        
+        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(data.getAbsolutePath()))).thenReturn(true);
         when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.eq("http://dx.doi.org/10.13039/100000001"), Mockito.eq(OrgDisambiguatedSourceType.FUNDREF.name()))).thenReturn(new OrgDisambiguatedEntity());
         when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.eq("http://dx.doi.org/10.13039/100000002"), Mockito.eq(OrgDisambiguatedSourceType.FUNDREF.name()))).thenReturn(new OrgDisambiguatedEntity());
         
