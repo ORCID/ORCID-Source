@@ -29,6 +29,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.grid.GridOrgLoadSource;
@@ -52,6 +53,9 @@ public class GridOrgLoadSourceTest {
 
     @Mock
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    
+    @Mock
+    private FileRotator fileRotator;
 
     @Mock
     private OrgDataClient orgDataClient;
@@ -100,6 +104,8 @@ public class GridOrgLoadSourceTest {
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
 
         gridOrgLoadSource.downloadOrgData();
+        
+        verify(fileRotator, Mockito.times(1)).removeFileIfExists(Mockito.eq(testFile.getAbsolutePath()));
         
         // verify collection with identifier 3 (see setUp method) is chosen
         verify(orgDataClient, Mockito.times(1)).get(Mockito.eq("gridFigshareCollectionUrl"), Mockito.eq("userAgent"), Mockito.any());

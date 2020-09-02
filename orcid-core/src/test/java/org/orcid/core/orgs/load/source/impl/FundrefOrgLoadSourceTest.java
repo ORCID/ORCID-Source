@@ -85,6 +85,7 @@ public class FundrefOrgLoadSourceTest {
     public void testDownloadOrgData() {
         when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath))).thenReturn(true);
         assertTrue(fundrefOrgLoadSource.downloadOrgData());
+        verify(mockFileRotator, Mockito.times(1)).removeFileIfExists(Mockito.eq(localFilePath));
         verify(orgDataClient).downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath));
     }
     
