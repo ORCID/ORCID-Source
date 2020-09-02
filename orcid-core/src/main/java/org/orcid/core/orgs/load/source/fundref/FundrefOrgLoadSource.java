@@ -118,10 +118,10 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         
         try {
             long start = System.currentTimeMillis();
-            FileInputStream file = new FileInputStream(localFilePath);
+            FileInputStream stream = new FileInputStream(localFilePath);
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document xmlDocument = builder.parse(file);
+            Document xmlDocument = builder.parse(stream);
 
             NodeList nodeList = (NodeList) xPath.compile(CONCEPTS_EXPRESSION).evaluate(xmlDocument, XPathConstants.NODESET);
             for (int i = 0; i < nodeList.getLength(); i++) {
