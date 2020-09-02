@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
@@ -79,6 +80,9 @@ public class GridOrgLoadSource implements OrgLoadSource {
 
     @Value("${org.orcid.core.orgs.grid.figshareArticleUrl:https://api.figshare.com/v2/articles/}")
     private String gridFigshareArticleUrl;
+    
+    @Resource
+    private FileRotator fileRotator;
 
     @Override
     public String getSourceName() {
@@ -96,6 +100,8 @@ public class GridOrgLoadSource implements OrgLoadSource {
 
     @Override
     public boolean downloadOrgData() {
+        fileRotator.removeFileIfExists(zipFilePath);
+        fileRotator.removeFileIfExists(localDataPath);
         orgDataClient.init();
         List<FigshareGridCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(gridFigshareCollectionUrl, userAgent, new GenericType<List<FigshareGridCollectionArticleSummary>>(){});
         FigshareGridCollectionArticleSummary latest = null;
