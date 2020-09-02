@@ -1,6 +1,8 @@
 package org.orcid.core.orgs.load.io;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -17,23 +19,20 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 
-public class HttpFileDownloaderTest {
+public class OrgDataClientTest {
     
     @InjectMocks
-    private HttpFileDownloader downloader;
+    private OrgDataClient orgDataClient;
     
     private File tempFile; 
 
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(downloader, "userAgent", "java");
-        
         tempFile = File.createTempFile("fundref-test-", ".rdf");
-        downloader.setLocalFilePath(tempFile.getAbsolutePath());
-        downloader.setUrl("url");
     }
     
     @After
@@ -45,14 +44,26 @@ public class HttpFileDownloaderTest {
     
     @Test
     public void testDownloadFileSuccess() throws IOException {
-        ReflectionTestUtils.setField(downloader, "client", getMockedClientWithSuccessfulResponse(getClass().getResourceAsStream("/fundref/fundref-test.rdf")));
-        assertTrue(downloader.downloadFile());
+        ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithSuccessfulResponse(getClass().getResourceAsStream("/fundref/fundref-test.rdf")));
+        assertTrue(orgDataClient.downloadFile("url", "userAgent", tempFile.getAbsolutePath()));
     }
     
     @Test
     public void testDownloadFileFailure() throws IOException {
-        ReflectionTestUtils.setField(downloader, "client", getMockedClientWithFailureResponse());
-        assertFalse(downloader.downloadFile());
+        ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithFailureResponse());
+        assertFalse(orgDataClient.downloadFile("url", "userAgent", tempFile.getAbsolutePath()));
+    }
+    
+    @Test
+    public void testGetFailure() throws IOException {
+        ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithFailureResponse());
+        assertNull(orgDataClient.get("url", "userAgent", new GenericType<String>() {}));
+    }
+    
+    @Test
+    public void testGet() throws IOException {
+        ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithSuccessfulEntityResponse());
+        assertEquals("success", orgDataClient.get("url", "userAgent", new GenericType<String>() {}));
     }
     
     private Client getMockedClientWithSuccessfulResponse(InputStream inputStream) throws IOException {
@@ -80,6 +91,21 @@ public class HttpFileDownloaderTest {
         Mockito.when(webResource.header(Mockito.anyString(), Mockito.anyString())).thenReturn(builder);
         Mockito.when(builder.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
         Mockito.when(response.getStatus()).thenReturn(403);
+        return client;
+    }
+    
+    private Client getMockedClientWithSuccessfulEntityResponse() throws IOException {
+        Client client = Mockito.mock(Client.class);
+        WebResource webResource = Mockito.mock(WebResource.class);
+        ClientResponse response = Mockito.mock(ClientResponse.class);
+        WebResource.Builder builder = Mockito.mock(WebResource.Builder.class);
+        
+        Mockito.when(client.resource(Mockito.eq("url"))).thenReturn(webResource);
+        Mockito.when(webResource.header(Mockito.eq("User-Agent"), Mockito.eq("userAgent"))).thenReturn(builder);
+        Mockito.when(builder.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
+        Mockito.when(response.getStatus()).thenReturn(200);
+        Mockito.when(response.getEntity(Mockito.eq(new GenericType<String>() {}))).thenReturn("success");
+        
         return client;
     }
     
