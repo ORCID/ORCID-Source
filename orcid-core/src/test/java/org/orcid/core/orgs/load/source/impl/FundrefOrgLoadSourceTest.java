@@ -71,13 +71,20 @@ public class FundrefOrgLoadSourceTest {
     @Test(expected = LoadSourceDisabledException.class)
     public void testSetDisabled() {
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "enabled", false);
-        fundrefOrgLoadSource.loadLatestOrgs();
+        fundrefOrgLoadSource.loadOrgData();
     }
     
     @Test
     public void testLoadLatestOrgsDownloadFailed() {
         when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath))).thenReturn(false);
-        assertFalse(fundrefOrgLoadSource.loadLatestOrgs());
+        assertFalse(fundrefOrgLoadSource.downloadOrgData());
+        verify(orgDataClient).downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath));
+    }
+    
+    @Test
+    public void testDownloadOrgData() {
+        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath))).thenReturn(true);
+        assertTrue(fundrefOrgLoadSource.downloadOrgData());
         verify(orgDataClient).downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath));
     }
     
@@ -88,9 +95,7 @@ public class FundrefOrgLoadSourceTest {
         assertTrue(data.exists());
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "localFilePath", data.getAbsolutePath());
         
-        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(data.getAbsolutePath()))).thenReturn(true);
-        
-        fundrefOrgLoadSource.loadLatestOrgs();
+        fundrefOrgLoadSource.loadOrgData();
         
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, Mockito.times(3)).persist(captor.capture());
@@ -112,11 +117,10 @@ public class FundrefOrgLoadSourceTest {
         assertTrue(data.exists());
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "localFilePath", data.getAbsolutePath());
         
-        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(data.getAbsolutePath()))).thenReturn(true);
         when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.eq("http://dx.doi.org/10.13039/100000001"), Mockito.eq(OrgDisambiguatedSourceType.FUNDREF.name()))).thenReturn(new OrgDisambiguatedEntity());
         when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.eq("http://dx.doi.org/10.13039/100000002"), Mockito.eq(OrgDisambiguatedSourceType.FUNDREF.name()))).thenReturn(new OrgDisambiguatedEntity());
         
-        fundrefOrgLoadSource.loadLatestOrgs();
+        fundrefOrgLoadSource.loadOrgData();
         
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, Mockito.times(2)).merge(captor.capture()); // two existing orgs updated

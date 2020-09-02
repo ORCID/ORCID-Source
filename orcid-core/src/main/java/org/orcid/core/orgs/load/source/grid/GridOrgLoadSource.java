@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.OrgDataClient;
+import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
 import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleDetails;
 import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleFile;
@@ -32,7 +33,6 @@ import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -86,14 +86,16 @@ public class GridOrgLoadSource implements OrgLoadSource {
     }
 
     @Override
-    public boolean loadLatestOrgs() {
-        if (downloadData()) {
-            loadData();
+    public boolean loadOrgData() {
+        if (!enabled) {
+            throw new LoadSourceDisabledException(getSourceName());
         }
-        return true;
+        
+        return loadData();
     }
 
-    private boolean downloadData() {
+    @Override
+    public boolean downloadOrgData() {
         orgDataClient.init();
         List<FigshareGridCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(gridFigshareCollectionUrl, userAgent, new GenericType<List<FigshareGridCollectionArticleSummary>>(){});
         FigshareGridCollectionArticleSummary latest = null;
@@ -148,24 +150,19 @@ public class GridOrgLoadSource implements OrgLoadSource {
         zis.close();
     }
     
-    private void loadData() {
+    private boolean loadData() {
         LOGGER.info("Loading GRID data...");
         Instant start = Instant.now();
         File fileToLoad = new File(localDataPath);
         if (!fileToLoad.exists()) {
             LOGGER.error("File {} doesn't exist", localDataPath);
-            throw new RuntimeException("GRID data not found");
+            return false;
         }
+        
         JsonNode rootNode = JsonUtils.read(fileToLoad);
         ArrayNode institutes = (ArrayNode) rootNode.get("institutes");
         institutes.forEach(institute -> {
             String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
-
-            // Case that should never happen
-            if (PojoUtil.isEmpty(sourceId)) {
-                LOGGER.error("Invalid institute with null id found {}", institute.toString());
-            }
-
             String status = institute.get("status").isNull() ? null : institute.get("status").asText();
             if ("active".equals(status)) {
                 String name = institute.get("name").isNull() ? null : institute.get("name").asText();
@@ -211,6 +208,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
         });
 
         LOGGER.info("Time taken to process the data: {}", Duration.between(start, Instant.now()).toString());
+        return true;
     }
 
     private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {

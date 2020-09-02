@@ -100,20 +100,15 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     }
 
     @Override
-    public boolean loadLatestOrgs() {
+    public boolean loadOrgData() {
         if (!enabled) {
             throw new LoadSourceDisabledException(getSourceName());
         }
 
-        if (downloadData()) {
-            importData();
-            return true;
-        } else {
-            return false;
-        }
+        return importData();
     }
 
-    private void importData() {
+    private boolean importData() {
         Map<String, String> cache = new HashMap<String, String>();
         
         try {
@@ -164,16 +159,22 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
             }
             long end = System.currentTimeMillis();
             LOGGER.info("Time taken to process the files: {}", (end - start));
+            return true;
         } catch (FileNotFoundException fne) {
             LOGGER.error("Unable to read file {}", localFilePath);
+            return false;
         } catch (ParserConfigurationException pce) {
             LOGGER.error("Unable to initialize the DocumentBuilder");
+            return false;
         } catch (IOException ioe) {
             LOGGER.error("Unable to parse document {}", localFilePath);
+            return false;
         } catch (SAXException se) {
             LOGGER.error("Unable to parse document {}", localFilePath);
+            return false;
         } catch (XPathExpressionException xpe) {
             LOGGER.error("XPathExpressionException {}", xpe.getMessage());
+            return false;
         }
     }
 
@@ -481,7 +482,8 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         return orgDisambiguatedEntity;
     }
 
-    private boolean downloadData() {
+    @Override
+    public boolean downloadOrgData() {
         fileRotator.removeFileIfExists(localFilePath);
         orgDataClient.init();
         boolean success = orgDataClient.downloadFile(fundrefDataUrl, userAgent, localFilePath);

@@ -30,6 +30,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.OrgDataClient;
+import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.grid.GridOrgLoadSource;
 import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleDetails;
 import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleFile;
@@ -65,7 +66,8 @@ public class GridOrgLoadSourceTest {
         ReflectionTestUtils.setField(gridOrgLoadSource, "userAgent", "userAgent");
         ReflectionTestUtils.setField(gridOrgLoadSource, "gridFigshareCollectionUrl", "gridFigshareCollectionUrl");
         ReflectionTestUtils.setField(gridOrgLoadSource, "gridFigshareArticleUrl", "gridFigshareArticleUrl/");
-
+        ReflectionTestUtils.setField(gridOrgLoadSource, "enabled", true);
+        
         when(orgDataClient.get(Mockito.eq("gridFigshareCollectionUrl"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(Arrays.asList(getFigshareGridCollectionArticleSummary(1, "2019-01-01T07:00:00"), getFigshareGridCollectionArticleSummary(2, "2020-01-01T07:00:00"), getFigshareGridCollectionArticleSummary(3, "2020-06-01T07:00:00")));
         when(orgDataClient.get(Mockito.eq("gridFigshareArticleUrl/1"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigshareGridCollectionArticleDetails(1));
         when(orgDataClient.get(Mockito.eq("gridFigshareArticleUrl/2"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigshareGridCollectionArticleDetails(2));
@@ -80,13 +82,24 @@ public class GridOrgLoadSourceTest {
     }
     
     @Test
-    public void testCorrectArticleChosen() throws URISyntaxException {
+    public void testGetSourceName() {
+        assertEquals("GRID", gridOrgLoadSource.getSourceName());
+    }
+    
+    @Test(expected = LoadSourceDisabledException.class)
+    public void testSetDisabled() {
+        ReflectionTestUtils.setField(gridOrgLoadSource, "enabled", false);
+        gridOrgLoadSource.loadOrgData();
+    }
+    
+    @Test
+    public void testDownloadOrgData() throws URISyntaxException {
         // doesn't matter which data file we choose as this test isn't testing data loading
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
 
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.downloadOrgData();
         
         // verify collection with identifier 3 (see setUp method) is chosen
         verify(orgDataClient, Mockito.times(1)).get(Mockito.eq("gridFigshareCollectionUrl"), Mockito.eq("userAgent"), Mockito.any());
@@ -104,7 +117,7 @@ public class GridOrgLoadSourceTest {
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
 
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(orgDisambiguatedDao, Mockito.times(1)).persist(captor.capture());
@@ -122,7 +135,7 @@ public class GridOrgLoadSourceTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_4_orgs_27_external_identifiers.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(orgDisambiguatedDao, Mockito.times(4)).persist(captor.capture());
@@ -146,7 +159,7 @@ public class GridOrgLoadSourceTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, Mockito.never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -201,7 +214,7 @@ public class GridOrgLoadSourceTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_6_external_identifiers.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedExternalIdentifierDao, times(1)).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
 
@@ -243,7 +256,7 @@ public class GridOrgLoadSourceTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_updated_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -299,7 +312,7 @@ public class GridOrgLoadSourceTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -350,7 +363,7 @@ public class GridOrgLoadSourceTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).persist(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -394,7 +407,7 @@ public class GridOrgLoadSourceTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).merge(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -454,7 +467,7 @@ public class GridOrgLoadSourceTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, times(1)).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -509,7 +522,7 @@ public class GridOrgLoadSourceTest {
         File testFile = path.toFile();
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
         
-        gridOrgLoadSource.loadLatestOrgs();
+        gridOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).merge(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));

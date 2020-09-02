@@ -87,25 +87,20 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     }
 
     @Override
-    public boolean loadLatestOrgs() {
+    public boolean loadOrgData() {
         if (!enabled) {
             throw new LoadSourceDisabledException(getSourceName());
         }
-
-        if (downloadData()) {
-            importData();
-            return true;
-        } else {
-            return false;
-        }
+        return importData();
     }
 
-    private boolean downloadData() {
+    @Override
+    public boolean downloadOrgData() {
         fileRotator.removeFileIfExists(ftpsFileDownloader.getLocalFilePath());
         return ftpsFileDownloader.downloadFile();
     }
 
-    private void importData() {
+    private boolean importData() {
         Map<Integer, List<JsonNode>> altNamesMap = new HashMap<>();
         Map<Integer, List<JsonNode>> identifiersMap = new HashMap<>();
         Map<Integer, JsonNode> dnNameMap = new HashMap<>();
@@ -117,8 +112,10 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             processDeletedElementsFile(zip, deletedElementsMap);
             processInstitutions(zip, altNamesMap, identifiersMap, dnNameMap);
             processDeletedElements(deletedElementsMap);
+            return true;
         } catch (IOException e) {
-            throw new RuntimeException("Error reading zip file", e);
+            LOGGER.error("Error importing RINGGOLD data", e);
+            return false;
         } finally {
             LOGGER.info("Ringgold import completed");
         }
