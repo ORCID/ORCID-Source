@@ -1,4 +1,4 @@
-package org.orcid.core.orgs.load.source.impl;
+package org.orcid.core.orgs.load.source.ringgold;
 
 import java.io.IOException;
 import java.io.InputStream;

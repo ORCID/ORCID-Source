@@ -1,4 +1,4 @@
-package org.orcid.core.orgs.load.source.impl;
+package org.orcid.core.orgs.load.source.fundref;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,7 +19,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
-import org.orcid.core.orgs.load.io.HttpFileDownloader;
+import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -63,8 +63,17 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     private static final String STATE_ABBREVIATION = "abbr";
     private static final String DEPRECATED_INDICATOR = "http://data.crossref.org/fundingdata/vocabulary/Deprecated";
 
-    @Resource(name = "fundrefHttpFileDownloader")
-    private HttpFileDownloader httpFileDownloader;
+    @Resource(name = "fundrefOrgDataClient")
+    private OrgDataClient orgDataClient;
+    
+    @Value("${org.orcid.core.orgs.fundref.latestReleaseUrl:url}")
+    private String fundrefDataUrl;
+    
+    @Value("${org.orcid.core.orgs.ringgold.fptLocalFilePath:/tmp/ringgold/fundref.rdf}")
+    private String localFilePath;
+
+    @Value("${org.orcid.core.orgs.clients.userAgent}")
+    private String userAgent;
 
     @Resource
     private FileRotator fileRotator;
@@ -109,7 +118,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         
         try {
             long start = System.currentTimeMillis();
-            FileInputStream file = new FileInputStream(httpFileDownloader.getLocalFilePath());
+            FileInputStream file = new FileInputStream(localFilePath);
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
             Document xmlDocument = builder.parse(file);
@@ -156,13 +165,13 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
             long end = System.currentTimeMillis();
             LOGGER.info("Time taken to process the files: {}", (end - start));
         } catch (FileNotFoundException fne) {
-            LOGGER.error("Unable to read file {}", httpFileDownloader.getLocalFilePath());
+            LOGGER.error("Unable to read file {}", localFilePath);
         } catch (ParserConfigurationException pce) {
             LOGGER.error("Unable to initialize the DocumentBuilder");
         } catch (IOException ioe) {
-            LOGGER.error("Unable to parse document {}", httpFileDownloader.getLocalFilePath());
+            LOGGER.error("Unable to parse document {}", localFilePath);
         } catch (SAXException se) {
-            LOGGER.error("Unable to parse document {}", httpFileDownloader.getLocalFilePath());
+            LOGGER.error("Unable to parse document {}", localFilePath);
         } catch (XPathExpressionException xpe) {
             LOGGER.error("XPathExpressionException {}", xpe.getMessage());
         }
@@ -473,8 +482,11 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     }
 
     private boolean downloadData() {
-        fileRotator.removeFileIfExists(httpFileDownloader.getLocalFilePath());
-        return httpFileDownloader.downloadFile();
+        fileRotator.removeFileIfExists(localFilePath);
+        orgDataClient.init();
+        boolean success = orgDataClient.downloadFile(fundrefDataUrl, userAgent, localFilePath);
+        orgDataClient.cleanUp();
+        return success;
     }
 
     @Override
