@@ -113,7 +113,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             processInstitutions(zip, altNamesMap, identifiersMap, dnNameMap);
             processDeletedElements(deletedElementsMap);
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error("Error importing RINGGOLD data", e);
             return false;
         } finally {
