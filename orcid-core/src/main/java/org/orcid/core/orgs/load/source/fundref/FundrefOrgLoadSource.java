@@ -69,7 +69,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     @Value("${org.orcid.core.orgs.fundref.latestReleaseUrl:url}")
     private String fundrefDataUrl;
     
-    @Value("${org.orcid.core.orgs.ringgold.fptLocalFilePath:/tmp/ringgold/fundref.rdf}")
+    @Value("${org.orcid.core.orgs.fundref.localFilePath:/tmp/ringgold/fundref.rdf}")
     private String localFilePath;
 
     @Value("${org.orcid.core.orgs.clients.userAgent}")
