@@ -9,6 +9,9 @@ public enum Features implements Feature {
     @Label("Disable Badges")
     DISABLE_BADGES,
 
+    @Label("Orcid Angular My Orcid")
+    ORCID_ANGULAR_MY_ORCID,
+    
     @Label("Orcid Angular Inbox")
     ORCID_ANGULAR_INBOX,
 
