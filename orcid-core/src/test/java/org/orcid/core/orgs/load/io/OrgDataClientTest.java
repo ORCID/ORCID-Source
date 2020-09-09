@@ -66,6 +66,7 @@ public class OrgDataClientTest {
         assertEquals("success", orgDataClient.get("url", "userAgent", new GenericType<String>() {}));
     }
     
+    @SuppressWarnings("resource")
     private Client getMockedClientWithSuccessfulResponse(InputStream inputStream) throws IOException {
         Client client = Mockito.mock(Client.class);
         WebResource webResource = Mockito.mock(WebResource.class);
@@ -77,7 +78,6 @@ public class OrgDataClientTest {
         Mockito.when(builder.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
         Mockito.when(response.getStatus()).thenReturn(200);
         Mockito.when(response.getEntityInputStream()).thenReturn(inputStream);
-        
         return client;
     }
     
@@ -94,6 +94,7 @@ public class OrgDataClientTest {
         return client;
     }
     
+    @SuppressWarnings("unchecked")
     private Client getMockedClientWithSuccessfulEntityResponse() throws IOException {
         Client client = Mockito.mock(Client.class);
         WebResource webResource = Mockito.mock(WebResource.class);
@@ -104,7 +105,7 @@ public class OrgDataClientTest {
         Mockito.when(webResource.header(Mockito.eq("User-Agent"), Mockito.eq("userAgent"))).thenReturn(builder);
         Mockito.when(builder.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
         Mockito.when(response.getStatus()).thenReturn(200);
-        Mockito.when(response.getEntity(Mockito.eq(new GenericType<String>() {}))).thenReturn("success");
+        Mockito.when(response.getEntity(Mockito.any(GenericType.class))).thenReturn("success");
         
         return client;
     }
