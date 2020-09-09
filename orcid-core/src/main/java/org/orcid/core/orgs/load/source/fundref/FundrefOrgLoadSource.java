@@ -3,6 +3,7 @@ package org.orcid.core.orgs.load.source.fundref;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,13 +108,13 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
 
         return importData();
     }
-
+    
     private boolean importData() {
         Map<String, String> cache = new HashMap<String, String>();
-        
+        InputStream stream = null;
         try {
             long start = System.currentTimeMillis();
-            FileInputStream stream = new FileInputStream(localFilePath);
+            stream = new FileInputStream(localFilePath);
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
             Document xmlDocument = builder.parse(stream);
@@ -175,6 +176,13 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         } catch (XPathExpressionException xpe) {
             LOGGER.error("XPathExpressionException {}", xpe.getMessage());
             return false;
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                LOGGER.error("Error closing stream", e);
+                throw new RuntimeException(e);
+            }
         }
     }
 
