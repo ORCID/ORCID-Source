@@ -154,7 +154,11 @@ public class ShibbolethController extends BaseController {
             
             ProfileEntity profile = profileEntityCacheManager.retrieve(userConnectionEntity.getOrcid());
             if (profile.getUsing2FA()) {
-                return new ModelAndView("institutional_2FA");
+                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                    return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/2fa-signin");
+                } else {
+                    return new ModelAndView("institutional_2FA");   
+                }
             }
             
             try {
@@ -197,7 +201,11 @@ public class ShibbolethController extends BaseController {
             LOGGER.info("Found existing user connection: {}", userConnectionEntity);
             HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(parseOriginalHeaders(userConnectionEntity.getHeadersJson()), headers);
             if (!checkHeadersResult.isSuccess()) {
-                codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/shibboleth/signin");
+                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                    codes.setRedirectUrl(orcidUrlManager.getBaseUrl() +"/2fa-signin");
+                } else {
+                    codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/shibboleth/signin");
+                }
                 return codes;
             }
             
@@ -217,7 +225,11 @@ public class ShibbolethController extends BaseController {
             codes.setRedirectUrl(calculateRedirectUrl(request, response, false));
             return codes;
         } else {
-            codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/shibboleth/signin");
+            if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                codes.setRedirectUrl(orcidUrlManager.getBaseUrl() +"/2fa-signin");
+            } else {
+                codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/shibboleth/signin");
+            }
             return codes;
         }
     }

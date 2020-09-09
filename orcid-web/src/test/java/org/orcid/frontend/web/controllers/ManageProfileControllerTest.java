@@ -956,15 +956,22 @@ public class ManageProfileControllerTest {
     	assertFalse(controller.validateEmailAddress("@."));
     	assertFalse(controller.validateEmailAddress("test"));
     	assertFalse(controller.validateEmailAddress("test@"));
-    	assertFalse(controller.validateEmailAddress("test@test"));
+
     	assertFalse(controller.validateEmailAddress("@test"));
     	assertFalse(controller.validateEmailAddress("@test.com"));
     	// Examples from https://en.wikipedia.org/wiki/Email_address#Examples
     	assertFalse(controller.validateEmailAddress("Abc.example.com"));
     	assertFalse(controller.validateEmailAddress("A@b@c@example.com"));
     	assertFalse(controller.validateEmailAddress("john.doe@example..com"));
-    	assertFalse(controller.validateEmailAddress("john..doe@example.com"));
-    	assertFalse(controller.validateEmailAddress("a\"b(c)d,e:f;g<h>i[j\\k]l@example.com"));
+
+        assertTrue(controller.validateEmailAddress("test@test"));
+    	assertTrue(controller.validateEmailAddress("john..doe@example.com"));
+    	assertTrue(controller.validateEmailAddress("a\"b(c)d,e:f;g<h>i[j\\k]l@example.com"));
+
+        assertTrue(controller.validateEmailAddress("test@test.inc"));
+        assertTrue(controller.validateEmailAddress("test@test.africa"));
+        assertTrue(controller.validateEmailAddress("test@test.中国"));
+        assertTrue(controller.validateEmailAddress("test@test.llc"));
     }
     
     @Test
