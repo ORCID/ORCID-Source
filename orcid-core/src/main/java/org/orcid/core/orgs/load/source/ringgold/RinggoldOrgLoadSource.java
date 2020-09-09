@@ -1,7 +1,6 @@
 package org.orcid.core.orgs.load.source.ringgold;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
@@ -120,12 +119,13 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             LOGGER.info("Ringgold import completed");
         }
     }
-
+    
     private JsonNode getJsonNode(ZipFile zip, ZipEntry entry) throws IOException, UnsupportedEncodingException {
         LOGGER.info("Generating json node for: " + entry.getName());
-        InputStream is = zip.getInputStream(entry);
-        Reader reader = new InputStreamReader(is, RINGGOLD_CHARACTER_ENCODING);
-        return JsonUtils.read(reader);
+        try (Reader reader = new InputStreamReader(zip.getInputStream(entry), RINGGOLD_CHARACTER_ENCODING)){
+            JsonNode node = JsonUtils.read(reader);
+            return node;
+        }        
     }
 
     private void processAltNamesFile(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap)
