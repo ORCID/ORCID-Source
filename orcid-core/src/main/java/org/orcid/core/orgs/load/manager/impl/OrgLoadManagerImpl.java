@@ -41,7 +41,10 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
         OrgLoadSource loader = getNextOrgLoader();
         if (loader != null) {
             OrgImportLogEntity importLog = getOrgImportLogEntity(loader);
-            boolean success = loader.loadLatestOrgs();
+            boolean success = loader.downloadOrgData();
+            if (success) {
+                success = loader.loadOrgData();
+            }
             logImport(importLog, success);
 
             if (success) {
