@@ -30,6 +30,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
+import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Controller;
@@ -289,18 +290,24 @@ public class OauthController {
         request.getSession().setAttribute("authorizationRequest", null);
         if (baseControllerUtil.getCurrentUser(sci) != null) {
             // Authorize the request
-            ModelAndView mav = authorizationEndpoint.authorize(model, requestParameters, sessionStatus, principal);
-            RedirectView rev = (RedirectView) mav.getView();
-            if (rev != null) {
-                String url = rev.getUrl();
-                String errorDescription = "error_description=";
-                if (url.contains("error")) {
-                    requestInfoForm.setError("invalid_scope");
-                    requestInfoForm.setErrorDescription(url.substring(url.indexOf("error_description=") + errorDescription.length()));
-                }   
-            }            
-            AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
-            request.getSession().setAttribute("authorizationRequest", authRequest);            
+            try {
+                ModelAndView mav = authorizationEndpoint.authorize(model, requestParameters, sessionStatus, principal);
+                RedirectView rev = (RedirectView) mav.getView();
+                if (rev != null) {
+                    String url = rev.getUrl();
+                    String errorDescription = "error_description=";
+                    if (url.contains("error")) {
+                        requestInfoForm.setError("invalid_scope");
+                        requestInfoForm.setErrorDescription(url.substring(url.indexOf("error_description=") + errorDescription.length()));
+                    }   
+                }
+                
+                AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
+                request.getSession().setAttribute("authorizationRequest", authRequest);
+            } catch (RedirectMismatchException e) {
+                requestInfoForm.setError("invalid_grant");
+                requestInfoForm.setErrorDescription("Redirect URI doesn't match your registered redirect URIs.");
+            }                       
         }
         return requestInfoForm;
     }
