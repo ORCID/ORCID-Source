@@ -15,9 +15,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.orgs.extId.normalizer.OrgDisambiguatedExternalIdNormalizer;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.core.togglz.Features;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
@@ -45,6 +47,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    
+    @Resource
+    private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDaoReadOnly;
@@ -60,6 +65,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
+
+    @Resource
+    private List<OrgDisambiguatedExternalIdNormalizer> orgDisambiguatedExternalIdNormalizers;
 
     @Override
     synchronized public void processOrgsForIndexing() {
@@ -167,6 +175,19 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         return ret;
     }
 
+    @Override
+    public OrgDisambiguatedEntity updateOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+        normalizeExternalIdentifiers(orgDisambiguatedEntity);
+        return orgDisambiguatedDao.merge(orgDisambiguatedEntity);
+    }
+
+    @Override
+    public OrgDisambiguatedEntity createOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+        normalizeExternalIdentifiers(orgDisambiguatedEntity);
+        orgDisambiguatedDao.persist(orgDisambiguatedEntity);
+        return orgDisambiguatedEntity;
+    }
+
     private OrgDisambiguated convertSolrDocument(OrgDisambiguatedSolrDocument doc) {
         OrgDisambiguated org = new OrgDisambiguated();
         org.setValue(doc.getOrgDisambiguatedName());
@@ -197,6 +218,18 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         return null;
     }
 
+    @Override
+    public void createOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
+        normalizeExternalIdentifier(identifier);
+        orgDisambiguatedExternalIdentifierDao.persist(identifier); 
+    }
+    
+    @Override
+    public void updateOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
+        normalizeExternalIdentifier(identifier);
+        orgDisambiguatedExternalIdentifierDao.merge(identifier); 
+    }
+    
     private OrgDisambiguated convertEntity(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         OrgDisambiguated org = new OrgDisambiguated();
         org.setValue(orgDisambiguatedEntity.getName());
@@ -241,6 +274,22 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
         }
         return org;
+    }
+    
+    private void normalizeExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
+        for (OrgDisambiguatedExternalIdNormalizer normalizer : orgDisambiguatedExternalIdNormalizers) {
+            if (normalizer.getType().equals(identifier.getIdentifierType())) {
+                identifier.setIdentifier(normalizer.normalize(identifier.getIdentifier()));
+            }
+        }
+    }
+
+    private void normalizeExternalIdentifiers(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+        if (orgDisambiguatedEntity.getExternalIdentifiers() != null) {
+            for (OrgDisambiguatedExternalIdentifierEntity identifier : orgDisambiguatedEntity.getExternalIdentifiers()) {
+                normalizeExternalIdentifier(identifier);
+            }
+        }
     }
 
 }

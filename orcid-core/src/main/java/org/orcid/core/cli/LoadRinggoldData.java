@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.JsonUtils;
@@ -58,6 +59,7 @@ public class LoadRinggoldData {
     
     private OrgDao orgDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    private OrgDisambiguatedManager orgDisambiguatedManager;
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     private OrgManager orgManager;
 
@@ -136,6 +138,7 @@ public class LoadRinggoldData {
         orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
         orgManager = (OrgManager) context.getBean("orgManagerV3");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
+        orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
@@ -344,7 +347,7 @@ public class LoadRinggoldData {
                     if (newId != null) {
                         existingEntity.setSourceParentId(String.valueOf(newId));
                     }
-                    orgDisambiguatedDao.merge(existingEntity);
+                    orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                     if (status.equals(OrganizationStatus.OBSOLETE)) {
                         numObsoleted++;
                     } else {
@@ -400,7 +403,7 @@ public class LoadRinggoldData {
             }
             entity.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
             entity.setIndexingStatus(IndexingStatus.PENDING);
-            orgDisambiguatedDao.persist(entity);
+            orgDisambiguatedManager.createOrgDisambiguated(entity);
             numAdded++;
         } else {
             // If the element have changed
@@ -411,7 +414,7 @@ public class LoadRinggoldData {
                 entity.setOrgType(type);
                 entity.setRegion(state);
                 entity.setIndexingStatus(IndexingStatus.REINDEX);
-                orgDisambiguatedDao.merge(entity);
+                orgDisambiguatedManager.updateOrgDisambiguated(entity);
                 numUpdated++;
             } else {
                 numUnchanged++;

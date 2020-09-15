@@ -24,11 +24,13 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -50,21 +52,20 @@ public class LoadRinggoldDataTest {
     @Mock
     private OrgDisambiguatedDao mockOrgDisambiguatedDao;
     @Mock
+    private OrgDisambiguatedManager mockOrgDisambiguatedManager;
+    @Mock
     private OrgDao mockOrgDao;
     @Mock
     private OrgManager mockOrgManager;
     
     private TransactionTemplate mockTransactionTemplate = new TransactionTemplateStub();
 
+    @InjectMocks
     private LoadRinggoldData loader = new LoadRinggoldData();
 
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        loader.setOrgDao(mockOrgDao);
-        loader.setOrgDisambiguatedDao(mockOrgDisambiguatedDao);
-        loader.setOrgDisambiguatedExternalIdentifierDao(mockOrgDisambiguatedExternalIdentifierDao);
-        loader.setOrgManager(mockOrgManager);
         loader.setTransactionTemplate(mockTransactionTemplate);
     }
 
@@ -103,8 +104,8 @@ public class LoadRinggoldDataTest {
         loader.execute();
 
         ArgumentCaptor<OrgDisambiguatedEntity> orgDisambiguatedEntityCaptor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        verify(mockOrgDisambiguatedDao, times(0)).merge(any());
-        verify(mockOrgDisambiguatedDao, times(4)).persist(orgDisambiguatedEntityCaptor.capture());
+        verify(mockOrgDisambiguatedManager, times(0)).updateOrgDisambiguated(any());
+        verify(mockOrgDisambiguatedManager, times(4)).createOrgDisambiguated(orgDisambiguatedEntityCaptor.capture());
         List<OrgDisambiguatedEntity> newOrgDisambiguatedEntities = orgDisambiguatedEntityCaptor.getAllValues();
         assertEquals(4, newOrgDisambiguatedEntities.size());
 
@@ -274,8 +275,8 @@ public class LoadRinggoldDataTest {
         loader.execute();
 
         ArgumentCaptor<OrgDisambiguatedEntity> orgDisambiguatedEntityCaptor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        verify(mockOrgDisambiguatedDao, times(0)).persist(any());
-        verify(mockOrgDisambiguatedDao, times(4)).merge(orgDisambiguatedEntityCaptor.capture());
+        verify(mockOrgDisambiguatedManager, times(0)).createOrgDisambiguated(any());
+        verify(mockOrgDisambiguatedManager, times(4)).updateOrgDisambiguated(orgDisambiguatedEntityCaptor.capture());
 
         List<OrgDisambiguatedEntity> newOrgDisambiguatedEntities = orgDisambiguatedEntityCaptor.getAllValues();
         assertEquals(4, newOrgDisambiguatedEntities.size());
@@ -354,8 +355,8 @@ public class LoadRinggoldDataTest {
         loader.execute();
 
         ArgumentCaptor<OrgDisambiguatedEntity> orgDisambiguatedEntityCaptor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        verify(mockOrgDisambiguatedDao, times(0)).merge(any());
-        verify(mockOrgDisambiguatedDao, times(1)).persist(orgDisambiguatedEntityCaptor.capture());
+        verify(mockOrgDisambiguatedManager, times(0)).updateOrgDisambiguated(any());
+        verify(mockOrgDisambiguatedManager, times(1)).createOrgDisambiguated(orgDisambiguatedEntityCaptor.capture());
         
         List<OrgDisambiguatedEntity> list = orgDisambiguatedEntityCaptor.getAllValues();
         assertEquals(1, list.size());
@@ -452,8 +453,8 @@ public class LoadRinggoldDataTest {
         loader.execute();
 
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        verify(mockOrgDisambiguatedDao, times(0)).persist(any());
-        verify(mockOrgDisambiguatedDao, times(1)).merge(captor.capture());
+        verify(mockOrgDisambiguatedManager, times(0)).createOrgDisambiguated(any());
+        verify(mockOrgDisambiguatedManager, times(1)).updateOrgDisambiguated(captor.capture());
         List<OrgDisambiguatedEntity> list = captor.getAllValues();
         assertEquals(1, list.size());
         OrgDisambiguatedEntity entity = list.get(0);

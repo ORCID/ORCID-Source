@@ -18,11 +18,14 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -38,14 +41,14 @@ public class LoadGridDataTest {
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     @Mock
     private OrgDisambiguatedDao orgDisambiguatedDao;
-
-    private LoadGridData loadGridData = new LoadGridData();
+    @Mock
+    private OrgDisambiguatedManager orgDisambiguatedManager;
+    @InjectMocks
+    private LoadGridData loadGridData;
 
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        loadGridData.setOrgDisambiguatedDao(orgDisambiguatedDao);
-        loadGridData.setOrgDisambiguatedExternalIdentifierDao(orgDisambiguatedExternalIdentifierDao);
     }
 
     @Test
@@ -182,7 +185,7 @@ public class LoadGridDataTest {
         
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
 
-        verify(orgDisambiguatedDao).merge(captor.capture());
+        verify(orgDisambiguatedManager).updateOrgDisambiguated(captor.capture());
 
         OrgDisambiguatedEntity orgToBeUpdated = captor.getValue();
         assertEquals(Iso3166Country.CR.name(), orgToBeUpdated.getCountry());
@@ -295,13 +298,13 @@ public class LoadGridDataTest {
         assertEquals(2L, loadGridData.getDeprecatedOrgs());
         assertEquals(2L, loadGridData.getObsoletedOrgs());
         assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
-        verify(orgDisambiguatedDao, times(0)).persist(Matchers.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedDao, times(4)).merge(Matchers.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(0)).createOrgDisambiguated(Mockito.any(OrgDisambiguatedEntity.class));
+        verify(orgDisambiguatedManager, times(4)).updateOrgDisambiguated(Mockito.any(OrgDisambiguatedEntity.class));
+        verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Mockito.any(OrgDisambiguatedExternalIdentifierEntity.class));
 
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
 
-        verify(orgDisambiguatedDao, times(4)).merge(captor.capture());
+        verify(orgDisambiguatedManager, times(4)).updateOrgDisambiguated(captor.capture());
 
         int obsoleteCount = 0;
         int deprecatedCount = 0;
@@ -345,13 +348,13 @@ public class LoadGridDataTest {
         assertEquals(2L, loadGridData.getDeprecatedOrgs());
         assertEquals(2L, loadGridData.getObsoletedOrgs());
         assertEquals(0L, loadGridData.getUpdatedExternalIdentifiers());
-        verify(orgDisambiguatedDao, times(4)).persist(Matchers.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedDao, times(0)).merge(Matchers.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Matchers.any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(4)).createOrgDisambiguated(Mockito.any(OrgDisambiguatedEntity.class));
+        verify(orgDisambiguatedManager, times(0)).updateOrgDisambiguated(Mockito.any(OrgDisambiguatedEntity.class));
+        verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(Mockito.any(OrgDisambiguatedExternalIdentifierEntity.class));
 
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
 
-        verify(orgDisambiguatedDao, times(4)).persist(captor.capture());
+        verify(orgDisambiguatedManager, times(4)).createOrgDisambiguated(captor.capture());
 
         int obsoleteCount = 0;
         int deprecatedCount = 0;
