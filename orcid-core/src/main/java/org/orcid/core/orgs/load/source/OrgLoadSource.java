@@ -4,11 +4,10 @@ public interface OrgLoadSource {
     
     String getSourceName();
     
-    boolean loadLatestOrgs();
+    boolean downloadOrgData();
+    
+    boolean loadOrgData();
     
     boolean isEnabled();
-
-    void setEnabled(boolean enabled);
-
 
 }

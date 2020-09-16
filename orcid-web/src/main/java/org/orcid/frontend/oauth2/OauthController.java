@@ -30,6 +30,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
+import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Controller;
@@ -73,26 +74,10 @@ public class OauthController {
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
         // Populate the request info form
 
-        RequestInfoForm requestInfoForm = null;
-        if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null &&
-            request.getSession().getAttribute("authorizationRequest") != null) {
-            requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
-            if (isRequestInfoFormDifferent(requestInfoForm, request)) {
-                Map<String, String> approvalParams = new HashMap<String, String>();
-                approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-                SimpleSessionStatus status = new SimpleSessionStatus();
-                Map<String, Object> modelAuth = new HashMap<String, Object>();
-                modelAuth.put("authorizationRequest", request.getSession().getAttribute("authorizationRequest"));
-                RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, modelAuth, status, principal);
-                requestInfoForm.setRedirectUrl(view.getUrl());
-                return requestInfoForm;
-            }
-        }
-        requestInfoForm = generateRequestInfoForm(request, request.getQueryString());
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
-        request.getSession().setAttribute("authorizationRequest", null);
+        RequestInfoForm requestInfoForm = generateRequestInfoForm(request, request.getQueryString(), model, requestParameters, sessionStatus, principal);                                
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);       
 
-        if (requestInfoForm.getError() != null) {
+        if (requestInfoForm.getError() != null || requestInfoForm.getRedirectUrl().contains(requestInfoForm.getResponseType())) {
             return requestInfoForm;
         }
         
@@ -129,7 +114,8 @@ public class OauthController {
         return setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
     }
 
-    private RequestInfoForm generateRequestInfoForm(HttpServletRequest request, String queryString) throws UnsupportedEncodingException {
+    private RequestInfoForm generateRequestInfoForm(HttpServletRequest request, String queryString, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
+            SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
         // Generate the request info form
         String url = request.getQueryString();
         RequestInfoForm requestInfoForm = new RequestInfoForm();
@@ -239,7 +225,8 @@ public class OauthController {
 
         if (!forceConfirm && usePersistentTokens && baseControllerUtil.getCurrentUser(sci) != null) {
             boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), baseControllerUtil.getCurrentUser(sci).getOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
-            if (tokenLongLifeAlreadyExists) {
+            if (tokenLongLifeAlreadyExists) {                 
+                setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
                 AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
                 if (authorizationRequest != null) {
                     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -270,12 +257,13 @@ public class OauthController {
     
                     authorizationRequest.setRequestParameters(requestParams);
                     // Authorization request model
-                    Map<String, Object> model = new HashMap<String, Object>();
-                    model.put("authorizationRequest", authorizationRequest);
+                    Map<String, Object> modelAuth = new HashMap<String, Object>();
+                    modelAuth.put("authorizationRequest", authorizationRequest);
     
                     // Approve using the spring authorization endpoint code.
-                    //note this will also handle generting implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));
-                    authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
+                    //note this will also handle generting implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));                   
+                    RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, modelAuth, status, principal);
+                    requestInfoForm.setRedirectUrl(view.getUrl());
                 }
             }
         }
@@ -299,21 +287,27 @@ public class OauthController {
     private RequestInfoForm setAuthorizationRequest(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal, RequestInfoForm requestInfoForm) {
         SecurityContext sci = getSecurityContext(request);
-        // TODO: Check if the authorizationRequest is already in the session
+        request.getSession().setAttribute("authorizationRequest", null);
         if (baseControllerUtil.getCurrentUser(sci) != null) {
             // Authorize the request
-            ModelAndView mav = authorizationEndpoint.authorize(model, requestParameters, sessionStatus, principal);
-            RedirectView rev = (RedirectView) mav.getView();
-            if (rev != null) {
-                String url = rev.getUrl();
-                String errorDescription = "error_description=";
-                if (url.contains("error")) {
-                    requestInfoForm.setError("invalid_scope");
-                    requestInfoForm.setErrorDescription(url.substring(url.indexOf("error_description=") + errorDescription.length()));
-                }   
-            }            
-            AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
-            request.getSession().setAttribute("authorizationRequest", authRequest);            
+            try {
+                ModelAndView mav = authorizationEndpoint.authorize(model, requestParameters, sessionStatus, principal);
+                RedirectView rev = (RedirectView) mav.getView();
+                if (rev != null) {
+                    String url = rev.getUrl();
+                    String errorDescription = "error_description=";
+                    if (url.contains("error")) {
+                        requestInfoForm.setError("invalid_scope");
+                        requestInfoForm.setErrorDescription(url.substring(url.indexOf("error_description=") + errorDescription.length()));
+                    }   
+                }
+                
+                AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
+                request.getSession().setAttribute("authorizationRequest", authRequest);
+            } catch (RedirectMismatchException e) {
+                requestInfoForm.setError("invalid_grant");
+                requestInfoForm.setErrorDescription("Redirect URI doesn't match your registered redirect URIs.");
+            }                       
         }
         return requestInfoForm;
     }
@@ -352,9 +346,5 @@ public class OauthController {
                     params.put(key, values[0]);
             }
         }
-    }
-    private boolean isRequestInfoFormDifferent(RequestInfoForm requestInfoForm, HttpServletRequest request) throws UnsupportedEncodingException {
-        RequestInfoForm newRequestInfoForm = generateRequestInfoForm(request, request.getQueryString());
-        return requestInfoForm.equals(newRequestInfoForm);
     }
 }

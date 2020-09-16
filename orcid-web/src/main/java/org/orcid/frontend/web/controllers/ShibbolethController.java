@@ -122,6 +122,11 @@ public class ShibbolethController extends BaseController {
             signinData.setLinkType("shibboleth");
             signinData.setFirstName(institutionalSignInManager.retrieveFirstName(headers));
             signinData.setLastName(institutionalSignInManager.retrieveLastName(headers));
+            RemoteUser remoteUsers = institutionalSignInManager.retrieveRemoteUser(headers);
+            if (remoteUsers.getUserId() != null && remoteUsers.getUserId().contains("@")) {
+                signinData.setEmail(remoteUsers.getUserId());    
+            }
+            
         }
         
         return signinData;
