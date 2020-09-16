@@ -135,7 +135,7 @@ public class GridOrgLoadSourceTest {
         assertNotEquals(OrganizationStatus.DEPRECATED.name(), persisted.getStatus());
         assertNotEquals(OrganizationStatus.OBSOLETE.name(), persisted.getStatus());
 
-        verify(orgDisambiguatedExternalIdentifierDao, times(5)).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(5)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
         verify(orgDisambiguatedManager, never()).updateOrgDisambiguated(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
     }
@@ -154,7 +154,7 @@ public class GridOrgLoadSourceTest {
             assertNotEquals(OrganizationStatus.OBSOLETE.name(), persisted.getStatus());
         }
 
-        verify(orgDisambiguatedExternalIdentifierDao, times(27)).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(27)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
         verify(orgDisambiguatedManager, never()).updateOrgDisambiguated(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
     }
@@ -226,10 +226,10 @@ public class GridOrgLoadSourceTest {
         ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
         gridOrgLoadSource.loadOrgData();
 
-        verify(orgDisambiguatedExternalIdentifierDao, times(1)).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
 
         verify(orgDisambiguatedDao, never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedExternalIdentifierDao, times(1)).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
         verify(orgDisambiguatedDao, never()).merge(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
     }
@@ -480,13 +480,13 @@ public class GridOrgLoadSourceTest {
         gridOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedExternalIdentifierDao, times(1)).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
         verify(orgDisambiguatedDao, never()).merge(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
 
         ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
 
-        verify(orgDisambiguatedExternalIdentifierDao).persist(captor.capture());
+        verify(orgDisambiguatedManager).createOrgDisambiguatedExternalIdentifier(captor.capture());
 
         OrgDisambiguatedExternalIdentifierEntity orgToBeUpdated = captor.getValue();
         assertEquals("http://en.wikipedia.org/wiki/org_1", orgToBeUpdated.getIdentifier());
@@ -536,13 +536,13 @@ public class GridOrgLoadSourceTest {
 
         verify(orgDisambiguatedDao, never()).merge(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
-        verify(orgDisambiguatedExternalIdentifierDao, times(2)).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(2)).updateOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
 
         verify(orgDisambiguatedDao, never()).persist(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedDao, never()).merge(any(OrgDisambiguatedEntity.class));
 
         ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
-        verify(orgDisambiguatedExternalIdentifierDao, times(2)).merge(captor.capture());
+        verify(orgDisambiguatedManager, times(2)).updateOrgDisambiguatedExternalIdentifier(captor.capture());
 
         List<OrgDisambiguatedExternalIdentifierEntity> extIdsToBeUpdated = captor.getAllValues();
 

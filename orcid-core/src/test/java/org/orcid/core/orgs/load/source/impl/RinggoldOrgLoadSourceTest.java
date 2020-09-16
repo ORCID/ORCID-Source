@@ -176,7 +176,7 @@ public class RinggoldOrgLoadSourceTest {
         verify(mockOrgDisambiguatedDao, times(0)).merge(any());
 
         ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
-        verify(mockOrgDisambiguatedExternalIdentifierDao, times(1)).persist(captor.capture());
+        verify(mockOrgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(captor.capture());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).remove(anyLong());
         List<OrgDisambiguatedExternalIdentifierEntity> list = captor.getAllValues();
@@ -329,7 +329,7 @@ public class RinggoldOrgLoadSourceTest {
 
         ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> addCaptor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
         ArgumentCaptor<Long> removeCaptor = ArgumentCaptor.forClass(Long.class);
-        verify(mockOrgDisambiguatedExternalIdentifierDao, times(1)).persist(addCaptor.capture());
+        verify(mockOrgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(addCaptor.capture());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(1)).remove(removeCaptor.capture());
         List<OrgDisambiguatedExternalIdentifierEntity> addedList = addCaptor.getAllValues();
