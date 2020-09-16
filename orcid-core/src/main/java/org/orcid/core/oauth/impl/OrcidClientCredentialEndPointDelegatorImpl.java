@@ -230,7 +230,6 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             authorizationParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE, String.valueOf(requestedTokenType));  
             //required so OrcidRandomValueTokenServicesImpl doesn't generate a refresh token
             authorizationParameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);  
-            checkIdTokenCreatedInLast24Hours(subjectToken);
         }
         
         if (redirectUri != null) {
@@ -254,23 +253,6 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 tokenId, clientId, code, token.getScope() });
         
         return token;
-    }
-    
-    private void checkIdTokenCreatedInLast24Hours(String idToken) {
-        try {
-            JWSObject jwsObject = JWSObject.parse(idToken);
-            JWTClaimsSet s = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
-            
-            Date issued = s.getIssueTime();
-            Calendar twentyFourHoursAgo = Calendar.getInstance();
-            twentyFourHoursAgo.add(Calendar.DAY_OF_YEAR, -1);
-            if (!issued.after(twentyFourHoursAgo.getTime())) {
-                throw new InvalidTokenException("ID token expired");
-            }
-        } catch (ParseException e) {
-            LOGGER.warn("Can't parse id token", e);
-            throw new RuntimeException(e);
-        }
     }
     
     protected Response getResponse(OAuth2AccessToken accessToken) {
