@@ -494,13 +494,13 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         WebResource resource = createQueryResource(
                 "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, "
                         + "(SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) "
-                        + "FROM Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY) AND Active_Member__c=TRUE");
+                        + "FROM Account WHERE RecordTypeId IN (Select Id From RecordType Where Name = 'Consortium Member') AND Active_Member__c=TRUE");
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting consortia list from SalesForce");
         return salesForceAdapter.createMembersListFromJson(result);
     }
-
+    
     /**
      * 
      * @throws SalesForceUnauthorizedException
