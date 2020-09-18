@@ -340,7 +340,7 @@ public class LoginController extends OauthControllerBase {
         }
         userCookieGenerator.addCookie(userConnectionId, response);
         
-        if (view.getViewName().equals("social_2FA") && Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+        if (Features.ORCID_ANGULAR_SIGNIN.isActive() && "social_2FA".equals(view.getViewName())) {
             return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/2fa-signin?social=true");
         }                   
 
