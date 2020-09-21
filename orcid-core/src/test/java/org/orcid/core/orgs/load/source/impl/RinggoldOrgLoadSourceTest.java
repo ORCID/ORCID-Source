@@ -38,6 +38,7 @@ import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.FtpsFileDownloader;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
+import org.orcid.core.orgs.load.source.ringgold.RinggoldOrgLoadSource;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -79,15 +80,15 @@ public class RinggoldOrgLoadSourceTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        ringgoldLoadSource.setEnabled(true);
+        ReflectionTestUtils.setField(ringgoldLoadSource, "enabled", true);
         ReflectionTestUtils.setField(ringgoldLoadSource, "transactionTemplate", mockTransactionTemplate);
         setupInitialMocks();
     }
     
     @Test(expected = LoadSourceDisabledException.class)
     public void testSetDisabled() {
-        ringgoldLoadSource.setEnabled(false);
-        ringgoldLoadSource.loadLatestOrgs();
+        ReflectionTestUtils.setField(ringgoldLoadSource, "enabled", false);
+        ringgoldLoadSource.loadOrgData();
     }
     
     @Test
@@ -98,11 +99,24 @@ public class RinggoldOrgLoadSourceTest {
     @Test
     public void testLoadLatestOrgsDownloadFailed() {
         when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn("/something/random");
-        when(mockFtpsFileDownloader.downloadFile()).thenReturn(false);
         
-        assertFalse(ringgoldLoadSource.loadLatestOrgs());
+        assertFalse(ringgoldLoadSource.loadOrgData());
         
         verify(mockFtpsFileDownloader).getLocalFilePath();
+    }
+    
+    @Test
+    public void testDownloadOrgData() throws URISyntaxException {
+        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_add_disambiguated_org.zip").toURI());
+        File zip = path.toFile();
+        assertTrue(zip.exists());
+        
+        when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn(zip.getAbsolutePath());
+        when(mockFtpsFileDownloader.downloadFile()).thenReturn(true);
+        
+        assertTrue(ringgoldLoadSource.downloadOrgData());
+        
+        verify(mockFtpsFileDownloader, atLeastOnce()).getLocalFilePath();
         verify(mockFtpsFileDownloader).downloadFile();
     }
     
@@ -113,12 +127,10 @@ public class RinggoldOrgLoadSourceTest {
         assertTrue(zip.exists());
         
         when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn(zip.getAbsolutePath());
-        when(mockFtpsFileDownloader.downloadFile()).thenReturn(true);
         
-        assertTrue(ringgoldLoadSource.loadLatestOrgs());
+        assertTrue(ringgoldLoadSource.loadOrgData());
         
         verify(mockFtpsFileDownloader, atLeastOnce()).getLocalFilePath();
-        verify(mockFtpsFileDownloader).downloadFile();
         
         ArgumentCaptor<OrgDisambiguatedEntity> orgDisambiguatedEntityCaptor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, times(0)).merge(any());
@@ -152,13 +164,10 @@ public class RinggoldOrgLoadSourceTest {
         assertTrue(zip.exists());
         
         when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn(zip.getAbsolutePath());
-        when(mockFtpsFileDownloader.downloadFile()).thenReturn(true);
         
-        assertTrue(ringgoldLoadSource.loadLatestOrgs());
+        assertTrue(ringgoldLoadSource.loadOrgData());
         
         verify(mockFtpsFileDownloader, atLeastOnce()).getLocalFilePath();
-        verify(mockFtpsFileDownloader).downloadFile();
-        
         verify(mockOrgDisambiguatedDao, times(0)).persist(any());
         verify(mockOrgDisambiguatedDao, times(0)).merge(any());
 
@@ -185,16 +194,12 @@ public class RinggoldOrgLoadSourceTest {
         assertTrue(zip.exists());
         
         when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn(zip.getAbsolutePath());
-        when(mockFtpsFileDownloader.downloadFile()).thenReturn(true);
         
-        assertTrue(ringgoldLoadSource.loadLatestOrgs());
+        assertTrue(ringgoldLoadSource.loadOrgData());
         
         verify(mockFtpsFileDownloader, atLeastOnce()).getLocalFilePath();
-        verify(mockFtpsFileDownloader).downloadFile();
-     
         verify(mockOrgDisambiguatedDao, times(0)).persist(any());
         verify(mockOrgDisambiguatedDao, times(0)).merge(any());
-
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).remove(anyLong());
@@ -220,20 +225,15 @@ public class RinggoldOrgLoadSourceTest {
         assertTrue(zip.exists());
         
         when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn(zip.getAbsolutePath());
-        when(mockFtpsFileDownloader.downloadFile()).thenReturn(true);
         
-        assertTrue(ringgoldLoadSource.loadLatestOrgs());
+        assertTrue(ringgoldLoadSource.loadOrgData());
         
         verify(mockFtpsFileDownloader, atLeastOnce()).getLocalFilePath();
-        verify(mockFtpsFileDownloader).downloadFile();
-        
         verify(mockOrgDisambiguatedDao, times(0)).persist(any());
         verify(mockOrgDisambiguatedDao, times(0)).merge(any());
-
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).persist(any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).remove(anyLong());        
-
         verify(mockOrgDao, times(0)).persist(any());
         verify(mockOrgDao, times(0)).merge(any());
     }
@@ -245,12 +245,10 @@ public class RinggoldOrgLoadSourceTest {
         assertTrue(zip.exists());
         
         when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn(zip.getAbsolutePath());
-        when(mockFtpsFileDownloader.downloadFile()).thenReturn(true);
         
-        assertTrue(ringgoldLoadSource.loadLatestOrgs());
+        assertTrue(ringgoldLoadSource.loadOrgData());
         
         verify(mockFtpsFileDownloader, atLeastOnce()).getLocalFilePath();
-        verify(mockFtpsFileDownloader).downloadFile();
         
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, times(0)).persist(any());
@@ -286,12 +284,10 @@ public class RinggoldOrgLoadSourceTest {
         assertTrue(zip.exists());
         
         when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn(zip.getAbsolutePath());
-        when(mockFtpsFileDownloader.downloadFile()).thenReturn(true);
         
-        assertTrue(ringgoldLoadSource.loadLatestOrgs());
+        assertTrue(ringgoldLoadSource.loadOrgData());
         
         verify(mockFtpsFileDownloader, atLeastOnce()).getLocalFilePath();
-        verify(mockFtpsFileDownloader).downloadFile();
         
         verify(mockOrgDisambiguatedDao, times(0)).persist(any());
         verify(mockOrgDisambiguatedDao, times(0)).merge(any());
@@ -320,13 +316,10 @@ public class RinggoldOrgLoadSourceTest {
         assertTrue(zip.exists());
         
         when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn(zip.getAbsolutePath());
-        when(mockFtpsFileDownloader.downloadFile()).thenReturn(true);
         
-        assertTrue(ringgoldLoadSource.loadLatestOrgs());
+        assertTrue(ringgoldLoadSource.loadOrgData());
         
         verify(mockFtpsFileDownloader, atLeastOnce()).getLocalFilePath();
-        verify(mockFtpsFileDownloader).downloadFile();
-        
         verify(mockOrgDisambiguatedDao, times(0)).persist(any());
         verify(mockOrgDisambiguatedDao, times(0)).merge(any());
 
@@ -359,12 +352,10 @@ public class RinggoldOrgLoadSourceTest {
         assertTrue(zip.exists());
         
         when(mockFtpsFileDownloader.getLocalFilePath()).thenReturn(zip.getAbsolutePath());
-        when(mockFtpsFileDownloader.downloadFile()).thenReturn(true);
         
-        assertTrue(ringgoldLoadSource.loadLatestOrgs());
+        assertTrue(ringgoldLoadSource.loadOrgData());
         
         verify(mockFtpsFileDownloader, atLeastOnce()).getLocalFilePath();
-        verify(mockFtpsFileDownloader).downloadFile();
         
         ArgumentCaptor<OrgDisambiguatedEntity> orgDisambiguatedEntityCaptor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, times(0)).persist(any());

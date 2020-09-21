@@ -49,6 +49,10 @@ NAME (displayName, givenName): If a name is provided by the institution, ORCID w
 
 EMAIL (mail): If an email address is provided, ORCID will use it to populate the ORCID registration or sign-in form.
 
+## Hide Institution in ORCID Institutional login list
+
+If you do not want your institution listed in ORCID's institutional login list, please ensure it is not marked as "Live" in the federation. Please note, marking it as not live in the federation means that it will be not be live for use with any system, not just ORCID.
+
 ## Skip the ORCID sign in page
 
 If a researcher has previously linked their ORCID record to their insitutional account and are currently signed into that institutional account they can go directly to their ORCID record skipping the sign in page. This is done by sending the user to the ORCID Service Provider Login Link, this link can be generated at [Switch Service Provider Login Link Composer](https://www.switch.ch/aai/guides/discovery/login-link-composer/) filling out the fields as directed:

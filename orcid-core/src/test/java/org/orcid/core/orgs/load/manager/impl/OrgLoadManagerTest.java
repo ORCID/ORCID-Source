@@ -58,12 +58,14 @@ public class OrgLoadManagerTest {
     @Test
     public void testLoadOrgs() {
         Mockito.when(importLogDao.getImportSourceOrder()).thenReturn(getListStartingWith("RINGGOLD"));
-        Mockito.when(ringgoldOrgLoadSource.loadLatestOrgs()).thenReturn(true);
+        Mockito.when(ringgoldOrgLoadSource.downloadOrgData()).thenReturn(true);
+        Mockito.when(ringgoldOrgLoadSource.loadOrgData()).thenReturn(true);
         Mockito.doNothing().when(importLogDao).persist(Mockito.any(OrgImportLogEntity.class));
 
         orgLoadManager.loadOrgs();
 
-        Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).loadLatestOrgs();
+        Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).downloadOrgData();
+        Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).loadOrgData();
         Mockito.verify(importLogDao, Mockito.times(1)).persist(captor.capture());
         OrgImportLogEntity importLog = captor.getValue();
         assertNotNull(importLog);
@@ -83,16 +85,19 @@ public class OrgLoadManagerTest {
         nextSources.add(0, "DISABLED");
         
         Mockito.when(importLogDao.getImportSourceOrder()).thenReturn(nextSources);
-        Mockito.when(ringgoldOrgLoadSource.loadLatestOrgs()).thenReturn(true);
+        Mockito.when(ringgoldOrgLoadSource.downloadOrgData()).thenReturn(true);
+        Mockito.when(ringgoldOrgLoadSource.loadOrgData()).thenReturn(true);
         Mockito.doNothing().when(importLogDao).persist(Mockito.any(OrgImportLogEntity.class));
 
         orgLoadManager.loadOrgs();
 
         // ringgold source chosen because DISABLED was not enabled
         Mockito.verify(disabledOrgLoadSource, Mockito.times(1)).isEnabled();
-        Mockito.verify(disabledOrgLoadSource, Mockito.never()).loadLatestOrgs();
+        Mockito.verify(disabledOrgLoadSource, Mockito.never()).downloadOrgData();
+        Mockito.verify(disabledOrgLoadSource, Mockito.never()).loadOrgData();
         Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).isEnabled();
-        Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).loadLatestOrgs();
+        Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).downloadOrgData();
+        Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).loadOrgData();
         Mockito.verify(importLogDao, Mockito.times(1)).persist(captor.capture());
         OrgImportLogEntity importLog = captor.getValue();
         assertNotNull(importLog);
@@ -107,14 +112,37 @@ public class OrgLoadManagerTest {
     }
 
     @Test
-    public void testLoadOrgsFailure() {
+    public void testLoadOrgsDownloadOrgDataFailure() {
         Mockito.when(importLogDao.getImportSourceOrder()).thenReturn(getListStartingWith("RINGGOLD"));
-        Mockito.when(ringgoldOrgLoadSource.loadLatestOrgs()).thenReturn(false);
+        Mockito.when(ringgoldOrgLoadSource.downloadOrgData()).thenReturn(false);
         Mockito.doNothing().when(importLogDao).persist(Mockito.any(OrgImportLogEntity.class));
 
         orgLoadManager.loadOrgs();
 
-        Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).loadLatestOrgs();
+        Mockito.verify(ringgoldOrgLoadSource, Mockito.never()).loadOrgData();
+        Mockito.verify(importLogDao, Mockito.times(1)).persist(captor.capture());
+        OrgImportLogEntity importLog = captor.getValue();
+        assertNotNull(importLog);
+        assertNotNull(importLog.getStart());
+        assertNotNull(importLog.getEnd());
+        assertFalse(importLog.isSuccessful());
+
+        ArgumentCaptor<String> slackMessageCaptor = ArgumentCaptor.forClass(String.class);
+        Mockito.verify(slackManager, Mockito.times(1)).sendAlert(slackMessageCaptor.capture(), Mockito.eq("#slack-channel"), Mockito.eq("slack-user"));
+        String slackMessage = slackMessageCaptor.getValue();
+        assertTrue(slackMessage.contains("FAILURE"));
+    }
+    
+    @Test
+    public void testLoadOrgsLoadOrgDataFailure() {
+        Mockito.when(importLogDao.getImportSourceOrder()).thenReturn(getListStartingWith("RINGGOLD"));
+        Mockito.when(ringgoldOrgLoadSource.downloadOrgData()).thenReturn(true);
+        Mockito.when(ringgoldOrgLoadSource.loadOrgData()).thenReturn(false);
+        Mockito.doNothing().when(importLogDao).persist(Mockito.any(OrgImportLogEntity.class));
+
+        orgLoadManager.loadOrgs();
+
+        Mockito.verify(ringgoldOrgLoadSource, Mockito.times(1)).loadOrgData();
         Mockito.verify(importLogDao, Mockito.times(1)).persist(captor.capture());
         OrgImportLogEntity importLog = captor.getValue();
         assertNotNull(importLog);

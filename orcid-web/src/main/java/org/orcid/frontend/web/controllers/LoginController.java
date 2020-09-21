@@ -305,15 +305,16 @@ public class LoginController extends OauthControllerBase {
         String userConnectionId = null;
         ModelAndView view = null;
         if (userConnection != null) {
-            userConnectionId = userConnection.getId().getUserid();
+            userConnectionId = userConnection.getId().getUserid();            
+            // Store relevant data in the session
+            socialSignInUtils.setSignedInData(request, userData);
+            
             if(userConnection.isLinked()) {                
                 // If user exists and is linked update user connection info
                 // and redirect to user record
                 view = updateUserConnectionAndLogUserIn(request, response, socialType, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
                         accessToken, expiresIn);
-            } else {
-                // Store relevant data in the session
-                socialSignInUtils.setSignedInData(request, userData);
+            } else {                
                 // Forward to account link page
                 if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
                     view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() +"/social-linking", true));
@@ -338,6 +339,11 @@ public class LoginController extends OauthControllerBase {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
         }
         userCookieGenerator.addCookie(userConnectionId, response);
+        
+        if (Features.ORCID_ANGULAR_SIGNIN.isActive() && "social_2FA".equals(view.getViewName())) {
+            return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/2fa-signin?social=true");
+        }                   
+
         return view;
     }
 

@@ -1,8 +1,9 @@
-package org.orcid.core.orgs.load.source.impl;
+package org.orcid.core.orgs.load.source.fundref;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
-import org.orcid.core.orgs.load.io.HttpFileDownloader;
+import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -63,8 +64,17 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     private static final String STATE_ABBREVIATION = "abbr";
     private static final String DEPRECATED_INDICATOR = "http://data.crossref.org/fundingdata/vocabulary/Deprecated";
 
-    @Resource(name = "fundrefHttpFileDownloader")
-    private HttpFileDownloader httpFileDownloader;
+    @Resource(name = "fundrefOrgDataClient")
+    private OrgDataClient orgDataClient;
+    
+    @Value("${org.orcid.core.orgs.fundref.latestReleaseUrl:url}")
+    private String fundrefDataUrl;
+    
+    @Value("${org.orcid.core.orgs.fundref.localFilePath:/tmp/ringgold/fundref.rdf}")
+    private String localFilePath;
+
+    @Value("${org.orcid.core.orgs.clients.userAgent}")
+    private String userAgent;
 
     @Resource
     private FileRotator fileRotator;
@@ -91,28 +101,23 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     }
 
     @Override
-    public boolean loadLatestOrgs() {
+    public boolean loadOrgData() {
         if (!enabled) {
             throw new LoadSourceDisabledException(getSourceName());
         }
 
-        if (downloadData()) {
-            importData();
-            return true;
-        } else {
-            return false;
-        }
+        return importData();
     }
-
-    private void importData() {
+    
+    private boolean importData() {
         Map<String, String> cache = new HashMap<String, String>();
-        
+        InputStream stream = null;
         try {
             long start = System.currentTimeMillis();
-            FileInputStream file = new FileInputStream(httpFileDownloader.getLocalFilePath());
+            stream = new FileInputStream(localFilePath);
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document xmlDocument = builder.parse(file);
+            Document xmlDocument = builder.parse(stream);
 
             NodeList nodeList = (NodeList) xPath.compile(CONCEPTS_EXPRESSION).evaluate(xmlDocument, XPathConstants.NODESET);
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -155,16 +160,29 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
             }
             long end = System.currentTimeMillis();
             LOGGER.info("Time taken to process the files: {}", (end - start));
+            return true;
         } catch (FileNotFoundException fne) {
-            LOGGER.error("Unable to read file {}", httpFileDownloader.getLocalFilePath());
+            LOGGER.error("Unable to read file {}", localFilePath);
+            return false;
         } catch (ParserConfigurationException pce) {
             LOGGER.error("Unable to initialize the DocumentBuilder");
+            return false;
         } catch (IOException ioe) {
-            LOGGER.error("Unable to parse document {}", httpFileDownloader.getLocalFilePath());
+            LOGGER.error("Unable to parse document {}", localFilePath);
+            return false;
         } catch (SAXException se) {
-            LOGGER.error("Unable to parse document {}", httpFileDownloader.getLocalFilePath());
+            LOGGER.error("Unable to parse document {}", localFilePath);
+            return false;
         } catch (XPathExpressionException xpe) {
             LOGGER.error("XPathExpressionException {}", xpe.getMessage());
+            return false;
+        } finally {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                LOGGER.error("Error closing stream", e);
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -472,9 +490,13 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         return orgDisambiguatedEntity;
     }
 
-    private boolean downloadData() {
-        fileRotator.removeFileIfExists(httpFileDownloader.getLocalFilePath());
-        return httpFileDownloader.downloadFile();
+    @Override
+    public boolean downloadOrgData() {
+        fileRotator.removeFileIfExists(localFilePath);
+        orgDataClient.init();
+        boolean success = orgDataClient.downloadFile(fundrefDataUrl, userAgent, localFilePath);
+        orgDataClient.cleanUp();
+        return success;
     }
 
     @Override
@@ -482,11 +504,6 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         return enabled;
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    
     private class RDFOrganization {
         String doi, name, country, stateCode, city, type, subtype, status, isReplacedBy;
     }
