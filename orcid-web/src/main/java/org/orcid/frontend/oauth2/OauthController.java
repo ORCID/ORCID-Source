@@ -31,6 +31,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidClientExcept
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
+import org.springframework.security.oauth2.common.exceptions.UnsupportedResponseTypeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Controller;
@@ -304,10 +305,13 @@ public class OauthController {
                 
                 AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
                 request.getSession().setAttribute("authorizationRequest", authRequest);
-            } catch (RedirectMismatchException e) {
+            } catch (RedirectMismatchException e ) {
                 requestInfoForm.setError("invalid_grant");
                 requestInfoForm.setErrorDescription("Redirect URI doesn't match your registered redirect URIs.");
-            }                       
+            } catch (UnsupportedResponseTypeException e) {
+                requestInfoForm.setError("unsupported_response_type");
+                requestInfoForm.setErrorDescription("Unsupported response type.");
+            }
         }
         return requestInfoForm;
     }
