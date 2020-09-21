@@ -136,7 +136,10 @@ public enum Features implements Feature {
     MEMBER_API_DEFAULT_TO_V3,
     
     @Label("Disable the 2.0 release candidates")
-    V2_DISABLE_RELEASE_CANDIDATES;
+    V2_DISABLE_RELEASE_CANDIDATES,
+    
+    @Label("Salesforce: Enable opportunities and org record types")
+    SF_ENABLE_OPP_ORG_RECORD_TYPES;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
