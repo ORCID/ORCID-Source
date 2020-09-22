@@ -20,6 +20,7 @@ import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
+import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Day;
@@ -29,6 +30,7 @@ import org.orcid.jaxb.model.v3.release.common.Subtitle;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Year;
+import org.orcid.jaxb.model.v3.release.record.Citation;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
@@ -134,7 +136,6 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             StringBuffer response = new StringBuffer();
             in.lines().forEach(i -> response.append(i));
             in.close();
-
             // Read JSON response and print
             JSONObject json = new JSONObject(response.toString());
 
@@ -155,6 +156,13 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         if (json.has("type")) {
             try {
                 result.setWorkType(WorkType.fromValue(json.getString("type")));
+            } catch (IllegalArgumentException e) {
+
+            }
+        }
+        if (result.getWorkType() == null && json.has("subtype")) {
+            try {
+                result.setWorkType(WorkType.fromValue(json.getString("subtype")));
             } catch (IllegalArgumentException e) {
 
             }
@@ -196,6 +204,14 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 extId.setUrl(new Url(idType.getResolutionPrefix() + doi));
             }
             result.getWorkExternalIdentifiers().getExternalIdentifier().add(extId);
+            //get Citation Data
+            String bibtexCitation = getBibtexCitationData(idType.getResolutionPrefix() + doi);
+            if(!StringUtils.isBlank(bibtexCitation)) {
+                Citation citation = new Citation();
+                citation.setWorkCitationType(CitationType.BIBTEX);
+                citation.setCitation(bibtexCitation);
+                result.setWorkCitation(citation);
+            }
         }
         if (json.has("ISBN")) {
             try {
@@ -240,8 +256,13 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             String description = json.getString("abstract");
             result.setShortDescription(description);
         }
-
-        if (json.has("journal-title")) {            
+        
+        if (result.getWorkType() == WorkType.BOOK) {
+            if (json.has("publisher")) {
+                result.setJournalTitle(new Title(json.getString("publisher")));
+            }
+        }
+        else if (json.has("journal-title")) {            
             result.setJournalTitle(new Title(json.getString("journal-title")));
         } else if (json.has("container-title")) {
             result.setJournalTitle(new Title(json.getString("container-title")));
@@ -315,5 +336,32 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             
         }
         return result;
+    }
+    
+    
+    private String getBibtexCitationData(String url) {
+        try {
+            
+            InputStream inputStream = cache.get(url, "application/x-bibtex");
+            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
+
+            StringBuffer response = new StringBuffer();
+            in.lines().forEach(i -> response.append(i));
+            in.close();
+ 
+            if(StringUtils.isNotBlank(response)) {
+                String responseStr = response.toString();
+                if(responseStr.startsWith("@") && responseStr.endsWith("}")) {
+                    return responseStr;
+                }
+            }
+            
+        } catch (UnexpectedResponseCodeException e) {
+            LOG.warn(String.format("UnexpectedResponseCode retrieving bibtext for DOI %s. Expected %s, got %s", url, e.getExpectedCode(), e.getReceivedCode()), e);
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
+        
     }
 }
