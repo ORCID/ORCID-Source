@@ -116,7 +116,25 @@ public class DOIResolverTest {
 
         });
         
+        when(cache.get("https://doi.org/10.000/0000.0000", "application/x-bibtex")).thenAnswer(new Answer<InputStream>() {
+
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return DOIResolverTest.class.getResourceAsStream("/examples/works/form_autofill/doi.json");
+            }
+
+        });
+        
         when(cache.get("https://doi.org/10.000/0000.0001", "application/vnd.citationstyles.csl+json")).thenAnswer(new Answer<InputStream>() {
+
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return DOIResolverTest.class.getResourceAsStream("/examples/works/form_autofill/doi-no-published-date.json");
+            }
+
+        });
+        
+        when(cache.get("https://doi.org/10.000/0000.0001", "application/x-bibtex")).thenAnswer(new Answer<InputStream>() {
 
             @Override
             public InputStream answer(InvocationOnMock invocation) throws Throwable {
@@ -134,7 +152,26 @@ public class DOIResolverTest {
 
         });
         
+        when(cache.get("https://doi.org/10.000/0000.0002", "application/x-bibtex")).thenAnswer(new Answer<InputStream>() {
+
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return DOIResolverTest.class.getResourceAsStream("/examples/works/form_autofill/doi-journal-title-in-container-title.json");
+            }
+
+        });
+        
+        
         when(cache.get("https://doi.org/10.000/0000.0003", "application/vnd.citationstyles.csl+json")).thenAnswer(new Answer<InputStream>() {
+
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return DOIResolverTest.class.getResourceAsStream("/examples/works/form_autofill/doi-journal-title-in-container-title-short.json");
+            }
+
+        });
+        
+        when(cache.get("https://doi.org/10.000/0000.0003", "application/x-bibtex")).thenAnswer(new Answer<InputStream>() {
 
             @Override
             public InputStream answer(InvocationOnMock invocation) throws Throwable {
