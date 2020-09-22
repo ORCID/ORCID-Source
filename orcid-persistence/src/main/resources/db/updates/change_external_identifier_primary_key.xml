@@ -2,9 +2,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet id="CHANGE-EXTERNAL-IDENTIFIER-PRIMARY-KEY" author="Angel Montenegro">
-        <preConditions>
-  			<primaryKeyExists tableName="external_identifier" primaryKeyName="external_identifier_pkey"/>
+	<changeSet id="CHANGE-EXTERNAL-IDENTIFIER-PRIMARY-KEY-POSTGRESQL" author="Camelia Dumitru" dbms="postgresql">
+    <preConditions onFail="MARK_RAN">
+        <not>
+  			   <primaryKeyExists tableName="external_identifier" primaryKeyName="external_identifier_numeric_pkey"/>
+        </not>
 		</preConditions>
 		<dropPrimaryKey tableName="external_identifier"
             constraintName="external_identifier_pkey" />
