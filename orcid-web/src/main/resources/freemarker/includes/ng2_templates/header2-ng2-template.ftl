@@ -63,7 +63,7 @@
                     <!-- FOR RESEARCHERS -->
                     <li class="first expanded" role="presentation"
                      [ngClass]="{'hover': mobileMenu.RESEARCHERS, 'open':  this.currentUrl.indexOf('signin') == -1}"  >
-                        <a href="{{aboutUri}}/about/what-is-orcid/mission" 
+                        <a href="{{getBaseUri()}}/help"
                         title="" role="menuitem" 
                         (mouseenter)="menuHandler('RESEARCHERS', $event)" 
                         (focus)="menuHandler('RESEARCHERS', $event)" 
