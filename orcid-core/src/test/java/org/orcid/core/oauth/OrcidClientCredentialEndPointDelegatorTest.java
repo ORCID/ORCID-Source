@@ -6,10 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
@@ -20,7 +17,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -37,10 +33,6 @@ import org.springframework.security.oauth2.common.exceptions.InvalidScopeExcepti
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.JWTClaimsSet.Builder;
-import com.nimbusds.jwt.SignedJWT;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -250,45 +242,4 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         assertTrue(token.getExpiration().getTime() > refreshToken.getExpiration().getTime());
     }
 
-    @Test(expected = InvalidTokenException.class)
-    public void testExpiredIdToken() throws JOSEException {
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
-        
-        String idToken = getSerialisedTestClaims();
-
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
-        formParams.add("client_id", CLIENT_ID_1);
-        formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
-        formParams.add("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange");
-        formParams.add("redirect_uri", "http://www.APP-5555555555555555.com/redirect/oauth");
-        formParams.add("scope", "/read-limited openid /activities/update");
-        formParams.add("requested_token_type", "urn:ietf:params:oauth:token-type:access_token");
-        formParams.add("subject_token_type", "urn:ietf:params:oauth:token-type:id_token");
-        formParams.add("subject_token", idToken);
-
-        orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
-    }
-
-    private String getSerialisedTestClaims() throws JOSEException {
-        Builder claims = new JWTClaimsSet.Builder();
-        claims.audience(CLIENT_ID_1);
-        claims.subject("https://orcid.org/orcid");
-        claims.claim("id_path", "orcid");
-        claims.issuer("whatever");
-        claims.claim("at_hash", "blah-blah");
-
-        Calendar longTimeAgo = Calendar.getInstance();
-        longTimeAgo.add(Calendar.DAY_OF_YEAR, -100);
-        claims.issueTime(longTimeAgo.getTime());
-        claims.expirationTime(longTimeAgo.getTime());
-        claims.jwtID(UUID.randomUUID().toString());
-        claims.claim(OrcidOauth2Constants.NONCE, "nonce");
-        claims.claim(OrcidOauth2Constants.AUTH_TIME, new Date());
-        claims.claim("name", "graham");
-        claims.claim("family_name", "gooch");
-        claims.claim("given_name", "graham gooch");
-
-        SignedJWT signedJWT = keyManager.sign(claims.build());
-        return signedJWT.serialize();
-    }
 }

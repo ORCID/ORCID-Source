@@ -101,8 +101,12 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
         
         Date now = new Date();
+        Calendar twentyFourHrs = Calendar.getInstance();
+        twentyFourHrs.setTime(now);
+        twentyFourHrs.add(Calendar.DAY_OF_YEAR, 1);
+        
         claims.issueTime(now);
-        claims.expirationTime(accessToken.getExpiration());
+        claims.expirationTime(twentyFourHrs.getTime());
         claims.jwtID(UUID.randomUUID().toString());
         if (nonce != null)
             claims.claim(OrcidOauth2Constants.NONCE, nonce);
