@@ -139,7 +139,10 @@ public enum Features implements Feature {
     V2_DISABLE_RELEASE_CANDIDATES,
     
     @Label("Salesforce: Enable opportunities and org record types")
-    SF_ENABLE_OPP_ORG_RECORD_TYPES;
+    SF_ENABLE_OPP_ORG_RECORD_TYPES,
+    
+    @Label("ID token 24 hours lifespan")
+    ID_TOKEN_24_HOURS_LIFESPAN;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
