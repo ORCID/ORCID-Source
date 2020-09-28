@@ -5,7 +5,7 @@
     <packaging>war</packaging>
     <name>ORCID - Web frontend</name>
     <description>A web application the serves the Angular frontend of the ORCID Registry</description>
-	<version>-prod-release-1.288.19</version>    
+	<version>-prod-release-1.288.20</version>    
 		
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
