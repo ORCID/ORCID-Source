@@ -115,6 +115,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     private String consortiumMemberRecordTypeId;
     
+    private String consortiumMemberRecordTypeIdFromAccountAndConsortiumMember;
+    
     private Map<String, Badge> badgesMap;
 
     @SuppressWarnings("unchecked")
@@ -336,6 +338,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             member.setParentId(consortiumLeadId);
             member.setOwnerId(consortiumOwnerId);
             member.setCountry(consortium.getCountry());
+            member.setRecordTypeId(getConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember());
             accountId = salesForceDao.createMember(member);
         }
         opportunity.setOwnerId(consortiumOwnerId);
@@ -442,6 +445,13 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             consortiumMemberRecordTypeId = salesForceDao.retrieveConsortiumMemberRecordTypeId();
         }
         return consortiumMemberRecordTypeId;
+    }
+    
+    private String getConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember() {
+        if (consortiumMemberRecordTypeIdFromAccountAndConsortiumMember == null) {
+            consortiumMemberRecordTypeIdFromAccountAndConsortiumMember = salesForceDao.retrieveConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember();
+        }
+        return consortiumMemberRecordTypeIdFromAccountAndConsortiumMember;
     }
     
     @Override
