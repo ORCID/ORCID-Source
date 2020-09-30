@@ -75,6 +75,10 @@ public class OauthController {
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
         // Populate the request info form
 
+        if (request.getQueryString() != null) {
+
+        }
+
         RequestInfoForm requestInfoForm = generateRequestInfoForm(request, request.getQueryString(), model, requestParameters, sessionStatus, principal);                                
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);       
 
@@ -113,6 +117,14 @@ public class OauthController {
         RequestInfoForm requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         return setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
+    }
+
+    @RequestMapping(value = { "/oauth/custom/requestInfoForm.json" }, method = RequestMethod.GET)
+    public @ResponseBody RequestInfoForm customRequestInfoForm(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
+                                                         SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
+        RequestInfoForm requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        return requestInfoForm;
     }
 
     private RequestInfoForm generateRequestInfoForm(HttpServletRequest request, String queryString, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
