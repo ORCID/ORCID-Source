@@ -141,7 +141,7 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
                 break;
         }
         //id
-        out.append(escapeStringForBibtex(creditName).replace(' ', '_')+work.getPutCode());   
+        out.append(escapeStringForBibtex(creditName).replace(' ', '_') + "_" + work.getPutCode());
         //title
         out.append(",\ntitle={"+escapeStringForBibtex((work.getWorkTitle() != null) ? work.getWorkTitle().getTitle().getContent() : "No Title")+"}");        
         //journal title
