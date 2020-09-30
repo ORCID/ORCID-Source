@@ -104,5 +104,7 @@ public interface SalesForceDao {
     List<Badge> retrieveBadges();
 
     String getAccessToken();
+    
+    String retrieveConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember();
 
 }

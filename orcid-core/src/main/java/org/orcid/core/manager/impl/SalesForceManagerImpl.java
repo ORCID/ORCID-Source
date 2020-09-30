@@ -41,6 +41,7 @@ import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
@@ -114,6 +115,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private String premiumConsortiumMemberTypeId;
 
     private String consortiumMemberRecordTypeId;
+    
+    private String consortiumMemberRecordTypeIdFromAccountAndConsortiumMember;
     
     private Map<String, Badge> badgesMap;
 
@@ -332,10 +335,12 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
         if (firstExistingMember.isPresent()) {
             accountId = firstExistingMember.get().getId();
-        } else {
-            member.setParentId(consortiumLeadId);
+        } else {            
             member.setOwnerId(consortiumOwnerId);
             member.setCountry(consortium.getCountry());
+            if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
+                member.setRecordTypeId(getConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember());
+            }
             accountId = salesForceDao.createMember(member);
         }
         opportunity.setOwnerId(consortiumOwnerId);
@@ -442,6 +447,13 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             consortiumMemberRecordTypeId = salesForceDao.retrieveConsortiumMemberRecordTypeId();
         }
         return consortiumMemberRecordTypeId;
+    }
+    
+    private String getConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember() {
+        if (consortiumMemberRecordTypeIdFromAccountAndConsortiumMember == null) {
+            consortiumMemberRecordTypeIdFromAccountAndConsortiumMember = salesForceDao.retrieveConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember();
+        }
+        return consortiumMemberRecordTypeIdFromAccountAndConsortiumMember;
     }
     
     @Override

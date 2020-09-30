@@ -15,8 +15,7 @@ public class Member implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String id;
-    private String parentId;
+    private String id;    
     private String ownerId;
     private String name;
     private String publicDisplayName;
@@ -31,6 +30,7 @@ public class Member implements Serializable {
     private String consortiumLeadId;
     private String lastMembershipStartDate;
     private String lastMembershipEndDate;
+    private String recordTypeId;
 
     public String getId() {
         return id;
@@ -38,14 +38,6 @@ public class Member implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
     }
 
     public String getOwnerId() {
@@ -167,13 +159,22 @@ public class Member implements Serializable {
     public void setLastMembershipEndDate(String lastMembershipEndDate) {
         this.lastMembershipEndDate = lastMembershipEndDate;
     }
+    
+    public String getRecordTypeId() {
+        return recordTypeId;
+    }
+
+    public void setRecordTypeId(String recordTypeId) {
+        this.recordTypeId = recordTypeId;
+    }
 
     @Override
     public String toString() {
-        return "Member [id=" + id + ", parentId=" + parentId + ", ownerId=" + ownerId + ", name=" + name + ", publicDisplayName=" + publicDisplayName + ", websiteUrl="
+        return "Member [id=" + id + ", ownerId=" + ownerId + ", name=" + name + ", publicDisplayName=" + publicDisplayName + ", websiteUrl="
                 + websiteUrl + ", researchCommunity=" + researchCommunity + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl
-                + ", publicDisplayEmail=" + publicDisplayEmail + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId=" + consortiumLeadId
-                + ", lastMembershipStartDate=" + lastMembershipStartDate + ", lastMembershipEndDate=" + lastMembershipEndDate + "]";
+                + ", publicDisplayEmail=" + publicDisplayEmail + ", emailDomains=" + emailDomains + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId="
+                + consortiumLeadId + ", lastMembershipStartDate=" + lastMembershipStartDate + ", lastMembershipEndDate=" + lastMembershipEndDate + ", recordTypeId="
+                + recordTypeId + "]";
     }
 
 }
