@@ -137,6 +137,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
     
     @Override
+    public String retrieveConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember() {
+        return retry(accessToken -> retrieveRecordTypeIdForAccountAndConsortiumMember(accessToken));
+    }
+    
+    @Override
     public List<OrgId> retrieveOrgIdsByAccountId(String accountId) {
         return retry(accessToken -> retrieveOrgIdsFromSalesForceByAccountId(accessToken, accountId));
     }
@@ -435,8 +440,13 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
 
     private JSONObject retrieveMembersObject(String accessToken, String accountId) {
         StringBuffer query = new StringBuffer();
-        query.append(
-                "SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
+        if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
+            query.append(
+                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
+        } else {
+            query.append(
+                "SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");            
+        }
         query.append(
                 "(SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), ");
         query.append(
@@ -497,7 +507,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             resource = createQueryResource(
                     "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, "
                             + "(SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) "
-                            + "FROM Account WHERE RecordTypeId IN (Select Id From RecordType Where Name = 'Consortium Member') AND Active_Member__c=TRUE");
+                            + "FROM Account WHERE RecordTypeId IN (Select Id From RecordType Where Name = 'Consortium Lead') AND Active_Member__c=TRUE");
         } else {
             resource = createQueryResource(
                     "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, "
@@ -671,6 +681,22 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return salesForceAdapter.extractIdFromFirstRecord(result);
     }
 
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    public String retrieveRecordTypeIdForAccountAndConsortiumMember(String accessToken) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get consortium member record type ID from SalesForce");
+        WebResource resource = createQueryResource("SELECT Id FROM RecordType WHERE SobjectType='Account' AND Name='Consortium Member'");
+        ClientResponse response = doGetRequest(resource, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 200, "Error getting consortium member record type ID from SalesForce");
+        return salesForceAdapter.extractIdFromFirstRecord(result);
+    }
+    
     /**
      * 
      * @throws SalesForceUnauthorizedException

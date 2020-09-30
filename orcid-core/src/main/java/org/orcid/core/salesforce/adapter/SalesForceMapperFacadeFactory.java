@@ -18,6 +18,7 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.OrgId;
+import org.orcid.core.togglz.Features;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomConverter;
@@ -77,8 +78,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter(new CommunityTypeConverter());
         converterFactory.registerConverter(new ReverseCommunityTypeConverter());
-        classMap.field("id", "Id");
-        classMap.field("parentId", "ParentId");
+        classMap.field("id", "Id");        
         classMap.field("ownerId", "OwnerId");
         classMap.field("name", "Name");
         classMap.field("publicDisplayName", "Public_Display_Name__c");
@@ -89,6 +89,10 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("logoUrl", "Logo_Description__c");
         classMap.field("publicDisplayEmail", "Public_Display_Email__c");
         classMap.field("emailDomains", "Email_domains__c");
+        if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
+            classMap.field("recordTypeId", "RecordTypeId");
+            classMap.field("consortiumLeadId", "Consortium_Lead__c");   
+        }
         classMap.fieldBToA("Last_membership_start_date__c", "lastMembershipStartDate");
         classMap.fieldBToA("Last_membership_end_date__c", "lastMembershipEndDate");
         classMap.customize(new CustomMapper<Member, JSONObject>() {
