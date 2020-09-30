@@ -97,7 +97,7 @@ ORCID now supports the following behaviour during authorization requests that in
     *   **error=login_required**  : the user does not have an ORCID session
     *   **error=interaction_required** : the user has not granted required permissions
 *   **prompt=login** :  If the user is already logged in, force them to reauthenticate
-*   **max_age=milliseconds** :  If the user logged in over max_age milliseconds in the past, force them to reauthenticate
+*   **max_age=seconds** :  If the user logged in over max_age seconds in the past, force them to reauthenticate
 *   **nonce=String** :  This nonce will be returned in the id_token.
 
 ## **Other endpoints** 
