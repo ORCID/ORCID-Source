@@ -77,8 +77,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter(new CommunityTypeConverter());
         converterFactory.registerConverter(new ReverseCommunityTypeConverter());
-        classMap.field("id", "Id");
-        classMap.field("parentId", "ParentId");
+        classMap.field("id", "Id");        
         classMap.field("ownerId", "OwnerId");
         classMap.field("name", "Name");
         classMap.field("publicDisplayName", "Public_Display_Name__c");
@@ -90,6 +89,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("publicDisplayEmail", "Public_Display_Email__c");
         classMap.field("emailDomains", "Email_domains__c");
         classMap.field("recordTypeId", "RecordTypeId");
+        classMap.field("consortiumLeadId", "Consortium_Lead__c");        
         classMap.fieldBToA("Last_membership_start_date__c", "lastMembershipStartDate");
         classMap.fieldBToA("Last_membership_end_date__c", "lastMembershipEndDate");
         classMap.customize(new CustomMapper<Member, JSONObject>() {

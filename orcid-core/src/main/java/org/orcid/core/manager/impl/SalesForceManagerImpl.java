@@ -334,8 +334,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
         if (firstExistingMember.isPresent()) {
             accountId = firstExistingMember.get().getId();
-        } else {
-            member.setParentId(consortiumLeadId);
+        } else {            
             member.setOwnerId(consortiumOwnerId);
             member.setCountry(consortium.getCountry());
             member.setRecordTypeId(getConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember());

@@ -441,7 +441,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private JSONObject retrieveMembersObject(String accessToken, String accountId) {
         StringBuffer query = new StringBuffer();
         query.append(
-                "SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
+                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
         query.append(
                 "(SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), ");
         query.append(
