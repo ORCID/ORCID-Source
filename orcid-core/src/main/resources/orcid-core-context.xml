@@ -1389,6 +1389,10 @@
         <property name="mapperFacade" ref="clientMapperFacade" />
     </bean>
 
+
+    <bean id="salesForceMapperFacadeFactoryLegacy" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactoryLegacy" />
+    <bean id="salesForceMemberMapperFacadeLegacy" factory-bean="&amp;salesForceMapperFacadeFactoryLegacy" factory-method="getMemberMapperFacade"/>
+
     <bean id="salesForceMapperFacadeFactory" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactory" />
     <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
            
