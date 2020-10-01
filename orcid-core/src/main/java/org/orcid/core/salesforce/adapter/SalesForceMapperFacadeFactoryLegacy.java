@@ -39,7 +39,7 @@ import ma.glasnost.orika.property.IntrospectorPropertyResolver;
  * @author Will Simpson
  *
  */
-public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> {
+public class SalesForceMapperFacadeFactoryLegacy implements FactoryBean<MapperFacade> {
 
     @Override
     public MapperFacade getObject() throws Exception {
@@ -89,8 +89,6 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("logoUrl", "Logo_Description__c");
         classMap.field("publicDisplayEmail", "Public_Display_Email__c");
         classMap.field("emailDomains", "Email_domains__c");
-        classMap.field("recordTypeId", "RecordTypeId");
-        classMap.field("consortiumLeadId", "Consortium_Lead__c");   
         classMap.fieldBToA("Last_membership_start_date__c", "lastMembershipStartDate");
         classMap.fieldBToA("Last_membership_end_date__c", "lastMembershipEndDate");
         classMap.customize(new CustomMapper<Member, JSONObject>() {

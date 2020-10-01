@@ -51,13 +51,13 @@ Editing the work section of a record requires a 3 step OAuth token with the ```/
 
 - **publication_date** _(optional)_ The date the work was completed
 
-- **exteral-id-type** _(required)_ The type of identifier. This field must be selected from the [supported work identifiers](https://pub.qa.orcid.org/v3.0/identifiers?locale=en)
+- **external-id-type** _(required)_ The type of identifier. This field must be selected from the [supported work identifiers](https://pub.qa.orcid.org/v3.0/identifiers?locale=en)
 
-- **exteral-id-value** _(required)_ The identifier itself
+- **external-id-value** _(required)_ The identifier itself
 
-- **exteral-id-url** _(optional)_ A url the identifier resolves to
+- **external-id-url** _(optional)_ A url the identifier resolves to
 
-- **exteral-id-relationship** _(required)_ Select self for identifiers that apply to the work itself or part-of for identifiers that apply to a collection the work is part of.
+- **external-id-relationship** _(required)_ Select self for identifiers that apply to the work itself or part-of for identifiers that apply to a collection the work is part of.
 
 - **work-url** _(optional)_ A url linking to the work
 
