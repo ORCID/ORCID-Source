@@ -124,6 +124,9 @@ public class OauthController {
             if (requestInfoForm.getUserOrcid() != null) {                
                 if (requestParameters.isEmpty() && request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING) != null) {
                     String url =  URLDecoder.decode((String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING), "UTF-8").trim();
+                    if(url.startsWith("oauth=&")) {
+                        url = url.replaceFirst("oauth=&", "");
+                    }
                     String[] pairs = url.split("&");
                     for (int i = 0; i < pairs.length; i++) {
                         String pair = pairs[i];
