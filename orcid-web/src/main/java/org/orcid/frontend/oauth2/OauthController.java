@@ -74,7 +74,6 @@ public class OauthController {
     public @ResponseBody RequestInfoForm loginGetHandler(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
         // Populate the request info form
-
         RequestInfoForm requestInfoForm = generateRequestInfoForm(request, request.getQueryString(), model, requestParameters, sessionStatus, principal);                                
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);       
 
@@ -113,6 +112,30 @@ public class OauthController {
         RequestInfoForm requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         return setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
+    }
+
+    @RequestMapping(value = { "/oauth/custom/requestInfoForm.json" }, method = RequestMethod.GET)
+    public @ResponseBody RequestInfoForm customRequestInfoForm(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
+                                                         SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
+        RequestInfoForm requestInfoForm = new RequestInfoForm();
+
+        if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null) {
+            requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
+            if (requestInfoForm.getUserOrcid() != null) {                
+                if (requestParameters.isEmpty() && request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING) != null) {
+                    String url =  URLDecoder.decode((String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING), "UTF-8").trim();
+                    String[] pairs = url.split("&");
+                    for (int i = 0; i < pairs.length; i++) {
+                        String pair = pairs[i];
+                        String[] keyValue = pair.split("=");
+                        requestParameters.put(keyValue[0], keyValue[1]);
+                    }
+                    setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
+                }                
+            }
+        }
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        return requestInfoForm;
     }
 
     private RequestInfoForm generateRequestInfoForm(HttpServletRequest request, String queryString, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
