@@ -83,10 +83,10 @@ The  id token can be used in the same way as described above.
 
 ## **What is an id_token?** 
 
-The id_token value is a JSON web token ([JWT](https://jwt.io/)) that has been signed and base64 encoded. The string is in three parts, separated by a period.  The first section is the header and contains information on how the JWT was signed.  The middle section contains useful information such as the subject (in our case, the ORCID ID), audience, issuer, issue time, expiry time and authentication time and, if requested using the member API, information about the users authentication method.  It will also include a nonce if this was in the original request.  The final section is the signature.  There are many client libraries that will take the jwks key we provide and validate the token.  The middle part of the id_token shown above looks like this when decoded:
+The id_token value is a JSON web token ([JWT](https://jwt.io/)) that has been signed and base64 encoded. The string is in three parts, separated by a period.  The first section is the header and contains information on how the JWT was signed.  The middle section contains useful information such as the subject (in our case, the ORCID ID), audience, issuer, issue time, expiry time and authentication time and, if requested using the member API, information about the users authentication method. It will also include a nonce if this was in the original request.  The final section is the signature.  There are many client libraries that will take the jwks key we provide and validate the token.  The middle part of the id_token shown above looks like this when decoded:
 
 ```
-    {"aud":"4444-4444-4444-4445","sub":"0000-0002-2601-8132","auth_time":1495707257,"amr":"pwd","iss":"https:\/\/orcid.org","exp":1495707873,"iat":1495707273,"nonce":"n1","jti":"eaa4d563-be63-47ee-8976-dc7cc3b7be61"}
+    {"aud":"4444-4444-4444-4445","sub":"0000-0002-2601-8132","auth_time":1601920037,"amr":"pwd","iss":"https:\/\/orcid.org","exp":1602006492,"iat":1601920092,"nonce":"n1","jti":"eaa4d563-be63-47ee-8976-dc7cc3b7be61"}
 ```
 
 ## **Query parameters** 

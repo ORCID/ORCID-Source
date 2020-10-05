@@ -36,6 +36,9 @@
 							<div class="col-md-12 col-sm-12 col-xs-12">
 								<span><@orcid.msg 'manage.developer_tools.group.website'/></span><br />
 								<input type="text" [(ngModel)]="_client.website.value" name="website" class="full-width-input" />
+								<span class="orcid-error https-error" *ngIf="_client.website.value && !_client.website.value.startsWith('https')">
+                                	<@orcid.msg 'manage.developer_tools.website_not_https'/>
+                                 </span>
 								<span class="orcid-error" *ngIf="_client.website.errors.length > 0">
 									<div *ngFor='let error of _client.website.errors'>{{error}}</div>
 								</span>	
@@ -120,6 +123,9 @@
 									<!-- URI -->
 									<div class="col-md-12 col-sm-12 col-xs-12">
 										<input type="text" [(ngModel)]="rUri.value.value" class="input-xlarge">
+										<span class="orcid-error https-error" *ngIf="rUri.value.value && !rUri.value.value.startsWith('https')">
+                                			<@orcid.msg 'manage.developer_tools.website_not_https'/>
+                                    	</span>
 										<a *ngIf="_client.type.value == 'public-client'" href="" id="delete-redirect-uri" (click)="deleteRedirectUri(i)" class="glyphicon glyphicon-trash grey"></a>
 										<a *ngIf="(i===_client.redirectUris.length-1) && _client.type.value == 'public-client'" href="" id="load-empty-redirect-uri" (click)="addRedirectUri()" class="glyphicon glyphicon-plus grey"></a>										
 									</div>

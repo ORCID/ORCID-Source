@@ -17,6 +17,6 @@
             <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
         </preConditions>
         <sql>GRANT SELECT ON TABLE dw_work to dw_user;</sql>
-    </changeSet>
+    </changeSet>  
                    
  </databaseChangeLog>

@@ -288,11 +288,19 @@
                         <div *ngIf="editSources[group.groupId]">
                             <ul *ngIf="!isPublicPage" class="sources-actions">
                                 <li>
-                                    <a 
-                                        (click)="deleteResearchResourceConfirm(researchResource)"  
-                                        title="<@orcid.msg 'freemarker.btnDelete' /> {{researchResource?.title?.title?.content}}">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>
+                                    <div class="popover-help-container">
+                                        <a
+                                            (click)="deleteResearchResourceConfirm(researchResource)"
+                                            title="<@orcid.msg 'freemarker.btnDelete' /> {{researchResource?.title?.title?.content}}">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                            <div class="popover top tooltip-delete tooltip-text">
+                                                <div class="arrow"></div>
+                                                <div class="popover-content">
+                                                    <span><@orcid.msg 'common.modals.delete' /></span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -321,9 +329,17 @@
                     <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
                         <ul *ngIf="!isPublicPage" class="sources-actions">
                             <li>
-                                <a (click)="deleteResearchResourceConfirm(researchResource)">
-                                    <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{researchResource?.title?.title?.content}}"></span>
-                                </a>
+                                <div class="popover-help-container">
+                                    <a (click)="deleteResearchResourceConfirm(researchResource)">
+                                        <span class="glyphicon glyphicon-trash" title="<@orcid.msg 'freemarker.btnDelete'/> {{researchResource?.title?.title?.content}}"></span>
+                                        <div class="popover top tooltip-delete tooltip-text">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@orcid.msg 'common.modals.delete' /></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -345,15 +361,31 @@
                     <div class="col-md-2 col-sm-2 col-xs-3" *ngIf="group.activePutCode == researchResource.putCode">
                         <ul *ngIf="!isPublicPage" class="sources-options" >
                             <li *ngIf="!(editSources[group.groupId] || group?.researchResources?.length == 1)">
-                                <a (click)="showSources(group, $event)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
+                                <div class="popover-help-container">
+                                    <a (click)="showSources(group, $event)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                        <div class="popover top tooltip-delete tooltip-text">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@orcid.msg 'common.modals.delete' /></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </li>
 
                             <li *ngIf="group?.researchResources?.length == 1">
-                                <a (click)="deleteResearchResourceConfirm(group.defaultResearchResource)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
+                                <div class="popover-help-container">
+                                    <a (click)="deleteResearchResourceConfirm(group.defaultResearchResource)">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                        <div class="popover top tooltip-delete tooltip-text">
+                                            <div class="arrow"></div>
+                                            <div class="popover-content">
+                                                <span><@orcid.msg 'common.modals.delete' /></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </li>
                         </ul>
                     </div>
