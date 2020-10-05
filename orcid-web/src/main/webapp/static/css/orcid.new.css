@@ -10056,3 +10056,7 @@ name-ng2 h2.full-name {
     min-width: 68px !important;
 }
 
+.https-error {
+    font-size: 12px;
+    margin-left: 4px;
+}
