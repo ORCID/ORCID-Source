@@ -19,7 +19,7 @@
   export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
   ```
 
-* Install [Tomcat](http://tomcat.apache.org/) and ensure it starts
+* Install [Tomcat 8.5.5](http://tomcat.apache.org/) and ensure it starts
 
 * Ensure a git client is installed
 
