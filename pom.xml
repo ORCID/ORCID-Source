@@ -25,7 +25,7 @@ the software.
     <description>The parent ORCID pom that all sub-projects reside under</description>
 
     <properties>
-        <spring.version>4.3.18.RELEASE</spring.version>
+        <spring.version>5.2.9.RELEASE</spring.version>
         <security.version>4.2.13.RELEASE</security.version>
         <jersey.version>1.19.1</jersey.version>
         <swagger.version>1.5.16</swagger.version>
