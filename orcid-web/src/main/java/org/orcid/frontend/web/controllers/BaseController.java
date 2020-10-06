@@ -581,6 +581,7 @@ public class BaseController {
             request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
 
             if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                // Remove the prompt parameter after a successful login 
                 targetUrl = removeParameterFromURI(targetUrl, OrcidOauth2Constants.PROMPT.toString());
             }
         } else {
