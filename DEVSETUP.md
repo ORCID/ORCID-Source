@@ -12,7 +12,7 @@
 
 * Install [Maven](http://maven.apache.org/index.html) - ensure you add maven/bin directory to PATH environment variable. Verify installation with mvn -version
 
-* Install Postgres version 9.5.5:
+* Install Postgres version 10.9:
   * [Windows](http://www.postgresql.org/download/) - verify with psql -U postgres in postgres installation's bin directory in command prompt
   * [Mac](http://postgresapp.com/) - add postgres bin directory to .bash_profile directory
   ```
