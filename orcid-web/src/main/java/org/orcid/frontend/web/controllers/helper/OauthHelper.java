@@ -150,7 +150,8 @@ public class OauthHelper {
             if (scopeMatcher.find()) {
                 String scopes = scopeMatcher.group(1);
                 String scopesString = URLDecoder.decode(scopes, "UTF-8").trim();
-                scopesString = scopesString.replaceAll(" +", " ");
+                // Replace any number of spaces or a plus (+) sign with a single space
+                scopesString = scopesString.replaceAll("( |\\+)+", " ");
                 for (ScopePathType theScope : ScopePathType.getScopesFromSpaceSeparatedString(scopesString)) {
                     ScopeInfoForm scopeInfoForm = new ScopeInfoForm();
                     scopeInfoForm.setValue(theScope.value());
