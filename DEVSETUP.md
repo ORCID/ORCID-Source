@@ -2,7 +2,7 @@
 
 ## Prerequisites 
 
-* Install [Java OpenJDK 8](https://openjdk.java.net/install/) or the Oracle version http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* Install [Java OpenJDK 8](https://openjdk.java.net/install/) by preference or the [Oracle version](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 * Add JAVA_HOME environment variable:
   * Windows - control panel -> system -> advanced system settings -> environment variables
   * Mac - create or edit .bash_profile file in home directory, add EXPORT JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home
