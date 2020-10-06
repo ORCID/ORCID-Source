@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -573,23 +574,33 @@ public class BaseController {
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered) {
         String targetUrl = null;
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-        if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+        if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
             // Just redirect to the authorization screen
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
             targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize?" + queryString;
             request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+
+            if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                targetUrl = removeParameterFromURI(targetUrl, OrcidOauth2Constants.PROMPT.toString());
+            }
         } else {
-            targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);            
+            targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
         }
-        
+
         if (targetUrl == null) {
             targetUrl = getBaseUri() + "/my-orcid";
             if (justRegistered) {
                 targetUrl += "?justRegistered";
             }
         }
-        
+
         return targetUrl;
+    }
+    
+    public static String removeParameterFromURI(String uri, String param) {
+        UriBuilder uriBuilder = UriBuilder.fromUri(uri);
+        String newUrl = uriBuilder.replaceQueryParam(param).build().toString();
+        return newUrl;
     }
 
     protected void passwordConfirmValidate(Text passwordConfirm, Text password) {
