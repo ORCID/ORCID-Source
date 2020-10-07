@@ -421,6 +421,15 @@ public class FundingsController extends BaseWorkspaceController {
             if (symbols.getGroupingSeparator() == 160) {
                 symbols.setGroupingSeparator(' ');
             }
+            /**
+             * Work around for the group separator for language format German, region Switzerland (de_CH) 
+             * changed from Java 10 to Java 11.In 10, it was correctly a ' (ASCII 39), in Java 11 it prints a ’ (ASCII 8217?)
+             * https://bugs.openjdk.java.net/browse/JDK-8211262
+             */
+            if(locale.getLanguage().equals(Locale.GERMAN.getLanguage()))
+			{
+            	symbols.setGroupingSeparator('\'');
+			}
             numberFormat.setDecimalFormatSymbols(symbols);
             Number number = numberFormat.parse(amount, parsePosition);
             if (number == null || parsePosition.getIndex() != amount.length()) {

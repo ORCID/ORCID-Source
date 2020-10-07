@@ -38,7 +38,15 @@
 	    <version>5.13.3</version>
 	</dependency>
 	
+	<!-- Annotation -->
+        <dependency>
+    		<groupId>javax.annotation</groupId>
+    		<artifactId>javax.annotation-api</artifactId>
+   			<version>1.3.1</version>
+		</dependency>
+	
      <!-- Test dependencies -->
+     
     <dependency>
         <groupId>org.orcid</groupId>
         <artifactId>orcid-test</artifactId>

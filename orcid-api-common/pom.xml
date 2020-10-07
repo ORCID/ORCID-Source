@@ -111,7 +111,9 @@
 			<groupId>de.undercouch</groupId>
 			<artifactId>citeproc-java</artifactId>
 			<version>0.6</version>
-		</dependency>		
+		</dependency>
+		
+		
 		
         <!-- Test dependencies -->
 

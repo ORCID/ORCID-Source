@@ -311,8 +311,9 @@ public class FundingsControllerTest extends BaseControllerTest {
         for (String amount : amounts100000) {
             try {
                 BigDecimal result = fundingController.getAmountAsBigDecimal(amount);
-                assertEquals("Amount is: " + result + " but it should be: " + _100000, _100000, result);
+                assertEquals("Intial: " + amount + " Amount is: " + result + " but it should be: " + _100000, _100000, result);
             } catch (Exception e) {
+            	e.printStackTrace();
                 fail("Amount: " + amount + " couldn't parsed to: " + _100000);
             }
         }
