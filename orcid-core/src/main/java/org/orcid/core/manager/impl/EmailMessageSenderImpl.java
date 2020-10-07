@@ -534,10 +534,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 case MEMBERSHIP:
                 case QUALIFICATION:
                 case SERVICE:
-                    value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + item.getItemName() +  " (" + renderCreationDate (createdDate) + ')';
+                    value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + (item.getItemName() != null ? item.getItemName() : "") +  " (" + renderCreationDate (createdDate) + ')';
                     break;
                 default:
-                    value = item.getItemName();
+                    value = item.getItemName() != null ? item.getItemName() : "";
                     if(item.getExternalIdentifier() != null) {
                         value += " " + item.getExternalIdentifier().getType() + ": " + item.getExternalIdentifier().getValue();
                     }
