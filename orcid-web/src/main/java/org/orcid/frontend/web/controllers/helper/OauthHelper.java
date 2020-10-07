@@ -172,6 +172,9 @@ public class OauthHelper {
             if (redirectUriMatcher.find()) {
                 try {
                     infoForm.setRedirectUrl(OrcidStringUtils.stripHtml(URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim()));
+                    if (infoForm.getRedirectUrl().contains("%")) {
+                        throw new InvalidRequestException("Invalid redirect URL");    
+                    }                    
                 } catch (UnsupportedEncodingException e) {
                     throw new InvalidRequestException("Invalid redirect URL");
                 }
