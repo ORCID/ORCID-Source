@@ -341,5 +341,5 @@ See [Manual Test](https://github.com/ORCID/ORCID-Source/tree/master/orcid-integr
 
 * Finally help out by improving these instructions!    
 
-## Eclipse tips
+# Eclipse tips
 [ECLIPSE_TIPS.md](ECLIPSE_TIPS.md)
