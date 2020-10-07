@@ -293,15 +293,14 @@ export class WorksService {
     }
 
     addBibtexJson(dw): void {
-        if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
+        if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex' && dw.putCode) {
             try {
-
                 this.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
                 for (var idx in this.bibtexJson[dw.putCode.value]) {
                     //make entryTags array so that template will parse correctly
                     this.bibtexJson[dw.putCode.value][idx].entryTags = Array.of(this.bibtexJson[dw.putCode.value][idx].entryTags); 
                 }
-                 
+                
             } catch (err) {
                 this.bibtexJson[dw.putCode.value] = null;
                 console.log("couldn't parse bibtex: " + dw.citation.citation.value);

@@ -77,7 +77,7 @@ public class BibtexManagerTest extends BaseTest{
         w.setWorkType(WorkType.JOURNAL_ARTICLE);
         w.setPutCode(100l);
         String bib = bibtexManager.generateBibtex(ORCID, w);
-        Assert.assertEquals("@article{Credit_Name100,\ntitle={Escapes \\texttheta {\\`a} \\`{A} \\`{E} \\textcopyright {\\\"e} {\\\"O} {\\`i}},\nauthor={Credit Name}\n}",bib);
+        Assert.assertEquals("@article{Credit_Name_100,\ntitle={Escapes \\texttheta {\\`a} \\`{A} \\`{E} \\textcopyright {\\\"e} {\\\"O} {\\`i}},\nauthor={Credit Name}\n}",bib);
     }
     
     @Test

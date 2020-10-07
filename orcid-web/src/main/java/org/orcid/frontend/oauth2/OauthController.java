@@ -137,17 +137,22 @@ public class OauthController {
             requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
             if (requestInfoForm.getUserOrcid() != null) {                
                 if (requestParameters.isEmpty() && request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING) != null) {
-                    String url =  URLDecoder.decode((String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING), "UTF-8").trim();
-                    if(url.startsWith("oauth=&")) {
-                        url = url.replaceFirst("oauth=&", "");
+                    try {
+                        String url = URLDecoder.decode((String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING), "UTF-8").trim();
+                        if (url.startsWith("oauth=&")) {
+                            url = url.replaceFirst("oauth=&", "");
+                        }
+                        String[] pairs = url.split("&");
+                        for (int i = 0; i < pairs.length; i++) {
+                            String pair = pairs[i];
+                            String[] keyValue = pair.split("=");
+                            requestParameters.put(keyValue[0], keyValue[1]);
+                        }
+                        setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
+                    } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
+                        requestInfoForm.setError("oauth_error");
+                        requestInfoForm.setErrorDescription("Invalid request");
                     }
-                    String[] pairs = url.split("&");
-                    for (int i = 0; i < pairs.length; i++) {
-                        String pair = pairs[i];
-                        String[] keyValue = pair.split("=");
-                        requestParameters.put(keyValue[0], keyValue[1]);
-                    }
-                    setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
                 }                
             }
         }

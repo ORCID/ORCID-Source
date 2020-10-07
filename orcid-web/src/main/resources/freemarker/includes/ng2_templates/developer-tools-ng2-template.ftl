@@ -92,6 +92,9 @@
                         <div class="col-md-10 col-sm-10 col-xs-12 dt-website">
                             <span><strong><@orcid.msg 'manage.developer_tools.generate.website'/></strong></span>
                             <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.generate.website.placeholder'/>" class="full-width-input" [(ngModel)]="client.website.value">
+                            <span class="orcid-error https-error" *ngIf="client.website.value && !client.website.value.startsWith('https')">
+                                <@orcid.msg 'manage.developer_tools.website_not_https'/>
+                            </span>
                             <span class="orcid-error" *ngIf="client.website.errors.length > 0">
                                 <div *ngFor='let error of client.website.errors' [innerHTML]="error"></div>
                             </span>                                             
@@ -116,7 +119,10 @@
                             <div class="redirectUris">
                                 <h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>                        
                                 <div *ngFor="let rUri of client.redirectUris; index as idx;">                            
-                                    <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" [(ngModel)]="rUri.value.value">                   
+                                    <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" [(ngModel)]="rUri.value.value">
+                                    <span class="orcid-error https-error" *ngIf="rUri.value.value && !rUri.value.value.startsWith('https')">
+                                        <@orcid.msg 'manage.developer_tools.website_not_https'/>
+                                    </span>
                                     <a (click)="deleteRedirectUri(idx);" class="glyphicon glyphicon-trash blue"></a>
                                     <span class="orcid-error" *ngIf="rUri.errors.length > 0">
                                         <div *ngFor='let error of rUri.errors' [innerHTML]="error"></div>
