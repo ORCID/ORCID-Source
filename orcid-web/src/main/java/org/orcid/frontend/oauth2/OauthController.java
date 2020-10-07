@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -35,6 +36,7 @@ import org.springframework.security.oauth2.common.exceptions.UnsupportedResponse
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +45,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Controller("oauthController")
 public class OauthController {
@@ -77,7 +80,18 @@ public class OauthController {
         RequestInfoForm requestInfoForm = generateRequestInfoForm(request, request.getQueryString(), model, requestParameters, sessionStatus, principal);                                
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);       
 
-        if (requestInfoForm.getError() != null || requestInfoForm.getRedirectUrl().contains(requestInfoForm.getResponseType())) {
+        boolean isResponseSet = false;
+
+        // Verify if we already have the response set in the URL
+        if (!PojoUtil.isEmpty(requestInfoForm.getResponseType())) {
+            MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUriString(requestInfoForm.getRedirectUrl()).build().getQueryParams();
+            List<String> responseParam = parameters.get(requestInfoForm.getResponseType());
+            if (responseParam != null && !responseParam.isEmpty() && !PojoUtil.isEmpty(responseParam.get(0))) {
+                isResponseSet = true;
+            }
+        }
+
+        if (requestInfoForm.getError() != null || isResponseSet) {
             return requestInfoForm;
         }
         
