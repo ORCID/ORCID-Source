@@ -19,7 +19,7 @@ the software.
 
     <groupId>org.orcid</groupId>
     <artifactId>orcid-parent</artifactId>
-    <version>release-1.289.2</version>
+    <version>delete-me-0.0</version>
     <packaging>pom</packaging>
     <name>ORCID - Parent</name>
     <description>The parent ORCID pom that all sub-projects reside under</description>

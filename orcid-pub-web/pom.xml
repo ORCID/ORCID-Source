@@ -9,7 +9,7 @@
 		<groupId>org.orcid</groupId>
 		<artifactId>orcid-parent</artifactId>        
 		<relativePath>../pom.xml</relativePath>
-		<version>release-1.289.2</version>
+		<version>delete-me-0.0</version>
 	</parent>
 
 	<properties>
