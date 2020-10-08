@@ -241,6 +241,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
         if(new HttpSessionRequestCache().getRequest(request, response) != null)
             new HttpSessionRequestCache().removeRequest(request, response);
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
+        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, null);
         return requestInfoForm;
     }
    
