@@ -556,11 +556,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
-        String emailName = deriveEmailFriendlyName(userReceivingPermission);
+        String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
         String emailNameGrantingPermission = deriveEmailFriendlyName(userGrantingPermission);
         String assetsUrl = getAssetsUrl();
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", emailName);
+        templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("orcidValue", userReceivingPermission);
         templateParams.put("emailNameGrantingPermission", emailNameGrantingPermission);
         templateParams.put("grantingOrcidValue", userGrantingPermission);
@@ -584,7 +584,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             html = templateManager.processTemplate("delegate_recipient_notification_html.ftl", templateParams);
         }
 
-            System.out.println("##### TEXT #####");
+        System.out.println("##### TEXT #####");
         System.out.println(text);
 
         System.out.println("##### HTML #####");
