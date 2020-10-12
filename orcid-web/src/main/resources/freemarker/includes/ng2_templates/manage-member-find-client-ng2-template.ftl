@@ -36,9 +36,6 @@
 							<div class="col-md-12 col-sm-12 col-xs-12">
 								<span><@orcid.msg 'manage.developer_tools.group.website'/></span><br />
 								<input type="text" [(ngModel)]="_client.website.value" name="website" class="full-width-input" />
-								<span class="orcid-error https-error" *ngIf="_client.website.value && !_client.website.value.startsWith('https')">
-                                	<@orcid.msg 'manage.developer_tools.website_not_https'/>
-                                 </span>
 								<span class="orcid-error" *ngIf="_client.website.errors.length > 0">
 									<div *ngFor='let error of _client.website.errors'>{{error}}</div>
 								</span>	
