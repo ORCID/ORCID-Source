@@ -198,8 +198,6 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         this.fillUrl(i);
         this.updateRelationships();
-        console.log("inside  change extId type");
-        this.applyLabelWorkType();
     }
 
     deleteContributor(obj): void {
