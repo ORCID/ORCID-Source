@@ -503,6 +503,7 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
                     if (res.externalWork) {
                         this.editWork = res.externalWork;
                         this.loadWorkTypes();
+                        this.applyLabelWorkType();
                     }
                 }
             }
