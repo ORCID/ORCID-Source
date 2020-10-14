@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
@@ -52,6 +53,9 @@ public class HomeController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
     
     private static final Locale DEFAULT_LOCALE = Locale.US;
+    
+    @Context
+    private HttpServletRequest httpRequest;
     
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
     private String aboutUri;
@@ -136,6 +140,10 @@ public class HomeController extends BaseController {
             throws NoSuchRequestHandlingMethodException {
 
         String orcid = getCurrentUserOrcid();
+        
+        if(!Boolean.TRUE.equals(logUserOut)) {
+            httpRequest.setAttribute("isUserStatus", true);
+        }
         
         if (logUserOut != null && logUserOut.booleanValue()) {
             removeJSessionIdCookie(request, response);
