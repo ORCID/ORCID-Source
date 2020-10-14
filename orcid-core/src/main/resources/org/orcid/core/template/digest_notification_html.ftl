@@ -4,12 +4,18 @@
     <html>
     <head>
         <title>${subject}</title>
-        <#include "css/notification.css">
     </head>
     <body>
-    <div class="main">
+    <div style="
+                max-width: 736px;
+                padding: 32px;
+                margin: auto;
+                font-family: Arial, helvetica, sans-serif;
+                color: #494A4C;
+                font-size: 15px;
+            ">
         <#include "notification_header_html.ftl"/>
-        <hr class="title" />
+        <hr style="color: #447405;border-style: solid;" />
         <p class="your-record"><@emailMacros.msg "notification.digest.record" /></p>
         <p>
             <#list digestEmail.sources as source>
@@ -21,7 +27,7 @@
                 </#if>
         </#list>
             <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" /></p>
-        <hr class="title" />
+        <hr style="color: #447405;border-style: solid;" />
         <p>
             <@emailMacros.msg "notification.digest.showing" /><@emailMacros.space />${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.outOf" />${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.changes" />
         </p>

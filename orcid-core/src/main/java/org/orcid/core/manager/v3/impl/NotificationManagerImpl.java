@@ -561,6 +561,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         String assetsUrl = getAssetsUrl();
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
+        templateParams.put("emailName", emailNameForDelegate);
         templateParams.put("orcidValue", userReceivingPermission);
         templateParams.put("emailNameGrantingPermission", emailNameGrantingPermission);
         templateParams.put("grantingOrcidValue", userGrantingPermission);
@@ -573,15 +574,15 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         
         addMessageParams(templateParams, userLocale);
 
-        // Generate body from template
-        String text = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
+        String text = null;        
+        String html = null;
 
         if (Features.ENABLE_NEW_NOTIFICATIONS.isActive()) {
             text = templateManager.processTemplate("delegate_recipient_notification.ftl", templateParams);
-            // Generate html from template
             html = templateManager.processTemplate("delegate_recipient_notification_html.ftl", templateParams);
+        } else {
+            text = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
+            html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);    
         }
 
         System.out.println("##### TEXT #####");
