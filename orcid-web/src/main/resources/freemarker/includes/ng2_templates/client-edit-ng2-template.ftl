@@ -117,7 +117,7 @@
                             <div class="inner-row margin-left-fix">                         
                                 <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>" class="input-xlarge ruri" [(ngModel)]="rUri.value.value" />                                                         
                                 <a (click)="deleteUriOnNewClient(index)" class="glyphicon glyphicon-trash grey"></a>
-                                <span class="orcid-error https-error" *ngIf="rUri.value.value && !rUri.value.value.startsWith('https')">
+                                <span class="orcid-error https-error" *ngIf="getBaseUri().startsWith('https://orcid.org') && rUri.value.value && !rUri.value.value.startsWith('https')">
                                 	<@orcid.msg 'manage.developer_tools.website_not_https'/>
                                 </span>
                                 <span class="orcid-error" *ngIf="rUri?.errors?.length > 0">
@@ -404,7 +404,7 @@
                             <div class="inner-row margin-left-fix">                         
                                 <input type="text" class="input-xlarge ruri" [(ngModel)]="rUri.value.value" placeholder="<@orcid.msg 'manage.developer_tools.group.redirect_uri_placeholder'/>"/>
                                 <a (click)="deleteUriOnExistingClient(index)" class="glyphicon glyphicon-trash grey pull-right"></a>
-                                <span class="orcid-error https-error" *ngIf="rUri.value.value && !rUri.value.value.startsWith('https')">
+                                <span class="orcid-error https-error" *ngIf="getBaseUri().startsWith('https://orcid.org') && rUri.value.value && !rUri.value.value.startsWith('https')">
                                 	<@orcid.msg 'manage.developer_tools.website_not_https'/>
                                 </span>
                                 <span class="orcid-error" *ngIf="rUri?.errors?.length > 0">
