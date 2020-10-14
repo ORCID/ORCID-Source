@@ -54,9 +54,6 @@ public class HomeController extends BaseController {
     
     private static final Locale DEFAULT_LOCALE = Locale.US;
     
-    @Context
-    private HttpServletRequest httpRequest;
-    
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
     private String aboutUri;
     
@@ -142,7 +139,7 @@ public class HomeController extends BaseController {
         String orcid = getCurrentUserOrcid();
         
         if(!Boolean.TRUE.equals(logUserOut)) {
-            httpRequest.setAttribute("isUserStatus", true);
+            request.setAttribute("isUserStatus", true);
         }
         
         if (logUserOut != null && logUserOut.booleanValue()) {
