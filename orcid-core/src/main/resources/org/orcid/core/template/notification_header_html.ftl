@@ -1,12 +1,18 @@
 <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
-<hr class="logo" />
+<hr style="color: #e0e0e0;border-style: solid;" />
 <p>
     <@emailMacros.msg "notification.header.hi" /><@emailMacros.space />${emailName}
-    <a href="#">(${baseUri}/${orcidValue})</a>
+    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${orcidValue}">
+        (${baseUri}/${orcidValue})
+    </a>
 </p>
 <p>
     <@emailMacros.msg "notification.header.gotNewNotifications" />
-    <a href="#"><@emailMacros.msg "notification.header.visit" /></a>
+    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/account">
+        <@emailMacros.msg "notification.header.visit" />
+    </a>
 </p>
 <br>
-<h3><@emailMacros.msg "notification.header.newNotifications" /></h3>
+<h3 style="font-size: 18px;font-weight: bold;">
+    <@emailMacros.msg "notification.header.newNotifications" />
+</h3>

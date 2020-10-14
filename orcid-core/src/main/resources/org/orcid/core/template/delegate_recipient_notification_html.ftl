@@ -4,15 +4,23 @@
     <html>
     <head>
         <title>${subject}</title>
-        <#include "css/notification.css">
     </head>
     <body>
-    <div class="main">
+    <div style="
+                max-width: 736px;
+                padding: 32px;
+                margin: auto;
+                font-family: Arial, helvetica, sans-serif;
+                color: #494A4C;
+                font-size: 15px;
+            ">
         <#include "notification_header_html.ftl"/>
-        <hr class="title" />
-        <p class="your-record"><@emailMacros.msg "notification.delegate.receipt.record" /></p>
+        <hr style="color: #447405;border-style: solid;" />
+        <p style="font-size: 12px;font-weight: 600;color: #447405;">
+            <@emailMacros.msg "notification.delegate.receipt.record" />
+        </p>
         <p>${emailNameGrantingPermission}<@emailMacros.space /><@emailMacros.msg "notification.delegate.receipt.trustedIndividual" /></p>
-        <hr class="title" />
+        <hr style="color: #447405;border-style: solid;" />
         <p>
             <@emailMacros.msg "notification.delegate.receipt.accountDelegate" /><@emailMacros.space />${emailNameGrantingPermission}<@emailMacros.space /><@emailMacros.msg "notification.delegate.asTrustedIndividual" />
         <p>
@@ -22,11 +30,15 @@
         </p>
         <p>
             <@emailMacros.msg "notification.delegate.receipt.tutorial" /><@emailMacros.space />
-            <a href="https://support.orcid.org/hc/articles/360006973613"><@emailMacros.msg "notification.delegate.receipt.tutorialLink" /></a>
+            <a style="text-decoration: underline;color: #085c77;" href="https://support.orcid.org/hc/articles/360006973613">
+                <@emailMacros.msg "notification.delegate.receipt.tutorialLink" />
+            </a>
         </p>
         <p>
             <@emailMacros.msg "notification.delegate.receipt.questions" /><@emailMacros.space />${emailNameGrantingPermission}<@emailMacros.msg "notification.delegate.receipt.helpDesk" /><@emailMacros.space />
-            <a href="https://orcid.org/help/contact-us"><@emailMacros.msg "notification.delegate.receipt.helpDeskLink" /></a>
+            <a style="text-decoration: underline;color: #085c77;" href="https://orcid.org/help/contact-us">
+                <@emailMacros.msg "notification.delegate.receipt.helpDeskLink" />
+            </a>
         </p>
         <#include "notification_footer_html.ftl"/>
     </div>
