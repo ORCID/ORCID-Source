@@ -218,6 +218,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path(API_STATUS_PATH)
     public Response viewStatusJson() {
+        httpRequest.setAttribute("skipAccessLog", true);
         httpRequest.setAttribute("isMonitoring", true);
         return serviceDelegator.viewStatus();
     }

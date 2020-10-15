@@ -139,6 +139,7 @@ public class HomeController extends BaseController {
         String orcid = getCurrentUserOrcid();
         
         if(!Boolean.TRUE.equals(logUserOut)) {
+            request.setAttribute("skipAccessLog", true);
             request.setAttribute("isUserStatus", true);
         }
         
