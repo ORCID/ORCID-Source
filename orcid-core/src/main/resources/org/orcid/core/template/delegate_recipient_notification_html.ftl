@@ -15,12 +15,12 @@
                 font-size: 15px;
             ">
         <#include "notification_header_html.ftl"/>
-        <hr style="color: #447405;border-style: solid;" />
+        <hr style="color: #447405;border-style: solid;border-width: 2px;" />
         <p style="font-size: 12px;font-weight: 600;color: #447405;">
             <@emailMacros.msg "notification.delegate.receipt.record" />
         </p>
         <p>${emailNameGrantingPermission}<@emailMacros.space /><@emailMacros.msg "notification.delegate.receipt.trustedIndividual" /></p>
-        <hr style="color: #447405;border-style: solid;" />
+        <hr style="color: #447405;border-style: solid;border-width: 2px;" />
         <p>
             <@emailMacros.msg "notification.delegate.receipt.accountDelegate" /><@emailMacros.space />${emailNameGrantingPermission}<@emailMacros.space /><@emailMacros.msg "notification.delegate.asTrustedIndividual" />
         <p>
