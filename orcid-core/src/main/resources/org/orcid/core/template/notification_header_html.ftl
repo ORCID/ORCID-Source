@@ -1,5 +1,5 @@
 <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
-<hr style="color: #e0e0e0;border-style: solid;" />
+<hr style="color: #e0e0e0;border-style: solid;border-width: 2px;" />
 <p>
     <@emailMacros.msg "notification.header.hi" /><@emailMacros.space />${emailName}
     <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${orcidValue}">
@@ -8,7 +8,7 @@
 </p>
 <p>
     <@emailMacros.msg "notification.header.gotNewNotifications" />
-    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/account">
+    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/inbox">
         <@emailMacros.msg "notification.header.visit" />
     </a>
 </p>

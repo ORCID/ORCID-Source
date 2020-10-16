@@ -15,16 +15,16 @@
                 font-size: 15px;
             ">
             <#include "notification_header_html.ftl"/>
-            <hr style="color: #447405;border-style: solid;" />
+            <hr style="color: #447405;border-style: solid;border-width: 2px;" />
             <p style="font-size: 12px;font-weight: 600;color: #447405;">
                 <@emailMacros.msg "notification.delegate.record" />
             </p>
             <p>${emailNameForDelegate}<@emailMacros.space /><@emailMacros.msg "notification.delegate.trustedIndividual" /></p>
-            <hr style="color: #447405;border-style: solid;" />
+            <hr style="color: #447405;border-style: solid;border-width: 2px;" />
             <p>
                 <@emailMacros.msg "notification.delegate.added" /><@emailMacros.space />${emailNameForDelegate}<@emailMacros.space />
-            <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${grantingOrcidValue}">
-                (${baseUri}/${grantingOrcidValue})
+            <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${orcidValueForDelegate}">
+                (${baseUri}/${orcidValueForDelegate})
             </a>
                 <@emailMacros.msg "notification.delegate.asTrustedIndividual" />
             <p>
