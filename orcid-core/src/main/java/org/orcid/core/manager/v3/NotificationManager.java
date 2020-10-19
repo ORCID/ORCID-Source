@@ -113,5 +113,7 @@ public interface NotificationManager {
     void sendForgottenIdEmail(String email, String orcid);
 
     void sendForgottenIdEmailNotFoundEmail(String email, Locale locale);
+    
+    public void send2FADisabledEmail(String userOrcid);
 
 }

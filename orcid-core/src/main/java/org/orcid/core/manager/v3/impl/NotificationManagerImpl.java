@@ -39,6 +39,7 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -64,6 +65,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -1244,5 +1246,34 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         String body = templateManager.processTemplate("forgot_id_email_not_found_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("forgot_id_email_not_found_email_html.ftl", templateParams);
         mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email, getSubject("email.subject.forgotten_id", locale), body, htmlBody);
-    }    
+    }
+    
+    @Override
+    public void send2FADisabledEmail(String userOrcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+        org.orcid.jaxb.model.v3.release.record.Emails emails = emailManager.getEmails(userOrcid);
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = getSubject("email.2fa_disabled.subject", userLocale);
+        
+
+        String emailFriendlyName = deriveEmailFriendlyName(userOrcid);
+        templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("subject", subject);
+
+        addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("email_2fa_disabled.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("email_2fa_disabled_html.ftl", templateParams);
+        
+        for(Email email: emails.getEmails()) {
+            mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+        }
+    }
 }

@@ -66,3 +66,9 @@ file_filter = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings
 source_file = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
+
+[registry.email2faDisabled]
+file_filter = orcid-core/src/main/resources/i18n/email2faDisabled_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/email2faDisabled_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
