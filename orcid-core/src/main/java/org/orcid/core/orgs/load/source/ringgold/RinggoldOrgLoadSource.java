@@ -19,6 +19,7 @@ import java.util.zip.ZipFile;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
@@ -58,6 +59,9 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    
+    @Resource
+    private OrgDisambiguatedManager orgDisambiguatedManager;
 
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
@@ -247,7 +251,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                     if (newId != null) {
                         existingEntity.setSourceParentId(String.valueOf(newId));
                     }
-                    orgDisambiguatedDao.merge(existingEntity);
+                    orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
 
                     if (replacementEntity != null) {
                         orgManager.updateDisambiguatedOrgReferences(existingEntity.getId(), replacementEntity.getId());
@@ -297,7 +301,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             }
             entity.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
             entity.setIndexingStatus(IndexingStatus.PENDING);
-            orgDisambiguatedDao.persist(entity);
+            orgDisambiguatedManager.createOrgDisambiguated(entity);
         } else {
             // If the element have changed
             if (changed(entity, parentId, name, country, city, state, type)) {
@@ -307,7 +311,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 entity.setOrgType(type);
                 entity.setRegion(state);
                 entity.setIndexingStatus(IndexingStatus.REINDEX);
-                orgDisambiguatedDao.merge(entity);
+                orgDisambiguatedManager.updateOrgDisambiguated(entity);
             }
         }
 
@@ -346,7 +350,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                     newEntity.setIdentifierType(type);
                     newEntity.setOrgDisambiguated(disambiguatedEntity);
                     newEntity.setPreferred(false);
-                    orgDisambiguatedExternalIdentifierDao.persist(newEntity);
+                    orgDisambiguatedManager.createOrgDisambiguatedExternalIdentifier(newEntity);
                 } else {
                     existingExternalIdentifiersMap.remove(id);
                 }

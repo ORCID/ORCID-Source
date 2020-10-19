@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -32,6 +33,8 @@ public class LoadLEIDataTest {
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     @Mock
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    @Mock
+    private OrgDisambiguatedManager orgDisambiguatedManager;
     @Mock
     private OrgDao orgDao;
     @InjectMocks
@@ -47,7 +50,7 @@ public class LoadLEIDataTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("lei/simpleRecord.xml").toURI());
         File testFile = path.toFile();
         ArgumentCaptor<OrgDisambiguatedEntity> argument = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        doNothing().when(orgDisambiguatedDao).persist(argument.capture());
+        Mockito.when(orgDisambiguatedManager.createOrgDisambiguated(argument.capture())).thenReturn(null);
         loadLeiData.setFileToLoad(testFile);
         loadLeiData.execute();
         assertEquals("213800GW5X3N23U2YM51", argument.getValue().getSourceId());
@@ -66,7 +69,7 @@ public class LoadLEIDataTest {
         Path path = Paths.get(getClass().getClassLoader().getResource("lei/complex.xml").toURI());
         File testFile = path.toFile();
         ArgumentCaptor<OrgDisambiguatedEntity> argument = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        doNothing().when(orgDisambiguatedDao).persist(argument.capture());;
+        Mockito.when(orgDisambiguatedManager.createOrgDisambiguated(argument.capture())).thenReturn(null);
         ArgumentCaptor<OrgEntity> orgArgument = ArgumentCaptor.forClass(OrgEntity.class);
         doNothing().when(orgDao).persist(orgArgument.capture());
         loadLeiData.setFileToLoad(testFile);
@@ -98,7 +101,7 @@ public class LoadLEIDataTest {
         Mockito.when(orgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.anyString(), Mockito.anyString())).thenReturn(found);
         //capture merge
         ArgumentCaptor<OrgDisambiguatedEntity> argument = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        Mockito.when(orgDisambiguatedDao.merge(argument.capture())).then(AdditionalAnswers.returnsFirstArg());
+        Mockito.when(orgDisambiguatedManager.updateOrgDisambiguated(argument.capture())).then(AdditionalAnswers.returnsFirstArg());
         //fake finding existing org
         Mockito.when(orgDao.findByAddressAndDisambiguatedOrg(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(),Mockito.anyObject(),Mockito.anyObject())).thenReturn(new OrgEntity());        
         //make sure we're not calling the wrong things
@@ -129,7 +132,7 @@ public class LoadLEIDataTest {
         Mockito.when(orgDisambiguatedDao.findBySourceIdAndSourceType(Mockito.anyString(), Mockito.anyString())).thenReturn(found);
         //capture merge
         ArgumentCaptor<OrgDisambiguatedEntity> argument = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        Mockito.when(orgDisambiguatedDao.merge(argument.capture())).then(AdditionalAnswers.returnsFirstArg());
+        Mockito.when(orgDisambiguatedManager.updateOrgDisambiguated(argument.capture())).then(AdditionalAnswers.returnsFirstArg());
         //fake not finding existing org
         ArgumentCaptor<OrgEntity> orgArgument = ArgumentCaptor.forClass(OrgEntity.class);
         doNothing().when(orgDao).persist(orgArgument.capture());;

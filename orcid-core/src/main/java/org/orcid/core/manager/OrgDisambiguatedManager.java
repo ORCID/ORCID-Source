@@ -2,6 +2,8 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.pojo.OrgDisambiguated;
 
 /**
@@ -22,5 +24,13 @@ public interface OrgDisambiguatedManager {
     public OrgDisambiguated findInDB(Long id);
     
     public OrgDisambiguated findInDB(String idValue, String idType);
+
+    OrgDisambiguatedEntity updateOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguatedEntity);
+
+    OrgDisambiguatedEntity createOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguatedEntity);
+
+    void updateOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier);
+
+    void createOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier);
 
 }

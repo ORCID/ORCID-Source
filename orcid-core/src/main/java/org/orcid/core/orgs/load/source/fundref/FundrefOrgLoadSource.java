@@ -18,6 +18,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
@@ -88,6 +89,9 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
     
+    @Resource
+    private OrgDisambiguatedManager orgDisambiguatedManager;
+    
     @Resource(name = "geonamesUser")
     private String apiUser;
 
@@ -139,18 +143,18 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                         existingEntity.setSourceUrl(rdfOrganization.doi);
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                         existingEntity.setStatus(rdfOrganization.status);
-                        orgDisambiguatedDao.merge(existingEntity);
+                        orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                     } else if (statusChanged(rdfOrganization, existingEntity)) {
                         existingEntity.setStatus(rdfOrganization.status);
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                        orgDisambiguatedDao.merge(existingEntity);
+                        orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                     } else {
                         if (StringUtils.isNotBlank(rdfOrganization.isReplacedBy)) {
                             if (!rdfOrganization.isReplacedBy.equals(existingEntity.getSourceParentId())) {
                                 existingEntity.setSourceParentId(rdfOrganization.isReplacedBy);
                                 existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
                                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                                orgDisambiguatedDao.merge(existingEntity);
+                                orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                             }
                         }
                     }
@@ -486,7 +490,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         }
         
         orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
-        orgDisambiguatedDao.persist(orgDisambiguatedEntity);
+        orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;
     }
 

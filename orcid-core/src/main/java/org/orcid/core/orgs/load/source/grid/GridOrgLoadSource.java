@@ -18,6 +18,7 @@ import java.util.zip.ZipInputStream;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
@@ -71,6 +72,9 @@ public class GridOrgLoadSource implements OrgLoadSource {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
+
+    @Resource
+    private OrgDisambiguatedManager orgDisambiguatedManager;
 
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
@@ -228,7 +232,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
                 existingBySourceId.setRegion(region);
                 existingBySourceId.setUrl(url);
                 existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
-                orgDisambiguatedDao.merge(existingBySourceId);
+                orgDisambiguatedManager.updateOrgDisambiguated(existingBySourceId);
             }
             return existingBySourceId;
         }
@@ -262,7 +266,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
                     } else {
                         if (existingExternalId.getPreferred() != preferred) {
                             existingExternalId.setPreferred(preferred);
-                            orgDisambiguatedExternalIdentifierDao.merge(existingExternalId);
+                            orgDisambiguatedManager.updateOrgDisambiguatedExternalIdentifier(existingExternalId);
                             LOGGER.info("External identifier for {} with ext id {} and type {} was updated",
                                     new Object[] { org.getId(), extId.asText(), identifierTypeName });
                         } else {
@@ -356,7 +360,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
         orgDisambiguatedEntity.setOrgType(orgType);
         orgDisambiguatedEntity.setSourceId(sourceId);
         orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
-        orgDisambiguatedDao.persist(orgDisambiguatedEntity);
+        orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;
     }
 
@@ -371,7 +375,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
         externalIdentifier.setIdentifierType(externalIdType);
         externalIdentifier.setOrgDisambiguated(disambiguatedOrg);
         externalIdentifier.setPreferred(preferred);
-        orgDisambiguatedExternalIdentifierDao.persist(externalIdentifier);
+        orgDisambiguatedManager.createOrgDisambiguatedExternalIdentifier(externalIdentifier);
         return true;
     }
 
@@ -387,7 +391,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
                 existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
                 existingEntity.setSourceParentId(primarySourceId);
                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                orgDisambiguatedDao.merge(existingEntity);
+                orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
             }
         } else {
             OrgDisambiguatedEntity deprecatedEntity = new OrgDisambiguatedEntity();
@@ -397,7 +401,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
             deprecatedEntity.setSourceParentId(primarySourceId);
             // We don't need to index it
             deprecatedEntity.setIndexingStatus(IndexingStatus.DONE);
-            orgDisambiguatedDao.persist(deprecatedEntity);
+            orgDisambiguatedManager.createOrgDisambiguated(deprecatedEntity);
         }
     }
 
@@ -411,7 +415,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.OBSOLETE.name())) {
                 existingEntity.setStatus(OrganizationStatus.OBSOLETE.name());
                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                orgDisambiguatedDao.merge(existingEntity);
+                orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
             }
         } else {
             OrgDisambiguatedEntity obsoletedEntity = new OrgDisambiguatedEntity();
@@ -420,7 +424,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
             obsoletedEntity.setSourceId(sourceId);
             // We don't need to index it
             obsoletedEntity.setIndexingStatus(IndexingStatus.DONE);
-            orgDisambiguatedDao.persist(obsoletedEntity);
+            orgDisambiguatedManager.createOrgDisambiguated(obsoletedEntity);
         }
     }
 

@@ -1,5 +1,7 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -37,6 +39,15 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
         }
         return null;
     }
+    
+    @Override
+    public List<OrgDisambiguatedExternalIdentifierEntity> findISNIsOfIncorrectLength(int batchSize) {
+            TypedQuery<OrgDisambiguatedExternalIdentifierEntity> query = entityManager.createQuery("FROM OrgDisambiguatedExternalIdentifierEntity e WHERE LENGTH(e.identifier) != 16 AND e.identifierType = 'ISNI')",
+                    OrgDisambiguatedExternalIdentifierEntity.class);
+            query.setMaxResults(batchSize);
+            return query.getResultList();
+    }
+    
     
     @Override
     public boolean exists(Long orgDisambiguatedId, String identifier, String identifierType) {
