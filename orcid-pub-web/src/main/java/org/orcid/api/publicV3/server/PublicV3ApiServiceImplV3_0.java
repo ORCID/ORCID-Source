@@ -176,6 +176,7 @@ public class PublicV3ApiServiceImplV3_0 {
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path(PUB_STATUS_PATH)
     public Response viewStatusJson() {
+        httpRequest.setAttribute("skipAccessLog", true);
         httpRequest.setAttribute("isMonitoring", true);
         return serviceDelegator.viewStatus();
     }
