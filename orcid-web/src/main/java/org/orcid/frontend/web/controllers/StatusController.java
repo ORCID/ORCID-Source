@@ -46,6 +46,7 @@ public class StatusController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
     String tomcatUp(HttpServletRequest request) {
+        request.setAttribute("skipAccessLog", true);
         request.setAttribute("isMonitoring", true);
         return "{tomcatUp:true}";
     }
@@ -53,6 +54,7 @@ public class StatusController {
     @RequestMapping(value = "/webStatus.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public ResponseEntity<Map<String, Boolean>> webStatus(HttpServletRequest request) {
+        request.setAttribute("skipAccessLog", true);
         request.setAttribute("isMonitoring", true);
         Map<String, Boolean> statusMap = statusManager.createStatusMap();
         HttpStatus responseStatus = statusMap.get(StatusManager.OVERALL_OK) ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR;

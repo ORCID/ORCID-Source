@@ -33,6 +33,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
@@ -59,6 +60,9 @@ public class RinggoldOrgLoadSourceTest {
 
     @Mock
     private OrgDisambiguatedDao mockOrgDisambiguatedDao;
+    
+    @Mock
+    private OrgDisambiguatedManager mockOrgDisambiguatedManager;
 
     @Mock
     private OrgDao mockOrgDao;
@@ -134,7 +138,7 @@ public class RinggoldOrgLoadSourceTest {
         
         ArgumentCaptor<OrgDisambiguatedEntity> orgDisambiguatedEntityCaptor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, times(0)).merge(any());
-        verify(mockOrgDisambiguatedDao, times(1)).persist(orgDisambiguatedEntityCaptor.capture());
+        verify(mockOrgDisambiguatedManager, times(1)).createOrgDisambiguated(orgDisambiguatedEntityCaptor.capture());
         
         List<OrgDisambiguatedEntity> list = orgDisambiguatedEntityCaptor.getAllValues();
         assertEquals(1, list.size());
@@ -172,7 +176,7 @@ public class RinggoldOrgLoadSourceTest {
         verify(mockOrgDisambiguatedDao, times(0)).merge(any());
 
         ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
-        verify(mockOrgDisambiguatedExternalIdentifierDao, times(1)).persist(captor.capture());
+        verify(mockOrgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(captor.capture());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).remove(anyLong());
         List<OrgDisambiguatedExternalIdentifierEntity> list = captor.getAllValues();
@@ -252,7 +256,7 @@ public class RinggoldOrgLoadSourceTest {
         
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, times(0)).persist(any());
-        verify(mockOrgDisambiguatedDao, times(1)).merge(captor.capture());
+        verify(mockOrgDisambiguatedManager, times(1)).updateOrgDisambiguated(captor.capture());
         List<OrgDisambiguatedEntity> list = captor.getAllValues();
         assertEquals(1, list.size());
         OrgDisambiguatedEntity entity = list.get(0);
@@ -325,7 +329,7 @@ public class RinggoldOrgLoadSourceTest {
 
         ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> addCaptor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
         ArgumentCaptor<Long> removeCaptor = ArgumentCaptor.forClass(Long.class);
-        verify(mockOrgDisambiguatedExternalIdentifierDao, times(1)).persist(addCaptor.capture());
+        verify(mockOrgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(addCaptor.capture());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(0)).merge(any());
         verify(mockOrgDisambiguatedExternalIdentifierDao, times(1)).remove(removeCaptor.capture());
         List<OrgDisambiguatedExternalIdentifierEntity> addedList = addCaptor.getAllValues();
@@ -359,7 +363,7 @@ public class RinggoldOrgLoadSourceTest {
         
         ArgumentCaptor<OrgDisambiguatedEntity> orgDisambiguatedEntityCaptor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(mockOrgDisambiguatedDao, times(0)).persist(any());
-        verify(mockOrgDisambiguatedDao, times(4)).merge(orgDisambiguatedEntityCaptor.capture());
+        verify(mockOrgDisambiguatedManager, times(4)).updateOrgDisambiguated(orgDisambiguatedEntityCaptor.capture());
 
         List<OrgDisambiguatedEntity> newOrgDisambiguatedEntities = orgDisambiguatedEntityCaptor.getAllValues();
         assertEquals(4, newOrgDisambiguatedEntities.size());

@@ -31,6 +31,7 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
@@ -84,11 +85,23 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @Mock
     private NotificationManager mockNotificationManager; 
     
+    @Mock
+    private org.orcid.core.manager.v3.NotificationManager mockV3NotificationManager;
+    
     @Resource
     ProfileDao profileDao;
     
     @Resource
     NotificationManager notificationManager;
+    
+    @Resource(name = "notificationManagerV3")
+    org.orcid.core.manager.v3.NotificationManager notificationV3Manager;
+    
+    @Mock
+    private TwoFactorAuthenticationManager mockTwoFactorAuthenticationManager;
+    
+    @Resource
+    TwoFactorAuthenticationManager twoFactorAuthenticationManager;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -103,6 +116,13 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         
         TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", mockNotificationManager);
         doNothing().when(mockNotificationManager).sendAutoDeprecateNotification(Mockito.anyString(), Mockito.anyString());
+        
+        TargetProxyHelper.injectIntoProxy(profileEntityManager, "notificationManager", mockV3NotificationManager);
+        doNothing().when(mockV3NotificationManager).send2FADisabledEmail(Mockito.anyString());
+        
+        TargetProxyHelper.injectIntoProxy(profileEntityManager, "twoFactorAuthenticationManager", mockTwoFactorAuthenticationManager);
+        doNothing().when(mockTwoFactorAuthenticationManager).disable2FA(Mockito.anyString());
+       
         
         TargetProxyHelper.injectIntoProxy(profileEntityManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
         Mockito.doNothing().when(mockProfileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
@@ -289,7 +309,6 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     public void testCreateMinimalRegistrationWithExistingEmailThatCanBeAutoDeprecated() {
         //Create the user, but set it as unclaimed
         String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
-        
         //Create a record by a member
         String orcidBefore = null;
         try {
@@ -304,18 +323,16 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         } 
-        
         Map<String, String> map1 = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map1);
         assertEquals(orcidBefore, map1.get(email));  
         
         //Then try to create it again, this time claimed and without source
-        Registration form = createRegistrationForm(email, true);
+        Registration form = createRegistrationForm(email, true);   
         String orcidAfter = registrationManager.createMinimalRegistration(form, true, java.util.Locale.ENGLISH, "0.0.0.0");
         assertTrue(OrcidStringUtils.isValidOrcid(orcidAfter));
         
         assertThat(orcidAfter, is(not(equalTo(orcidBefore))));
-        
         Map<String, String> map2 = emailManager.findOricdIdsByCommaSeparatedEmails(email);
         assertNotNull(map2);
         assertEquals(orcidAfter, map2.get(email));  

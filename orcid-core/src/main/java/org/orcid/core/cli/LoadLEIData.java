@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -54,6 +55,7 @@ public class LoadLEIData {
     private File fileToLoad;
 
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    private OrgDisambiguatedManager orgDisambiguatedManager;
     private OrgDao orgDao;
 
     // Statistics
@@ -108,6 +110,7 @@ public class LoadLEIData {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDao = (OrgDao) context.getBean("orgDao");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
+        orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");
     }
 
     /**
@@ -237,7 +240,7 @@ public class LoadLEIData {
                     existingDO.setStatus(OrganizationStatus.OBSOLETE.name());
                 }
                 LOGGER.info("Merging LEI:" + org.id);
-                existingDO = orgDisambiguatedDao.merge(existingDO);
+                existingDO = orgDisambiguatedManager.updateOrgDisambiguated(existingDO);
                 updatedDisambiguatedOrgs++;
             }
         } else {
@@ -261,7 +264,7 @@ public class LoadLEIData {
             }
             orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.LEI.name());
             LOGGER.info("Creating LEI:" + org.id);
-            orgDisambiguatedDao.persist(orgDisambiguatedEntity);
+            orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
             existingDO = orgDisambiguatedEntity;
             addedDisambiguatedOrgs++;
         }

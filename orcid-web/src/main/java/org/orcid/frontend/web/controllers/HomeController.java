@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
@@ -136,6 +137,11 @@ public class HomeController extends BaseController {
             throws NoSuchRequestHandlingMethodException {
 
         String orcid = getCurrentUserOrcid();
+        
+        if(!Boolean.TRUE.equals(logUserOut)) {
+            request.setAttribute("skipAccessLog", true);
+            request.setAttribute("isUserStatus", true);
+        }
         
         if (logUserOut != null && logUserOut.booleanValue()) {
             removeJSessionIdCookie(request, response);

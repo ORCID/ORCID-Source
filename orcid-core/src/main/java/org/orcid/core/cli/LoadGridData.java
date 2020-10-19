@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -38,6 +39,7 @@ public class LoadGridData {
 
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    private OrgDisambiguatedManager orgDisambiguatedManager;
 
     // Statistics
     private long updatedOrgs = 0;
@@ -113,7 +115,7 @@ public class LoadGridData {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
         orgDisambiguatedExternalIdentifierDao = (OrgDisambiguatedExternalIdentifierDao) context.getBean("orgDisambiguatedExternalIdentifierDao");
-
+        orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");
     }
 
     public void execute() {
@@ -192,7 +194,7 @@ public class LoadGridData {
                 existingBySourceId.setRegion(region);
                 existingBySourceId.setUrl(url);
                 existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
-                orgDisambiguatedDao.merge(existingBySourceId);
+                orgDisambiguatedManager.updateOrgDisambiguated(existingBySourceId);
                 updatedOrgs++;
             }
             return existingBySourceId;
@@ -321,7 +323,7 @@ public class LoadGridData {
         orgDisambiguatedEntity.setOrgType(orgType);
         orgDisambiguatedEntity.setSourceId(sourceId);
         orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
-        orgDisambiguatedDao.persist(orgDisambiguatedEntity);
+        orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
         addedDisambiguatedOrgs++;
         return orgDisambiguatedEntity;
     }
@@ -354,7 +356,7 @@ public class LoadGridData {
                 existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
                 existingEntity.setSourceParentId(primarySourceId);
                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                orgDisambiguatedDao.merge(existingEntity);
+                orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                 deprecatedOrgs++;
             }
         } else {
@@ -365,7 +367,7 @@ public class LoadGridData {
             deprecatedEntity.setSourceParentId(primarySourceId);
             //We don't need to index it
             deprecatedEntity.setIndexingStatus(IndexingStatus.DONE);
-            orgDisambiguatedDao.persist(deprecatedEntity);
+            orgDisambiguatedManager.createOrgDisambiguated(deprecatedEntity);
             deprecatedOrgs++;
         }
     }
@@ -381,7 +383,7 @@ public class LoadGridData {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.OBSOLETE.name())) {
                 existingEntity.setStatus(OrganizationStatus.OBSOLETE.name());
                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                orgDisambiguatedDao.merge(existingEntity);
+                orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                 obsoletedOrgs++;
             }
         } else {
@@ -391,7 +393,7 @@ public class LoadGridData {
             obsoletedEntity.setSourceId(sourceId);            
             //We don't need to index it
             obsoletedEntity.setIndexingStatus(IndexingStatus.DONE);
-            orgDisambiguatedDao.persist(obsoletedEntity);
+            orgDisambiguatedManager.createOrgDisambiguated(obsoletedEntity);
             obsoletedOrgs++;
         }
     }

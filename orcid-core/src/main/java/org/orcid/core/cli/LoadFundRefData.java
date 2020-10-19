@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -67,6 +68,7 @@ public class LoadFundRefData {
 
     // Resources    
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    private OrgDisambiguatedManager orgDisambiguatedManager;
     private String apiUser;
     // Cache
     private HashMap<String, String> cache = new HashMap<String, String>();
@@ -111,7 +113,8 @@ public class LoadFundRefData {
     private void init() {
         @SuppressWarnings("resource")
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");        
+        orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");     
+        orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");     
         // Geonames params
         geonamesApiUrl = (String) context.getBean("geonamesApiUrl");
         apiUser = (String) context.getBean("geonamesUser");
@@ -150,13 +153,13 @@ public class LoadFundRefData {
                         existingEntity.setSourceUrl(rdfOrganization.doi);
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                         existingEntity.setStatus(rdfOrganization.status);
-                        orgDisambiguatedDao.merge(existingEntity); 
+                        orgDisambiguatedManager.updateOrgDisambiguated(existingEntity); 
                         updatedOrgs += 1;
                     } else if(statusChanged(rdfOrganization, existingEntity)) {
                         //If the status changed, update the status
                         existingEntity.setStatus(rdfOrganization.status);
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                        orgDisambiguatedDao.merge(existingEntity); 
+                        orgDisambiguatedManager.updateOrgDisambiguated(existingEntity); 
                         depreciatedOrgs += 1;
                     } else {
                         // Check if it is depreciated
@@ -165,7 +168,7 @@ public class LoadFundRefData {
                                 existingEntity.setSourceParentId(rdfOrganization.isReplacedBy);
                                 existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
                                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                                orgDisambiguatedDao.merge(existingEntity); 
+                                orgDisambiguatedManager.updateOrgDisambiguated(existingEntity); 
                                 depreciatedOrgs += 1;
                             }
                         } 
@@ -504,7 +507,7 @@ public class LoadFundRefData {
         }
         orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());       
         
-        orgDisambiguatedDao.persist(orgDisambiguatedEntity);
+        orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;
     }
 }

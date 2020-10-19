@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
@@ -45,6 +46,9 @@ public class FundrefOrgLoadSourceTest {
     
     @Mock
     private OrgDisambiguatedDao mockOrgDisambiguatedDao;
+    
+    @Mock
+    private OrgDisambiguatedManager mockOrgDisambiguatedManager;
     
     @InjectMocks
     private FundrefOrgLoadSource fundrefOrgLoadSource;
@@ -99,7 +103,7 @@ public class FundrefOrgLoadSourceTest {
         fundrefOrgLoadSource.loadOrgData();
         
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        verify(mockOrgDisambiguatedDao, Mockito.times(3)).persist(captor.capture());
+        verify(mockOrgDisambiguatedManager, Mockito.times(3)).createOrgDisambiguated(captor.capture());
         
         List<OrgDisambiguatedEntity> entities = captor.getAllValues();
         assertEquals(3, entities.size());
@@ -124,7 +128,7 @@ public class FundrefOrgLoadSourceTest {
         fundrefOrgLoadSource.loadOrgData();
         
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        verify(mockOrgDisambiguatedDao, Mockito.times(2)).merge(captor.capture()); // two existing orgs updated
+        verify(mockOrgDisambiguatedManager, Mockito.times(2)).updateOrgDisambiguated(captor.capture()); // two existing orgs updated
         
         List<OrgDisambiguatedEntity> entities = captor.getAllValues();
         assertEquals(2, entities.size());
@@ -134,7 +138,7 @@ public class FundrefOrgLoadSourceTest {
         assertEquals("FUNDREF", entities.get(1).getSourceType());
 
         captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        verify(mockOrgDisambiguatedDao, Mockito.times(1)).persist(captor.capture()); // one new org created
+        verify(mockOrgDisambiguatedManager, Mockito.times(1)).createOrgDisambiguated(captor.capture()); // one new org created
         
         entities = captor.getAllValues();
         assertEquals(1, entities.size());

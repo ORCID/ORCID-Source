@@ -15,8 +15,12 @@ import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticationManager {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(TwoFactorAuthenticationManagerImpl.class);
 
     private static final String APP_NAME = "orcid.org";
     

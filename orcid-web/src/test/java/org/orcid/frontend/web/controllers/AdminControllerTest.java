@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +45,7 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -128,6 +130,12 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     private RecordNameDao recordNameDao;
     
+    @Mock
+    private TwoFactorAuthenticationManager mockTwoFactorAuthenticationManager;
+    
+    @Resource
+    TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+    
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
     
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
@@ -155,6 +163,9 @@ public class AdminControllerTest extends BaseControllerTest {
 
         TargetProxyHelper.injectIntoProxy(adminController, "orcidSecurityManager", mockOrcidSecurityManager);
         when(mockOrcidSecurityManager.isAdmin()).thenReturn(true);
+        
+        TargetProxyHelper.injectIntoProxy(profileEntityManager, "twoFactorAuthenticationManager", mockTwoFactorAuthenticationManager);
+        doNothing().when(mockTwoFactorAuthenticationManager).disable2FA(Mockito.anyString());
     }
 
     @AfterClass

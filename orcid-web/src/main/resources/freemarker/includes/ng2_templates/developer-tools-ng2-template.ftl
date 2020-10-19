@@ -117,7 +117,7 @@
                                 <h4><@orcid.msg 'manage.developer_tools.redirect_uri'/></h4>                        
                                 <div *ngFor="let rUri of client.redirectUris; index as idx;">                            
                                     <input type="text" placeholder="<@orcid.msg 'manage.developer_tools.redirect_uri.placeholder'/>" [(ngModel)]="rUri.value.value">
-                                    <span class="orcid-error https-error" *ngIf="rUri.value.value && !rUri.value.value.startsWith('https')">
+                                    <span class="orcid-error https-error" *ngIf="getBaseUri().startsWith('https://orcid.org') && rUri.value.value && !rUri.value.value.startsWith('https')">
                                         <@orcid.msg 'manage.developer_tools.website_not_https'/>
                                     </span>
                                     <a (click)="deleteRedirectUri(idx);" class="glyphicon glyphicon-trash blue"></a>

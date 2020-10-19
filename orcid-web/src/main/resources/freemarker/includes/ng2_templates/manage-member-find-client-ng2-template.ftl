@@ -120,7 +120,7 @@
 									<!-- URI -->
 									<div class="col-md-12 col-sm-12 col-xs-12">
 										<input type="text" [(ngModel)]="rUri.value.value" class="input-xlarge">
-										<span class="orcid-error https-error" *ngIf="rUri.value.value && !rUri.value.value.startsWith('https')">
+										<span class="orcid-error https-error" *ngIf="getBaseUri().startsWith('https://orcid.org') && rUri.value.value && !rUri.value.value.startsWith('https')">
                                 			<@orcid.msg 'manage.developer_tools.website_not_https'/>
                                     	</span>
 										<a *ngIf="_client.type.value == 'public-client'" href="" id="delete-redirect-uri" (click)="deleteRedirectUri(i)" class="glyphicon glyphicon-trash grey"></a>
