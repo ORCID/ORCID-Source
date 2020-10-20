@@ -281,8 +281,12 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.authorizeURL = getBaseUri() + '/oauth/authorize?client_id=' + this.client.clientId.value + '&response_type=code&scope=/authenticate&redirect_uri=' + url;        
         this.sampleAuthCurl = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=" + this.client.clientId.value + "&client_secret=" + this.client.clientSecret.value + "&grant_type=authorization_code&redirect_uri=" + url + "&code=REPLACE WITH OAUTH CODE' " + getBaseUri() + "/oauth/token";
         this.sampleOpenId = getBaseUri() + '/oauth/authorize?client_id=' + this.client.clientId.value + '&response_type=token&scope=openid&redirect_uri=' + url;
-    };        
-    
+    };
+
+    getBaseUri(): String {
+        return getBaseUri();
+    };
+
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
