@@ -1,4 +1,5 @@
 declare var orcidVar: any;
+declare var getBaseUri: any;
 
 import { NgForOf, NgIf } 
     from '@angular/common'; 
