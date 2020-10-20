@@ -483,6 +483,10 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     };
 
+    getBaseUri(): String {
+        return getBaseUri();
+    };
+
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
@@ -502,5 +506,5 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
               })
             })
         })
-    }; 
+    };
 }
