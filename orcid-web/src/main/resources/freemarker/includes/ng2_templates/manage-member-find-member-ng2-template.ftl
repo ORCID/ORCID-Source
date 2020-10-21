@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="manage-member-find-member-ng2-template">
 	<!-- Edit member -->
-	<div *ngIf="member.groupOrcid.value.length > 0">
+	<div *ngIf="member.groupOrcid.value && member.groupOrcid.value.length > 0">
 		<div class="admin-edit-client">
 			<div class="row">
 				<div class="col-md-12 col-sm-12 col-xs-12">
