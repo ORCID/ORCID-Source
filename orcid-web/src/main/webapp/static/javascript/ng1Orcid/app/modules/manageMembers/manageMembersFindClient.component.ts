@@ -237,4 +237,8 @@ export class ManageMembersFindClientComponent
       object: client
     });
   }
+
+  getBaseUri(): String {
+    return getBaseUri();
+  };
 }
