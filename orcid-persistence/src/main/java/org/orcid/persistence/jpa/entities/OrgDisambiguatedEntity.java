@@ -14,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -184,7 +183,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.popularity = popularity;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "orgDisambiguated")
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "orgDisambiguated")
     @Fetch(FetchMode.SUBSELECT)
     public Set<OrgDisambiguatedExternalIdentifierEntity> getExternalIdentifiers() {
         return externalIdentifiers;
