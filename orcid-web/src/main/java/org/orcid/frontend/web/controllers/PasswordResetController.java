@@ -140,10 +140,11 @@ public class PasswordResetController extends BaseController {
     public @ResponseBody ResponseEntity<EmailRequest> issuePasswordResetRequest(HttpServletRequest request, @RequestBody EmailRequest passwordResetRequest) {
         for (String param : request.getParameterMap().keySet()) {
             if (!RESET_PASSWORD_PARAMS_WHITELIST.contains(param)) {
+                LOGGER.info("Password reset: Non whitelisted param '{}' for password reset request", param);
                 // found parameter that has not been white-listed
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
-        }
+        }        
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
         passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
@@ -152,21 +153,28 @@ public class PasswordResetController extends BaseController {
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
         if (Features.RESET_PASSWORD_EMAIL.isActive()) {
-            if (emailManager.emailExists(passwordResetRequest.getEmail())) {
-                String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
-                if (profileEntityManager.isDeactivated(orcid)) {
-                    notificationManager.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
-                } else if (!profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
-                    notificationManager.sendApiRecordCreationEmail(passwordResetRequest.getEmail(), orcid);
+            try {
+                if (emailManager.emailExists(passwordResetRequest.getEmail())) {
+                    String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
+                    if (profileEntityManager.isDeactivated(orcid)) {
+                        notificationManager.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
+                    } else if (!profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
+                        notificationManager.sendApiRecordCreationEmail(passwordResetRequest.getEmail(), orcid);
+                    } else {
+                        notificationManager.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
+                    }
                 } else {
-                    notificationManager.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
+                    Locale locale = localeManager.getLocale();
+                    notificationManager.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale);
                 }
-            } else {
-                Locale locale = localeManager.getLocale();
-                notificationManager.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale);
+                passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
+                return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
+            } catch(Exception e) {
+                String emailHash = encryptionManager.getEmailHash(OrcidStringUtils.filterEmailAddress(passwordResetRequest.getEmail()));
+                LOGGER.error("Password reset:Unable to reset password for " + emailHash, e);                
+                errors.add(getMessage("Email.resetPasswordForm.error"));
+                return new ResponseEntity<>(passwordResetRequest, HttpStatus.BAD_REQUEST);
             }
-            passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
-            return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         } else {
             try {
                 String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
