@@ -109,11 +109,16 @@
     
     <!-- 
          Please leave the following script commented out as it breaks unit tests using hsqldb. it is still here because it has 
-         already run on production. The following 'hsqldb_safe' script replaces it for the purpose of running unit tests.
+         already run on production. The following 'hsqldb_safe' script replaces it for the purpose of running unit tests, the 
+         'psql_safe' ensures the id field is created on new envs when the 
+         https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/java/org/orcid/core/cli/InitDb.java ran
          GN - 2020-07-17
     -->
-    <include file="/db/updates/change_external_identifier_primary_key.xml" /> 
+    <!-- <include file="/db/updates/change_external_identifier_primary_key.xml" /> -->
+    <!-- We MUST ensure the id exists in the external_identifier table, so, this script should run on new and none initialized databases -->
+    <include file="/db/updates/change_external_identifier_primary_key_psql_safe.xml" /> 
     <include file="/db/updates/change_external_identifier_primary_key_hsqldb_safe.xml" />
+    
     <include file="/db/updates/resize_external_id_url.xml" />
     
     <include file="/db/updates/migrate-wosuid.xml" />
