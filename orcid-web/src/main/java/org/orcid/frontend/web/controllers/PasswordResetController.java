@@ -140,11 +140,12 @@ public class PasswordResetController extends BaseController {
     public @ResponseBody ResponseEntity<EmailRequest> issuePasswordResetRequest(HttpServletRequest request, @RequestBody EmailRequest passwordResetRequest) {
         for (String param : request.getParameterMap().keySet()) {
             if (!RESET_PASSWORD_PARAMS_WHITELIST.contains(param)) {
-                LOGGER.info("Password reset: Non whitelisted param '{}' for password reset request", param);
+                LOGGER.info("Password reset: Non whitelisted param '{}' for password reset request for email '{}'", param, passwordResetRequest.getEmail());
                 // found parameter that has not been white-listed
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
         }        
+        LOGGER.info("Password reset: processing password reset request for '{}'", passwordResetRequest.getEmail());
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
         passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
@@ -157,21 +158,24 @@ public class PasswordResetController extends BaseController {
                 if (emailManager.emailExists(passwordResetRequest.getEmail())) {
                     String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
                     if (profileEntityManager.isDeactivated(orcid)) {
+                        LOGGER.info("Password reset: Reactivation email sent to '{}'", passwordResetRequest.getEmail());
                         notificationManager.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
                     } else if (!profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
+                        LOGGER.info("Password reset: API record creation email sent to '{}'", passwordResetRequest.getEmail());
                         notificationManager.sendApiRecordCreationEmail(passwordResetRequest.getEmail(), orcid);
                     } else {
+                        LOGGER.info("Password reset: Reset password email sent to '{}'", passwordResetRequest.getEmail());
                         notificationManager.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
                     }
                 } else {
                     Locale locale = localeManager.getLocale();
+                    LOGGER.info("Password reset: Email not found email sent to '{}' with locale '{}'", passwordResetRequest.getEmail(), locale);
                     notificationManager.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale);
                 }
                 passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
                 return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
             } catch(Exception e) {
-                String emailHash = encryptionManager.getEmailHash(OrcidStringUtils.filterEmailAddress(passwordResetRequest.getEmail()));
-                LOGGER.error("Password reset:Unable to reset password for " + emailHash, e);                
+                LOGGER.error("Password reset: Unable to reset password for " + passwordResetRequest.getEmail(), e);                
                 errors.add(getMessage("Email.resetPasswordForm.error"));
                 return new ResponseEntity<>(passwordResetRequest, HttpStatus.BAD_REQUEST);
             }
