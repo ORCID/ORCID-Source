@@ -215,20 +215,14 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             Map<Integer, JsonNode> dnNameMap) {
         LOGGER.info("Processing institutions");
         institutions.forEach(institution -> {
-            transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    OrgDisambiguatedEntity entity = processInstitution(institution, dnNameMap);
-                    Integer ringgoldId = institution.get("ringgold_id").asInt();
-                    // Create external identifiers
-                    generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
+            Integer ringgoldId = institution.get("ringgold_id").asInt();
+            OrgDisambiguatedEntity entity = processInstitution(institution, dnNameMap);
+            generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
 
-                    // Create orgs based on the alt names information
-                    if (altNamesMap.containsKey(ringgoldId)) {
-                        generateOrganizations(entity, altNamesMap.get(ringgoldId));
-                    }
-                }
-            });
+            // Create orgs based on the alt names information
+            if (altNamesMap.containsKey(ringgoldId)) {
+                generateOrganizations(entity, altNamesMap.get(ringgoldId));
+            }
         });
     }
 
