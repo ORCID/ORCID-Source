@@ -213,16 +213,14 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         )
         .subscribe(
             data => {
-                if(data) {
+                if (data.errors != null && data.errors.length > 0 || this.client.clientId.value.length == 0) {
                     this.client = data;
-                    if(this.client.clientId.value.length == 0) {
-                        this.showForm = true;
-                    } else {
-                        this.showForm = false;
-                        this.selectedRedirectUri = this.client.redirectUris[0].value.value;
-                        this.generateSamples(this.selectedRedirectUri);
-                    }
-                }                    
+                    this.showForm = true;
+                } else {
+                    this.showForm = false;
+                    this.selectedRedirectUri = this.client.redirectUris[0].value.value;
+                    this.generateSamples(this.selectedRedirectUri);
+                }
             },
             error => {
                 console.log("error createCredentials", error);
@@ -237,16 +235,14 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         )
         .subscribe(
             data => {
-                if(data) {
+                if (data.errors != null && data.errors.length > 0 || this.client.clientId.value.length == 0) {
                     this.client = data;
-                    if(this.client.clientId.value.length == 0) {
-                        this.showForm = true;
-                    } else {
-                        this.showForm = false;
-                        this.selectedRedirectUri = this.client.redirectUris[0].value.value;
-                        this.generateSamples(this.selectedRedirectUri);
-                    }
-                }                    
+                    this.showForm = true;
+                } else {
+                    this.showForm = false;
+                    this.selectedRedirectUri = this.client.redirectUris[0].value.value;
+                    this.generateSamples(this.selectedRedirectUri);
+                }
             },
             error => {
                 console.log("error updateCredentials", error);

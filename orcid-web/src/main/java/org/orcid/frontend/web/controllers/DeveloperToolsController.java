@@ -204,10 +204,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             client.getErrors().add(getMessage("manage.developer_tools.at_least_one"));
         } else {
             for (RedirectUri rUri : client.getRedirectUris()) {
-                validateRedirectUri(rUri);
-                if (!RedirectUriType.SSO_AUTHENTICATION.value().equals(rUri.getType().getValue()))  {
-                    rUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
-                }
+                validateRedirectUri(rUri);               
                 copyErrors(rUri, client);
             }
         }                
