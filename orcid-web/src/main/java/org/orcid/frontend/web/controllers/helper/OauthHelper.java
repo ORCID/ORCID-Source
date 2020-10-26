@@ -16,6 +16,7 @@ import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.RegistrationController;
+import org.orcid.frontend.web.exception.OauthInvalidRequestException;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.record.Name;
@@ -165,7 +166,7 @@ public class OauthHelper {
                     infoForm.getScopes().add(scopeInfoForm);
                 }
             } else {
-                throw new InvalidRequestException("Please specify the desired scopes");
+                throw new OauthInvalidRequestException("Please specify the desired scopes", infoForm);
             }
 
             Matcher redirectUriMatcher = redirectUriPattern.matcher(requestUrl);
@@ -173,10 +174,10 @@ public class OauthHelper {
                 try {
                     infoForm.setRedirectUrl(OrcidStringUtils.stripHtml(URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim()));
                 } catch (UnsupportedEncodingException e) {
-                    throw new InvalidRequestException("Invalid redirect URL");
+                    throw new OauthInvalidRequestException("Invalid redirect URL", infoForm);
                 }
             } else {
-                throw new InvalidRequestException("Please specify a redirect URL");
+                throw new OauthInvalidRequestException("Please specify a redirect URL", infoForm);
             }
 
             Matcher stateParamMatcher = stateParamPattern.matcher(requestUrl);
@@ -193,10 +194,10 @@ public class OauthHelper {
                 try {
                     infoForm.setResponseType(OrcidStringUtils.stripHtml(URLDecoder.decode(responseTypeMatcher.group(1), "UTF-8").trim()));
                 } catch (UnsupportedEncodingException e) {
-                    throw new InvalidRequestException("Invalid response type");
+                    throw new OauthInvalidRequestException("Invalid response type", infoForm);
                 }
             } else {
-                throw new InvalidRequestException("Please specify a response type");
+                throw new OauthInvalidRequestException("Please specify a response type", infoForm);
             }
 
             Matcher givenNamesMatcher = RegistrationController.givenNamesPattern.matcher(requestUrl);
