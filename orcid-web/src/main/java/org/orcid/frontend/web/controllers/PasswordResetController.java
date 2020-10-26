@@ -145,6 +145,7 @@ public class PasswordResetController extends BaseController {
                 return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
             }
         }        
+        LOGGER.info("Password reset: processing password reset request for '{}'", passwordResetRequest.getEmail());
         List<String> errors = new ArrayList<>();
         passwordResetRequest.setErrors(errors);
         passwordResetRequest.setEmail(passwordResetRequest.getEmail().trim());
