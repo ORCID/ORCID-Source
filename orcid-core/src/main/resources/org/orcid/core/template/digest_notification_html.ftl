@@ -15,21 +15,26 @@
                 font-size: 15px;
             ">
         <#include "notification_header_html.ftl"/>
-        <hr style="color: #447405;border-style: solid;" />
-        <p class="your-record"><@emailMacros.msg "notification.digest.record" /></p>
-        <p>
-            <#list digestEmail.sources as source>
-                <#if source != 'ORCID'>
-                    ${source}
-                    <#if (digestEmail.sources?size gt 1)>
-                        ,
+        <div style="">
+            <hr style="color: #447405;border-style: solid;border-width: 2px;" />
+            <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
+                <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
+                <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.digest.record" /></p>
+            </div>
+            <p style="margin: 15px 0;font-weight: bold;">
+                <#list digestEmail.sources as source>
+                    <#if source != 'ORCID'>
+                        ${source}
+                        <#if (digestEmail.sources?size gt 1)>
+                            ,
+                        </#if>
                     </#if>
-                </#if>
-        </#list>
-            <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" /></p>
-        <hr style="color: #447405;border-style: solid;" />
+                </#list>
+                <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" /></p>
+            <hr style="color: #447405;border-style: solid;border-width: 2px;" />
+        </div>
         <p>
-            <@emailMacros.msg "notification.digest.showing" /><@emailMacros.space />${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.outOf" />${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.changes" />
+            <@emailMacros.msg "notification.digest.showing" /><@emailMacros.space />${digestEmail.sources?size}<@emailMacros.space /><@emailMacros.msg "notification.digest.outOf" /><@emailMacros.space />${digestEmail.sources?size}<@emailMacros.space /><@emailMacros.msg "notification.digest.changes" />
         </p>
         <#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
             <#if sourceId != 'ORCID'>
@@ -68,6 +73,7 @@
         <#if verboseNotifications>
             <#include "digest_email_amend_section.ftl"/>
         </#if>
+        <br>
         <#include "notification_footer_html.ftl"/>
     </div>
     </body>
