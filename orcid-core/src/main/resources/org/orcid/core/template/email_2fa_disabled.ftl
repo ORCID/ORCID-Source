@@ -5,6 +5,8 @@
 
 <@emailMacros.msg "email.2fa_disabled.if_you_received" />
 
+<@emailMacros.msg "email.2fa_disabled.no_reply" />
+
 <@emailMacros.msg "email.2fa_disabled.more_info"  />
 
 <@emailMacros.msg "email.common.warm_regards" />
