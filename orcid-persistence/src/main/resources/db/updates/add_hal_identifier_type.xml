@@ -5,6 +5,6 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">select count(*) from identifier_type where id_name='HAL';</sqlCheck>
         </preConditions>
-        <sql>INSERT INTO identifier_type (id, id_name, id_resolution_prefix, id_deprecated, date_created, last_modified, primary_use, case_sensitive) VALUES (44, 'HAL', 'https://hal.archives-ouvertes.fr/view/resolver/', false, now(), now(), 'work', false);</sql>
+        <sql>INSERT INTO identifier_type (id, id_name, id_resolution_prefix, id_deprecated, date_created, last_modified, primary_use) VALUES (44, 'HAL', 'https://hal.archives-ouvertes.fr/view/resolver/', false, now(), now(), 'work');</sql>
     </changeSet>
 </databaseChangeLog>
