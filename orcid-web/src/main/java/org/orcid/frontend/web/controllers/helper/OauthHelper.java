@@ -114,6 +114,8 @@ public class OauthHelper {
                 infoForm.setClientName(clientName);
                 infoForm.setClientEmailRequestReason(clientEmailRequestReason);
                 infoForm.setMemberName(memberName);
+            } else {
+                throw new OauthInvalidRequestException("Please specify a client id", infoForm);
             }
 
             Matcher orcidMatcher = orcidPattern.matcher(requestUrl);
