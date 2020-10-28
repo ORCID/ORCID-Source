@@ -30,6 +30,7 @@ import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Locale;
@@ -382,7 +383,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     public void disable2FA(String orcid) {
         LOGGER.info("disabling 2FA for " + orcid);
         profileDao.disable2FA(orcid);
-        notificationManager.send2FADisabledEmail(orcid);
+        if (Features.TWO_FA_DEACTIVATE_EMAIL.isActive()) {
+            notificationManager.send2FADisabledEmail(orcid);
+        }
     }
 
     @Override
