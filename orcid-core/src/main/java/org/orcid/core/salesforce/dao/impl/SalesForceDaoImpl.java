@@ -2,7 +2,9 @@ package org.orcid.core.salesforce.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -71,6 +73,8 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private Client client;
 
     private String accessToken;
+    
+    private List<String> consotiumLeadRecordTypeIds;
 
     @Override
     public List<Member> retrieveConsortia() {
@@ -438,7 +442,28 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return retrieveMembersObject(accessToken, null);
     }
 
+    private synchronized List<String> getConsortiumLeadIds() {
+        if (consotiumLeadRecordTypeIds == null) {
+            WebResource resource1 = createQueryResource("Select Id From RecordType Where Name = 'Consortium Lead'");
+            WebResource resource = resource1;
+            ClientResponse response = doGetRequest(resource, accessToken);
+            checkAuthorization(response);
+            JSONObject result = checkResponse(response, 200, "Error getting premium consortium member type ID from SalesForce");
+            consotiumLeadRecordTypeIds = salesForceAdapter.extractIds(result);
+        }
+        return this.consotiumLeadRecordTypeIds;
+    }
+    
     private JSONObject retrieveMembersObject(String accessToken, String accountId) {
+        String ids = "";
+        Iterator<String> it = getConsortiumLeadIds().iterator();
+        while(it.hasNext()) {
+            ids += "'" + it.next() + "'";
+            if(it.hasNext()) {
+                ids += ",";
+            }
+        }
+        
         StringBuffer query = new StringBuffer();
         if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
             query.append(
@@ -450,7 +475,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         query.append(
                 "(SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), ");
         query.append(
-                "Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c, Account.Last_membership_start_date__c, Account.Last_membership_end_date__c from Account WHERE Active_Member__c=TRUE");
+                "Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c, Account.Last_membership_start_date__c, Account.Last_membership_end_date__c from Account WHERE Active_Member__c=TRUE AND (RecordTypeId NOT IN (" + ids + ") OR (RecordTypeId IN (" + ids + ") AND Consortia_Member__c=TRUE))");
         if (accountId != null) {
             validateSalesForceId(accountId);
             query.append(" AND Account.Id = '");

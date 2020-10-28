@@ -135,7 +135,6 @@ public class OauthController {
 
         if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null) {
             requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
-            if (requestInfoForm.getUserOrcid() != null) {                
                 if (requestParameters.isEmpty() && request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING) != null) {
                     try {
                         String url = URLDecoder.decode((String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING), "UTF-8").trim();
@@ -154,7 +153,6 @@ public class OauthController {
                         requestInfoForm.setErrorDescription("Invalid request");
                     }
                 }                
-            }
         }
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         return requestInfoForm;

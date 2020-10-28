@@ -318,6 +318,22 @@ public class SalesForceAdapter {
         }
     }
 
+    public List<String> extractIds(JSONObject object) {
+        List<String> ids = new ArrayList<String>();
+        try {
+            JSONArray records = object.getJSONArray("records");
+
+            for (int i = 0; i < records.length(); i++) {
+                JSONObject obj = records.getJSONObject(i);
+                ids.add(obj.getString("Id"));
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting ID from first record", e);
+        }
+
+        return ids;
+    }
+    
     public static String extractIdFromUrl(String url) {
         if (url == null) {
             return null;
