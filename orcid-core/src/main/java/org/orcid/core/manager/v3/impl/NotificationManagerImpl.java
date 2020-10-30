@@ -585,12 +585,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);    
         }
 
-        System.out.println("##### TEXT #####");
-        System.out.println(text);
-
-        System.out.println("##### HTML #####");
-        System.out.println(html);
-
         NotificationAdministrative notification = new NotificationAdministrative();
         notification.setNotificationType(NotificationType.ADMINISTRATIVE);
         notification.setSubject(subject);
