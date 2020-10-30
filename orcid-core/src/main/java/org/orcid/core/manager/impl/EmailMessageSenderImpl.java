@@ -37,6 +37,7 @@ import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
@@ -219,7 +220,23 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int activityCount = 0;
         Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
+        String subjectDelegate = null;
+        String bodyHtmlDelegate = null;
+        String bodyHtmlDelegateRecipient = null;
         for (Notification notification : notifications) {
+            if (notification instanceof NotificationAdministrative) {
+                NotificationAdministrative notificationAdministrative = (NotificationAdministrative) notification;
+                subjectDelegate = notificationAdministrative.getSubject();
+                if ("[ORCID] You've been made an Account Delegate!".equals(subjectDelegate)) {
+                    int bodyTag = notificationAdministrative.getBodyHtml().indexOf("<body>");
+                    int bodyTagClose = notificationAdministrative.getBodyHtml().indexOf("</body>");
+                    bodyHtmlDelegateRecipient = notificationAdministrative.getBodyHtml().substring(bodyTag + 6, bodyTagClose);                    
+                } else if ("[ORCID] You've made an Account Delegate!".equals(subjectDelegate)) {                    
+                    int bodyTag = notificationAdministrative.getBodyHtml().indexOf("<body>");
+                    int bodyTagClose = notificationAdministrative.getBodyHtml().indexOf("</body>");
+                    bodyHtmlDelegate = notificationAdministrative.getBodyHtml().substring(bodyTag + 6, bodyTagClose);
+                }
+            }
             digestEmail.addNotification(notification);
             if (notification.getSource() == null) {
                 orcidMessageCount++;
@@ -257,6 +274,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("subject", subject);
         params.put("verboseNotifications", false);
         params.put("orcidValue", record.getId());
+        params.put("subjectDelegate", subjectDelegate);
+        params.put("bodyHtmlDelegate", bodyHtmlDelegate);
+        params.put("bodyHtmlDelegateRecipient", bodyHtmlDelegateRecipient);
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 
