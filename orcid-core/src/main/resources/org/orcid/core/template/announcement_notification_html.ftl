@@ -4,7 +4,6 @@
     <html>
     <head>
         <title>${subject}</title>
-        <#include "css/notification.css">
     </head>
     <body>
         <p>
