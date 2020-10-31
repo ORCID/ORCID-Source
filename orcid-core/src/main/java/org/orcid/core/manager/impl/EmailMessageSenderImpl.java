@@ -223,18 +223,18 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String subjectDelegate = null;
         String bodyHtmlDelegate = null;
         String bodyHtmlDelegateRecipient = null;
+        String bodyHtmlAdminDelegate = null;
+
         for (Notification notification : notifications) {
             if (notification instanceof NotificationAdministrative) {
                 NotificationAdministrative notificationAdministrative = (NotificationAdministrative) notification;
                 subjectDelegate = notificationAdministrative.getSubject();
                 if ("[ORCID] You've been made an Account Delegate!".equals(subjectDelegate)) {
-                    int bodyTag = notificationAdministrative.getBodyHtml().indexOf("<body>");
-                    int bodyTagClose = notificationAdministrative.getBodyHtml().indexOf("</body>");
-                    bodyHtmlDelegateRecipient = notificationAdministrative.getBodyHtml().substring(bodyTag + 6, bodyTagClose);                    
+                    bodyHtmlDelegateRecipient = getHtmlBody(notificationAdministrative);
                 } else if ("[ORCID] You've made an Account Delegate!".equals(subjectDelegate)) {                    
-                    int bodyTag = notificationAdministrative.getBodyHtml().indexOf("<body>");
-                    int bodyTagClose = notificationAdministrative.getBodyHtml().indexOf("</body>");
-                    bodyHtmlDelegate = notificationAdministrative.getBodyHtml().substring(bodyTag + 6, bodyTagClose);
+                    bodyHtmlDelegate = getHtmlBody(notificationAdministrative);
+                } else if (subjectDelegate != null && subjectDelegate.startsWith("[ORCID] Trusting")) {
+                    bodyHtmlAdminDelegate = getHtmlBody(notificationAdministrative);
                 }
             }
             digestEmail.addNotification(notification);
@@ -277,6 +277,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("subjectDelegate", subjectDelegate);
         params.put("bodyHtmlDelegate", bodyHtmlDelegate);
         params.put("bodyHtmlDelegateRecipient", bodyHtmlDelegateRecipient);
+        params.put("bodyHtmlAdminDelegate", bodyHtmlAdminDelegate);
+
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 
@@ -594,5 +596,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 updates.get(itemType).put(actionType, new TreeSet<String>());
             }
         }
+    }
+
+    private String getHtmlBody(NotificationAdministrative notificationAdministrative) {
+        int bodyTag = notificationAdministrative.getBodyHtml().indexOf("<body>");
+        int bodyTagClose = notificationAdministrative.getBodyHtml().indexOf("</body>");
+        return notificationAdministrative.getBodyHtml().substring(bodyTag + 6, bodyTagClose);
     }
 }

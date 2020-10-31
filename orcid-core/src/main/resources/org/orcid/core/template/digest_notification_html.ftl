@@ -114,6 +114,10 @@
                                         <@bodyHtmlDelegateRecipient?interpret />
                                     <#elseif subjectDelegate == '[ORCID] You\'ve made an Account Delegate!'>
                                         <@bodyHtmlDelegate?interpret />
+                                    <#elseif subjectDelegate?starts_with("[ORCID] Trusting")>
+                                        <@bodyHtmlAdminDelegate?interpret />
+                                    <#else>
+                                        ${(notification.subject)}
                                     </#if>
                                 </#if>
                             <#else>
