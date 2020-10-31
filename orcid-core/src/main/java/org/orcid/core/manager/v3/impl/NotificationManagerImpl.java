@@ -624,12 +624,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         // Generate html from template
         String html = templateManager.processTemplate("delegate_notification_html.ftl", templateParams);
 
-        System.out.println("##### TEXT #####");
-        System.out.println(text);
-
-        System.out.println("##### HTML #####");
-        System.out.println(html);
-
         NotificationAdministrative notification = new NotificationAdministrative();
         notification.setNotificationType(NotificationType.ADMINISTRATIVE);
         notification.setSubject(subject);
@@ -847,12 +841,13 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
         addMessageParams(templateParams, userLocale);
         
-        String htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
-        
-        // todo
-        System.out.println(htmlBody);
-        
-        htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
+        String htmlBody = null;
+
+        if (Features.ENABLE_NEW_NOTIFICATIONS.isActive()) {
+            htmlBody = templateManager.processTemplate("admin_delegate_request_notification_html.ftl", templateParams);
+        } else {
+            htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
+        }
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
