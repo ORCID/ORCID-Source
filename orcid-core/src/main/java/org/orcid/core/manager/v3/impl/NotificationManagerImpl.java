@@ -107,7 +107,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "ORCID <email-changed@notify.orcid.org>";
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
-
+    
     public static final int DELETE_BATCH_SIZE = 500;
     
     @Value("${org.orcid.core.email.verify.tooOld:15}")
@@ -540,7 +540,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Transactional
     public void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission) {
         ProfileEntity delegateProfileEntity = profileEntityCacheManager.retrieve(userReceivingPermission);
-
+        
         Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(userReceivingPermission);
         String frequencyString = frequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS);
         SendEmailFrequency administrativeChangeEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
@@ -553,7 +553,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
         Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
-
+        
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
         String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
@@ -574,7 +574,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         
         addMessageParams(templateParams, userLocale);
 
-        String text = null;        
+        String text = null;
         String html = null;
 
         if (Features.ENABLE_NEW_NOTIFICATIONS.isActive()) {
@@ -582,7 +582,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             html = templateManager.processTemplate("delegate_recipient_notification_html.ftl", templateParams);
         } else {
             text = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
-            html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);    
+            html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
         }
 
         NotificationAdministrative notification = new NotificationAdministrative();
@@ -590,7 +590,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         notification.setSubject(subject);
         notification.setBodyHtml(html);
         notification.setBodyText(text);
-        createNotification(userReceivingPermission, notification);        
+        createNotification(userReceivingPermission, notification);
     }
 
     @Override
