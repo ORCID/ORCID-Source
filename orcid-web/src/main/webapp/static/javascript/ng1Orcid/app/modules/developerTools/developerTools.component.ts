@@ -207,6 +207,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };
     
     createCredentials(): void {
+        this.deleteEmptyRedirectUris();
         this.developerToolsService.createCredentials(this.client)
         .pipe(    
                 takeUntil(this.ngUnsubscribe)

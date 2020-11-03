@@ -200,12 +200,18 @@ public class DeveloperToolsController extends BaseWorkspaceController {
             client.setRedirectUris(new ArrayList<RedirectUri>());
         }
 
-        if(!client.getRedirectUris().isEmpty()) {
+
+        if(client.getRedirectUris().isEmpty()) {
+            client.getErrors().add(getMessage("manage.developer_tools.at_least_one"));
+        } else {
             for (RedirectUri rUri : client.getRedirectUris()) {
-                validateRedirectUri(rUri);               
+                validateRedirectUri(rUri);
+                if (!RedirectUriType.SSO_AUTHENTICATION.value().equals(rUri.getType().getValue())) {
+                    rUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                }
                 copyErrors(rUri, client);
             }
-        }                
+        }
     }
 
     /**
