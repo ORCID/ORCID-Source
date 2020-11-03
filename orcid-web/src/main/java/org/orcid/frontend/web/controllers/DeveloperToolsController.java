@@ -197,12 +197,10 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         copyErrors(client.getWebsite(), client);
         
         if (client.getRedirectUris() == null){
-            client.setRedirectUris(new ArrayList<RedirectUri>());            
-        } 
-        
-        if(client.getRedirectUris().isEmpty()) {
-            client.getErrors().add(getMessage("manage.developer_tools.at_least_one"));
-        } else {
+            client.setRedirectUris(new ArrayList<RedirectUri>());
+        }
+
+        if(!client.getRedirectUris().isEmpty()) {
             for (RedirectUri rUri : client.getRedirectUris()) {
                 validateRedirectUri(rUri);               
                 copyErrors(rUri, client);

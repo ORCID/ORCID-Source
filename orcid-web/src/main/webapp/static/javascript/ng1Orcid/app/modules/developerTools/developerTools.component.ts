@@ -229,6 +229,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };    
     
     updateCredentials(): void {
+        this.deleteEmptyRedirectUris();
         this.developerToolsService.updateCredentials(this.client)
         .pipe(    
                 takeUntil(this.ngUnsubscribe)
@@ -278,6 +279,10 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.sampleAuthCurl = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=" + this.client.clientId.value + "&client_secret=" + this.client.clientSecret.value + "&grant_type=authorization_code&redirect_uri=" + url + "&code=REPLACE WITH OAUTH CODE' " + getBaseUri() + "/oauth/token";
         this.sampleOpenId = getBaseUri() + '/oauth/authorize?client_id=' + this.client.clientId.value + '&response_type=token&scope=openid&redirect_uri=' + url;
     };
+
+    deleteEmptyRedirectUris() {
+        this.client.redirectUris = this.client.redirectUris.filter(redirect => redirect.value.value !== '');
+    }
 
     getBaseUri(): String {
         return getBaseUri();
