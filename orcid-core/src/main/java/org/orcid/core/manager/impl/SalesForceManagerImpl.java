@@ -76,6 +76,9 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     @Resource(name = "salesForceMemberCache")
     private Cache<String, Member> salesForceMemberCache;
+    
+    @Resource(name = "salesForceMemberEvenIfItIsNotAConsortiaMemberCache")
+    private Cache<String, Member> salesForceMemberEvenIfItIsNotAConsortiaMemberCache;
 
     @Resource(name = "salesForceMemberDetailsCache")
     private Cache<MemberDetailsCacheKey, MemberDetails> salesForceMemberDetailsCache;
@@ -130,6 +133,11 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     public Member retrieveMember(String accountId) {
         return salesForceMemberCache.get(accountId);
     }
+    
+    @Override
+    public Member retrieveMemberEvenIfItIsNotAConsortiaMember(String accountId) {
+        return salesForceMemberEvenIfItIsNotAConsortiaMemberCache.get(accountId);
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -159,8 +167,20 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
+    public MemberDetails retrieveFreshDetailsEvenIfItIsNotAConsortiaMember(String memberId) {
+        salesForceMemberEvenIfItIsNotAConsortiaMemberCache.remove(memberId);
+        removeMemberDetailsFromCache(memberId);
+        Member salesForceMember = retrieveMemberEvenIfItIsNotAConsortiaMember(memberId);
+        return processDetails(memberId, false, salesForceMember);
+    }
+    
+    @Override
     public MemberDetails retrieveDetails(String memberId, boolean publicOnly) {
         Member salesForceMember = retrieveMember(memberId);
+        return processDetails(memberId, publicOnly, salesForceMember);
+    }
+    
+    private MemberDetails processDetails(String memberId, boolean publicOnly, Member salesForceMember) {
         if (salesForceMember != null) {
             MemberDetails details = salesForceMemberDetailsCache
                     .get(new MemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName));
@@ -175,13 +195,6 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             return details;
         }
         return null;
-    }
-
-    @Override
-    public MemberDetails retrieveFreshDetails(String memberId) {
-        salesForceMemberCache.remove(memberId);
-        removeMemberDetailsFromCache(memberId);
-        return retrieveDetails(memberId);
     }
 
     @SuppressWarnings("unchecked")

@@ -26,6 +26,8 @@ public interface SalesForceDao {
     List<Member> retrieveMembers();
 
     Member retrieveMember(String accountId);
+    
+    Member retrieveMembersEvenIfItIsNotAConsortiaMember(String accountId);
 
     List<Member> retrieveMembersByWebsite(String websiteUrl);
 

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -89,6 +88,17 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     @Override
     public Member retrieveMember(String accountId) {
         return retry(accessToken -> retrieveMemberFromSalesForce(accessToken, accountId));
+    }
+    
+    @Override
+    public Member retrieveMembersEvenIfItIsNotAConsortiaMember(String accountId) {
+        return retry(accessToken -> {
+            LOGGER.info("About get member from SalesForce (RegardlessOfConsortiaMemberFlag)");
+            List<Member> membersList = new ArrayList<>();
+            JSONObject jsonObject = retrieveMembersObject(accessToken, accountId, false);
+            membersList.addAll(salesForceAdapter.createMembersListFromJson(jsonObject));
+            return !membersList.isEmpty() ? membersList.get(0) : null;   
+        });            
     }
 
     @Override
@@ -433,13 +443,13 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private Member retrieveMemberFromSalesForce(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get member from SalesForce");
         List<Member> membersList = new ArrayList<>();
-        JSONObject jsonObject = retrieveMembersObject(accessToken, accountId);
+        JSONObject jsonObject = retrieveMembersObject(accessToken, accountId, true);
         membersList.addAll(salesForceAdapter.createMembersListFromJson(jsonObject));
         return !membersList.isEmpty() ? membersList.get(0) : null;
     }
 
     private JSONObject retrieveMembersObject(String accessToken) {
-        return retrieveMembersObject(accessToken, null);
+        return retrieveMembersObject(accessToken, null, true);
     }
 
     private synchronized List<String> getConsortiumLeadIds() {
@@ -452,9 +462,9 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             consotiumLeadRecordTypeIds = salesForceAdapter.extractIds(result);
         }
         return this.consotiumLeadRecordTypeIds;
-    }
+    }        
     
-    private JSONObject retrieveMembersObject(String accessToken, String accountId) {
+    private JSONObject retrieveMembersObject(String accessToken, String accountId, boolean filterNonConsortiaMembers) {
         String ids = "";
         Iterator<String> it = getConsortiumLeadIds().iterator();
         while(it.hasNext()) {
@@ -475,7 +485,15 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         query.append(
                 "(SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), ");
         query.append(
-                "Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c, Account.Last_membership_start_date__c, Account.Last_membership_end_date__c from Account WHERE Active_Member__c=TRUE AND (RecordTypeId NOT IN (" + ids + ") OR (RecordTypeId IN (" + ids + ") AND Consortia_Member__c=TRUE))");
+                "Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c, Account.Last_membership_start_date__c, Account.Last_membership_end_date__c from Account WHERE Active_Member__c=TRUE AND (RecordTypeId NOT IN ("
+                        + ids + ") OR (RecordTypeId IN (" + ids + ")");
+
+        if (filterNonConsortiaMembers) {
+            query.append(" AND Consortia_Member__c=TRUE");
+        }
+
+        query.append("))");
+
         if (accountId != null) {
             validateSalesForceId(accountId);
             query.append(" AND Account.Id = '");

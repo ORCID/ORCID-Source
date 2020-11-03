@@ -223,7 +223,7 @@ public class ManageMembersController extends BaseController {
     
     @RequestMapping(value = "/find-consortium.json", method = RequestMethod.GET)
     public @ResponseBody MemberDetailsForm findConsortium(@RequestParam("id") String id) {
-        MemberDetails memberDetails = salesForceManager.retrieveFreshDetails(id);
+        MemberDetails memberDetails = salesForceManager.retrieveFreshDetailsEvenIfItIsNotAConsortiaMember(id);
         MemberDetailsForm consortiumForm = MemberDetailsForm.fromMemberDetails(memberDetails);
         List<Contact> contactsList = salesForceManager.retrieveFreshContactsByAccountId(id);
         salesForceManager.addOrcidsToContacts(contactsList);

@@ -28,6 +28,8 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     List<Member> retrieveMembers();
 
     Member retrieveMember(String accountId);
+    
+    Member retrieveMemberEvenIfItIsNotAConsortiaMember(String accountId);
 
     List<Member> retrieveConsortia();
 
@@ -41,7 +43,7 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
 
     MemberDetails retrieveDetails(String memberId, boolean publicOnly);
 
-    MemberDetails retrieveFreshDetails(String memberId);
+    MemberDetails retrieveFreshDetailsEvenIfItIsNotAConsortiaMember(String memberId);
 
     List<Contact> retrieveContactsByAccountId(String accountId);
 
