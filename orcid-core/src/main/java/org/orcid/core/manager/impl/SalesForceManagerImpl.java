@@ -335,7 +335,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
         if (firstExistingMember.isPresent()) {
             String subMemberAcccountId = firstExistingMember.get().getId();
-            MemberDetails memberDetails = retrieveDetails(parentAccountId);
+            MemberDetails memberDetails = retrieveDetailsEvenIfItIsNotAConsortiaMember(parentAccountId);
             subMemberExists = memberDetails.getSubMembers().stream().anyMatch(s -> subMemberAcccountId.equals(s.getOpportunity().getTargetAccountId()));
         }
 
@@ -345,7 +345,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Override
     public String createMember(Member member, Contact initialContact) {
         String consortiumLeadId = member.getConsortiumLeadId();
-        Member consortium = retrieveMember(consortiumLeadId);
+        Member consortium = retrieveMemberEvenIfItIsNotAConsortiaMember(consortiumLeadId);
         String consortiumOwnerId = consortium.getOwnerId();
         Opportunity opportunity = new Opportunity();
         URL websiteUrl = member.getWebsiteUrl();
