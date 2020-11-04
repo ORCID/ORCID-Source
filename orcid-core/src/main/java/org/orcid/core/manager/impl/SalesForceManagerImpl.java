@@ -167,6 +167,12 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
+    public MemberDetails retrieveDetailsEvenIfItIsNotAConsortiaMember(String memberId) {
+        Member salesForceMember = retrieveMemberEvenIfItIsNotAConsortiaMember(memberId);
+        return processDetails(memberId, false, salesForceMember);
+    }
+    
+    @Override
     public MemberDetails retrieveFreshDetailsEvenIfItIsNotAConsortiaMember(String memberId) {
         salesForceMemberEvenIfItIsNotAConsortiaMemberCache.remove(memberId);
         removeMemberDetailsFromCache(memberId);

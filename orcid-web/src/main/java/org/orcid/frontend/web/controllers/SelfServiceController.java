@@ -187,7 +187,7 @@ public class SelfServiceController extends BaseController {
     @RequestMapping(value = "/get-member-details.json", method = RequestMethod.GET)
     public @ResponseBody MemberDetailsForm getConsortium(@RequestParam("accountId") String accountId) {
         checkAccess(accountId);
-        MemberDetails memberDetails = salesForceManager.retrieveDetails(accountId);
+        MemberDetails memberDetails = salesForceManager.retrieveDetailsEvenIfItIsNotAConsortiaMember(accountId);
         MemberDetailsForm consortiumForm = MemberDetailsForm.fromMemberDetails(memberDetails);
         consortiumForm.setAllowedFullAccess(isAllowedFullAccess(accountId));
         return consortiumForm;
@@ -472,7 +472,7 @@ public class SelfServiceController extends BaseController {
 
     private void checkAccess(String memberId) {
         List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveActiveSourceId());
-        MemberDetails memberDetails = salesForceManager.retrieveDetails(memberId);
+        MemberDetails memberDetails = salesForceManager.retrieveDetailsEvenIfItIsNotAConsortiaMember(memberId);
         if (!(usersAuthorizedAccountIds.contains(memberId) || usersAuthorizedAccountIds.contains(memberDetails.getMember().getConsortiumLeadId()))) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);
         }

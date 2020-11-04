@@ -1137,7 +1137,7 @@
     </bean>
     
     <bean id="salesForceMemberEvenIfItIsNotAConsortiaMemberCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
-        <property name="cacheName" value="sales-force-member" />
+        <property name="cacheName" value="sales-force-member-non-consortia-included" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="1000" />
         <property name="maxMegaBytesOnDisk" value="0" />
