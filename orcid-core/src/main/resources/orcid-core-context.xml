@@ -1184,6 +1184,18 @@
         </property>
     </bean>
     
+    <bean id="salesForceConsortiumLeadIdsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-consortium-lead-ids" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1000" />
+        <property name="maxMegaBytesOnDisk" value="0" />
+        <property name="timeToIdleSeconds" value="600" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.SalesForceConsortiumLeadIdsCacheEntryFactory" />
+        </property>
+    </bean>
+    
     <bean id="salesForceConnectionCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="sales-force-connection" />
 		<property name="cacheManager" ref="coreCacheManager" />

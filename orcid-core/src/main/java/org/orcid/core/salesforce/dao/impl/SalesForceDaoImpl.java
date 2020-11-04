@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -242,6 +241,19 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         }
         return salesForceId;
     }
+    
+    @Override
+    public List<String> getConsortiumLeadIds() {
+        if (consotiumLeadRecordTypeIds == null) {
+            WebResource resource1 = createQueryResource("Select Id From RecordType Where Name = 'Consortium Lead'");
+            WebResource resource = resource1;
+            ClientResponse response = doGetRequest(resource, accessToken);
+            checkAuthorization(response);
+            JSONObject result = checkResponse(response, 200, "Error getting premium consortium member type ID from SalesForce");
+            consotiumLeadRecordTypeIds = salesForceAdapter.extractIds(result);
+        }
+        return this.consotiumLeadRecordTypeIds;
+    }
 
     private String escapeStringInput(String input) {
         if (input == null) {
@@ -442,32 +454,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return retrieveMembersObject(accessToken, null);
     }
 
-    private synchronized List<String> getConsortiumLeadIds() {
-        if (consotiumLeadRecordTypeIds == null) {
-            WebResource resource1 = createQueryResource("Select Id From RecordType Where Name = 'Consortium Lead'");
-            WebResource resource = resource1;
-            ClientResponse response = doGetRequest(resource, accessToken);
-            checkAuthorization(response);
-            JSONObject result = checkResponse(response, 200, "Error getting premium consortium member type ID from SalesForce");
-            consotiumLeadRecordTypeIds = salesForceAdapter.extractIds(result);
-        }
-        return this.consotiumLeadRecordTypeIds;
-    }
-    
     private JSONObject retrieveMembersObject(String accessToken, String accountId) {
-        String ids = "";
-        Iterator<String> it = getConsortiumLeadIds().iterator();
-        while(it.hasNext()) {
-            ids += "'" + it.next() + "'";
-            if(it.hasNext()) {
-                ids += ",";
-            }
-        }
-        
         StringBuffer query = new StringBuffer();
         if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
             query.append(
-                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
+                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, Account.Consortia_Member__c, RecordTypeId, ");
         } else {
             query.append(
                 "SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");            
@@ -475,7 +466,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         query.append(
                 "(SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), ");
         query.append(
-                "Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c, Account.Last_membership_start_date__c, Account.Last_membership_end_date__c from Account WHERE Active_Member__c=TRUE AND (RecordTypeId NOT IN (" + ids + ") OR (RecordTypeId IN (" + ids + ") AND Consortia_Member__c=TRUE))");
+                "Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c, Account.Last_membership_start_date__c, Account.Last_membership_end_date__c from Account WHERE Active_Member__c=TRUE");
         if (accountId != null) {
             validateSalesForceId(accountId);
             query.append(" AND Account.Id = '");
