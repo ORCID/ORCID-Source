@@ -62,7 +62,7 @@ public class MembersListController extends BaseController {
         List<Member> onlyConsortiaMembers = members
                 .stream()
                 .filter(e -> (
-                        (!consortiumLeadIds.contains(e.getRecordTypeId()) || Boolean.TRUE.equals(e.getIsConsortiaMember()))
+                        (!consortiumLeadIds.contains(e.getRecordTypeId()) || (consortiumLeadIds.contains(e.getRecordTypeId()) && Boolean.TRUE.equals(e.getIsConsortiaMember())))
                         ))
                 .collect(Collectors.toList());
                                 
