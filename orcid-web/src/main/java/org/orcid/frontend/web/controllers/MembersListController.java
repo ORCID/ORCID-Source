@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.ehcache.Cache;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.CommunityType;
@@ -31,6 +32,9 @@ public class MembersListController extends BaseController {
 
     @Resource
     private SalesForceManager salesForceManager;
+    
+    @Resource(name = "salesForceConsortiumLeadIdsCache")
+    private Cache<String, List<String>> salesForceConsortiumLeadIdsCache;
 
     @RequestMapping("/members")
     public ModelAndView membersList() {
@@ -52,11 +56,16 @@ public class MembersListController extends BaseController {
 
     @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
     public @ResponseBody List<Member> retrieveMembers() {
+        List<String> consortiumLeadIds = salesForceConsortiumLeadIdsCache.get("");
         List<Member> members = salesForceManager.retrieveMembers();
+        
         List<Member> onlyConsortiaMembers = members
                 .stream()
-                .filter(e -> (Boolean.TRUE.equals(e.getIsConsortiaMember())))
+                .filter(e -> (
+                        (!consortiumLeadIds.contains(e.getRecordTypeId()) || Boolean.TRUE.equals(e.getIsConsortiaMember()))
+                        ))
                 .collect(Collectors.toList());
+                                
         return onlyConsortiaMembers;
     }
 
