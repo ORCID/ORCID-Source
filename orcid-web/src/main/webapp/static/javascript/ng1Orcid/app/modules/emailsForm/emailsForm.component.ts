@@ -224,6 +224,11 @@ export class EmailsFormComponent implements AfterViewInit, OnDestroy, OnInit {
 
                     if (this.inputEmail.errors.length == 0) {
                         this.initInputEmail();
+                    } else {
+                        if (this.inputEmail.errors.filter(error => error.startsWith('Please enter your email address in the').length > 0)
+                            && this.inputEmail.errors.filter(error => error.includes('is already associated with an ORCID')).length > 0) {
+                            this.inputEmail.errors = this.inputEmail.errors.filter(error => !error.startsWith('Please enter your email address in the'));
+                        }
                     }
                 },
                 error => {
