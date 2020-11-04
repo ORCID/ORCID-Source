@@ -91,6 +91,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("emailDomains", "Email_domains__c");
         classMap.field("recordTypeId", "RecordTypeId");
         classMap.field("consortiumLeadId", "Consortium_Lead__c");   
+        classMap.field("isConsortiaMember", "Consortia_Member__c");
         classMap.fieldBToA("Last_membership_start_date__c", "lastMembershipStartDate");
         classMap.fieldBToA("Last_membership_end_date__c", "lastMembershipEndDate");
         classMap.customize(new CustomMapper<Member, JSONObject>() {

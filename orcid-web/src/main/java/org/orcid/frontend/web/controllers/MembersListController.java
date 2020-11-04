@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -51,7 +52,12 @@ public class MembersListController extends BaseController {
 
     @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
     public @ResponseBody List<Member> retrieveMembers() {
-        return salesForceManager.retrieveMembers();
+        List<Member> members = salesForceManager.retrieveMembers();
+        List<Member> onlyConsortiaMembers = members
+                .stream()
+                .filter(e -> (Boolean.TRUE.equals(e.getIsConsortiaMember())))
+                .collect(Collectors.toList());
+        return onlyConsortiaMembers;
     }
 
     @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
