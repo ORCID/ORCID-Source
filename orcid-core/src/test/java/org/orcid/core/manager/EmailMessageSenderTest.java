@@ -104,6 +104,9 @@ public class EmailMessageSenderTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", mockEncryptionManager);
         TargetProxyHelper.injectIntoProxy(recordNameManagerV3, "recordNameDao", mockRecordNameDao);
+
+        // Disable all features by default
+        togglzRule.disableAll();
     }
 
     @After
