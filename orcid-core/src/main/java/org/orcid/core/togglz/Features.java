@@ -56,9 +56,6 @@ public enum Features implements Feature {
 
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
-
-    @Label("Enable Hotjar tracking")
-    HOTJAR,
     
     @Label("Https for links to iDs")
     HTTPS_IDS,
