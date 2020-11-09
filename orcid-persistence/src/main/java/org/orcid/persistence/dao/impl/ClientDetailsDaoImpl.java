@@ -211,4 +211,21 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         updateQuery.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public void activateClient(String clientDetailsId) {
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set deactivatedDate = null, deactivatedBy = null where id = :clientId");
+        updateQuery.setParameter("clientId", clientDetailsId);
+        updateQuery.executeUpdate();
+    }
+    
+    @Override
+    @Transactional
+    public void deactivateClient(String clientDetailsId, String deactivatedBy) {
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set deactivatedDate = now(), deactivatedBy = :deactivatedBy where id = :clientId");
+        updateQuery.setParameter("clientId", clientDetailsId);
+        updateQuery.setParameter("deactivatedBy", deactivatedBy);
+        updateQuery.executeUpdate();
+    }
+
 }

@@ -1,0 +1,26 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="George Nash" id="ADD-DEACTIVATED-DATE-TO-CLIENT-DETAILS">     
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="client_details" columnName="deactivated_date"/>
+            </not>
+         </preConditions>
+         <addColumn tableName="client_details">
+            <column name="deactivated_date" type="TIMESTAMP WITH TIME ZONE" />
+         </addColumn>    
+    </changeSet>
+
+    <changeSet author="George Nash" id="ADD-DEACTIVATED-BY-TO-CLIENT-DETAILS">     
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="client_details" columnName="deactivated_by"/>
+            </not>
+         </preConditions>
+         <addColumn tableName="client_details">
+            <column name="deactivated_by" type="VARCHAR(19)" />
+         </addColumn>    
+    </changeSet>
+</databaseChangeLog>
