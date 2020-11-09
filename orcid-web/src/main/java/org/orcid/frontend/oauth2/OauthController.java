@@ -21,6 +21,7 @@ import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
+import org.orcid.frontend.web.exception.OauthInvalidRequestException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -135,7 +136,6 @@ public class OauthController {
 
         if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null) {
             requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
-            if (requestInfoForm.getUserOrcid() != null) {                
                 if (requestParameters.isEmpty() && request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING) != null) {
                     try {
                         String url = URLDecoder.decode((String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING), "UTF-8").trim();
@@ -154,7 +154,6 @@ public class OauthController {
                         requestInfoForm.setErrorDescription("Invalid request");
                     }
                 }                
-            }
         }
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         return requestInfoForm;
@@ -168,7 +167,17 @@ public class OauthController {
         try {
             // Get and save the request information form
             requestInfoForm = oauthHelper.generateRequestInfoForm(url);
-        } catch (InvalidRequestException | InvalidClientException e) {
+        } catch (InvalidClientException e) {
+            requestInfoForm.setError("invalid_client");
+            requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
+        } catch (OauthInvalidRequestException e) {
+            requestInfoForm =  e.getRequestInfoForm();
+            requestInfoForm.setError("oauth_error");
+            requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
+        } 
+        catch (InvalidRequestException e) {
             requestInfoForm.setError("oauth_error");
             requestInfoForm.setErrorDescription(e.getMessage());
             return requestInfoForm;

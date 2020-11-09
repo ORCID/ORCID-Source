@@ -142,7 +142,10 @@ public enum Features implements Feature {
     SF_ENABLE_OPP_ORG_RECORD_TYPES,
     
     @Label("ID token 24 hours lifespan")
-    ID_TOKEN_24_HOURS_LIFESPAN;
+    ID_TOKEN_24_HOURS_LIFESPAN,
+    
+    @Label("Send the 2FA Disabled Email")
+    TWO_FA_DEACTIVATE_EMAIL;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

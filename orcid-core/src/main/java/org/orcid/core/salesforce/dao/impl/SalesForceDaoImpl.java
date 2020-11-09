@@ -2,6 +2,7 @@ package org.orcid.core.salesforce.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -71,6 +72,8 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private Client client;
 
     private String accessToken;
+    
+    private List<String> consotiumLeadRecordTypeIds;
 
     @Override
     public List<Member> retrieveConsortia() {
@@ -237,6 +240,19 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             throw new IllegalArgumentException();
         }
         return salesForceId;
+    }
+    
+    @Override
+    public List<String> getConsortiumLeadIds() {
+        if (consotiumLeadRecordTypeIds == null) {
+            WebResource resource1 = createQueryResource("Select Id From RecordType Where Name = 'Consortium Lead'");
+            WebResource resource = resource1;
+            ClientResponse response = doGetRequest(resource, accessToken);
+            checkAuthorization(response);
+            JSONObject result = checkResponse(response, 200, "Error getting premium consortium member type ID from SalesForce");
+            consotiumLeadRecordTypeIds = salesForceAdapter.extractIds(result);
+        }
+        return this.consotiumLeadRecordTypeIds;
     }
 
     private String escapeStringInput(String input) {
@@ -442,7 +458,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         StringBuffer query = new StringBuffer();
         if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
             query.append(
-                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
+                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, Account.Consortia_Member__c, RecordTypeId, ");
         } else {
             query.append(
                 "SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");            

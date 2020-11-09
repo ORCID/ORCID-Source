@@ -189,13 +189,9 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };
     
     deleteRedirectUri(idx): void {
-        var removed = this.client.redirectUris[idx].value.value
         this.client.redirectUris.splice(idx, 1);
-        if(this.googleUri == removed) {
-            this.hideGoogleUri = false;
-        } else if (this.swaggerUri == removed){
-            this.hideSwaggerUri = false;
-        }        
+        this.hideGoogleUri = this.client.redirectUris.filter(redirectUri => redirectUri.value.includes(this.googleUri)).length != 0;
+        this.hideSwaggerUri = this.client.redirectUris.filter(redirectUri => redirectUri.value.includes(this.swaggerUri)).length != 0;
     };
     
     createOrUpdateCredentials(): void {
@@ -207,22 +203,21 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };
     
     createCredentials(): void {
+        this.deleteEmptyRedirectUris();
         this.developerToolsService.createCredentials(this.client)
         .pipe(    
                 takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                if(data) {
+                if (data.errors != null && data.errors.length > 0 || this.client.clientId.value.length == 0) {
                     this.client = data;
-                    if(this.client.clientId.value.length == 0) {
-                        this.showForm = true;
-                    } else {
-                        this.showForm = false;
-                        this.selectedRedirectUri = this.client.redirectUris[0].value.value;
-                        this.generateSamples(this.selectedRedirectUri);
-                    }
-                }                    
+                    this.showForm = true;
+                } else {
+                    this.showForm = false;
+                    this.selectedRedirectUri = this.client.redirectUris[0].value.value;
+                    this.generateSamples(this.selectedRedirectUri);
+                }
             },
             error => {
                 console.log("error createCredentials", error);
@@ -231,22 +226,21 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };    
     
     updateCredentials(): void {
+        this.deleteEmptyRedirectUris();
         this.developerToolsService.updateCredentials(this.client)
         .pipe(    
                 takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
             data => {
-                if(data) {
+                if (data.errors != null && data.errors.length > 0 || this.client.clientId.value.length == 0) {
                     this.client = data;
-                    if(this.client.clientId.value.length == 0) {
-                        this.showForm = true;
-                    } else {
-                        this.showForm = false;
-                        this.selectedRedirectUri = this.client.redirectUris[0].value.value;
-                        this.generateSamples(this.selectedRedirectUri);
-                    }
-                }                    
+                    this.showForm = true;
+                } else {
+                    this.showForm = false;
+                    this.selectedRedirectUri = this.client.redirectUris[0].value.value;
+                    this.generateSamples(this.selectedRedirectUri);
+                }
             },
             error => {
                 console.log("error updateCredentials", error);
@@ -282,6 +276,10 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.sampleAuthCurl = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=" + this.client.clientId.value + "&client_secret=" + this.client.clientSecret.value + "&grant_type=authorization_code&redirect_uri=" + url + "&code=REPLACE WITH OAUTH CODE' " + getBaseUri() + "/oauth/token";
         this.sampleOpenId = getBaseUri() + '/oauth/authorize?client_id=' + this.client.clientId.value + '&response_type=token&scope=openid&redirect_uri=' + url;
     };
+
+    deleteEmptyRedirectUris() {
+        this.client.redirectUris = this.client.redirectUris.filter(redirect => redirect.value.value !== '');
+    }
 
     getBaseUri(): String {
         return getBaseUri();
