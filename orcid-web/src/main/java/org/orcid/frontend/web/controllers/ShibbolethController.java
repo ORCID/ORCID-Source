@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
@@ -180,7 +181,12 @@ public class ShibbolethController extends BaseController {
         LOGGER.warn("Remote user was not null, however, userConnectionEntity is for {}", shibIdentityProvider);
 
         if (mav.getViewName().equals("social_link_signin") && Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-            return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/institutional-linking");
+            String insitutionalLinking = "/institutional-linking";
+            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            if (queryString != null) {
+                insitutionalLinking = insitutionalLinking + "?" + queryString;
+            }
+            return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() + insitutionalLinking);
         }
         
         return mav;
