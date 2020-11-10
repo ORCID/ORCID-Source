@@ -3,6 +3,8 @@ package org.orcid.scheduler.validation;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -23,8 +25,6 @@ import org.orcid.persistence.jpa.entities.ValidatedPublicProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.xml.sax.SAXException;
 
 import com.sun.jersey.api.client.Client;
@@ -47,7 +47,10 @@ public class PublicProfileValidator {
     private Schema schema;
 
     private boolean developmentMode;
-    
+
+    @Value("${org.orcid.scheduler.api.profile.validation.maxAgeInDays:90}")
+    private int validationMaxAgeInDays;
+
     @Value("${org.orcid.scheduler.api.profile.validation.batchSize:100}")
     private int batchSize;
 
@@ -66,7 +69,19 @@ public class PublicProfileValidator {
         }
     }
 
-    public void validatePublicRecords() {
+    public void processValidationCycle() {
+        removeOldRecords();
+        validateRecords();
+    }
+
+    private void removeOldRecords() {
+        LocalDate maxAge = LocalDate.now().minusDays(validationMaxAgeInDays);
+        validatedPublicProfileDao.removeOldRecords(java.util.Date.from(maxAge.atStartOfDay()
+                .atZone(ZoneId.systemDefault())
+                .toInstant()));
+    }
+
+    public void validateRecords() {
         jerseyClient = PublicProfileValidationClient.create(developmentMode);
         List<String> orcidIds = validatedPublicProfileDao.getNextRecordsToValidate(batchSize);
         for (String orcid : orcidIds) {
