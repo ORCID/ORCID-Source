@@ -314,13 +314,9 @@ public class LoginController extends OauthControllerBase {
                 // and redirect to user record
                 view = updateUserConnectionAndLogUserIn(request, response, socialType, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
                         accessToken, expiresIn);
-            } else {                
+            } else {
                 // Forward to account link page
-                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                    view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() +"/social-linking", true));
-                } else {
-                    view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
-                }     
+                view = socialLinking(request);
             }   
         } else {
             // Store relevant data in the session
@@ -329,11 +325,7 @@ public class LoginController extends OauthControllerBase {
             userConnectionId = createUserConnection(socialType, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL),
                     userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Forward to account link page
-            if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() +"/social-linking", true));
-            } else {
-                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
-            }
+            view = socialLinking(request);
         }
         if (userConnectionId == null) {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
@@ -374,5 +366,18 @@ public class LoginController extends OauthControllerBase {
         // Update security context with user information
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return new ModelAndView(new RedirectView(calculateRedirectUrl(request, response, false)));
+    }
+
+    private ModelAndView socialLinking(HttpServletRequest request) {
+        if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+            String socialLinking = "/social-linking";
+            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            if (queryString != null) {
+                socialLinking = socialLinking + "?" + queryString;
+            }
+            return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + socialLinking, true));
+        } else {
+            return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+        }
     }
 }
