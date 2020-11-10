@@ -190,8 +190,13 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     
     deleteRedirectUri(idx): void {
         this.client.redirectUris.splice(idx, 1);
-        this.hideGoogleUri = this.client.redirectUris.filter(redirectUri => redirectUri.value.includes(this.googleUri)).length != 0;
-        this.hideSwaggerUri = this.client.redirectUris.filter(redirectUri => redirectUri.value.includes(this.swaggerUri)).length != 0;
+        if (this.client.redirectUris > 0) {
+            this.hideGoogleUri = this.client.redirectUris.filter(redirectUri => redirectUri.value.includes(this.googleUri)).length != 0;
+            this.hideSwaggerUri = this.client.redirectUris.filter(redirectUri => redirectUri.value.includes(this.swaggerUri)).length != 0;
+        } else {
+            this.hideGoogleUri = false;
+            this.hideSwaggerUri = false;
+        }
     };
     
     createOrUpdateCredentials(): void {
