@@ -51,17 +51,18 @@ public class PublicProfileValidator {
     @Value("${org.orcid.scheduler.api.profile.validation.batchSize:100}")
     private int batchSize;
 
+    @SuppressWarnings("resource")
     public PublicProfileValidator(String baseUri, boolean developmentMode) throws URISyntaxException {
         this.baseUri = new URI(baseUri);
         this.developmentMode = developmentMode;
 
-        Source source = new StreamSource(getClass().getResourceAsStream("/record_3.0_rc2/record-3.0_rc2.xsd"));
+        Source source = new StreamSource(getClass().getResourceAsStream("/record_3.0/record-3.0.xsd"));
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         schemaFactory.setResourceResolver(new PublicProfileValidatorResourceResolver());
         try {
             schema = schemaFactory.newSchema(source);
         } catch (SAXException e) {
-            throw new RuntimeException("Error creating ValidatedPublicProfileManagerImpl: " + e);
+            throw new RuntimeException("Error creating PublicProfileValidator: " + e);
         }
     }
 
@@ -118,14 +119,6 @@ public class PublicProfileValidator {
 
     public void setDevelopmentMode(boolean developmentMode) {
         this.developmentMode = developmentMode;
-    }
-
-    @SuppressWarnings("resource")
-    public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-scheduler-beans-context.xml");
-        PublicProfileValidator validator = (PublicProfileValidator) context.getBean("publicProfileValidator");
-        validator.setDevelopmentMode(true);
-        validator.validatePublicRecords();
     }
 
 }
