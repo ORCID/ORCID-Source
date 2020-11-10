@@ -32,6 +32,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
@@ -310,8 +311,13 @@ public class RegistrationController extends BaseController {
         } else if (OrcidOauth2Constants.SHIBBOLETH.equals(reg.getLinkType())) {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
-
         String redirectUrl = calculateRedirectUrl(request, response, true);
+        
+        if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+            if (request.getQueryString() == null || request.getQueryString().isEmpty()){
+                redirectUrl = calculateRedirectUrl(request, response, true, true);
+            }
+        } 
         r.setUrl(redirectUrl);
         return r;
     }
