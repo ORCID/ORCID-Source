@@ -572,9 +572,13 @@ public class BaseController {
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered) {
+        return calculateRedirectUrl(request, response, justRegistered, false);
+    }
+
+    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered, boolean avoidOauthRedirect) {
         String targetUrl = null;
-        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);       
-        if (isOauth2ScreensRequest != null && isOauth2ScreensRequest && request.getQueryString() != null && !request.getQueryString().isEmpty()) {
+        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        if (isOauth2ScreensRequest != null && isOauth2ScreensRequest && !avoidOauthRedirect) {
             // Just redirect to the authorization screen
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
             targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize?" + queryString;
