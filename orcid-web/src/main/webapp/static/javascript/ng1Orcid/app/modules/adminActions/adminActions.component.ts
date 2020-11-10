@@ -659,6 +659,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.showActivateClientMessages = true;
                 setTimeout (() => {
                     this.showActivateClient = false;
+                    this.showActivateClientMessages = false;
                     this.clientToActivate = '';
                 }, 10000);
             },
@@ -683,6 +684,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.showDeactivateClientMessages = true;
                 setTimeout (() => {
                     this.showDeactivateClient = false;
+                    this.showDeactivateClientMessages = false;
                     this.clientToDeactivate = '';
                 }, 10000);
             },
