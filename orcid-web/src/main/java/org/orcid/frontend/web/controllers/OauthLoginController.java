@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.ClientDeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.security.UnclaimedProfileExistsException;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.frontend.spring.OrcidWebAuthenticationDetails;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;

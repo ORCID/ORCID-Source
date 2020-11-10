@@ -127,6 +127,9 @@ public class AdminControllerTest extends BaseControllerTest {
     private OrcidSecurityManager mockOrcidSecurityManager;
     
     @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Resource(name = "clientDetailsManagerV3")
     private ClientDetailsManager clientDetailsManager;
     
     @Resource
@@ -1147,42 +1150,54 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Test
     public void testDeactivateClient() throws ClientAlreadyDeactivatedException {
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", mockClientDetailsManager);
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
-        Mockito.doNothing().when(clientDetailsManager).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
+        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
+        Mockito.doNothing().when(mockClientDetailsManager).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
         ClientActivationRequest clientDeactivation = new ClientActivationRequest();
         clientDeactivation.setClientId("test");
         clientDeactivation = adminController.deactivateClient(clientDeactivation);
         assertNull(clientDeactivation.getError());
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);
     }
     
     @Test
     public void testActivateClient() throws ClientAlreadyActiveException {
-        Mockito.doNothing().when(clientDetailsManager).activateClientDetails(Mockito.eq("test"));
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", mockClientDetailsManager);
+        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
+        Mockito.doNothing().when(mockClientDetailsManager).activateClientDetails(Mockito.eq("test"));
         ClientActivationRequest clientActivation = new ClientActivationRequest();
         clientActivation.setClientId("test");
         clientActivation = adminController.activateClient(clientActivation);
         assertNull(clientActivation.getError());
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);        
     }
     
     @Test
     public void testDeactivateClientAlreadyDeactivated() throws ClientAlreadyDeactivatedException {
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", mockClientDetailsManager);
         SecurityContextHolder.getContext().setAuthentication(getAuthentication());
-        Mockito.doThrow(new ClientAlreadyDeactivatedException("already-deactivated")).when(clientDetailsManager).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
+        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
+        Mockito.doThrow(new ClientAlreadyDeactivatedException("already-deactivated")).when(mockClientDetailsManager).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
         ClientActivationRequest clientDeactivation = new ClientActivationRequest();
         clientDeactivation.setClientId("test");
         clientDeactivation = adminController.deactivateClient(clientDeactivation);
         assertNotNull(clientDeactivation.getError());
         assertEquals("already-deactivated", clientDeactivation.getError());
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);
     }
     
     @Test
     public void testActivateClientAlreadyActive() throws ClientAlreadyActiveException {
-        Mockito.doThrow(new ClientAlreadyActiveException("already-active")).when(clientDetailsManager).activateClientDetails(Mockito.eq("test"));
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", mockClientDetailsManager);
+        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
+        Mockito.doThrow(new ClientAlreadyActiveException("already-active")).when(mockClientDetailsManager).activateClientDetails(Mockito.eq("test"));
         ClientActivationRequest clientActivation = new ClientActivationRequest();
         clientActivation.setClientId("test");
         clientActivation = adminController.activateClient(clientActivation);
         assertNotNull(clientActivation.getError());
         assertEquals("already-active", clientActivation.getError());
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);
     }
 
 }

@@ -14,7 +14,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.error_rc1.OrcidError;

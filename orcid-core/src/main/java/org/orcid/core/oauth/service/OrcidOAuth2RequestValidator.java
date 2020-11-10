@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.orcid.core.exception.ClientDeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;

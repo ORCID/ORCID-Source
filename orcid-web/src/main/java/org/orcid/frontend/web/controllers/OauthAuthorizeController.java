@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.ClientDeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
