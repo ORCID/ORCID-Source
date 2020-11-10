@@ -12,6 +12,7 @@ import javax.persistence.PersistenceException;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
@@ -273,6 +274,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                     orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
                 } catch (LockedException le) {
                     throw new InvalidTokenException(le.getMessage());
+                } catch (ClientDeactivatedException e) {
+                    throw new InvalidTokenException(e.getMessage());
                 }
             }                        
         }

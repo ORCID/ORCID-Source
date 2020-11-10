@@ -11,10 +11,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
@@ -101,15 +101,18 @@ public class OauthController {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
             authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails, requestInfoForm.getResponseType());
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-        } catch (InvalidScopeException | LockedException | InvalidClientException e) {
+        } catch (InvalidScopeException | LockedException | ClientDeactivatedException | InvalidClientException e) {
             if (e instanceof InvalidScopeException) {
                 requestInfoForm.setError("invalid_scope");
                 requestInfoForm.setErrorDescription(e.getMessage());
             } else if (e instanceof InvalidClientException) {
                 requestInfoForm.setError("invalid_client");
                 requestInfoForm.setErrorDescription(e.getMessage());
-            } else {
+            } else if (e instanceof LockedException){
                 requestInfoForm.setError("client_locked");
+                requestInfoForm.setErrorDescription(e.getMessage());
+            } else {
+                requestInfoForm.setError("client_deactivated");
                 requestInfoForm.setErrorDescription(e.getMessage());
             }
             return requestInfoForm;
@@ -226,6 +229,10 @@ public class OauthController {
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         } catch (LockedException e) {
             requestInfoForm.setError("client_locked");
+            requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
+        } catch (ClientDeactivatedException e) {
+            requestInfoForm.setError("client_deactivated");
             requestInfoForm.setErrorDescription(e.getMessage());
             return requestInfoForm;
         }

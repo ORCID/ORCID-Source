@@ -214,7 +214,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @Transactional
     public void activateClient(String clientDetailsId) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set deactivatedDate = null, deactivatedBy = null where id = :clientId");
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now(), deactivatedDate = null, deactivatedBy = null where id = :clientId");
         updateQuery.setParameter("clientId", clientDetailsId);
         updateQuery.executeUpdate();
     }
@@ -222,7 +222,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @Transactional
     public void deactivateClient(String clientDetailsId, String deactivatedBy) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set deactivatedDate = now(), deactivatedBy = :deactivatedBy where id = :clientId");
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now(), deactivatedDate = now(), deactivatedBy = :deactivatedBy where id = :clientId");
         updateQuery.setParameter("clientId", clientDetailsId);
         updateQuery.setParameter("deactivatedBy", deactivatedBy);
         updateQuery.executeUpdate();

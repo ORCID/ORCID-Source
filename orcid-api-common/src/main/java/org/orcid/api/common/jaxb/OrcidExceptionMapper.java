@@ -16,6 +16,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidApiException;
@@ -101,6 +102,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (t instanceof OrcidDeprecatedException) {
             logShortError(t, clientId);
         } else if (t instanceof LockedException) {
+            logShortError(t, clientId);
+        } else if (t instanceof ClientDeactivatedException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidNonPublicElementException) {
             logShortError(t, clientId);
@@ -223,6 +226,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             return response;
         } else if (LockedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account locked : ", t);
+            return Response.status(Response.Status.CONFLICT).entity(entity).build();
+        } else if (ClientDeactivatedException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("Client deactivated : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else if (NoResultException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Not found : ", t);

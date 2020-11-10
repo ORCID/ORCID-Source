@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
@@ -190,6 +191,9 @@ public class LoginController extends OauthControllerBase {
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         } catch (LockedException e) {
             String redirectUriWithParams = redirectUri + "?error=client_locked&error_description=" + e.getMessage();
+            return new ModelAndView(new RedirectView(redirectUriWithParams));
+        } catch (ClientDeactivatedException e) {
+            String redirectUriWithParams = redirectUri + "?error=client_deactivated&error_description=" + e.getMessage();
             return new ModelAndView(new RedirectView(redirectUriWithParams));
         }
 

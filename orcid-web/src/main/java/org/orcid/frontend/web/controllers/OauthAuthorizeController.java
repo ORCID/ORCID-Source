@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.security.aop.LockedException;
@@ -72,18 +73,19 @@ public class OauthAuthorizeController extends OauthControllerBase {
         boolean usePersistentTokens = false;
 
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());        
-
         // validate client scopes
         try {
             authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails,requestInfoForm.getResponseType());
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-        } catch (InvalidScopeException | LockedException e) {
+        } catch (InvalidScopeException | ClientDeactivatedException | LockedException e) {
             String redirectUriWithParams = requestInfoForm.getRedirectUrl();                
             if(e instanceof InvalidScopeException) {
                 redirectUriWithParams += "?error=invalid_scope&error_description=" + e.getMessage();
-            } else {
+            } else if (e instanceof LockedException) {
                 redirectUriWithParams += "?error=client_locked&error_description=" + e.getMessage();
-            }                               
+            } else {
+                redirectUriWithParams += "?error=client_deactivated&error_description=" + e.getMessage();
+            }
             RedirectView rView = new RedirectView(redirectUriWithParams);
             ModelAndView error = new ModelAndView();
             error.setView(rView);

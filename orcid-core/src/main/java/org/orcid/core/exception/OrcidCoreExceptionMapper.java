@@ -108,6 +108,7 @@ public class OrcidCoreExceptionMapper {
 
         // 409
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(LockedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9018));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ClientDeactivatedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9057));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDuplicatedActivityException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9021));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DuplicatedGroupIdRecordException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9025));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDuplicatedElementException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9030));
