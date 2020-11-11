@@ -120,7 +120,8 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.registrationForm = data;
                 this.registrationForm.resetParams = resetParams;
                 this.registrationForm.activitiesVisibilityDefault.visibility = null;
-                this.cdr.detectChanges();              
+                this.cdr.detectChanges();
+                this.getReactivationData(resetParams);
             },
             error => {
                 // something bad is happening!
@@ -153,7 +154,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             baseUri += '/shibboleth';
         }
         this.reactivationService.postReactivationConfirm(this.registrationForm)
-        .pipe(    
+        .pipe(
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
@@ -165,25 +166,25 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
                     this.theFormWasSubmittedAndHasSomeErrors = true
                     this.registrationForm = data;
                     for (var index in this.registrationForm.emailsAdditional) {
-                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {      
-                            this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;     
+                        if (this.registrationForm.emailsAdditional[index].errors.length > 0) {
+                            this.errorEmailsAdditional[index] = data.emailsAdditional[index].value;
                             //deactivated error
                             this.showEmailsAdditionalDeactivatedError.splice(index, 1, ($.inArray('orcid.frontend.verify.deactivated_email', this.registrationForm.emailsAdditional[index].errors) != -1));
                             this.showEmailsAdditionalReactivationSent.splice(index, 1, false);
                             //duplicate email error
-                            this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));                            
+                            this.showEmailsAdditionalDuplicateEmailError.splice(index, 1, ($.inArray('orcid.frontend.verify.duplicate_email', this.registrationForm.emailsAdditional[index].errors) != -1));
                         } else {
                             this.showEmailsAdditionalDeactivatedError[index] = false;
                             this.showEmailsAdditionalDuplicateEmailError[index] = false;
-                        } 
+                        }
                     }
                     this.cdr.detectChanges();
-                } 
+                }
             },
             error => {
                 // something bad is happening!
                 console.log("ReactivationCtrl.postReactivationConfirm() error");
-            } 
+            }
         );
     };
 
@@ -206,7 +207,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             field = '';
         }
         this.reactivationService.serverValidate(this.registrationForm, field)
-        .pipe(    
+        .pipe(
             takeUntil(this.ngUnsubscribe)
         )
         .subscribe(
@@ -216,7 +217,7 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
             error => {
                 // something bad is happening!
                 console.log("serverValidate() error");
-            } 
+            }
         );
     };
 
@@ -267,8 +268,8 @@ export class ReactivationComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit() {
         var segments = window.location.href.split('/');
         var resetParams = segments[segments.length - 1];
+
         this.getReactivation(resetParams, '');
-        this.getReactivationData(resetParams);
     };
 
     getBaseUri() : String {
