@@ -1,0 +1,24 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    
+    <changeSet id="CREATE-VALIDATED-PUBLIC-PROFILE-VIEW" author="George Nash" dbms="postgresql">
+        <createView viewName="dw_validated_public_profile" replaceIfExists="true">
+            SELECT 
+            MIN(date_created) as date_from, 
+            MAX(date_created) as date_to, 
+            CAST ((SELECT COUNT(*) FROM validated_public_profile WHERE valid IS TRUE) AS FLOAT) / CAST ((SELECT COUNT(*) FROM validated_public_profile) AS FLOAT) * 100 AS percent_valid,
+            (SELECT error FROM (SELECT error, COUNT(*) AS errorCount FROM validated_public_profile WHERE valid IS FALSE GROUP BY error ORDER BY errorCount DESC LIMIT 1) AS dr) AS most_common_error,
+            CAST ((SELECT COUNT(*) FROM validated_public_profile WHERE valid IS FALSE AND error = (SELECT error FROM (SELECT error, COUNT(*) AS errorCount FROM validated_public_profile WHERE valid IS FALSE GROUP BY error ORDER BY errorCount DESC LIMIT 1) AS dr)) AS FLOAT) / CAST ((SELECT COUNT(*) FROM validated_public_profile) AS FLOAT) * 100 AS percent_affected_by_most_common_error 
+            FROM validated_public_profile;
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-VALIDATED-PUBLIC-PROFILE" author="George Nash" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_validated_public_profile to dw_user;</sql>
+    </changeSet>
+</databaseChangeLog>
