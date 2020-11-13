@@ -51,6 +51,11 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
     showSection: any;
     showSendDeactivateEmailSuccess: boolean;
     toggleText: any;
+    show2FA: boolean;
+    codes: any;
+    verificationCode: string;
+    recoveryCode: string;
+    showRecoveryCodeSignIn: boolean;
     
     constructor(
         private cdr:ChangeDetectorRef,
@@ -79,7 +84,10 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
             'getMyData': false
         };
         this.showSendDeactivateEmailSuccess=false;
-        this.toggleText = {}; 
+        this.toggleText = {};
+        this.codes = {};
+        this.verificationCode = "";
+        this.recoveryCode = "";
     }
 
     cancelDeprecateModal(id: string){
@@ -115,10 +123,14 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
             data => {
                 this.deprecateProfilePojo = data;
                 if(data.errors.length == 0) {
-                    this.elementWidth = '645';
-                    this.elementHeight = '645';
-                    this.genericService.open('modalDeprecateAccountConfirm');
-                } 
+                    if (this.deprecateProfilePojo.verificationCodeRequired) {
+                        this.show2FA = true;
+                    } else {
+                        this.elementWidth = '645';
+                        this.elementHeight = '645';
+                        this.genericService.open('modalDeprecateAccountConfirm');
+                    }
+                }
             },
             error => {
                 console.log('deprecateORCIDerror', error);
@@ -136,6 +148,7 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
                 if(data) {
                     this.deprecateProfilePojo = data;
                     this.closeModal('modalDeprecateAccountConfirm');
+                    this.show2FA = false;
                     this.genericService.close('modalDeprecateAccountConfirm');
                     this.elementWidth = '400';
                     this.elementHeight = '200';
@@ -153,6 +166,49 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
                 console.log('submitDeprecateAccountError', error);
             } 
         );
+    };
+
+    toggleRecoveryCodeSignIn = function () {
+        this.showRecoveryCodeSignIn = true;
+    };
+
+    accountAuthenticationCode(): void {
+        this.twoFAStateService.accountAuthenticationCode()
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.codes = data;
+                },
+                error => {
+                    //console.log('getWebsitesFormError', error);
+                }
+            );
+    };
+
+    accountSubmitCode(): void {
+        this.codes.orcid = this.deprecateProfilePojo.deprecatingOrcid;
+        this.twoFAStateService.accountSubmitCode( this.codes )
+            .pipe(
+                takeUntil(this.ngUnsubscribe)
+            )
+            .subscribe(
+                data => {
+                    this.codes = data;
+                    if (data.errors.length == 0) {
+                        this.elementWidth = '645';
+                        this.elementHeight = '645';
+                        this.genericService.open('modalDeprecateAccountConfirm');
+                    } else {
+                        this.verificationCode = "";
+                        this.recoveryCode = "";
+                    }
+                },
+                error => {
+                    //console.log('getWebsitesFormError', error);
+                }
+            );
     };
 
     disable2FA(): void {
@@ -363,8 +419,9 @@ export class AccountSettingsComponent implements AfterViewInit, OnDestroy, OnIni
         this.getChangePassword();
         this.getPreferences();
         this.getDeprecateProfile();
-    }; 
-    
+        this.accountAuthenticationCode();
+    };
+
     getBaseUri() : String {
         return getBaseUri();
     };
