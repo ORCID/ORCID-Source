@@ -3,9 +3,9 @@ package org.orcid.core.oauth.service;
 import java.util.Map;
 import java.util.Set;
 
-import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.exception.ClientDeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -15,8 +15,6 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestValidator;
-
-import com.google.common.collect.Sets;
 
 public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
     
@@ -99,6 +97,10 @@ public class OrcidOAuth2RequestValidator extends DefaultOAuth2RequestValidator {
         //If it is locked
         if(!memberEntity.isAccountNonLocked()) {
             throw new LockedException("The client is locked");
+        }
+        
+        if (clientDetails.getDeactivatedDate() != null) {
+            throw new ClientDeactivatedException(clientDetails.getClientId());
         }
     }
 

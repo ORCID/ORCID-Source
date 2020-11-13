@@ -1,5 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -12,11 +14,13 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.orcid.core.exception.ClientAlreadyActiveException;
+import org.orcid.core.exception.ClientAlreadyDeactivatedException;
 import org.orcid.core.manager.AppIdGenerationManager;
-import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
+import org.orcid.core.manager.v3.ClientDetailsManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.impl.ClientDetailsManagerReadOnlyImpl;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -41,6 +45,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl implements ClientDetailsManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerImpl.class);
+    
+    private static final DateFormat DEACTIVATED_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     @Resource
     private ClientDetailsDao clientDetailsDao;
@@ -394,6 +400,25 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
                 clientAuthorizedGrantTypeDao.insertClientAuthorizedGrantType(clientDetails.getId(), type);
             }
         }
+    }
+
+    @Override
+    public void deactivateClientDetails(String clientDetailsId, String orcid) throws ClientAlreadyDeactivatedException {
+        ClientDetailsEntity entity = clientDetailsDaoReadOnly.find(clientDetailsId);
+        if (entity.getDeactivatedDate() != null) {
+            String error = String.format("Client already deactivated by %s on %s", new Object[] { entity.getDeactivatedBy(), DEACTIVATED_DATE_FORMAT.format(entity.getDeactivatedDate()) });
+            throw new ClientAlreadyDeactivatedException(error);
+        }
+        clientDetailsDao.deactivateClient(clientDetailsId, orcid);
+    }
+
+    @Override
+    public void activateClientDetails(String clientDetailsId) throws ClientAlreadyActiveException {
+        ClientDetailsEntity entity = clientDetailsDaoReadOnly.find(clientDetailsId);
+        if (entity.getDeactivatedDate() == null) {
+            throw new ClientAlreadyActiveException("Client already active");
+        }
+        clientDetailsDao.activateClient(clientDetailsId);
     }
     
 }

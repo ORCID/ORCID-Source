@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -62,6 +62,9 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private String emailAccessReason;
     private boolean allowAutoDeprecate = false;
     private boolean userOBOEnabled = false;
+    
+    private Date deactivatedDate;
+    private String deactivatedBy;
     
     public ClientDetailsEntity() {
     }
@@ -459,6 +462,24 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.userOBOEnabled = userOBOEnabled;
     }
     
+    @Column(name = "deactivated_date")
+    public Date getDeactivatedDate() {
+        return deactivatedDate;
+    }
+
+    public void setDeactivatedDate(Date deactivatedDate) {
+        this.deactivatedDate = deactivatedDate;
+    }
+
+    @Column(name = "deactivated_by")
+    public String getDeactivatedBy() {
+        return deactivatedBy;
+    }
+
+    public void setDeactivatedBy(String deactivatedBy) {
+        this.deactivatedBy = deactivatedBy;
+    }
+
     /*
      * Allow manually setting the last modified day on clients since
      * the @PreUpdate will not run unless there is a change in the table itself,
