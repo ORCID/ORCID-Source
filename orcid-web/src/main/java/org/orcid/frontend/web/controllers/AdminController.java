@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.exception.ClientAlreadyActiveException;
+import org.orcid.core.exception.ClientAlreadyDeactivatedException;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SpamManager;
@@ -31,6 +34,7 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
+import org.orcid.pojo.ClientActivationRequest;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
@@ -73,6 +77,9 @@ public class AdminController extends BaseController {
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
+    
+    @Resource(name = "clientDetailsManagerV3")
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource(name = "spamManager")
     SpamManager spamManager;     
@@ -963,6 +970,34 @@ public class AdminController extends BaseController {
         resendIdMap.put("without2FAs", without2FAs);
         resendIdMap.put("disabledIds", disabledIds);
         return resendIdMap;
+    }
+    
+    @RequestMapping(value = "/deactivate-client.json", method = RequestMethod.POST)
+    public @ResponseBody ClientActivationRequest deactivateClient(@RequestBody ClientActivationRequest clientActivation) {
+        if (!clientDetailsManager.exists(clientActivation.getClientId())) {
+            clientActivation.setError("Client not found");
+            return clientActivation;
+        }
+        try {
+            clientDetailsManager.deactivateClientDetails(clientActivation.getClientId(), getCurrentUserOrcid());
+        } catch (ClientAlreadyDeactivatedException e) {
+            clientActivation.setError(e.getMessage());
+        } 
+        return clientActivation;
+    }
+    
+    @RequestMapping(value = "/activate-client.json", method = RequestMethod.POST)
+    public @ResponseBody ClientActivationRequest activateClient(@RequestBody ClientActivationRequest clientActivation) {
+        if (!clientDetailsManager.exists(clientActivation.getClientId())) {
+            clientActivation.setError("Client not found");
+            return clientActivation;
+        }
+        try {
+            clientDetailsManager.activateClientDetails(clientActivation.getClientId());
+        } catch (ClientAlreadyActiveException e) {
+            clientActivation.setError(e.getMessage());
+        } 
+        return clientActivation;
     }
 
 }

@@ -1,9 +1,7 @@
-package org.orcid.core.security.aop;
+package org.orcid.core.exception;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.orcid.core.exception.ApplicationException;
 
 /**
  * @author Angel Montenegro

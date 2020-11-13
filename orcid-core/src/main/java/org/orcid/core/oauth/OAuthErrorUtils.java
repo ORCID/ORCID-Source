@@ -2,10 +2,11 @@ package org.orcid.core.oauth;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
-import org.orcid.core.security.aop.LockedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -18,6 +19,9 @@ public class OAuthErrorUtils {
         OAuthError error = new OAuthError();
         error.setErrorDescription(t.getMessage());
         if (LockedException.class.isAssignableFrom(t.getClass())) {
+            error.setError(OAuthError.UNAUTHORIZED_CLIENT);
+            error.setResponseStatus(Status.BAD_REQUEST);
+        } else if (ClientDeactivatedException.class.isAssignableFrom(t.getClass())) {
             error.setError(OAuthError.UNAUTHORIZED_CLIENT);
             error.setResponseStatus(Status.BAD_REQUEST);
         } else if (UnsupportedGrantTypeException.class.isAssignableFrom(t.getClass())) {
