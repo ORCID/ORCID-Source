@@ -10122,12 +10122,14 @@ name-ng2 h2.full-name {
 }
 
 
-.new-menu.header2  .menu-bar.mobile li:hover {
+.new-menu.header2  .menu-bar.mobile > .container > .menu > li > a:hover{    
+    color: rgba(0,0,0,0.87);
     background-color: #d4e7a1;
 }
 
-.new-menu.header2  .menu-bar.mobile li:hover  a{
+.new-menu.header2  .menu-bar.mobile l> .container > .menu > li > .mobile-menu-sign-in-url > a:hover{
     color: rgba(0,0,0,0.87);
+    background-color: #d4e7a1;
 }
 
 
