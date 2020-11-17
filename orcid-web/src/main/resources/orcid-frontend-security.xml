@@ -458,6 +458,10 @@
 			access="ROLE_USER" />
 		<sec:intercept-url pattern="/person.json(\?.*)?"
             access="ROLE_USER" />
+		<sec:intercept-url pattern="/2FA/authenticationCode.json(\?.*)?"
+			access="ROLE_USER" />
+		<sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
+			access="ROLE_USER" />
 		
 		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
 		
