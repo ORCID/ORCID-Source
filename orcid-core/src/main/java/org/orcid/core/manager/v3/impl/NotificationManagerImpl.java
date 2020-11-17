@@ -577,7 +577,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         String text = null;        
         String html = null;
 
-        if (Features.ENABLE_NEW_NOTIFICATIONS.isActive()) {
+        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
             text = templateManager.processTemplate("delegate_recipient_notification.ftl", templateParams);
             html = templateManager.processTemplate("delegate_recipient_notification_html.ftl", templateParams);
         } else {
@@ -845,7 +845,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         
         String htmlBody = null;
 
-        if (Features.ENABLE_NEW_NOTIFICATIONS.isActive()) {
+        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
             htmlBody = templateManager.processTemplate("admin_delegate_request_notification_html.ftl", templateParams);
         } else {
             htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
