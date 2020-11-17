@@ -145,7 +145,7 @@ public class EmailMessageSenderTest extends BaseTest {
 
     @Test
     public void testCreateDigestLegacyNotification() throws IOException {
-        togglzRule.enable(Features.ENABLE_NEW_NOTIFICATIONS);
+        togglzRule.enable(Features.ORCID_ANGULAR_INBOX);
         EmailMessage emailMessage = emailMessageSender.createDigestLegacy("0000-0000-0000-0000", generateNotifications());
 
         assertNotNull(emailMessage);
