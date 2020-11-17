@@ -3,8 +3,7 @@ package org.orcid.scheduler.validation;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -75,10 +74,9 @@ public class PublicProfileValidator {
     }
 
     private void removeOldRecords() {
-        LocalDate maxAge = LocalDate.now().minusDays(validationMaxAgeInDays);
-        validatedPublicProfileDao.removeOldRecords(java.util.Date.from(maxAge.atStartOfDay()
-                .atZone(ZoneId.systemDefault())
-                .toInstant()));
+        Calendar maxAge = Calendar.getInstance();
+        maxAge.add(Calendar.DAY_OF_YEAR, -validationMaxAgeInDays);
+        validatedPublicProfileDao.removeOldRecords(maxAge.getTime());
     }
 
     public void validateRecords() {
