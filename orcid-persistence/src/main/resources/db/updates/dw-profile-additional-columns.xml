@@ -1,0 +1,19 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+    <changeSet id="ALTER-DW-PROFILE-VIEW-OTHER" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_profile" replaceIfExists="true">
+            select orcid, orcid_type, record_locked, group_type, salesforce_id, date_created, last_modified, profile_deactivation_date,
+            enable_developer_tools, last_login, using_2fa
+            from profile
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-PROFILE_OTHER" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile to dw_user;</sql>
+    </changeSet>
+    
+</databaseChangeLog>

@@ -59,7 +59,7 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
 
                     // Notify
                     notificationManager.sendNotificationToAddedDelegate(userOrcid, delegateOrcid);
-                    if (Features.ENABLE_NEW_NOTIFICATIONS.isActive()) {
+                    if (Features.ORCID_ANGULAR_INBOX.isActive()) {
                         notificationManager.sendNotificationToUserGrantingPermission(userOrcid, delegateOrcid);
                     }
                     // Update last modified on delegate's profile so that the

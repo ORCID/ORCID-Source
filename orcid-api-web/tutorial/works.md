@@ -101,7 +101,7 @@ curl -i -H "Accept: application/vnd.orcid+xml" -H 'Authorization: Bearer dd91868
 ```
 
 
-## Read multiple works (up to 50)
+## Read multiple works (up to 100)
 
 | Parameter | Value        |
 |--------------------|--------------------------|
