@@ -938,14 +938,14 @@
     
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/2019-07-emailVisibilitySettings,classpath:i18n/ng_orcid,classpath:i18n/ng_orcid_signin,classpath:i18n/email2faDisabled" />
+		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/2019-07-emailVisibilitySettings,classpath:i18n/ng_orcid,classpath:i18n/ng_orcid_signin,classpath:i18n/notification,classpath:i18n/email2faDisabled" />
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 	</bean>
 	
 	<bean id="messageSourceNoFallback"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/2019-07-emailVisibilitySettings,classpath:i18n/ng_orcid,classpath:i18n/ng_orcid_signin,classpath:i18n/email2faDisabled" />
+		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/2019-07-emailVisibilitySettings,classpath:i18n/ng_orcid,classpath:i18n/ng_orcid_signin,classpath:i18n/notification,classpath:i18n/email2faDisabled" />
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 		<property name="fallbackToSystemLocale" value="false" />
@@ -1181,6 +1181,18 @@
         <property name="copyValues" value="false" />
         <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.ContactsCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceConsortiumLeadIdsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-consortium-lead-ids" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1000" />
+        <property name="maxMegaBytesOnDisk" value="0" />
+        <property name="timeToIdleSeconds" value="600" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.SalesForceConsortiumLeadIdsCacheEntryFactory" />
         </property>
     </bean>
     

@@ -34,7 +34,7 @@
 	
 	<!-- PUBLIC API VALIDATION - the following beans can be removed once we have validated (and fixed) all profiles against public api v3 -->
 	<bean id="publicProfileValidator" class="org.orcid.scheduler.validation.PublicProfileValidator">
-	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.baseUrl:https://localhost:8443/orcid-pub-web/v3.0_rc2/}" />
+	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.baseUrl:https://localhost:8443/orcid-pub-web/v3.0/}" />
 	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.developmentMode:false}" />
 	</bean>
 	

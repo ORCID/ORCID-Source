@@ -181,5 +181,21 @@ export class AdminActionsService {
         )
     };
     
+    activateClient( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/activate-client.json', 
+                JSON.stringify(obj), 
+                { headers: this.headers }
+        )
+    };
+    
+    deactivateClient( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/deactivate-client.json', 
+                JSON.stringify(obj), 
+                { headers: this.headers }
+        )
+    };
+    
 
 }

@@ -340,6 +340,8 @@
   <include file="/db/updates/dw_views_to_use_db_id.xml" />
   <include file="/db/updates/org_import_log.xml" />
   <include file="/db/updates/grant_read_to_dw_user_for_work.xml" />
+  <include file="/db/updates/add_deactivation_cols_to_client_details.xml" />
   <include file="/db/updates/add_hal_identifier_type.xml" />
   <include file="/db/updates/dw-profile-additional-columns.xml" />
+  <include file="/db/updates/create_public_profile_validation_dw_view.xml" />
 </databaseChangeLog>

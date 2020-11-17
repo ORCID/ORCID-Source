@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -42,10 +41,13 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.orcid.core.exception.ClientAlreadyActiveException;
+import org.orcid.core.exception.ClientAlreadyDeactivatedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
+import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -67,9 +69,9 @@ import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.persistence.jpa.entities.SpamEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
+import org.orcid.pojo.ClientActivationRequest;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
@@ -123,6 +125,12 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Mock
     private OrcidSecurityManager mockOrcidSecurityManager;
+    
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Resource(name = "clientDetailsManagerV3")
+    private ClientDetailsManager clientDetailsManager;
     
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
@@ -1138,6 +1146,58 @@ public class AdminControllerTest extends BaseControllerTest {
         
         assertEquals("That ORCID iD is not on our records", results.getError());        
 
+    }
+    
+    @Test
+    public void testDeactivateClient() throws ClientAlreadyDeactivatedException {
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", mockClientDetailsManager);
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
+        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
+        Mockito.doNothing().when(mockClientDetailsManager).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
+        ClientActivationRequest clientDeactivation = new ClientActivationRequest();
+        clientDeactivation.setClientId("test");
+        clientDeactivation = adminController.deactivateClient(clientDeactivation);
+        assertNull(clientDeactivation.getError());
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);
+    }
+    
+    @Test
+    public void testActivateClient() throws ClientAlreadyActiveException {
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", mockClientDetailsManager);
+        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
+        Mockito.doNothing().when(mockClientDetailsManager).activateClientDetails(Mockito.eq("test"));
+        ClientActivationRequest clientActivation = new ClientActivationRequest();
+        clientActivation.setClientId("test");
+        clientActivation = adminController.activateClient(clientActivation);
+        assertNull(clientActivation.getError());
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);        
+    }
+    
+    @Test
+    public void testDeactivateClientAlreadyDeactivated() throws ClientAlreadyDeactivatedException {
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", mockClientDetailsManager);
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
+        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
+        Mockito.doThrow(new ClientAlreadyDeactivatedException("already-deactivated")).when(mockClientDetailsManager).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
+        ClientActivationRequest clientDeactivation = new ClientActivationRequest();
+        clientDeactivation.setClientId("test");
+        clientDeactivation = adminController.deactivateClient(clientDeactivation);
+        assertNotNull(clientDeactivation.getError());
+        assertEquals("already-deactivated", clientDeactivation.getError());
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);
+    }
+    
+    @Test
+    public void testActivateClientAlreadyActive() throws ClientAlreadyActiveException {
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", mockClientDetailsManager);
+        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
+        Mockito.doThrow(new ClientAlreadyActiveException("already-active")).when(mockClientDetailsManager).activateClientDetails(Mockito.eq("test"));
+        ClientActivationRequest clientActivation = new ClientActivationRequest();
+        clientActivation.setClientId("test");
+        clientActivation = adminController.activateClient(clientActivation);
+        assertNotNull(clientActivation.getError());
+        assertEquals("already-active", clientActivation.getError());
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);
     }
 
 }

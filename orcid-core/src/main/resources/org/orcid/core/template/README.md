@@ -135,7 +135,7 @@ _Email to the Account Delegate when someone grants them access to their account.
 * [added\_as\_delegate\_email.ftl](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/org/orcid/core/template/added_as_delegate_email.ftl)
 * [Internal Spec](https://docs.google.com/a/orcid.org/document/d/1eK7mNZCPAtcUTeB-JKCBNW956KdWtw0SlI4jYN5-DUY/edit#heading=h.r9ka6n639epv)
 * Variables:
-	* ${emailNameForDeletate} - the name of the Account Delegate
+	* ${emailNameForDelegate} - the name of the Account Delegate
 	* ${grantingOrcidValue} - the numerical portion of the ORCID iD of the person granting Delegate permissions
 	* ${grantingOrcidName} - the name of the person granting Delegate permissions
 	* ${baseUri} - the base URI of the sending site

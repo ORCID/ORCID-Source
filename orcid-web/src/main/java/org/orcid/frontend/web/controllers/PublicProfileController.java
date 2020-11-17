@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
@@ -32,7 +33,6 @@ import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
