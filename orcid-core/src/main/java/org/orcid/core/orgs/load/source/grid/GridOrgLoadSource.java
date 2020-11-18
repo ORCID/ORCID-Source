@@ -50,9 +50,9 @@ public class GridOrgLoadSource implements OrgLoadSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(GridOrgLoadSource.class);
 
     private static final String WIKIPEDIA_URL = "wikipedia_url";
-    
+
     private static final String FILE_EXTENSION = ".zip";
-    
+
     private static final String DATA_FILE_NAME = "grid.json";
 
     @Value("${org.orcid.core.orgs.grid.enabled:true}")
@@ -63,10 +63,10 @@ public class GridOrgLoadSource implements OrgLoadSource {
 
     @Resource(name = "gridOrgDataClient")
     private OrgDataClient orgDataClient;
-    
+
     @Value("${org.orcid.core.orgs.grid.localZipPath:/tmp/grid/grid.zip}")
     private String zipFilePath;
-    
+
     @Value("${org.orcid.core.orgs.grid.localDataPath:/tmp/grid/grid.json}")
     private String localDataPath;
 
@@ -84,7 +84,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
 
     @Value("${org.orcid.core.orgs.grid.figshareArticleUrl:https://api.figshare.com/v2/articles/}")
     private String gridFigshareArticleUrl;
-    
+
     @Resource
     private FileRotator fileRotator;
 
@@ -98,46 +98,55 @@ public class GridOrgLoadSource implements OrgLoadSource {
         if (!enabled) {
             throw new LoadSourceDisabledException(getSourceName());
         }
-        
+
         return loadData();
     }
 
     @Override
     public boolean downloadOrgData() {
-        fileRotator.removeFileIfExists(zipFilePath);
-        fileRotator.removeFileIfExists(localDataPath);
-        orgDataClient.init();
-        List<FigshareGridCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(gridFigshareCollectionUrl, userAgent, new GenericType<List<FigshareGridCollectionArticleSummary>>(){});
-        FigshareGridCollectionArticleSummary latest = null;
-        for (FigshareGridCollectionArticleSummary article : gridCollectionArticles) {
-            if (latest == null) {
-                latest = article;
-                continue;
-            }
-            Date posted = article.getTimeline().getPostedAsDate();
-            if (posted.after(latest.getTimeline().getPostedAsDate())) {
-                latest = article;
-            }
-        }
-
-        FigshareGridCollectionArticleDetails details = orgDataClient.get(gridFigshareArticleUrl + latest.getId(), userAgent, new GenericType<FigshareGridCollectionArticleDetails> () {});
-        List<FigshareGridCollectionArticleFile> files = details.getFiles();
-        boolean success = false;
-        for (FigshareGridCollectionArticleFile file : files) {
-            if (file.getName().endsWith(FILE_EXTENSION)) {
-                success = orgDataClient.downloadFile(file.getDownloadUrl(), userAgent, zipFilePath);
-            }
-        }
-        orgDataClient.cleanUp();
         try {
-            unzipData();
-        } catch (IOException e) {
-            LOGGER.error("Error unzipping GRID data", e);
-            throw new RuntimeException(e);
+            fileRotator.removeFileIfExists(zipFilePath);
+            fileRotator.removeFileIfExists(localDataPath);
+            orgDataClient.init();
+            List<FigshareGridCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(gridFigshareCollectionUrl, userAgent,
+                    new GenericType<List<FigshareGridCollectionArticleSummary>>() {
+                    });
+            FigshareGridCollectionArticleSummary latest = null;
+            for (FigshareGridCollectionArticleSummary article : gridCollectionArticles) {
+                if (latest == null) {
+                    latest = article;
+                    continue;
+                }
+                Date posted = article.getTimeline().getPostedAsDate();
+                if (posted.after(latest.getTimeline().getPostedAsDate())) {
+                    latest = article;
+                }
+            }
+
+            FigshareGridCollectionArticleDetails details = orgDataClient.get(gridFigshareArticleUrl + latest.getId(), userAgent,
+                    new GenericType<FigshareGridCollectionArticleDetails>() {
+                    });
+            List<FigshareGridCollectionArticleFile> files = details.getFiles();
+            boolean success = false;
+            for (FigshareGridCollectionArticleFile file : files) {
+                if (file.getName().endsWith(FILE_EXTENSION)) {
+                    success = orgDataClient.downloadFile(file.getDownloadUrl(), userAgent, zipFilePath);
+                }
+            }
+            orgDataClient.cleanUp();
+            try {
+                unzipData();
+            } catch (IOException e) {
+                LOGGER.error("Error unzipping GRID data", e);
+                throw new RuntimeException(e);
+            }
+            return success;
+        } catch (Exception e) {
+            LOGGER.error("Error downloading GRID data", e);
+            return false;
         }
-        return success;
     }
-    
+
     private void unzipData() throws IOException {
         byte[] buffer = new byte[1024];
         ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath));
@@ -159,66 +168,71 @@ public class GridOrgLoadSource implements OrgLoadSource {
         zis.closeEntry();
         zis.close();
     }
-    
-    private boolean loadData() {
-        LOGGER.info("Loading GRID data...");
-        Instant start = Instant.now();
-        File fileToLoad = new File(localDataPath);
-        if (!fileToLoad.exists()) {
-            LOGGER.error("File {} doesn't exist", localDataPath);
-            return false;
-        }
-        
-        JsonNode rootNode = JsonUtils.read(fileToLoad);
-        ArrayNode institutes = (ArrayNode) rootNode.get("institutes");
-        institutes.forEach(institute -> {
-            String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
-            String status = institute.get("status").isNull() ? null : institute.get("status").asText();
-            if ("active".equals(status)) {
-                String name = institute.get("name").isNull() ? null : institute.get("name").asText();
-                StringJoiner sj = new StringJoiner(",");
-                String orgType = null;
-                if (!institute.get("types").isNull()) {
-                    ((ArrayNode) institute.get("types")).forEach(x -> sj.add(x.textValue()));
-                    orgType = sj.toString();
-                }
 
-                ArrayNode addresses = institute.get("addresses").isNull() ? null : (ArrayNode) institute.get("addresses");
-                String city = null;
-                String region = null;
-                Iso3166Country country = null;
-                if (addresses != null) {
-                    for (JsonNode address : addresses) {
-                        if (addresses.size() == 1 || (address.get("primary") != null && address.get("primary").asBoolean())) {
-                            city = address.get("city").isNull() ? null : address.get("city").asText();
-                            region = address.get("state").isNull() ? null : address.get("state").asText();
-                            String countryCode = address.get("country_code").isNull() ? null : address.get("country_code").asText();
-                            country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
+    private boolean loadData() {
+        try {
+            LOGGER.info("Loading GRID data...");
+            Instant start = Instant.now();
+            File fileToLoad = new File(localDataPath);
+            if (!fileToLoad.exists()) {
+                LOGGER.error("File {} doesn't exist", localDataPath);
+                return false;
+            }
+
+            JsonNode rootNode = JsonUtils.read(fileToLoad);
+            ArrayNode institutes = (ArrayNode) rootNode.get("institutes");
+            institutes.forEach(institute -> {
+                String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
+                String status = institute.get("status").isNull() ? null : institute.get("status").asText();
+                if ("active".equals(status)) {
+                    String name = institute.get("name").isNull() ? null : institute.get("name").asText();
+                    StringJoiner sj = new StringJoiner(",");
+                    String orgType = null;
+                    if (!institute.get("types").isNull()) {
+                        ((ArrayNode) institute.get("types")).forEach(x -> sj.add(x.textValue()));
+                        orgType = sj.toString();
+                    }
+
+                    ArrayNode addresses = institute.get("addresses").isNull() ? null : (ArrayNode) institute.get("addresses");
+                    String city = null;
+                    String region = null;
+                    Iso3166Country country = null;
+                    if (addresses != null) {
+                        for (JsonNode address : addresses) {
+                            if (addresses.size() == 1 || (address.get("primary") != null && address.get("primary").asBoolean())) {
+                                city = address.get("city").isNull() ? null : address.get("city").asText();
+                                region = address.get("state").isNull() ? null : address.get("state").asText();
+                                String countryCode = address.get("country_code").isNull() ? null : address.get("country_code").asText();
+                                country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
+                            }
                         }
                     }
+
+                    ArrayNode urls = institute.get("links").isNull() ? null : (ArrayNode) institute.get("links");
+                    // Use the first URL
+                    String url = (urls != null && urls.size() > 0) ? urls.get(0).asText() : null;
+
+                    // Creates or updates an institute
+                    OrgDisambiguatedEntity entity = processInstitute(sourceId, name, country, city, region, url, orgType);
+
+                    // Creates external identifiers
+                    processExternalIdentifiers(entity, institute);
+                } else if ("redirected".equals(status)) {
+                    String primaryId = institute.get("redirect").isNull() ? null : institute.get("redirect").asText();
+                    deprecateOrg(sourceId, primaryId);
+                } else if ("obsolete".equals(status)) {
+                    obsoleteOrg(sourceId);
+                } else {
+                    LOGGER.error("Illegal status '" + status + "' for institute " + sourceId);
                 }
+            });
 
-                ArrayNode urls = institute.get("links").isNull() ? null : (ArrayNode) institute.get("links");
-                // Use the first URL
-                String url = (urls != null && urls.size() > 0) ? urls.get(0).asText() : null;
-
-                // Creates or updates an institute
-                OrgDisambiguatedEntity entity = processInstitute(sourceId, name, country, city, region, url, orgType);
-
-                // Creates external identifiers
-                processExternalIdentifiers(entity, institute);
-            } else if ("redirected".equals(status)) {
-                String primaryId = institute.get("redirect").isNull() ? null : institute.get("redirect").asText();
-                deprecateOrg(sourceId, primaryId);
-            } else if ("obsolete".equals(status)) {
-                obsoleteOrg(sourceId);
-            } else {
-                LOGGER.error("Illegal status '" + status + "' for institute " + sourceId);
-            }
-        });
-
-        LOGGER.info("Time taken to process the data: {}", Duration.between(start, Instant.now()).toString());
-        return true;
+            LOGGER.info("Time taken to process the data: {}", Duration.between(start, Instant.now()).toString());
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Error loading GRID data", e);
+            return false;
+        }
     }
 
     private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
