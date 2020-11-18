@@ -13,10 +13,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
@@ -24,6 +28,7 @@ import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.pojo.DelegateForm;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class GivenPermissionToManagerTest extends BaseTest {
@@ -42,10 +47,22 @@ public class GivenPermissionToManagerTest extends BaseTest {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
+    
+    @Mock
+    private NotificationManager mock_notificationManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
+        initDBUnitData(DATA_FILES);        
+    }
+    
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(givenPermissionToManager, "notificationManager", mock_notificationManager);
     }
 
     @AfterClass
@@ -55,6 +72,11 @@ public class GivenPermissionToManagerTest extends BaseTest {
         removeDBUnitData(reversedDataFiles);
     }
 
+    @After
+    public void after() {
+        TargetProxyHelper.injectIntoProxy(givenPermissionToManager, "notificationManager", notificationManager);
+    }
+    
     @Test
     public void testFindByGiverAndReceiverOrcid() {
         DelegateForm form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(GIVER, RECEIVER);

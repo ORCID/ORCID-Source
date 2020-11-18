@@ -37,6 +37,7 @@ import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
+import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
@@ -219,7 +220,23 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int activityCount = 0;
         Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
+        String subjectDelegate = null;
+        String bodyHtmlDelegate = null;
+        String bodyHtmlDelegateRecipient = null;
+        String bodyHtmlAdminDelegate = null;
+
         for (Notification notification : notifications) {
+            if (notification instanceof NotificationAdministrative) {
+                NotificationAdministrative notificationAdministrative = (NotificationAdministrative) notification;
+                subjectDelegate = notificationAdministrative.getSubject();
+                if ("[ORCID] You've been made an Account Delegate!".equals(subjectDelegate)) {
+                    bodyHtmlDelegateRecipient = getHtmlBody(notificationAdministrative);
+                } else if ("[ORCID] You've made an Account Delegate!".equals(subjectDelegate)) {                    
+                    bodyHtmlDelegate = getHtmlBody(notificationAdministrative);
+                } else if (subjectDelegate != null && subjectDelegate.startsWith("[ORCID] Trusting")) {
+                    bodyHtmlAdminDelegate = getHtmlBody(notificationAdministrative);
+                }
+            }
             digestEmail.addNotification(notification);
             if (notification.getSource() == null) {
                 orcidMessageCount++;
@@ -256,8 +273,19 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("baseUri", orcidUrlManager.getBaseUrl());
         params.put("subject", subject);
         params.put("verboseNotifications", false);
+        params.put("orcidValue", record.getId());
+        params.put("subjectDelegate", subjectDelegate);
+        params.put("bodyHtmlDelegate", bodyHtmlDelegate);
+        params.put("bodyHtmlDelegateRecipient", bodyHtmlDelegateRecipient);
+        params.put("bodyHtmlAdminDelegate", bodyHtmlAdminDelegate);
+
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
+
+        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
+            bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
+            bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
+        }
 
         EmailMessage emailMessage = new EmailMessage();
 
@@ -568,5 +596,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 updates.get(itemType).put(actionType, new TreeSet<String>());
             }
         }
+    }
+
+    private String getHtmlBody(NotificationAdministrative notificationAdministrative) {
+        int bodyTag = notificationAdministrative.getBodyHtml().indexOf("<body>");
+        int bodyTagClose = notificationAdministrative.getBodyHtml().indexOf("</body>");
+        return notificationAdministrative.getBodyHtml().substring(bodyTag + 6, bodyTagClose);
     }
 }

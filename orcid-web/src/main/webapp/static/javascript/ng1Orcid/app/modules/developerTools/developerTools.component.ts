@@ -74,7 +74,8 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         .subscribe(
             data => {
                 var pubBaseUri = data.messages['PUB_BASE_URI'];
-                this.swaggerUri = pubBaseUri + '/v2.0/';                
+                this.swaggerUri = pubBaseUri + '/v2.0/';
+                this.getClient();
             },
             error => {               
             } 
@@ -190,8 +191,13 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     
     deleteRedirectUri(idx): void {
         this.client.redirectUris.splice(idx, 1);
-        this.hideGoogleUri = this.client.redirectUris.filter(redirectUri => redirectUri.value.includes(this.googleUri)).length != 0;
-        this.hideSwaggerUri = this.client.redirectUris.filter(redirectUri => redirectUri.value.includes(this.swaggerUri)).length != 0;
+        if (this.client.redirectUris.length > 0) {
+            this.hideGoogleUri = this.client.redirectUris.filter(redirectUri => redirectUri.value && redirectUri.value.value.includes(this.googleUri)).length != 0;
+            this.hideSwaggerUri = this.client.redirectUris.filter(redirectUri => redirectUri.value && redirectUri.value.value.includes(this.swaggerUri)).length != 0;
+        } else {
+            this.hideGoogleUri = false;
+            this.hideSwaggerUri = false;
+        }
     };
     
     createOrUpdateCredentials(): void {
@@ -291,6 +297,5 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };
     
     ngOnInit() {
-        this.getClient();
     };
 }

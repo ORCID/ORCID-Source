@@ -5,9 +5,9 @@ import java.util.Collection;
 import javax.persistence.NoResultException;
 
 import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.VisibilityType;
 import org.orcid.jaxb.model.v3.release.record.Email;

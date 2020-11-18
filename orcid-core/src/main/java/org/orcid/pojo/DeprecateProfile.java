@@ -25,6 +25,8 @@ public class DeprecateProfile implements ErrorsInterface {
     
     private String primaryAccountName;
     
+    private boolean verificationCodeRequired;
+    
     public List<String> getErrors() {
         return errors;
     }
@@ -96,5 +98,13 @@ public class DeprecateProfile implements ErrorsInterface {
     public void setDeprecatingOrcid(String deprecatingOrcid) {
         this.deprecatingOrcid = deprecatingOrcid;
     }
+    
+    public boolean getVerificationCodeRequired() {
+        return verificationCodeRequired;
+    }
+
+    public void setVerificationCodeRequired(boolean verificationCodeRequired) {
+        this.verificationCodeRequired = verificationCodeRequired;
+    }  
     
 }

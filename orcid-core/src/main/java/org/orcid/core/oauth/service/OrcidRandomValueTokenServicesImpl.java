@@ -12,13 +12,14 @@ import javax.persistence.PersistenceException;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.exception.ClientDeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -273,6 +274,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                     orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
                 } catch (LockedException le) {
                     throw new InvalidTokenException(le.getMessage());
+                } catch (ClientDeactivatedException e) {
+                    throw new InvalidTokenException(e.getMessage());
                 }
             }                        
         }
