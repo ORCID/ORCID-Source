@@ -94,7 +94,6 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.assetsPath = data.messages['STATIC_PATH'];
                 this.aboutUri = data.messages['ABOUT_URI'];
-                this.aboutUriTemporal = data.messages['ABOUT_URI_TEMPORAL'];
                 this.liveIds = data.messages['LIVE_IDS'];                
             },
             error => {

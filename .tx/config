@@ -78,3 +78,9 @@ file_filter = orcid-core/src/main/resources/i18n/email2faDisabled_<lang>.propert
 source_file = orcid-core/src/main/resources/i18n/email2faDisabled_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
+
+[registry.layout]
+file_filter = orcid-core/src/main/resources/i18n/layout_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/layout_en.properties
+source_lang = en
+type = UNICODEPROPERTIES

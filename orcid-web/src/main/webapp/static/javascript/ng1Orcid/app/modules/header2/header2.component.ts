@@ -48,6 +48,7 @@ export class Header2Component  {
     openMobileMenu = false
     isMobile = false
     currentUrl = location.href
+    aboutUriTemporal 
 
     constructor(
         private notificationsSrvc: NotificationsService,
@@ -93,6 +94,7 @@ export class Header2Component  {
             data => {
                 this.assetsPath = data.messages['STATIC_PATH'];
                 this.aboutUri = data.messages['ABOUT_URI'];
+                this.aboutUriTemporal = data.messages['ABOUT_URI_TEMPORAL'];
                 this.liveIds = data.messages['LIVE_IDS'];
                 this.userMenu = data.messages['ENABLE_USER_MENU'] === "true"    
                 
