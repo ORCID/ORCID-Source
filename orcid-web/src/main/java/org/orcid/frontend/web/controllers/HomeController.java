@@ -54,6 +54,11 @@ public class HomeController extends BaseController {
     
     private static final Locale DEFAULT_LOCALE = Locale.US;
     
+
+    @Value("${org.orcid.core.aboutUriTemporalWhileTransitioningToTheNewInfoWebSite:https://info.orcid.org}")
+    private String aboutUriTemporal;
+    
+
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
     private String aboutUri;
     
@@ -263,6 +268,7 @@ public class HomeController extends BaseController {
         configDetails.setMessage("STATIC_PATH", getStaticContentPath(request));
         configDetails.setMessage("SHIBBOLETH_ENABLED", String.valueOf(isShibbolethEnabled()));
         configDetails.setMessage("ABOUT_URI", aboutUri);
+        configDetails.setMessage("ABOUT_URI_TEMPORAL", aboutUriTemporal);
         configDetails.setMessage("GA_TRACKING_ID", googleAnalyticsTrackingId);
         configDetails.setMessage("MAINTENANCE_MESSAGE", getMaintenanceMessage());
         configDetails.setMessage("LIVE_IDS", statisticsCacheManager.retrieveLiveIds(localeManager.getLocale()));   

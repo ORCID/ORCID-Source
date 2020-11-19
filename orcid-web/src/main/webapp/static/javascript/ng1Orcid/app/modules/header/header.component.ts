@@ -47,6 +47,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     assetsPath: String;
     aboutUri: String;
     liveIds: String;    
+    aboutUriTemporal: String;
     
     constructor(
         private notificationsSrvc: NotificationsService,
