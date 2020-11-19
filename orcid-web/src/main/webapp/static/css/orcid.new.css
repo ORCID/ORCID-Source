@@ -10060,3 +10060,56 @@ name-ng2 h2.full-name {
     font-size: 12px;
     margin-left: 4px;
 }
+.new-menu.header2 .menu-bar {
+    background-color: #fff;
+}
+.new-menu.header2 .menu-bar > .container > .menu > li.open > a, 
+.new-menu.header2 .menu-bar > .container > .menu > li.open > a:hover , 
+.new-menu.header2 .menu-bar > .container > .menu > li.open > a:focus  {
+    color: #2e7f9f;
+    background-color:#fff;
+}
+.new-menu.header2 .menu-bar > .container > .menu > li.open > a:hover {
+    color: #98ce00;
+
+}
+.new-menu.header2 .menu-bar > .container > .menu > li > a:hover,
+.new-menu.header2 .menu-bar > .container > .menu > li > a:focus{
+    background-color: #fff;
+}
+.new-menu.header2 .menu-bar a {
+    color: #2e7f9f;
+        font-size: 18px;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 1.3px;
+}
+.new-menu.header2 .menu-bar.mobile{
+    background-color: #003449;
+}
+
+.new-menu.header2 .menu-bar.mobile a {
+    color: white;
+}
+.new-menu .menu-bar {
+    border-bottom: solid 1px;
+   border-bottom-color: rgba(0, 0, 0, 0.12);
+}
+.new-menu .menu-bar {
+    border-bottom: solid 1px;
+   border-bottom-color: rgba(0, 0, 0, 0.12);
+}
+.new-menu.header2 .menu-bar a:hover {
+    color: #98ce00;
+}
+.new-menu.header2  .menu-bar.mobile > .container > .menu > li > a:hover{    
+    color: rgba(0,0,0,0.87);
+    background-color: #d4e7a1;
+}
+.new-menu.header2  .menu-bar.mobile l> .container > .menu > li > .mobile-menu-sign-in-url > a:hover{
+    color: rgba(0,0,0,0.87);
+    background-color: #d4e7a1;
+}
+.new-menu.header2 .menu-bar {
+    margin-bottom: 10px;
+}
