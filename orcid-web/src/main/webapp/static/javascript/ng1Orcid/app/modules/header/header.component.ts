@@ -47,6 +47,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
     assetsPath: String;
     aboutUri: String;
     liveIds: String;    
+    aboutUriTemporal: String;
     
     constructor(
         private notificationsSrvc: NotificationsService,
@@ -93,6 +94,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {
                 this.assetsPath = data.messages['STATIC_PATH'];
                 this.aboutUri = data.messages['ABOUT_URI'];
+                this.aboutUriTemporal = data.messages['ABOUT_URI_TEMPORAL'];
                 this.liveIds = data.messages['LIVE_IDS'];                
             },
             error => {

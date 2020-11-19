@@ -1,7 +1,7 @@
 <script type="text/ng-template" id="header2-ng2-template">
 
 
-<@orcid.checkFeatureStatus featureName='ORCID_ANGULAR_INBOX'>
+<@orcid.checkFeatureStatus featureName='NEW_INFO_SITE' enabled=false>
 <div class="header2" >
     <div  *ngIf="!isOauth && mobileMenu"> 
 
@@ -422,7 +422,7 @@
 </div> 
 </@orcid.checkFeatureStatus>
 
-<@orcid.checkFeatureStatus featureName='ORCID_ANGULAR_INBOX' enabled=false>
+<@orcid.checkFeatureStatus featureName='NEW_INFO_SITE'>
 <div class="new-menu header2" >
     <div  *ngIf="!isOauth && mobileMenu"> 
 
@@ -462,7 +462,7 @@
                          <#--  
                         <div class="conditions" >
                             <p> ${springMacroRequestContext.getMessage("public-layout.search.terms1")?replace("<br />", " ")?replace("'", "\\'")}<a
-                                    href="{{aboutUri}}/legal">${springMacroRequestContext.getMessage("public-layout.search.terms2")?replace("<br />", " ")?replace("'", "\\'")}</a>${springMacroRequestContext.getMessage("public-layout.search.terms3")?replace("<br />", " ")?replace("'", "\\'")}
+                                    href="{{aboutUriTemporal}}/legal">${springMacroRequestContext.getMessage("public-layout.search.terms2")?replace("<br />", " ")?replace("'", "\\'")}</a>${springMacroRequestContext.getMessage("public-layout.search.terms3")?replace("<br />", " ")?replace("'", "\\'")}
                             </p>
                         </div>  
                         -->
@@ -476,34 +476,33 @@
                 <ul class="menu" resize  role="presentation" role="menu">
                     <!-- ABOUT -->
                     <li role="presentation" class="expanded"  >
-                        <a href="{{aboutUri}}/what-is-orcid" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.about")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }}</a>
+                        <a href="{{aboutUriTemporal}}/what-is-orcid" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.about")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }}</a>
                     </li>
     
                         <!-- Membership -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}/about-membership" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.membership")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUriTemporal}}/about-membership" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.membership")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <!-- DOCUMENTATION -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}/documentation/" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.documentation")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUriTemporal}}/documentation/" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.documentation")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <!-- COMMUNITY -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}/orcid-community/" role="menuitem" >{{'${springMacroRequestContext.getMessage("manage_consortium.community")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUriTemporal}}/orcid-community/" role="menuitem" >{{'${springMacroRequestContext.getMessage("manage_consortium.community")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
-
 
                     <!-- NEWS & EVENTS -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.newsAndEvents")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUriTemporal}}" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.newsAndEvents")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
 
                     <!-- FOR RESEARCHERS -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}/help-getting-started-with-your-orcid" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUriTemporal}}/help-getting-started-with-your-orcid" role="menuitem" >{{'${springMacroRequestContext.getMessage("public-layout.for_researchers")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <@orcid.checkFeatureStatus featureName='ENABLE_USER_MENU'>
