@@ -135,6 +135,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
         Locale locale = getUserLocaleFromProfileEntity(record);
         int orcidMessageCount = 0;
+        String subjectDelegate = null;
+        String bodyHtmlDelegate = null;
+        String bodyHtmlDelegateRecipient = null;
+        String bodyHtmlAdminDelegate = null;
         
         Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
@@ -142,6 +146,17 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         Map<String, ClientUpdates> updatesByClient = new HashMap<String, ClientUpdates>();
 
         for (Notification notification : notifications) {
+            if (notification instanceof NotificationAdministrative) {
+                NotificationAdministrative notificationAdministrative = (NotificationAdministrative) notification;
+                subjectDelegate = notificationAdministrative.getSubject();
+                if ("[ORCID] You've been made an Account Delegate!".equals(subjectDelegate)) {
+                    bodyHtmlDelegateRecipient = getHtmlBody(notificationAdministrative);
+                } else if ("[ORCID] You've made an Account Delegate!".equals(subjectDelegate)) {
+                    bodyHtmlDelegate = getHtmlBody(notificationAdministrative);
+                } else if (subjectDelegate != null && subjectDelegate.startsWith("[ORCID] Trusting")) {
+                    bodyHtmlAdminDelegate = getHtmlBody(notificationAdministrative);
+                }
+            }
             digestEmail.addNotification(notification);
             if (notification.getSource() == null) {
                 orcidMessageCount++;
@@ -199,8 +214,19 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("clientUpdates", sortedClientUpdates);
         params.put("verboseNotifications", true);
         params.put("maxPerClient", maxNotificationsToShowPerClient);
+        params.put("orcidValue", record.getId());
+        params.put("subjectDelegate", subjectDelegate);
+        params.put("bodyHtmlDelegate", bodyHtmlDelegate);
+        params.put("bodyHtmlDelegateRecipient", bodyHtmlDelegateRecipient);
+        params.put("bodyHtmlAdminDelegate", bodyHtmlAdminDelegate);
+
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
+
+        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
+            bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
+            bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
+        }
 
         EmailMessage emailMessage = new EmailMessage();
 
