@@ -459,13 +459,6 @@
                         </div>
                     </div>        
                 </div>
-                         <#--  
-                        <div class="conditions" >
-                            <p> ${springMacroRequestContext.getMessage("public-layout.search.terms1")?replace("<br />", " ")?replace("'", "\\'")}<a
-                                    href="{{aboutUriTemporal}}/legal">${springMacroRequestContext.getMessage("public-layout.search.terms2")?replace("<br />", " ")?replace("'", "\\'")}</a>${springMacroRequestContext.getMessage("public-layout.search.terms3")?replace("<br />", " ")?replace("'", "\\'")}
-                            </p>
-                        </div>  
-                        -->
                 </div>
             </div>
         </div>
