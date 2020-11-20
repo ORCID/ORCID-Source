@@ -14,7 +14,7 @@
             </a>
         <p>
             <@emailMacros.msg "notification.delegate.receipt.accountDelegateMeans" />
-            <@emailMacros.space />${emailNameGrantingPermission}<@emailMacros.space />
+            <@emailMacros.space />${emailNameGrantingPermission}
             <@emailMacros.msg "notification.delegate.receipt.orcidRecord" />
         </p>
         <p>
