@@ -110,9 +110,9 @@
                         <#elseif notificationType != 'AMENDED'>
                             <#if notificationType == 'ADMINISTRATIVE'>
                                 <#if subjectDelegate??>
-                                    <#if subjectDelegate == '[ORCID] You\'ve been made an Account Delegate!'>
+                                    <#if subjectDelegate?ends_with("has made you an Account Delegate for their ORCID record")>
                                         <@bodyHtmlDelegateRecipient?interpret />
-                                    <#elseif subjectDelegate == '[ORCID] You\'ve made an Account Delegate!'>
+                                    <#elseif subjectDelegate?ends_with("has been added as a Trusted Individual")>
                                         <@bodyHtmlDelegate?interpret />
                                     <#elseif subjectDelegate?starts_with("[ORCID] Trusting")>
                                         <@bodyHtmlAdminDelegate?interpret />
