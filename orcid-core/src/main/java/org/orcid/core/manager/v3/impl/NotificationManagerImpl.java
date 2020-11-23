@@ -1169,6 +1169,10 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         return notificationDao.getUnreadCount(orcid);
     }
 
+    public int getTotalCount(String orcid, boolean archived) {
+        return notificationDao.getTotalCount(orcid, archived);
+    }
+
     @Override
     public void flagAsRead(String orcid, Long id) {
         notificationDao.flagAsRead(orcid, id);
