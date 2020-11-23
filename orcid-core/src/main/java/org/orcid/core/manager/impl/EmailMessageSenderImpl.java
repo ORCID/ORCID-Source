@@ -149,9 +149,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             if (notification instanceof NotificationAdministrative) {
                 NotificationAdministrative notificationAdministrative = (NotificationAdministrative) notification;
                 subjectDelegate = notificationAdministrative.getSubject();
-                if ("[ORCID] You've been made an Account Delegate!".equals(subjectDelegate)) {
+                if (subjectDelegate.endsWith("has made you an Account Delegate for their ORCID record")) {
                     bodyHtmlDelegateRecipient = getHtmlBody(notificationAdministrative);
-                } else if ("[ORCID] You've made an Account Delegate!".equals(subjectDelegate)) {
+                } else if (subjectDelegate.endsWith("has been added as a Trusted Individual")) {
                     bodyHtmlDelegate = getHtmlBody(notificationAdministrative);
                 } else if (subjectDelegate != null && subjectDelegate.startsWith("[ORCID] Trusting")) {
                     bodyHtmlAdminDelegate = getHtmlBody(notificationAdministrative);
@@ -255,9 +255,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             if (notification instanceof NotificationAdministrative) {
                 NotificationAdministrative notificationAdministrative = (NotificationAdministrative) notification;
                 subjectDelegate = notificationAdministrative.getSubject();
-                if ("[ORCID] You've been made an Account Delegate!".equals(subjectDelegate)) {
+                if (subjectDelegate.endsWith("has made you an Account Delegate for their ORCID record")) {
                     bodyHtmlDelegateRecipient = getHtmlBody(notificationAdministrative);
-                } else if ("[ORCID] You've made an Account Delegate!".equals(subjectDelegate)) {                    
+                } else if (subjectDelegate.endsWith("has been added as a Trusted Individual")) {
                     bodyHtmlDelegate = getHtmlBody(notificationAdministrative);
                 } else if (subjectDelegate != null && subjectDelegate.startsWith("[ORCID] Trusting")) {
                     bodyHtmlAdminDelegate = getHtmlBody(notificationAdministrative);
