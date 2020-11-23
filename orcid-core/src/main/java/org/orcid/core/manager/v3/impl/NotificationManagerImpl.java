@@ -554,10 +554,19 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
 
+        String emailNameGrantingPermission = deriveEmailFriendlyName(userGrantingPermission);
+
+        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
+            StringBuffer sb = new StringBuffer();
+            sb.append(emailNameGrantingPermission);
+            sb.append(" ");
+            sb.append(getSubject("notification.delegate.receipt.trustedIndividual", userLocale));
+            subject = sb.toString();
+        }
+
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
         String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
-        String emailNameGrantingPermission = deriveEmailFriendlyName(userGrantingPermission);
         String assetsUrl = getAssetsUrl();
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
@@ -602,6 +611,14 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
         String subject = getSubject("email.subject.delegate.recipient", userLocale);
         String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
+
+        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
+            StringBuffer sb = new StringBuffer();
+            sb.append(emailNameForDelegate);
+            sb.append(" ");
+            sb.append(getSubject("notification.delegate.trustedIndividual", userLocale));
+            subject = sb.toString();
+        }
 
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
@@ -1150,6 +1167,10 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     public int getUnreadCount(String orcid) {
         return notificationDao.getUnreadCount(orcid);
+    }
+
+    public int getTotalCount(String orcid, boolean archived) {
+        return notificationDao.getTotalCount(orcid, archived);
     }
 
     @Override

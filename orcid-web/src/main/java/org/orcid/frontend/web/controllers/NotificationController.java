@@ -143,6 +143,12 @@ public class NotificationController extends BaseController {
         return notificationManager.getUnreadCount(currentOrcid);
     }
 
+    @RequestMapping("/totalCount.json")
+    public @ResponseBody int getTotalCountJson(@RequestParam(value = "archived", defaultValue = "false") boolean archived) {
+        String currentOrcid = getCurrentUserOrcid();
+        return notificationManager.getTotalCount(currentOrcid, archived);
+    }
+
     @RequestMapping(value = "{id}/read.json")
     public @ResponseBody Notification flagAsRead(HttpServletResponse response, @PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
@@ -151,7 +157,7 @@ public class NotificationController extends BaseController {
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
 
-    @RequestMapping(value = "{id}/archive.json")
+    @RequestMapping(value = "{id}/archive")
     public @ResponseBody Notification flagAsArchived(HttpServletResponse response, @PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationManager.flagAsArchived(currentUserOrcid, Long.valueOf(id), false);

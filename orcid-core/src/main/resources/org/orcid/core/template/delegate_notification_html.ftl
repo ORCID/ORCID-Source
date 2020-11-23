@@ -11,6 +11,7 @@
             <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${orcidValueForDelegate}">
                 (${baseUri}/${orcidValueForDelegate})
             </a>
+                <@emailMacros.space />
                 <@emailMacros.msg "notification.delegate.asTrustedIndividual" />
             <p>
                 <@emailMacros.msg "notification.delegate.accessYourRecord" /><@emailMacros.space />
