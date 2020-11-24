@@ -248,17 +248,17 @@ For this test you need to have a Consortium Lead account on QA and a Consortium 
 
 1. Install Axe browser plugin from https://www.deque.com/axe/ if you don't have it already. 
 
-2. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1jSzuH9k5KeX-OqGdltj9dJx5MorczSWhFbcbYgVWWrc/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
-3. Visit https://qa.orcid.org and check errors are same or less than 20 errors.
-4. Visit https://qa.orcid.org/register and check errors are same or less than 19.
-5. Visit https://qa.orcid.org/reset-password and check errors are same or less than 5.
-6. Visit https://qa.orcid.org/signin and check errors are same or less than 15.
+2. Visit the following pages and check in the AXE console that their errors are less or the same as stated below. If they are more than stated below visit the [QA benchmarks](https://docs.google.com/document/d/1GBd1EqJB5oMYZNeENGvrUlY3NzhplqiD8mwFIjDCTLU/edit?usp=sharing) and compare your result to the results there to see what is causing the error.
+3. Visit https://qa.orcid.org and check there are no violations.
+4. Visit https://qa.orcid.org/register and check there are no violations (be sure to go through the 3 steps of the register form).
+5. Visit https://qa.orcid.org/reset-password and check there are no violations.
+6. Visit https://qa.orcid.org/signin and check check there are no violations.
 7.	Stay on this page and sign in with:
 
 	```0000-0002-7361-1027```
 	```QA password```
 
-8. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  60.
+8. Visit https://qa.orcid.org/myorcid Check the number of errors in AXE is less than  45.
 9. Visit https://qa.orcid.org/signout
 10. Upload your document to https://drive.google.com/drive/folders/1yG9ksNIGF9Iy7NU858cmuo7ReUbqSqcO 
 
