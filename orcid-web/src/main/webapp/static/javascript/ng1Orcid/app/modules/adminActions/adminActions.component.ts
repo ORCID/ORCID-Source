@@ -116,16 +116,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     // General
     ids: string;
     
-    // activate / deactivate client
-    clientToActivate: string;
-    clientToDeactivate: string;
-    showDeactivateClient: boolean;
-    showActivateClient: boolean;
-    showActivateClientMessages: boolean;
-    showDeactivateClientMessages: boolean;
-    activateClientResults: any;
-    deactivateClientResults: any;
-    
     constructor(
         private adminActionsService: AdminActionsService,
         private commonSrvc: CommonService
@@ -200,13 +190,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.ids = '';
         
         this.getLockReasons();
-        
-        this.showActivateClient = false;
-        this.showDeactivateClient = false;
-        this.clientToActivate = '';
-        this.clientToDeactivate = '';
-        this.showActivateClientMessages = false;
-        this.showDeactivateClientMessages = false;
     }    
 
     getLockReasons(): void {
@@ -644,56 +627,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     };
     
       
-    activateClient(): void {
-        let clientActivationRequest = {} as any;
-        clientActivationRequest.clientId = this.clientToActivate;
-        clientActivationRequest.error = '';
-        
-        this.adminActionsService.activateClient( clientActivationRequest )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.activateClientResults = data;
-                this.showActivateClientMessages = true;
-                setTimeout (() => {
-                    this.showActivateClient = false;
-                    this.showActivateClientMessages = false;
-                    this.clientToActivate = '';
-                }, 10000);
-            },
-            error => {
-                console.log('admin: activateClient error', error);
-            } 
-        );
-    };
-    
-    deactivateClient(): void {
-        let clientActivationRequest = {} as any;
-        clientActivationRequest.clientId = this.clientToDeactivate;
-        clientActivationRequest.error = '';
-        
-        this.adminActionsService.deactivateClient( clientActivationRequest )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.deactivateClientResults = data;
-                this.showDeactivateClientMessages = true;
-                setTimeout (() => {
-                    this.showDeactivateClient = false;
-                    this.showDeactivateClientMessages = false;
-                    this.clientToDeactivate = '';
-                }, 10000);
-            },
-            error => {
-                console.log('admin: activateClient error', error);
-            } 
-        );
-    };
-
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
