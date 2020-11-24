@@ -33,7 +33,7 @@
             </span>
             <@emailMacros.space />            
             <a style="text-decoration: underline;color: #085c77;" href="https://orcid.org/help/contact-us" target="_blank">                
-                <@emailMacros.msg "notification.delegate.receipt.helpDesk" /><@emailMacros.space />
+                <@emailMacros.msg "notification.delegate.receipt.helpDeskLink" />
             </a>
         </p>
     </body>
