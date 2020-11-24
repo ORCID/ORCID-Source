@@ -8,7 +8,7 @@
     <body>
             <p>
                 <@emailMacros.msg "notification.delegate.added" /><@emailMacros.space />${emailNameForDelegate}<@emailMacros.space />
-            <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${orcidValueForDelegate}" target="_blank">
+            <a style="text-decoration: underline;color: #085c77;display: inline-block;" href="${baseUri}/${orcidValueForDelegate}" target="_blank">
                 (${baseUri}/${orcidValueForDelegate})
             </a>
                 <@emailMacros.space />
