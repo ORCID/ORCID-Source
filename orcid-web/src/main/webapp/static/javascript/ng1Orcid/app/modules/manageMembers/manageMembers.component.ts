@@ -33,8 +33,14 @@ export class ManageMembersComponent
     findMember: false,
     consortia: false
   };
+  
+  showDeactivateClient: boolean;
+  showActivateClient: boolean;
 
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) {
+    this.showActivateClient = false;
+    this.showDeactivateClient = false;
+  }
 
   toggleCollapse(modalName) {
     this.collapseMenu[modalName] = !this.collapseMenu[modalName];
@@ -58,4 +64,5 @@ export class ManageMembersComponent
   }
 
   ngOnInit() {}
+  
 }

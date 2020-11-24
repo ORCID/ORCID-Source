@@ -5,6 +5,8 @@
 <#include "/includes/ng2_templates/manage-member-add-form-success-ng2-template.ftl">
 <#include "/includes/ng2_templates/manage-member-find-member-confirm-ng2-template.ftl">
 <#include "/includes/ng2_templates/manage-member-find-client-ng2-template.ftl">
+<#include "/includes/ng2_templates/manage-member-activate-client-ng2-template.ftl">
+<#include "/includes/ng2_templates/manage-member-deactivate-client-ng2-template.ftl">
 
 
 <script type="text/ng-template" id="manage-member-ng2-template">
@@ -47,6 +49,29 @@
 					<manage-members-consortium-ng2> </manage-members-consortium-ng2>
 			</div>
 		</div>
+		
+		<!-- deactivate client -->
+		<a name="deactivate-client"></a>
+        <div class="workspace-accordion-item" id="deactivate-client">
+            <p>
+                <a *ngIf="showDeactivateClient" (click)="showDeactivateClient = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.deactivate_client' /></a>
+                <a *ngIf="!showDeactivateClient" (click)="showDeactivateClient = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.deactivate_client' /></a>
+            </p>
+            <div class="collapsible bottom-margin-small admin-modal" *ngIf="showDeactivateClient">
+                <manage-members-deactivate-client-ng2> </manage-members-deactivate-client-ng2>
+            </div>
+        </div>
+        
+        <!-- activate client  -->
+        <div class="workspace-accordion-item" id="activate-client">
+            <p>
+                <a *ngIf="showActivateClient" (click)="showActivateClient = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.activate_client' /></a>
+                <a *ngIf="!showActivateClient" (click)="showActivateClient = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.activate_client' /></a>
+            </p>
+            <div class="collapsible bottom-margin-small admin-modal" *ngIf="showActivateClient">
+                <manage-members-activate-client-ng2> </manage-members-activate-client-ng2>
+            </div>
+        </div>
 
 
 </script>

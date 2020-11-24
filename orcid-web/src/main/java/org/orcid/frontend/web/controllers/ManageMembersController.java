@@ -9,7 +9,10 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.exception.ClientAlreadyActiveException;
+import org.orcid.core.exception.ClientAlreadyDeactivatedException;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
@@ -18,6 +21,7 @@ import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.pojo.ClientActivationRequest;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.MemberDetailsForm;
@@ -52,6 +56,9 @@ public class ManageMembersController extends BaseController {
     
     @Resource(name = "clientDetailsManagerReadOnlyV3")
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+    
+    @Resource(name = "clientDetailsManagerV3")
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource
     private ClientsController groupAdministratorController;
@@ -238,6 +245,34 @@ public class ManageMembersController extends BaseController {
         consortium.setErrors(new ArrayList<String>());
         salesForceManager.enableAccess(consortium.getAccountId(), consortium.getContactsList());
         return consortium;
+    }
+    
+    @RequestMapping(value = "/deactivate-client.json", method = RequestMethod.POST)
+    public @ResponseBody ClientActivationRequest deactivateClient(@RequestBody ClientActivationRequest clientActivation) {
+        if (!clientDetailsManager.exists(clientActivation.getClientId())) {
+            clientActivation.setError("Client not found");
+            return clientActivation;
+        }
+        try {
+            clientDetailsManager.deactivateClientDetails(clientActivation.getClientId(), getCurrentUserOrcid());
+        } catch (ClientAlreadyDeactivatedException e) {
+            clientActivation.setError(e.getMessage());
+        } 
+        return clientActivation;
+    }
+    
+    @RequestMapping(value = "/activate-client.json", method = RequestMethod.POST)
+    public @ResponseBody ClientActivationRequest activateClient(@RequestBody ClientActivationRequest clientActivation) {
+        if (!clientDetailsManager.exists(clientActivation.getClientId())) {
+            clientActivation.setError("Client not found");
+            return clientActivation;
+        }
+        try {
+            clientDetailsManager.activateClientDetails(clientActivation.getClientId());
+        } catch (ClientAlreadyActiveException e) {
+            clientActivation.setError(e.getMessage());
+        } 
+        return clientActivation;
     }
 
     /**
