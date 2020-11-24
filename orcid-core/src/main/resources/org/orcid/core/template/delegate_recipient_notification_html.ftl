@@ -17,7 +17,9 @@
         <p>
             <@emailMacros.msg "notification.delegate.receipt.accountDelegateMeans" />
             <@emailMacros.space />${emailNameGrantingPermission}
-            <@emailMacros.msg "notification.delegate.receipt.orcidRecord" />
+            <span style="margin-left: 3px">
+                <@emailMacros.msg "notification.delegate.receipt.orcidRecord" />
+            </span>
         </p>
         <p>
             <@emailMacros.msg "notification.delegate.receipt.tutorial" /><@emailMacros.space />
@@ -28,8 +30,10 @@
         <p>
             <@emailMacros.msg "notification.delegate.receipt.questions" /><@emailMacros.space />${emailNameGrantingPermission}<@emailMacros.space />
             <a style="text-decoration: underline;color: #085c77;" href="mailto:${grantingOrcidEmail}">(${grantingOrcidEmail})</a>
+            <span style="margin-left: 3px">
+                <@emailMacros.msg "notification.delegate.receipt.helpDesk" />
+            </span>
             <@emailMacros.space />
-            <@emailMacros.msg "notification.delegate.receipt.helpDesk" /><@emailMacros.space />
             <a style="text-decoration: underline;color: #085c77;" href="https://orcid.org/help/contact-us">
                 <@emailMacros.msg "notification.delegate.receipt.helpDeskLink" />
             </a>
