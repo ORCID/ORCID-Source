@@ -2,13 +2,13 @@
 <hr style="color: #e0e0e0;background-color: #e0e0e0;border-style: solid;border-width: 2px;" />
 <p>
     <@emailMacros.msg "notification.header.hi" /><@emailMacros.space />${emailName}
-    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${orcidValue}">
+    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${orcidValue}" target="_blank">
         (${baseUri}/${orcidValue})
     </a>
 </p>
 <p>
     <@emailMacros.msg "notification.header.gotNewNotifications" />
-    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/inbox">
+    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/inbox" target="_blank">
         <@emailMacros.msg "notification.header.visit" />
     </a>
 </p>
