@@ -1,0 +1,45 @@
+
+Hi John Watson
+
+You've got new notifications on your ORCID record. To see more details for a particular notification or to take action please visit your ORCID notification inbox
+Your new notificationsYOUR RECORDJohn Watson has made changes to your ORCID record
+
+Showing John Watson out ofJohn Watson changes made by this client
+
+ORCID would like to let you know
+
+        We have release a new messaging feature
+        The ORCID registry is now available in Orc
+
+
+                    Super Institution 1: Request to add items (2014-07-10)
+                        Works (2)
+                            Work 1 (doi: 123446/67654)
+                            Work 2 (doi: http://dx.doi.org/123446/67655)
+
+                        ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
+                        MORE INFO: https://testserver.orcid.org/inbox#1
+
+                    Super Institution 1: Request to add items (2014-08-17)
+                        Employment (1)
+                            Employment 1 (doi: 12345/abc)
+
+                        ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
+                        MORE INFO: https://testserver.orcid.org/inbox#2
+
+                    Lovely Publisher 1 has updated recent funding on your ORCID record. (2014-07-12)
+
+                    Lovely Publisher 1: Request to add items (2014-07-10)
+                        Works (2)
+                            Work 3 (doi: 12345/def)
+                            Work 4 (doi: 12345/ghi)
+
+                        ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
+                        MORE INFO: https://testserver.orcid.org/inbox#3
+
+Why did I get this email?
+You have received this email either because you opted in to notifications about your ORCID record or because it is service announcement related to your record. You can adjust the frequency of these emails and manage other subscription preferences in your account settings
+Learn more about how your notification inbox works
+Your email preferences ORCID privacy policy ORCID.org
+ORCID, Inc10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA
+

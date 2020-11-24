@@ -14,7 +14,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
@@ -108,6 +107,7 @@ public class OrcidCoreExceptionMapper {
 
         // 409
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(LockedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9018));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(ClientDeactivatedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9057));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDuplicatedActivityException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9021));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(DuplicatedGroupIdRecordException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9025));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDuplicatedElementException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9030));

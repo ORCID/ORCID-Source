@@ -74,7 +74,8 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         .subscribe(
             data => {
                 var pubBaseUri = data.messages['PUB_BASE_URI'];
-                this.swaggerUri = pubBaseUri + '/v2.0/';                
+                this.swaggerUri = pubBaseUri + '/v2.0/';
+                this.getClient();
             },
             error => {               
             } 
@@ -189,13 +190,14 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };
     
     deleteRedirectUri(idx): void {
-        var removed = this.client.redirectUris[idx].value.value
         this.client.redirectUris.splice(idx, 1);
-        if(this.googleUri == removed) {
+        if (this.client.redirectUris.length > 0) {
+            this.hideGoogleUri = this.client.redirectUris.filter(redirectUri => redirectUri.value && redirectUri.value.value.includes(this.googleUri)).length != 0;
+            this.hideSwaggerUri = this.client.redirectUris.filter(redirectUri => redirectUri.value && redirectUri.value.value.includes(this.swaggerUri)).length != 0;
+        } else {
             this.hideGoogleUri = false;
-        } else if (this.swaggerUri == removed){
             this.hideSwaggerUri = false;
-        }        
+        }
     };
     
     createOrUpdateCredentials(): void {
@@ -207,6 +209,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };
     
     createCredentials(): void {
+        this.deleteEmptyRedirectUris();
         this.developerToolsService.createCredentials(this.client)
         .pipe(    
                 takeUntil(this.ngUnsubscribe)
@@ -229,6 +232,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };    
     
     updateCredentials(): void {
+        this.deleteEmptyRedirectUris();
         this.developerToolsService.updateCredentials(this.client)
         .pipe(    
                 takeUntil(this.ngUnsubscribe)
@@ -279,6 +283,10 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         this.sampleOpenId = getBaseUri() + '/oauth/authorize?client_id=' + this.client.clientId.value + '&response_type=token&scope=openid&redirect_uri=' + url;
     };
 
+    deleteEmptyRedirectUris() {
+        this.client.redirectUris = this.client.redirectUris.filter(redirect => redirect.value.value !== '');
+    }
+
     getBaseUri(): String {
         return getBaseUri();
     };
@@ -289,6 +297,5 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
     };
     
     ngOnInit() {
-        this.getClient();
     };
 }

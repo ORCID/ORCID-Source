@@ -107,8 +107,6 @@ public class BaseController {
 
     private String googleAnalyticsTrackingId;
     
-    private String hotjarTrackingId;
-
     protected List<String> domainsAllowingRobots;
 
     protected static final String STATIC_FOLDER_PATH = "/static/" + ReleaseNameUtils.getReleaseName();
@@ -188,16 +186,6 @@ public class BaseController {
     @Value("${org.orcid.frontend.web.googleAnalyticsTrackingId:}")
     public void setGoogleAnalyticsTrackingId(String googleAnalyticsTrackingId) {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
-    }
-    
-    @ModelAttribute("hotjarTrackingId")
-    public String getHotjarTrackingId() {
-        return hotjarTrackingId;
-    }
-
-    @Value("${org.orcid.frontend.web.hotjarTrackingId:}")
-    public void setHotjarTrackingId(String hotjarTrackingId) {
-        this.hotjarTrackingId = hotjarTrackingId;
     }
 
     @ModelAttribute("sendEmailFrequencies")
@@ -572,9 +560,13 @@ public class BaseController {
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered) {
+        return calculateRedirectUrl(request, response, justRegistered, false);
+    }
+
+    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered, boolean avoidOauthRedirect) {
         String targetUrl = null;
-        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);       
-        if (isOauth2ScreensRequest != null && isOauth2ScreensRequest && request.getQueryString() != null && !request.getQueryString().isEmpty()) {
+        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        if (isOauth2ScreensRequest != null && isOauth2ScreensRequest && !avoidOauthRedirect) {
             // Just redirect to the authorization screen
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
             targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize?" + queryString;

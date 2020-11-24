@@ -2,10 +2,12 @@ package org.orcid.core.orgs.load.source.grid.api;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(value = { "embargo_options" })
 public class FigshareGridCollectionArticleDetails {
 
     @JsonProperty("defined_type_name")

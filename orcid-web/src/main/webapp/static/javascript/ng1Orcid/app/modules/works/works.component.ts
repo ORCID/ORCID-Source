@@ -592,7 +592,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             // the current one
                             var bestMatch = null;
                             for (var idx in this.worksService.details) {    
-                                if (this.worksService.details[idx].source == orcidVar.orcidId) {
+                                if (this.worksService.details[idx].source == orcidVar.orcidId && this.worksService.details[idx].putCode.value == putCode) {
                                     bestMatch = this.worksService.details[idx];
                                     break;
                                 }

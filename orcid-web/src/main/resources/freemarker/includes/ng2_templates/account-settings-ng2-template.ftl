@@ -187,7 +187,39 @@
                             <div *ngFor='let error of deprecateProfilePojo.errors'
                                 [innerHTML]="error"></div>
                         </span>
-                        <button (click)="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.remove_record")}</button>
+                        <div class="row" *ngIf="show2FA">
+                            <div class="ccol-xs-12 col-lg-6">
+                                <div class="orcid-error">
+                                    <p *ngIf="codes?.errors && codes?.errors.length > 0">{{codes?.errors[0]}}</p>
+                                </div>
+                                <div class="form-group">
+                                    <p class="bold">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.heading")}<p>
+                                    <label for="verificationCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}</label>
+                                    <input id="verificationCode" [(ngModel)]="codes.verificationCode" name="verificationCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.label")}">
+                                </div>
+                                <div id="2FAInstructions">
+                                    <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.instructions")}</p>
+                                    <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device1")} <a (click)='toggleRecoveryCodeSignIn()'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device2")}</a></p>
+                                    <p>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.no_device_or_recovery")} <a href='https://support.orcid.org/hc/en-us/requests/new'>${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.contact_support")}</a></p>
+                                </div>
+                                <div id="recoveryCodeSignin" class="form-group" *ngIf="showRecoveryCodeSignIn">
+                                    <label for="recoveryCode" class="control-label">${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}</label>
+                                    <input id="recoveryCode" [(ngModel)]="codes.recoveryCode" name="recoveryCode" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("orcid.frontend.security.2fa.recoveryCode")}">
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-lg-12">
+                                <div class="control-group">
+                                    <ul class="inline-list">
+                                        <li>
+                                            <button (click)="accountSubmitCode()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.remove_record")}</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <#--                        </div>-->
+                        <button *ngIf="!show2FA" (click)="deprecateORCID()" class="btn btn-primary">${springMacroRequestContext.getMessage("deprecate_orcid.remove_record")}</button>
                     </div>
                     <#include "/includes/ng2_templates/deprecate-account-modal-ng2-template.ftl"> 
                     <#include "/includes/ng2_templates/deprecate-account-success-modal-ng2-template.ftl"> 

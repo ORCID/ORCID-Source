@@ -25,6 +25,8 @@ export class TwoFAStateService {
     private urlRegister: string;
     private urlStartSetup: string;
     private urlVerificationCode: string;
+    private urlAuthenticationCode: string;
+    private urlSubmitCode: string;
     private notify = new Subject<any>();
     
     notifyObservable$ = this.notify.asObservable();
@@ -41,6 +43,8 @@ export class TwoFAStateService {
         this.urlRegister = getBaseUri() + '/2FA/register.json';
         this.urlStartSetup = getBaseUri() + '/2FA/QRCode.json';
         this.urlVerificationCode = getBaseUri() + '/2FA/register.json';
+        this.urlAuthenticationCode = getBaseUri() + '/2FA/authenticationCode.json';
+        this.urlSubmitCode = getBaseUri() + '/2FA/submitCode.json';
     }
 
     checkState(): Observable<any> {
@@ -106,6 +110,24 @@ export class TwoFAStateService {
             { headers: this.headers }
         )
         
+    }
+
+    accountAuthenticationCode(): Observable<any> {
+        return this.http.get(
+            getBaseUri() + '/2FA/authenticationCode.json'
+        )
+
+    }
+
+    accountSubmitCode( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+
+        return this.http.post(
+            getBaseUri() + '/2FA/submitCode.json',
+            encoded_data,
+            { headers: this.headers }
+        )
+
     }
 
     notifyOther(): void {

@@ -203,7 +203,7 @@ public class PasswordResetController extends BaseController {
                      * "orcid.frontend.reset.password.disabled_account_2");
                      * message += "</a>"; errors.add(message);
                      */
-                    errors.add("orcid.frontend.security.orcid_deactivated");
+                    errors.add(getMessage("orcid.frontend.security.orcid_deactivated"));
                     return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
                 }
 

@@ -51,4 +51,8 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     
     void changePersistenceTokensProperty(String clientId, boolean isPersistenTokensEnabled);
 
+    void activateClient(String clientDetailsId);
+
+    void deactivateClient(String clientDetailsId, String deactivatedBy);
+
 }

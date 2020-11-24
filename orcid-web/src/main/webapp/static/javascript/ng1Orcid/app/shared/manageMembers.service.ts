@@ -83,4 +83,20 @@ export class ManageMembersService {
   notifyOther(): void {
     this.notify.next();
   }
+  
+  activateClient( obj ): Observable<any> {
+    return this.http.post( 
+            getBaseUri() + '/manage-members/activate-client.json', 
+            JSON.stringify(obj), 
+            { headers: this.headers }
+    )
+  };
+    
+  deactivateClient( obj ): Observable<any> {
+    return this.http.post( 
+            getBaseUri() + '/manage-members/deactivate-client.json', 
+            JSON.stringify(obj), 
+            { headers: this.headers }
+    )
+  };
 }
