@@ -22,15 +22,17 @@
     </div>
     <br>
     <br>
-    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/account">
-        <@emailMacros.msg "notification.footer.preferences" />
-    </a>
-    <a style="text-decoration: underline;color: #085c77;padding-left: 16px;" href="https://orcid.org/footer/privacy-policy">
-        <@emailMacros.msg "notification.footer.privacy" />
-    </a>
-    <a style="text-decoration: underline;color: #085c77;padding-left: 16px;" href="https://orcid.org">
-        <@emailMacros.msg "notification.footer.orcid" />
-    </a>
+    <p>
+        <a style="text-decoration: underline;color: #085c77;display: inline-block;" href="${baseUri}/account">
+            <@emailMacros.msg "notification.footer.preferences" />
+        </a>
+        <a style="text-decoration: underline;color: #085c77;padding-left: 16px;display: inline-block;" href="https://orcid.org/footer/privacy-policy">
+            <@emailMacros.msg "notification.footer.privacy" />
+        </a>
+        <a style="text-decoration: underline;color: #085c77;padding-left: 16px;" href="https://orcid.org">
+            <@emailMacros.msg "notification.footer.orcid" />
+        </a>
+    </p>
     <p>
         <b>
             <@emailMacros.msg "notification.footer.orcidInc" />

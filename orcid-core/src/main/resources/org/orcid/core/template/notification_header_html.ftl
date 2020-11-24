@@ -2,9 +2,9 @@
 <hr style="color: #e0e0e0;background-color: #e0e0e0;border-style: solid;border-width: 2px;" />
 <p>
     <@emailMacros.msg "notification.header.hi" /><@emailMacros.space />${emailName}
-    <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${orcidValue}">
+    <a style="text-decoration: underline;color: #085c77;display: inline-block;" href="${baseUri}/${orcidValue}">
         (${baseUri}/${orcidValue})
-    </a>
+    </a>,
 </p>
 <p>
     <@emailMacros.msg "notification.header.gotNewNotifications" />
