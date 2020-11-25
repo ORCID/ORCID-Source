@@ -10060,6 +10060,12 @@ name-ng2 h2.full-name {
     font-size: 12px;
     margin-left: 4px;
 }
+
+.member-not-found {
+    padding-top: 20px;
+    margin-left: -10px;
+}
+
 .new-menu.header2 .menu-bar {
     background-color: #fff;
 }

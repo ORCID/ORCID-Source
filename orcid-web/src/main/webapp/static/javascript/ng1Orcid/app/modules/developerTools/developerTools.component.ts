@@ -74,7 +74,7 @@ export class DeveloperToolsComponent implements AfterViewInit, OnDestroy, OnInit
         .subscribe(
             data => {
                 var pubBaseUri = data.messages['PUB_BASE_URI'];
-                this.swaggerUri = pubBaseUri + '/v2.0/';
+                this.swaggerUri = pubBaseUri + '/v3.0/';
                 this.getClient();
             },
             error => {               

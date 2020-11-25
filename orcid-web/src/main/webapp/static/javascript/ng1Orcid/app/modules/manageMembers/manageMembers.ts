@@ -23,6 +23,10 @@ import { ManageMembersFindMemberConfirmComponent } from "./manageMembersFindMemb
 
 import { ManageMembersFindClientComponent } from "./manageMembersFindClient.component"
 
+import { ManageMembersDeactivateClientComponent } from "./manageMembersDeactivateClient.component"
+
+import { ManageMembersActivateClientComponent } from "./manageMembersActivateClient.component"
+
 // This is the Angular 1 part of the module
 export const ManageMembersModule = angular.module("ManageMembersModule", []);
 
@@ -30,8 +34,8 @@ export const ManageMembersModule = angular.module("ManageMembersModule", []);
 // This is the Angular 2 part of the module
 @NgModule({
   imports: [CommonNg2Module],
-  declarations: [ManageMembersComponent, ManageMemberAddFormComponent, ManageMembersConsortiumComponent, ManageMembersFindComponent, ManageMemberAddFormSuccessComponent, ManageMembersFindMemberComponent, ManageMembersFindMemberConfirmComponent, ManageMembersFindClientComponent],
-  entryComponents: [ManageMembersComponent, ManageMemberAddFormComponent, ManageMembersConsortiumComponent, ManageMembersFindComponent, ManageMemberAddFormSuccessComponent, ManageMembersFindMemberComponent, ManageMembersFindMemberConfirmComponent, ManageMembersFindClientComponent],
+  declarations: [ManageMembersComponent, ManageMemberAddFormComponent, ManageMembersConsortiumComponent, ManageMembersFindComponent, ManageMemberAddFormSuccessComponent, ManageMembersFindMemberComponent, ManageMembersFindMemberConfirmComponent, ManageMembersFindClientComponent, ManageMembersActivateClientComponent, ManageMembersDeactivateClientComponent],
+  entryComponents: [ManageMembersComponent, ManageMemberAddFormComponent, ManageMembersConsortiumComponent, ManageMembersFindComponent, ManageMemberAddFormSuccessComponent, ManageMembersFindMemberComponent, ManageMembersFindMemberConfirmComponent, ManageMembersFindClientComponent, ManageMembersActivateClientComponent, ManageMembersDeactivateClientComponent],
   providers: []
 })
 export class ManageMembersNg2Module {}
@@ -54,6 +58,10 @@ ManageMembersModule.directive("manageMembersNg2", <any>downgradeComponent({
   component: ManageMembersFindMemberConfirmComponent
 })).directive("manageMembersFindClientNg2", <any>downgradeComponent({
   component: ManageMembersFindClientComponent
+})).directive("manageMembersActivateClientNg2", <any>downgradeComponent({
+  component: ManageMembersActivateClientComponent
+})).directive("manageMembersDeactivateClientNg2", <any>downgradeComponent({
+  component: ManageMembersDeactivateClientComponent
 }));
 
 

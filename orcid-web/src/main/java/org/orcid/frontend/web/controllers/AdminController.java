@@ -972,32 +972,4 @@ public class AdminController extends BaseController {
         return resendIdMap;
     }
     
-    @RequestMapping(value = "/deactivate-client.json", method = RequestMethod.POST)
-    public @ResponseBody ClientActivationRequest deactivateClient(@RequestBody ClientActivationRequest clientActivation) {
-        if (!clientDetailsManager.exists(clientActivation.getClientId())) {
-            clientActivation.setError("Client not found");
-            return clientActivation;
-        }
-        try {
-            clientDetailsManager.deactivateClientDetails(clientActivation.getClientId(), getCurrentUserOrcid());
-        } catch (ClientAlreadyDeactivatedException e) {
-            clientActivation.setError(e.getMessage());
-        } 
-        return clientActivation;
-    }
-    
-    @RequestMapping(value = "/activate-client.json", method = RequestMethod.POST)
-    public @ResponseBody ClientActivationRequest activateClient(@RequestBody ClientActivationRequest clientActivation) {
-        if (!clientDetailsManager.exists(clientActivation.getClientId())) {
-            clientActivation.setError("Client not found");
-            return clientActivation;
-        }
-        try {
-            clientDetailsManager.activateClientDetails(clientActivation.getClientId());
-        } catch (ClientAlreadyActiveException e) {
-            clientActivation.setError(e.getMessage());
-        } 
-        return clientActivation;
-    }
-
 }
