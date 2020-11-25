@@ -1,1 +1,1 @@
-release-1.292.4
+release-1.292.6
