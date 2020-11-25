@@ -8,7 +8,6 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.common.LanguageCode;
-import org.orcid.persistence.constants.SiteConstants;
 import org.springframework.cache.annotation.Cacheable;
 
 public class LanguagesMap {
