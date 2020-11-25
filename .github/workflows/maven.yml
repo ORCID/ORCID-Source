@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-18.04
 
@@ -20,3 +20,9 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: mvn clean test
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1.5
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        files: test-results/**/*.xml
