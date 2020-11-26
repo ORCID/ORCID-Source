@@ -147,8 +147,8 @@ public class NotificationController extends BaseController {
     public @ResponseBody ResponseEntity<?> getTotalCountJson() {
         String currentOrcid = getCurrentUserOrcid();
         int allNotifications = notificationManager.getTotalCount(currentOrcid, true);
-        int notArchivedCount = notificationManager.getTotalCount(currentOrcid, false);
-        return ResponseEntity.ok("{\"all\":" + allNotifications + ",\"nonArchived\":" + notArchivedCount + "}");
+        int notArchivedNotifications = notificationManager.getTotalCount(currentOrcid, false);
+        return ResponseEntity.ok("{\"all\":" + allNotifications + ",\"nonArchived\":" + notArchivedNotifications + "}");
     }
 
     @RequestMapping(value = "{id}/read.json")
