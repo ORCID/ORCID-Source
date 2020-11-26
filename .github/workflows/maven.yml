@@ -24,8 +24,8 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Build and test
-      run: mvn clean verify
+    - name: Run tests
+      run: mvn test --batch-mode -Dmaven.test.failure.ignore=true
     - name: Publish Test Report
       uses: scacap/action-surefire-report@v1
       with:
