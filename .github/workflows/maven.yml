@@ -18,11 +18,9 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Build with Maven
-      run: mvn clean test
-    - name: Publish Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v1.5
-      if: always()
+    - name: Build and test
+      run: mvn test
+    - name: Publish Test Report
+      uses: scacap/action-surefire-report@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        files: test-results/**/*.xml
+          github_token: ${{ secrets.GITHUB_TOKEN }}
