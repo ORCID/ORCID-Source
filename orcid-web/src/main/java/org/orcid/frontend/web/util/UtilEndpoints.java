@@ -2,10 +2,7 @@ package org.orcid.frontend.web.util;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.orcid.core.manager.PasswordGenerationManager;
-import org.orcid.core.manager.impl.PasswordGenerationManagerImpl;
-import org.orcid.password.constants.OrcidPasswordConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
