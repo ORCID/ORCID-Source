@@ -144,9 +144,11 @@ public class NotificationController extends BaseController {
     }
 
     @RequestMapping("/totalCount.json")
-    public @ResponseBody int getTotalCountJson(@RequestParam(value = "archived", defaultValue = "false") boolean archived) {
+    public @ResponseBody ResponseEntity<?> getTotalCountJson() {
         String currentOrcid = getCurrentUserOrcid();
-        return notificationManager.getTotalCount(currentOrcid, archived);
+        int allNotifications = notificationManager.getTotalCount(currentOrcid, true);
+        int notArchivedCount = notificationManager.getTotalCount(currentOrcid, false);
+        return ResponseEntity.ok("{\"all\":" + allNotifications + ",\"nonArchived\":" + notArchivedCount + "}");
     }
 
     @RequestMapping(value = "{id}/read.json")
