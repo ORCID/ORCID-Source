@@ -93,9 +93,4 @@ public class OAuthErrorUtilsTest {
         assertEquals(OAuthError.UNAUTHORIZED_CLIENT, error.getError());
         assertEquals(Status.BAD_REQUEST, error.getResponseStatus());
     }
-    
-    @Test
-    public void failTest() {
-        fail();
-    }
 }
