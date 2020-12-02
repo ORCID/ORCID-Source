@@ -540,6 +540,7 @@ public class RegistrationController extends BaseController {
             return new ModelAndView("redirect:/signin");
         }
         String redirect = "redirect:/signin";
+        StringBuilder sb = new StringBuilder();
         try {
             String toDecrypt = new String(Base64.decodeBase64(encryptedEmail), "UTF-8");
             String decryptedEmail = encryptionManager.decryptForExternalUse(toDecrypt);
@@ -555,14 +556,21 @@ public class RegistrationController extends BaseController {
                     profileEntityManager.updateLocale(decryptedEmail, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
                     redirectAttributes.addFlashAttribute("emailVerified", true);
                     redirectAttributes.addFlashAttribute("verifiedEmail", decryptedEmail);
+                    sb.append("emailVerified=true");
+                    sb.append("&");
+                    sb.append("verifiedEmail=");
+                    sb.append(decryptedEmail);
 
                     if (!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
                             redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
+                            sb.append("&");
+                            sb.append("primaryEmailUnverified=true");
                         }
                     }
                 } else {
                     redirectAttributes.addFlashAttribute("emailVerified", false);
+                    sb.append("emailVerified=false");
                 }
 
                 if (currentUser != null && currentUser.equals(orcid)) {
@@ -572,8 +580,14 @@ public class RegistrationController extends BaseController {
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
+            sb.append("invalidVerifyUrl=true");
             SecurityContextHolder.clearContext();
         }
+
+        if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+            redirect = "redirect:"+ orcidUrlManager.getBaseUrl() +"/signin?" + sb.toString();
+        }
+
         return new ModelAndView(redirect);
     }
 
