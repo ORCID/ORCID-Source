@@ -1184,6 +1184,18 @@
         </property>
     </bean>
     
+    <bean id="salesForceContactsForAuthenticationCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-contacts-for-authentication" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1000" />
+        <property name="maxMegaBytesOnDisk" value="0" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.salesForce.cache.contacts_for_authentication:600}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.ContactsCacheEntryFactory" />
+        </property>
+    </bean>
+    
     <bean id="salesForceConsortiumLeadIdsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="sales-force-consortium-lead-ids" />
         <property name="cacheManager" ref="coreCacheManager" />

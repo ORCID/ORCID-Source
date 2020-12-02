@@ -29,7 +29,10 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.ContactsForm;
 import org.orcid.pojo.ajaxForm.MemberDetailsForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.SubMemberForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,13 +52,15 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = { "/self-service", "/manage-consortium", })
 public class SelfServiceController extends BaseController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SelfServiceController.class);
+    
     private static final String NOT_PUBLIC = "not public";
 
     @Resource
     private SalesForceManager salesForceManager;
 
     @Resource(name = "emailManagerV3")
-    private EmailManager emailManager;
+    private EmailManager emailManager;    
     
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
@@ -90,13 +95,21 @@ public class SelfServiceController extends BaseController {
     
     @RequestMapping
     public ModelAndView getManageConsortiumPage() {
-        return new ModelAndView("redirect:/self-service/" + salesForceManager.retrievePrimaryAccountIdByOrcid(getCurrentUserOrcid()));
+        String accountId = salesForceManager.retrievePrimaryAccountIdByOrcid(getCurrentUserOrcid());
+        if(PojoUtil.isEmpty(accountId)) {
+            LOGGER.warn(getCurrentUserOrcid() + " have tried to access the self-service page, but there is no entry for him in the salesforce_connection table");
+            return new ModelAndView("redirect:/my-orcid");
+        }
+        return new ModelAndView("redirect:/self-service/" + accountId);
     }
 
     @RequestMapping("/{accountId}")
     public ModelAndView getManageConsortiumPage(@PathVariable(required = false) String accountId) {
-        ModelAndView mav = new ModelAndView("self_service");
-        return mav;
+        if (!salesForceManager.isActiveContact(accountId, getCurrentUserOrcid())) {
+            LOGGER.warn("User " + getCurrentUserOrcid() + " doesnt have any email address set as contact in salesforce org " + accountId);
+            return new ModelAndView("redirect:/my-orcid");
+        }
+        return new ModelAndView("self_service");
     }
 
     @RequestMapping("/{accountId}/all-consortium-contacts")
@@ -474,6 +487,11 @@ public class SelfServiceController extends BaseController {
         List<String> usersAuthorizedAccountIds = salesForceManager.retrieveAccountIdsByOrcid(sourceManager.retrieveActiveSourceId());
         MemberDetails memberDetails = salesForceManager.retrieveDetails(memberId);
         if (!(usersAuthorizedAccountIds.contains(memberId) || usersAuthorizedAccountIds.contains(memberDetails.getMember().getConsortiumLeadId()))) {
+            throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);
+        }
+        
+        //Check user is still an active contact in salesforce
+        if (!salesForceManager.isActiveContact(memberId, getCurrentUserOrcid())) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);
         }
     }
