@@ -969,7 +969,7 @@ public class ManageProfileControllerTest {
     	assertFalse(controller.validateEmailAddress("A@b@c@example.com"));
     	assertFalse(controller.validateEmailAddress("john.doe@example..com"));
 
-        assertTrue(controller.validateEmailAddress("test@test"));
+        assertFalse(controller.validateEmailAddress("test@test"));
     	assertTrue(controller.validateEmailAddress("john..doe@example.com"));
     	assertTrue(controller.validateEmailAddress("a\"b(c)d,e:f;g<h>i[j\\k]l@example.com"));
 
