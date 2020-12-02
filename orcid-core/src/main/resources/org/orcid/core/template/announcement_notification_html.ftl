@@ -7,7 +7,7 @@
     </head>
     <body>
         <p>
-            <@emailMacros.msg "notification.announcement.text" />
+            <@emailMacros.msg "notification.share.announcement.text" />
         <p>
     </body>
     </html>

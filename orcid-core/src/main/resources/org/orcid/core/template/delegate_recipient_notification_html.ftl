@@ -24,7 +24,7 @@
         <p>
             <@emailMacros.msg "notification.delegate.receipt.tutorial" /><@emailMacros.space />
             <a style="text-decoration: underline;color: #085c77;" href="https://support.orcid.org/hc/articles/360006973613" target="_blank">
-                <@emailMacros.msg "notification.delegate.receipt.tutorialLink" />
+                https://support.orcid.org/hc/articles/360006973613.
             </a>
         </p>
         <p>
@@ -35,7 +35,7 @@
             </span>
             <@emailMacros.space />            
             <a style="text-decoration: underline;color: #085c77;" href="https://orcid.org/help/contact-us" target="_blank">                
-                <@emailMacros.msg "notification.delegate.receipt.helpDeskLink" />
+                https://orcid.org/help/contact-us.
             </a>
         </p>
     </body>

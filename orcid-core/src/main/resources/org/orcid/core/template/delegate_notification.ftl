@@ -1,7 +1,7 @@
 <#import "email_macros.ftl" as emailMacros />
 
 <#include "notification_header.ftl"/>
-<@emailMacros.msg "notification.delegate.record" />
+<@emailMacros.msg "notification.share.record" />
 
 ${emailNameForDelegate}<@emailMacros.space /><@emailMacros.msg "notification.delegate.trustedIndividual" />
 
