@@ -475,7 +475,7 @@
     
                      <!-- FOR RESEARCHERS -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUriTemporal}}/help-getting-started-with-your-orcid" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.forResearchers")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUriTemporal}}/help-getting-started-with-your-orcid/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.forResearchers")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <!-- Membership -->
