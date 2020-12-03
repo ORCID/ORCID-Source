@@ -39,7 +39,7 @@
                         <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
                         <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
                             <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
-                            <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.digest.record" /></p>
+                            <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.share.record" /></p>
                         </div>
                         <p style="margin: 15px 0;font-weight: bold;">
                             <#list digestEmail.sources as source>
@@ -56,7 +56,7 @@
                         <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
                         <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
                             <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
-                            <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.digest.record" /></p>
+                            <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.share.record" /></p>
                         </div>
                         <p style="margin: 15px 0;font-weight: bold;">
                             <#list digestEmail.sources as source>
