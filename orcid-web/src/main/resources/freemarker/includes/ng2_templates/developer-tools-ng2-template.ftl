@@ -32,7 +32,7 @@
                                         <div class="row">
                                             <span class="col-md-12 col-xs-12 col-sm-12">
                                                 <@orcid.msg 'developer_tools.public_member.terms.check_1' />
-                                                <a href="{{getBaseUri()}}/orcid-public-client-terms-service" target="terms_of_service">
+                                                <a href="{{getBaseUri()}}/content/orcid-public-client-terms-service" target="terms_of_service">
                                                 <@orcid.msg 'developer_tools.public_member.terms.check_2' />
                                                 </a>
                                             </span>
