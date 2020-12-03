@@ -25,7 +25,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run tests
-      run: mvn test --batch-mode -Dmaven.test.failure.ignore=true
+      run: mvn test --batch-mode
     - name: Publish Test Report
       uses: scacap/action-surefire-report@v1
       with:
