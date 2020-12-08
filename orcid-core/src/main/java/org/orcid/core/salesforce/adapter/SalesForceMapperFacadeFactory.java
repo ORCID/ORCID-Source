@@ -18,7 +18,6 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.OrgId;
-import org.orcid.core.togglz.Features;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomConverter;
@@ -182,6 +181,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("votingContact", "Voting_Contact__c");
         classMap.field("current", "Current__c");
         classMap.field("roleType", "Member_Org_Role__c");
+        classMap.field("contactCurrentEmail", "Contact_Curr_Email__c");
         classMap.register();
     }
 

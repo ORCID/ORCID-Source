@@ -490,8 +490,10 @@ public class SelfServiceController extends BaseController {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);
         }
         
+        String consortiumLeadId = (memberDetails.getMember() != null) ? memberDetails.getMember().getConsortiumLeadId() : null;
+        
         //Check user is still an active contact in salesforce
-        if (!salesForceManager.isActiveContact(memberId, getCurrentUserOrcid())) {
+        if (!salesForceManager.isActiveContact(memberId, consortiumLeadId, getCurrentUserOrcid())) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);
         }
     }

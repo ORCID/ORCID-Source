@@ -130,6 +130,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     @Override
+    public List<ContactRole> retrieveCurrentMembershipContactRolesFromSalesForceByAccountId(String accountId) {
+        return retry(accessToken -> retrieveCurrentMembershipContactRolesFromSalesForceByAccountId(accessToken, accountId));
+    }
+    
+    @Override
     public String retrievePremiumConsortiumMemberTypeId() {
         return retry(accessToken -> retrievePremiumConsortiumMemberTypeIdFromSalesForce(accessToken));
     }
@@ -626,6 +631,46 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      *             expired.
      * 
      */
+    private List<ContactRole> retrieveContactRolesFromSalesForceByContactIdAndAccountId(String accessToken, String contactId, String accountId)
+            throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of contact roles from SalesForce");
+        validateSalesForceId(contactId);
+        validateSalesForceId(accountId);
+        WebResource resource1 = createQueryResource(
+                "Select Id, Contact__c, Member_Org_Role__c From Membership_Contact_Role__c Where Contact__c = '%s' And Organization__c='%s'", contactId, accountId);
+        WebResource resource = resource1;
+        ClientResponse response = doGetRequest(resource, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
+        return salesForceAdapter.createContactRolesFromJson(result);
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
     private List<Contact> retrieveContactsWithRolesFromSalesForceByAccountId(String accessToken, String accountId, boolean includeNonCurrent)
             throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of contacts from SalesForce");
@@ -642,7 +687,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
         return salesForceAdapter.createContactsWithRolesFromJson(result);
     }
-
+        
     /**
      * 
      * @throws SalesForceUnauthorizedException
@@ -650,20 +695,50 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
      *             expired.
      * 
      */
-    private List<ContactRole> retrieveContactRolesFromSalesForceByContactIdAndAccountId(String accessToken, String contactId, String accountId)
+    private List<ContactRole> retrieveCurrentMembershipContactRolesFromSalesForceByAccountId(String accessToken, String accountId)
             throws SalesForceUnauthorizedException {
-        LOGGER.info("About get list of contact roles from SalesForce");
-        validateSalesForceId(contactId);
+        LOGGER.info("About get list of contact roles from SalesForce");        
         validateSalesForceId(accountId);
         WebResource resource1 = createQueryResource(
-                "Select Id, Contact__c, Member_Org_Role__c From Membership_Contact_Role__c Where Contact__c = '%s' And Organization__c='%s'", contactId, accountId);
+                "Select Id, Contact__c, Contact_Curr_Email__c, Member_Org_Role__c From Membership_Contact_Role__c Where Organization__c='%s' And Current__c = True", accountId);
         WebResource resource = resource1;
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
         return salesForceAdapter.createContactRolesFromJson(result);
-    }
-
+    }    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * 
      * @throws SalesForceUnauthorizedException
