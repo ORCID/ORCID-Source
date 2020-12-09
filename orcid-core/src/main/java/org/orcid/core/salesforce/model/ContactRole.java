@@ -14,7 +14,7 @@ public class ContactRole implements Serializable {
     // The SalesForce Id of the role object itself
     private String id;
     private String accountId;
-    private String contactId;
+    private String contactId;    
     private Boolean isVotingContact;
     private Boolean isCurrent;
     private ContactRoleType roleType;
@@ -73,11 +73,10 @@ public class ContactRole implements Serializable {
     public void setRoleType(ContactRoleType roleType) {
         this.roleType = roleType;
     }
-
     @Override
     public String toString() {
-        return "ContactRole [id=" + id + ", accountId=" + accountId + ", contactId=" + contactId + ", isVotingContact=" + isVotingContact + ", isCurrent=" + isCurrent
-                + ", roleType=" + roleType + "]";
+        return "ContactRole [id=" + id + ", accountId=" + accountId + ", contactId=" + contactId + ", isVotingContact="
+                + isVotingContact + ", isCurrent=" + isCurrent + ", roleType=" + roleType + "]";
     }
 
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.StringUtil;
 import org.ehcache.Cache;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
@@ -93,7 +95,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     private Cache<String, List<Contact>> salesForceContactsCache;
 
     @Resource(name = "salesForceContactsForAuthenticationCache")
-    private Cache<String, List<Contact>> salesForceContactsForAuthenticationCache;
+    private Cache<Map<String, String>, List<Contact>> salesForceContactsForAuthenticationCache;
     
     @Resource
     private SalesForceDao salesForceDao;
@@ -200,8 +202,13 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
 
     @Override
-    public List<Contact> retrieveContactsForAuthenticationByAccountId(String accountId) {
-        return salesForceContactsForAuthenticationCache.get(accountId);
+    public List<Contact> retrieveContactsForAuthenticationByAccountId(String accountId, String consortiumLeadId) {
+        Map<String, String> ids = new HashMap<String, String>();
+        ids.put("accountId", accountId);
+        if(!StringUtil.isBlank(consortiumLeadId)) {
+            ids.put("consortiumLeadId", consortiumLeadId);
+        }
+        return salesForceContactsForAuthenticationCache.get(ids);
     }
     
     @Override
@@ -853,8 +860,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     }
     
     @Override
-    public boolean isActiveContact(String accountId, String currentUserOrcid) {
-        List<Contact> contacts = retrieveContactsForAuthenticationByAccountId(accountId); 
+    public boolean isActiveContact(String accountId, String consortiumLeadId, String currentUserOrcid) {
+        List<Contact> contacts = retrieveContactsForAuthenticationByAccountId(accountId, consortiumLeadId); 
         org.orcid.jaxb.model.v3.release.record.Emails verifiedEmails = emailManagerReadOnlyV3.getVerifiedEmails(currentUserOrcid);
         List<org.orcid.jaxb.model.v3.release.record.Email> verifiedEmailsList = verifiedEmails.getEmails();
         for(Contact c : contacts) {

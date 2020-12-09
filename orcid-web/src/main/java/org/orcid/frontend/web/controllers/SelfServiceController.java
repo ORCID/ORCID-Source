@@ -105,7 +105,9 @@ public class SelfServiceController extends BaseController {
 
     @RequestMapping("/{accountId}")
     public ModelAndView getManageConsortiumPage(@PathVariable(required = false) String accountId) {
-        if (!salesForceManager.isActiveContact(accountId, getCurrentUserOrcid())) {
+        MemberDetails memberDetails = salesForceManager.retrieveDetails(accountId);
+        String consortiumLeadId = (memberDetails.getMember() != null) ? memberDetails.getMember().getConsortiumLeadId() : null;
+        if (!salesForceManager.isActiveContact(accountId, consortiumLeadId, getCurrentUserOrcid())) {
             LOGGER.warn("User " + getCurrentUserOrcid() + " doesnt have any email address set as contact in salesforce org " + accountId);
             return new ModelAndView("redirect:/my-orcid");
         }
@@ -490,8 +492,10 @@ public class SelfServiceController extends BaseController {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);
         }
         
+        String consortiumLeadId = (memberDetails.getMember() != null) ? memberDetails.getMember().getConsortiumLeadId() : null;
+        
         //Check user is still an active contact in salesforce
-        if (!salesForceManager.isActiveContact(memberId, getCurrentUserOrcid())) {
+        if (!salesForceManager.isActiveContact(memberId, consortiumLeadId, getCurrentUserOrcid())) {
             throw new OrcidUnauthorizedException("You are not authorized for account ID = " + memberId);
         }
     }
