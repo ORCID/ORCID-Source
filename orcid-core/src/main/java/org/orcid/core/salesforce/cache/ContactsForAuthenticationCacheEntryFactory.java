@@ -7,11 +7,6 @@ import javax.annotation.Resource;
 import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 
-/**
- * 
- * @author Will Simpson
- *
- */
 public class ContactsForAuthenticationCacheEntryFactory implements CacheLoaderWriter<Object, Object> {
 
     @Resource
@@ -32,7 +27,7 @@ public class ContactsForAuthenticationCacheEntryFactory implements CacheLoaderWr
 
     @Override
     public void delete(Object key) throws Exception {
-     // Not needed, populating only
+        // Not needed, populating only
     }
 
 }
