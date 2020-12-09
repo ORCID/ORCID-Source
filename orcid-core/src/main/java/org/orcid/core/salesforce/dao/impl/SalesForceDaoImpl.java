@@ -646,7 +646,8 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return salesForceAdapter.createContactRolesFromJson(result);
     }
     
-    /*
+    /**
+     * 
      * @throws SalesForceUnauthorizedException If the status code from
      * SalesForce is 401, e.g. access token expired.
      * 
@@ -696,39 +697,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
         return salesForceAdapter.createContactsWithRolesFromJson(result);
     }
-      
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     /**
      * 
      * @throws SalesForceUnauthorizedException
