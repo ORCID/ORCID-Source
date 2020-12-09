@@ -1192,7 +1192,7 @@
         <property name="timeToIdleSeconds" value="${org.orcid.core.salesForce.cache.contacts_for_authentication:600}" />
         <property name="copyValues" value="false" />
         <property name="cacheLoaderWriter">
-            <bean class="org.orcid.core.salesforce.cache.ContactsCacheEntryFactory" />
+            <bean class="org.orcid.core.salesforce.cache.ContactsForAuthenticationCacheEntryFactory" />
         </property>
     </bean>
     

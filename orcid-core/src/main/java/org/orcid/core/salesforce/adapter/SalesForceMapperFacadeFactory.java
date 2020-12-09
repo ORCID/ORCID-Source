@@ -18,7 +18,6 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.OrgId;
-import org.orcid.core.togglz.Features;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomConverter;
