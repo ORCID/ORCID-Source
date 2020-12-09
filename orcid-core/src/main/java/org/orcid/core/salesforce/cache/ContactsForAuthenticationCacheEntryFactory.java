@@ -1,5 +1,7 @@
 package org.orcid.core.salesforce.cache;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
@@ -17,8 +19,10 @@ public class ContactsForAuthenticationCacheEntryFactory implements CacheLoaderWr
 
     @Override
     public Object load(Object key) throws Exception {
-        String accountId = (String) key;
-        return salesForceDao.retrieveContactsWithRolesByAccountId(accountId);
+        Map<String, String> ids = (Map<String, String>) key;
+        String accountId = ids.get("accountId");
+        String consortiumLeadId = ids.get("consortiumLeadId");
+        return salesForceDao.retrieveContactsAllowedToEdit(accountId, consortiumLeadId);
     }
 
     @Override

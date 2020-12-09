@@ -10,6 +10,7 @@ import java.util.function.Function;
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.SalesForceUnauthorizedException;
@@ -130,11 +131,6 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     }
 
     @Override
-    public List<ContactRole> retrieveCurrentMembershipContactRolesFromSalesForceByAccountId(String accountId) {
-        return retry(accessToken -> retrieveCurrentMembershipContactRolesFromSalesForceByAccountId(accessToken, accountId));
-    }
-    
-    @Override
     public String retrievePremiumConsortiumMemberTypeId() {
         return retry(accessToken -> retrievePremiumConsortiumMemberTypeIdFromSalesForce(accessToken));
     }
@@ -223,6 +219,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     @Override
     public void removeOpportunity(String opportunityId) {
         retryConsumer(accessToken -> removeOpportunityInSalesForce(accessToken, opportunityId));
+    }
+
+    @Override
+    public List<Contact> retrieveContactsAllowedToEdit(String accountId, String consortiumLeadId) {
+        return retry(accessToken -> retrieveContactsAllowedToEdit(accessToken, accountId, consortiumLeadId));
     }
     
     @Override
@@ -644,26 +645,33 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
         return salesForceAdapter.createContactRolesFromJson(result);
     }
+    
+    /*
+     * @throws SalesForceUnauthorizedException If the status code from
+     * SalesForce is 401, e.g. access token expired.
+     * 
+     */
+    private List<Contact> retrieveContactsAllowedToEdit(String accessToken, String accountId, String consortiumLeadId) {
+        LOGGER.info("About to get list of contacts from SalesForce allowed to edit account with id " + accountId);
+        validateSalesForceId(accountId);
+        WebResource resource;
+        StringBuilder query = new StringBuilder(
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Contact_Curr_Email__c, Member_Org_Role__c, Voting_Contact__c, Current__c, Organization__c From Membership_Contact_Roles__r");
+        query.append(" Where Current__c = True");
+        query.append(" Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'");
+        if (!StringUtils.isBlank(consortiumLeadId)) {
+            query.append(" Or Id='%s'");
+            resource = createQueryResource(query.toString(), accountId, consortiumLeadId);
+        } else {
+            resource = createQueryResource(query.toString(), accountId);
+        }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
+        ClientResponse response = doGetRequest(resource, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
+        return salesForceAdapter.createContactsWithRolesFromJson(result);
+    }
+                    
     /**
      * 
      * @throws SalesForceUnauthorizedException
@@ -679,6 +687,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
                 "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Member_Org_Role__c, Voting_Contact__c, Current__c, Organization__c From Membership_Contact_Roles__r");
         if (!includeNonCurrent) {
             query.append(" Where Current__c = True");
+            
         }
         query.append(" Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'");
         WebResource resource = createQueryResource(query.toString(), accountId);
@@ -687,26 +696,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
         return salesForceAdapter.createContactsWithRolesFromJson(result);
     }
-        
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
-    private List<ContactRole> retrieveCurrentMembershipContactRolesFromSalesForceByAccountId(String accessToken, String accountId)
-            throws SalesForceUnauthorizedException {
-        LOGGER.info("About get list of contact roles from SalesForce");        
-        validateSalesForceId(accountId);
-        WebResource resource1 = createQueryResource(
-                "Select Id, Contact__c, Contact_Curr_Email__c, Member_Org_Role__c From Membership_Contact_Role__c Where Organization__c='%s' And Current__c = True", accountId);
-        WebResource resource = resource1;
-        ClientResponse response = doGetRequest(resource, accessToken);
-        checkAuthorization(response);
-        JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
-        return salesForceAdapter.createContactRolesFromJson(result);
-    }    
+      
     
     
     
