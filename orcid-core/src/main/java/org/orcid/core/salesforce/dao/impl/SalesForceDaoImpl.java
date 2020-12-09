@@ -577,7 +577,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         query.append(" Where Current__c = True");
         query.append(" Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'");
         if (!StringUtils.isBlank(consortiumLeadId)) {
-            query.append(" Or Id='%s'");
+            query.append(" OR Id='%s'");
             resource = createQueryResource(query.toString(), accountId, consortiumLeadId);
         } else {
             resource = createQueryResource(query.toString(), accountId);
@@ -586,7 +586,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
-        return salesForceAdapter.createContactsWithRolesFromJson(result);
+        return salesForceAdapter.extractAllContactsWithRolesFromJson(result);
     }
     
     /**
