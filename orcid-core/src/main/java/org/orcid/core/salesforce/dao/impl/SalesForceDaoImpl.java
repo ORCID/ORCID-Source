@@ -263,6 +263,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         }
         return this.consotiumLeadRecordTypeIds;
     }
+    
+    @Override
+    public void clearConsortiumLeadIdsCache() {
+        this.consotiumLeadRecordTypeIds = null;
+    }
 
     private String escapeStringInput(String input) {
         if (input == null) {
