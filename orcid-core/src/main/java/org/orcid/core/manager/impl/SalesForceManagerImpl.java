@@ -779,6 +779,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         premiumConsortiumMemberTypeId = null;
         consortiumMemberRecordTypeId = null;
         badgesMap = null;
+        salesForceDao.clearConsortiumLeadIdsCache();
     }
 
     private void evictLists() {

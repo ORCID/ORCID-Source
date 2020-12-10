@@ -110,5 +110,7 @@ public interface SalesForceDao {
     String retrieveConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember();
     
     List<Contact> retrieveContactsAllowedToEdit(String accountId, String consortiumLeadId);
+    
+    void clearConsortiumLeadIdsCache();
 
 }
