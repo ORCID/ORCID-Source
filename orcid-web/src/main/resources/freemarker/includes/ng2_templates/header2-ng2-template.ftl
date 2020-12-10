@@ -490,7 +490,7 @@
 
                     <!-- RESOURCES -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUriTemporal}}/orcid-community/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.resources")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUriTemporal}}/resources/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.resources")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <!-- NEWS & EVENTS -->
