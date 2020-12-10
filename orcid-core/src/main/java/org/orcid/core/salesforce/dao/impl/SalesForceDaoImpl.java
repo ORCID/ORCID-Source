@@ -2,7 +2,6 @@ package org.orcid.core.salesforce.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -250,6 +249,10 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     
     @Override
     public List<String> getConsortiumLeadIds() {
+        return retry(accessToken -> getConsortiumLeadIds(accessToken));
+    }
+    
+    private List<String> getConsortiumLeadIds(String accessToken) {
         if (consotiumLeadRecordTypeIds == null) {
             WebResource resource1 = createQueryResource("Select Id From RecordType Where Name = 'Consortium Lead'");
             WebResource resource = resource1;
