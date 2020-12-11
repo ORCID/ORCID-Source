@@ -1,1 +1,1 @@
-release-1.292.13_patch_about_drupal_redirects_1
+release-1.292.13_patch_about_drupal_redirects_2
