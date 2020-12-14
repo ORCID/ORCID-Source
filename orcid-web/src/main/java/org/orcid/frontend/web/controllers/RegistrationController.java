@@ -585,7 +585,10 @@ public class RegistrationController extends BaseController {
         }
 
         if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-            redirect = "redirect:"+ orcidUrlManager.getBaseUrl() +"/signin?" + sb.toString();
+            // TODO add parameters to my-orcid redirect @DanielPalafox
+            if (redirect.indexOf("signin") > 0) {
+                redirect = "redirect:"+ orcidUrlManager.getBaseUrl() +"/signin?" + sb.toString();
+            }
         }
 
         return new ModelAndView(redirect);
