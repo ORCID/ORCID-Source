@@ -8,7 +8,7 @@
 		<groupId>org.orcid</groupId>
 		<artifactId>orcid-parent</artifactId>        
 		<relativePath>../pom.xml</relativePath>
-		<version>release-1.292.14</version>
+		<version>release-1.292.15</version>
 	</parent>
     
 	<properties>
