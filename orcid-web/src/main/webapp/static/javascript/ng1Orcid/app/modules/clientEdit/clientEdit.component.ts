@@ -112,7 +112,7 @@ export class ClientEditComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 var pubBaseUri = data.messages['PUB_BASE_URI'];
-                this.swaggerUri = pubBaseUri + '/v3.0/';
+                this.swaggerUri = pubBaseUri;
                 this.swaggerMemberUri = this.swaggerUri.replace("pub","api");
             },
             error => {

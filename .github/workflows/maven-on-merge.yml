@@ -1,17 +1,13 @@
-# This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+name: ORCID-Source on merge
 
-name: ORCID-Source CI
-
-on:  
-  pull_request:
-    branches: [ master ]
+'on':
+  push:
+    branches:
+      - master
 
 jobs:
   build-and-test:
-
     runs-on: ubuntu-18.04
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
@@ -30,3 +26,4 @@ jobs:
       uses: scacap/action-surefire-report@v1
       with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
