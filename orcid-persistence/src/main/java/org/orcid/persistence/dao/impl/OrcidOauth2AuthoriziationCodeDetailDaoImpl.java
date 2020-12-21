@@ -3,10 +3,8 @@ package org.orcid.persistence.dao.impl;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
-import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +23,6 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<O
     }
 
     @Override
-    @ExcludeFromProfileLastModifiedUpdate
     public OrcidOauth2AuthoriziationCodeDetail removeAndReturn(String code) {
         OrcidOauth2AuthoriziationCodeDetail orcidOauth2AuthoriziationCodeDetail = find(code);
 

@@ -6,7 +6,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -44,7 +43,6 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    @ExcludeFromProfileLastModifiedUpdate
     public void removeByRefreshTokenValue(String refreshTokenValue) {
         Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE, revocationDate=now(), revokeReason = 'CLIENT_REVOKED' where refreshTokenValue = :refreshToken");
         query.setParameter("refreshToken", refreshTokenValue);
@@ -63,7 +61,6 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
-    @ExcludeFromProfileLastModifiedUpdate
     public List<OrcidOauth2TokenDetail> findByAuthenticationKey(String authenticationKey) {
         TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where authenticationKey = :authenticationKey",
                 OrcidOauth2TokenDetail.class);

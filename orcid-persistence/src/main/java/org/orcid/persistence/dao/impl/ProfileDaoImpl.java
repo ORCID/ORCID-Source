@@ -14,7 +14,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
@@ -42,7 +41,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @ExcludeFromProfileLastModifiedUpdate
     public void remove(String id) {
         super.remove(id);
     }
@@ -396,7 +394,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
     public void updateIndexingStatus(String orcid, IndexingStatus indexingStatus) {
         String queryString = null;
         if (IndexingStatus.DONE.equals(indexingStatus)) {
@@ -437,7 +434,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
     public void updateLastModifiedDateWithoutResult(String orcid) {
         Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
         query.setParameter("orcid", orcid);
@@ -463,7 +459,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @Override
     @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
     public void updateLastModifiedDateAndIndexingStatus(String orcid, IndexingStatus indexingStatus) {
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = :indexingStatus where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
@@ -711,7 +706,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
     public void updateLastLoginDetails(String orcid, String ipAddress) {
         Query query = entityManager.createNativeQuery("update profile set last_login=now(), user_last_ip=:ipAddr where orcid=:orcid");
         query.setParameter("orcid", orcid);
