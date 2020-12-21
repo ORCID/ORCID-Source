@@ -203,4 +203,10 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     public void persist(OrcidOauth2TokenDetail token) {
         super.persist(token);
     }
+    
+    @Override
+    @UpdateProfileLastModified
+    public OrcidOauth2TokenDetail merge(OrcidOauth2TokenDetail token) {
+        return super.merge(token);
+    }
 }
