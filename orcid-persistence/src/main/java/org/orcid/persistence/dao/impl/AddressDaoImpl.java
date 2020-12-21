@@ -169,6 +169,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     }    
     
     @Override
+    @Transactional
     @UpdateProfileLastModified
     public void persist(AddressEntity address) {
         super.persist(address);
