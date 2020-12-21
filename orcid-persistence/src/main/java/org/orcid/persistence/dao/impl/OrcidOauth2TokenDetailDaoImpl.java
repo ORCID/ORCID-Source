@@ -7,6 +7,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
+import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
@@ -198,5 +199,11 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         if (count == 0) {
             LOGGER.debug("Cannot remove disable tokens for client/orcid {0}/{1}", clientDetailsId, orcid);
         }
+    }
+    
+    @Override
+    @UpdateProfileLastModified
+    public void persist(OrcidOauth2TokenDetail token) {
+        super.persist(token);
     }
 }

@@ -283,10 +283,20 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * 
      */
     @Override
-    public void updateLastModifed(String orcid) {
+    public void updateLastModifedAndIndexingStatus(String orcid) {
         profileLastModifiedAspect.updateLastModifiedDateAndIndexingStatus(orcid);
     }
 
+    /**
+     * Updates the DB and the cached value in the request scope.
+     * 
+     */
+    @Override
+    public void updateLastModifed(String orcid) {
+        profileLastModifiedAspect.updateLastModifiedDate(orcid);
+    }
+
+    
     @Override
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);

@@ -121,7 +121,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
             LOG.info("Got batch of {} unclaimed profiles to flag for indexing", orcidsToFlag.size());
             for (String orcid : orcidsToFlag) {
                 LOG.info("About to flag unclaimed profile for indexing: {}", orcid);
-                profileEntityManager.updateLastModifed(orcid);
+                profileEntityManager.updateLastModifedAndIndexingStatus(orcid);
             }
         } while (!orcidsToFlag.isEmpty());
     }

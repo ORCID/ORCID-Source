@@ -56,6 +56,8 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     boolean deactivateRecord(String orcid);
     
     void updateLastModifed(String orcid);
+    
+    void updateLastModifedAndIndexingStatus(String orcid);
 
     void updateLocale(String orcid, AvailableLocales locale);
 
@@ -78,4 +80,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     void enable2FA(String orcid);
 
     void update2FASecret(String orcid, String secret);
+
+    
 }

@@ -6,6 +6,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -35,6 +36,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
 
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public void remove(String giverOrcid, String receiverOrcid) {
         Query query = entityManager.createQuery("delete from GivenPermissionToEntity g where g.giver = :giverOrcid and g.receiver = :receiverOrcid");
         query.setParameter("giverOrcid", giverOrcid);
@@ -57,5 +59,12 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
         query.setParameter("receiverOrcid", receiverOrcid);
         return query.getResultList();
     }
+    
+    @Override
+    @UpdateProfileLastModified
+    public GivenPermissionToEntity merge(GivenPermissionToEntity entity) {
+        return super.merge(entity);
+    }
+         
 
 }

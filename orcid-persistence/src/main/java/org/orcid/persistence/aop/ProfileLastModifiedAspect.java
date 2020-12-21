@@ -38,15 +38,9 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileLastModifiedAspect.class);    
     
-    //@formatter:off
-    private static final String POINTCUT_DEFINITION_BASE = "(execution(* org.orcid.persistence.dao.*.remove*(..))"
-            + "|| execution(* org.orcid.persistence.dao.*.delete*(..))" + "|| execution(* org.orcid.persistence.dao.*.update*(..))"
-            + "|| execution(* org.orcid.persistence.dao.*.merge*(..))" + "|| execution(* org.orcid.persistence.dao.*.add*(..))"
-            + "|| execution(* org.orcid.persistence.dao.*.persist*(..)))"
-            + "&& !@annotation(org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate)"
-            + "&& !within(org.orcid.persistence.dao.impl.WebhookDaoImpl)";
-
-    //@formatter:on    
+    private static final String UPDATE_PROFILE_LAST_MODIFIED = "@annotation(org.orcid.persistence.aop.UpdateProfileLastModified)";
+    
+    private static final String UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS = "@annotation(org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus)";
     
     public boolean isEnabled() {
         return enabled;
@@ -63,14 +57,8 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     public void setName(String name) {
         this.name = name;
     }
-
-    /** Runs after any method that updates a record.
-     * Updates the last modified and refreshes the request-scope last modified cache.
-     * 
-     * @param joinPoint
-     * @param orcid
-     */
-    @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(orcid, ..)")
+    
+    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED + " && args(orcid, ..)")
     public void updateProfileLastModified(JoinPoint joinPoint, String orcid) {
         if (!enabled) {
             return;
@@ -80,12 +68,10 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
-        
-        //update and clear scope cache
-        this.updateLastModifiedDateAndIndexingStatus(orcid);
+        this.updateLastModifiedDate(orcid);
     }
 
-    @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(profileAware, ..)")
+    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED + " && args(profileAware, ..)")
     public void updateProfileLastModified(JoinPoint joinPoint, ProfileAware profileAware) {
         if (!enabled) {
             return;
@@ -97,7 +83,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         }
     }
 
-    @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(orcidAware, ..)")
+    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED + " && args(orcidAware, ..)")
     public void updateProfileLastModified(JoinPoint joinPoint, OrcidAware orcidAware) {
         if (!enabled) {
             return;
@@ -108,12 +94,48 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         }
     }
     
+    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS + " && args(orcid, ..)")
+    public void updateProfileLastModifiedAndIndexingStatus(JoinPoint joinPoint, String orcid) {
+        if (!enabled) {
+            return;
+        }
+        if (LOGGER.isDebugEnabled()) {
+            if (!OrcidStringUtils.isValidOrcid(orcid)) {
+                LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
+            }
+        }
+        this.updateLastModifiedDateAndIndexingStatus(orcid);
+    }
+
+    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS + " && args(profileAware, ..)")
+    public void updateProfileLastModifiedAndIndexingStatus(JoinPoint joinPoint, ProfileAware profileAware) {
+        if (!enabled) {
+            return;
+        }
+        ProfileEntity profile = profileAware.getProfile();
+        if (profile != null) {
+            String orcid = profile.getId();
+            updateProfileLastModifiedAndIndexingStatus(joinPoint, orcid);
+        }
+    }
+
+    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS + " && args(orcidAware, ..)")
+    public void updateProfileLastModifiedAndIndexingStatus(JoinPoint joinPoint, OrcidAware orcidAware) {
+        if (!enabled) {
+            return;
+        }
+        String orcid = orcidAware.getOrcid();
+        if(!StringUtils.isEmpty(orcid)) {
+            updateProfileLastModifiedAndIndexingStatus(joinPoint, orcid);
+        }
+    }
+    
     @Override
     public int getOrder() {
         return PRECEDENCE;
     }
 
-    /** Updates the last modified date and clears the request-scope last modified cache.
+    /** Updates the last modified date and indexing status and clears the request-scope last modified cache.
      * 
      * @param orcid
      */    
@@ -122,6 +144,20 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             return;
         }
         profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (sra != null)
+            sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
+    }
+    
+    /** Updates the last modified date and clears the request-scope last modified cache.
+     * 
+     * @param orcid
+     */    
+    public void updateLastModifiedDate(String orcid) {
+        if (!enabled) {
+            return;
+        }
+        profileDao.updateLastModifiedDateWithoutResult(orcid);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             

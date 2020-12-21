@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -58,7 +59,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Override
     @Transactional
     public boolean updateOtherName(OtherNameEntity otherName) {
-        throw new UnsupportedOperationException("This opperation is not supported yet");
+        throw new UnsupportedOperationException("This operation is not supported yet");
     }
 
     /**
@@ -70,6 +71,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean addOtherName(String orcid, String displayName) {
         Query query = entityManager
                 .createNativeQuery("INSERT INTO other_name (other_name_id, date_created, last_modified, display_name, orcid) VALUES (nextval('other_name_seq'), now(), now(), :displayName, :orcid)");
@@ -86,6 +88,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteOtherName(OtherNameEntity otherName) {
         Assert.notNull(otherName);
         Query query = entityManager.createQuery("DELETE FROM OtherNameEntity WHERE id=:id");
@@ -103,6 +106,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllOtherNames(String orcid) {
         Query query = entityManager.createQuery("delete from OtherNameEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -192,5 +196,17 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         query.setParameter("ids", clientProfileOrcidIds);
         query.setMaxResults(max);
         return query.getResultList();
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void persist(OtherNameEntity entity) {
+        super.persist(entity);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public OtherNameEntity merge(OtherNameEntity entity) {
+        return super.merge(entity);
     }
 }

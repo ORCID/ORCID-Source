@@ -45,7 +45,6 @@ public class InternalSSODaoImpl extends GenericDaoImpl<InternalSSOEntity, String
 
     @Override
     @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
     public boolean update(String orcid, String token) {
         Query query = entityManager.createNativeQuery("UPDATE internal_sso SET last_modified = now() WHERE orcid = :orcid AND token = :token");
         query.setParameter("orcid", orcid);

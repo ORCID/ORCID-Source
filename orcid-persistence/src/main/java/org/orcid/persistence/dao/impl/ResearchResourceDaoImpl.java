@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.persistence.aop.UpdateProfileLastModified;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ResearchResourceDao;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeResearchResource(String userOrcid, Long researchResourceId) {
         Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity where research_resource_id=:researchResourceId");
         queryItem.setParameter("researchResourceId", researchResourceId);
@@ -45,6 +48,8 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     }
 
     @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void removeResearchResources(String userOrcid) {
         Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity where research_resource_id in (SELECT id from ResearchResourceEntity where profile.id=:userOrcid)");
         queryItem.setParameter("userOrcid", userOrcid);
@@ -56,6 +61,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     }
 
     @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, String visibility) {
         Query query = entityManager
                 .createQuery("update ResearchResourceEntity set visibility=:visibility, lastModified=now() where id in (:researchResourceIds) and  profile.id=:orcid");
@@ -75,6 +81,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public boolean updateToMaxDisplay(String orcid, Long researchResourceId) {
         Query query = entityManager.createNativeQuery("UPDATE research_resource SET display_index=(select coalesce(MAX(display_index) + 1, 0) from research_resource where orcid=:orcid and id != :researchResourceId ), last_modified=now() WHERE id=:researchResourceId");        
         query.setParameter("researchResourceId", researchResourceId);
@@ -96,6 +103,18 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
         Query query = entityManager.createNativeQuery("SELECT distinct rr.id FROM research_resource rr LEFT JOIN research_resource_org rro ON rr.id = rro.research_resource_id LEFT JOIN research_resource_item rri ON rr.id = rri.research_resource_id LEFT JOIN research_resource_item_org rrio ON rri.id = rrio.research_resource_item_id WHERE rro.org_id IN (:orgIds) OR rrio.org_id IN (:orgIds)");
         query.setParameter("orgIds", orgIds);
         return query.getResultList();
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void persist(ResearchResourceEntity entity) {
+        super.persist(entity);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public ResearchResourceEntity merge(ResearchResourceEntity entity) {
+        return super.merge(entity);
     }
 
 }

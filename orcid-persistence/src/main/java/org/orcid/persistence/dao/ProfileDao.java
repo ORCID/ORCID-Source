@@ -73,7 +73,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     
     List<ProfileEntity> findByOrcidType(String orcidType);
 
-    @Deprecated
     void updateLastModifiedDateWithoutResult(String orcid);
 
     void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus);

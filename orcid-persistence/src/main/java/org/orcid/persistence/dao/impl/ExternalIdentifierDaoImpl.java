@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,6 +30,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
      */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeExternalIdentifier(String orcid, String externalIdReference) {
         Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where owner.id=:orcid and externalIdReference=:externalIdReference");
         query.setParameter("orcid", orcid);
@@ -70,6 +72,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeExternalIdentifier(String orcid, Long id) {
         Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where owner.id=:orcid and id=:id");
         query.setParameter("orcid", orcid);
@@ -79,10 +82,22 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllExternalIdentifiers(String orcid) {
         Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
 
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void persist(ExternalIdentifierEntity externalId) {
+        super.persist(externalId);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public ExternalIdentifierEntity merge(ExternalIdentifierEntity externalId) {
+        return super.merge(externalId);
+    }
 }

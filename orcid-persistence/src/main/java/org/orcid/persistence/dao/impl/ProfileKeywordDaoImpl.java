@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -57,6 +58,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteProfileKeyword(String orcid, String keyword) {
         Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE profile.id = :orcid AND keywordName = :keyword");
         query.setParameter("orcid", orcid);
@@ -72,6 +74,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean addProfileKeyword(String orcid, String keyword, String sourceId, String clientSourceId, String visibility) {
         Query query = entityManager
                 .createNativeQuery("INSERT INTO profile_keyword (id, date_created, last_modified, profile_orcid, keywords_name, source_id, client_source_id, visibility) VALUES (nextval('keyword_seq'), now(), now(), :orcid, :keywords_name, :source_id, :client_source_id, :keywords_visibility)");
@@ -93,6 +96,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteProfileKeyword(ProfileKeywordEntity entity) {        
         Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE id=:id");
         query.setParameter("id", entity.getId());
@@ -101,6 +105,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllKeywords(String orcid) {
         Query query = entityManager.createQuery("delete from ProfileKeywordEntity where profile_orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -191,5 +196,16 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         query.setMaxResults(max);
         return query.getResultList();
     }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void persist(ProfileKeywordEntity entity) {
+        super.persist(entity);
+    }
 
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public ProfileKeywordEntity merge(ProfileKeywordEntity entity) {
+        return super.merge(entity);
+    }
 }

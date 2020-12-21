@@ -62,9 +62,6 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
                     if (Features.ORCID_ANGULAR_INBOX.isActive()) {
                         notificationManager.sendNotificationToUserGrantingPermission(userOrcid, delegateOrcid);
                     }
-                    // Update last modified on delegate's profile so that the
-                    // granting user is visible to them immediately
-                    profileEntityManager.updateLastModifed(delegateOrcid);
                 }
             });
         }

@@ -15,6 +15,8 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
+import org.orcid.persistence.aop.UpdateProfileLastModified;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -336,6 +338,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void removeChildrenWithGeneratedIds(ProfileEntity profileEntity) {
         String orcid = profileEntity.getId();
         removeChildren(orcid, profileEntity.getResearcherUrls(), "user.id");
@@ -434,6 +437,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @ExcludeFromProfileLastModifiedUpdate
     public void updateLastModifiedDateWithoutResult(String orcid) {
         Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
         query.setParameter("orcid", orcid);
@@ -499,6 +503,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public void updateLocale(String orcid, String locale) {
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), locale = :locale where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
@@ -543,6 +548,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public void updateEncryptedPassword(String orcid, String encryptedPassword) {
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), encryptedPassword = :encryptedPassword where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
@@ -552,6 +558,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
             boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
         Query updateQuery = entityManager.createQuery(
@@ -578,6 +585,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public boolean updateDeveloperTools(String orcid, boolean enabled) {
         Query query = entityManager.createQuery("update ProfileEntity set enableDeveloperTools=:enabled, lastModified=now() where orcid=:orcid");
         if (enabled)
@@ -740,6 +748,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public boolean updateDefaultVisibility(String orcid, String visibility) {
         Query updateQuery = entityManager
                 .createQuery("update ProfileEntity set lastModified = now(), activitiesVisibilityDefault = :activitiesVisibilityDefault where orcid = :orcid");
@@ -791,6 +800,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public void update2FASecret(String orcid, String secret) {
         Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), secretFor2FA = :secret where orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -879,5 +889,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("startDate", startDate); 
         query.setParameter("endDate", endDate);
         return query.getResultList();
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public ProfileEntity merge(ProfileEntity entity) {
+        return super.merge(entity);
     }
 }

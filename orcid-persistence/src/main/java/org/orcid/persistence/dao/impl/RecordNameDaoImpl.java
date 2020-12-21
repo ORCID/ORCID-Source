@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -47,6 +48,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateRecordName(RecordNameEntity recordName) {
         Query query = entityManager.createNativeQuery(
                 "update record_name set credit_name = :creditName, family_name = :familyName, given_names = :givenNames, visibility = :visibility, last_modified = now() where orcid = :orcid");
@@ -78,5 +80,11 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
         TypedQuery<RecordNameEntity> query = entityManager.createQuery("FROM RecordNameEntity WHERE orcid in :ids", RecordNameEntity.class);
         query.setParameter("ids", orcids);
         return query.getResultList();
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void persist(RecordNameEntity entity) {
+        super.persist(entity);
     }
 }
