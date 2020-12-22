@@ -116,12 +116,14 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void persist(PeerReviewEntity entity) {
         super.persist(entity);
     }
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public PeerReviewEntity merge(PeerReviewEntity entity) {
         return super.merge(entity);
     }

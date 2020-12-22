@@ -887,6 +887,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public ProfileEntity merge(ProfileEntity entity) {
         return super.merge(entity);
     }

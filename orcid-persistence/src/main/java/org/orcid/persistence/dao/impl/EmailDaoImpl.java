@@ -421,18 +421,21 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void persist(EmailEntity email) {
         super.persist(email);
     }
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public EmailEntity merge(EmailEntity email) {
         return super.merge(email);
     }
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void remove(String id) {
         super.remove(id);
     }

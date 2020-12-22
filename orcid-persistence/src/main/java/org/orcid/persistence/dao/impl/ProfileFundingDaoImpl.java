@@ -386,12 +386,14 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void persist(ProfileFundingEntity entity) {
         super.persist(entity);
     }
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public ProfileFundingEntity merge(ProfileFundingEntity entity) {
         return super.merge(entity);
     }

@@ -91,12 +91,14 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
 
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional    
     public void persist(ExternalIdentifierEntity externalId) {
         super.persist(externalId);
     }
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public ExternalIdentifierEntity merge(ExternalIdentifierEntity externalId) {
         return super.merge(externalId);
     }

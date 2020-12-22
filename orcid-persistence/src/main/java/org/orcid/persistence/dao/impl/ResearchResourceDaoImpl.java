@@ -62,6 +62,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
 
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, String visibility) {
         Query query = entityManager
                 .createQuery("update ResearchResourceEntity set visibility=:visibility, lastModified=now() where id in (:researchResourceIds) and  profile.id=:orcid");
@@ -107,12 +108,14 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void persist(ResearchResourceEntity entity) {
         super.persist(entity);
     }
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public ResearchResourceEntity merge(ResearchResourceEntity entity) {
         return super.merge(entity);
     }

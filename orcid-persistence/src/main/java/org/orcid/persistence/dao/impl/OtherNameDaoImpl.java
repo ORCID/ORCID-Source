@@ -200,12 +200,14 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void persist(OtherNameEntity entity) {
         super.persist(entity);
     }
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public OtherNameEntity merge(OtherNameEntity entity) {
         return super.merge(entity);
     }

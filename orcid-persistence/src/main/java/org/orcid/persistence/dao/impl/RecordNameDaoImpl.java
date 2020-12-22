@@ -84,6 +84,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void persist(RecordNameEntity entity) {
         super.persist(entity);
     }

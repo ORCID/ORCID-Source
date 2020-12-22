@@ -62,6 +62,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
     
     @Override
     @UpdateProfileLastModified
+    @Transactional    
     public GivenPermissionToEntity merge(GivenPermissionToEntity entity) {
         return super.merge(entity);
     }

@@ -199,12 +199,14 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void persist(ProfileKeywordEntity entity) {
         super.persist(entity);
     }
 
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public ProfileKeywordEntity merge(ProfileKeywordEntity entity) {
         return super.merge(entity);
     }

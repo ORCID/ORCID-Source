@@ -198,12 +198,14 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     
     @Override
     @UpdateProfileLastModified
+    @Transactional
     public void persist(ResearcherUrlEntity entity) {
         super.persist(entity);
     }
     
     @Override
     @UpdateProfileLastModified
+    @Transactional
     public ResearcherUrlEntity merge(ResearcherUrlEntity entity) {
         return super.merge(entity);
     }

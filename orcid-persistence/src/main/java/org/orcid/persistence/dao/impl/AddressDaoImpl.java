@@ -177,12 +177,14 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     
     @Override
     @UpdateProfileLastModified
+    @Transactional
     public void remove(AddressEntity address) {
         super.remove(address);
     }
     
     @Override
     @UpdateProfileLastModified
+    @Transactional
     public AddressEntity merge(AddressEntity address) {
         return super.merge(address);
     }

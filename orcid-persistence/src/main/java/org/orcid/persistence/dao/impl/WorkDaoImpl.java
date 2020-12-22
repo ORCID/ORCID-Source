@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -134,7 +135,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @Override
     @Transactional
-    @UpdateProfileLastModifiedAndIndexingStatus
+    @UpdateProfileLastModified
     public boolean updateToMaxDisplay(String orcid, Long workId) {
         Query query = entityManager.createNativeQuery("UPDATE work SET display_index=(select coalesce(MAX(display_index) + 1, 0) from work where orcid=:orcid and work_id != :workId ), last_modified=now() WHERE work_id=:workId");        
         query.setParameter("workId", workId);
@@ -333,12 +334,14 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void persist(WorkEntity entity) {
         super.persist(entity);
     }
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public WorkEntity merge(WorkEntity entity) {
         return super.merge(entity);
     }

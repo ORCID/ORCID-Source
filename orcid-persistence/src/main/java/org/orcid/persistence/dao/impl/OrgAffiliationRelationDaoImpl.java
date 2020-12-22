@@ -100,6 +100,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      */
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public boolean updateVisibilitiesOnOrgAffiliationRelation(String userOrcid, ArrayList<Long> orgAffiliationRelationIds, String visibility) {
         Query query = entityManager.createQuery(
                 "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:userOrcid and id in (:orgAffiliationRelationIds)");
@@ -401,12 +402,14 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public void persist(OrgAffiliationRelationEntity affiliation) {
         super.persist(affiliation);
     }
     
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public OrgAffiliationRelationEntity merge(OrgAffiliationRelationEntity affiliation) {
         return super.merge(affiliation);
     }
