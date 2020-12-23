@@ -1,5 +1,5 @@
 {
-	"site" : "www.example.com",
+	"site" : "https://qa.orcid.org",
 	"issues" : [
 		{ 
 			"id" : "10038",
