@@ -17,7 +17,6 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: OWASP ZAP Full Scan
-        uses: zaproxy/action-baseline@v0.3.0
+        uses: zaproxy/action-full-scan@v0.1.0
         with:
           target: "https://qa.orcid.org"
-          cmd_options: '-p ./.zap/progress.zap'
