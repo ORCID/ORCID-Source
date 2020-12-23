@@ -20,4 +20,4 @@ jobs:
         uses: zaproxy/action-baseline@v0.3.0
         with:
           target: "https://qa.orcid.org"
-          cmd_options: '-p .zap/progress.zap'
+          cmd_options: '-p ./.zap/progress.zap'
