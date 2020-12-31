@@ -83,20 +83,22 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
             }
         }
         NumberFormat nf = NumberFormat.getInstance(locale);
-        return nf.format(liveIds);
+        return nf.format(this.liveIds);
     }
 
     @Scheduled(fixedDelayString = "${statistics.key.interval.delay:3600000}")
     private void setLatestStatisticsSummary() {
         LOG.info("Getting the latest statistics summary");
         StatisticsSummary summary = statisticsManagerReadOnly.getLatestStatisticsModel();
-        if (!statisticsCache.containsKey(CACHE_STATISTICS_KEY)) {
-            statisticsCache.put(CACHE_STATISTICS_KEY, summary);
-        } else {
-            statisticsCache.replace(CACHE_STATISTICS_KEY, summary);
+        if(summary != null) {
+            if (!statisticsCache.containsKey(CACHE_STATISTICS_KEY)) {
+                statisticsCache.put(CACHE_STATISTICS_KEY, summary);
+            } else {
+                statisticsCache.replace(CACHE_STATISTICS_KEY, summary);
+            }
         }
-        LOG.info("Caching liveIds value to:" + summary.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value()));
-        this.liveIds = summary.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value());
+        this.liveIds = (summary == null) ? null : summary.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value());
+        LOG.info("Caching liveIds value to:" + this.liveIds);
         LOG.info("Latest statistics summary is set");
     }
 
