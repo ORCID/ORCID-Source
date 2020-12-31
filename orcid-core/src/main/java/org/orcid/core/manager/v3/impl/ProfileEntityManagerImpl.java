@@ -569,7 +569,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public void updatePassword(String orcid, String password) {
         String encryptedPassword = encryptionManager.hashForInternalUse(password);
-        profileDao.updateEncryptedPassword(orcid, encryptedPassword);
+        profileDao.changeEncryptedPassword(orcid, encryptedPassword);
         profileHistoryEventManager.recordEvent(ProfileHistoryEventType.RESET_PASSWORD, orcid);
     }
 
