@@ -175,7 +175,7 @@ public class ShibbolethController extends BaseController {
                 SecurityContextHolder.getContext().setAuthentication(null);
                 LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
-            return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
+            return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false, false, "shibboleth"));
         } 
         
         LOGGER.warn("Remote user was not null, however, userConnectionEntity is for {}", shibIdentityProvider);
@@ -233,7 +233,7 @@ public class ShibbolethController extends BaseController {
                 SecurityContextHolder.getContext().setAuthentication(null);
                 LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
-            codes.setRedirectUrl(calculateRedirectUrl(request, response, false));
+            codes.setRedirectUrl(calculateRedirectUrl(request, response, false, false, "shibboleth"));
             return codes;
         } else {
             if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
