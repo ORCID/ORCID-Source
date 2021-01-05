@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidAware;
 import org.orcid.persistence.jpa.entities.ProfileAware;
@@ -30,7 +30,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     private static String REQUEST_PROFILE_LAST_MODIFIED = "REQUEST_PROFILE_LAST_MODIFIED";
 
-    private ProfileDao profileDao;
+    private ProfileLastModifiedDao profileLastModifiedDao;
 
     private boolean enabled = true;
     
@@ -46,8 +46,8 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         return enabled;
     }
 
-    public void setProfileDao(ProfileDao profileDao) {
-        this.profileDao = profileDao;
+    public void setProfileLastModifiedDao(ProfileLastModifiedDao profileLastModifiedDao) {
+        this.profileLastModifiedDao = profileLastModifiedDao;
     }
 
     public void setEnabled(boolean enabled) {
@@ -143,7 +143,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         if (!enabled) {
             return;
         }
-        profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
+        profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
@@ -157,7 +157,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         if (!enabled) {
             return;
         }
-        profileDao.updateLastModifiedDateWithoutResult(orcid);
+        profileLastModifiedDao.updateLastModifiedDateWithoutResult(orcid);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
@@ -175,7 +175,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         if (sra != null)
             lastMod = (Date) sra.getAttribute(sraKey(orcid), ServletRequestAttributes.SCOPE_REQUEST);
         if (lastMod == null) {
-            lastMod = profileDao.retrieveLastModifiedDate(orcid);
+            lastMod = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
             if (sra != null)
                 sra.setAttribute(sraKey(orcid), lastMod, ServletRequestAttributes.SCOPE_REQUEST);
         }

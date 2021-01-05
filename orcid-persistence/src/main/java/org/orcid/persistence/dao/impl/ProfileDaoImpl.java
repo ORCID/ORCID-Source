@@ -1,6 +1,5 @@
 package org.orcid.persistence.dao.impl;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -414,32 +413,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getSingleResult();
     }
 
-    /**
-     * Fetches the last modified from the database Do not call unless it also
-     * manages the request level cache
-     * 
-     * @See ProfileLastModifiedAspect
-     * 
-     */
-    @SuppressWarnings("unchecked")
-    public Date retrieveLastModifiedDate(String orcid) {
-        Query nativeQuery = entityManager.createNativeQuery("Select p.last_modified FROM profile p WHERE p.orcid =:orcid");
-        nativeQuery.setParameter("orcid", orcid);
-        List<Timestamp> tsList = nativeQuery.getResultList();
-        if (tsList != null && !tsList.isEmpty()) {
-            return new Date(tsList.get(0).getTime());
-        }
-        return null;
-    }
-
-    @Override
-    @Transactional
-    public void updateLastModifiedDateWithoutResult(String orcid) {
-        Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
-        query.setParameter("orcid", orcid);
-        query.executeUpdate();
-    }
-
     @Override
     @Transactional
     public void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus) {
@@ -448,22 +421,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("lastModified", lastModified);
         query.setParameter("indexingStatus", indexingStatus.name());
         query.executeUpdate();
-    }
-
-    /**
-     * This method is used to update the last modified and indexing status
-     * without triggering last update events
-     * 
-     * @param orcid
-     * @param indexingStatus
-     */
-    @Override
-    @Transactional
-    public void updateLastModifiedDateAndIndexingStatus(String orcid, IndexingStatus indexingStatus) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = :indexingStatus where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("indexingStatus", indexingStatus);
-        updateQuery.executeUpdate();
     }
 
     private void updateWebhookProfileLastUpdate(String orcid) {

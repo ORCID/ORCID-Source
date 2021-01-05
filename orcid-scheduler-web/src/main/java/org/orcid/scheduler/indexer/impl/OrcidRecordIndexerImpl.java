@@ -15,6 +15,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.scheduler.indexer.OrcidRecordIndexer;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -55,6 +56,9 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
 
     @Resource
     private ProfileDao profileDaoReadOnly;
+    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDaoReadOnly;
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
@@ -170,7 +174,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
             for (Pair<String, IndexingStatus> p : orcidsForIndexing) {
                 String orcid = p.getLeft();
 
-                Date last = profileDaoReadOnly.retrieveLastModifiedDate(orcid);
+                Date last = profileLastModifiedDaoReadOnly.retrieveLastModifiedDate(orcid);
                 LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
                 
                 if(IndexingStatus.SOLR_UPDATE.equals(status)) {
