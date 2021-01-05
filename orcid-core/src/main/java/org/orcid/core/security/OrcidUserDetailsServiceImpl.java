@@ -141,6 +141,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
                     // If salesforce integration is down for any reason, lets
                     // add the ROLE since we know the user have access at least
                     // from the registry point of view
+                    LOGGER.warn("Salesforce integration seems to be down, couldn't verify user " + profile.getId(), e);                    
                     userDetails.getAuthorities().add(OrcidWebRole.ROLE_SELF_SERVICE);
                 }
             }
