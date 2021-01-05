@@ -545,7 +545,7 @@ public class SetUpClientsAndUsers {
             // password
             String encryptedPassword = encryptionManager.hashForInternalUse(params.get(PASSWORD));
             if (!encryptedPassword.equals(entity.getEncryptedPassword())) {                
-                profileDao.updateEncryptedPassword(orcid, encryptedPassword);                
+                profileDao.changeEncryptedPassword(orcid, encryptedPassword);                
             }
             
             //update email hash
