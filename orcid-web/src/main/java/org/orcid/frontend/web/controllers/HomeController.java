@@ -12,7 +12,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
@@ -26,7 +25,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
