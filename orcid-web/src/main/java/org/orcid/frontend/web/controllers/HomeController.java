@@ -68,6 +68,9 @@ public class HomeController extends BaseController {
     @Value("${org.orcid.frontend.web.googleAnalyticsTrackingId:}")
     private String googleAnalyticsTrackingId;
     
+    @Value("${org.orcid.frontend.web.hotjarTrackingId:}")
+    private String hotjarTrackingId;
+    
     @Value("${org.orcid.frontend.web.maintenanceMessage:}")
     private String maintenanceMessage;
     
@@ -270,6 +273,7 @@ public class HomeController extends BaseController {
         configDetails.setMessage("ABOUT_URI", aboutUri);
         configDetails.setMessage("ABOUT_URI_TEMPORAL", aboutUriTemporal);
         configDetails.setMessage("GA_TRACKING_ID", googleAnalyticsTrackingId);
+        configDetails.setMessage("HOTJAR_TRACKING_ID", hotjarTrackingId);
         configDetails.setMessage("MAINTENANCE_MESSAGE", getMaintenanceMessage());
         configDetails.setMessage("LIVE_IDS", statisticsCacheManager.retrieveLiveIds(localeManager.getLocale()));   
         configDetails.setMessage("SEARCH_BASE", getSearchBaseUrl());

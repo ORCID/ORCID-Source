@@ -272,7 +272,7 @@ public class LoginController extends OauthControllerBase {
         }
 
         JSONObject userData = socialSignInUtils.getFacebookUserData(code);
-        return processLogin(request, response, SocialType.FACEBOOK, userData);
+        return processSocialLogin(request, response, SocialType.FACEBOOK, userData);
     }
 
     @RequestMapping(value = { "/signin/google" }, method = RequestMethod.POST)
@@ -296,10 +296,10 @@ public class LoginController extends OauthControllerBase {
         }
 
         JSONObject userData = socialSignInUtils.getGoogleUserData(code);
-        return processLogin(request, response, SocialType.GOOGLE, userData);
+        return processSocialLogin(request, response, SocialType.GOOGLE, userData);
     }
 
-    private ModelAndView processLogin(HttpServletRequest request, HttpServletResponse response, SocialType socialType, JSONObject userData) throws JSONException {
+    private ModelAndView processSocialLogin(HttpServletRequest request, HttpServletResponse response, SocialType socialType, JSONObject userData) throws JSONException {
         String providerUserId = userData.getString(OrcidOauth2Constants.PROVIDER_USER_ID);
         String accessToken = userData.getString(OrcidOauth2Constants.ACCESS_TOKEN);
         Long expiresIn = Long.valueOf(userData.getString(OrcidOauth2Constants.EXPIRES_IN));
@@ -316,7 +316,7 @@ public class LoginController extends OauthControllerBase {
             if(userConnection.isLinked()) {                
                 // If user exists and is linked update user connection info
                 // and redirect to user record
-                view = updateUserConnectionAndLogUserIn(request, response, socialType, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
+                view = updateUserConnectionAndSocialLogUserIn(request, response, socialType, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
                         accessToken, expiresIn);
             } else {
                 // Forward to account link page
@@ -348,7 +348,7 @@ public class LoginController extends OauthControllerBase {
         return userConnectionManager.create(providerUserId, socialType.value(), email, userName, accessToken, expireTime);
     }
 
-    private ModelAndView updateUserConnectionAndLogUserIn(HttpServletRequest request, HttpServletResponse response, SocialType socialType, String userOrcid,
+    private ModelAndView updateUserConnectionAndSocialLogUserIn(HttpServletRequest request, HttpServletResponse response, SocialType socialType, String userOrcid,
             String userConnectionId, String providerUserId, String accessToken, Long expiresIn) {
         LOGGER.info("Updating existing userconnection for orcid={}, type={}, providerUserId={}", new Object[] { userOrcid, socialType.value(), providerUserId });
         // Update user connection info
@@ -369,7 +369,7 @@ public class LoginController extends OauthControllerBase {
 
         // Update security context with user information
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ModelAndView(new RedirectView(calculateRedirectUrl(request, response, false)));
+        return new ModelAndView(new RedirectView(calculateRedirectUrl(request, response, false, false, "social")));
     }
 
     private ModelAndView socialLinking(HttpServletRequest request) {
