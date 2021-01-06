@@ -571,19 +571,28 @@ public class BaseController {
             setError(creditName, "Pattern.registrationForm.nameSegment");
     }
 
+
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered) {
         return calculateRedirectUrl(request, response, justRegistered, false);
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered, boolean avoidOauthRedirect) {
+        return calculateRedirectUrl(request, response, justRegistered, avoidOauthRedirect, null);
+    }
+
+
+    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered, boolean avoidOauthRedirect, String thirdPartyLogin) {
         String targetUrl = null;
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         if (isOauth2ScreensRequest != null && isOauth2ScreensRequest && !avoidOauthRedirect) {
             // Just redirect to the authorization screen
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
-            targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize?" + queryString;
+            targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize";
+            if (thirdPartyLogin != null){
+                targetUrl += "/third-party-signin-completed";
+            }
+            targetUrl += '?' + queryString;
             request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-
             if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
                 // Remove the prompt parameter after a successful login 
                 targetUrl = removeParameterFromURI(targetUrl, OrcidOauth2Constants.PROMPT.toString());
@@ -591,12 +600,21 @@ public class BaseController {
         } else {
             targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
         }
+        
+        Boolean addJustRegisteredParameter = false;
+        
+        if (justRegistered && targetUrl == null) {
+            addJustRegisteredParameter = true;
+        }
 
         if (targetUrl == null) {
             targetUrl = getBaseUri() + "/my-orcid";
-            if (justRegistered) {
-                targetUrl += "?justRegistered";
+            if (thirdPartyLogin != null){
+                targetUrl += "/third-party-signin-completed";
             }
+        }
+        if (addJustRegisteredParameter) {
+            targetUrl += "?justRegistered";
         }
 
         return targetUrl;
