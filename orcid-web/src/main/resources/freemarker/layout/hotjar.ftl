@@ -11,8 +11,8 @@
 	    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
 	</script>
 	<script>
-	    if (orcidVar && orcidVar.orcidId) {
-	        window.hj('identify', orcidVar.orcidId, {});
+	    if (orcidVar && orcidVar.realOrcidId) {
+	        window.hj('identify', orcidVar.realOrcidId, {});
 	    }
 	</script>
 	<!-- End Hotjar -->
