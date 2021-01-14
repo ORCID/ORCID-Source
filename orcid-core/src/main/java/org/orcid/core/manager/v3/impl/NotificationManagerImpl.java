@@ -573,6 +573,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         templateParams.put("emailName", emailNameForDelegate);
         templateParams.put("orcidValue", userReceivingPermission);
         templateParams.put("emailNameGrantingPermission", emailNameGrantingPermission);
+        templateParams.put("emailNameGrantingPermissionWithApostrophe", emailNameGrantingPermission + "'s");
         templateParams.put("grantingOrcidValue", userGrantingPermission);
         templateParams.put("grantingOrcidName", deriveEmailFriendlyName(userGrantingPermission));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());

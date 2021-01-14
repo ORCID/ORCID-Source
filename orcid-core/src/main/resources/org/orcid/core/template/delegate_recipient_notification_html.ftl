@@ -12,11 +12,14 @@
             <b>${emailNameGrantingPermission}</b>
             <@emailMacros.space />
             <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${grantingOrcidValue}" target="_blank">
-                (${baseUri}/${grantingOrcidValue})
+                (${baseUri}/${grantingOrcidValue}).
             </a>
+        </p>
         <p>
             <@emailMacros.msg "notification.delegate.receipt.accountDelegateMeans" />
-            <@emailMacros.space />${emailNameGrantingPermission}
+            <span style="margin-right: -3px">
+                <@emailMacros.space />${emailNameGrantingPermissionWithApostrophe}
+            </span>
             <span style="margin-left: -3px">
                 <@emailMacros.msg "notification.delegate.receipt.orcidRecord" />
             </span>
@@ -29,11 +32,9 @@
         </p>
         <p>
             <@emailMacros.msg "notification.delegate.receipt.questions" /><@emailMacros.space />${emailNameGrantingPermission}<@emailMacros.space />
-            <a style="text-decoration: underline;color: #085c77;" href="mailto:${grantingOrcidEmail}">(${grantingOrcidEmail})</a>
-            <span style="margin-left: -3px">
-                <@emailMacros.msg "notification.delegate.receipt.helpDesk" />
-            </span>
-            <@emailMacros.space />            
+            <a style="text-decoration: underline;color: #085c77;" href="mailto:${grantingOrcidEmail}">(${grantingOrcidEmail}),</a>
+            <@emailMacros.msg "notification.delegate.receipt.helpDesk" />
+            <@emailMacros.space />
             <a style="text-decoration: underline;color: #085c77;" href="https://orcid.org/help/contact-us" target="_blank">                
                 https://orcid.org/help/contact-us.
             </a>
