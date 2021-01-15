@@ -490,6 +490,28 @@ public class ManageProfileController extends BaseWorkspaceController {
         return org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails);
     }
 
+    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails setEmails(HttpServletRequest request,  @RequestBody org.orcid.pojo.ajaxForm.Emails newEmailSet) {                                
+        Emails oldEmailSet = emailManager.getEmails(getCurrentUserOrcid());  
+        String orcid = getCurrentUserOrcid();
+        
+        newEmailSet.getEmails().forEach(newJsonEmail -> {
+            String owner = emailManager.findOrcidIdByEmail(newJsonEmail.getValue());
+            if(orcid.equals(owner)) {
+                oldEmailSet.getEmails().forEach(oldJsonEmail -> { 
+                    if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
+                        if (newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())){
+                            emailManager.updateVisibility(orcid, newJsonEmail.getValue(), newJsonEmail.getVisibility());
+                        }
+                    }
+                });
+            }
+        });
+        
+        Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());       
+        return org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet);    
+    }
+
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
     public @ResponseBody org.orcid.pojo.ajaxForm.Email addEmails(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
