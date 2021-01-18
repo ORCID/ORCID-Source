@@ -11,9 +11,10 @@
 	    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
 	</script>
 	<script>
-	    if (orcidVar && orcidVar.realOrcidId) {
-	        window.hj('identify', orcidVar.realOrcidId, {});
-	    }
+		var userId = orcidVar.realOrcidId || null;
+        window.hj('identify', userId, {
+			user_id	: userId,
+		});
 	</script>
 	<!-- End Hotjar -->
  </#if>
