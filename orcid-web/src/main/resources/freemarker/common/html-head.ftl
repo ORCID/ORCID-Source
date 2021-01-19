@@ -27,10 +27,6 @@
     <meta property="og:image" content="https:${staticCdn}/img/orcid-og-image.png">
     
     <#include "/layout/google_analytics.ftl">
-
-    <@orcid.checkFeatureStatus 'HOTJAR'>
-        <#include "/layout/hotjar.ftl">
-    </@orcid.checkFeatureStatus> 
     
     <script type="text/javascript">
         window.resourceBasePath = "${staticCdn}"
@@ -77,6 +73,9 @@
         </#if>
     </script>
 
+    <@orcid.checkFeatureStatus 'HOTJAR'>
+        <#include "/layout/hotjar.ftl">
+    </@orcid.checkFeatureStatus>
     <#include "/macros/orcid_ga.ftl">
 
 

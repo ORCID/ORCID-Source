@@ -9,6 +9,12 @@
 	        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
 	        a.appendChild(r);
 	    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-	</script> 
+	</script>
+	<script>
+		var userId = orcidVar.realOrcidId || null;
+        window.hj('identify', userId, {
+			user_id	: userId,
+		});
+	</script>
 	<!-- End Hotjar -->
  </#if>
