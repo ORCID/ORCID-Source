@@ -28,7 +28,7 @@ public class BackupCodeEntity extends BaseEntity<Long> implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "backup_code_seq")
-    @SequenceGenerator(name = "backup_code_seq", sequenceName = "backup_code_seq")
+    @SequenceGenerator(name = "backup_code_seq", sequenceName = "backup_code_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

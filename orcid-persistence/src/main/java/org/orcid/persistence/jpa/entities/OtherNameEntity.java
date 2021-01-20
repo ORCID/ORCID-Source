@@ -38,7 +38,7 @@ public class OtherNameEntity extends SourceAwareEntity<Long> implements Comparab
     @Id
     @Column(name = "other_name_id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "other_name_seq")
-    @SequenceGenerator(name = "other_name_seq", sequenceName = "other_name_seq")
+    @SequenceGenerator(name = "other_name_seq", sequenceName = "other_name_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

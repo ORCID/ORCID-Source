@@ -92,9 +92,9 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
+			  <groupId>org.hibernate</groupId>
+			  <artifactId>hibernate-agroal</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>

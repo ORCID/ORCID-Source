@@ -44,8 +44,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.support.RequestContextUtils;
+
+import org.springframework.http.HttpHeaders;
 
 @Controller
 public class HomeController extends BaseController {
@@ -106,10 +108,11 @@ public class HomeController extends BaseController {
     }
 
     @RequestMapping(value = "/robots.txt")
-    public String dynamicRobots(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public String dynamicRobots(HttpServletRequest request) throws NoHandlerFoundException {
         String requestedDomain = request.getServerName();
         if (domainsAllowingRobots.contains(requestedDomain)) {
-            throw new NoSuchRequestHandlingMethodException(request);
+        	HttpHeaders headers = new HttpHeaders();
+            throw new NoHandlerFoundException(request.getMethod(), request.getRequestURL().toString(), headers);
         }
         return "robots";
     }
@@ -117,7 +120,7 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/lang.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    org.orcid.pojo.Local langJson(HttpServletRequest request, @RequestParam(value = "lang", required = false) String lang) throws NoSuchRequestHandlingMethodException {
+    org.orcid.pojo.Local langJson(HttpServletRequest request, @RequestParam(value = "lang", required = false) String lang) {
         if (lang != null) {
             String orcid = getRealUserOrcid();
             if (orcid != null) {
@@ -133,8 +136,7 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/userStatus.json")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
-    Object getUserStatusJson(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "logUserOut", required = false) Boolean logUserOut)
-            throws NoSuchRequestHandlingMethodException {
+    Object getUserStatusJson(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "logUserOut", required = false) Boolean logUserOut) {
 
         String orcid = getCurrentUserOrcid();
         

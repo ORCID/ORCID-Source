@@ -441,7 +441,7 @@
         <property name="poolSize" value="${org.orcid.core.poolSizeForInternalEncryption:16}" />
     </bean>
 
-    <bean id="hibernateStringEncryptor" class="org.jasypt.hibernate4.encryptor.HibernatePBEStringEncryptor">
+    <bean id="hibernateStringEncryptor" class="org.jasypt.hibernate5.encryptor.HibernatePBEStringEncryptor">
         <property name="registeredName" value="hibernateStringEncryptor" />
         <property name="encryptor" ref="internalEncryptor" />
     </bean>

@@ -37,7 +37,7 @@ public class OrcidMultiSecretAuthenticationProvider extends DaoAuthenticationPro
         String presentedPassword = authentication.getCredentials().toString();
         ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(userDetails.getUsername());
         for (ClientSecretEntity clientSecretEntity : clientDetailsEntity.getClientSecrets()) {
-            if (getPasswordEncoder().isPasswordValid(encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret()), presentedPassword, null)) {
+            if (getPasswordEncoder().matches(encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret()), presentedPassword)) {
                 return;
             }
         }

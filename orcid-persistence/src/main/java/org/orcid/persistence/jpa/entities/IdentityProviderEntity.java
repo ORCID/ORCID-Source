@@ -36,7 +36,7 @@ public class IdentityProviderEntity extends BaseEntity<Long> {
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "identity_provider_seq")
-    @SequenceGenerator(name = "identity_provider_seq", sequenceName = "identity_provider_seq")
+    @SequenceGenerator(name = "identity_provider_seq", sequenceName = "identity_provider_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

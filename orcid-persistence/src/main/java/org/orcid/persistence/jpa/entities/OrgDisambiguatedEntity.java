@@ -61,7 +61,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "org_disambiguated_seq")
-    @SequenceGenerator(name = "org_disambiguated_seq", sequenceName = "org_disambiguated_seq")
+    @SequenceGenerator(name = "org_disambiguated_seq", sequenceName = "org_disambiguated_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

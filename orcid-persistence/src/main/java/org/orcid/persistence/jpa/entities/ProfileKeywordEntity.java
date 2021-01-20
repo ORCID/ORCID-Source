@@ -34,7 +34,7 @@ public class ProfileKeywordEntity extends SourceAwareEntity<Long> implements Com
     @Id    
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "keyword_seq")
-    @SequenceGenerator(name = "keyword_seq", sequenceName = "keyword_seq")
+    @SequenceGenerator(name = "keyword_seq", sequenceName = "keyword_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

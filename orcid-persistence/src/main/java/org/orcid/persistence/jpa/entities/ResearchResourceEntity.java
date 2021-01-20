@@ -47,7 +47,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "research_resource_seq")
-    @SequenceGenerator(name = "research_resource_seq", sequenceName = "research_resource_seq")
+    @SequenceGenerator(name = "research_resource_seq", sequenceName = "research_resource_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

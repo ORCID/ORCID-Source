@@ -4,4 +4,4 @@ package org.orcid.persistence.jpa.entities;
 import org.hibernate.annotations.TypeDefs;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.Parameter;
-import org.jasypt.hibernate4.type.EncryptedStringType;
+import org.jasypt.hibernate5.type.EncryptedStringType;

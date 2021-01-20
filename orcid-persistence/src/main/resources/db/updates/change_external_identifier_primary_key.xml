@@ -2,7 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet id="CHANGE-EXTERNAL-IDENTIFIER-PRIMARY-KEY" author="Angel Montenegro">
+	<changeSet id="CHANGE-EXTERNAL-IDENTIFIER-PRIMARY-KEY-POSTGRESQL" author="Camelia Dumitru" dbms="postgresql">
         <preConditions>
   			<primaryKeyExists tableName="external_identifier" primaryKeyName="external_identifier_pkey"/>
 		</preConditions>
@@ -12,7 +12,7 @@
 	        <column name="id" type="bigint" autoIncrement="true" >
 	        	<constraints nullable="false" primaryKey="true" primaryKeyName="external_identifier_numeric_pkey"/>
 	        </column>
-        </addColumn>  
+        </addColumn> 
         <addUniqueConstraint tableName="external_identifier" columnNames="orcid, external_id_reference, external_id_type"/>                             
     </changeSet>
 </databaseChangeLog>	
