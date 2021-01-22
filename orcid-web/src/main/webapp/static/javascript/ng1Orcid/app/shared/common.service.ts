@@ -48,12 +48,12 @@ export class CommonService {
             this.userInfo$
                 .pipe(take(1))
                 .subscribe((data) => {
-                    if (data.realOrcidId && !!!data.hotjarUserId) {
+                    if (data['REAL_USER_ORCID'] && !!!data['HOTJAR_USER_ID']) {
                         setTimeout(() => {
                             if (window['hj'] &&
                                 window['hj']['hq'] &&
                                 !window['hj']['hq'].isUndefined(window['hj'].globals.get("userId"))) {
-                                this.addHotjarUserId(orcidVar.realOrcidId, window['hj'].globals.get("userId").split("-").shift())
+                                this.addHotjarUserId(data['REAL_USER_ORCID'], window['hj'].globals.get("userId").split("-").shift())
                                     .pipe(take(1))
                                     .subscribe(data => {
                                         if (!data) {
@@ -353,9 +353,11 @@ export class CommonService {
     }
 
     addHotjarUserId(orcid, hotjarUserId): Observable<any> {
+        console.log(orcid);
+        console.log(hotjarUserId);
         return this.http.post(getBaseUri() + '/add-hotjar-user-id.json', {
-            orcid: orcid,
-            hotjarUserId: hotjarUserId
+            orcid,
+            hotjarUserId
         });
     };
 }
