@@ -39,10 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -252,7 +249,7 @@ public class HomeController extends BaseController {
             if(!PojoUtil.isEmpty(p.getGroupType())) {
                 info.put("MEMBER_TYPE", p.getGroupType());
             }
-            
+            info.put("HOTJAR_USER_ID", p.getHotjarUserId());
         }
         return info;
     }
@@ -307,6 +304,15 @@ public class HomeController extends BaseController {
 
         lPojo.setMessages(localPropertyMap);
         return lPojo;
+    }
+
+    @RequestMapping(value = "/add-hotjar-user-id.json", method = RequestMethod.POST)
+    public @ResponseBody boolean addHotjarUserId(@RequestBody Map<String, String> body) {
+        String orcid = body.get("orcid");
+        if(OrcidStringUtils.isValidOrcid(orcid)) {
+            return profileEntityManager.addHotjarUserId(orcid, body.get("hotjarUserId"));
+        }
+        return false;
     }
     
     public String getMaintenanceMessage() {
