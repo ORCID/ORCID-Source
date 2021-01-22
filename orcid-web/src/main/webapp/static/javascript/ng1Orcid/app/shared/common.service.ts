@@ -6,10 +6,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
      from '@angular/common/http';
 
-import { Observable, Subject, ReplaySubject } 
+import { Observable }
     from 'rxjs';
 
-import { share, shareReplay } 
+import { share, take }
     from 'rxjs/operators';    
     
 import { OrgDisambiguated } 
@@ -42,9 +42,28 @@ export class CommonService {
         this.isPublicPage = this.publicPageRegex.test(path);
         if(this.isPublicPage) {
             var orcidId = path.match(this.orcidRegex)[0];
-            this.publicUserInfo$ = this.getPublicUserInfo(orcidId).pipe(share()); 
+            this.publicUserInfo$ = this.getPublicUserInfo(orcidId).pipe(share());
         } else {
-            this.userInfo$ = this.getUserInfo().pipe(share());  
+            this.userInfo$ = this.getUserInfo().pipe(share());
+            this.userInfo$
+                .pipe(take(1))
+                .subscribe((data) => {
+                    if (data.realOrcidId && !!!data.hotjarUserId) {
+                        setTimeout(() => {
+                            if (window['hj'] &&
+                                window['hj']['hq'] &&
+                                !window['hj']['hq'].isUndefined(window['hj'].globals.get("userId"))) {
+                                this.addHotjarUserId(orcidVar.realOrcidId, window['hj'].globals.get("userId").split("-").shift())
+                                    .pipe(take(1))
+                                    .subscribe(data => {
+                                        if (!data) {
+                                            console.log("error adding hotjar user id");
+                                        }
+                                    })
+                            }
+                        }, 6000);
+                    }
+                });
         }
     }
 
@@ -332,4 +351,11 @@ export class CommonService {
         }
         return null;
     }
+
+    addHotjarUserId(orcid, hotjarUserId): Observable<any> {
+        return this.http.post(getBaseUri() + '/add-hotjar-user-id.json', {
+            orcid: orcid,
+            hotjarUserId: hotjarUserId
+        });
+    };
 }
