@@ -88,4 +88,6 @@ public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
     
     void activateClientDetails(String clientDetailsId) throws ClientAlreadyActiveException;
 
+    void convertPublicClientToMember(String clientId, String groupId);
+
 }

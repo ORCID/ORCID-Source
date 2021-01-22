@@ -59,16 +59,20 @@ import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
+import org.orcid.pojo.ConvertClient;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
@@ -1143,6 +1147,140 @@ public class AdminControllerTest extends BaseControllerTest {
         
         assertEquals("That ORCID iD is not on our records", results.getError());        
 
+    }
+    
+    @Test
+    public void testValidateClientConversion() throws IllegalAccessException, UnsupportedEncodingException {
+        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
+        ClientDetailsManager clientDetailsManager = Mockito.mock(ClientDetailsManager.class);
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+        
+        ClientDetailsEntity publicClient = new ClientDetailsEntity();
+        publicClient.setClientType(ClientType.PUBLIC_CLIENT.name());
+        
+        ClientDetailsEntity memberClient = new ClientDetailsEntity();
+        memberClient.setClientType(ClientType.PREMIUM_UPDATER.name());
+        
+        ProfileEntity group = new ProfileEntity();
+        group.setId("legal-group");
+        group.setOrcidType(OrcidType.GROUP.name());
+        
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        Mockito.when(clientDetailsManager.exists(Mockito.eq("public-client"))).thenReturn(true);
+        Mockito.when(clientDetailsManager.exists(Mockito.eq("member-client"))).thenReturn(true);
+        Mockito.when(clientDetailsManager.exists(Mockito.eq("nothing"))).thenReturn(false);
+        Mockito.when(clientDetailsManager.findByClientId(Mockito.eq("public-client"))).thenReturn(publicClient);
+        Mockito.when(clientDetailsManager.findByClientId(Mockito.eq("member-client"))).thenReturn(memberClient);
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("nothing"))).thenThrow(new IllegalArgumentException());
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("no-group"))).thenReturn(null);
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("legal-group"))).thenReturn(group);
+        
+        AdminController adminController = new AdminController();
+        
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
+        
+        ConvertClient data = new ConvertClient();
+        
+        data = adminController.validateClientConversion(mockRequest, mockResponse, data);
+        assertTrue(data.isClientNotFound());
+        
+        data.setClientId("invalid");
+        data = adminController.validateClientConversion(mockRequest, mockResponse, data);
+        assertTrue(data.isClientNotFound());
+        
+        data.setClientId("member-client");
+        data = adminController.validateClientConversion(mockRequest, mockResponse, data);
+        assertTrue(data.isAlreadyMember());
+
+        data.setClientId("public-client");
+        data = adminController.validateClientConversion(mockRequest, mockResponse, data);
+        assertTrue(data.isGroupIdNotFound());
+        
+        data.setGroupId("nothing");
+        data = adminController.validateClientConversion(mockRequest, mockResponse, data);
+        assertTrue(data.isGroupIdNotFound());
+
+        data.setGroupId("no-group");
+        data = adminController.validateClientConversion(mockRequest, mockResponse, data);
+        assertTrue(data.isGroupIdNotFound());
+        
+        data.setGroupId("legal-group");
+        data = adminController.validateClientConversion(mockRequest, mockResponse, data);
+        assertFalse(data.isGroupIdNotFound());
+    }
+    
+    @Test
+    public void testConvertClient() throws IllegalAccessException, UnsupportedEncodingException {
+        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
+        ClientDetailsManager clientDetailsManager = Mockito.mock(ClientDetailsManager.class);
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+        
+        ClientDetailsEntity publicClient = new ClientDetailsEntity();
+        publicClient.setClientType(ClientType.PUBLIC_CLIENT.name());
+        
+        ClientDetailsEntity memberClient = new ClientDetailsEntity();
+        memberClient.setClientType(ClientType.PREMIUM_UPDATER.name());
+        
+        ProfileEntity group = new ProfileEntity();
+        group.setId("legal-group");
+        group.setOrcidType(OrcidType.GROUP.name());
+        
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        Mockito.when(clientDetailsManager.exists(Mockito.eq("public-client"))).thenReturn(true);
+        Mockito.when(clientDetailsManager.exists(Mockito.eq("member-client"))).thenReturn(true);
+        Mockito.when(clientDetailsManager.exists(Mockito.eq("nothing"))).thenReturn(false);
+        Mockito.when(clientDetailsManager.findByClientId(Mockito.eq("public-client"))).thenReturn(publicClient);
+        Mockito.when(clientDetailsManager.findByClientId(Mockito.eq("member-client"))).thenReturn(memberClient);
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("nothing"))).thenThrow(new IllegalArgumentException());
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("no-group"))).thenReturn(null);
+        Mockito.when(profileEntityCacheManager.retrieve(Mockito.eq("legal-group"))).thenReturn(group);
+        Mockito.doNothing().when(clientDetailsManager).convertPublicClientToMember(Mockito.eq("public-client"), Mockito.eq("legal-group"));
+        
+        AdminController adminController = new AdminController();
+        
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "clientDetailsManager", clientDetailsManager);
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
+        
+        ConvertClient data = new ConvertClient();
+        
+        data = adminController.convertClient(mockRequest, mockResponse, data);
+        assertTrue(data.isClientNotFound());
+        assertFalse(data.isSuccess());
+        
+        data.setClientId("invalid");
+        data = adminController.convertClient(mockRequest, mockResponse, data);
+        assertTrue(data.isClientNotFound());
+        assertFalse(data.isSuccess());
+        
+        data.setClientId("member-client");
+        data = adminController.convertClient(mockRequest, mockResponse, data);
+        assertTrue(data.isAlreadyMember());
+        assertFalse(data.isSuccess());
+
+        data.setClientId("public-client");
+        data = adminController.convertClient(mockRequest, mockResponse, data);
+        assertTrue(data.isGroupIdNotFound());
+        assertFalse(data.isSuccess());
+        
+        data.setGroupId("nothing");
+        data = adminController.convertClient(mockRequest, mockResponse, data);
+        assertTrue(data.isGroupIdNotFound());
+        assertFalse(data.isSuccess());
+
+        data.setGroupId("no-group");
+        data = adminController.convertClient(mockRequest, mockResponse, data);
+        assertTrue(data.isGroupIdNotFound());
+        assertFalse(data.isSuccess());
+        
+        data.setGroupId("legal-group");
+        data = adminController.convertClient(mockRequest, mockResponse, data);
+        assertFalse(data.isGroupIdNotFound());
+        assertTrue(data.isSuccess());
+
+        Mockito.verify(clientDetailsManager).convertPublicClientToMember(Mockito.eq("public-client"), Mockito.eq("legal-group"));
     }
     
 }
