@@ -162,8 +162,7 @@ public class DOIResolverTest {
                 return DOIResolverTest.class.getResourceAsStream("/examples/works/form_autofill/doi-journal-title-in-container-title.json");
             }
 
-        });
-        
+        });        
         
         when(cache.get(eq("https://doi.org/10.000/0000.0003"), any(HashMap.class))).thenAnswer(new Answer<InputStream>() {
 
@@ -181,8 +180,7 @@ public class DOIResolverTest {
                 return DOIResolverTest.class.getResourceAsStream("/examples/works/form_autofill/doi-journal-title-in-container-title-short.json");
             }
 
-        });
-        
+        });        
         
     }
 

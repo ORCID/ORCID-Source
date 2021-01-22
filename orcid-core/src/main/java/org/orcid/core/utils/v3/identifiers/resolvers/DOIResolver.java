@@ -336,8 +336,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                     }
                     result.setPublicationDate(publicationDate);
                 }
-            }
-            
+            }           
         }
         return result;
     }
