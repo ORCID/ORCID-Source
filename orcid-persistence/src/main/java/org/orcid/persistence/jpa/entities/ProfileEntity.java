@@ -136,6 +136,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     // 2FA
     private Boolean using2FA = Boolean.FALSE;
     private String secretFor2FA;
+
+    private String hotjarUserId;
     
     @Id
     @Column(name = "orcid", length = 19)
@@ -179,6 +181,16 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setSecretFor2FA(String secretFor2FA) {
         this.secretFor2FA = secretFor2FA;
+    }
+
+
+    @Column(name = "hotjar_user_id")
+    public String getHotjarUserId() {
+        return hotjarUserId;
+    }
+
+    public void setHotjarUserId(String hotjarUserId) {
+        this.hotjarUserId = hotjarUserId;
     }
 
     @Column(name = "orcid_type")

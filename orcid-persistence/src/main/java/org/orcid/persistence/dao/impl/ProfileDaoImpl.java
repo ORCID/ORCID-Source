@@ -800,6 +800,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    public boolean addHotjarUserId(String orcid, String hotjarUserId) {
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), hotjarUserId = :hotjarUserId where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("hotjarUserId", hotjarUserId);
+        return query.executeUpdate() > 0;
+    }
+
+    @Override
+    @Transactional
     public boolean deactivate(String orcid) {
         Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), profile_deactivation_date = now(), indexing_status = 'REINDEX' where orcid = :orcid");
         query.setParameter("orcid", orcid);        
