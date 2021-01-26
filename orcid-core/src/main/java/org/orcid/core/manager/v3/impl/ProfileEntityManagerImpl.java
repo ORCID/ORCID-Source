@@ -640,11 +640,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         profileDao.update2FASecret(orcid, secret);
     }
 
-    @Override
-    public boolean addHotjarUserId(String orcid, String hotjarUserId) {
-        return profileDao.addHotjarUserId(orcid, hotjarUserId);
-    }
-
     /**
      * Clears all record info but the email addresses, that stay unmodified
      */

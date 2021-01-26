@@ -141,8 +141,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     
     void update2FASecret(String orcid, String secret);
 
-    boolean addHotjarUserId(String orcid, String hotjarUserId);
-
     boolean deactivate(String orcid);
 
     List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid);
