@@ -12,7 +12,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
@@ -26,7 +25,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
@@ -39,7 +37,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -248,8 +249,7 @@ public class HomeController extends BaseController {
             }
             if(!PojoUtil.isEmpty(p.getGroupType())) {
                 info.put("MEMBER_TYPE", p.getGroupType());
-            }
-            info.put("HOTJAR_USER_ID", p.getHotjarUserId());
+            }            
         }
         return info;
     }
@@ -306,15 +306,6 @@ public class HomeController extends BaseController {
         return lPojo;
     }
 
-    @RequestMapping(value = "/add-hotjar-user-id.json", method = RequestMethod.POST)
-    public @ResponseBody boolean addHotjarUserId(@RequestBody Map<String, String> body) {
-        String orcid = body.get("orcid");
-        if(OrcidStringUtils.isValidOrcid(orcid)) {
-            return profileEntityManager.addHotjarUserId(orcid, body.get("hotjarUserId"));
-        }
-        return false;
-    }
-    
     public String getMaintenanceMessage() {
         if (maintenanceHeaderUrl != null) {
             try {

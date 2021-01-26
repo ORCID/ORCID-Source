@@ -44,26 +44,7 @@ export class CommonService {
             var orcidId = path.match(this.orcidRegex)[0];
             this.publicUserInfo$ = this.getPublicUserInfo(orcidId).pipe(share());
         } else {
-            this.userInfo$ = this.getUserInfo().pipe(share());
-            this.userInfo$
-                .pipe(take(1))
-                .subscribe((data) => {
-                    if (data['REAL_USER_ORCID'] && !!!data['HOTJAR_USER_ID']) {
-                        setTimeout(() => {
-                            if (window['hj'] &&
-                                window['hj']['hq'] &&
-                                !window['hj']['hq'].isUndefined(window['hj'].globals.get("userId"))) {
-                                this.addHotjarUserId(data['REAL_USER_ORCID'], window['hj'].globals.get("userId").split("-").shift())
-                                    .pipe(take(1))
-                                    .subscribe(data => {
-                                        if (!data) {
-                                            console.log("error adding hotjar user id");
-                                        }
-                                    })
-                            }
-                        }, 6000);
-                    }
-                });
+            this.userInfo$ = this.getUserInfo().pipe(share());            
         }
     }
 
@@ -351,13 +332,5 @@ export class CommonService {
         }
         return null;
     }
-
-    addHotjarUserId(orcid, hotjarUserId): Observable<any> {
-        console.log(orcid);
-        console.log(hotjarUserId);
-        return this.http.post(getBaseUri() + '/add-hotjar-user-id.json', {
-            orcid,
-            hotjarUserId
-        });
-    };
+   
 }
