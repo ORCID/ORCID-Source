@@ -78,6 +78,4 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     void enable2FA(String orcid);
 
     void update2FASecret(String orcid, String secret);
-    
-    boolean addHotjarUserId(String orcid, String hotjarUserId);
 }
