@@ -69,16 +69,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     Long getConfirmedProfileCount();
 
-    Date retrieveLastModifiedDate(String orcid);
-    
     List<ProfileEntity> findByOrcidType(String orcidType);
 
-    @Deprecated
-    void updateLastModifiedDateWithoutResult(String orcid);
-
     void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus);
-
-    void updateLastModifiedDateAndIndexingStatus(String orcid, IndexingStatus indexingStatus);
 
     public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults);
 
@@ -140,8 +133,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void enable2FA(String orcid);
     
     void update2FASecret(String orcid, String secret);
-
-    boolean addHotjarUserId(String orcid, String hotjarUserId);
 
     boolean deactivate(String orcid);
 

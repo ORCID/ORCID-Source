@@ -6,12 +6,12 @@ import java.lang.annotation.Target;
 
 /**
  * 
- * @author Will Simpson
+ * @author George Nash
  * 
  */
 @Target( { java.lang.annotation.ElementType.METHOD })
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @Documented
-public @interface ExcludeFromProfileLastModifiedUpdate {
+public @interface UpdateProfileLastModifiedAndIndexingStatus {
 
 }
