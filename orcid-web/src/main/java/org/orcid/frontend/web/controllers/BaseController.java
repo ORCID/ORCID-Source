@@ -26,6 +26,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
@@ -513,11 +514,19 @@ public class BaseController {
             try {
                 String redirectUriString = redirectUri.getValue().getValue();
                 if (!redirectUriValidator.isValid(redirectUriString)) {
-                    redirectUriString = "http://" + redirectUriString;
-                    if (redirectUriValidator.isValid(redirectUriString)) {
-                        redirectUri.getValue().setValue(redirectUriString);
+                    if (redirectUriString.startsWith("http")) {
+                        if (OrcidStringUtils.isValidURL(redirectUriString)) {
+                            redirectUri.getValue().setValue(redirectUriString);
+                        } else {
+                            redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                        }                       
                     } else {
-                        redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                        redirectUriString = "http://" + redirectUriString;
+                        if (redirectUriValidator.isValid(redirectUriString)) {
+                            redirectUri.getValue().setValue(redirectUriString);
+                        } else {
+                            redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                        }
                     }
                 }
             } catch (NullPointerException npe) {
