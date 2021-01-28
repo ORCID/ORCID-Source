@@ -69,15 +69,8 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
-    @Transactional
     public boolean verifyEmail(String email, String orcid) {
-        boolean verified = emailDao.verifyEmail(email);
-
-        if (verified) {
-            profileLastModifiedAspect.updateLastModifiedDateAndIndexingStatus(orcid);
-        }
-
-        return verified;
+        return emailDao.verifyEmail(email);
     }
 
     @Override

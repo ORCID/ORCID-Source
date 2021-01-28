@@ -38,8 +38,6 @@ public interface GenericDao<E extends OrcidEntity<I>, I extends Serializable> {
 
     void persist(E e);
     
-    void persistIgnoringProfileLastModifiedUpdate(E e);
-
     Long countAll();
 
 }

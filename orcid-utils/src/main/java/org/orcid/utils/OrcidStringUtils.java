@@ -24,6 +24,7 @@ public class OrcidStringUtils {
     public static String ORCID_URI_STRING = "http://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
     public static String ORCID_URI_2_1_STRING = "https://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
     public static String EMAIL_REGEXP = "^([^@\\s]|(\".+\"))+@([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]+\\.)+([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]{2,})+$";
+    public static String URL_REGEXP = "^((((https?|ftps?|gopher|telnet|nntp)://)|(mailto:|news:))(%[0-9A-Fa-f]{2}|[-()_.!~*';/?:@&=+$,A-Za-z0-9])+)([).!';/?:,][[:blank:]])?$";
 
     private static String LT = "&lt;";
     private static String GT = "&gt;";
@@ -42,6 +43,7 @@ public class OrcidStringUtils {
     private static final Pattern orcidUri2_1Pattern = Pattern.compile(ORCID_URI_2_1_STRING);
     private static final Pattern clientIdPattern = Pattern.compile("APP-[\\dA-Z]{16}");
     private static final Pattern emailPattern = Pattern.compile(EMAIL_REGEXP);
+    private static final Pattern urlPattern = Pattern.compile(URL_REGEXP);
 
     private static final Pattern invalidXMLCharactersPattern = Pattern.compile("(\u0000|\uFFFE|\uFFFF)");
 
@@ -71,6 +73,14 @@ public class OrcidStringUtils {
         }
     }
 
+    public static boolean isValidURL(String url) {
+        if (StringUtils.isNotBlank(url)) {
+            return urlPattern.matcher(url).matches();
+        } else {
+            return false;
+        }
+    }
+    
     public static String getOrcidNumber(String orcid) {
         Matcher matcher = orcidPattern.matcher(orcid);
         if (matcher.find()) {

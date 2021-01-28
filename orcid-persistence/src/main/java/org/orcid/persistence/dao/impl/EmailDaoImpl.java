@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.persistence.aop.UpdateProfileLastModified;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -44,6 +46,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void updatePrimary(String orcid, String primaryEmail) {
         Query query = entityManager.createNativeQuery("UPDATE email SET is_primary= CASE email WHEN :primaryEmail THEN true ELSE false END WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);        
@@ -53,6 +56,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void addEmail(String orcid, String email, String emailHash, String visibility, String sourceId, String clientSourceId) {
         try {
             Query query = entityManager
@@ -73,6 +77,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void removeEmail(String orcid, String email) {
         String deleteEmailEvent = "delete from email_event where trim(lower(email)) = trim(lower(:email))";
         String deleteEmail = "delete from email where orcid = :orcid and trim(lower(email)) = trim(lower(:email))";
@@ -109,6 +114,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public boolean verifyEmail(String email) {
         Query query = entityManager.createNativeQuery("update email set is_verified = true, is_current=true, last_modified=now() where trim(lower(email)) = trim(lower(:email))");
         query.setParameter("email", email);
@@ -167,6 +173,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVerifySetCurrentAndPrimary(String orcid, String email) {
         Query query = entityManager.createQuery("update EmailEntity set current = true, primary = true, verified = true, lastModified=now() where orcid = :orcid and email = :email");
         query.setParameter("orcid", orcid);
@@ -243,6 +250,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibility(String orcid, String email, String visibility) {
         Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, lastModified=now() where email = :email and orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -410,4 +418,26 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         query.setMaxResults(max);
         return query.getResultList();
     }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public void persist(EmailEntity email) {
+        super.persist(email);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public EmailEntity merge(EmailEntity email) {
+        return super.merge(email);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public void remove(String id) {
+        super.remove(id);
+    }
+    
 }
