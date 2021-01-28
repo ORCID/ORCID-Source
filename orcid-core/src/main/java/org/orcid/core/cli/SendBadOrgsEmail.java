@@ -28,6 +28,7 @@ import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -58,6 +59,7 @@ public class SendBadOrgsEmail {
 
     private TransactionTemplate transactionTemplate;
     private ProfileDao profileDao;
+    private ProfileLastModifiedDao profileLastModifiedDao;
     private AffiliationsManager affiliationsManager;
     private ProfileFundingManager profileFundingManager;
     private LocaleManager localeManager;
@@ -163,6 +165,7 @@ public class SendBadOrgsEmail {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
         profileDao = (ProfileDao) context.getBean("profileDao");
+        profileLastModifiedDao = (ProfileLastModifiedDao) context.getBean("profileLastModifiedDao");
         affiliationsManager = (AffiliationsManager) context.getBean("affiliationsManager");
         profileFundingManager = (ProfileFundingManager) context.getBean("profileFundingManager");
         localeManager = (LocaleManager) context.getBean("localeManager");
@@ -306,8 +309,7 @@ public class SendBadOrgsEmail {
         }
         if (!dryRun) {
             // Update the profile for re-index and cache refresh
-            profileDao.updateLastModifiedDateAndIndexingStatus(profile.getId(), IndexingStatus.REINDEX);
-            profileDao.flush();
+            profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(profile.getId(), IndexingStatus.REINDEX);
             // Send the email
             boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getEmail(), SUBJECT, body, html);
             if (!mailSent) {

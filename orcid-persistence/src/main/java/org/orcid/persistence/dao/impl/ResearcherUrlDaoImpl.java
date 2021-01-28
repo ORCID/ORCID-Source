@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -63,6 +64,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public boolean deleteResearcherUrl(String orcid, long id) {
         Query query = entityManager.createNativeQuery("DELETE FROM researcher_url WHERE orcid = :orcid and id = :id");
         query.setParameter("orcid", orcid);
@@ -92,6 +94,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public boolean updateResearcherUrl(long id, String newUrl) {
         Query query = entityManager.createNativeQuery("UPDATE researcher_url SET url=:newUrl WHERE id=:id");
         query.setParameter("newUrl", newUrl);
@@ -101,6 +104,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
 
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public void removeAllResearcherUrls(String orcid) {
         Query query = entityManager.createQuery("delete from ResearcherUrlEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -190,6 +194,20 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
         query.setParameter("ids", clientProfileOrcidIds);
         query.setMaxResults(max);
         return query.getResultList();
+    }
+    
+    @Override
+    @UpdateProfileLastModified
+    @Transactional
+    public void persist(ResearcherUrlEntity entity) {
+        super.persist(entity);
+    }
+    
+    @Override
+    @UpdateProfileLastModified
+    @Transactional
+    public ResearcherUrlEntity merge(ResearcherUrlEntity entity) {
+        return super.merge(entity);
     }
 
 }
