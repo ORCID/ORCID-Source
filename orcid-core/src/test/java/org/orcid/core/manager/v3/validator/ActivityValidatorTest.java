@@ -318,7 +318,7 @@ public class ActivityValidatorTest {
         work.setVisibility(Visibility.PUBLIC);
         work.setWorkCitation(new Citation("citation", CitationType.FORMATTED_HARVARD));
         ContributorAttributes attributes = new ContributorAttributes();
-        attributes.setContributorRole(ContributorRole.ASSIGNEE);
+        attributes.setContributorRole(ContributorRole.ASSIGNEE.name());
         attributes.setContributorSequence(SequenceType.FIRST);
 
         ContributorOrcid contributorOrcid = new ContributorOrcid();

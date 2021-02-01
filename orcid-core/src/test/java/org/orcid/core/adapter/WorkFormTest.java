@@ -124,7 +124,7 @@ public class WorkFormTest {
         org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.release.record.WorkContributors();
         org.orcid.jaxb.model.v3.release.common.Contributor contributor = new org.orcid.jaxb.model.v3.release.common.Contributor();
         org.orcid.jaxb.model.v3.release.common.ContributorAttributes attributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
-        attributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.CO_INVENTOR);
+        attributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.CO_INVENTOR.value());
         attributes.setContributorSequence(org.orcid.jaxb.model.common.SequenceType.FIRST);
         contributor.setContributorAttributes(attributes);
         contributor.setContributorEmail(null);      

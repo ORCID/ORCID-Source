@@ -60,7 +60,7 @@ public class Contributor implements ErrorsInterface, Serializable {
             if (contributor.getContributorAttributes() != null) {
                 contributor.getContributorAttributes();
                 if (contributor.getContributorAttributes().getContributorRole() != null)
-                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
+                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole()));
                 if (contributor.getContributorAttributes().getContributorSequence() != null)
                     c.setContributorSequence(Text.valueOf(contributor.getContributorAttributes().getContributorSequence().value()));
             }

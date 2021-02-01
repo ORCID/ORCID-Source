@@ -141,7 +141,7 @@ public class WorkFormTest extends XMLTestCase {
         contributor.setCreditName(new CreditName("Credit name"));
         contributor.setContributorOrcid(new ContributorOrcid("0000-0000-0000-0000"));
         ContributorAttributes att = new ContributorAttributes();
-        att.setContributorRole(ContributorRole.ASSIGNEE);
+        att.setContributorRole(ContributorRole.ASSIGNEE.name());
         att.setContributorSequence(SequenceType.FIRST);
         contributor.setContributorAttributes(att);
         contributors.getContributor().add(contributor);
