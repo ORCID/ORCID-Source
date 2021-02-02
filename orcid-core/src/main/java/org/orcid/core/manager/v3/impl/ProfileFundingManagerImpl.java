@@ -287,7 +287,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
         pfe = profileFundingDao.merge(pfe);
         profileFundingDao.flush();
-        if (!isApiRequest) {
+        if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, ActionType.UPDATE));
         }
         return jpaJaxbFundingAdapter.toFunding(pfe);
