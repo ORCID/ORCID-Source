@@ -17,12 +17,8 @@
         </p>
         <p>
             <@emailMacros.msg "notification.delegate.receipt.accountDelegateMeans" />
-            <span style="margin-right: -3px">
-                <@emailMacros.space />${emailNameGrantingPermissionWithApostrophe}
-            </span>
-            <span style="margin-left: -3px">
-                <@emailMacros.msg "notification.delegate.receipt.orcidRecord" />
-            </span>
+            <@emailMacros.space />${emailNameGrantingPermissionWithApostrophe}
+            <@emailMacros.msg "notification.delegate.receipt.orcidRecord" />
         </p>
         <p>
             <@emailMacros.msg "notification.delegate.receipt.tutorial" /><@emailMacros.space />
