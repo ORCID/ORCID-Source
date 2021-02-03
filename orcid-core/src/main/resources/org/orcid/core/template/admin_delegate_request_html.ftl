@@ -17,7 +17,7 @@
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 				<@emailMacros.msg "email.admin_delegate_request.you_have.1" /><@emailMacros.space />${trustedOrcidName}
                 <@emailMacros.space /><@emailMacros.msg "email.admin_delegate_request.you_have.2" />${baseUri}/${trustedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.3" />
-                ${trustedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.4" />${baseUri}/${managedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.5" />${managedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.6" />
+				${baseUri}/${trustedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.4" />${baseUri}/${managedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.5" />${baseUri}/${managedOrcidValue}<@emailMacros.msg "email.admin_delegate_request.you_have.6" />
 		    </p>		   
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 		    	<@emailMacros.space /><@emailMacros.msg "email.admin_delegate_request.you_have.7" />
