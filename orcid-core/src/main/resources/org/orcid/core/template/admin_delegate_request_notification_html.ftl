@@ -11,15 +11,9 @@
     <p>
         <@emailMacros.msg "notification.admin_delegate_request.you_have.1" /><@emailMacros.space />${trustedOrcidName}
         <@emailMacros.space /><@emailMacros.msg "notification.admin_delegate_request.you_have.2" />
-            <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${trustedOrcidValue}">${baseUri}/${trustedOrcidValue}</a>
-        <span style="margin-left: -3px">
-            )
-        </span>
+            <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${trustedOrcidValue}" target="_blank">${baseUri}/${trustedOrcidValueWithParenthesis}</a>
         <@emailMacros.space /><@emailMacros.msg "notification.admin_delegate_request.you_have.3" />
-        <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${managedOrcidValue}">${baseUri}/${managedOrcidValue}</a>
-        <span style="margin-left: -3px">
-            .
-        </span>
+        <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${managedOrcidValue}" target="_blank">${baseUri}/${managedOrcidValueWithFullPoint}</a>
     </p>
     <p>
         <@emailMacros.space /><@emailMacros.msg "notification.admin_delegate_request.you_have.4" />
