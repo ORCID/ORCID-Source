@@ -457,11 +457,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     @UpdateProfileLastModified
     public void updateLocale(String orcid, String locale) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), locale = :locale where orcid = :orcid");
+        Query updateQuery = entityManager.createQuery("update ProfileEntity set locale = :locale where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("locale", locale);
         updateQuery.executeUpdate();
-
     }
 
     @Override
