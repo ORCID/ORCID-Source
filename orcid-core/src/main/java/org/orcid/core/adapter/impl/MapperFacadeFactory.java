@@ -23,6 +23,7 @@ import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeCon
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV2;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV2;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV2;
+import org.orcid.core.contributors.ContributorRoleConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -150,11 +151,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private EncryptionManager encryptionManager;
+    
+    private ContributorRoleConverter workContributorsRoleConverter;
 
     private boolean orikaDebug;
 
-    public MapperFacadeFactory(boolean orikaDebug) {
+    public MapperFacadeFactory(boolean orikaDebug, ContributorRoleConverter workContributorsRoleConverter) {
         this.orikaDebug = orikaDebug;
+        this.workContributorsRoleConverter = workContributorsRoleConverter;
     }
 
     private MapperFactory getNewMapperFactory() {
@@ -555,7 +559,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV2());
-        converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter());
+        converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter(workContributorsRoleConverter));
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);

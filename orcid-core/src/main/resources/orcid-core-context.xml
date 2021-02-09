@@ -1338,6 +1338,7 @@
 	
 	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory">
 	   <constructor-arg value="${org.orcid.core.orika.debug:false}" />
+	   <constructor-arg ref="workContributorsRoleConverter" />
 	</bean>
 	<bean id="mapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getObject"/>
 	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
@@ -1661,4 +1662,9 @@
 	<bean id="fundrefOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
 
     <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
+    
+    <bean id="workContributorsRoleConverter" class="org.orcid.core.contributors.works.ContributorRoleConverterImpl">
+        <property name="mappingsString" value="WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR" />
+    </bean>
+    
 </beans>

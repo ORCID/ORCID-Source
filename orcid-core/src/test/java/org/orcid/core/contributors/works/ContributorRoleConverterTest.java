@@ -4,12 +4,13 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class WorkContributorRoleConverterTest {
-
-    WorkContributorRoleConverter converter = new WorkContributorRoleConverter();
+public class ContributorRoleConverterTest {
 
     @Test
     public void testGetDbValueFromAPIValue() {
+        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
+        converter.setMappingsString("WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR");
+        
         // legacy
         assertEquals("AUTHOR", converter.toDBRole("author"));
         assertEquals("ASSIGNEE", converter.toDBRole("assignee"));
@@ -43,6 +44,9 @@ public class WorkContributorRoleConverterTest {
 
     @Test
     public void testToLegacyRoleValue() {
+        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
+        converter.setMappingsString("WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR");
+        
         // legacy
         assertEquals("author", converter.toLegacyRoleValue("AUTHOR"));
         assertEquals("assignee", converter.toLegacyRoleValue("ASSIGNEE"));
@@ -67,7 +71,7 @@ public class WorkContributorRoleConverterTest {
         assertNull(converter.toLegacyRoleValue("PROJECT_ADMINISTRATION"));
         assertNull(converter.toLegacyRoleValue("RESOURCES"));
         assertNull(converter.toLegacyRoleValue("SOFTWARE"));
-        assertNull(converter.toLegacyRoleValue("SUPERVISION"));
+        assertEquals("principal-investigator", converter.toLegacyRoleValue("SUPERVISION"));
         assertNull(converter.toLegacyRoleValue("VALIDATION"));
         assertNull(converter.toLegacyRoleValue("VISUALIZATION"));
         assertEquals("author", converter.toLegacyRoleValue("WRITING_ORIGINAL_DRAFT"));
@@ -76,6 +80,9 @@ public class WorkContributorRoleConverterTest {
     
     @Test
     public void testToRoleValue() {
+        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
+        converter.setMappingsString("WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR");
+        
         // legacy
         assertEquals("author", converter.toRoleValue("AUTHOR"));
         assertEquals("assignee", converter.toRoleValue("ASSIGNEE"));
@@ -107,4 +114,24 @@ public class WorkContributorRoleConverterTest {
         assertEquals("writing – review & editing", converter.toRoleValue("WRITING_REVIEW_EDITING"));
     }
 
+    @Test
+    public void testToLegacyRoleWhenMappingsNotSet() {
+        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
+        
+        assertNull(converter.toLegacyRoleValue("CONCEPTUALIZATION"));
+        assertNull(converter.toLegacyRoleValue("DATA_CURATION"));
+        assertEquals("editor", converter.toLegacyRoleValue("EDITOR")); // editor is already a legacy value so doesn't require mappings set
+        assertNull(converter.toLegacyRoleValue("FORMAL_ANALYSIS"));
+        assertNull(converter.toLegacyRoleValue("FUNDING_ACQUISITION"));
+        assertNull(converter.toLegacyRoleValue("INVESTIGATION"));
+        assertNull(converter.toLegacyRoleValue("METHODOLOGY"));
+        assertNull(converter.toLegacyRoleValue("PROJECT_ADMINISTRATION"));
+        assertNull(converter.toLegacyRoleValue("RESOURCES"));
+        assertNull(converter.toLegacyRoleValue("SOFTWARE"));
+        assertNull(converter.toLegacyRoleValue("SUPERVISION"));
+        assertNull(converter.toLegacyRoleValue("VALIDATION"));
+        assertNull(converter.toLegacyRoleValue("VISUALIZATION"));
+        assertNull(converter.toLegacyRoleValue("WRITING_ORIGINAL_DRAFT"));
+        assertNull(converter.toLegacyRoleValue("WRITING_REVIEW_EDITING"));
+    }
 }

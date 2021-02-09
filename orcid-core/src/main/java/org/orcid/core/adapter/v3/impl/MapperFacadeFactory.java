@@ -26,6 +26,7 @@ import org.orcid.core.adapter.v3.converter.OrgConverter;
 import org.orcid.core.adapter.v3.converter.VisibilityConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.contributors.ContributorRoleConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -182,6 +183,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource(name = "workContributorsRoleConverter")
+    private ContributorRoleConverter workContributorsRoleConverter;
 
     @Override
     public MapperFacade getObject() throws Exception {
@@ -515,7 +519,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, localeManager));
-        converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter());
+        converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter(workContributorsRoleConverter));
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);

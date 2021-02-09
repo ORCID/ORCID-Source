@@ -15,7 +15,7 @@ public enum LegacyContributorRole implements Serializable {
     PRINCIPAL_INVESTIGATOR("principal-investigator"), 
     POSTDOCTORAL_RESEARCHER("postdoctoral-researcher"), 
     SUPPORT_STAFF("support-staff");
-
+    
     private final String value;
 
     LegacyContributorRole(String v) {
