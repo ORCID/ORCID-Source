@@ -531,7 +531,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
-        when(emailManager.verifyEmail(email, orcid)).thenReturn(true);
+        when(emailManager.verifyEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
@@ -543,7 +543,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertTrue(ra.getFlashAttributes().containsKey("emailVerified"));
         assertTrue((Boolean) ra.getFlashAttributes().get("emailVerified"));
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
-        verify(emailManager, times(1)).verifyEmail(email, orcid);
+        verify(emailManager, times(1)).verifyEmail(orcid, email);
         verify(profileEntityManager, times(1)).updateLocale(eq(orcid), eq(AvailableLocales.EN));
     }
         
@@ -557,7 +557,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         // Email doesn't exists
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(false);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
-        when(emailManager.verifyEmail(email, orcid)).thenReturn(true);
+        when(emailManager.verifyEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
@@ -581,7 +581,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
         // For some reason the email wasn't verified
-        when(emailManager.verifyEmail(email, orcid)).thenReturn(false);
+        when(emailManager.verifyEmail(orcid, email)).thenReturn(false);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
