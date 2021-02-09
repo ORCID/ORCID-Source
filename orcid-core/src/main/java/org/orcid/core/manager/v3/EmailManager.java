@@ -22,7 +22,7 @@ public interface EmailManager extends EmailManagerReadOnly {
     
     void removeEmail(String orcid, String email);        
     
-    boolean verifyEmail(String email, String orcid);
+    boolean verifyEmail(String orcid, String email);
     
     boolean verifyPrimaryEmail(String orcid);
     

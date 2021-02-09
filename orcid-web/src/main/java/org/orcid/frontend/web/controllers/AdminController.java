@@ -583,7 +583,7 @@ public class AdminController extends BaseController {
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
             String orcid = emailManagerReadOnly.findOrcidIdByEmail(email);
-            emailManager.verifyEmail(email, orcid);
+            emailManager.verifyEmail(orcid, email);
         } else {
             result = getMessage("admin.verify_email.fail", email);
         }
