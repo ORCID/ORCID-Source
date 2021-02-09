@@ -62,49 +62,27 @@
                             <#if subjectDelegate??>
                                 <#if subjectDelegate?ends_with("has made you an Account Delegate for their ORCID record")>
                                     ${(subjectDelegate)}
-                                    <#if (digestEmail.sources?size gt 1)>
-                                        <#list digestEmail.sources as source>
-                                            <#if source != 'ORCID'>
-                                                ${source}
-                                                <#if (digestEmail.sources?size gt 1)>
-                                                    ,
-                                                </#if>
-                                            </#if>
-                                        </#list>
-                                        <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
-                                    </#if>
                                 <#elseif subjectDelegate?ends_with("has been added as a Trusted Individual")>
                                     ${(subjectDelegate)}
-                                    <#if (digestEmail.sources?size gt 1)>
-                                        <#list digestEmail.sources as source>
-                                            <#if source != 'ORCID'>
-                                                ${source}
-                                                <#if (digestEmail.sources?size gt 1)>
-                                                    ,
-                                                </#if>
-                                            </#if>
-                                        </#list>
-                                        <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
-                                    </#if>
                                 <#elseif subjectDelegate?starts_with("[ORCID] Trusting")>
                                     ${(subjectDelegate)}
-                                    <#if (digestEmail.sources?size gt 1)>
-                                        <#list digestEmail.sources as source>
-                                            <#if source != 'ORCID'>
+                                <#else>
+                                    <#list digestEmail.sources as source>
+                                        <#if bodyHtmlDelegate != '' || bodyHtmlDelegateRecipient != '' || bodyHtmlAdminDelegate != ''>
+                                            <#if source == emailName>
+
+                                            <#else>
                                                 ${source}
-                                                <#if (digestEmail.sources?size gt 1)>
+                                                <#if (digestEmail.sources?size gt 1) && source?index != digestEmail.sources?size - 1>
                                                     ,
                                                 </#if>
                                             </#if>
-                                        </#list>
-                                        <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
-                                    </#if>
-                                <#else>
-                                    <#list digestEmail.sources as source>
-                                        <#if source != 'ORCID'>
-                                            ${source}
-                                            <#if (digestEmail.sources?size gt 1)>
-                                                ,
+                                        <#else>
+                                            <#if source != 'ORCID'>
+                                                ${source}
+                                                <#if (digestEmail.sources?size gt 1) && source?index != digestEmail.sources?size - 1>
+                                                    ,
+                                                </#if>
                                             </#if>
                                         </#if>
                                     </#list>
@@ -172,7 +150,6 @@
                 </#list>
             </#if>
         </#list>
-        <br>
         <#if verboseNotifications>
             <#include "digest_notification_amend_section_html.ftl"/>
         </#if>
