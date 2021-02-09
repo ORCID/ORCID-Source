@@ -14,10 +14,10 @@
                 color: #494A4C;
                 font-size: 15px;
             ">
+        <#include "notification_header_html.ftl"/>
         <#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
             <#if sourceId != 'ORCID'>
                 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
-                    <#include "notification_header_html.ftl"/>
                     <#if notificationType == 'PERMISSION' || notificationType == 'INSTITUTIONAL_CONNECTION'>
                         <hr style="color: #ff9c00;background-color: #ff9c00;border-style: solid;border-width: 2px;"/>
                         <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
@@ -174,7 +174,7 @@
         </#list>
         <br>
         <#if verboseNotifications>
-            <#include "digest_email_amend_section.ftl"/>
+            <#include "digest_notification_amend_section_html.ftl"/>
         </#if>
         <br>
         <#include "notification_footer_html.ftl"/>
