@@ -14,10 +14,10 @@
                 color: #494A4C;
                 font-size: 15px;
             ">
+        <#include "notification_header_html.ftl"/>
         <#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
             <#if sourceId != 'ORCID'>
                 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
-                    <#include "notification_header_html.ftl"/>
                     <#if notificationType == 'PERMISSION' || notificationType == 'INSTITUTIONAL_CONNECTION'>
                         <hr style="color: #ff9c00;background-color: #ff9c00;border-style: solid;border-width: 2px;"/>
                         <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
@@ -59,15 +59,59 @@
                             <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.share.record" /></p>
                         </div>
                         <p style="margin: 15px 0;font-weight: bold;">
-                            <#list digestEmail.sources as source>
-                                <#if source != 'ORCID'>
-                                    ${source}
+                            <#if subjectDelegate??>
+                                <#if subjectDelegate?ends_with("has made you an Account Delegate for their ORCID record")>
+                                    ${(subjectDelegate)}
                                     <#if (digestEmail.sources?size gt 1)>
-                                        ,
+                                        <#list digestEmail.sources as source>
+                                            <#if source != 'ORCID'>
+                                                ${source}
+                                                <#if (digestEmail.sources?size gt 1)>
+                                                    ,
+                                                </#if>
+                                            </#if>
+                                        </#list>
+                                        <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
                                     </#if>
+                                <#elseif subjectDelegate?ends_with("has been added as a Trusted Individual")>
+                                    ${(subjectDelegate)}
+                                    <#if (digestEmail.sources?size gt 1)>
+                                        <#list digestEmail.sources as source>
+                                            <#if source != 'ORCID'>
+                                                ${source}
+                                                <#if (digestEmail.sources?size gt 1)>
+                                                    ,
+                                                </#if>
+                                            </#if>
+                                        </#list>
+                                        <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
+                                    </#if>
+                                <#elseif subjectDelegate?starts_with("[ORCID] Trusting")>
+                                    ${(subjectDelegate)}
+                                    <#if (digestEmail.sources?size gt 1)>
+                                        <#list digestEmail.sources as source>
+                                            <#if source != 'ORCID'>
+                                                ${source}
+                                                <#if (digestEmail.sources?size gt 1)>
+                                                    ,
+                                                </#if>
+                                            </#if>
+                                        </#list>
+                                        <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
+                                    </#if>
+                                <#else>
+                                    <#list digestEmail.sources as source>
+                                        <#if source != 'ORCID'>
+                                            ${source}
+                                            <#if (digestEmail.sources?size gt 1)>
+                                                ,
+                                            </#if>
+                                        </#if>
+                                    </#list>
+                                    <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
                                 </#if>
-                            </#list>
-                            <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" /></p>
+                            </#if>
+                        </p>
                         <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
                     <#else>
                         <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
@@ -130,7 +174,7 @@
         </#list>
         <br>
         <#if verboseNotifications>
-            <#include "digest_email_amend_section.ftl"/>
+            <#include "digest_notification_amend_section_html.ftl"/>
         </#if>
         <br>
         <#include "notification_footer_html.ftl"/>
