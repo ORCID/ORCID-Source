@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -52,6 +53,7 @@ import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -529,7 +531,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
-        when(emailManager.verifyEmail(email, orcid)).thenReturn(true);
+        when(emailManager.verifyEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
@@ -541,7 +543,8 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertTrue(ra.getFlashAttributes().containsKey("emailVerified"));
         assertTrue((Boolean) ra.getFlashAttributes().get("emailVerified"));
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
-        verify(emailManager, times(1)).verifyEmail(email, orcid);
+        verify(emailManager, times(1)).verifyEmail(orcid, email);
+        verify(profileEntityManager, times(1)).updateLocale(eq(orcid), eq(AvailableLocales.EN));
     }
         
     @Test
@@ -554,7 +557,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         // Email doesn't exists
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(false);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
-        when(emailManager.verifyEmail(email, orcid)).thenReturn(true);
+        when(emailManager.verifyEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
@@ -578,7 +581,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
         // For some reason the email wasn't verified
-        when(emailManager.verifyEmail(email, orcid)).thenReturn(false);
+        when(emailManager.verifyEmail(orcid, email)).thenReturn(false);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
