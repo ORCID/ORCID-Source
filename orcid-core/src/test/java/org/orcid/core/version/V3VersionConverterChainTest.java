@@ -635,7 +635,7 @@ public class V3VersionConverterChainTest {
         assertEquals(org.orcid.jaxb.model.common.CitationType.FORMATTED_UNSPECIFIED, releaseWork.getWorkCitation().getWorkCitationType());
         assertEquals(1, releaseWork.getWorkContributors().getContributor().size());
 
-        assertEquals(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE,
+        assertEquals("ASSIGNEE",
                 releaseWork.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorRole());
         assertEquals(org.orcid.jaxb.model.common.SequenceType.ADDITIONAL,
                 releaseWork.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorSequence());

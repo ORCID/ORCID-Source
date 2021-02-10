@@ -15,11 +15,11 @@ import ma.glasnost.orika.metadata.Type;
 public class WorkContributorsConverter extends BidirectionalConverter<WorkContributors, String> {
 
     private ContributorRoleConverter roleConverter;
-    
+
     public WorkContributorsConverter(ContributorRoleConverter roleConverter) {
         this.roleConverter = roleConverter;
     }
-    
+
     @Override
     public String convertTo(WorkContributors source, Type<String> destinationType) {
         return JsonUtils.convertToJsonString(source);
@@ -34,18 +34,21 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
             JsonNode contributor = contributors.next();
             JsonNode attributes = contributor.get("contributorAttributes");
             JsonNode contributorRole = attributes.get("contributorRole");
-            String contributorRoleValue = contributorRole.textValue();
-            
-            // ensure only V2 compatible roles
-            String legacyRole =  roleConverter.toLegacyRoleName(contributorRoleValue);
-            
-            if (legacyRole != null) {
-                ((ObjectNode) attributes).put("contributorRole", legacyRole);
-            } else {
-                ((ObjectNode) attributes).remove("contributorRole");
+
+            if (contributorRole != null) {
+                String contributorRoleValue = contributorRole.textValue();
+
+                // ensure only V2 compatible roles
+                String legacyRole = roleConverter.toLegacyRoleName(contributorRoleValue);
+
+                if (legacyRole != null) {
+                    ((ObjectNode) attributes).put("contributorRole", legacyRole);
+                } else {
+                    ((ObjectNode) attributes).remove("contributorRole");
+                }
             }
         }
-        
+
         WorkContributors workContributors = JsonUtils.convertTreeToValue(tree, WorkContributors.class);
         workContributors.getContributor().forEach(c -> c.setCreditName("".equals(c.getCreditName()) ? null : c.getCreditName()));
 
