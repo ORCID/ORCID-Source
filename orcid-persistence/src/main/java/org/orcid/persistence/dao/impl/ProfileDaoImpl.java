@@ -28,8 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
-    private static final String PUBLIC_VISIBILITY = "PUBLIC";
-
     private static final String PRIVATE_VISIBILITY = "PRIVATE";
     
     @Value("${org.orcid.postgres.query.timeout:30000}")
@@ -455,11 +453,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @UpdateProfileLastModified
     public void updateLocale(String orcid, String locale) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity set locale = :locale where orcid = :orcid");
+        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), locale = :locale, indexingStatus = :indexing_status where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("locale", locale);
+        updateQuery.setParameter("indexing_status", IndexingStatus.PENDING);
         updateQuery.executeUpdate();
     }
 
@@ -508,7 +506,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @UpdateProfileLastModifiedAndIndexingStatus
     public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
             boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
         Query updateQuery = entityManager.createQuery(
@@ -535,7 +532,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @Override
     @Transactional
-    @UpdateProfileLastModified
     public boolean updateDeveloperTools(String orcid, boolean enabled) {
         Query query = entityManager.createQuery("update ProfileEntity set enableDeveloperTools=:enabled, lastModified=now() where orcid=:orcid");
         if (enabled)
@@ -697,7 +693,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @UpdateProfileLastModified
     public boolean updateDefaultVisibility(String orcid, String visibility) {
         Query updateQuery = entityManager
                 .createQuery("update ProfileEntity set lastModified = now(), activitiesVisibilityDefault = :activitiesVisibilityDefault where orcid = :orcid");
@@ -749,7 +744,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     
     @Override
     @Transactional
-    @UpdateProfileLastModified
     public void update2FASecret(String orcid, String secret) {
         Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), secretFor2FA = :secret where orcid = :orcid");
         query.setParameter("orcid", orcid);

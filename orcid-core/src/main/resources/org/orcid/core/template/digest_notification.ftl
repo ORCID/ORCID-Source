@@ -46,7 +46,7 @@ ${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.hasChan
     </#if>
 </#list>
 <#if verboseNotifications>
-    <#include "digest_email_amend_section.ftl"/>
+    <#include "digest_notification_amend_section.ftl"/>
 </#if>
 
 <#include "notification_footer.ftl"/>
