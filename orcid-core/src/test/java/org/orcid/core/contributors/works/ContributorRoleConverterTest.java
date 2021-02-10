@@ -79,6 +79,42 @@ public class ContributorRoleConverterTest {
     }
     
     @Test
+    public void testToLegacyRoleName() {
+        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
+        converter.setMappingsString("WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR");
+        
+        // legacy
+        assertEquals("AUTHOR", converter.toLegacyRoleName("AUTHOR"));
+        assertEquals("ASSIGNEE", converter.toLegacyRoleName("ASSIGNEE"));
+        assertEquals("EDITOR", converter.toLegacyRoleName("EDITOR"));
+        assertEquals("CHAIR_OR_TRANSLATOR", converter.toLegacyRoleName("CHAIR_OR_TRANSLATOR"));
+        assertEquals("CO_INVESTIGATOR", converter.toLegacyRoleName("CO_INVESTIGATOR"));
+        assertEquals("CO_INVENTOR", converter.toLegacyRoleName("CO_INVENTOR"));
+        assertEquals("GRADUATE_STUDENT", converter.toLegacyRoleName("GRADUATE_STUDENT"));
+        assertEquals("OTHER_INVENTOR", converter.toLegacyRoleName("OTHER_INVENTOR"));
+        assertEquals("PRINCIPAL_INVESTIGATOR", converter.toLegacyRoleName("PRINCIPAL_INVESTIGATOR"));
+        assertEquals("POSTDOCTORAL_RESEARCHER", converter.toLegacyRoleName("POSTDOCTORAL_RESEARCHER"));
+        assertEquals("SUPPORT_STAFF", converter.toLegacyRoleName("SUPPORT_STAFF"));
+
+        // credit
+        assertNull(converter.toLegacyRoleName("CONCEPTUALIZATION"));
+        assertNull(converter.toLegacyRoleName("DATA_CURATION"));
+        assertEquals("EDITOR", converter.toLegacyRoleName("EDITOR")); // special case, part of both sets of roles
+        assertNull(converter.toLegacyRoleName("FORMAL_ANALYSIS"));
+        assertNull(converter.toLegacyRoleName("FUNDING_ACQUISITION"));
+        assertEquals("CO_INVESTIGATOR", converter.toLegacyRoleName("INVESTIGATION"));
+        assertNull(converter.toLegacyRoleName("METHODOLOGY"));
+        assertNull(converter.toLegacyRoleName("PROJECT_ADMINISTRATION"));
+        assertNull(converter.toLegacyRoleName("RESOURCES"));
+        assertNull(converter.toLegacyRoleName("SOFTWARE"));
+        assertEquals("PRINCIPAL_INVESTIGATOR", converter.toLegacyRoleName("SUPERVISION"));
+        assertNull(converter.toLegacyRoleName("VALIDATION"));
+        assertNull(converter.toLegacyRoleName("VISUALIZATION"));
+        assertEquals("AUTHOR", converter.toLegacyRoleName("WRITING_ORIGINAL_DRAFT"));
+        assertEquals("EDITOR", converter.toLegacyRoleName("WRITING_REVIEW_EDITING"));
+    }
+    
+    @Test
     public void testToRoleValue() {
         ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
         converter.setMappingsString("WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR");

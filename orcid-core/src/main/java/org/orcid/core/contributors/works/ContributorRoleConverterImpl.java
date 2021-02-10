@@ -125,7 +125,7 @@ public class ContributorRoleConverterImpl implements ContributorRoleConverter {
         try {
             // already a legacy role value
             LegacyContributorRole legacyRole = LegacyContributorRole.valueOf(dbRoleString);
-            return legacyRole.value();
+            return legacyRole.name();
         } catch (IllegalArgumentException e) {
             // ignore
         }

@@ -24,7 +24,7 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
 
     @Override
     public WorkContributors convertFrom(String source, Type<WorkContributors> destinationType) {
-        WorkContributors workContributors = JsonUtils.readObjectFromJsonString(source, destinationType.getRawType());
+        WorkContributors workContributors = JsonUtils.readObjectFromJsonString(source, WorkContributors.class);
         workContributors.getContributor().forEach(c -> c.setCreditName("".equals(c.getCreditName()) ? null : c.getCreditName()));
         
         // convert role to API format

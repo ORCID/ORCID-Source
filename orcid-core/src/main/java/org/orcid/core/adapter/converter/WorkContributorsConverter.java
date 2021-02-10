@@ -46,7 +46,7 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
             }
         }
         
-        WorkContributors workContributors = JsonUtils.convertTreeToValue(tree, destinationType.getRawType());
+        WorkContributors workContributors = JsonUtils.convertTreeToValue(tree, WorkContributors.class);
         workContributors.getContributor().forEach(c -> c.setCreditName("".equals(c.getCreditName()) ? null : c.getCreditName()));
 
         return workContributors;
