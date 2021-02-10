@@ -25,73 +25,28 @@
                             <p style="color: #ff9c00;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.digest.permissions" /></p>
                         </div>
                         <p style="margin: 15px 0;font-weight: bold;">
-                            <#list digestEmail.sources as source>
-                                <#if source != 'ORCID'>
-                                    ${source}
-                                    <#if (digestEmail.sources?size gt 1)>
-                                        ,
-                                    </#if>
-                                </#if>
-                            </#list>
+                            ${sourceId}
                             <@emailMacros.space /><@emailMacros.msg "notification.digest.askedPermission" /></p>
                         <hr style="color: #ff9c00;background-color: #ff9c00;border-style: solid;border-width: 2px;"/>
-                    <#elseif notificationType == 'AMENDED'>
-                        <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
-                        <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
-                            <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
-                            <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.share.record" /></p>
-                        </div>
-                        <p style="margin: 15px 0;font-weight: bold;">
-                            <#list digestEmail.sources as source>
-                                <#if source != 'ORCID'>
-                                    ${source}
-                                    <#if (digestEmail.sources?size gt 1)>
-                                        ,
-                                    </#if>
-                                </#if>
-                            </#list>
-                            <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" /></p>
-                        <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
                     <#elseif notificationType == 'ADMINISTRATIVE'>
-                        <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
-                        <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
-                            <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
-                            <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.share.record" /></p>
-                        </div>
-                        <p style="margin: 15px 0;font-weight: bold;">
                             <#if subjectDelegate??>
+                                <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
+                                <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
+                                    <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
+                                    <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.share.record" /></p>
+                                </div>
+                                <p style="margin: 15px 0;font-weight: bold;">
                                 <#if subjectDelegate?ends_with("has made you an Account Delegate for their ORCID record")>
                                     ${(subjectDelegate)}
                                 <#elseif subjectDelegate?ends_with("has been added as a Trusted Individual")>
                                     ${(subjectDelegate)}
                                 <#elseif subjectDelegate?starts_with("[ORCID] Trusting")>
                                     ${(subjectDelegate)}
-                                <#else>
-                                    <#list digestEmail.sources as source>
-                                        <#if bodyHtmlDelegate != '' || bodyHtmlDelegateRecipient != '' || bodyHtmlAdminDelegate != ''>
-                                            <#if source == emailName>
-
-                                            <#else>
-                                                ${source}
-                                                <#if (digestEmail.sources?size gt 1) && source?index != digestEmail.sources?size - 1>
-                                                    ,
-                                                </#if>
-                                            </#if>
-                                        <#else>
-                                            <#if source != 'ORCID'>
-                                                ${source}
-                                                <#if (digestEmail.sources?size gt 1) && source?index != digestEmail.sources?size - 1>
-                                                    ,
-                                                </#if>
-                                            </#if>
-                                        </#if>
-                                    </#list>
-                                    <@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
                                 </#if>
+                                </p>
+                                <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
                             </#if>
-                        </p>
-                        <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
-                    <#else>
+                    <#elseif notificationType == 'CUSTOM'>
                         <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
                         <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
                             <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
@@ -112,6 +67,43 @@
                                     <br>
                                 </#list>
                             </#list>
+                            <a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"
+                               rel="noopener noreferrer"
+                               target="_blank"
+                            >
+                                <button type="button"
+                                        style="width: 165px;
+                                        background-color: #2e7f9f;
+                                        color: white;
+                                        position: relative;
+                                        display: inline-block;
+                                        padding: .8em;
+                                        border: 1px solid transparent;
+                                        border-radius: 3px;
+                                        outline: none;
+                                        font-family: inherit;
+                                        font-size: 13px;
+                                        font-weight: normal;
+                                        line-height: 1.15384615;
+                                        text-align: center;
+                                        text-decoration: none;
+                                        cursor: pointer;
+                                        user-select: none;
+                                        border: transparent;">
+                                    <span style="text-transform: uppercase;">
+                                        <@emailMacros.msg "notification.digest.grantPermission" />
+                                    </span>
+                                </button>
+                            </a>
+                            <br>
+                            <p style="word-break: break-word">
+                                <@emailMacros.msg "notification.digest.cantClick" />
+                                <a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"
+                                   target="orcid.blank"
+                                   style="text-decoration: underline;color: #085c77;display: inline-block;"
+                                >${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action</a>
+                            </p>
+                            <br>
                         <#elseif notificationType == 'AMENDED' && !verboseNotifications>
                             <p>
                                 <@emailMacros.msg "notification.digest.showing" />
