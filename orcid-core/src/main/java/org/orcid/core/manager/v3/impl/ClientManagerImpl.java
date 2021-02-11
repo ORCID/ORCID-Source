@@ -29,6 +29,7 @@ import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
@@ -77,6 +78,9 @@ public class ClientManagerImpl implements ClientManager {
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDao;
 
     @Override
     @Transactional
@@ -223,7 +227,7 @@ public class ClientManagerImpl implements ClientManager {
                     // client and for the member as well
                     if (result) {
                         clientDetailsDao.updateLastModified(clientId);
-                        profileDao.updateLastModifiedDateWithoutResult(sourceManager.retrieveActiveSourceId());
+                        profileLastModifiedDao.updateLastModifiedDateWithoutResult(sourceManager.retrieveActiveSourceId());
                     }
                     return result;
                 } catch (Exception e) {

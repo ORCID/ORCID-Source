@@ -146,6 +146,7 @@
         <property name="initialPoolSize" value="${org.orcid.message-listener.db.initialPoolSize}" />
         <property name="minPoolSize" value="${org.orcid.message-listener.db.minPoolSize}" />
         <property name="maxPoolSize" value="${org.orcid.message-listener.db.maxPoolSize}" />
+        <property name="maxIdleTimeExcessConnections" value="${org.orcid.persistence.db.maxIdleTimeExcessConnections:120}"/>
         <property name="maxStatements" value="${org.orcid.message-listener.db.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="${org.orcid.message-listener.db.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="${org.orcid.message-listener.db.testConnectionOnCheckin}" />

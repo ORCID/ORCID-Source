@@ -3,11 +3,12 @@ package org.orcid.persistence.dao.impl;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
+import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Declan Newman (declan) Date: 24/04/2012
@@ -23,7 +24,6 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<O
     }
 
     @Override
-    @ExcludeFromProfileLastModifiedUpdate
     public OrcidOauth2AuthoriziationCodeDetail removeAndReturn(String code) {
         OrcidOauth2AuthoriziationCodeDetail orcidOauth2AuthoriziationCodeDetail = find(code);
 
@@ -48,5 +48,19 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<O
         query.setParameter("code", code);
         OrcidOauth2AuthoriziationCodeDetail result = query.getSingleResult();
         return result.isPersistent();
+    }
+    
+    @Override
+    @UpdateProfileLastModified
+    @Transactional
+    public void persist(OrcidOauth2AuthoriziationCodeDetail authCode) {
+        super.persist(authCode);
+    }
+    
+    @Override
+    @UpdateProfileLastModified
+    @Transactional
+    public OrcidOauth2AuthoriziationCodeDetail merge(OrcidOauth2AuthoriziationCodeDetail authCode) {
+        return super.merge(authCode);
     }
 }

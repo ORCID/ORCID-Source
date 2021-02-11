@@ -73,6 +73,9 @@
         </#if>
     </script>
 
+    <@orcid.checkFeatureStatus 'HOTJAR'>
+        <#include "/layout/hotjar.ftl">
+    </@orcid.checkFeatureStatus>
     <#include "/macros/orcid_ga.ftl">
 
 

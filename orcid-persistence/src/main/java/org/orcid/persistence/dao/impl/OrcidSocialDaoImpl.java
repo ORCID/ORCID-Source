@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.OrcidSocialDao;
 import org.orcid.persistence.jpa.entities.OrcidSocialEntity;
 import org.orcid.persistence.jpa.entities.OrcidSocialType;
@@ -30,6 +31,7 @@ public class OrcidSocialDaoImpl extends GenericDaoImpl<OrcidSocialEntity, OrcidS
 
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public void delete(String orcid, OrcidSocialType type) {
         Query query = entityManager.createNativeQuery("DELETE FROM orcid_social WHERE orcid=:orcid AND type=:type");
         query.setParameter("orcid", orcid);
@@ -52,6 +54,7 @@ public class OrcidSocialDaoImpl extends GenericDaoImpl<OrcidSocialEntity, OrcidS
 
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public boolean updateLatestRunDate(String orcid, OrcidSocialType type) {
         Query query = entityManager.createNativeQuery("UPDATE orcid_social SET last_run = now() WHERE orcid=:orcid AND type=:type");
         query.setParameter("orcid", orcid);

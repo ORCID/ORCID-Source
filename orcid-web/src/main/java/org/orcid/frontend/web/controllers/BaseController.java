@@ -26,6 +26,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
@@ -107,6 +108,8 @@ public class BaseController {
 
     private String googleAnalyticsTrackingId;
     
+    private String hotjarTrackingId;
+
     protected List<String> domainsAllowingRobots;
 
     protected static final String STATIC_FOLDER_PATH = "/static/" + ReleaseNameUtils.getReleaseName();
@@ -186,6 +189,16 @@ public class BaseController {
     @Value("${org.orcid.frontend.web.googleAnalyticsTrackingId:}")
     public void setGoogleAnalyticsTrackingId(String googleAnalyticsTrackingId) {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
+    }
+    
+    @ModelAttribute("hotjarTrackingId")
+    public String getHotjarTrackingId() {
+        return hotjarTrackingId;
+    }
+
+    @Value("${org.orcid.frontend.web.hotjarTrackingId:}")
+    public void setHotjarTrackingId(String hotjarTrackingId) {
+        this.hotjarTrackingId = hotjarTrackingId;
     }
 
     @ModelAttribute("sendEmailFrequencies")
@@ -501,11 +514,19 @@ public class BaseController {
             try {
                 String redirectUriString = redirectUri.getValue().getValue();
                 if (!redirectUriValidator.isValid(redirectUriString)) {
-                    redirectUriString = "http://" + redirectUriString;
-                    if (redirectUriValidator.isValid(redirectUriString)) {
-                        redirectUri.getValue().setValue(redirectUriString);
+                    if (redirectUriString.startsWith("http")) {
+                        if (OrcidStringUtils.isValidURL(redirectUriString)) {
+                            redirectUri.getValue().setValue(redirectUriString);
+                        } else {
+                            redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                        }                       
                     } else {
-                        redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                        redirectUriString = "http://" + redirectUriString;
+                        if (redirectUriValidator.isValid(redirectUriString)) {
+                            redirectUri.getValue().setValue(redirectUriString);
+                        } else {
+                            redirectUri.getErrors().add(getMessage("manage.developer_tools.invalid_redirect_uri"));
+                        }
                     }
                 }
             } catch (NullPointerException npe) {
@@ -559,19 +580,28 @@ public class BaseController {
             setError(creditName, "Pattern.registrationForm.nameSegment");
     }
 
+
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered) {
         return calculateRedirectUrl(request, response, justRegistered, false);
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered, boolean avoidOauthRedirect) {
+        return calculateRedirectUrl(request, response, justRegistered, avoidOauthRedirect, null);
+    }
+
+
+    protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered, boolean avoidOauthRedirect, String thirdPartyLogin) {
         String targetUrl = null;
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         if (isOauth2ScreensRequest != null && isOauth2ScreensRequest && !avoidOauthRedirect) {
             // Just redirect to the authorization screen
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
-            targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize?" + queryString;
+            targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize";
+            if (thirdPartyLogin != null){
+                targetUrl += "/third-party-signin-completed";
+            }
+            targetUrl += '?' + queryString;
             request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-
             if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
                 // Remove the prompt parameter after a successful login 
                 targetUrl = removeParameterFromURI(targetUrl, OrcidOauth2Constants.PROMPT.toString());
@@ -579,12 +609,21 @@ public class BaseController {
         } else {
             targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
         }
+        
+        Boolean addJustRegisteredParameter = false;
+        
+        if (justRegistered && targetUrl == null) {
+            addJustRegisteredParameter = true;
+        }
 
         if (targetUrl == null) {
             targetUrl = getBaseUri() + "/my-orcid";
-            if (justRegistered) {
-                targetUrl += "?justRegistered";
+            if (thirdPartyLogin != null){
+                targetUrl += "/third-party-signin-completed";
             }
+        }
+        if (addJustRegisteredParameter) {
+            targetUrl += "?justRegistered";
         }
 
         return targetUrl;

@@ -11,9 +11,9 @@
     <p>
         <@emailMacros.msg "notification.admin_delegate_request.you_have.1" /><@emailMacros.space />${trustedOrcidName}
         <@emailMacros.space /><@emailMacros.msg "notification.admin_delegate_request.you_have.2" />
-            <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${trustedOrcidValue}">${trustedOrcidValue}</a>
+            <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${trustedOrcidValue}" target="_blank">${baseUri}/${trustedOrcidValueWithParenthesis}</a>
         <@emailMacros.space /><@emailMacros.msg "notification.admin_delegate_request.you_have.3" />
-        <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${managedOrcidValue}">${managedOrcidValue}.</a>
+        <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/${managedOrcidValue}" target="_blank">${baseUri}/${managedOrcidValueWithFullPoint}</a>
     </p>
     <p>
         <@emailMacros.space /><@emailMacros.msg "notification.admin_delegate_request.you_have.4" />
@@ -25,7 +25,6 @@
     <p>
         <@emailMacros.msg "notification.admin_delegate_request.for_a_tutorial" />
         <a style="text-decoration: underline;color: #085c77;" href="https://support.orcid.org/hc/articles/360006973613" rel="noopener noreferrer" target="orcid.blank">https://support.orcid.org/hc/articles/360006973613</a>
-
     </p>
     </body>
     </html>

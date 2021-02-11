@@ -12,18 +12,12 @@ import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
-import org.springframework.scheduling.annotation.Scheduled;
 
 public class StatsApiServiceDelegatorImpl implements StatsApiServiceDelegator {
 
     @Resource
     StatisticsCacheManager statisticsCacheManager;
 
-    @Scheduled(fixedDelayString = "${statistics.summary.interval.delay:600000}")
-    public void updateToLatestStatisticsTimeline() {  
-        statisticsCacheManager.setLatestStatisticsTimeline();
-    }
-    
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     public Response getStatsSummary() {
