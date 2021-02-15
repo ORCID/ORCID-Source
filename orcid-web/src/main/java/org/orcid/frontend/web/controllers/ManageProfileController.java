@@ -50,6 +50,7 @@ import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.AddressesForm;
 import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.EditEmail;
+import org.orcid.pojo.ajaxForm.Email;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -493,20 +494,54 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
     public @ResponseBody org.orcid.pojo.ajaxForm.Emails setEmails(HttpServletRequest request,  @RequestBody org.orcid.pojo.ajaxForm.Emails newEmailSet) {                                
         Emails oldEmailSet = emailManager.getEmails(getCurrentUserOrcid());  
+        List<org.orcid.jaxb.model.v3.release.record.Email> deletedEmails = new ArrayList<org.orcid.jaxb.model.v3.release.record.Email>();
+        List<Email> newEmails = new ArrayList<Email>();
         String orcid = getCurrentUserOrcid();
         
-        newEmailSet.getEmails().forEach(newJsonEmail -> {
-            String owner = emailManager.findOrcidIdByEmail(newJsonEmail.getValue());
-            if(orcid.equals(owner)) {
-                oldEmailSet.getEmails().forEach(oldJsonEmail -> { 
-                    if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
-                        if (newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())){
-                            emailManager.updateVisibility(orcid, newJsonEmail.getValue(), newJsonEmail.getVisibility());
-                        }
+        
+        for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
+            boolean isNewEmail = true;
+            for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail:   oldEmailSet.getEmails()) {
+                if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
+                    isNewEmail = false;
+                    // VISIBILITY UPDATE
+                    if (newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())){
+                        updateEmailVisibility(newJsonEmail);
                     }
-                });
+                    // Primary email UPDATE
+                    if (newJsonEmail.isPrimary() && !oldJsonEmail.isPrimary()) {
+                        setPrimary(request, newJsonEmail);
+                    }
+                }
             }
-        });
+            if (isNewEmail) {
+                // List emails to be added
+                newEmails.add(newJsonEmail);
+            }
+        }
+        
+        for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail : oldEmailSet.getEmails()) {
+            boolean emailWasDeleted = true;
+            for (org.orcid.pojo.ajaxForm.Email  newJsonEmail:   newEmailSet.getEmails()) {
+                if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
+                    emailWasDeleted = false;
+                }
+            }
+            if (!emailWasDeleted) {
+                // List emails to be deleted
+                deletedEmails.add(oldJsonEmail);
+            }
+        }
+        
+        
+        for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
+            deleteEmailJson ( deletedEmail.getEmail() );
+            
+        }
+        for (Email newEmail : newEmails) {
+            addEmails ( request, (org.orcid.pojo.AddEmail)newEmail);
+        }
+    
         
         Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());       
         return org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet);    
