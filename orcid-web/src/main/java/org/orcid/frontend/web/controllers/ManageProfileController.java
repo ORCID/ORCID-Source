@@ -39,6 +39,7 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.pojo.AddEmail;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.DelegateForm;
@@ -497,7 +498,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<org.orcid.jaxb.model.v3.release.record.Email> deletedEmails = new ArrayList<org.orcid.jaxb.model.v3.release.record.Email>();
         List<Email> newEmails = new ArrayList<Email>();
         String orcid = getCurrentUserOrcid();
-        
+        List<String> errors = new ArrayList<String>();
         
         for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
             boolean isNewEmail = true;
@@ -505,12 +506,13 @@ public class ManageProfileController extends BaseWorkspaceController {
                 if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
                     isNewEmail = false;
                     // VISIBILITY UPDATE
-                    if (newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())){
+                    if (!newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())){
                         updateEmailVisibility(newJsonEmail);
                     }
                     // Primary email UPDATE
                     if (newJsonEmail.isPrimary() && !oldJsonEmail.isPrimary()) {
-                        setPrimary(request, newJsonEmail);
+                        org.orcid.pojo.ajaxForm.Email response  = setPrimary(request, newJsonEmail);
+                        errors.addAll(response.getErrors());
                     }
                 }
             }
@@ -527,7 +529,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     emailWasDeleted = false;
                 }
             }
-            if (!emailWasDeleted) {
+            if (emailWasDeleted) {
                 // List emails to be deleted
                 deletedEmails.add(oldJsonEmail);
             }
@@ -539,12 +541,22 @@ public class ManageProfileController extends BaseWorkspaceController {
             
         }
         for (Email newEmail : newEmails) {
-            addEmails ( request, (org.orcid.pojo.AddEmail)newEmail);
+            AddEmail newEmailCasted = new org.orcid.pojo.AddEmail();
+            newEmailCasted.setCurrent(true);
+            newEmailCasted.setValue(newEmail.getValue());
+            newEmailCasted.setVisibility(newEmail.getVisibility());
+            newEmailCasted.setPrimary(false);
+            newEmailCasted.setVerified(false);
+            org.orcid.pojo.ajaxForm.Email response  = addEmails ( request, newEmailCasted);
+            errors.addAll(response.getErrors());
+            
         }
     
-        
-        Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());       
-        return org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet);    
+    
+        Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
+        org.orcid.pojo.ajaxForm.Emails emailsResponse = org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet);
+        emailsResponse.setErrors(errors);
+        return emailsResponse;
     }
 
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
