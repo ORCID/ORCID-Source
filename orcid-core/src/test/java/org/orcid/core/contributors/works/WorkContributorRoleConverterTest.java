@@ -1,15 +1,16 @@
 package org.orcid.core.contributors.works;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 
-public class ContributorRoleConverterTest {
+public class WorkContributorRoleConverterTest {
 
     @Test
     public void testGetDbValueFromAPIValue() {
-        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
-        converter.setMappingsString("WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR");
+        WorkContributorRoleConverter converter = new WorkContributorRoleConverter();
         
         // legacy
         assertEquals("AUTHOR", converter.toDBRole("author"));
@@ -44,8 +45,7 @@ public class ContributorRoleConverterTest {
 
     @Test
     public void testToLegacyRoleValue() {
-        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
-        converter.setMappingsString("WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR");
+        WorkContributorRoleConverter converter = new WorkContributorRoleConverter();
         
         // legacy
         assertEquals("author", converter.toLegacyRoleValue("AUTHOR"));
@@ -80,8 +80,7 @@ public class ContributorRoleConverterTest {
     
     @Test
     public void testToLegacyRoleName() {
-        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
-        converter.setMappingsString("WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR");
+        WorkContributorRoleConverter converter = new WorkContributorRoleConverter();
         
         // legacy
         assertEquals("AUTHOR", converter.toLegacyRoleName("AUTHOR"));
@@ -116,8 +115,7 @@ public class ContributorRoleConverterTest {
     
     @Test
     public void testToRoleValue() {
-        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
-        converter.setMappingsString("WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR");
+        WorkContributorRoleConverter converter = new WorkContributorRoleConverter();
         
         // legacy
         assertEquals("author", converter.toRoleValue("AUTHOR"));
@@ -149,25 +147,5 @@ public class ContributorRoleConverterTest {
         assertEquals("writing – original draft", converter.toRoleValue("WRITING_ORIGINAL_DRAFT"));
         assertEquals("writing – review & editing", converter.toRoleValue("WRITING_REVIEW_EDITING"));
     }
-
-    @Test
-    public void testToLegacyRoleWhenMappingsNotSet() {
-        ContributorRoleConverterImpl converter = new ContributorRoleConverterImpl();
-        
-        assertNull(converter.toLegacyRoleValue("CONCEPTUALIZATION"));
-        assertNull(converter.toLegacyRoleValue("DATA_CURATION"));
-        assertEquals("editor", converter.toLegacyRoleValue("EDITOR")); // editor is already a legacy value so doesn't require mappings set
-        assertNull(converter.toLegacyRoleValue("FORMAL_ANALYSIS"));
-        assertNull(converter.toLegacyRoleValue("FUNDING_ACQUISITION"));
-        assertNull(converter.toLegacyRoleValue("INVESTIGATION"));
-        assertNull(converter.toLegacyRoleValue("METHODOLOGY"));
-        assertNull(converter.toLegacyRoleValue("PROJECT_ADMINISTRATION"));
-        assertNull(converter.toLegacyRoleValue("RESOURCES"));
-        assertNull(converter.toLegacyRoleValue("SOFTWARE"));
-        assertNull(converter.toLegacyRoleValue("SUPERVISION"));
-        assertNull(converter.toLegacyRoleValue("VALIDATION"));
-        assertNull(converter.toLegacyRoleValue("VISUALIZATION"));
-        assertNull(converter.toLegacyRoleValue("WRITING_ORIGINAL_DRAFT"));
-        assertNull(converter.toLegacyRoleValue("WRITING_REVIEW_EDITING"));
-    }
+    
 }

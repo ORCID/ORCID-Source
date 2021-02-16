@@ -1,8 +1,10 @@
-package org.orcid.core.contributors.works;
+package org.orcid.core.contributors.roles.works;
 
 import java.io.Serializable;
 
-public enum LegacyContributorRole implements Serializable {
+import org.orcid.core.contributors.roles.LegacyContributorRole;
+
+public enum LegacyWorkContributorRole implements Serializable, LegacyContributorRole {
 
     AUTHOR("author"), 
     ASSIGNEE("assignee"), 
@@ -18,7 +20,7 @@ public enum LegacyContributorRole implements Serializable {
     
     private final String value;
 
-    LegacyContributorRole(String v) {
+    LegacyWorkContributorRole(String v) {
         value = v;
     }
 
@@ -26,8 +28,8 @@ public enum LegacyContributorRole implements Serializable {
         return value;
     }
     
-    public static LegacyContributorRole fromValue(String v) {
-        for (LegacyContributorRole c : LegacyContributorRole.values()) {
+    public static LegacyWorkContributorRole fromValue(String v) {
+        for (LegacyWorkContributorRole c : LegacyWorkContributorRole.values()) {
             if (c.value.equalsIgnoreCase(v)) {
                 return c;
             }

@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.contributors.ContributorRoleConverter;
+import org.orcid.core.contributors.roles.ContributorRoleConverter;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.ContributorAttributes;
 import org.orcid.jaxb.model.common_v2.ContributorEmail;

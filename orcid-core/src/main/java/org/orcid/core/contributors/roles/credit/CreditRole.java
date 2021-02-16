@@ -1,8 +1,8 @@
-package org.orcid.core.contributors.works;
+package org.orcid.core.contributors.roles.credit;
 
 import java.io.Serializable;
 
-public enum CreditContributorRole implements Serializable {
+public enum CreditRole implements Serializable {
 
     CONCEPTUALIZATION("conceptualization"), 
     DATA_CURATION("data curation"), 
@@ -22,7 +22,7 @@ public enum CreditContributorRole implements Serializable {
 
     private final String value;
 
-    CreditContributorRole(String v) {
+    CreditRole(String v) {
         value = v;
     }
 
@@ -30,8 +30,8 @@ public enum CreditContributorRole implements Serializable {
         return value;
     }
     
-    public static CreditContributorRole fromValue(String v) {
-        for (CreditContributorRole c : CreditContributorRole.values()) {
+    public static CreditRole fromValue(String v) {
+        for (CreditRole c : CreditRole.values()) {
             if (c.value.equalsIgnoreCase(v)) {
                 return c;
             }

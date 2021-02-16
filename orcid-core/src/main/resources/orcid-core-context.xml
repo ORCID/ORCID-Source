@@ -16,7 +16,7 @@
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
-		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs" />
+		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors" />
 	
 	<aop:aspectj-autoproxy />
 	
@@ -1336,9 +1336,13 @@
 		<constructor-arg value="cdn_active_url.txt"/>
 	</bean>
 	
+	<bean id="workContributorRoleConverter" class="org.orcid.core.contributors.roles.works.WorkContributorRoleConverter" />
+	
+	<bean id="fundingContributorRoleConverter" class="org.orcid.core.contributors.roles.fundings.FundingContributorRoleConverter" />
+	
 	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory">
-	   <constructor-arg value="${org.orcid.core.orika.debug:false}" />
-	   <constructor-arg ref="workContributorsRoleConverter" />
+	   <constructor-arg ref="workContributorRoleConverter" />
+	   <constructor-arg ref="fundingContributorRoleConverter" />
 	</bean>
 	<bean id="mapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getObject"/>
 	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
@@ -1662,9 +1666,5 @@
 	<bean id="fundrefOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
 
     <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
-    
-    <bean id="workContributorsRoleConverter" class="org.orcid.core.contributors.works.ContributorRoleConverterImpl">
-        <property name="mappingsString" value="WRITING_ORIGINAL_DRAFT,AUTHOR,WRITING_REVIEW_EDITING,EDITOR,INVESTIGATION,CO_INVESTIGATOR,SUPERVISION,PRINCIPAL_INVESTIGATOR" />
-    </bean>
     
 </beans>

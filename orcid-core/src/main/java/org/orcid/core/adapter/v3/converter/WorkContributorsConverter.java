@@ -1,6 +1,6 @@
 package org.orcid.core.adapter.v3.converter;
 
-import org.orcid.core.contributors.ContributorRoleConverter;
+import org.orcid.core.contributors.roles.ContributorRoleConverter;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 

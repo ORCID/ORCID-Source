@@ -10,8 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.contributors.ContributorRoleConverter;
-import org.orcid.core.contributors.works.CreditContributorRole;
+import org.orcid.core.contributors.roles.ContributorRoleConverter;
+import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
@@ -73,8 +73,8 @@ public class WorkContributorsConverterTest {
     
     private WorkContributors getWorkContributors() {
         WorkContributors workContributors = new WorkContributors();
-        workContributors.getContributor().add(getContributor(CreditContributorRole.FUNDING_ACQUISITION.value()));
-        workContributors.getContributor().add(getContributor(CreditContributorRole.FORMAL_ANALYSIS.value()));
+        workContributors.getContributor().add(getContributor(CreditRole.FUNDING_ACQUISITION.value()));
+        workContributors.getContributor().add(getContributor(CreditRole.FORMAL_ANALYSIS.value()));
         return workContributors;
     }
     

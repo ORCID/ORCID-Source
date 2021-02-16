@@ -1,4 +1,4 @@
-package org.orcid.core.contributors;
+package org.orcid.core.contributors.roles;
 
 public interface ContributorRoleConverter {
     
@@ -8,8 +8,6 @@ public interface ContributorRoleConverter {
 
     String toDBRole(String roleValue);
     
-    void setMappingsString(String mappingsString);
-
     String toLegacyRoleName(String contributorRoleValue);
     
 }

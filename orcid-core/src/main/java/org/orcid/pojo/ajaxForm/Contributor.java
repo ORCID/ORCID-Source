@@ -82,7 +82,7 @@ public class Contributor implements ErrorsInterface, Serializable {
             if (contributor.getContributorAttributes() != null) {
                 contributor.getContributorAttributes();
                 if (contributor.getContributorAttributes().getContributorRole() != null)
-                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
+                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole()));
             }
             if (contributor.getContributorOrcid() != null) {
                 c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
@@ -122,7 +122,7 @@ public class Contributor implements ErrorsInterface, Serializable {
         if (this.getContributorRole() != null || this.getContributorSequence() != null) {
             FundingContributorAttributes ca = new FundingContributorAttributes();
             if (!PojoUtil.isEmpty(this.getContributorRole()))
-                ca.setContributorRole(FundingContributorRole.fromValue(this.getContributorRole().getValue()));
+                ca.setContributorRole(this.getContributorRole().getValue());
             c.setContributorAttributes(ca);
         }
         if (this.getEmail() != null)

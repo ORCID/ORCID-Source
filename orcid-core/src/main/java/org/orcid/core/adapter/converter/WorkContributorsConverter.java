@@ -2,7 +2,7 @@ package org.orcid.core.adapter.converter;
 
 import java.util.Iterator;
 
-import org.orcid.core.contributors.ContributorRoleConverter;
+import org.orcid.core.contributors.roles.ContributorRoleConverter;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.record_v2.WorkContributors;
 

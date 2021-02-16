@@ -436,7 +436,7 @@ public class ActivityValidatorTest {
         FundingContributor contributor = new FundingContributor();
 
         FundingContributorAttributes attributes = new FundingContributorAttributes();
-        attributes.setContributorRole(FundingContributorRole.LEAD);
+        attributes.setContributorRole(FundingContributorRole.LEAD.value());
 
         ContributorOrcid contributorOrcid = new ContributorOrcid();
         contributorOrcid.setHost("http://test.orcid.org");

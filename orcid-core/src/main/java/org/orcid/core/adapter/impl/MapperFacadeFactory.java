@@ -23,7 +23,8 @@ import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeCon
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV2;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV2;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV2;
-import org.orcid.core.contributors.ContributorRoleConverter;
+import org.orcid.core.contributors.roles.fundings.FundingContributorRoleConverter;
+import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -118,7 +119,6 @@ import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.converter.ConverterFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
-import ma.glasnost.orika.impl.generator.EclipseJdtCompilerStrategy;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.metadata.TypeFactory;
 
@@ -151,20 +151,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private EncryptionManager encryptionManager;
-    
-    private ContributorRoleConverter workContributorsRoleConverter;
 
-    private boolean orikaDebug;
+    @Resource
+    private WorkContributorRoleConverter workContributorsRoleConverter;
 
-    public MapperFacadeFactory(boolean orikaDebug, ContributorRoleConverter workContributorsRoleConverter) {
-        this.orikaDebug = orikaDebug;
+    @Resource
+    private FundingContributorRoleConverter fundingContributorsRoleConverter;
+
+    public MapperFacadeFactory(WorkContributorRoleConverter workContributorsRoleConverter, FundingContributorRoleConverter fundingContributorsRoleConverter) {
         this.workContributorsRoleConverter = workContributorsRoleConverter;
+        this.fundingContributorsRoleConverter = fundingContributorsRoleConverter;
     }
 
     private MapperFactory getNewMapperFactory() {
-        if (orikaDebug) {
-            return new DefaultMapperFactory.Builder().compilerStrategy(new EclipseJdtCompilerStrategy()).build();
-        }
         return new DefaultMapperFactory.Builder().build();
     }
 
@@ -746,7 +745,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = getNewMapperFactory();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JSONFundingExternalIdentifiersConverterV2());
-        converterFactory.registerConverter("fundingContributorsConverterId", new FundingContributorsConverter());
+        converterFactory.registerConverter("fundingContributorsConverterId", new FundingContributorsConverter(fundingContributorsRoleConverter));
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
@@ -1020,7 +1019,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                     for (ClientRedirectUri cru : a.getClientRedirectUris()) {
                         String rUriKey = ClientRedirectUriEntity.getUriAndTypeKey(cru.getRedirectUri(), cru.getRedirectUriType());
                         if (existingRedirectUriEntitiesMap.containsKey(rUriKey)) {
-                            ClientRedirectUriEntity existingEntity = existingRedirectUriEntitiesMap.get(rUriKey);                            
+                            ClientRedirectUriEntity existingEntity = existingRedirectUriEntitiesMap.get(rUriKey);
                             existingEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
                             existingEntity.setUriActType(cru.getUriActType());
                             existingEntity.setUriGeoArea(cru.getUriGeoArea());
@@ -1216,10 +1215,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Override
     public boolean isSingleton() {
         return true;
-    }
-
-    public void setOrikaDebug(boolean orikaDebug) {
-        this.orikaDebug = orikaDebug;
     }
 
     private WorkType getWorkType(String name) {
