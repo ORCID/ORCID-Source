@@ -428,7 +428,7 @@ $(function() {
 
     // fire off  check, if this page wasn't loaded via iframe (or html5
     // foo)
-    if (location == parent.location) {
+    if (location == parent.location && !$("#error-page").length) {
         checkOrcidLoggedIn();
         setInterval(checkOrcidLoggedIn, 30000);
     }
