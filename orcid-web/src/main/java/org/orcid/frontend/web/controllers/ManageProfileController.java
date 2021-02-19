@@ -510,7 +510,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         updateEmailVisibility(newJsonEmail);
                     }
                     // Primary email UPDATE
-                    if (newJsonEmail.isPrimary() && !oldJsonEmail.isPrimary()) {
+                    if (newJsonEmail.isPrimary() != null &&  newJsonEmail.isPrimary() && !oldJsonEmail.isPrimary()) {
                         org.orcid.pojo.ajaxForm.Email response  = setPrimary(request, newJsonEmail);
                         errors.addAll(response.getErrors());
                     }
@@ -605,6 +605,33 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return email;
     }
+    
+    @RequestMapping(value = "/validateEmail.json", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email validatEmail(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
+        List<String> errors = new ArrayList<String>();
+
+        MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+        // Clean the email address so it doesn't contains any horizontal white spaces
+        email.setValue(OrcidStringUtils.filterEmailAddress(email.getValue()));
+        
+        validateEmailAddress(email.getValue(), true, false, request, mbr);
+        
+        for (ObjectError oe : mbr.getAllErrors()) {
+            if (oe.getCode() != null) {
+                errors.add(getMessage(oe.getCode(), oe.getArguments()));
+            } else {
+                errors.add(oe.getDefaultMessage());
+            }
+        }
+        if (!errors.isEmpty()) {
+            email.setErrors(errors);
+                          
+        } 
+        return email;
+
+    }
+
+    
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
     public @ResponseBody Errors deleteEmailJson(@RequestParam("email") String email) {
