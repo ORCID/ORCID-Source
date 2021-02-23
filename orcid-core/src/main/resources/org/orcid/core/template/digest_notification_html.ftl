@@ -25,7 +25,7 @@
                             <p style="color: #ff9c00;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.digest.permissions" /></p>
                         </div>
                         <p style="margin: 15px 0;font-weight: bold;">
-                            ${sourceId}
+                            ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
                             <@emailMacros.space /><@emailMacros.msg "notification.digest.askedPermission" /></p>
                         <hr style="color: #ff9c00;background-color: #ff9c00;border-style: solid;border-width: 2px;"/>
                     <#elseif notificationType == 'ADMINISTRATIVE'>
