@@ -549,6 +549,10 @@ public class ManageProfileController extends BaseWorkspaceController {
             newEmailCasted.setVerified(false);
             org.orcid.pojo.ajaxForm.Email response  = addEmails ( request, newEmailCasted);
             errors.addAll(response.getErrors());
+            if (newEmail.isPrimary() != null &&  newEmail.isPrimary()) {
+                org.orcid.pojo.ajaxForm.Email setAsPrimaryResponse  = setPrimary(request, newEmail);
+                errors.addAll(setAsPrimaryResponse.getErrors());
+            }
             
         }
     
