@@ -58,13 +58,11 @@
                     <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
                         <#if notificationType == 'PERMISSION'>
                             <p><#if notification.notificationSubject??>${notification.notificationSubject} <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if><#else><@emailMacros.msg "email.digest.requesttoadd" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></#if></p>
-                            <br>
                             <#assign itemsByType=notification.items.itemsByType>
                             <#list itemsByType?keys?sort as itemType>
                                 <div>
                                     <p style="margin-bottom: 2px;">
-                                        <strong><@emailMacros.msg "email.common.recordsection." + itemType /></strong>(${itemsByType[itemType]?size}
-                                        )
+                                        <strong><@emailMacros.msg "email.common.recordsection." + itemType /></strong><@emailMacros.space />(${itemsByType[itemType]?size})
                                     </p>
                                 </div>
                                 <div>
@@ -75,7 +73,6 @@
                                     </ul>
                                 </div>
                             </#list>
-                            <br>
                             <a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"
                                rel="noopener noreferrer"
                                target="_blank"
@@ -112,7 +109,6 @@
                                    style="text-decoration: underline;color: #085c77;display: inline-block;"
                                 >${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action</a>
                             </p>
-                            <br>
                         <#elseif notificationType == 'AMENDED' && !verboseNotifications>
                             <p>
                                 <@emailMacros.msg "notification.digest.showing" />
@@ -154,7 +150,6 @@
         <#if verboseNotifications>
             <#include "digest_notification_amend_section_html.ftl"/>
         </#if>
-        <br>
         <#include "notification_footer_html.ftl"/>
     </div>
     </body>
