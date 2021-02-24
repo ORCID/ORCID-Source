@@ -42,7 +42,8 @@
                         <#list elements>
                             <div>
                                 <p style="margin-bottom: 2px;">
-                                    <strong><@emailMacros.msg "notification.digest." + action /></strong></p>
+                                    <strong><@emailMacros.msg "notification.digest." + action /></strong>
+                                </p>
                             </div>
                             <div>
                                 <ul style="padding-left: 0;margin-top: 2px;">
@@ -55,7 +56,6 @@
                     </#if>
                 </#list>
             </div>
-            <br>
         </#if>
     </#list>
 </#list>

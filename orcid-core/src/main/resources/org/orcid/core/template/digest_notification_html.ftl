@@ -13,6 +13,7 @@
                 font-family: Arial, helvetica, sans-serif;
                 color: #494A4C;
                 font-size: 15px;
+                line-height: 1.5;
             ">
         <#include "notification_header_html.ftl"/>
         <#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
@@ -20,7 +21,7 @@
                 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
                     <#if notificationType == 'PERMISSION' || notificationType == 'INSTITUTIONAL_CONNECTION'>
                         <hr style="color: #ff9c00;background-color: #ff9c00;border-style: solid;border-width: 2px;"/>
-                        <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
+                        <div style="font-weight: bold;display: flex;align-items: center;text-align: start;letter-spacing: 0.5px;">
                             <span style="background-color:#ff9c00;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
                             <p style="color: #ff9c00;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.digest.permissions" /></p>
                         </div>
@@ -31,7 +32,7 @@
                     <#elseif notificationType == 'ADMINISTRATIVE'>
                             <#if subjectDelegate??>
                                 <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
-                                <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
+                                <div style="font-weight: bold;display: flex;align-items: center;text-align: start;letter-spacing: 0.5px;">
                                     <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
                                     <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.share.record" /></p>
                                 </div>
@@ -48,7 +49,7 @@
                             </#if>
                     <#elseif notificationType == 'CUSTOM'>
                         <hr style="color: #447405;background-color: #447405;border-style: solid;border-width: 2px;"/>
-                        <div style="font-weight: bold;display: flex;align-items: center;text-align: start;">
+                        <div style="font-weight: bold;display: flex;align-items: center;text-align: start;letter-spacing: 0.5px;">
                             <span style="background-color:#447405;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
                             <p style="color: #447405;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.digest.data" /></p>
                         </div>
@@ -60,13 +61,21 @@
                             <br>
                             <#assign itemsByType=notification.items.itemsByType>
                             <#list itemsByType?keys?sort as itemType>
-                                <b><@emailMacros.msg "email.common.recordsection." + itemType /></b> (${itemsByType[itemType]?size})
-                                <br>
-                                <#list itemsByType[itemType] as item>
-                                    *<@emailMacros.space />${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if>
-                                    <br>
-                                </#list>
+                                <div>
+                                    <p style="margin-bottom: 2px;">
+                                        <strong><@emailMacros.msg "email.common.recordsection." + itemType /></strong>(${itemsByType[itemType]?size}
+                                        )
+                                    </p>
+                                </div>
+                                <div>
+                                    <ul style="padding-left: 0;margin-top: 2px;">
+                                        <#list itemsByType[itemType] as item>
+                                            <li><@emailMacros.space />${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if></li>
+                                        </#list>
+                                    </ul>
+                                </div>
                             </#list>
+                            <br>
                             <a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"
                                rel="noopener noreferrer"
                                target="_blank"
