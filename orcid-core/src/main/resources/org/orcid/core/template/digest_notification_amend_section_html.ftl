@@ -31,7 +31,7 @@
     </div>
     <#list types as type>
         <#if clientUpdate.updates[type]??>
-            <div>
+            <div style="margin-bottom: 30px;">
                 <p>
                     <strong style="text-transform: uppercase;"><@emailMacros.msg "email.common.recordsection." + type /></strong>
                 </p>
