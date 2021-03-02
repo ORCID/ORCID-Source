@@ -69,7 +69,6 @@ import org.orcid.utils.DateUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
  * @author Declan Newman (declan) Date: 23/02/2012
@@ -830,7 +829,7 @@ public class ManageProfileControllerTest {
     }
     
     @Test
-    public void testStripHtmlFromNames() throws NoSuchRequestHandlingMethodException {
+    public void testStripHtmlFromNames() {
         RecordNameManager mockRecordNameManager = Mockito.mock(RecordNameManager.class);
         
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
