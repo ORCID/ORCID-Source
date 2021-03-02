@@ -1,0 +1,16 @@
+name: release_tag_on_development_branch
+
+on:
+  push:
+    tags:
+      - 'release-*'
+
+jobs:
+  check-bats-version:
+    if: github.event.base_ref == 'refs/heads/development'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: npm install -g bats
+      - run: bats -v
