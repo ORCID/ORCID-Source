@@ -232,7 +232,7 @@ If automatic push/pull between Transifex and Github fails, files can be transfer
 
 2. Pull only strings that have been marked as reviewed in Transifex
 
-        tx pull --mode reviewed
+        tx pull -a --mode reviewed
 
 3. Commit and push changes to remote
 

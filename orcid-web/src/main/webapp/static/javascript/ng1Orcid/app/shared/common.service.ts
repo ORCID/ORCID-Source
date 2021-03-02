@@ -6,10 +6,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientModule, HttpHeaders, HttpParams } 
      from '@angular/common/http';
 
-import { Observable, Subject, ReplaySubject } 
+import { Observable }
     from 'rxjs';
 
-import { share, shareReplay } 
+import { share, take }
     from 'rxjs/operators';    
     
 import { OrgDisambiguated } 
@@ -42,9 +42,9 @@ export class CommonService {
         this.isPublicPage = this.publicPageRegex.test(path);
         if(this.isPublicPage) {
             var orcidId = path.match(this.orcidRegex)[0];
-            this.publicUserInfo$ = this.getPublicUserInfo(orcidId).pipe(share()); 
+            this.publicUserInfo$ = this.getPublicUserInfo(orcidId).pipe(share());
         } else {
-            this.userInfo$ = this.getUserInfo().pipe(share());  
+            this.userInfo$ = this.getUserInfo().pipe(share());            
         }
     }
 
@@ -332,4 +332,5 @@ export class CommonService {
         }
         return null;
     }
+   
 }

@@ -15,9 +15,5 @@ public interface StatisticsCacheManager {
     
     StatisticsSummary retrieve();
 
-    StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum type);
-            
-    void setLatestStatisticsSummary();
-            
-    void setLatestStatisticsTimeline();
+    StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum type);            
 }

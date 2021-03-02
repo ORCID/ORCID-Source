@@ -55,11 +55,6 @@ source_file = orcid-core/src/main/resources/i18n/ng_orcid_search_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
-[registry.ng_orcid_search]
-file_filter = orcid-core/src/main/resources/i18n/ng_orcid_material_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/ng_orcid_material_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
 
 [registry.2019-07-emailVisibilitySettings]
 file_filter = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings_<lang>.properties
@@ -67,8 +62,47 @@ source_file = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings
 source_lang = en
 type = UNICODEPROPERTIES
 
+
+[registry.notification-digest]
+file_filter = orcid-core/src/main/resources/i18n/notification_digest_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_digest_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
+
+[registry.notification-delegate]
+file_filter = orcid-core/src/main/resources/i18n/notification_delegate_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_delegate_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
+
+[registry.notification-announcement]
+file_filter = orcid-core/src/main/resources/i18n/notification_announcement_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_announcement_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
+[registry.notification-admin-delegate]
+file_filter = orcid-core/src/main/resources/i18n/notification_admin_delegate_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_admin_delegate_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
+[registry.notification-share]
+file_filter = orcid-core/src/main/resources/i18n/notification_share_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_share_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
 [registry.email2faDisabled]
 file_filter = orcid-core/src/main/resources/i18n/email2faDisabled_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email2faDisabled_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
+[registry.layout]
+file_filter = orcid-core/src/main/resources/i18n/layout_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/layout_en.properties
 source_lang = en
 type = UNICODEPROPERTIES

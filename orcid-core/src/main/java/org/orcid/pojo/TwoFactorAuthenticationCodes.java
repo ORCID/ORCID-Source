@@ -12,6 +12,8 @@ public class TwoFactorAuthenticationCodes implements ErrorsInterface {
     private String redirectUrl;
     
     private String recoveryCode;
+    
+    private String orcid;
 
     private List<String> errors = new ArrayList<>();
     
@@ -48,5 +50,14 @@ public class TwoFactorAuthenticationCodes implements ErrorsInterface {
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
     }
+    
+    public String getOrcid() {
+        return orcid;
+    }
+
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
+    }
+    
     
 }

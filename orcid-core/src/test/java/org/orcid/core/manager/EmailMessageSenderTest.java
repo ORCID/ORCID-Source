@@ -17,12 +17,14 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.Relationship;
@@ -45,38 +47,42 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
+import org.togglz.junit.TogglzRule;
 
 /**
- * 
+ *
  * @author Will Simpson
- * 
+ *
  */
 public class EmailMessageSenderTest extends BaseTest {
 
     @Resource
     private EmailMessageSender emailMessageSender;
-    
+
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManagerV3;
-  
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     private EncryptionManager encryptionManager;
-    
+
     @Resource
     private RecordNameDao recordNameDao;
-    
+
     @Mock
     private ProfileEntityCacheManager mockProfileEntityCacheManager;
-    
+
     @Mock
     private EncryptionManager mockEncryptionManager;
-    
+
     @Mock
     private RecordNameDao mockRecordNameDao;
-    
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
+
     @Before
     public void beforeClass() {
         MockitoAnnotations.initMocks(this);
@@ -85,28 +91,31 @@ public class EmailMessageSenderTest extends BaseTest {
         entity.setId(orcid);
         entity.setLocale(AvailableLocales.EN.name());
         when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(entity);
-        
+
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setCreditName("John Watson");
         recordName.setGivenNames("Watson");
-        recordName.setFamilyName("John");        
+        recordName.setFamilyName("John");
         recordName.setOrcid(orcid);
-        
+
         when(mockEncryptionManager.encryptForExternalUse(Mockito.anyString())).thenReturn("encrypted");
         when(mockRecordNameDao.getRecordName(anyString(), anyLong())).thenReturn(recordName);
-        
+
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", mockEncryptionManager);  
-        TargetProxyHelper.injectIntoProxy(recordNameManagerV3, "recordNameDao", mockRecordNameDao);          
+        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", mockEncryptionManager);
+        TargetProxyHelper.injectIntoProxy(recordNameManagerV3, "recordNameDao", mockRecordNameDao);
+
+        // Disable all features by default
+        togglzRule.disableAll();
     }
-    
+
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", encryptionManager);  
+        TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", encryptionManager);
         TargetProxyHelper.injectIntoProxy(recordNameManagerV3, "recordNameDao", recordNameDao);
     }
-    
+
     @Test
     public void testCreateDigestLegacy() throws IOException {
         EmailMessage emailMessage = emailMessageSender.createDigestLegacy("0000-0000-0000-0000", generateNotifications());
@@ -120,9 +129,9 @@ public class EmailMessageSenderTest extends BaseTest {
         assertEquals(expectedBodyHtml, html);
         assertEquals(expectedBodyText, text);
     }
-    
+
     @Test
-    public void testCreateDigest() throws IOException {        
+    public void testCreateDigest() throws IOException {
         EmailMessage emailMessage = emailMessageSender.createDigest("0000-0000-0000-0000", generateNotifications());
         assertNotNull(emailMessage);
         String html = emailMessage.getBodyHtml();
@@ -133,6 +142,24 @@ public class EmailMessageSenderTest extends BaseTest {
         assertEquals(expectedBodyHtml, html);
         assertEquals(expectedBodyText, text);
     }
+
+    @Test
+    public void testCreateDigestLegacyNotification() throws IOException {
+        togglzRule.enable(Features.ORCID_ANGULAR_INBOX);
+        EmailMessage emailMessage = emailMessageSender.createDigestLegacy("0000-0000-0000-0000", generateNotifications());
+
+        assertNotNull(emailMessage);
+        String html = emailMessage.getBodyHtml().trim().replaceAll("\\s","");
+        String text = emailMessage.getBodyText().trim().replaceAll("\\s","");
+        String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_notification_body_legacy.txt"));
+        String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_notification_body_legacy.html"));
+        String rExpectedBodyText = expectedBodyText.replace("\r\n", "\n").replace("\r", "\n").trim().replaceAll("\\s","");
+        String rExpectedBodyHtml = expectedBodyHtml.replace("\r\n", "\n").replace("\r", "\n").trim().replaceAll("\\s","");
+        assertEquals("[ORCID] John Watson you have new notifications", emailMessage.getSubject());
+        assertEquals(rExpectedBodyHtml, html);
+        assertEquals(rExpectedBodyText, text);
+    }
+
 
     private List<Notification> generateNotifications() {
         List<Notification> notifications = new ArrayList<>();
@@ -201,15 +228,15 @@ public class EmailMessageSenderTest extends BaseTest {
         items.getItems().add(createActivity(ItemType.EDUCATION, "education-1", null, null, "department", "org name"));
         notification6.setItems(items);
         notifications.add(notification6);
-        
+
         return notifications;
     }
-    
+
     private Item createActivity(ItemType actType, String actName, String doi1, String issn1, String dept, String org) {
         Item item = new Item();
         item.setItemType(actType);
         item.setItemName(actName);
-        if(doi1 != null) {
+        if (doi1 != null) {
             ExternalID extId = new ExternalID();
             extId.setType("doi");
             extId.setValue(doi1);
@@ -217,30 +244,30 @@ public class EmailMessageSenderTest extends BaseTest {
         }
         item.setActionType(ActionType.CREATE);
         Map<String, Object> additionalInfo = new HashMap<String, Object>();
-        if(doi1 != null && issn1 != null) {
+        if (doi1 != null && issn1 != null) {
             ExternalIDs extIds = new ExternalIDs();
             ExternalID extId1 = new ExternalID();
             extId1.setRelationship(Relationship.SELF);
             extId1.setType("doi");
             extId1.setValue(doi1);
             extIds.getExternalIdentifier().add(extId1);
-            
+
             ExternalID extId2 = new ExternalID();
             extId2.setRelationship(Relationship.SELF);
             extId2.setType("issn");
             extId2.setValue(issn1);
             extIds.getExternalIdentifier().add(extId2);
-            
-            additionalInfo.put("external_identifiers", extIds);              
+
+            additionalInfo.put("external_identifiers", extIds);
         } else if (dept != null && org != null) {
             additionalInfo.put("department", dept);
             additionalInfo.put("org_name", org);
         }
-        
-        if(!additionalInfo.isEmpty()) {
+
+        if (!additionalInfo.isEmpty()) {
             item.setAdditionalInfo(additionalInfo);
         }
-        
+
         return item;
     }
 

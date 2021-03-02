@@ -17,11 +17,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
-import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.PreferenceManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
@@ -127,6 +123,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
+
+    @Resource
+    private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
     
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -337,6 +336,9 @@ public class ManageProfileController extends BaseWorkspaceController {
             deprecateProfile.setPrimaryEmails(
                     primaryEmails.getEmails().stream().map(e -> e.getEmail()).collect(Collectors.toList()));
         }
+
+        deprecateProfile.setVerificationCodeRequired(twoFactorAuthenticationManager.userUsing2FA(deprecatingOrcid));
+
         return deprecateProfile;
     }
 

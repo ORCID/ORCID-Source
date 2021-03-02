@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.util.StringUtil;
 import org.ehcache.Cache;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
@@ -43,10 +45,13 @@ import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.ReleaseNameUtils;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Functions;
 
@@ -89,12 +94,15 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Resource(name = "salesForceContactsCache")
     private Cache<String, List<Contact>> salesForceContactsCache;
 
+    @Resource(name = "salesForceContactsForAuthenticationCache")
+    private Cache<Map<String, String>, List<Contact>> salesForceContactsForAuthenticationCache;
+    
     @Resource
     private SalesForceDao salesForceDao;
 
     @Resource(name = "salesForceConnectionEntityCacheManager")
     private GenericCacheManager<OrcidString, List<SalesForceConnectionEntity>> salesForceConnectionEntityCacheManager;
-
+    
     @Resource
     private SalesForceConnectionDao salesForceConnectionDao;
 
@@ -109,6 +117,10 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     
     @Resource
     private EmailManagerReadOnly emailManagerReadOnly;
+    
+
+    @Resource(name = "emailManagerReadOnlyV3")
+    private org.orcid.core.manager.v3.read_only.EmailManagerReadOnly emailManagerReadOnlyV3;
     
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -184,12 +196,21 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         return retrieveDetails(memberId);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Contact> retrieveContactsByAccountId(String accountId) {
         return salesForceContactsCache.get(accountId);
     }
 
+    @Override
+    public List<Contact> retrieveContactsForAuthenticationByAccountId(String accountId, String consortiumLeadId) {
+        Map<String, String> ids = new HashMap<String, String>();
+        ids.put("accountId", accountId);
+        if(!StringUtil.isBlank(consortiumLeadId)) {
+            ids.put("consortiumLeadId", consortiumLeadId);
+        }
+        return salesForceContactsForAuthenticationCache.get(ids);
+    }
+    
     @Override
     public List<Contact> retrieveFreshContactsByAccountId(String accountId) {
         salesForceContactsCache.remove(accountId);
@@ -298,6 +319,9 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
     @Override
     public String retrievePrimaryAccountIdByOrcid(String orcid) {
         List<SalesForceConnectionEntity> connections = salesForceConnectionEntityCacheManager.retrieve(new OrcidString(orcid));
+        if(connections == null || connections.isEmpty()) {
+            return null;
+        }
         return connections.stream().filter(c -> c.isPrimary()).findFirst().get().getSalesForceAccountId();
     }
 
@@ -755,6 +779,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
         premiumConsortiumMemberTypeId = null;
         consortiumMemberRecordTypeId = null;
         badgesMap = null;
+        salesForceDao.clearConsortiumLeadIdsCache();
     }
 
     private void evictLists() {
@@ -833,6 +858,23 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     private boolean isVotingContact(Contact contact) {
         return Boolean.TRUE.equals(contact.getRole().isVotingContact());
+    }
+    
+    @Override
+    public boolean isActiveContact(String accountId, String consortiumLeadId, String currentUserOrcid) {
+        List<Contact> contacts = retrieveContactsForAuthenticationByAccountId(accountId, consortiumLeadId); 
+        org.orcid.jaxb.model.v3.release.record.Emails verifiedEmails = emailManagerReadOnlyV3.getVerifiedEmails(currentUserOrcid);
+        List<org.orcid.jaxb.model.v3.release.record.Email> verifiedEmailsList = verifiedEmails.getEmails();
+        for(Contact c : contacts) {
+            if(!PojoUtil.isEmpty(c.getEmail())) {
+                for(org.orcid.jaxb.model.v3.release.record.Email verifiedEmail : verifiedEmailsList) {
+                    if(c.getEmail().equalsIgnoreCase(verifiedEmail.getEmail())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

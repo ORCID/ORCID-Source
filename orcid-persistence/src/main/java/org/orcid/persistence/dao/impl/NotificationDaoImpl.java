@@ -10,7 +10,7 @@ import java.util.Properties;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
+import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +76,20 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         TypedQuery<Long> query = entityManager.createQuery("select count(*) from NotificationEntity where readDate is null and archivedDate is null and orcid = :orcid",
                 Long.class);
         query.setParameter("orcid", orcid);
+        return query.getSingleResult().intValue();
+    }
+
+
+    @Override
+    public int getTotalCount(String orcid, boolean archived) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("select count(*) from NotificationEntity where orcid = :orcid");
+        if (!archived) {
+            sb.append(" and archivedDate is null");
+        } 
+        TypedQuery<Long> query = entityManager.createQuery(sb.toString(),
+                Long.class);
+        query.setParameter("orcid", orcid);       
         return query.getSingleResult().intValue();
     }
 
@@ -262,7 +276,6 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
     
     @Override
-    @ExcludeFromProfileLastModifiedUpdate
     public void flagAsNonSendable(String orcid, Long id) {
         Query query = entityManager.createQuery("update NotificationEntity set sendable=false where orcid = :orcid and id = :id");
         query.setParameter("orcid", orcid);
@@ -271,7 +284,6 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }    
     
     @Override
-    @ExcludeFromProfileLastModifiedUpdate
     public void updateRetryCount(String orcid, Long id, Long retryCount) {
         Query query = entityManager.createQuery("update NotificationEntity set retryCount = :count where orcid = :orcid and id = :id");
         query.setParameter("count", retryCount);
@@ -369,4 +381,17 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         return query.getResultList();
     }
 
+    @Override
+    @UpdateProfileLastModified
+    @Transactional
+    public void persist(NotificationEntity entity) {
+        super.persist(entity);
+    }
+    
+    @Override
+    @UpdateProfileLastModified
+    @Transactional
+    public NotificationEntity merge(NotificationEntity entity) {
+        return super.merge(entity);
+    }
 }

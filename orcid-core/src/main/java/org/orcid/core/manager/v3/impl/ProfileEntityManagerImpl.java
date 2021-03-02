@@ -41,6 +41,7 @@ import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -54,10 +55,11 @@ import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.FamilyName;
 import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.persistence.dao.BackupCodeDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -65,7 +67,6 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -169,6 +170,12 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
+    
+    @Resource
+    protected BackupCodeDao backupCodeDao;
+    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDao;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -215,7 +222,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                         }
                     }
 
-                    profileDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
+                    profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
                     return true;
                 }
                 return false;
@@ -280,10 +287,20 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * 
      */
     @Override
-    public void updateLastModifed(String orcid) {
+    public void updateLastModifedAndIndexingStatus(String orcid) {
         profileLastModifiedAspect.updateLastModifiedDateAndIndexingStatus(orcid);
     }
 
+    /**
+     * Updates the DB and the cached value in the request scope.
+     * 
+     */
+    @Override
+    public void updateLastModifed(String orcid) {
+        profileLastModifiedAspect.updateLastModifiedDate(orcid);
+    }
+
+    
     @Override
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);
@@ -566,7 +583,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public void updatePassword(String orcid, String password) {
         String encryptedPassword = encryptionManager.hashForInternalUse(password);
-        profileDao.updateEncryptedPassword(orcid, encryptedPassword);
+        profileDao.changeEncryptedPassword(orcid, encryptedPassword);
         profileHistoryEventManager.recordEvent(ProfileHistoryEventType.RESET_PASSWORD, orcid);
     }
 
@@ -622,7 +639,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     public void disable2FA(String orcid) {
         LOGGER.info("v3 disabling 2FA for " + orcid);
         profileDao.disable2FA(orcid);
-        notificationManager.send2FADisabledEmail(orcid);
+        if (Features.TWO_FA_DEACTIVATE_EMAIL.isActive()) {
+            notificationManager.send2FADisabledEmail(orcid);
+        }
     }
 
     @Override
@@ -669,8 +688,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         // Remove keywords
         profileKeywordManager.removeAllKeywords(orcid);
 
-        // disable 2FA
-        twoFactorAuthenticationManager.disable2FA(orcid);
+        // Admin disabling 2FA, so, we should not notify the user
+        profileDao.disable2FA(orcid);
+        backupCodeDao.removedUsedBackupCodes(orcid);
 
         // delete notifications
         notificationManager.deleteNotificationsForRecord(orcid);

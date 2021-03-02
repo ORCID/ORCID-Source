@@ -15,6 +15,7 @@ import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -29,7 +30,6 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_v2.Filterable;

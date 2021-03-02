@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -58,6 +59,9 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
 
                     // Notify
                     notificationManager.sendNotificationToAddedDelegate(userOrcid, delegateOrcid);
+                    if (Features.ORCID_ANGULAR_INBOX.isActive()) {
+                        notificationManager.sendNotificationToUserGrantingPermission(userOrcid, delegateOrcid);
+                    }
 
                     // Update last modified on delegate's profile so that the
                     // granting user is visible to them immediately

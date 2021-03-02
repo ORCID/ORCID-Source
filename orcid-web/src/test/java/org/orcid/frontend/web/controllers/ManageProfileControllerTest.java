@@ -31,6 +31,7 @@ import org.mockito.stubbing.Answer;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.GivenPermissionToManager;
@@ -114,6 +115,9 @@ public class ManageProfileControllerTest {
     @Mock
     private RecordNameManagerReadOnly mockRecordNameManagerReadOnlyV3;
     
+    @Mock
+    private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+    
     private RecordNameEntity getRecordName(String orcidId) {
         RecordNameEntity recordName = new RecordNameEntity();
         recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
@@ -139,6 +143,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "orcidIdentifierUtils", mockOrcidIdentifierUtils);
         TargetProxyHelper.injectIntoProxy(controller, "profileLastModifiedAspect", profileLastModifiedAspect);
         TargetProxyHelper.injectIntoProxy(controller, "recordNameManagerReadOnlyV3", mockRecordNameManagerReadOnlyV3);
+        TargetProxyHelper.injectIntoProxy(controller, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
                 
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
@@ -963,7 +968,7 @@ public class ManageProfileControllerTest {
     	assertFalse(controller.validateEmailAddress("A@b@c@example.com"));
     	assertFalse(controller.validateEmailAddress("john.doe@example..com"));
 
-        assertTrue(controller.validateEmailAddress("test@test"));
+        assertFalse(controller.validateEmailAddress("test@test"));
     	assertTrue(controller.validateEmailAddress("john..doe@example.com"));
     	assertTrue(controller.validateEmailAddress("a\"b(c)d,e:f;g<h>i[j\\k]l@example.com"));
 

@@ -44,6 +44,8 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     MemberDetails retrieveFreshDetails(String memberId);
 
     List<Contact> retrieveContactsByAccountId(String accountId);
+    
+    List<Contact> retrieveContactsForAuthenticationByAccountId(String accountId, String consortiumLeadId);
 
     List<Contact> retrieveFreshContactsByAccountId(String accountId);
     
@@ -123,5 +125,7 @@ public interface SalesForceManager extends ManagerReadOnlyBase {
     Map<String, Badge> retrieveBadgesMap();
 
     List<OrgId> retrieveAllOrgIds();
+    
+    boolean isActiveContact(String accountId, String consortiumLeadId, String currentUserOrcid);
 
 }

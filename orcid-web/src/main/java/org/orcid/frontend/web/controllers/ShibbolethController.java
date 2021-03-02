@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
@@ -174,13 +175,18 @@ public class ShibbolethController extends BaseController {
                 SecurityContextHolder.getContext().setAuthentication(null);
                 LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
-            return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false));
+            return new ModelAndView("redirect:" + calculateRedirectUrl(request, response, false, false, "shibboleth"));
         } 
         
         LOGGER.warn("Remote user was not null, however, userConnectionEntity is for {}", shibIdentityProvider);
 
         if (mav.getViewName().equals("social_link_signin") && Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-            return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/institutional-linking");
+            String insitutionalLinking = "/institutional-linking";
+            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            if (queryString != null) {
+                insitutionalLinking = insitutionalLinking + "?" + queryString;
+            }
+            return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() + insitutionalLinking);
         }
         
         return mav;
@@ -227,7 +233,7 @@ public class ShibbolethController extends BaseController {
                 SecurityContextHolder.getContext().setAuthentication(null);
                 LOGGER.warn("User {0} should have been logged-in via Shibboleth, but was unable to due to a problem", remoteUser, e);
             }
-            codes.setRedirectUrl(calculateRedirectUrl(request, response, false));
+            codes.setRedirectUrl(calculateRedirectUrl(request, response, false, false, "shibboleth"));
             return codes;
         } else {
             if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {

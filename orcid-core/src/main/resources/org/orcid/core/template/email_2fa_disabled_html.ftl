@@ -20,12 +20,14 @@
           <@emailMacros.msg "email.2fa_disabled.if_you_received.html" />
         </p>
         <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+          <@emailMacros.msg "email.2fa_disabled.no_reply" />
+        </p> 
+        <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
           <@emailMacros.msg "email.2fa_disabled.more_info.html" />
         </p>  
         <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
           <@emailMacros.msg "email.common.warm_regards" />
-          <a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
-        </p>
+         </p>
         <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
           <a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
         </p>

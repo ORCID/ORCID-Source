@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.exception.ClientDeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
@@ -20,7 +22,6 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
@@ -191,6 +192,9 @@ public class LoginController extends OauthControllerBase {
         } catch (LockedException e) {
             String redirectUriWithParams = redirectUri + "?error=client_locked&error_description=" + e.getMessage();
             return new ModelAndView(new RedirectView(redirectUriWithParams));
+        } catch (ClientDeactivatedException e) {
+            String redirectUriWithParams = redirectUri + "?error=client_deactivated&error_description=" + e.getMessage();
+            return new ModelAndView(new RedirectView(redirectUriWithParams));
         }
 
         // validate client scopes
@@ -268,7 +272,7 @@ public class LoginController extends OauthControllerBase {
         }
 
         JSONObject userData = socialSignInUtils.getFacebookUserData(code);
-        return processLogin(request, response, SocialType.FACEBOOK, userData);
+        return processSocialLogin(request, response, SocialType.FACEBOOK, userData);
     }
 
     @RequestMapping(value = { "/signin/google" }, method = RequestMethod.POST)
@@ -292,10 +296,10 @@ public class LoginController extends OauthControllerBase {
         }
 
         JSONObject userData = socialSignInUtils.getGoogleUserData(code);
-        return processLogin(request, response, SocialType.GOOGLE, userData);
+        return processSocialLogin(request, response, SocialType.GOOGLE, userData);
     }
 
-    private ModelAndView processLogin(HttpServletRequest request, HttpServletResponse response, SocialType socialType, JSONObject userData) throws JSONException {
+    private ModelAndView processSocialLogin(HttpServletRequest request, HttpServletResponse response, SocialType socialType, JSONObject userData) throws JSONException {
         String providerUserId = userData.getString(OrcidOauth2Constants.PROVIDER_USER_ID);
         String accessToken = userData.getString(OrcidOauth2Constants.ACCESS_TOKEN);
         Long expiresIn = Long.valueOf(userData.getString(OrcidOauth2Constants.EXPIRES_IN));
@@ -312,15 +316,11 @@ public class LoginController extends OauthControllerBase {
             if(userConnection.isLinked()) {                
                 // If user exists and is linked update user connection info
                 // and redirect to user record
-                view = updateUserConnectionAndLogUserIn(request, response, socialType, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
+                view = updateUserConnectionAndSocialLogUserIn(request, response, socialType, userConnection.getOrcid(), userConnection.getId().getUserid(), providerUserId,
                         accessToken, expiresIn);
-            } else {                
+            } else {
                 // Forward to account link page
-                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                    view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() +"/social-linking", true));
-                } else {
-                    view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
-                }     
+                view = socialLinking(request);
             }   
         } else {
             // Store relevant data in the session
@@ -329,11 +329,7 @@ public class LoginController extends OauthControllerBase {
             userConnectionId = createUserConnection(socialType, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL),
                     userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Forward to account link page
-            if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() +"/social-linking", true));
-            } else {
-                view = new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
-            }
+            view = socialLinking(request);
         }
         if (userConnectionId == null) {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
@@ -352,7 +348,7 @@ public class LoginController extends OauthControllerBase {
         return userConnectionManager.create(providerUserId, socialType.value(), email, userName, accessToken, expireTime);
     }
 
-    private ModelAndView updateUserConnectionAndLogUserIn(HttpServletRequest request, HttpServletResponse response, SocialType socialType, String userOrcid,
+    private ModelAndView updateUserConnectionAndSocialLogUserIn(HttpServletRequest request, HttpServletResponse response, SocialType socialType, String userOrcid,
             String userConnectionId, String providerUserId, String accessToken, Long expiresIn) {
         LOGGER.info("Updating existing userconnection for orcid={}, type={}, providerUserId={}", new Object[] { userOrcid, socialType.value(), providerUserId });
         // Update user connection info
@@ -373,6 +369,19 @@ public class LoginController extends OauthControllerBase {
 
         // Update security context with user information
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ModelAndView(new RedirectView(calculateRedirectUrl(request, response, false)));
+        return new ModelAndView(new RedirectView(calculateRedirectUrl(request, response, false, false, "social")));
+    }
+
+    private ModelAndView socialLinking(HttpServletRequest request) {
+        if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+            String socialLinking = "/social-linking";
+            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            if (queryString != null) {
+                socialLinking = socialLinking + "?" + queryString;
+            }
+            return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + socialLinking, true));
+        } else {
+            return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+        }
     }
 }

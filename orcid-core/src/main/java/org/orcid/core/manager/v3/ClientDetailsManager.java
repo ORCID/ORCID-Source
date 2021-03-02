@@ -3,6 +3,8 @@ package org.orcid.core.manager.v3;
 import java.util.List;
 import java.util.Set;
 
+import org.orcid.core.exception.ClientAlreadyActiveException;
+import org.orcid.core.exception.ClientAlreadyDeactivatedException;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -81,5 +83,9 @@ public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
     void addAuthorizedGrantTypeToClient(Set<String> types, ClientDetailsEntity clientDetails);
 
     void addClientRedirectUri(String clientId, String uri, RedirectUriType uriType, ScopePathType scope);
+    
+    void deactivateClientDetails(String clientDetailsId, String orcid) throws ClientAlreadyDeactivatedException;
+    
+    void activateClientDetails(String clientDetailsId) throws ClientAlreadyActiveException;
 
 }

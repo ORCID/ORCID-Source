@@ -1,13 +1,13 @@
 package org.orcid.frontend.web.controllers;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
-import org.orcid.pojo.TwoFactorAuthQRCodeUrl;
-import org.orcid.pojo.TwoFactorAuthStatus;
-import org.orcid.pojo.TwoFactorAuthRegistration;
-import org.orcid.pojo.TwoFactorAuthSecret;
+import org.orcid.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -20,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import net.glxn.qrgen.QRCode;
 
+import java.util.ArrayList;
+
 @Controller
 @RequestMapping(value = { "/2FA" })
 public class TwoFactorAuthenticationController extends BaseController {
@@ -31,6 +33,9 @@ public class TwoFactorAuthenticationController extends BaseController {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Resource
+    private BackupCodeManager backupCodeManager;
 
     @RequestMapping("/status.json")
     public @ResponseBody TwoFactorAuthStatus get2FAStatus() {
@@ -88,5 +93,40 @@ public class TwoFactorAuthenticationController extends BaseController {
         TwoFactorAuthSecret secret = new TwoFactorAuthSecret();
         secret.setSecret(twoFactorAuthenticationManager.getSecret(getCurrentUserOrcid()));
         return secret;
+    }
+
+    @RequestMapping(value = { "/authenticationCode.json" }, method = RequestMethod.GET)
+    public @ResponseBody
+    TwoFactorAuthenticationCodes getTwoFactorCodeWrapper() {
+        return new TwoFactorAuthenticationCodes();
+    }
+
+    @RequestMapping(value = { "/submitCode.json" }, method = RequestMethod.POST)
+    public @ResponseBody
+    TwoFactorAuthenticationCodes post2FAVerificationCode(@RequestBody TwoFactorAuthenticationCodes codes, HttpServletRequest request,
+                                                         HttpServletResponse response) {
+        String orcid = codes.getOrcid();
+        validate2FACodes(orcid, codes);
+        if (!codes.getErrors().isEmpty()) {
+            return codes;
+        }
+        codes.setRedirectUrl(calculateRedirectUrl(request, response, false));
+
+        return codes;
+    }
+
+    private void validate2FACodes(String orcid, TwoFactorAuthenticationCodes codes) {
+        codes.setErrors(new ArrayList<>());
+        if (codes.getRecoveryCode() != null && !codes.getRecoveryCode().isEmpty()) {
+            if (!backupCodeManager.verify(orcid, codes.getRecoveryCode())) {
+                codes.getErrors().add(getMessage("2FA.recoveryCode.invalid"));
+            }
+            return;
+        }
+
+        if (codes.getVerificationCode() == null || codes.getVerificationCode().isEmpty()
+                || !twoFactorAuthenticationManager.verificationCodeIsValid(codes.getVerificationCode(), orcid)) {
+            codes.getErrors().add(getMessage("2FA.verificationCode.invalid"));
+        }
     }
 }

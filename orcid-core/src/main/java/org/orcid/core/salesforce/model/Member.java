@@ -31,6 +31,7 @@ public class Member implements Serializable {
     private String lastMembershipStartDate;
     private String lastMembershipEndDate;
     private String recordTypeId;
+    private Boolean isConsortiaMember;
 
     public String getId() {
         return id;
@@ -168,13 +169,21 @@ public class Member implements Serializable {
         this.recordTypeId = recordTypeId;
     }
 
+    public Boolean getIsConsortiaMember() {
+        return isConsortiaMember;
+    }
+
+    public void setIsConsortiaMember(Boolean isConsortiaMember) {
+        this.isConsortiaMember = isConsortiaMember;
+    }
+
     @Override
     public String toString() {
-        return "Member [id=" + id + ", ownerId=" + ownerId + ", name=" + name + ", publicDisplayName=" + publicDisplayName + ", websiteUrl="
-                + websiteUrl + ", researchCommunity=" + researchCommunity + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl
-                + ", publicDisplayEmail=" + publicDisplayEmail + ", emailDomains=" + emailDomains + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId="
-                + consortiumLeadId + ", lastMembershipStartDate=" + lastMembershipStartDate + ", lastMembershipEndDate=" + lastMembershipEndDate + ", recordTypeId="
-                + recordTypeId + "]";
+        return "Member [id=" + id + ", ownerId=" + ownerId + ", name=" + name + ", publicDisplayName=" + publicDisplayName + ", websiteUrl=" + websiteUrl
+                + ", researchCommunity=" + researchCommunity + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl + ", publicDisplayEmail="
+                + publicDisplayEmail + ", emailDomains=" + emailDomains + ", mainOpportunityPath=" + mainOpportunityPath + ", consortiumLeadId=" + consortiumLeadId
+                + ", lastMembershipStartDate=" + lastMembershipStartDate + ", lastMembershipEndDate=" + lastMembershipEndDate + ", recordTypeId=" + recordTypeId
+                + ", isConsortiaMember=" + isConsortiaMember + "]";
     }
 
 }

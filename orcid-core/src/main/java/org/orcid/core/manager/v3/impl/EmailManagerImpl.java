@@ -16,6 +16,7 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -69,15 +70,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
-    @Transactional
-    public boolean verifyEmail(String email, String orcid) {
-        boolean verified = emailDao.verifyEmail(email);
-
-        if (verified) {
-            profileLastModifiedAspect.updateLastModifiedDateAndIndexingStatus(orcid);
-        }
-
-        return verified;
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public boolean verifyEmail(String orcid, String email) {
+        return emailDao.verifyEmail(email);
     }
 
     @Override

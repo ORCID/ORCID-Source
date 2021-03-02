@@ -38,6 +38,8 @@ public interface NotificationManager {
 
     void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
 
+    void sendNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission);
+
     Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
 
     void sendOrcidDeactivateEmail(String userOrcid);
@@ -93,6 +95,8 @@ public interface NotificationManager {
     NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 
     int getUnreadCount(String orcid);
+
+    int getTotalCount(String var1, boolean archived);
     
     void flagAsRead(String orcid, Long id);
 

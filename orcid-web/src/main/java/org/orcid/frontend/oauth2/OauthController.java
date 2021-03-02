@@ -11,16 +11,17 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.exception.ClientDeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
-import org.orcid.core.security.aop.LockedException;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
+import org.orcid.frontend.web.exception.OauthInvalidRequestException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -100,15 +101,18 @@ public class OauthController {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
             authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails, requestInfoForm.getResponseType());
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-        } catch (InvalidScopeException | LockedException | InvalidClientException e) {
+        } catch (InvalidScopeException | LockedException | ClientDeactivatedException | InvalidClientException e) {
             if (e instanceof InvalidScopeException) {
                 requestInfoForm.setError("invalid_scope");
                 requestInfoForm.setErrorDescription(e.getMessage());
             } else if (e instanceof InvalidClientException) {
                 requestInfoForm.setError("invalid_client");
                 requestInfoForm.setErrorDescription(e.getMessage());
-            } else {
+            } else if (e instanceof LockedException){
                 requestInfoForm.setError("client_locked");
+                requestInfoForm.setErrorDescription(e.getMessage());
+            } else {
+                requestInfoForm.setError("client_deactivated");
                 requestInfoForm.setErrorDescription(e.getMessage());
             }
             return requestInfoForm;
@@ -135,7 +139,6 @@ public class OauthController {
 
         if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null) {
             requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
-            if (requestInfoForm.getUserOrcid() != null) {                
                 if (requestParameters.isEmpty() && request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING) != null) {
                     try {
                         String url = URLDecoder.decode((String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING), "UTF-8").trim();
@@ -154,7 +157,6 @@ public class OauthController {
                         requestInfoForm.setErrorDescription("Invalid request");
                     }
                 }                
-            }
         }
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         return requestInfoForm;
@@ -168,7 +170,17 @@ public class OauthController {
         try {
             // Get and save the request information form
             requestInfoForm = oauthHelper.generateRequestInfoForm(url);
-        } catch (InvalidRequestException | InvalidClientException e) {
+        } catch (InvalidClientException e) {
+            requestInfoForm.setError("invalid_client");
+            requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
+        } catch (OauthInvalidRequestException e) {
+            requestInfoForm =  e.getRequestInfoForm();
+            requestInfoForm.setError("oauth_error");
+            requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
+        } 
+        catch (InvalidRequestException e) {
             requestInfoForm.setError("oauth_error");
             requestInfoForm.setErrorDescription(e.getMessage());
             return requestInfoForm;
@@ -217,6 +229,10 @@ public class OauthController {
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         } catch (LockedException e) {
             requestInfoForm.setError("client_locked");
+            requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
+        } catch (ClientDeactivatedException e) {
+            requestInfoForm.setError("client_deactivated");
             requestInfoForm.setErrorDescription(e.getMessage());
             return requestInfoForm;
         }

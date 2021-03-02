@@ -42,6 +42,8 @@ public interface SalesForceDao {
     List<Contact> retrieveContactsWithRolesByAccountId(String accountId, boolean includeNonCurrent);
 
     List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId);
+    
+    List<String> getConsortiumLeadIds();
 
     String retrievePremiumConsortiumMemberTypeId();
 
@@ -106,5 +108,9 @@ public interface SalesForceDao {
     String getAccessToken();
     
     String retrieveConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember();
+    
+    List<Contact> retrieveContactsAllowedToEdit(String accountId, String consortiumLeadId);
+    
+    void clearConsortiumLeadIdsCache();
 
 }

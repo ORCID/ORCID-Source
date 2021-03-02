@@ -269,7 +269,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
         
         Mockito.when(mockEncryptionManager.hashForInternalUse(Mockito.eq("password"))).thenReturn("encryptedPassword");
-        Mockito.doNothing().when(mockProfileDao).updateEncryptedPassword(Mockito.eq("orcid"), Mockito.eq("encryptedPassword"));
+        Mockito.doNothing().when(mockProfileDao).changeEncryptedPassword(Mockito.eq("orcid"), Mockito.eq("encryptedPassword"));
         Mockito.doNothing().when(mockProfileHistoryEventManager).recordEvent(Mockito.eq(ProfileHistoryEventType.RESET_PASSWORD), Mockito.eq("orcid"));
         
         profileEntityManager.updatePassword("orcid", "password");

@@ -11,7 +11,7 @@ public enum Features implements Feature {
 
     @Label("Orcid Angular My Orcid")
     ORCID_ANGULAR_MY_ORCID,
-    
+
     @Label("Orcid Angular Inbox")
     ORCID_ANGULAR_INBOX,
 
@@ -72,7 +72,7 @@ public enum Features implements Feature {
     @Label("New footer")
     NEW_FOOTER,
     
-    @Label("Research resource actvities section in the UI")
+    @Label("Research resource activities section in the UI")
     RESEARCH_RESOURCE,
     
     @Label("Reset password send email in all cases")
@@ -137,12 +137,15 @@ public enum Features implements Feature {
     
     @Label("Disable the 2.0 release candidates")
     V2_DISABLE_RELEASE_CANDIDATES,
-    
+
     @Label("Salesforce: Enable opportunities and org record types")
     SF_ENABLE_OPP_ORG_RECORD_TYPES,
-    
+
     @Label("ID token 24 hours lifespan")
-    ID_TOKEN_24_HOURS_LIFESPAN;
+    ID_TOKEN_24_HOURS_LIFESPAN,
+    
+    @Label("Send the 2FA Disabled Email")
+    TWO_FA_DEACTIVATE_EMAIL;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

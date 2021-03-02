@@ -134,7 +134,7 @@ public class SocialController extends BaseController {
                     return codes;
                 }
                 updateUserConnectionLoginAndLogUserIn(userConnectionId, providerId, providerUserId, orcid);
-                codes.setRedirectUrl(calculateRedirectUrl(request, response, false));
+                codes.setRedirectUrl(calculateRedirectUrl(request, response, false, false, "social"));
             } else {
                 codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/social/access");
             }

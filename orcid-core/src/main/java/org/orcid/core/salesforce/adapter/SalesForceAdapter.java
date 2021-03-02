@@ -111,6 +111,26 @@ public class SalesForceAdapter {
             throw new RuntimeException("Error getting contacts with roles list from SalesForce JSON", e);
         }
     }
+    
+    public List<Contact> extractAllContactsWithRolesFromJson(JSONObject object) {
+        List<JSONObject> allContacts = new ArrayList<JSONObject>();
+        try {            
+            JSONArray records = object.getJSONArray("records");
+            for(int i = 0; i < records.length(); i++) {
+                JSONObject element = records.getJSONObject(i);
+                JSONObject contactRoles = element.optJSONObject("Membership_Contact_Roles__r");
+                allContacts.addAll(extractObjectListFromRecords(contactRoles));
+                
+            }                                   
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting contacts with roles list from SalesForce JSON", e);
+        }
+        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
+            return allContacts.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());
+        } else {
+            return allContacts.stream().map(e -> mapperFacadeLegacy.map(e, Contact.class)).collect(Collectors.toList());
+        }
+    }
 
     public JSONObject createSaleForceRecordFromContact(Contact contact) {
         if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
@@ -318,6 +338,22 @@ public class SalesForceAdapter {
         }
     }
 
+    public List<String> extractIds(JSONObject object) {
+        List<String> ids = new ArrayList<String>();
+        try {
+            JSONArray records = object.getJSONArray("records");
+
+            for (int i = 0; i < records.length(); i++) {
+                JSONObject obj = records.getJSONObject(i);
+                ids.add(obj.getString("Id"));
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting ID from first record", e);
+        }
+
+        return ids;
+    }
+    
     public static String extractIdFromUrl(String url) {
         if (url == null) {
             return null;

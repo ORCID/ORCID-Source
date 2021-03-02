@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SpamManager;
@@ -73,6 +74,9 @@ public class AdminController extends BaseController {
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
+    
+    @Resource(name = "clientDetailsManagerV3")
+    private ClientDetailsManager clientDetailsManager;
 
     @Resource(name = "spamManager")
     SpamManager spamManager;     
@@ -579,7 +583,7 @@ public class AdminController extends BaseController {
         String result = getMessage("admin.verify_email.success", email);
         if (emailManager.emailExists(email)) {
             String orcid = emailManagerReadOnly.findOrcidIdByEmail(email);
-            emailManager.verifyEmail(email, orcid);
+            emailManager.verifyEmail(orcid, email);
         } else {
             result = getMessage("admin.verify_email.fail", email);
         }
@@ -964,5 +968,5 @@ public class AdminController extends BaseController {
         resendIdMap.put("disabledIds", disabledIds);
         return resendIdMap;
     }
-
+    
 }

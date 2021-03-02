@@ -12,7 +12,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
@@ -26,7 +25,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
@@ -56,6 +54,11 @@ public class HomeController extends BaseController {
     
     private static final Locale DEFAULT_LOCALE = Locale.US;
     
+
+    @Value("${org.orcid.core.aboutUriTemporalWhileTransitioningToTheNewInfoWebSite:https://info.orcid.org}")
+    private String aboutUriTemporal;
+    
+
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
     private String aboutUri;
     
@@ -248,8 +251,7 @@ public class HomeController extends BaseController {
             }
             if(!PojoUtil.isEmpty(p.getGroupType())) {
                 info.put("MEMBER_TYPE", p.getGroupType());
-            }
-            
+            }            
         }
         return info;
     }
@@ -268,6 +270,7 @@ public class HomeController extends BaseController {
         configDetails.setMessage("STATIC_PATH", getStaticContentPath(request));
         configDetails.setMessage("SHIBBOLETH_ENABLED", String.valueOf(isShibbolethEnabled()));
         configDetails.setMessage("ABOUT_URI", aboutUri);
+        configDetails.setMessage("ABOUT_URI_TEMPORAL", aboutUriTemporal);
         configDetails.setMessage("GA_TRACKING_ID", googleAnalyticsTrackingId);
         configDetails.setMessage("HOTJAR_TRACKING_ID", hotjarTrackingId);
         configDetails.setMessage("MAINTENANCE_MESSAGE", getMaintenanceMessage());
@@ -304,7 +307,7 @@ public class HomeController extends BaseController {
         lPojo.setMessages(localPropertyMap);
         return lPojo;
     }
-    
+
     public String getMaintenanceMessage() {
         if (maintenanceHeaderUrl != null) {
             try {

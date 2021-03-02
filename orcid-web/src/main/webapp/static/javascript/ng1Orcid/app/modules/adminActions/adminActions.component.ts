@@ -607,6 +607,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
     disable2FA(): void {
+        
         this.adminActionsService.disable2FA( this.toDisableIdsOrEmails )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -624,7 +625,8 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
-
+    
+      
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives

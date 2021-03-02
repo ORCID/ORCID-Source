@@ -35,6 +35,9 @@ public class OtherNameDaoTest extends DBUnitTest {
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -66,12 +69,12 @@ public class OtherNameDaoTest extends DBUnitTest {
 
     @Test
     public void testAddOtherName() {
-        Date profileLastModifiedOrig = profileDao.retrieveLastModifiedDate("4444-4444-4444-4441");
+        Date profileLastModifiedOrig = profileLastModifiedDao.retrieveLastModifiedDate("4444-4444-4444-4441");
         assertEquals(2, dao.getOtherNames("4444-4444-4444-4441", 0L).size());
         boolean result = dao.addOtherName("4444-4444-4444-4441", "OtherName");
         assertEquals(true, result);
         assertEquals(3, dao.getOtherNames("4444-4444-4444-4441", 0L).size());
-        assertFalse("Profile last modified date should have been updated", profileLastModifiedOrig.after(profileDao.retrieveLastModifiedDate("4444-4444-4444-4441")));
+        assertFalse("Profile last modified date should have been updated", profileLastModifiedOrig.after(profileLastModifiedDao.retrieveLastModifiedDate("4444-4444-4444-4441")));
         
         
         OtherNameEntity entity = new OtherNameEntity();
@@ -95,7 +98,7 @@ public class OtherNameDaoTest extends DBUnitTest {
         List<OtherNameEntity> updatedOtherNames = dao.getOtherNames("4444-4444-4444-4443", 0L);
         assertNotNull(updatedOtherNames);
         assertEquals(1, updatedOtherNames.size());
-        assertTrue("Profile last modified date should have been updated", justBeforeStart.before(profileDao.retrieveLastModifiedDate("4444-4444-4444-4443")));
+        assertTrue("Profile last modified date should have been updated", justBeforeStart.before(profileLastModifiedDao.retrieveLastModifiedDate("4444-4444-4444-4443")));
     }
     
     @Test

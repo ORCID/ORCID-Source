@@ -33,12 +33,12 @@
 
 	<!-- Profile last modified aspect -->
 	<bean id="profileLastModifiedAspect" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileDao" ref="profileDao" />
+		<property name="profileLastModifiedDao" ref="profileLastModifiedDao" />
 		<property name="enabled" value="true" />
 	</bean>
 
 	<bean id="profileLastModifiedAspectReadOnly" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileDao" ref="profileDaoReadOnly" />
+		<property name="profileLastModifiedDao" ref="profileLastModifiedDaoReadOnly" />
 		<property name="enabled" value="false" />
 		<property name="name" value="read_only" />
 	</bean>
@@ -77,6 +77,14 @@
     <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
     
     <bean id="profileDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileDaoImpl">
+         <property name="entityManager" ref="entityManagerReadOnly" />
+     </bean>
+     
+    <bean id="profileLastModifiedDao" class="org.orcid.persistence.dao.impl.ProfileLastModifiedDaoImpl">
+         <property name="entityManager" ref="entityManager" />
+    </bean>
+    
+    <bean id="profileLastModifiedDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileLastModifiedDaoImpl">
          <property name="entityManager" ref="entityManagerReadOnly" />
      </bean>
      
@@ -362,6 +370,7 @@
         <property name="initialPoolSize" value="\${org.orcid.persistence.db.initialPoolSize}" />
         <property name="minPoolSize" value="\${org.orcid.persistence.db.minPoolSize}" />
         <property name="maxPoolSize" value="\${org.orcid.persistence.db.maxPoolSize}" />
+        <property name="maxIdleTimeExcessConnections" value="\${org.orcid.persistence.db.maxIdleTimeExcessConnections:120}"/>
         <property name="maxStatements" value="\${org.orcid.persistence.db.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.testConnectionOnCheckin}" />
@@ -377,6 +386,7 @@
         <property name="initialPoolSize" value="\${org.orcid.persistence.db.readonly.initialPoolSize}" />
         <property name="minPoolSize" value="\${org.orcid.persistence.db.readonly.minPoolSize}" />
         <property name="maxPoolSize" value="\${org.orcid.persistence.db.readonly.maxPoolSize}" />
+        <property name="maxIdleTimeExcessConnections" value="\${org.orcid.persistence.db.maxIdleTimeExcessConnections:120}"/>
         <property name="maxStatements" value="\${org.orcid.persistence.db.readonly.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.readonly.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.readonly.testConnectionOnCheckin}" />

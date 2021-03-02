@@ -9,6 +9,7 @@ import java.util.function.Function;
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.SalesForceUnauthorizedException;
@@ -71,6 +72,8 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
     private Client client;
 
     private String accessToken;
+    
+    private List<String> consotiumLeadRecordTypeIds;
 
     @Override
     public List<Member> retrieveConsortia() {
@@ -97,6 +100,11 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return retry(accessToken -> retrieveConsortiumFromSalesForce(accessToken, consortiumId));
     }
 
+    @Override
+    public List<Contact> retrieveContactsAllowedToEdit(String accountId, String consortiumLeadId) {
+        return retry(accessToken -> retrieveContactsAllowedToEdit(accessToken, accountId, consortiumLeadId));
+    }
+    
     @Override
     public MemberDetails retrieveDetails(String memberId, String consortiumLeadId) {
         validateSalesForceId(memberId);
@@ -237,6 +245,28 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
             throw new IllegalArgumentException();
         }
         return salesForceId;
+    }
+    
+    @Override
+    public List<String> getConsortiumLeadIds() {
+        return retry(accessToken -> getConsortiumLeadIds(accessToken));
+    }
+    
+    private List<String> getConsortiumLeadIds(String accessToken) {
+        if (consotiumLeadRecordTypeIds == null) {
+            WebResource resource1 = createQueryResource("Select Id From RecordType Where Name = 'Consortium Lead'");
+            WebResource resource = resource1;
+            ClientResponse response = doGetRequest(resource, accessToken);
+            checkAuthorization(response);
+            JSONObject result = checkResponse(response, 200, "Error getting premium consortium member type ID from SalesForce");
+            consotiumLeadRecordTypeIds = salesForceAdapter.extractIds(result);
+        }
+        return this.consotiumLeadRecordTypeIds;
+    }
+    
+    @Override
+    public void clearConsortiumLeadIdsCache() {
+        this.consotiumLeadRecordTypeIds = null;
     }
 
     private String escapeStringInput(String input) {
@@ -442,7 +472,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         StringBuffer query = new StringBuffer();
         if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
             query.append(
-                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");
+                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, Account.Consortia_Member__c, RecordTypeId, ");
         } else {
             query.append(
                 "SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");            
@@ -540,6 +570,33 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         return salesForceAdapter.createConsortiumFromJson(result);
     }
 
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException If the status code from
+     * SalesForce is 401, e.g. access token expired.
+     * 
+     */
+    private List<Contact> retrieveContactsAllowedToEdit(String accessToken, String accountId, String consortiumLeadId) {
+        LOGGER.info("About to get list of contacts from SalesForce allowed to edit account with id " + accountId);
+        validateSalesForceId(accountId);
+        WebResource resource;
+        StringBuilder query = new StringBuilder(
+                "Select (Select Id, Contact__c, Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Contact_Curr_Email__c, Member_Org_Role__c, Voting_Contact__c, Current__c, Organization__c From Membership_Contact_Roles__r");
+        query.append(" Where Current__c = True");
+        query.append(" Order By Contact__r.LastName Desc, Contact__r.FirstName Desc) From Account a Where Id='%s'");
+        if (!StringUtils.isBlank(consortiumLeadId)) {
+            query.append(" OR Id='%s'");
+            resource = createQueryResource(query.toString(), accountId, consortiumLeadId);
+        } else {
+            resource = createQueryResource(query.toString(), accountId);
+        }
+
+        ClientResponse response = doGetRequest(resource, accessToken);
+        checkAuthorization(response);
+        JSONObject result = checkResponse(response, 200, "Error getting contacts from SalesForce");
+        return salesForceAdapter.extractAllContactsWithRolesFromJson(result);
+    }
+    
     /**
      * 
      * @throws SalesForceUnauthorizedException

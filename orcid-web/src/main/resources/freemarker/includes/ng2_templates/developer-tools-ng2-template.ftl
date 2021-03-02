@@ -20,7 +20,7 @@
                             </div>
                             <div class="col-md-12 col-xs-12 col-sm-12">
                                 <span>
-                                   <@orcid.msg 'developer_tools.public_member.terms.description_1' /><a href="http://orcid.org/content/orcid-public-client-terms-service" target="terms_of_service"><@orcid.msg 'developer_tools.public_member.terms.description_2' /></a><@orcid.msg 'developer_tools.public_member.terms.description_3' />
+                                   <@orcid.msg 'developer_tools.public_member.terms.description_1' /><a href="{{getBaseUri()}}/content/orcid-public-client-terms-service" target="terms_of_service"><@orcid.msg 'developer_tools.public_member.terms.description_2' /></a><@orcid.msg 'developer_tools.public_member.terms.description_3' />
                                 </span>             
                             </div>              
                         </div>      
@@ -32,7 +32,7 @@
                                         <div class="row">
                                             <span class="col-md-12 col-xs-12 col-sm-12">
                                                 <@orcid.msg 'developer_tools.public_member.terms.check_1' />
-                                                <a href="http://orcid.org/content/orcid-public-client-terms-service" target="terms_of_service">
+                                                <a href="{{getBaseUri()}}/content/orcid-public-client-terms-service" target="terms_of_service">
                                                 <@orcid.msg 'developer_tools.public_member.terms.check_2' />
                                                 </a>
                                             </span>
@@ -68,7 +68,7 @@
                     <p class="reset"><strong><@orcid.msg 'developer_tools.public_member.enabled' /></strong></p>
                     <p>
                         <@orcid.msg 'developer_tools.public_member.enabled.terms_1' />
-                        <a href="http://orcid.org/content/orcid-public-client-terms-service" target="terms_of_service"><@orcid.msg 'developer_tools.public_member.enabled.terms_2' /></a><@orcid.msg 'developer_tools.public_member.enabled.terms_3' />
+                        <a href="{{getBaseUri()}}/content/orcid-public-client-terms-service" target="terms_of_service"><@orcid.msg 'developer_tools.public_member.enabled.terms_2' /></a><@orcid.msg 'developer_tools.public_member.enabled.terms_3' />
                     </p>                            
                     <p class="developer-tools-instructions"></p>
                 </div>
@@ -366,7 +366,7 @@
 <div class="row">
     <div class="col-md-12 col-sm-12 col-xs-12">
         <h3><@orcid.msg 'developer_tools.client_types.description.differences' /></h3>
-        <p><a href="https://orcid.org/about/membership/comparison" target="developer_tools.client_types.description.differences.link"><@orcid.msg 'developer_tools.client_types.description.differences.link' /></a></p>
+        <p><a href="{{getBaseUri() + '/about/membership/comparison'}}" target="developer_tools.client_types.description.differences.link"><@orcid.msg 'developer_tools.client_types.description.differences.link' /></a></p>
     </div>
 </div>
 <!--ADDITIONAL RESOURCES-->
