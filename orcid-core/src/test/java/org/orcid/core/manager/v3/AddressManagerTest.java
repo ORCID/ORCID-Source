@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -32,8 +33,11 @@ import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -72,6 +76,9 @@ public class AddressManagerTest extends BaseTest {
     
     @Resource
     private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private ProfileDao profileDao;
     
     @Resource
     private RecordNameDao recordNameDao;
@@ -140,6 +147,11 @@ public class AddressManagerTest extends BaseTest {
     @Test
     public void testAddAddressToClaimedRecordPreserveUserDefaultVisibility() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
+
+        ProfileEntity profile = profileDao.find(claimedOrcid);
+        Date lastModified = profile.getLastModified();
+        IndexingStatus indexingStatus = profile.getIndexingStatus();
+        
         Address address = getAddress(Iso3166Country.US);
         
         address = addressManager.createAddress(claimedOrcid, address, true);
@@ -147,6 +159,14 @@ public class AddressManagerTest extends BaseTest {
         
         assertNotNull(address);
         assertEquals(Visibility.LIMITED, address.getVisibility());  
+        
+        profile = profileDao.find(claimedOrcid);
+        Date updatedLastModified = profile.getLastModified();
+        IndexingStatus updatedIndexingStatus = profile.getIndexingStatus();
+        
+        assertTrue(updatedLastModified.after(lastModified));
+        assertTrue(!IndexingStatus.PENDING.equals(indexingStatus));
+        assertTrue(IndexingStatus.PENDING.equals(updatedIndexingStatus));
     }
     
     @Test
