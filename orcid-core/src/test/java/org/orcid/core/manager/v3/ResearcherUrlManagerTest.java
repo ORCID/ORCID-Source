@@ -144,8 +144,11 @@ public class ResearcherUrlManagerTest extends BaseTest {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         
         ProfileEntity profile = profileDao.find(claimedOrcid);
+        profile.setIndexingStatus(IndexingStatus.DONE);
+        profileDao.merge(profile);
+        
+        profile = profileDao.find(claimedOrcid);
         Date lastModified = profile.getLastModified();
-        IndexingStatus indexingStatus = profile.getIndexingStatus();
         
         ResearcherUrl rUrl = getResearcherUrl();
         
@@ -156,12 +159,8 @@ public class ResearcherUrlManagerTest extends BaseTest {
         assertEquals(Visibility.LIMITED, rUrl.getVisibility());
         
         profile = profileDao.find(claimedOrcid);
-        Date updatedLastModified = profile.getLastModified();
-        IndexingStatus updatedIndexingStatus = profile.getIndexingStatus();
-        
-        assertTrue(updatedLastModified.after(lastModified));
-        assertTrue(!IndexingStatus.PENDING.equals(indexingStatus));
-        assertTrue(IndexingStatus.PENDING.equals(updatedIndexingStatus));
+        assertTrue(profile.getLastModified().getTime() > lastModified.getTime());
+        assertTrue(IndexingStatus.PENDING.equals(profile.getIndexingStatus()));
     }
 
     @Test
