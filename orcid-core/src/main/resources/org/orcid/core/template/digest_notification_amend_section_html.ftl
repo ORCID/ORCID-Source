@@ -31,7 +31,7 @@
     </div>
     <#list types as type>
         <#if clientUpdate.updates[type]??>
-            <div>
+            <div style="margin-bottom: 30px;">
                 <p>
                     <strong style="text-transform: uppercase;"><@emailMacros.msg "email.common.recordsection." + type /></strong>
                 </p>
@@ -42,7 +42,8 @@
                         <#list elements>
                             <div>
                                 <p style="margin-bottom: 2px;">
-                                    <strong><@emailMacros.msg "notification.digest." + action /></strong></p>
+                                    <strong><@emailMacros.msg "notification.digest." + action /></strong>
+                                </p>
                             </div>
                             <div>
                                 <ul style="padding-left: 0;margin-top: 2px;">
@@ -55,7 +56,6 @@
                     </#if>
                 </#list>
             </div>
-            <br>
         </#if>
     </#list>
 </#list>
