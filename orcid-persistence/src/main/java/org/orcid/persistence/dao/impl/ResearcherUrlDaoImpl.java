@@ -7,6 +7,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -64,7 +65,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     @Transactional
-    @UpdateProfileLastModified
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteResearcherUrl(String orcid, long id) {
         Query query = entityManager.createNativeQuery("DELETE FROM researcher_url WHERE orcid = :orcid and id = :id");
         query.setParameter("orcid", orcid);
@@ -197,17 +198,24 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     }
     
     @Override
-    @UpdateProfileLastModified
+    @UpdateProfileLastModifiedAndIndexingStatus
     @Transactional
     public void persist(ResearcherUrlEntity entity) {
         super.persist(entity);
     }
     
     @Override
-    @UpdateProfileLastModified
+    @UpdateProfileLastModifiedAndIndexingStatus
     @Transactional
     public ResearcherUrlEntity merge(ResearcherUrlEntity entity) {
         return super.merge(entity);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public void remove(ResearcherUrlEntity entity) {
+        super.remove(entity);
     }
 
 }
