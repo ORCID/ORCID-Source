@@ -551,6 +551,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 ProfileEntity profileEntity = profileDao.find(orcid);
                 profileEntity.setDeactivationDate(null);
                 profileEntity.setClaimed(true);
+                profileEntity.setIndexingStatus(IndexingStatus.PENDING);
                 if (reactivation != null) {
                     profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(reactivation.getPassword().getValue()));
                     profileEntity.setActivitiesVisibilityDefault(reactivation.getActivitiesVisibilityDefault().getVisibility().name());                    
