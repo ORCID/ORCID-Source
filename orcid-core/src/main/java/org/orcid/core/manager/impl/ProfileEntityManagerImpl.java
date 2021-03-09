@@ -346,34 +346,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return Locale.valueOf(locale);
     }
 
-    /**
-     * Set the locked status of an account to true
-     * 
-     * @param orcid
-     *            the id of the profile that should be locked
-     * @return true if the account was locked
-     */
-    @Override
-    public boolean lockProfile(String orcid, String lockReason, String description) {
-        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description);
-        if (wasLocked) {
-            notificationManager.sendOrcidLockedEmail(orcid);
-        }
-        return wasLocked;
-    }
-
-    /**
-     * Set the locked status of an account to false
-     * 
-     * @param orcid
-     *            the id of the profile that should be unlocked
-     * @return true if the account was unlocked
-     */
-    @Override
-    public boolean unlockProfile(String orcid) {
-        return profileDao.unlockProfile(orcid);
-    }
-
     @Override
     public Date getLastLogin(String orcid) {
         return profileDao.getLastLogin(orcid);
@@ -396,66 +368,5 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public void update2FASecret(String orcid, String secret) {
         profileDao.update2FASecret(orcid, secret);
-    }
-    
-    /**
-     * Clears all record info but the email addresses, that stay unmodified
-     * */
-    private void clearRecord(String orcid, Boolean disableTokens) {
-        // Remove works
-        workManager.removeAllWorks(orcid);
-
-        // Remove funding
-        fundingManager.removeAllFunding(orcid);
-        
-        // Remove affiliations
-        affiliationsManager.removeAllAffiliations(orcid);
-        
-        // Remove peer reviews
-        peerReviewManager.removeAllPeerReviews(orcid);
-        
-        // Remove addresses
-        addressManager.removeAllAddress(orcid);
-        
-        // Remove external identifiers
-        externalIdentifierManager.removeAllExternalIdentifiers(orcid);
-        
-        // Remove researcher urls
-        researcherUrlManager.removeAllResearcherUrls(orcid);
-        
-        // Remove other names
-        otherNamesManager.removeAllOtherNames(orcid);
-        
-        // Remove keywords
-        profileKeywordManager.removeAllKeywords(orcid);
-        
-        // Remove biography
-        if (biographyManager.exists(orcid)) {
-            Biography deprecatedBio = new Biography();
-            deprecatedBio.setContent(null);
-            deprecatedBio.setVisibility(Visibility.PRIVATE);
-            biographyManager.updateBiography(orcid, deprecatedBio);
-        }
-        
-        // Set the deactivated names
-        if (recordNameManager.exists(orcid)) {
-            Name name = new Name();
-            name.setCreditName(new CreditName());
-            name.setGivenNames(new GivenNames("Given Names Deactivated"));
-            name.setFamilyName(new FamilyName("Family Name Deactivated"));
-            name.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC);
-            name.setPath(orcid);
-            recordNameManager.updateRecordName(orcid, name);
-        }
-        
-        // 
-        userConnectionDao.deleteByOrcid(orcid);
-        
-        if(disableTokens) {
-            // Disable any token that belongs to this record
-            orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(orcid, RevokeReason.RECORD_DEACTIVATED);
-        }
-        // Change default visibility to private
-        profileDao.updateDefaultVisibility(orcid, Visibility.PRIVATE.name());
-    }
+    }        
 }
