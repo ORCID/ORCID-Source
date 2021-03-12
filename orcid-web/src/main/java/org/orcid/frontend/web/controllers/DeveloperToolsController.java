@@ -23,6 +23,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +56,9 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
+    
+    @Value("${org.orcid.web.validation.members.websites:true}")
+    private boolean validateWebsites;
     
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
@@ -191,7 +195,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         }
         if (PojoUtil.isEmpty(client.getWebsite())) {
             client.getWebsite().setErrors(Arrays.asList(getMessage("manage.developer_tools.website_not_empty")));
-        } else {
+        } else if (validateWebsites) {
             validateUrl(client.getWebsite(), "manage.developer_tools.invalid_website");
         }
         copyErrors(client.getWebsite(), client);
