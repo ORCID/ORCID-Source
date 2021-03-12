@@ -344,5 +344,6 @@
   <include file="/db/updates/add_hal_identifier_type.xml" />
   <include file="/db/updates/dw-profile-additional-columns.xml" />
   <include file="/db/updates/create_public_profile_validation_dw_view.xml" />
-  <include file="/db/updates/public_profile_validation_dw_view_last_modified.xml" />
+  <include file="/db/updates/public_profile_validation_dw_view_last_modified.xml" />  
+  <include file="/db/updates/identifier-types/update-osti-identifier-prefix.xml" />  
 </databaseChangeLog>

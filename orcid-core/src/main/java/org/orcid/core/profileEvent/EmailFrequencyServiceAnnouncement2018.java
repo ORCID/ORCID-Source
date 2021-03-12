@@ -139,7 +139,7 @@ public class EmailFrequencyServiceAnnouncement2018 {
             ProfileEntity profileEntity = profileDaoReadOnly.find(orcid);
             if (!profileEntity.isAccountNonLocked() || profileEntity.getPrimaryRecord() != null || profileEntity.getDeactivationDate() != null
                     || (profileEntity.getClaimed() != null && !profileEntity.getClaimed())) {
-                profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_SKIPPED));
+                profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_SKIPPED));
                 return;
             }
             Locale locale = getUserLocale(profileEntity.getLocale());
@@ -163,12 +163,12 @@ public class EmailFrequencyServiceAnnouncement2018 {
             entity.setNotificationFamily(NOTIFICATION_FAMILY);
             entity.setProfile(new ProfileEntity(orcid));
             entity.setSendable(true);
-            notificationDao.persistIgnoringProfileLastModifiedUpdate(entity);
-            profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_NOTIFICATION_CREATED));
+            notificationDao.persist(entity);
+            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_NOTIFICATION_CREATED));
         } catch (Exception e) {
             LOG.error("Exception for: {}", orcid);
             LOG.error("Error", e);
-            profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_FAIL));
+            profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_FAIL));
         }
     }
     

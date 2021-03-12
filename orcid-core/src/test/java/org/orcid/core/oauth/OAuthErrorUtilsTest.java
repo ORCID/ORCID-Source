@@ -17,6 +17,7 @@ package org.orcid.core.oauth;
  * =============================================================================
  */
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import javax.ws.rs.core.Response.Status;
 

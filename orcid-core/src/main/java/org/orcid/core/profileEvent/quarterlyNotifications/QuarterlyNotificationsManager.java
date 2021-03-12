@@ -132,7 +132,7 @@ public abstract class QuarterlyNotificationsManager {
             ProfileEntity profileEntity = profileDaoReadOnly.find(orcid);
             if (!profileEntity.isAccountNonLocked() || profileEntity.getPrimaryRecord() != null || profileEntity.getDeactivationDate() != null
                     || (profileEntity.getClaimed() != null && !profileEntity.getClaimed())) {
-                profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, SKIPPED));
+                profileEventDao.persist(new ProfileEventEntity(orcid, SKIPPED));
                 return;
             }
             
@@ -160,14 +160,14 @@ public abstract class QuarterlyNotificationsManager {
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    notificationDao.persistIgnoringProfileLastModifiedUpdate(entity);
-                    profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, CREATED));
+                    notificationDao.persist(entity);
+                    profileEventDao.persist(new ProfileEventEntity(orcid, CREATED));
                 }
             });                         
         } catch (Exception e) {
             LOG.error("Exception for: {}", orcid);
             LOG.error("Error", e);
-            profileEventDao.persistIgnoringProfileLastModifiedUpdate(new ProfileEventEntity(orcid, FAILED));
+            profileEventDao.persist(new ProfileEventEntity(orcid, FAILED));
         }
     }
     

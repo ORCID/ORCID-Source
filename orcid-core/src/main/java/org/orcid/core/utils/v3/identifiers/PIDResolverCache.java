@@ -130,4 +130,22 @@ public class PIDResolverCache {
         
         throw new UnexpectedResponseCodeException(con.getResponseCode());
     }
+    
+    public InputStream get(String url, Map<String, String> headers) throws IOException {
+        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        
+        for(Map.Entry<String, String> header : headers.entrySet()) {
+            con.addRequestProperty(header.getKey(), header.getValue());
+        }
+        
+        con.setRequestMethod("GET");
+        con.setInstanceFollowRedirects(true);
+        con = doProtocolRedirect(con, 0);
+        if(con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            return con.getInputStream();
+        }
+        
+        throw new UnexpectedResponseCodeException(con.getResponseCode());
+    }
+        
 }

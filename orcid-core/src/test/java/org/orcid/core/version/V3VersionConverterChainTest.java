@@ -635,7 +635,7 @@ public class V3VersionConverterChainTest {
         assertEquals(org.orcid.jaxb.model.common.CitationType.FORMATTED_UNSPECIFIED, releaseWork.getWorkCitation().getWorkCitationType());
         assertEquals(1, releaseWork.getWorkContributors().getContributor().size());
 
-        assertEquals(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE,
+        assertEquals("ASSIGNEE",
                 releaseWork.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorRole());
         assertEquals(org.orcid.jaxb.model.common.SequenceType.ADDITIONAL,
                 releaseWork.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorSequence());
@@ -724,7 +724,7 @@ public class V3VersionConverterChainTest {
                 new org.orcid.jaxb.model.v3.release.record.Citation("This is the citation", org.orcid.jaxb.model.common.CitationType.FORMATTED_UNSPECIFIED));
         org.orcid.jaxb.model.v3.release.common.Contributor c = new org.orcid.jaxb.model.v3.release.common.Contributor();
         org.orcid.jaxb.model.v3.release.common.ContributorAttributes ca = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
-        ca.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE);
+        ca.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE.name());
         ca.setContributorSequence(org.orcid.jaxb.model.common.SequenceType.ADDITIONAL);
         c.setContributorAttributes(ca);
         c.setContributorEmail(new org.orcid.jaxb.model.v3.release.common.ContributorEmail("contributor@orcid.org"));

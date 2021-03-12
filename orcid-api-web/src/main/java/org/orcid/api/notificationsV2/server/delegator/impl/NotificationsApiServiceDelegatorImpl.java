@@ -16,7 +16,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.OrcidNotificationNotFoundException;

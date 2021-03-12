@@ -12,7 +12,7 @@
 
 	<!-- Profile last modified aspect -->
 	<bean id="profileLastModifiedAspect" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileDao" ref="profileDao" />
+		<property name="profileLastModifiedDao" ref="profileLastModifiedDao" />
 		<property name="enabled" value="false" />
 	</bean>
 

@@ -10,10 +10,5 @@
 	        a.appendChild(r);
 	    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
 	</script>
-	<script>
-	    if (orcidVar && orcidVar.realOrcidId) {
-	        window.hj('identify', orcidVar.realOrcidId, {});
-	    }
-	</script>
 	<!-- End Hotjar -->
  </#if>

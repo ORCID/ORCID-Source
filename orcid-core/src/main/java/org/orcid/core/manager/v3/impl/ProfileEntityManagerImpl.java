@@ -56,6 +56,7 @@ import org.orcid.jaxb.model.v3.release.record.FamilyName;
 import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.dao.BackupCodeDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -172,6 +173,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource
     protected BackupCodeDao backupCodeDao;
+    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDao;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -218,7 +222,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                         }
                     }
 
-                    profileDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
+                    profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
                     return true;
                 }
                 return false;
@@ -283,10 +287,20 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * 
      */
     @Override
-    public void updateLastModifed(String orcid) {
+    public void updateLastModifedAndIndexingStatus(String orcid) {
         profileLastModifiedAspect.updateLastModifiedDateAndIndexingStatus(orcid);
     }
 
+    /**
+     * Updates the DB and the cached value in the request scope.
+     * 
+     */
+    @Override
+    public void updateLastModifed(String orcid) {
+        profileLastModifiedAspect.updateLastModifiedDate(orcid);
+    }
+
+    
     @Override
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);
@@ -537,6 +551,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 ProfileEntity profileEntity = profileDao.find(orcid);
                 profileEntity.setDeactivationDate(null);
                 profileEntity.setClaimed(true);
+                profileEntity.setIndexingStatus(IndexingStatus.PENDING);
                 if (reactivation != null) {
                     profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(reactivation.getPassword().getValue()));
                     profileEntity.setActivitiesVisibilityDefault(reactivation.getActivitiesVisibilityDefault().getVisibility().name());                    
