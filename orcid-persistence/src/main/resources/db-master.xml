@@ -346,4 +346,5 @@
   <include file="/db/updates/create_public_profile_validation_dw_view.xml" />
   <include file="/db/updates/public_profile_validation_dw_view_last_modified.xml" />  
   <include file="/db/updates/identifier-types/update-osti-identifier-prefix.xml" />  
+  <include file="/db/updates/identifier-types/identifier-type-45-ppr.xml" />
 </databaseChangeLog>
