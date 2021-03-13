@@ -36,6 +36,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -120,6 +121,29 @@ public class ClientsControllerTest extends BaseControllerTest {
         assertNotNull(client);
         assertEquals(1, client.getErrors().size());
         assertEquals(controller.getMessage("common.invalid_url"), client.getErrors().get(0));
+        
+        // test website validation when switched off
+        ReflectionTestUtils.setField(controller, "validateWebsites", false);
+        
+        client = controller.getEmptyClient();
+        client.setRedirectUris(new ArrayList<RedirectUri>());
+        client.setDisplayName(Text.valueOf("This is a valid name"));
+        client.setShortDescription(Text.valueOf("This is a valid description"));
+        client.setWebsite(Text.valueOf("invalid"));
+        client = controller.createClient(client);
+        assertNotNull(client);
+        assertEquals(0, client.getErrors().size());
+        
+        // check empty website still causes an issue
+        client = controller.getEmptyClient();
+        client.setRedirectUris(new ArrayList<RedirectUri>());
+        client.setDisplayName(Text.valueOf("This is a valid name"));
+        client.setShortDescription(Text.valueOf("This is a valid description"));
+        client = controller.createClient(client);
+        assertNotNull(client);
+        assertEquals(1, client.getErrors().size());
+        
+        ReflectionTestUtils.setField(controller, "validateWebsites", true);
     }
 
     @Test

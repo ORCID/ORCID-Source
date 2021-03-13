@@ -16,7 +16,7 @@
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
-		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs" />
+		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors" />
 	
 	<aop:aspectj-autoproxy />
 	
@@ -938,14 +938,14 @@
     
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/2019-07-emailVisibilitySettings,classpath:i18n/ng_orcid,classpath:i18n/ng_orcid_signin,classpath:i18n/email2faDisabled,classpath:i18n/layout,classpath:i18n/notification_share,classpath:i18n/notification_digest,classpath:i18n/notification_delegate,classpath:i18n/notification_announcement,classpath:i18n/notification_admin_delegate" />
+		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email_added_as_delegate,classpath:i18n/email_admin_delegate_request,classpath:i18n/email_amend,classpath:i18n/email_api_record_creation,classpath:i18n/email_auto_deprecate,classpath:i18n/email_claim_reminder,classpath:i18n/email_common,classpath:i18n/email_deactivate,classpath:i18n/email_digest,classpath:i18n/email_forgotten_id,classpath:i18n/email_institutional_connection,classpath:i18n/email_locked,classpath:i18n/email_new_claim_reminder,classpath:i18n/email_notification,classpath:i18n/email_reactivation,classpath:i18n/email_removed,classpath:i18n/email_reset_password,classpath:i18n/email_reset_password_not_found,classpath:i18n/email_subject,classpath:i18n/email_tips,classpath:i18n/email_verify,classpath:i18n/email_verify_reminder,classpath:i18n/email_welcome,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/2019-07-emailVisibilitySettings,classpath:i18n/ng_orcid,classpath:i18n/ng_orcid_signin,classpath:i18n/email2faDisabled,classpath:i18n/layout,classpath:i18n/notification_share,classpath:i18n/notification_digest,classpath:i18n/notification_delegate,classpath:i18n/notification_announcement,classpath:i18n/notification_admin_delegate" />
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 	</bean>
 	
 	<bean id="messageSourceNoFallback"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/2019-07-emailVisibilitySettings,classpath:i18n/ng_orcid,classpath:i18n/ng_orcid_signin,classpath:i18n/email2faDisabled,classpath:i18n/layout,classpath:i18n/notification_share,classpath:i18n/notification_digest,classpath:i18n/notification_delegate,classpath:i18n/notification_announcement,classpath:i18n/notification_admin_delegate" />
+		<property name="basenames" value="classpath:i18n/about,classpath:i18n/api,classpath:i18n/email_added_as_delegate,classpath:i18n/email_admin_delegate_request,classpath:i18n/email_amend,classpath:i18n/email_api_record_creation,classpath:i18n/email_auto_deprecate,classpath:i18n/email_claim_reminder,classpath:i18n/email_common,classpath:i18n/email_deactivate,classpath:i18n/email_digest,classpath:i18n/email_forgotten_id,classpath:i18n/email_institutional_connection,classpath:i18n/email_locked,classpath:i18n/email_new_claim_reminder,classpath:i18n/email_notification,classpath:i18n/email_reactivation,classpath:i18n/email_removed,classpath:i18n/email_reset_password,classpath:i18n/email_reset_password_not_found,classpath:i18n/email_subject,classpath:i18n/email_tips,classpath:i18n/email_verify,classpath:i18n/email_verify_reminder,classpath:i18n/email_welcome,classpath:i18n/javascript,classpath:i18n/messages,classpath:i18n/admin,classpath:i18n/identifiers,classpath:i18n/notranslate,classpath:i18n/2019-07-emailVisibilitySettings,classpath:i18n/ng_orcid,classpath:i18n/ng_orcid_signin,classpath:i18n/email2faDisabled,classpath:i18n/layout,classpath:i18n/notification_share,classpath:i18n/notification_digest,classpath:i18n/notification_delegate,classpath:i18n/notification_announcement,classpath:i18n/notification_admin_delegate" />
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 		<property name="fallbackToSystemLocale" value="false" />
@@ -1336,8 +1336,13 @@
 		<constructor-arg value="cdn_active_url.txt"/>
 	</bean>
 	
+	<bean id="workContributorRoleConverter" class="org.orcid.core.contributors.roles.works.WorkContributorRoleConverter" />
+	
+	<bean id="fundingContributorRoleConverter" class="org.orcid.core.contributors.roles.fundings.FundingContributorRoleConverter" />
+	
 	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory">
-	   <constructor-arg value="${org.orcid.core.orika.debug:false}" />
+	   <constructor-arg ref="workContributorRoleConverter" />
+	   <constructor-arg ref="fundingContributorRoleConverter" />
 	</bean>
 	<bean id="mapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getObject"/>
 	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
@@ -1661,4 +1666,5 @@
 	<bean id="fundrefOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
 
     <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
+    
 </beans>

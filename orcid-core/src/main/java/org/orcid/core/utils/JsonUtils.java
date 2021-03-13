@@ -67,6 +67,14 @@ public class JsonUtils {
         }
     }
     
+    public static <T> T convertTreeToValue(JsonNode tree, Class<T> clazz) {
+        try {
+            return mapperFromJSON.treeToValue(tree, clazz);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     public static JSONObject extractObject(JSONObject parent, String key) {
         if (parent.isNull(key)) {
             return null;
