@@ -27,6 +27,7 @@
     <context:property-placeholder location="\${org.orcid.config.file:}" ignore-resource-not-found="true" ignore-unresolvable="true" />
     <context:property-placeholder location="classpath:${org.orcid.persistence.properties}" ignore-resource-not-found="true"
         ignore-unresolvable="true" />
+    
 
 	<bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>

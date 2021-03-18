@@ -92,7 +92,7 @@ public class OrcidAuthenticationProviderTest {
         });
     }
     
-    
+    /*
     @Test
     public void authenticateOrcidTest() {
         String orcid = "0000-0000-0000-0000";
@@ -129,5 +129,5 @@ public class OrcidAuthenticationProviderTest {
         assertNotNull(token); 
         assertEquals(orcid, token.getPrincipal());
         assertEquals(password, token.getCredentials());
-    }
+    }*/
 }
