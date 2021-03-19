@@ -1,10 +1,14 @@
 package org.orcid.core.adapter.v3.converter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
 import org.orcid.core.contributors.roles.InvalidContributorRoleException;
+import org.orcid.core.contributors.roles.credit.CreditRole;
+import org.orcid.core.contributors.roles.fundings.LegacyFundingContributorRole;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.v3.release.record.FundingContributors;
 
@@ -29,6 +33,16 @@ public class FundingContributorsConverter extends BidirectionalConverter<Funding
                 if (resolvedRoleValue == null) {
                     Map<String, String> exceptionParams = new HashMap<>();
                     exceptionParams.put("role", providedRoleValue);
+                    
+                    List<String> legalValues = new ArrayList<>();
+                    for (LegacyFundingContributorRole role : LegacyFundingContributorRole.values()) {
+                        legalValues.add(role.value());
+                    }
+                    for (CreditRole role : CreditRole.values()) {
+                        legalValues.add(role.value());
+                    }
+                    exceptionParams.put("validRoles", legalValues.toString());
+                    
                     throw new InvalidContributorRoleException(exceptionParams);
                 }
                 c.getContributorAttributes().setContributorRole(resolvedRoleValue);
