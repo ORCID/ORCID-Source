@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -66,7 +67,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     
     @Override
     @Transactional
-    @UpdateProfileLastModified
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteAddress(String orcid, Long putCode) {
         Query query = entityManager.createQuery("DELETE FROM AddressEntity WHERE id=:id and user.id = :orcid");
         query.setParameter("id", putCode);
@@ -170,20 +171,20 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     
     @Override
     @Transactional
-    @UpdateProfileLastModified
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void persist(AddressEntity address) {
         super.persist(address);
     }
     
     @Override
-    @UpdateProfileLastModified
+    @UpdateProfileLastModifiedAndIndexingStatus
     @Transactional
     public void remove(AddressEntity address) {
         super.remove(address);
     }
     
     @Override
-    @UpdateProfileLastModified
+    @UpdateProfileLastModifiedAndIndexingStatus
     @Transactional
     public AddressEntity merge(AddressEntity address) {
         return super.merge(address);

@@ -27,6 +27,9 @@ import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.FundingContributor;
+import org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes;
+import org.orcid.jaxb.model.v3.release.record.FundingContributors;
 import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -309,7 +312,6 @@ public class JpaJaxbFundingAdapterTest {
         assertNotNull(summary.getOrganization());
         assertNotNull(summary.getOrganization().getAddress());
     }
-
     
     @Test
     public void clearFundingEntityFieldsTest() throws JAXBException {
@@ -377,6 +379,43 @@ public class JpaJaxbFundingAdapterTest {
 
     }
 
+    @Test
+    public void processLegacyContributorsTest() throws JAXBException {
+        Funding f = getV30Funding();
+        assertNotNull(f);
+        FundingContributors fcs = new FundingContributors(); 
+        FundingContributor fc = new FundingContributor();
+        FundingContributorAttributes fca = new FundingContributorAttributes(); 
+        fca.setContributorRole("co-lead");
+        fc.setContributorAttributes(fca);
+        f.setContributors(fcs);
+        fcs.getContributor().add(fc);
+                
+        ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
+        assertNotNull(pfe);
+        assertNotNull(pfe.getContributorsJson());
+        assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"CO_LEAD\"}}]}", pfe.getContributorsJson());               
+    
+        fca.setContributorRole("lead");
+        pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
+        assertNotNull(pfe);
+        assertNotNull(pfe.getContributorsJson());
+        assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"LEAD\"}}]}", pfe.getContributorsJson());
+        
+        fca.setContributorRole("supported-by");
+        pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
+        assertNotNull(pfe);
+        assertNotNull(pfe.getContributorsJson());
+        assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"SUPPORTED_BY\"}}]}", pfe.getContributorsJson());
+        
+        fca.setContributorRole("other-contribution");
+        pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
+        assertNotNull(pfe);
+        assertNotNull(pfe.getContributorsJson());
+        assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"OTHER_CONTRIBUTION\"}}]}", pfe.getContributorsJson());
+        
+    }
+    
     private Funding getFunding(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -384,6 +423,14 @@ public class JpaJaxbFundingAdapterTest {
         if (full) {
             name = "/record_3.0_rc1/samples/read_samples/funding-full-3.0_rc1.xml";
         }
+        InputStream inputStream = getClass().getResourceAsStream(name);
+        return (Funding) unmarshaller.unmarshal(inputStream);
+    }
+    
+    private Funding getV30Funding() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        String name = "/record_3.0/samples/write_samples/funding-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Funding) unmarshaller.unmarshal(inputStream);
     }

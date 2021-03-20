@@ -42,6 +42,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -249,6 +250,41 @@ public class DeveloperToolsControllerTest {
         assertNotNull(result.getErrors());
         assertEquals(result.getErrors().size(), 1);
         assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.at_least_one"));
+        
+        // test website validation when switched off
+        ReflectionTestUtils.setField(developerToolsController, "validateWebsites", false);
+        
+        // empty website should behave the same
+        client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setShortDescription(Text.valueOf("This is a description"));
+        redirectUris = new ArrayList<RedirectUri>();
+        rUri = new RedirectUri();
+        rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
+        redirectUris.add(rUri);
+        client.setRedirectUris(redirectUris);
+        result = developerToolsController.createClient(client);
+        assertNotNull(result.getErrors());
+        assertEquals(result.getErrors().size(), 1);
+        assertEquals(result.getErrors().get(0), developerToolsController.getMessage("manage.developer_tools.website_not_empty"));
+
+        // invalid website should be allowed
+        client = new Client();
+        client.setDisplayName(Text.valueOf("Client Name"));
+        client.setShortDescription(Text.valueOf("This is a description"));
+        client.setWebsite(Text.valueOf("invalid"));
+        redirectUris = new ArrayList<RedirectUri>();
+        rUri = new RedirectUri();
+        rUri.setType(Text.valueOf(RedirectUriType.SSO_AUTHENTICATION.value()));
+        rUri.setValue(Text.valueOf("https://orcid.org"));
+        redirectUris.add(rUri);
+        client.setRedirectUris(redirectUris);
+        result = developerToolsController.createClient(client);
+        assertNotNull(result.getErrors());
+        assertEquals(result.getErrors().size(), 0);
+        
+        ReflectionTestUtils.setField(developerToolsController, "validateWebsites", true);
     }
 
     @Test
