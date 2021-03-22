@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
+import org.orcid.core.contributors.roles.InvalidContributorRoleException;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
@@ -50,6 +51,17 @@ public class WorkContributorsConverterTest {
         
         // role converter needed to turn role names to upper case enum names 
         Mockito.verify(mockContributorRoleConverter, Mockito.times(2)).toDBRole(Mockito.anyString());
+    }
+    
+    /**
+     * Test to check invalid roles converted to null don't get into the db
+     */
+    @Test(expected = InvalidContributorRoleException.class)
+    public void testConvertToWithErroneousValue() {
+        Mockito.when(mockContributorRoleConverter.toDBRole(Mockito.anyString())).thenReturn(null);
+        
+        WorkContributors workContributors = getWorkContributors();
+        workContributorsConverter.convertTo(workContributors, null);
     }
 
     /**
