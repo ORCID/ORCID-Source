@@ -1655,12 +1655,12 @@
 	</bean>
 	
 	<bean id="ringgoldFtpsFileDownloader" class="org.orcid.core.orgs.load.io.FtpsFileDownloader">
-	    <property name="host" value="${org.orcid.core.orgs.ringgold.fptHost:host}" />
-	    <property name="port" value="${org.orcid.core.orgs.ringgold.fptPort:990}" />
-	    <property name="localFilePath" value="${org.orcid.core.orgs.ringgold.fptLocalFilePath:/tmp/ringgold/ringold-import.zip}" />
+	    <property name="host" value="${org.orcid.core.orgs.ringgold.ftpHost:host}" />
+	    <property name="port" value="${org.orcid.core.orgs.ringgold.ftpPort:990}" />
+	    <property name="localFilePath" value="${org.orcid.core.orgs.ringgold.ftpLocalFilePath:/tmp/ringgold/ringold-import.zip}" />
 	    <property name="remoteFilePath" value="${org.orcid.core.orgs.ringgold.ftpRemoteFilePath:/remote/filepath}" />
-        <property name="username" value="${org.orcid.core.orgs.ringgold.fptUsername:username}" />
-        <property name="password" value="${org.orcid.core.orgs.ringgold.fptPassword:password}" />
+        <property name="username" value="${org.orcid.core.orgs.ringgold.ftpUsername:username}" />
+        <property name="password" value="${org.orcid.core.orgs.ringgold.ftpPassword:password}" />
 	</bean>
 	
 	<bean id="fundrefOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
