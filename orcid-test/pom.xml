@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 	<groupId>org.orcid</groupId>
     <artifactId>orcid-test</artifactId>
-	<version>test-openjdk-11-v3</version>
+	<version>release-2.0.0</version>
     <name>ORCID - Test</name>
     <description>Test utilities that can be brought in to other modules with the test scope</description>
         

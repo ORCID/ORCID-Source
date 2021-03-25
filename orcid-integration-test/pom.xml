@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.orcid</groupId>
         <artifactId>orcid-parent</artifactId>
-        <version>test-openjdk-11-v3</version>
+        <version>release-2.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
