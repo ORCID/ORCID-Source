@@ -19,12 +19,6 @@ source_file = orcid-core/src/main/resources/i18n/email_admin_delegate_request_en
 source_lang = en
 type = UNICODEPROPERTIES
 
-[registry.email-amend]
-file_filter = orcid-core/src/main/resources/i18n/email_amend_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_amend_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
 [registry.email-api-record-creation]
 file_filter = orcid-core/src/main/resources/i18n/email_api_record_creation_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_api_record_creation_en.properties
