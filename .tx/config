@@ -9,7 +9,7 @@ type = UNICODEPROPERTIES
 
 [registry.email-added-as-delegate]
 file_filter = orcid-core/src/main/resources/i18n/email_added_as_delegate_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_en.properties
+source_file = orcid-core/src/main/resources/i18n/email_added_as_delegate_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
