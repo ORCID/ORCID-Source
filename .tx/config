@@ -116,6 +116,12 @@ source_file = orcid-core/src/main/resources/i18n/email_reset_password_en.propert
 source_lang = en
 type = UNICODEPROPERTIES
 
+[registry.email-reset-password-not-found]
+file_filter = orcid-core/src/main/resources/i18n/email_reset_password_not_found_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/email_reset_password_not_found_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
 
 [registry.email-subject]
 file_filter = orcid-core/src/main/resources/i18n/email_subject_<lang>.properties
