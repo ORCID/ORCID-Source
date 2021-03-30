@@ -25,12 +25,6 @@ source_file = orcid-core/src/main/resources/i18n/email_api_record_creation_en.pr
 source_lang = en
 type = UNICODEPROPERTIES
 
-[registry.email-auto-deprecate]
-file_filter = orcid-core/src/main/resources/i18n/email_auto_deprecate_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_auto_deprecate_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
 [registry.email-claim-reminder]
 file_filter = orcid-core/src/main/resources/i18n/email_claim_reminder_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_claim_reminder_en.properties
