@@ -144,13 +144,6 @@ source_lang = en
 type = UNICODEPROPERTIES
 
 
-[registry.email-verify-reminder]
-file_filter = orcid-core/src/main/resources/i18n/email_verify_reminder_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_verify_reminder_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-
 [registry.email-welcome]
 file_filter = orcid-core/src/main/resources/i18n/email_welcome_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_welcome_en.properties
