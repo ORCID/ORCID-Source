@@ -13,23 +13,6 @@ source_file = orcid-core/src/main/resources/i18n/email_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
-[registry.email-admin-delegate-request]
-file_filter = orcid-core/src/main/resources/i18n/email_admin_delegate_request_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_admin_delegate_request_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.email-amend]
-file_filter = orcid-core/src/main/resources/i18n/email_amend_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_amend_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.email-api-record-creation]
-file_filter = orcid-core/src/main/resources/i18n/email_api_record_creation_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_api_record_creation_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
 
 [registry.email-auto-deprecate]
 file_filter = orcid-core/src/main/resources/i18n/email_auto_deprecate_<lang>.properties
@@ -37,11 +20,6 @@ source_file = orcid-core/src/main/resources/i18n/email_auto_deprecate_en.propert
 source_lang = en
 type = UNICODEPROPERTIES
 
-[registry.email-claim-reminder]
-file_filter = orcid-core/src/main/resources/i18n/email_claim_reminder_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_claim_reminder_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
 
 [registry.email-common]
 file_filter = orcid-core/src/main/resources/i18n/email_common_<lang>.properties
@@ -84,12 +62,6 @@ source_file = orcid-core/src/main/resources/i18n/email_locked_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
-
-[registry.email-new-claim-reminder]
-file_filter = orcid-core/src/main/resources/i18n/email_new_claim_reminder_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_new_claim_reminder_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
 
 [registry.email-notification]
 file_filter = orcid-core/src/main/resources/i18n/email_notification_<lang>.properties
