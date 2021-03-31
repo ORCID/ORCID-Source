@@ -9,7 +9,7 @@ type = UNICODEPROPERTIES
 
 [registry.email-added-as-delegate]
 file_filter = orcid-core/src/main/resources/i18n/email_added_as_delegate_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_en.properties
+source_file = orcid-core/src/main/resources/i18n/email_added_as_delegate_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
@@ -19,21 +19,9 @@ source_file = orcid-core/src/main/resources/i18n/email_admin_delegate_request_en
 source_lang = en
 type = UNICODEPROPERTIES
 
-[registry.email-amend]
-file_filter = orcid-core/src/main/resources/i18n/email_amend_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_amend_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
 [registry.email-api-record-creation]
 file_filter = orcid-core/src/main/resources/i18n/email_api_record_creation_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_api_record_creation_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.email-auto-deprecate]
-file_filter = orcid-core/src/main/resources/i18n/email_auto_deprecate_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_auto_deprecate_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
@@ -116,6 +104,12 @@ source_file = orcid-core/src/main/resources/i18n/email_reset_password_en.propert
 source_lang = en
 type = UNICODEPROPERTIES
 
+[registry.email-reset-password-not-found]
+file_filter = orcid-core/src/main/resources/i18n/email_reset_password_not_found_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/email_reset_password_not_found_en.properties
+source_lang = en
+type = UNICODEPROPERTIES
+
 
 [registry.email-subject]
 file_filter = orcid-core/src/main/resources/i18n/email_subject_<lang>.properties
@@ -134,13 +128,6 @@ type = UNICODEPROPERTIES
 [registry.email-verify]
 file_filter = orcid-core/src/main/resources/i18n/email_verify_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_verify_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-
-[registry.email-verify-reminder]
-file_filter = orcid-core/src/main/resources/i18n/email_verify_reminder_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_verify_reminder_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
