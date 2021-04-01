@@ -254,20 +254,26 @@
                                     </div>
                                 </label>
                                 <div class="relative">                          
-                                    <label class="checkbox-inline">
+                                    <label class="checkbox-inline checkbox-inline-work">
                                         <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="self" />
                                         <@orcid.msg "common.self" />
                                     </label>
                                                                                             
-                                    <label class="checkbox-inline">
+                                    <label class="checkbox-inline checkbox-inline-work">
                                         <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="part-of" />
                                         <@orcid.msg "common.part_of" />
-                                    </label>                            
-                                    
-                                    <label class="checkbox-inline">
+                                    </label>  
+                                                              
+                                    <label class="checkbox-inline checkbox-inline-work">
                                         <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="version-of" />
                                         <@orcid.msg "common.version_of" />
-                                    </label>    
+                                    </label>
+                                    
+                                    <label class="checkbox-inline checkbox-inline-work">
+                                        <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="funded-by" />
+                                        <@orcid.msg "common.funded_by" />
+                                    </label>
+         
                                     <button *ngIf="editWork.workExternalIdentifiers.length > 1" (click)="deleteExternalIdentifier(i)" class="glyphicon glyphicon-trash grey action-icon-align-right"></button>                            
                                     <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i].relationship?.errors?.length > 0">
                                         <div *ngFor='let error of editWork.workExternalIdentifiers[i].relationship.errors' [innerHtml]="error"></div>
