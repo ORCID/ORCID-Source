@@ -39,7 +39,6 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
-import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -56,6 +55,7 @@ import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.Items;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.model.v3.release.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.constants.SendEmailFrequency;
@@ -65,7 +65,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -573,6 +572,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         templateParams.put("emailName", emailNameForDelegate);
         templateParams.put("orcidValue", userReceivingPermission);
         templateParams.put("emailNameGrantingPermission", emailNameGrantingPermission);
+        templateParams.put("emailNameGrantingPermissionWithApostrophe", emailNameGrantingPermission + "'s");
         templateParams.put("grantingOrcidValue", userGrantingPermission);
         templateParams.put("grantingOrcidName", deriveEmailFriendlyName(userGrantingPermission));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -842,7 +842,9 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("trustedOrcidName", trustedOrcidName);
         templateParams.put("trustedOrcidValue", trustedOrcid);
+        templateParams.put("trustedOrcidValueWithParenthesis", trustedOrcid + ")");
         templateParams.put("managedOrcidValue", managedOrcid);
+        templateParams.put("managedOrcidValueWithFullPoint", managedOrcid + ".");
 
         String primaryEmail = emailManager.findPrimaryEmail(managedOrcid).getEmail();
         if (primaryEmail == null) {

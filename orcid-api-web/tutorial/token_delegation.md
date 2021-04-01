@@ -1,3 +1,5 @@
+__NOTE: The Token Delegation feature is no longer available.__
+
 ## What is Token Delegation
 
 Token Delegation allows an ORCID member to transfer permissions granted to their client to another member client. This allows the second client to take an action, such as posting to the user's ORCID record on behalf of the original client.

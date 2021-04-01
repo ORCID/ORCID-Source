@@ -33,12 +33,12 @@
 
 	<!-- Profile last modified aspect -->
 	<bean id="profileLastModifiedAspect" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileDao" ref="profileDao" />
+		<property name="profileLastModifiedDao" ref="profileLastModifiedDao" />
 		<property name="enabled" value="true" />
 	</bean>
 
 	<bean id="profileLastModifiedAspectReadOnly" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileDao" ref="profileDaoReadOnly" />
+		<property name="profileLastModifiedDao" ref="profileLastModifiedDaoReadOnly" />
 		<property name="enabled" value="false" />
 		<property name="name" value="read_only" />
 	</bean>
@@ -77,6 +77,14 @@
     <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
     
     <bean id="profileDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileDaoImpl">
+         <property name="entityManager" ref="entityManagerReadOnly" />
+     </bean>
+     
+    <bean id="profileLastModifiedDao" class="org.orcid.persistence.dao.impl.ProfileLastModifiedDaoImpl">
+         <property name="entityManager" ref="entityManager" />
+    </bean>
+    
+    <bean id="profileLastModifiedDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileLastModifiedDaoImpl">
          <property name="entityManager" ref="entityManagerReadOnly" />
      </bean>
      

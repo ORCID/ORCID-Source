@@ -1,6 +1,5 @@
 package org.orcid.persistence.dao.impl;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,7 +13,8 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.persistence.aop.ExcludeFromProfileLastModifiedUpdate;
+import org.orcid.persistence.aop.UpdateProfileLastModified;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -28,8 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
-    private static final String PUBLIC_VISIBILITY = "PUBLIC";
-
     private static final String PRIVATE_VISIBILITY = "PRIVATE";
     
     @Value("${org.orcid.postgres.query.timeout:30000}")
@@ -40,7 +38,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @ExcludeFromProfileLastModifiedUpdate
     public void remove(String id) {
         super.remove(id);
     }
@@ -336,6 +333,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void removeChildrenWithGeneratedIds(ProfileEntity profileEntity) {
         String orcid = profileEntity.getId();
         removeChildren(orcid, profileEntity.getResearcherUrls(), "user.id");
@@ -393,7 +391,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
     public void updateIndexingStatus(String orcid, IndexingStatus indexingStatus) {
         String queryString = null;
         if (IndexingStatus.DONE.equals(indexingStatus)) {
@@ -414,32 +411,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getSingleResult();
     }
 
-    /**
-     * Fetches the last modified from the database Do not call unless it also
-     * manages the request level cache
-     * 
-     * @See ProfileLastModifiedAspect
-     * 
-     */
-    @SuppressWarnings("unchecked")
-    public Date retrieveLastModifiedDate(String orcid) {
-        Query nativeQuery = entityManager.createNativeQuery("Select p.last_modified FROM profile p WHERE p.orcid =:orcid");
-        nativeQuery.setParameter("orcid", orcid);
-        List<Timestamp> tsList = nativeQuery.getResultList();
-        if (tsList != null && !tsList.isEmpty()) {
-            return new Date(tsList.get(0).getTime());
-        }
-        return null;
-    }
-
-    @Override
-    @Transactional
-    public void updateLastModifiedDateWithoutResult(String orcid) {
-        Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
-        query.setParameter("orcid", orcid);
-        query.executeUpdate();
-    }
-
     @Override
     @Transactional
     public void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus) {
@@ -448,23 +419,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("lastModified", lastModified);
         query.setParameter("indexingStatus", indexingStatus.name());
         query.executeUpdate();
-    }
-
-    /**
-     * This method is used to update the last modified and indexing status
-     * without triggering last update events
-     * 
-     * @param orcid
-     * @param indexingStatus
-     */
-    @Override
-    @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
-    public void updateLastModifiedDateAndIndexingStatus(String orcid, IndexingStatus indexingStatus) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = :indexingStatus where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("indexingStatus", indexingStatus);
-        updateQuery.executeUpdate();
     }
 
     private void updateWebhookProfileLastUpdate(String orcid) {
@@ -500,11 +454,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void updateLocale(String orcid, String locale) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), locale = :locale where orcid = :orcid");
+        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), locale = :locale, indexingStatus = :indexing_status where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("locale", locale);
+        updateQuery.setParameter("indexing_status", IndexingStatus.PENDING);
         updateQuery.executeUpdate();
-
     }
 
     @Override
@@ -703,7 +657,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
     public void updateLastLoginDetails(String orcid, String ipAddress) {
         Query query = entityManager.createNativeQuery("update profile set last_login=now(), user_last_ip=:ipAddr where orcid=:orcid");
         query.setParameter("orcid", orcid);
@@ -797,7 +750,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("secret", secret);
         query.executeUpdate();
     }
-
+    
     @Override
     @Transactional
     public boolean deactivate(String orcid) {
@@ -879,5 +832,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("startDate", startDate); 
         query.setParameter("endDate", endDate);
         return query.getResultList();
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public ProfileEntity merge(ProfileEntity entity) {
+        return super.merge(entity);
     }
 }

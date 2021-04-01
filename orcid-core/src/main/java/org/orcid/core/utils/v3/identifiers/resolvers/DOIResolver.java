@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -130,7 +131,10 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         // see https://crosscite.org/docs.html for more docs.
 
         try {
-            InputStream inputStream = cache.get(rr.getGeneratedUrl(), "application/vnd.citationstyles.csl+json");
+            HashMap<String, String> headers = new HashMap<String, String>();
+            headers.put("Accept", "application/vnd.citationstyles.csl+json");
+            headers.put("User-Agent", "ORCID Registry;mailto:support@orcid.org");
+            InputStream inputStream = cache.get(rr.getGeneratedUrl(), headers);
             BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8.name()));
 
             StringBuffer response = new StringBuffer();
@@ -332,8 +336,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                     }
                     result.setPublicationDate(publicationDate);
                 }
-            }
-            
+            }           
         }
         return result;
     }

@@ -293,7 +293,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                 org.orcid.jaxb.model.v3.release.common.Contributor workContributor = new org.orcid.jaxb.model.v3.release.common.Contributor();
                 org.orcid.jaxb.model.v3.release.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
                 if(!PojoUtil.isEmpty(wfContributor.getContributorRole())) {
-                    contributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.fromValue(wfContributor.getContributorRole().getValue()));
+                    contributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.fromValue(wfContributor.getContributorRole().getValue()).value());
                 }
                 
                 if(!PojoUtil.isEmpty(wfContributor.getContributorSequence())) {

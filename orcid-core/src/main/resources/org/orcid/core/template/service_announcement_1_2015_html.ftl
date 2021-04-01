@@ -14,7 +14,7 @@
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 		    	<@emailMacros.msg "email.service_announcement.body_intro" />
-		    	<a href="https://orcid.org/privacy-policy" target="orcid.blank"><@emailMacros.msg "email.service_announcement.privacy_link" /></a><@emailMacros.msg "email.service_announcement.dot_bottom" />
+		    	<a href="https://orcid.org/privacy-policy" target="orcid.blank"><@emailMacros.msg "email.service_announcement.privacy_link" /></a><@emailMacros.msg "email.common.period" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 		    	<span style="font-weight:bold"><@emailMacros.msg "email.service_announcement.body_inbox_title" /></span><br>

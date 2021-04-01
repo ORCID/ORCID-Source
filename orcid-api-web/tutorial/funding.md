@@ -53,13 +53,13 @@ Editing the funding section of a record requires a 3 step OAuth token with the `
 
 - **end-date** _(optional)_ The date the funding ended or will end
 
-- **external-id-type** _(optional)_ The type of identifier. This field must be set to ```grant_number```
+- **external-id-type** _(required)_ The type of identifier. This field must be set to ```grant_number```
 
-- **external-id-value** _(optional)_ The identifier itself
+- **external-id-value** _(required)_ The identifier itself
 
 - **external-id-url** _(optional)_ A url the identifier resolves to
 
-- **external-id-relationship** _(optional)_ Select self for identifiers that apply to the funding itself or part-of for identifiers that apply to a collection the funding is part of.
+- **external-id-relationship** _(required)_ Select self for identifiers that apply to the funding itself or part-of for identifiers that apply to a collection the funding is part of.
 
 - **contributors** _(optional)_ Information about the individuals who received the funding
 

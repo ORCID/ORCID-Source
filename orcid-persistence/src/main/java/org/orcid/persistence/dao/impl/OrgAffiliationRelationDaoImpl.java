@@ -2,12 +2,13 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.persistence.aop.UpdateProfileLastModified;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -45,6 +46,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId) {
         Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where profile.id=:userOrcid and id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
@@ -70,6 +72,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, String visibility) {
         Query query = entityManager.createQuery(
                 "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:userOrcid and id=:orgAffiliationRelationId");
@@ -96,6 +99,8 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * @return true if each relationship was updated
      */
     @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
     public boolean updateVisibilitiesOnOrgAffiliationRelation(String userOrcid, ArrayList<Long> orgAffiliationRelationIds, String visibility) {
         Query query = entityManager.createQuery(
                 "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:userOrcid and id in (:orgAffiliationRelationIds)");
@@ -144,6 +149,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean addOrgAffiliationRelation(String clientOrcid, long orgAffiliationRelationId, String visibility) {
         Query query = entityManager.createNativeQuery(
                 "INSERT INTO org_affiliation_relation(orcid, id, date_created, last_modified, added_to_profile_date, visibility, source_id) values(:orcid, :orgAffiliationRelationId, now(), now(), now(), :visibility, :sourceId)");
@@ -270,6 +276,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
 
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllAffiliations(String orcid) {
         Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -278,6 +285,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
 
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public Boolean updateToMaxDisplay(String orcid, Long putCode) {
         Query query = entityManager.createNativeQuery(
                 "UPDATE org_affiliation_relation SET display_index=(select coalesce(MAX(display_index) + 1, 0) from org_affiliation_relation where orcid=:orcid and id != :putCode and org_affiliation_relation_role = (select org_affiliation_relation_role from org_affiliation_relation where id = :putCode)), last_modified=now() WHERE id=:putCode");
@@ -390,5 +398,19 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("ids", clientProfileOrcidIds);
         query.setMaxResults(max);
         return query.getResultList();
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public void persist(OrgAffiliationRelationEntity affiliation) {
+        super.persist(affiliation);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public OrgAffiliationRelationEntity merge(OrgAffiliationRelationEntity affiliation) {
+        return super.merge(affiliation);
     }
 }

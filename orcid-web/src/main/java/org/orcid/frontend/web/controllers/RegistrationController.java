@@ -551,9 +551,9 @@ public class RegistrationController extends BaseController {
                     return new ModelAndView("wrong_user");
                 }
 
-                boolean verified = emailManager.verifyEmail(decryptedEmail, orcid);
+                boolean verified = emailManager.verifyEmail(orcid, decryptedEmail);
                 if (verified) {
-                    profileEntityManager.updateLocale(decryptedEmail, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
+                    profileEntityManager.updateLocale(orcid, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
                     redirectAttributes.addFlashAttribute("emailVerified", true);
                     redirectAttributes.addFlashAttribute("verifiedEmail", decryptedEmail);
                     sb.append("emailVerified=true");

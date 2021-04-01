@@ -136,7 +136,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     // 2FA
     private Boolean using2FA = Boolean.FALSE;
     private String secretFor2FA;
-    
+
     @Id
     @Column(name = "orcid", length = 19)
     public String getId() {

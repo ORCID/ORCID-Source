@@ -2,13 +2,13 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Query;
 
+import org.orcid.persistence.aop.UpdateProfileLastModified;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +67,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteAddress(String orcid, Long putCode) {
         Query query = entityManager.createQuery("DELETE FROM AddressEntity WHERE id=:id and user.id = :orcid");
         query.setParameter("id", putCode);
@@ -76,6 +77,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public void removeAllAddress(String orcid) {
         Query query = entityManager.createQuery("delete from AddressEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -166,4 +168,25 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
         query.setMaxResults(max);
         return query.getResultList();
     }    
+    
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void persist(AddressEntity address) {
+        super.persist(address);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public void remove(AddressEntity address) {
+        super.remove(address);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public AddressEntity merge(AddressEntity address) {
+        return super.merge(address);
+    }
 }

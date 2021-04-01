@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.persistence.aop.UpdateProfileLastModified;
+import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -47,6 +49,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeProfileFunding(String userOrcid, Long profileFundingId) {
         Query query = entityManager.createQuery("delete from ProfileFundingEntity where profile.id=:userOrcid and id=:profileFundingId");
         query.setParameter("userOrcid", userOrcid);
@@ -70,6 +73,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, String visibility) {
         Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id=:profileFundingId");
         query.setParameter("clientOrcid", clientOrcid);
@@ -94,6 +98,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateProfileFundingVisibilities(String clientOrcid, ArrayList<Long> profileFundingIds, String visibility) {
         Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id in (:profileFundingIds)");
         query.setParameter("clientOrcid", clientOrcid);
@@ -113,6 +118,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public ProfileFundingEntity addProfileFunding(ProfileFundingEntity newProfileFundingEntity) {
         entityManager.persist(newProfileFundingEntity);
         return newProfileFundingEntity;
@@ -171,6 +177,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public ProfileFundingEntity updateProfileFunding(ProfileFundingEntity profileFunding) {
         ProfileFundingEntity toUpdate = this.find(profileFunding.getId());
         mergeProfileFunding(toUpdate, profileFunding);
@@ -198,6 +205,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     
     @Override
     @Transactional
+    @UpdateProfileLastModified
     public boolean updateToMaxDisplay(String orcid, Long id) {
         Query query = entityManager.createNativeQuery("UPDATE profile_funding SET display_index = (select coalesce(MAX(display_index) + 1, 0) from profile_funding where orcid=:orcid and id != :id ), last_modified=now() WHERE id = :id");
         query.setParameter("orcid", orcid);
@@ -267,6 +275,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     
     @Override
     @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllFunding(String orcid) {
         Query query = entityManager.createQuery("delete from ProfileFundingEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
@@ -373,5 +382,19 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         query.setParameter("ids", clientProfileOrcidIds);
         query.setMaxResults(max);
         return query.getResultList();
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public void persist(ProfileFundingEntity entity) {
+        super.persist(entity);
+    }
+    
+    @Override
+    @UpdateProfileLastModifiedAndIndexingStatus
+    @Transactional
+    public ProfileFundingEntity merge(ProfileFundingEntity entity) {
+        return super.merge(entity);
     }
 }
