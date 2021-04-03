@@ -1,0 +1,19 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+  <changeSet id="UPDATE-GRANT-NUMBER-PRIMARY-USE" author="Camelia Dumitru">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1">select count(*) from identifier_type where id_name = 'GRANT_NUMBER';</sqlCheck>
+    </preConditions>
+    <sql>UPDATE identifier_type SET primary_use = 'work', last_modified=now() WHERE id_name = 'GRANT_NUMBER';</sql>     
+  </changeSet>
+    
+    <changeSet id="UPDATE-PROPOSAL-ID-PRIMARY-USE" author="Camelia Dumitru">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="1">select count(*) from identifier_type where id_name = 'PROPOSAL_ID';</sqlCheck>
+    </preConditions>
+    <sql>UPDATE identifier_type SET primary_use = 'work', last_modified=now() WHERE id_name = 'PROPOSAL_ID';</sql>     
+  </changeSet>
+    
+</databaseChangeLog>
+   

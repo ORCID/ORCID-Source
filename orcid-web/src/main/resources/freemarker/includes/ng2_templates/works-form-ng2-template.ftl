@@ -38,13 +38,12 @@
                 <!-- Main content -->       
                 <div class="row">
                     <!-- Left Column -->            
-                    <div class="col-md-6 col-sm-6 col-xs-12">   
-                        
+                    <div class="col-md-6 col-sm-6 col-xs-12">            
                         <div class="form-group">
                             <label class="relative"><@orcid.msg 'manual_work_form_contents.labelworkcategory'/></label>
                             <span *ngIf="editWork?.workCategory?.value" class="required" [ngClass]="isValidClass(editWork.workCategory)">*</span>
                             <div class="relative" *ngIf="editWork?.workCategory">
-                                <select id="workCategory" name="workCategory" class="form-control" [(ngModel)]="editWork.workCategory.value" (ngModelChange)="loadWorkTypes(); clearErrors(); applyLabelWorkType(); updateRelationships();">
+                                <select id="workCategory" name="workCategory" class="form-control" [(ngModel)]="editWork.workCategory.value" (ngModelChange)="loadWorkTypes(); clearErrors(); applyLabelWorkType();updateRelationships();">
                                     <option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkCategory.empty' /></option>
                                     <#list workCategories?keys as key>
                                         <option value="${key}">${workCategories[key]}</option>
