@@ -19,15 +19,9 @@ source_file = orcid-core/src/main/resources/i18n/email_admin_delegate_request_en
 source_lang = en
 type = UNICODEPROPERTIES
 
-[registry.email-api-record-creation]
-file_filter = orcid-core/src/main/resources/i18n/email_api_record_creation_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_api_record_creation_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
 [registry.email-claim-reminder]
-file_filter = orcid-core/src/main/resources/i18n/email_claim_reminder_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_claim_reminder_en.properties
+file_filter = orcid-core/src/main/resources/i18n/email_new_claim_reminder_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/email_new_claim_reminder_reminder_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
@@ -72,12 +66,6 @@ source_file = orcid-core/src/main/resources/i18n/email_locked_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
-
-[registry.email-new-claim-reminder]
-file_filter = orcid-core/src/main/resources/i18n/email_new_claim_reminder_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_new_claim_reminder_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
 
 [registry.email-notification]
 file_filter = orcid-core/src/main/resources/i18n/email_notification_<lang>.properties
