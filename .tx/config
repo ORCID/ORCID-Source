@@ -19,9 +19,9 @@ source_file = orcid-core/src/main/resources/i18n/email_admin_delegate_request_en
 source_lang = en
 type = UNICODEPROPERTIES
 
-[registry.email-claim-reminder]
+[registry.email-new-claim-reminder]
 file_filter = orcid-core/src/main/resources/i18n/email_new_claim_reminder_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_new_claim_reminder_reminder_en.properties
+source_file = orcid-core/src/main/resources/i18n/email_new_claim_reminder_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
 
@@ -143,6 +143,7 @@ file_filter = orcid-core/src/main/resources/i18n/messages_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/messages_en.properties
 source_lang = en
 type = UNICODEPROPERTIES
+
 
 [registry.test_messages]
 file_filter = orcid-core/src/main/resources/i18n/test_messages_<lang>.properties
