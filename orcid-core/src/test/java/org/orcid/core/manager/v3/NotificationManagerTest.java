@@ -641,4 +641,57 @@ public class NotificationManagerTest extends DBUnitTest {
         ReflectionTestUtils.setField(notificationManager, "notificationDao", notificationDao);
     }
 
+        
+    @Test
+    public void testSend2FADisabledEmail() throws JAXBException, IOException, URISyntaxException {
+        ProfileEntity p = new ProfileEntity();
+        p.setLocale("EN");
+        when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(p);
+
+        org.orcid.jaxb.model.v3.release.record.Emails emails = new org.orcid.jaxb.model.v3.release.record.Emails();
+        List<org.orcid.jaxb.model.v3.release.record.Email> emailsList = new ArrayList<>();
+        org.orcid.jaxb.model.v3.release.record.Email email = new org.orcid.jaxb.model.v3.release.record.Email();
+        email.setEmail("test@test.com");
+        emailsList.add(email);
+        emails.setEmails(emailsList);
+        when(mockEmailManager.getEmails(anyString())).thenReturn(emails);
+
+        notificationManager.send2FADisabledEmail("4444-4444-4444-4446");
+    }
+    
+    @Test
+    public void testSendForgottenIdEmail() throws JAXBException, IOException, URISyntaxException {
+        resetMocks();
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        String userOrcid = "0000-0000-0000-0003";
+        ProfileEntity profile = new ProfileEntity(userOrcid);
+        for (AvailableLocales locale : AvailableLocales.values()) {
+            profile.setLocale(locale.name());
+            when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
+            notificationManager.sendForgottenIdEmail("test@test.com", userOrcid);
+        }
+    }
+    
+    @Test
+    public void testSendForgottenIdEmailNotFound() throws Exception {
+        resetMocks();
+        String submittedEmail = "email_not_in_orcid@test.orcid.org";
+        for (AvailableLocales curLocale : AvailableLocales.values()) {
+            notificationManager.sendForgottenIdEmailNotFoundEmail(submittedEmail, LocaleUtils.toLocale(curLocale.value()));
+        }
+    }
+
+    @Test
+    public void testSendOrcidLockedEmail() throws JAXBException, IOException, URISyntaxException {
+        ProfileEntity p = new ProfileEntity();
+        p.setLocale("EN");
+        when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(p);
+
+        Email email = new Email();
+        email.setEmail("josiah_carberry@brown.edu");
+        when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
+
+        notificationManager.sendOrcidLockedEmail("4444-4444-4444-4446");
+    }
+
 }
