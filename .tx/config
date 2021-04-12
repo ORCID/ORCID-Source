@@ -170,13 +170,6 @@ source_lang = en
 type = UNICODEPROPERTIES
 
 
-[registry.2019-07-emailVisibilitySettings]
-file_filter = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-
 [registry.notification-digest]
 file_filter = orcid-core/src/main/resources/i18n/notification_digest_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/notification_digest_en.properties
