@@ -145,37 +145,6 @@ source_lang = en
 type = UNICODEPROPERTIES
 
 
-[registry.test_messages]
-file_filter = orcid-core/src/main/resources/i18n/test_messages_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/test_messages_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.ng_orcid]
-file_filter = orcid-core/src/main/resources/i18n/ng_orcid_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/ng_orcid_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.ng_orcid_signin]
-file_filter = orcid-core/src/main/resources/i18n/ng_orcid_signin_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/ng_orcid_signin_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.ng_orcid_search]
-file_filter = orcid-core/src/main/resources/i18n/ng_orcid_search_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/ng_orcid_search_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-
-[registry.2019-07-emailVisibilitySettings]
-file_filter = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/2019-07-emailVisibilitySettings_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
 
 [registry.notification-digest]
 file_filter = orcid-core/src/main/resources/i18n/notification_digest_<lang>.properties
