@@ -145,12 +145,6 @@ source_lang = en
 type = UNICODEPROPERTIES
 
 
-[registry.test_messages]
-file_filter = orcid-core/src/main/resources/i18n/test_messages_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/test_messages_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
 
 [registry.notification-digest]
 file_filter = orcid-core/src/main/resources/i18n/notification_digest_<lang>.properties
