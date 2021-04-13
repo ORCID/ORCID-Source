@@ -14,14 +14,14 @@
 		    </p>
 			<ul>
 				<li><@emailMacros.msg "email.forgotten_id.try_anohter_email" />
-				<a href="${baseUri}/reset-password"> <@emailMacros.msg "email.forgotten_id.try_anohter_email_link"/></a><@emailMacros.msg "email.service_announcement.dot_bottom"/>
+				<a href="${baseUri}/reset-password"> <@emailMacros.msg "email.forgotten_id.try_anohter_email_link"/></a><@emailMacros.msg "email.common.period"/>
 				</li>
 				<li><@emailMacros.msg "email.forgotten_id.contact_us" />
-				<a href="https://support.orcid.org/hc/en-us/requests/new"> <@emailMacros.msg "email.common.if_you_have_any.contact_us"/></a><@emailMacros.msg "email.service_announcement.dot_bottom"/>
+				<a href="https://support.orcid.org/hc/en-us/requests/new"> <@emailMacros.msg "email.common.if_you_have_any.contact_us"/></a><@emailMacros.msg "email.common.period"/>
 				</li>
 
 				<li><@emailMacros.msg "email.forgotten_id.certain_not_regiser" />
-					<a href="${baseUri}/register"><@emailMacros.msg "email.forgotten_id.certain_not_regiser_url" /></a><@emailMacros.msg "email.service_announcement.dot_bottom"/>
+					<a href="${baseUri}/register"><@emailMacros.msg "email.forgotten_id.certain_not_regiser_url" /></a><@emailMacros.msg "email.common.period"/>
 				</li>
 			</ul>
 		  	<p style="white-space: pre;">
