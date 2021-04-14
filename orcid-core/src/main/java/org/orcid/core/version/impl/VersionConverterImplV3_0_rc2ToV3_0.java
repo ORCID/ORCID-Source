@@ -88,6 +88,8 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
         OrcidIdBaseMapper orcidIdBaseMapper = new OrcidIdBaseMapper();
         
         WorkContributorRoleMapper workContributorRoleMapper = new WorkContributorRoleMapper();
+        
+        FundingContributorRoleMapper fundingContributorRoleMapper = new FundingContributorRoleMapper();
 
         // GROUP ID
         mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords.class).byDefault().register();
@@ -150,6 +152,10 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
         mapperFactory.classMap(Fundings.class, org.orcid.jaxb.model.v3.rc2.record.summary.Fundings.class).byDefault().register();
         mapperFactory.classMap(Funding.class, org.orcid.jaxb.model.v3.rc2.record.Funding.class).byDefault().register();
         mapperFactory.classMap(FundingSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.FundingSummary.class).byDefault().register();
+
+        // FUNDING CONTRIBUTORS
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes.class,
+                org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes.class).customize(fundingContributorRoleMapper).register();
 
         // EDUCATION
         mapperFactory.classMap(org.orcid.jaxb.model.v3.release.record.Educations.class, org.orcid.jaxb.model.v3.rc2.record.Educations.class).byDefault().register();
@@ -300,4 +306,31 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
             }
         }
     }
+    
+    private class FundingContributorRoleMapper
+            extends CustomMapper<org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes, org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes> {
+        @Override
+        public void mapAtoB(org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes v3Attributes,
+                org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes v3rc2Attributes, MappingContext context) {
+
+            if (v3Attributes.getContributorRole() != null) {
+                try {
+                    v3rc2Attributes.setContributorRole(org.orcid.jaxb.model.common.FundingContributorRole.fromValue(v3Attributes.getContributorRole()));
+                } catch (IllegalArgumentException iae) {
+                    if (CreditRole.SUPERVISION.value().equals(v3Attributes.getContributorRole())) {
+                        v3rc2Attributes.setContributorRole(org.orcid.jaxb.model.common.FundingContributorRole.LEAD);
+                    }
+                    // If no mapping is found, leave it null
+                }
+            }
+        }
+
+        @Override
+        public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes v3rc2Attributes,
+                org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes v3Attributes, MappingContext context) {
+            if (v3rc2Attributes.getContributorRole() != null) {
+                v3Attributes.setContributorRole(v3rc2Attributes.getContributorRole().value());
+            }
+        }
+    }   
 }

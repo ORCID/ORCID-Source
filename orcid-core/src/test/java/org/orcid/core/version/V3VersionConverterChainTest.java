@@ -11,6 +11,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.contributors.roles.credit.CreditRole;
+import org.orcid.jaxb.model.common.FundingContributorRole;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.ResourceType;
@@ -855,7 +857,7 @@ public class V3VersionConverterChainTest {
     }
     
     @Test
-    public void upgradeContributorAttributesTest() {
+    public void upgradeWorkContributorAttributesTest() {
         // Test default contributor roles
         org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
         rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
@@ -867,7 +869,7 @@ public class V3VersionConverterChainTest {
         
         assertNotNull(v3ContributorAttributes);
         assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
-        assertEquals("assignee", v3ContributorAttributes.getContributorRole());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE.value(), v3ContributorAttributes.getContributorRole());
         
         rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
         rc2ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
@@ -879,7 +881,7 @@ public class V3VersionConverterChainTest {
         
         assertNotNull(v3ContributorAttributes);
         assertEquals(SequenceType.ADDITIONAL, v3ContributorAttributes.getContributorSequence());
-        assertEquals("author", v3ContributorAttributes.getContributorRole());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.AUTHOR.value(), v3ContributorAttributes.getContributorRole());
         
         rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
         rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
@@ -891,15 +893,111 @@ public class V3VersionConverterChainTest {
         
         assertNotNull(v3ContributorAttributes);
         assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
-        assertEquals("chair-or-translator", v3ContributorAttributes.getContributorRole());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.CHAIR_OR_TRANSLATOR.value(), v3ContributorAttributes.getContributorRole());
+        
+        rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
+        rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
+        rc2ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.CO_INVENTOR);
+
+        v3ContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.common.ContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2ContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(v3ContributorAttributes);
+        assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.CO_INVENTOR.value(), v3ContributorAttributes.getContributorRole());
+        
+        rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
+        rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
+        rc2ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.CO_INVESTIGATOR);
+
+        v3ContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.common.ContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2ContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(v3ContributorAttributes);
+        assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.CO_INVESTIGATOR.value(), v3ContributorAttributes.getContributorRole());
+        
+        rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
+        rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
+        rc2ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.EDITOR);
+
+        v3ContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.common.ContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2ContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(v3ContributorAttributes);
+        assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.EDITOR.value(), v3ContributorAttributes.getContributorRole());
+        
+        rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
+        rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
+        rc2ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.GRADUATE_STUDENT);
+
+        v3ContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.common.ContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2ContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(v3ContributorAttributes);
+        assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.GRADUATE_STUDENT.value(), v3ContributorAttributes.getContributorRole());
+        
+        rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
+        rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
+        rc2ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.OTHER_INVENTOR);
+
+        v3ContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.common.ContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2ContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(v3ContributorAttributes);
+        assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.OTHER_INVENTOR.value(), v3ContributorAttributes.getContributorRole());
+        
+        rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
+        rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
+        rc2ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.POSTDOCTORAL_RESEARCHER);
+
+        v3ContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.common.ContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2ContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(v3ContributorAttributes);
+        assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.POSTDOCTORAL_RESEARCHER.value(), v3ContributorAttributes.getContributorRole());
+        
+        rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
+        rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
+        rc2ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.PRINCIPAL_INVESTIGATOR);
+
+        v3ContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.common.ContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2ContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(v3ContributorAttributes);
+        assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.PRINCIPAL_INVESTIGATOR.value(), v3ContributorAttributes.getContributorRole());
+        
+        rc2ContributorAttributes = new org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes(); 
+        rc2ContributorAttributes.setContributorSequence(SequenceType.FIRST);
+        rc2ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.SUPPORT_STAFF);
+
+        v3ContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.common.ContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2ContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(v3ContributorAttributes);
+        assertEquals(SequenceType.FIRST, v3ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.SUPPORT_STAFF.value(), v3ContributorAttributes.getContributorRole());               
     }
     
     @Test
-    public void downgradeContributorAttributesTest() {
+    public void downgradeWorkContributorAttributesTest() {
         // Test default contributor roles
         org.orcid.jaxb.model.v3.release.common.ContributorAttributes v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         v3ContributorAttributes.setContributorSequence(SequenceType.FIRST);
-        v3ContributorAttributes.setContributorRole("author");
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.AUTHOR.value());
         
         org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
                 .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
@@ -909,7 +1007,17 @@ public class V3VersionConverterChainTest {
         
         v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
-        v3ContributorAttributes.setContributorRole("chair-or-translator");
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.ASSIGNEE, rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.CHAIR_OR_TRANSLATOR.value());
         
         rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
                 .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
@@ -919,7 +1027,7 @@ public class V3VersionConverterChainTest {
         
         v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
-        v3ContributorAttributes.setContributorRole("co-inventor");
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.CO_INVENTOR.value());
         
         rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
                 .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
@@ -927,10 +1035,80 @@ public class V3VersionConverterChainTest {
         assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
         assertEquals(org.orcid.jaxb.model.common.ContributorRole.CO_INVENTOR, rc2ContributorAttributes.getContributorRole());
         
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.CO_INVESTIGATOR.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.CO_INVESTIGATOR, rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.EDITOR.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.EDITOR, rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.GRADUATE_STUDENT.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.GRADUATE_STUDENT, rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.OTHER_INVENTOR.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.OTHER_INVENTOR, rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.POSTDOCTORAL_RESEARCHER.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.POSTDOCTORAL_RESEARCHER, rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.PRINCIPAL_INVESTIGATOR.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.PRINCIPAL_INVESTIGATOR, rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.SUPPORT_STAFF.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertEquals(org.orcid.jaxb.model.common.ContributorRole.SUPPORT_STAFF, rc2ContributorAttributes.getContributorRole());
+        
         // Test credit contributor roles
         v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         v3ContributorAttributes.setContributorSequence(SequenceType.FIRST);
-        v3ContributorAttributes.setContributorRole("writing – original draft");
+        v3ContributorAttributes.setContributorRole(CreditRole.WRITING_ORIGINAL_DRAFT.value());
         
         rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
                 .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
@@ -940,7 +1118,7 @@ public class V3VersionConverterChainTest {
         
         v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         v3ContributorAttributes.setContributorSequence(SequenceType.FIRST);
-        v3ContributorAttributes.setContributorRole("writing – review & editing");
+        v3ContributorAttributes.setContributorRole(CreditRole.WRITING_REVIEW_EDITING.value());
         
         rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
                 .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
@@ -950,7 +1128,7 @@ public class V3VersionConverterChainTest {
         
         v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         v3ContributorAttributes.setContributorSequence(SequenceType.FIRST);
-        v3ContributorAttributes.setContributorRole("investigation");
+        v3ContributorAttributes.setContributorRole(CreditRole.INVESTIGATION.value());
         
         rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
                 .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
@@ -960,7 +1138,7 @@ public class V3VersionConverterChainTest {
         
         v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         v3ContributorAttributes.setContributorSequence(SequenceType.FIRST);
-        v3ContributorAttributes.setContributorRole("supervision");
+        v3ContributorAttributes.setContributorRole(CreditRole.SUPERVISION.value());
         
         rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
                 .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
@@ -970,7 +1148,7 @@ public class V3VersionConverterChainTest {
         
         v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
-        v3ContributorAttributes.setContributorRole("conceptualization");
+        v3ContributorAttributes.setContributorRole(CreditRole.CONCEPTUALIZATION.value());
         
         rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
                 .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
@@ -980,7 +1158,67 @@ public class V3VersionConverterChainTest {
         
         v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
-        v3ContributorAttributes.setContributorRole("project administration");
+        v3ContributorAttributes.setContributorRole(CreditRole.DATA_CURATION.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertNull(rc2ContributorAttributes.getContributorRole());                
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(CreditRole.FORMAL_ANALYSIS.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertNull(rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(CreditRole.FUNDING_ACQUISITION.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertNull(rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(CreditRole.METHODOLOGY.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertNull(rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(CreditRole.RESOURCES.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertNull(rc2ContributorAttributes.getContributorRole());
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(CreditRole.SOFTWARE.value());
+        
+        rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        assertNotNull(rc2ContributorAttributes);
+        assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
+        assertNull(rc2ContributorAttributes.getContributorRole());        
+        
+        v3ContributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        v3ContributorAttributes.setContributorSequence(SequenceType.ADDITIONAL);
+        v3ContributorAttributes.setContributorRole(CreditRole.VALIDATION.value());
         
         rc2ContributorAttributes = (org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes) (v3VersionConverterChain
                 .downgrade(new V3Convertible(v3ContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
@@ -988,4 +1226,243 @@ public class V3VersionConverterChainTest {
         assertEquals(SequenceType.ADDITIONAL, rc2ContributorAttributes.getContributorSequence());
         assertNull(rc2ContributorAttributes.getContributorRole());        
     }
+    
+    @Test
+    public void upgradeFundingContributorAttributesTest() {
+        org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes rc2FundingContributorAttributes = new org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes();  
+        rc2FundingContributorAttributes.setContributorRole(FundingContributorRole.CO_LEAD);
+        
+        org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes v3FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2FundingContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertEquals(FundingContributorRole.CO_LEAD.value(), v3FundingContributorAttributes.getContributorRole());
+        
+        rc2FundingContributorAttributes = new org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes();  
+        rc2FundingContributorAttributes.setContributorRole(FundingContributorRole.LEAD);
+        
+        v3FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2FundingContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertEquals(FundingContributorRole.LEAD.value(), v3FundingContributorAttributes.getContributorRole());
+        
+        rc2FundingContributorAttributes = new org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes();  
+        rc2FundingContributorAttributes.setContributorRole(FundingContributorRole.OTHER_CONTRIBUTION);
+        
+        v3FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2FundingContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertEquals(FundingContributorRole.OTHER_CONTRIBUTION.value(), v3FundingContributorAttributes.getContributorRole());
+        
+        rc2FundingContributorAttributes = new org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes();  
+        rc2FundingContributorAttributes.setContributorRole(FundingContributorRole.SUPPORTED_BY);
+        
+        v3FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes) (v3VersionConverterChain
+                .upgrade(new V3Convertible(rc2FundingContributorAttributes, "3.0_rc2"), "3.0")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertEquals(FundingContributorRole.SUPPORTED_BY.value(), v3FundingContributorAttributes.getContributorRole());
+    }
+    
+    @Test
+    public void downgradeFundingContributorAttributesTest() {        
+        // Test default contributor roles
+        org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(FundingContributorRole.CO_LEAD.value());
+        
+        org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertEquals(FundingContributorRole.CO_LEAD, rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(FundingContributorRole.LEAD.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertEquals(FundingContributorRole.LEAD, rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(FundingContributorRole.OTHER_CONTRIBUTION.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertEquals(FundingContributorRole.OTHER_CONTRIBUTION, rc2FundingContributorAttributes.getContributorRole());        
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(FundingContributorRole.SUPPORTED_BY.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertEquals(FundingContributorRole.SUPPORTED_BY, rc2FundingContributorAttributes.getContributorRole());        
+        
+        // Test credit contributor roles
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.SUPERVISION.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertEquals(FundingContributorRole.LEAD, rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.CONCEPTUALIZATION.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.DATA_CURATION.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.EDITOR.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.FORMAL_ANALYSIS.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.FUNDING_ACQUISITION.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.INVESTIGATION.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.METHODOLOGY.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.PROJECT_ADMINISTRATION.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.RESOURCES.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.SOFTWARE.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.VALIDATION.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.VISUALIZATION.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.WRITING_ORIGINAL_DRAFT.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        
+        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
+        v3FundingContributorAttributes.setContributorRole(CreditRole.WRITING_REVIEW_EDITING.value());
+        
+        rc2FundingContributorAttributes =         
+                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
+                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2FundingContributorAttributes);
+        assertNull(rc2FundingContributorAttributes.getContributorRole());
+    }   
 }
