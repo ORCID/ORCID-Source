@@ -2,6 +2,7 @@ package org.orcid.core.version.impl;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.version.V3Convertible;
 import org.orcid.core.version.V3VersionConverter;
@@ -45,10 +46,10 @@ import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
-import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
@@ -85,6 +86,8 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         OrcidIdBaseMapper orcidIdBaseMapper = new OrcidIdBaseMapper();
+        
+        WorkContributorRoleMapper workContributorRoleMapper = new WorkContributorRoleMapper();
 
         // GROUP ID
         mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords.class).byDefault().register();
@@ -138,6 +141,10 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
         mapperFactory.classMap(Work.class, org.orcid.jaxb.model.v3.rc2.record.Work.class).byDefault().register();
         mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.v3.rc2.record.summary.WorkSummary.class).byDefault().register();
 
+        // WORK CONTRIBUTORS
+        mapperFactory.classMap(org.orcid.jaxb.model.v3.release.common.ContributorAttributes.class, 
+                org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes.class).customize(workContributorRoleMapper).register();
+        
         // FUNDING
         mapperFactory.classMap(FundingGroup.class, org.orcid.jaxb.model.v3.rc2.record.summary.FundingGroup.class).byDefault().register();
         mapperFactory.classMap(Fundings.class, org.orcid.jaxb.model.v3.rc2.record.summary.Fundings.class).byDefault().register();
@@ -252,5 +259,45 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
             }
         }
 
+    }
+    
+    private class WorkContributorRoleMapper
+            extends CustomMapper<org.orcid.jaxb.model.v3.release.common.ContributorAttributes, org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes> {
+        @Override
+        public void mapAtoB(org.orcid.jaxb.model.v3.release.common.ContributorAttributes v3Attributes,
+                org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes v3rc2Attributes, MappingContext context) {
+            if (v3Attributes.getContributorSequence() != null) {
+                v3rc2Attributes.setContributorSequence(v3Attributes.getContributorSequence());
+            }
+
+            if (v3Attributes.getContributorRole() != null) {
+                try {
+                    v3rc2Attributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.fromValue(v3Attributes.getContributorRole()));
+                } catch (IllegalArgumentException iae) {
+                    if (CreditRole.WRITING_ORIGINAL_DRAFT.value().equals(v3Attributes.getContributorRole())) {
+                        v3rc2Attributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.AUTHOR);
+                    } else if (CreditRole.WRITING_REVIEW_EDITING.value().equals(v3Attributes.getContributorRole())) {
+                        v3rc2Attributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.EDITOR);
+                    } else if (CreditRole.INVESTIGATION.value().equals(v3Attributes.getContributorRole())) {
+                        v3rc2Attributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.CO_INVESTIGATOR);
+                    } else if (CreditRole.SUPERVISION.value().equals(v3Attributes.getContributorRole())) {
+                        v3rc2Attributes.setContributorRole(org.orcid.jaxb.model.common.ContributorRole.PRINCIPAL_INVESTIGATOR);
+                    }
+                    // If no mapping is found, leave it null
+                }
+            }
+        }
+
+        @Override
+        public void mapBtoA(org.orcid.jaxb.model.v3.rc2.common.ContributorAttributes v3rc2Attributes,
+                org.orcid.jaxb.model.v3.release.common.ContributorAttributes v3Attributes, MappingContext context) {
+            if (v3rc2Attributes.getContributorSequence() != null) {
+                v3Attributes.setContributorSequence(v3rc2Attributes.getContributorSequence());
+            }
+
+            if (v3rc2Attributes.getContributorRole() != null) {
+                v3Attributes.setContributorRole(v3rc2Attributes.getContributorRole().value());
+            }
+        }
     }
 }
