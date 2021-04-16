@@ -90,6 +90,10 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertNotNull(record.getOtherNames());
         assertEquals(1, record.getOtherNames().getOtherNames().size());
 
+        assertNotNull(record.getNames());
+        assertEquals("Given Names", record.getNames().getGivenNames().getValue());
+        assertEquals("Family Name", record.getNames().getFamilyName().getValue());
+
         assertNotNull(record.getCountries());
         assertEquals(1, record.getCountries().getAddresses().size());
         assertEquals(String.valueOf(9), record.getCountries().getAddresses().get(0).getPutCode());

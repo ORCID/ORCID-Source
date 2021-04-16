@@ -170,6 +170,7 @@ public class PublicRecordController extends BaseWorkspaceController {
                             displayName += name.getFamilyName().getContent();
                         }
                     }
+                    publicRecord.setNames(NamesForm.valueOf(name));
                 }
             }
 

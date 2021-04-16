@@ -6,6 +6,7 @@ public class PublicRecord {
 
     private String title;
     private String displayName;
+    private NamesForm names;
     private BiographyForm biography;
     private OtherNamesForm otherNames;
     private AddressesForm countries;
@@ -28,6 +29,14 @@ public class PublicRecord {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public NamesForm getNames() {
+        return names;
+    }
+
+    public void setNames(NamesForm names) {
+        this.names = names;
     }
 
     public BiographyForm getBiography() {
