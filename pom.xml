@@ -974,7 +974,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.0.6-SNAPSHOT</version>
+               <version>3.0.6</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
