@@ -109,21 +109,26 @@ export class WorksFormComponent implements AfterViewInit, OnDestroy, OnInit {
         this.editWork.workExternalIdentifiers.push({externalIdentifierId: {value: ""}, externalIdentifierType: {value: ""}, relationship: {value: "self"}, url: {value: ""}});
     };
 
-    updateRelationships(): void {
+    updateRelationships(): void {    
         var workType = this.editWork.workType;
         if (this.editWork.workExternalIdentifiers && this.editWork.workExternalIdentifiers.length > 0) {
             for (var key in this.editWork.workExternalIdentifiers) {
                 var extId = this.editWork.workExternalIdentifiers[key];
-                if (extId.externalIdentifierType && extId.relationship && workType) {
-                    if (extId.externalIdentifierType.value == 'isbn' && workType.value == 'book-chapter') {
-                        extId.relationship.value = 'part-of';
-                    } else if (extId.externalIdentifierType.value == 'isbn' && workType.value == 'book') {
-                        extId.relationship.value = 'self';
-                    } else if (extId.externalIdentifierType.value == 'issn') {
-                        extId.relationship.value = 'part-of';
-                        
-                    } else if (extId.externalIdentifierType.value == 'isbn' && ["dictionary-entry", "conference-paper","encyclopedia-entry" ].indexOf(workType.value) != -1){
-                        extId.relationship.value = 'part-of';
+                if (extId.externalIdentifierType && extId.relationship) {
+                    if(workType) {
+                      if (extId.externalIdentifierType.value == 'isbn' && workType.value == 'book-chapter') {
+                          extId.relationship.value = 'part-of';
+                      } else if (extId.externalIdentifierType.value == 'isbn' && workType.value == 'book') {
+                          extId.relationship.value = 'self';
+                      } else if (extId.externalIdentifierType.value == 'issn') {
+                          extId.relationship.value = 'part-of';
+                          
+                      } else if (extId.externalIdentifierType.value == 'isbn' && ["dictionary-entry", "conference-paper","encyclopedia-entry" ].indexOf(workType.value) != -1){
+                          extId.relationship.value = 'part-of';
+                      } 
+                    }
+                    if (extId.externalIdentifierType.value == 'grant_number' || extId.externalIdentifierType.value == 'proposal-id') {
+                        extId.relationship.value = 'funded-by';
                     }
                 }
             }
