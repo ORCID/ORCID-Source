@@ -155,11 +155,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         
         orcidSecurityManager.checkSourceAndThrow(existingEntity);
 
-        System.out.println("------------------------------------------------");
-        System.out.println(peerReview.getSubjectName());
-        System.out.println(peerReview.getSubjectName() == null ? "No subject name!!!" : peerReview.getSubjectName().getTitle().getContent());
-        System.out.println("------------------------------------------------");
-        
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, existingEntity);        
         existingEntity.setVisibility(originalVisibility.name());
 
@@ -173,10 +168,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         } else {
             existingEntity.setOrg(null);
         }
-        
-        System.out.println("------------------------------------------------");
-        System.out.println(existingEntity.getSubjectName());
-        System.out.println("------------------------------------------------");
         
         existingEntity = peerReviewDao.merge(existingEntity);
         peerReviewDao.flush();
