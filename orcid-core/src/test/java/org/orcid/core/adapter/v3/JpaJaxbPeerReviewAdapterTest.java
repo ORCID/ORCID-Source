@@ -27,6 +27,8 @@ import org.orcid.jaxb.model.common.PeerReviewSubjectType;
 import org.orcid.jaxb.model.common.PeerReviewType;
 import org.orcid.jaxb.model.common.Role;
 import org.orcid.jaxb.model.common.WorkType;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
@@ -97,55 +99,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }
-
-    @Test
-    public void testToOrgAffiliationRelationEntity() throws JAXBException {
-        PeerReview e = getPeerReview(true);
-        // Set the put code
-        e.setPutCode(Long.valueOf(12345));
-        assertNotNull(e);
-        PeerReviewEntity pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
-        assertNotNull(pe);
-        // General info
-        assertEquals(Long.valueOf(12345), pe.getId());
-        assertNull(pe.getDateCreated());
-        assertNull(pe.getLastModified());
-        assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());
-        assertEquals(
-                "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
-                pe.getExternalIdentifiersJson());
-        assertEquals("REVIEWER", pe.getRole());
-        assertEquals("REVIEW", pe.getType());
-        assertEquals("peer-review:url", pe.getUrl());
-
-        // Dates
-        assertEquals(Integer.valueOf(2), pe.getCompletionDate().getDay());
-        assertEquals(Integer.valueOf(2), pe.getCompletionDate().getMonth());
-        assertEquals(Integer.valueOf(1948), pe.getCompletionDate().getYear());
-
-        // Source
-        assertNull(pe.getSourceId());
-        assertNull(pe.getClientSourceId());
-        assertNull(pe.getElementSourceId());
-        
-        // org should be null, it will be found / created based on model object of incoming data
-        assertNull(pe.getOrg());
-
-        // Check subject
-        assertEquals(
-                "{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}",
-                pe.getSubjectExternalIdentifiersJson());
-        assertEquals("peer-review:subject-container-name", pe.getSubjectContainerName());
-        assertEquals("peer-review:subject-name", pe.getSubjectName());
-        assertEquals("peer-review:subject-translated-name", pe.getSubjectTranslatedName());
-        assertEquals("en", pe.getSubjectTranslatedNameLanguageCode());
-        assertEquals("peer-review:subject-url", pe.getSubjectUrl());
-        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.JOURNAL_ARTICLE.name(), pe.getSubjectType());
-
-        // Check group id
-        assertEquals("orcid-generated:12345", pe.getGroupId());
-    }
-
+   
     @Test
     public void fromPeerReviewToPeerReviewEntity() throws JAXBException {
         PeerReview e = getPeerReview(true);        
@@ -159,26 +113,35 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertNull(pe.getDateCreated());
         assertNull(pe.getLastModified());
         
+        // Source should be null, it is not set by the mapper
+        assertNull(pe.getSourceId());
+        assertNull(pe.getClientSourceId());
+        assertNull(pe.getElementSourceId());
+        
+        // General info
         assertEquals(Long.valueOf(12345), pe.getId());
         assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());
         assertEquals("REVIEWER", pe.getRole());
         assertEquals("REVIEW", pe.getType());
         assertEquals("https://alt-url.com", pe.getUrl());
         
+        // Dates
         assertEquals(Integer.valueOf(1), pe.getCompletionDate().getDay());
         assertEquals(Integer.valueOf(8), pe.getCompletionDate().getMonth());
         assertEquals(Integer.valueOf(2012), pe.getCompletionDate().getYear());        
+        
+        // Group id
         assertEquals("issn:1741-4857", pe.getGroupId());
         
+        // Subject data
         assertEquals("Journal title", pe.getSubjectContainerName());
-        
         assertEquals("Name of the paper reviewed", pe.getSubjectName());
         assertEquals("Translated title", pe.getSubjectTranslatedName());
         assertEquals("en", pe.getSubjectTranslatedNameLanguageCode());
         assertEquals("JOURNAL_ARTICLE", pe.getSubjectType());
         assertEquals("https://subject-alt-url.com", pe.getSubjectUrl());
-        assertEquals("PRIVATE", pe.getVisibility());
         
+        // Identifiers
         assertEquals("{\"relationship\":\"SELF\",\"url\":{\"value\":\"https://doi.org/10.1087/20120404\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.1087/20120404\"}}", pe.getSubjectExternalIdentifiersJson());
         assertEquals(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"https://localsystem.org/1234\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}",
@@ -474,6 +437,10 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
             p.setPutCode(Long.valueOf(12345));
             // Set the visibility
             p.setVisibility(Visibility.PRIVATE);
+            // Set the source
+            Source s = new Source();
+            s.setSourceClientId(new SourceClientId("APP-0000000000000000"));
+            p.setSource(s);
         }
         
         assertNotNull(p.getCompletionDate());
@@ -486,10 +453,6 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         assertNotNull(p.getOrganization());
         assertNotNull(p.getOrganization().getDisambiguatedOrganization());
         assertNotNull(p.getOrganization().getAddress());
-        System.out.println("----------------------------------------");
-        System.out.println(p.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
-        System.out.println(p.getOrganization().getAddress().getCity());
-        System.out.println("----------------------------------------");
         assertNotNull(p.getPutCode());
         assertNotNull(p.getRole());        
         assertNotNull(p.getSubjectContainerName());
