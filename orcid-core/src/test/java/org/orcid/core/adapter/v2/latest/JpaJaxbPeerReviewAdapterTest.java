@@ -16,7 +16,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
-import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record_v2.PeerReview;
@@ -47,113 +48,161 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
     private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
 
     @Test
-    public void testToOrgAffiliationRelationEntity() throws JAXBException {
-        PeerReview e = getPeerReview(true);
+    public void fromPeerReviewToPeerReviewEntity() throws JAXBException {
+        PeerReview e = getPeerReview(true);        
         assertNotNull(e);
-        assertNotNull(e.getCreatedDate());
-        assertNotNull(e.getLastModifiedDate());
+        
         PeerReviewEntity pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
         assertNotNull(pe);
-        //General info
-        assertEquals(Long.valueOf(12345), pe.getId());
+
+        // Source should be null, it is not set by the mapper
+        assertNull(pe.getSourceId());
+        assertNull(pe.getClientSourceId());
+        assertNull(pe.getElementSourceId());
         assertNull(pe.getDateCreated());
         assertNull(pe.getLastModified());
-        assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());        
-        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
+        
+        // General info
+        assertEquals(Long.valueOf(12345), pe.getId());
+        assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());
         assertEquals("REVIEWER", pe.getRole());
         assertEquals("REVIEW", pe.getType());
         assertEquals("peer-review:url", pe.getUrl());
         
-        //Dates
-        assertEquals(Integer.valueOf(2), pe.getCompletionDate().getDay());        
+        // Dates
+        assertEquals(Integer.valueOf(2), pe.getCompletionDate().getDay());
         assertEquals(Integer.valueOf(2), pe.getCompletionDate().getMonth());
         assertEquals(Integer.valueOf(1948), pe.getCompletionDate().getYear());        
         
-        // Source
-        assertNull(pe.getSourceId());        
-        assertNull(pe.getClientSourceId());        
-        assertNull(pe.getElementSourceId());
+        // Group id
+        assertEquals("orcid-generated:12345", pe.getGroupId());
         
-        //Check org values
-        assertEquals("common:name", pe.getOrg().getName());
-        assertEquals("common:city", pe.getOrg().getCity());
-        assertEquals("common:region", pe.getOrg().getRegion());        
-        assertEquals(Iso3166Country.AF.name(), pe.getOrg().getCountry());
-        assertEquals("http://dx.doi.org/10.13039/100000001", pe.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("FUNDREF", pe.getOrg().getOrgDisambiguated().getSourceType()); 
-        
-        //Check subject        
-        assertEquals("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}", pe.getSubjectExternalIdentifiersJson());
+        // Subject data
         assertEquals("peer-review:subject-container-name", pe.getSubjectContainerName());
         assertEquals("peer-review:subject-name", pe.getSubjectName());
         assertEquals("peer-review:subject-translated-name", pe.getSubjectTranslatedName());
         assertEquals("en", pe.getSubjectTranslatedNameLanguageCode());
+        assertEquals("JOURNAL_ARTICLE", pe.getSubjectType());
         assertEquals("peer-review:subject-url", pe.getSubjectUrl());
-        assertEquals(WorkType.JOURNAL_ARTICLE.name(), pe.getSubjectType());
         
-        //Check group id
-        assertEquals("orcid-generated:12345", pe.getGroupId());
+        // Org data
+        assertNotNull(pe.getOrg());
+        assertEquals("common:city", pe.getOrg().getCity());
+        assertEquals("common:region", pe.getOrg().getRegion());
+        assertEquals("AF", pe.getOrg().getCountry());
+        
+        // Identifiers
+        assertEquals("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}", pe.getSubjectExternalIdentifiersJson());
+        assertEquals(
+                "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}",
+                pe.getExternalIdentifiersJson());        
     }
     
     @Test
-    public void clearPeerReviewEntityFieldsTest() throws JAXBException {
-        PeerReview e = getPeerReview(true);
+    public void fromPeerReviewEntityFullToPeerReviewEntityWithOnlyRequiredFields() throws JAXBException {
+        // Get full peer review
+        PeerReview e = getPeerReview(true);        
         assertNotNull(e);
-        assertNotNull(e.getCreatedDate());
-        assertNotNull(e.getLastModifiedDate());
+        
+        // Generate the entity
         PeerReviewEntity pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
         assertNotNull(pe);
-        //General info
-        assertEquals(Long.valueOf(12345), pe.getId());
-        assertEquals(Visibility.PRIVATE.name(), pe.getVisibility());        
-        assertEquals("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"work:external-identifier-id\"}}]}", pe.getExternalIdentifiersJson());
-        assertEquals("REVIEWER", pe.getRole());
-        assertEquals("REVIEW", pe.getType());
-        assertEquals("peer-review:url", pe.getUrl());
-
-        // Clear fields
-        e.setUrl(null);
-        e.setSubjectUrl(null);
-        e.getSubjectName().setTranslatedTitle(null);
-        e.setSubjectContainerName(null);
         
+        // Clear fields
+        e.setCompletionDate(null);        
+        e.setExternalIdentifiers(null);
+        e.setGroupId(null);
+        e.setLastModifiedDate(null);
+        e.setOrganization(null);
+        e.setPath(null);
+        e.setPutCode(null);
+        e.setRole(null);
+        e.setSource(null);
+        e.setSubjectContainerName(null);
+        e.setSubjectExternalIdentifier(null);
+        e.setSubjectName(null);
+        e.setSubjectType(null);
+        e.setSubjectUrl(null);
+        e.setType(null);
+        e.setUrl(null);
+        e.setVisibility(null);
+        
+        // Convert again
         pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
         assertNotNull(pe);
         
-        // Check fields are null
-        assertNull(pe.getUrl());
-        assertNull(pe.getSubjectUrl());
+        // Verify fields has been removed
+        assertNull(pe.getCompletionDate());
+        assertNull(pe.getExternalIdentifiersJson());
+        assertNull(pe.getGroupId());
+        assertNull(pe.getOrg());
+        assertNull(pe.getRole());
+        assertNull(pe.getSubjectContainerName());
+        assertNull(pe.getSubjectExternalIdentifiersJson());
+        assertNull(pe.getSubjectName());
         assertNull(pe.getSubjectTranslatedName());
         assertNull(pe.getSubjectTranslatedNameLanguageCode());
+        assertNull(pe.getSubjectType());
+        assertNull(pe.getSubjectUrl());
+        assertNull(pe.getType());
+        assertNull(pe.getUrl());
+        assertNull(pe.getVisibility());
+        
+        // Map existing entity to updated entity
+        e = getPeerReview(true);        
+        assertNotNull(e);
+        pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e);
+        
+        // Verify fields exists
+        assertNotNull(pe.getCompletionDate());
+        assertNotNull(pe.getExternalIdentifiersJson());
+        assertNotNull(pe.getGroupId());
+        assertNotNull(pe.getRole());
+        assertNotNull(pe.getSubjectContainerName());
+        assertNotNull(pe.getSubjectExternalIdentifiersJson());
+        assertNotNull(pe.getSubjectName());
+        assertNotNull(pe.getSubjectTranslatedName());
+        assertNotNull(pe.getSubjectTranslatedNameLanguageCode());
+        assertNotNull(pe.getSubjectType());
+        assertNotNull(pe.getSubjectUrl());
+        assertNotNull(pe.getType());
+        assertNotNull(pe.getUrl());
+        assertNotNull(pe.getVisibility());
+        
+        // Clear fields
+        e.setCompletionDate(null);        
+        e.setExternalIdentifiers(null);
+        e.setGroupId(null);
+        e.setLastModifiedDate(null);
+        e.setPath(null);
+        e.setPutCode(null);
+        e.setRole(null);
+        e.setSource(null);
+        e.setSubjectContainerName(null);
+        e.setSubjectExternalIdentifier(null);
+        e.setSubjectName(null);
+        e.setSubjectType(null);
+        e.setSubjectUrl(null);
+        e.setType(null);
+        e.setUrl(null);
+        e.setVisibility(null);
+        
+        pe = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(e, pe);
+        // Verify fields has been removed
+        assertNull(pe.getCompletionDate());
+        assertNull(pe.getExternalIdentifiersJson());
+        assertNull(pe.getGroupId());
+        assertNull(pe.getRole());
         assertNull(pe.getSubjectContainerName());
-                
-        //Dates
-        assertNull(pe.getDateCreated());
-        assertNull(pe.getLastModified());
-        assertEquals(Integer.valueOf(2), pe.getCompletionDate().getDay());        
-        assertEquals(Integer.valueOf(2), pe.getCompletionDate().getMonth());
-        assertEquals(Integer.valueOf(1948), pe.getCompletionDate().getYear());        
-        
-        // Source
-        assertNull(pe.getSourceId());        
-        assertNull(pe.getClientSourceId());        
-        assertNull(pe.getElementSourceId());
-        
-        //Check org values
-        assertEquals("common:name", pe.getOrg().getName());
-        assertEquals("common:city", pe.getOrg().getCity());
-        assertEquals("common:region", pe.getOrg().getRegion());        
-        assertEquals(org.orcid.jaxb.model.common_v2.Iso3166Country.AF.name(), pe.getOrg().getCountry());
-        assertEquals("http://dx.doi.org/10.13039/100000001", pe.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("FUNDREF", pe.getOrg().getOrgDisambiguated().getSourceType()); 
-        
-        //Check subject        
-        assertEquals("{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"peer-review:subject-external-identifier-id\"}}", pe.getSubjectExternalIdentifiersJson());
-        assertEquals("peer-review:subject-name", pe.getSubjectName());
-        assertEquals(org.orcid.jaxb.model.record_v2.WorkType.JOURNAL_ARTICLE.name(), pe.getSubjectType());
-        
-        //Check group id
-        assertEquals("orcid-generated:12345", pe.getGroupId());    
+        assertNull(pe.getSubjectExternalIdentifiersJson());
+        assertNull(pe.getSubjectName());
+        assertNull(pe.getSubjectTranslatedName());
+        assertNull(pe.getSubjectTranslatedNameLanguageCode());
+        assertNull(pe.getSubjectType());
+        assertNull(pe.getSubjectUrl());
+        assertNull(pe.getType());
+        assertNull(pe.getUrl());
+        assertNull(pe.getVisibility());
     }
     
     @Test
@@ -234,7 +283,40 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
             name = "/record_2.0/samples/read_samples/peer-review-full-2.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
-        return (PeerReview) unmarshaller.unmarshal(inputStream);
+        PeerReview p = (PeerReview) unmarshaller.unmarshal(inputStream);
+        if(full) {
+            // Set the put code
+            p.setPutCode(Long.valueOf(12345));
+            // Set the visibility
+            p.setVisibility(Visibility.PRIVATE);
+            // Set the source
+            Source s = new Source();
+            s.setSourceClientId(new SourceClientId("APP-0000000000000000"));
+            p.setSource(s);
+        }
+        
+        assertNotNull(p.getCompletionDate());
+        assertNotNull(p.getCompletionDate().getDay());
+        assertNotNull(p.getCompletionDate().getMonth());
+        assertNotNull(p.getCompletionDate().getYear());
+        assertNotNull(p.getExternalIdentifiers());
+        assertNotNull(p.getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(p.getGroupId());        
+        assertNotNull(p.getOrganization());
+        assertNotNull(p.getOrganization().getDisambiguatedOrganization());
+        assertNotNull(p.getOrganization().getAddress());
+        assertNotNull(p.getPutCode());
+        assertNotNull(p.getRole());        
+        assertNotNull(p.getSubjectContainerName());
+        assertNotNull(p.getSubjectExternalIdentifier());
+        assertNotNull(p.getSubjectName());
+        assertNotNull(p.getSubjectType());
+        assertNotNull(p.getSubjectUrl());
+        assertNotNull(p.getType());
+        assertNotNull(p.getUrl());
+        assertNotNull(p.getVisibility());
+        
+        return p;
     }
     
     private PeerReviewEntity getPeerReviewEntity() throws IllegalAccessException {
