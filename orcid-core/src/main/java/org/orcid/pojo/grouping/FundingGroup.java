@@ -23,6 +23,8 @@ public class FundingGroup extends ActivityGroup {
     
     private String source;
     
+    private FundingForm defaultFunding;
+    
     private List<FundingForm> fundings;
     
     public String getTitle() {
@@ -73,6 +75,14 @@ public class FundingGroup extends ActivityGroup {
         this.fundings = fundings;
     }
     
+    public FundingForm getDefaultFunding() {
+        return defaultFunding;
+    }
+
+    public void setDefaultFunding(FundingForm defaultFunding) {
+        this.defaultFunding = defaultFunding;
+    }
+
     public static FundingGroup valueOf(org.orcid.jaxb.model.v3.release.record.summary.FundingGroup fundingGroup) {
         FundingGroup group = new FundingGroup();
         group.setFundings(new ArrayList<>());
@@ -93,6 +103,7 @@ public class FundingGroup extends ActivityGroup {
                 group.setStartDate(fundingSummary.getStartDate() != null ? Date.valueOf(fundingSummary.getStartDate()) : null);
                 group.setEndDate(fundingSummary.getEndDate() != null ? Date.valueOf(fundingSummary.getEndDate()) : null);
                 group.setTitle(fundingSummary.getTitle().getTitle().getContent());
+                group.setDefaultFunding(fundingForm);
             }
         }
 
