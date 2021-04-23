@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.common.FundingContributorRole;
+import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.jaxb.model.v3.release.common.ContributorEmail;
 import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
@@ -17,7 +17,7 @@ import org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes;
 public class Contributor implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     private List<String> errors = new ArrayList<String>();
 
     private Text contributorSequence;
@@ -59,8 +59,14 @@ public class Contributor implements ErrorsInterface, Serializable {
         if (contributor != null) {
             if (contributor.getContributorAttributes() != null) {
                 contributor.getContributorAttributes();
-                if (contributor.getContributorAttributes().getContributorRole() != null)
-                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole()));
+                if (contributor.getContributorAttributes().getContributorRole() != null) {
+                    try {
+                        CreditRole cr = CreditRole.fromValue(contributor.getContributorAttributes().getContributorRole());
+                        c.setContributorRole(Text.valueOf(cr.getUiValue()));
+                    } catch(IllegalArgumentException e) {
+                        c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole()));
+                    }                    
+                }
                 if (contributor.getContributorAttributes().getContributorSequence() != null)
                     c.setContributorSequence(Text.valueOf(contributor.getContributorAttributes().getContributorSequence().value()));
             }
@@ -81,8 +87,14 @@ public class Contributor implements ErrorsInterface, Serializable {
         if (contributor != null) {
             if (contributor.getContributorAttributes() != null) {
                 contributor.getContributorAttributes();
-                if (contributor.getContributorAttributes().getContributorRole() != null)
-                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole()));
+                if (contributor.getContributorAttributes().getContributorRole() != null) {
+                    try {
+                        CreditRole cr = CreditRole.fromValue(contributor.getContributorAttributes().getContributorRole());
+                        c.setContributorRole(Text.valueOf(cr.getUiValue()));
+                    } catch (IllegalArgumentException e) {
+                        c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole()));
+                    }
+                }
             }
             if (contributor.getContributorOrcid() != null) {
                 c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
@@ -93,29 +105,7 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
         }
         return c;
-    }   
-    
-    @Deprecated
-    public static Contributor valueOf(org.orcid.jaxb.model.message.FundingContributor contributor) {
-        Contributor c = new Contributor();
-        if (contributor != null) {
-            if (contributor.getContributorAttributes() != null) {
-                contributor.getContributorAttributes();
-                if (contributor.getContributorAttributes().getContributorRole() != null)
-                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
-            }
-            if (contributor.getContributorEmail() != null)
-                c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
-            if (contributor.getContributorOrcid() != null) {
-                c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
-                c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
-            }
-            if (contributor.getCreditName() != null) {
-                c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
-            }
-        }
-        return c;
-    }  
+    }           
                     
     public FundingContributor toFundingContributor() {
         FundingContributor c = new FundingContributor();
