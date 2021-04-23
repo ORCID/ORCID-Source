@@ -1,1 +1,1 @@
-release-1.296.19_patch_1
+release-1.296.19_patch_credit_urls
