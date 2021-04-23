@@ -26,21 +26,21 @@ public class WorkContributorRoleConverterTest {
         assertEquals("SUPPORT_STAFF", converter.toDBRole("support-staff"));
 
         // credit
-        assertEquals("CONCEPTUALIZATION", converter.toDBRole("conceptualization"));
-        assertEquals("DATA_CURATION", converter.toDBRole("data curation"));
+        assertEquals("CONCEPTUALIZATION", converter.toDBRole("http://credit.niso.org/contributor-roles/conceptualization/"));
+        assertEquals("DATA_CURATION", converter.toDBRole("http://credit.niso.org/contributor-roles/data-curation/"));
         assertEquals("EDITOR", converter.toDBRole("editor"));
-        assertEquals("FORMAL_ANALYSIS", converter.toDBRole("formal analysis"));
-        assertEquals("FUNDING_ACQUISITION", converter.toDBRole("funding acquisition"));
-        assertEquals("INVESTIGATION", converter.toDBRole("investigation"));
-        assertEquals("METHODOLOGY", converter.toDBRole("methodology"));
-        assertEquals("PROJECT_ADMINISTRATION", converter.toDBRole("project administration"));
-        assertEquals("RESOURCES", converter.toDBRole("resources"));
-        assertEquals("SOFTWARE", converter.toDBRole("software"));
-        assertEquals("SUPERVISION", converter.toDBRole("supervision"));
-        assertEquals("VALIDATION", converter.toDBRole("validation"));
-        assertEquals("VISUALIZATION", converter.toDBRole("visualization"));
-        assertEquals("WRITING_ORIGINAL_DRAFT", converter.toDBRole("writing – original draft"));
-        assertEquals("WRITING_REVIEW_EDITING", converter.toDBRole("writing – review & editing"));
+        assertEquals("FORMAL_ANALYSIS", converter.toDBRole("http://credit.niso.org/contributor-roles/formal-analysis/"));
+        assertEquals("FUNDING_ACQUISITION", converter.toDBRole("http://credit.niso.org/contributor-roles/funding-acquisition/"));
+        assertEquals("INVESTIGATION", converter.toDBRole("http://credit.niso.org/contributor-roles/investigation/"));
+        assertEquals("METHODOLOGY", converter.toDBRole("http://credit.niso.org/contributor-roles/methodology/"));
+        assertEquals("PROJECT_ADMINISTRATION", converter.toDBRole("http://credit.niso.org/contributor-roles/project-administration/"));
+        assertEquals("RESOURCES", converter.toDBRole("http://credit.niso.org/contributor-roles/resources/"));
+        assertEquals("SOFTWARE", converter.toDBRole("http://credit.niso.org/contributor-roles/software/"));
+        assertEquals("SUPERVISION", converter.toDBRole("http://credit.niso.org/contributor-roles/supervision/"));
+        assertEquals("VALIDATION", converter.toDBRole("http://credit.niso.org/contributor-roles/validation/"));
+        assertEquals("VISUALIZATION", converter.toDBRole("http://credit.niso.org/contributor-roles/visualization/"));
+        assertEquals("WRITING_ORIGINAL_DRAFT", converter.toDBRole("http://credit.niso.org/contributor-roles/writing-original-draft/"));
+        assertEquals("WRITING_REVIEW_EDITING", converter.toDBRole("http://credit.niso.org/contributor-roles/writing-review-editing/"));
     }
 
     @Test
@@ -131,21 +131,21 @@ public class WorkContributorRoleConverterTest {
         assertEquals("support-staff", converter.toRoleValue("SUPPORT_STAFF"));
 
         // credit
-        assertEquals("conceptualization", converter.toRoleValue("CONCEPTUALIZATION"));
-        assertEquals("data curation", converter.toRoleValue("DATA_CURATION"));
+        assertEquals("http://credit.niso.org/contributor-roles/conceptualization/", converter.toRoleValue("CONCEPTUALIZATION"));
+        assertEquals("http://credit.niso.org/contributor-roles/data-curation/", converter.toRoleValue("DATA_CURATION"));
         assertEquals("editor", converter.toRoleValue("EDITOR"));
-        assertEquals("formal analysis", converter.toRoleValue("FORMAL_ANALYSIS"));
-        assertEquals("funding acquisition", converter.toRoleValue("FUNDING_ACQUISITION"));
-        assertEquals("investigation", converter.toRoleValue("INVESTIGATION"));
-        assertEquals("methodology", converter.toRoleValue("METHODOLOGY"));
-        assertEquals("project administration", converter.toRoleValue("PROJECT_ADMINISTRATION"));
-        assertEquals("resources", converter.toRoleValue("RESOURCES"));
-        assertEquals("software", converter.toRoleValue("SOFTWARE"));
-        assertEquals("supervision", converter.toRoleValue("SUPERVISION"));
-        assertEquals("validation", converter.toRoleValue("VALIDATION"));
-        assertEquals("visualization", converter.toRoleValue("VISUALIZATION"));
-        assertEquals("writing – original draft", converter.toRoleValue("WRITING_ORIGINAL_DRAFT"));
-        assertEquals("writing – review & editing", converter.toRoleValue("WRITING_REVIEW_EDITING"));
+        assertEquals("http://credit.niso.org/contributor-roles/formal-analysis/", converter.toRoleValue("FORMAL_ANALYSIS"));
+        assertEquals("http://credit.niso.org/contributor-roles/funding-acquisition/", converter.toRoleValue("FUNDING_ACQUISITION"));
+        assertEquals("http://credit.niso.org/contributor-roles/investigation/", converter.toRoleValue("INVESTIGATION"));
+        assertEquals("http://credit.niso.org/contributor-roles/methodology/", converter.toRoleValue("METHODOLOGY"));
+        assertEquals("http://credit.niso.org/contributor-roles/project-administration/", converter.toRoleValue("PROJECT_ADMINISTRATION"));
+        assertEquals("http://credit.niso.org/contributor-roles/resources/", converter.toRoleValue("RESOURCES"));
+        assertEquals("http://credit.niso.org/contributor-roles/software/", converter.toRoleValue("SOFTWARE"));
+        assertEquals("http://credit.niso.org/contributor-roles/supervision/", converter.toRoleValue("SUPERVISION"));
+        assertEquals("http://credit.niso.org/contributor-roles/validation/", converter.toRoleValue("VALIDATION"));
+        assertEquals("http://credit.niso.org/contributor-roles/visualization/", converter.toRoleValue("VISUALIZATION"));
+        assertEquals("http://credit.niso.org/contributor-roles/writing-original-draft/", converter.toRoleValue("WRITING_ORIGINAL_DRAFT"));
+        assertEquals("http://credit.niso.org/contributor-roles/writing-review-editing/", converter.toRoleValue("WRITING_REVIEW_EDITING"));
     }
     
 }
