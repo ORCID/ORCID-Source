@@ -19,7 +19,7 @@ the software.
 
     <groupId>org.orcid</groupId>
     <artifactId>orcid-parent</artifactId>
-    <version>release-1.296.19_patch_credit_urls_and_fix_npe</version>
+    <version>release-1.296.19_patch_3</version>
     <packaging>pom</packaging>
     <name>ORCID - Parent</name>
     <description>The parent ORCID pom that all sub-projects reside under</description>
