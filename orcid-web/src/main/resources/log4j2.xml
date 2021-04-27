@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn">
+<Configuration>
     <Properties>
         <Property name="basePath">/Users/camelia/Desktop/logs</Property>
     </Properties>
@@ -17,6 +17,9 @@
     </Appenders>
     <Loggers>
         <Logger name="org.springframework" level="warn" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Logger>
+        <Logger name="org.springframework.security.web.util.matcher" level="error" additivity="true">
             <appender-ref ref="FILE_APPENDER" />
         </Logger>
         <Logger name="org.springframework.security" level="debug" additivity="true">

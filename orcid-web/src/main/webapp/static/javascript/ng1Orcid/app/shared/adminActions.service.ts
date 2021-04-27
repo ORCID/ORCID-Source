@@ -37,6 +37,21 @@ export class AdminActionsService {
             getBaseUri() + '/admin-actions/admin-switch-user?orcidOrEmail=' + encodeURIComponent(obj)
         );        
     };
+
+    switchUserPost( id ): Observable<any> {
+        var body = 'username=' + id; 
+        return this.http.post(
+            getBaseUri() + '/switch-user',
+            body, 
+            { headers: new HttpHeaders(
+            				{
+                			'Access-Control-Allow-Origin':'*',
+                			'Content-Type': 'application/x-www-form-urlencoded'
+            				} 
+            )}
+        )     
+    }
+
     
     findIds( obj ): Observable<any> {
         return this.http.post( 
@@ -83,7 +98,7 @@ export class AdminActionsService {
                 getBaseUri() + '/admin-actions/deprecate-profile/check-orcid.json',                 
                 JSON.stringify(obj),
                 { headers: this.headers }
-            )
+     )
     }
     
     deprecateRecord( obj ): Observable<any> {
