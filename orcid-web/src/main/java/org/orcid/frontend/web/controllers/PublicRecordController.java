@@ -217,9 +217,6 @@ public class PublicRecordController extends BaseWorkspaceController {
                 }
             }
             publicRecord.setCountries(form);
-
-
-            
         }
 
         // Fill keywords
