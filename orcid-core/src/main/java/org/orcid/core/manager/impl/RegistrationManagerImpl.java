@@ -56,6 +56,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     private EncryptionManager encryptionManager;
 
+    @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
     @Resource
@@ -88,12 +89,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
-    }
-
-    @Required
-    public void setNotificationManager(NotificationManager notificationManager) {
-        this.notificationManager = notificationManager;
-    }
+    }   
     
     @Override
     public void resetUserPassword(String toEmail, String userOrcid, Boolean isClaimed) {
