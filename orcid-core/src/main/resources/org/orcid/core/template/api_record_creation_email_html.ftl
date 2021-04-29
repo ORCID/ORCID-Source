@@ -1,3 +1,5 @@
+## THIS EMAIL IS NOT USE, TESTED OR TRANSLATED 
+
 <#import "email_macros.ftl" as emailMacros />
 <#escape x as x?html>
 <!DOCTYPE html>
