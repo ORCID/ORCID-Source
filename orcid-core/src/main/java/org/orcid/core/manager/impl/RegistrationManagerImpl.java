@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -100,7 +100,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         LOGGER.debug("Resetting password for Orcid: {}", userOrcid);
         if (isClaimed == null || !isClaimed) {
             LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", userOrcid);
-            notificationManager.sendApiRecordCreationEmail(toEmail, userOrcid);
+            notificationManager.sendClaimReminderEmail(userOrcid, 0, toEmail);
         } else {
             notificationManager.sendPasswordResetEmail(toEmail, userOrcid);
         }

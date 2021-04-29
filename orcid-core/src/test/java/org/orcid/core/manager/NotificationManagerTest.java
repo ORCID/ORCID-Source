@@ -267,31 +267,31 @@ public class NotificationManagerTest extends DBUnitTest {
         }        
     }
 
-    @Test
-    public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
-        ClientDetailsEntity c = new ClientDetailsEntity("APP-5555555555555555");
-        c.setClientName("ClientName");
-        SourceEntity sourceEntity = new SourceEntity(c);
+    // @Test
+    // public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
+    //     ClientDetailsEntity c = new ClientDetailsEntity("APP-5555555555555555");
+    //     c.setClientName("ClientName");
+    //     SourceEntity sourceEntity = new SourceEntity(c);
         
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManagerReadOnly);
+    //     TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
+    //     TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManagerReadOnly);
 
-        String userOrcid = "0000-0000-0000-0003";
-        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
+    //     String userOrcid = "0000-0000-0000-0003";
+    //     String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
         
-        ProfileEntity profile = new ProfileEntity(userOrcid);
-        profile.setSource(sourceEntity);
-        Email email = new Email();
-        email.setEmail("test@email.com");
+    //     ProfileEntity profile = new ProfileEntity(userOrcid);
+    //     profile.setSource(sourceEntity);
+    //     Email email = new Email();
+    //     email.setEmail("test@email.com");
         
-        when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
-        when(mockEmailManagerReadOnly.findPrimaryEmail(userOrcid)).thenReturn(email);
+    //     when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
+    //     when(mockEmailManagerReadOnly.findPrimaryEmail(userOrcid)).thenReturn(email);
         
-        for (Locale locale : Locale.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
-            notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
-        }
-    }    
+    //     for (Locale locale : Locale.values()) {
+    //         profileEntityManager.updateLocale(userOrcid, locale);
+    //         notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
+    //     }
+    // }    
 
     @Test
     public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {

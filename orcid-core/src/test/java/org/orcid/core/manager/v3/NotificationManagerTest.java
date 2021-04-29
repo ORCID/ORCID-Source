@@ -382,26 +382,26 @@ public class NotificationManagerTest extends DBUnitTest {
         }
     }
 
-    @Test
-    public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
-        resetMocks();
-        String userOrcid = "0000-0000-0000-0003";
-        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
-        for (AvailableLocales locale : AvailableLocales.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
-            notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
-        }
-    }
+    // @Test
+    // public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
+    //     resetMocks();
+    //     String userOrcid = "0000-0000-0000-0003";
+    //     String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
+    //     for (AvailableLocales locale : AvailableLocales.values()) {
+    //         profileEntityManager.updateLocale(userOrcid, locale);
+    //         notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
+    //     }
+    // }
 
-    @Test
-    public void testApiCreatedRecordEmailNullEmailSupplied() throws JAXBException, IOException, URISyntaxException {
-        resetMocks();
-        String userOrcid = "0000-0000-0000-0003";
-        for (AvailableLocales locale : AvailableLocales.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
-            notificationManager.sendApiRecordCreationEmail(null, userOrcid);
-        }
-    }
+    // @Test
+    // public void testApiCreatedRecordEmailNullEmailSupplied() throws JAXBException, IOException, URISyntaxException {
+    //     resetMocks();
+    //     String userOrcid = "0000-0000-0000-0003";
+    //     for (AvailableLocales locale : AvailableLocales.values()) {
+    //         profileEntityManager.updateLocale(userOrcid, locale);
+    //         notificationManager.sendApiRecordCreationEmail(null, userOrcid);
+    //     }
+    // }
 
     @Test
     public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
