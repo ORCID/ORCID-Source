@@ -13,7 +13,7 @@
 			    <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.api_record_creation.creaded_an_account.1" />${creatorName}<@emailMacros.space /><@emailMacros.msg "email.api_record_creation.creaded_an_account.2" />
+                ${creatorName}<@emailMacros.space /><@emailMacros.msg "email.api_record_creation.creaded_an_account.2" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 		        <@emailMacros.msg "email.api_record_creation.what" />

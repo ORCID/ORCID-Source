@@ -1,7 +1,7 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.api_record_creation.creaded_an_account.1" />${creatorName}<@emailMacros.space /><@emailMacros.msg "email.api_record_creation.creaded_an_account.2" />
+${creatorName}<@emailMacros.space /><@emailMacros.msg "email.api_record_creation.creaded_an_account.2" />
 
 <@emailMacros.msg "email.api_record_creation.what" />
 
