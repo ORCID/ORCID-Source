@@ -417,18 +417,18 @@ public class NotificationManagerTest extends DBUnitTest {
         }
     }
 
-    // @Test
-    // public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
-    //     resetMocks();
-    //     TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-    //     String userOrcid = "0000-0000-0000-0003";
-    //     ProfileEntity profile = new ProfileEntity(userOrcid);
-    //     for (AvailableLocales locale : AvailableLocales.values()) {
-    //         profile.setLocale(locale.name());
-    //         when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
-    //         notificationManager.sendClaimReminderEmail(userOrcid, 2, "test@test.com");
-    //     }
-    // }
+    @Test
+    public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
+        resetMocks();
+        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        String userOrcid = "0000-0000-0000-0003";
+        ProfileEntity profile = new ProfileEntity(userOrcid);
+        for (AvailableLocales locale : AvailableLocales.values()) {
+            profile.setLocale(locale.name());
+            when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
+            notificationManager.sendClaimReminderEmail(userOrcid, 2, "test@test.com");
+        }
+    }
 
     @Test
     public void testChangeEmailAddress() throws Exception {
