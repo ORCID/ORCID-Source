@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -207,7 +208,15 @@ public class PublicRecordController extends BaseWorkspaceController {
         Addresses publicAddresses;
         publicAddresses = addressManagerReadOnly.getPublicAddresses(orcid);
         if (publicAddresses != null && publicAddresses.getAddress() != null) {
-            publicRecord.setCountries(AddressesForm.valueOf(publicAddresses));
+            AddressesForm form = AddressesForm.valueOf(publicAddresses);
+            // Set country name
+            if (form != null && form.getAddresses() != null) {
+                Map<String, String> countries = retrieveIsoCountries();
+                for (AddressForm addressForm : form.getAddresses()) {
+                    addressForm.setCountryName(countries.get(addressForm.getIso2Country().getValue().name()));
+                }
+            }
+            publicRecord.setCountries(form);
         }
 
         // Fill keywords
