@@ -56,7 +56,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
+    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST, delay);
     }
 
@@ -75,28 +75,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      *         and object[1] contains the indexing status
      */
     @Override
-    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {
-        List<IndexingStatus> indexingStatuses = new ArrayList<>(1);
-        indexingStatuses.add(indexingStatus);
-        return findOrcidsByIndexingStatus(indexingStatuses, maxResults, orcidsToExclude, delay);
-    }
-
-    /**
-     * Get a list of the ORCID id's with the given indexing status
-     * 
-     * @param indexingStatuses
-     *            The list of desired indexing status
-     * @param maxResults
-     *            Max number of results
-     * @param orcidsToExclude
-     *            List of ORCID id's to exclude from the results
-     * @return a list of object arrays where the object[0] contains the orcid id
-     *         and object[1] contains the indexing status
-     */
-    @SuppressWarnings("unchecked")
-    private List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults,
-            Collection<String> orcidsToExclude, Integer delay) {
-        StringBuilder builder = new StringBuilder("SELECT p.orcid, p.indexing_status FROM profile p WHERE p.indexing_status IN :indexingStatus ");
+    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {        
+        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p INNER JOIN oauth2_token_detail o ON p.orcid = o.user_orcid WHERE p.indexing_status = :indexingStatus ");
         if(delay != null && delay > 0) {
             builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
         }
@@ -106,22 +86,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         // Ordering by indexing status will force re-indexing to be lower
         // priority than normal indexing
         builder.append(" ORDER BY (p.last_modified > (NOW() - CAST('1' as INTERVAL HOUR))) DESC, indexing_status, p.last_modified");
-        Query query = entityManager.createNativeQuery(builder.toString());
-        query.setParameter("indexingStatus", IndexingStatus.getNames(indexingStatuses));
+        Query query = entityManager.createNativeQuery(builder.toString(), String.class);
+        query.setParameter("indexingStatus", indexingStatus);
         if (!orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
         query.setMaxResults(maxResults);
         // Sets a timeout for this query
         query.setHint("javax.persistence.query.timeout", queryTimeout);
-        List<Object[]> dbInfo = query.getResultList();
-        List<Pair<String, IndexingStatus>> results = new ArrayList<Pair<String, IndexingStatus>>();
-        dbInfo.stream().forEach(element -> {
-            IndexingStatus i = element[1] == null ? null : IndexingStatus.valueOf((String) element[1]);
-            Pair<String, IndexingStatus> pair = Pair.of((String) element[0], i);
-            results.add(pair);
-        });
-        return results;
+        return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")

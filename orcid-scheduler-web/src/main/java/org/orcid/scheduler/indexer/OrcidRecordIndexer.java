@@ -7,6 +7,8 @@ public interface OrcidRecordIndexer {
 
     void processProfilesWithPendingFlagAndAddToMessageQueue();
     
+    void processProfilesWithForceIndexingFlagAndAddToMessageQueue();
+    
     void processUnclaimedProfilesToFlagForIndexing();
     
     void processUnclaimedProfilesForReminder();
