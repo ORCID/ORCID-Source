@@ -1343,17 +1343,7 @@ public class V3VersionConverterChainTest {
                 .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
         
         assertNotNull(rc2FundingContributorAttributes);
-        assertNull(rc2FundingContributorAttributes.getContributorRole());
-        
-        v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
-        v3FundingContributorAttributes.setContributorRole(CreditRole.EDITOR.value());
-        
-        rc2FundingContributorAttributes =         
-                (org.orcid.jaxb.model.v3.rc2.record.FundingContributorAttributes) (v3VersionConverterChain
-                .downgrade(new V3Convertible(v3FundingContributorAttributes, "3.0"), "3.0_rc2")).getObjectToConvert();
-        
-        assertNotNull(rc2FundingContributorAttributes);
-        assertNull(rc2FundingContributorAttributes.getContributorRole());
+        assertNull(rc2FundingContributorAttributes.getContributorRole());                
         
         v3FundingContributorAttributes = new org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes();
         v3FundingContributorAttributes.setContributorRole(CreditRole.FORMAL_ANALYSIS.value());

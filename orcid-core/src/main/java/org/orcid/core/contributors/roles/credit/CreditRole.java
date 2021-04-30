@@ -4,21 +4,20 @@ import java.io.Serializable;
 
 public enum CreditRole implements Serializable {
 
-    CONCEPTUALIZATION("http://credit.niso.org/contributor-roles/conceptualization/", "Conceptualization"), 
-    DATA_CURATION("http://credit.niso.org/contributor-roles/data-curation/", "Data curation"), 
-    EDITOR("editor", "Editor"), 
-    FORMAL_ANALYSIS("http://credit.niso.org/contributor-roles/formal-analysis/", "Formal analysis"), 
-    FUNDING_ACQUISITION("http://credit.niso.org/contributor-roles/funding-acquisition/", "Funding acquisition"), 
-    INVESTIGATION("http://credit.niso.org/contributor-roles/investigation/", "Investigation"), 
-    METHODOLOGY("http://credit.niso.org/contributor-roles/methodology/", "Methodology"), 
-    PROJECT_ADMINISTRATION("http://credit.niso.org/contributor-roles/project-administration/", "Project administration"), 
-    RESOURCES("http://credit.niso.org/contributor-roles/resources/", "Resources"), 
-    SOFTWARE("http://credit.niso.org/contributor-roles/software/", "Software"), 
-    SUPERVISION("http://credit.niso.org/contributor-roles/supervision/", "Supervision"),
-    VALIDATION("http://credit.niso.org/contributor-roles/validation/", "Validation"),
-    VISUALIZATION("http://credit.niso.org/contributor-roles/visualization/", "Visualization"),
-    WRITING_ORIGINAL_DRAFT("http://credit.niso.org/contributor-roles/writing-original-draft/", "Writing – original draft"),
-    WRITING_REVIEW_EDITING("http://credit.niso.org/contributor-roles/writing-review-editing/", "Writing – review & editing");
+    CONCEPTUALIZATION("http://credit.niso.org/contributor-roles/conceptualization/", "conceptualization"), 
+    DATA_CURATION("http://credit.niso.org/contributor-roles/data-curation/", "data curation"),     
+    FORMAL_ANALYSIS("http://credit.niso.org/contributor-roles/formal-analysis/", "formal analysis"), 
+    FUNDING_ACQUISITION("http://credit.niso.org/contributor-roles/funding-acquisition/", "funding acquisition"), 
+    INVESTIGATION("http://credit.niso.org/contributor-roles/investigation/", "investigation"), 
+    METHODOLOGY("http://credit.niso.org/contributor-roles/methodology/", "methodology"), 
+    PROJECT_ADMINISTRATION("http://credit.niso.org/contributor-roles/project-administration/", "project administration"), 
+    RESOURCES("http://credit.niso.org/contributor-roles/resources/", "resources"), 
+    SOFTWARE("http://credit.niso.org/contributor-roles/software/", "software"), 
+    SUPERVISION("http://credit.niso.org/contributor-roles/supervision/", "supervision"),
+    VALIDATION("http://credit.niso.org/contributor-roles/validation/", "validation"),
+    VISUALIZATION("http://credit.niso.org/contributor-roles/visualization/", "visualization"),
+    WRITING_ORIGINAL_DRAFT("http://credit.niso.org/contributor-roles/writing-original-draft/", "writing – original draft"),
+    WRITING_REVIEW_EDITING("http://credit.niso.org/contributor-roles/writing-review-editing/", "writing – review & editing");
 
     private final String value;
     private final String uiValue;
