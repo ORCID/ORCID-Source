@@ -5,8 +5,7 @@ import java.io.Serializable;
 public enum CreditRole implements Serializable {
 
     CONCEPTUALIZATION("http://credit.niso.org/contributor-roles/conceptualization/", "Conceptualization"), 
-    DATA_CURATION("http://credit.niso.org/contributor-roles/data-curation/", "Data curation"), 
-    EDITOR("editor", "Editor"), 
+    DATA_CURATION("http://credit.niso.org/contributor-roles/data-curation/", "Data curation"),     
     FORMAL_ANALYSIS("http://credit.niso.org/contributor-roles/formal-analysis/", "Formal analysis"), 
     FUNDING_ACQUISITION("http://credit.niso.org/contributor-roles/funding-acquisition/", "Funding acquisition"), 
     INVESTIGATION("http://credit.niso.org/contributor-roles/investigation/", "Investigation"), 
