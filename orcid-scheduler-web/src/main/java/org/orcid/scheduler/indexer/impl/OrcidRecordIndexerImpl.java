@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -150,14 +149,13 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
 
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status) {
         LOG.info("processing profiles with " + status.name() + " flag.");
-        List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
+        List<String> orcidsForIndexing = new ArrayList<>();
         boolean connectionIssue = false;
         String solrQueue = (IndexingStatus.REINDEX.equals(status) ? reindexSolrQueueName : updateSolrQueueName);
         String v2SummaryQueue = (IndexingStatus.REINDEX.equals(status) ? reindexSummaryQueueName : updateSummaryQueueName);
         String v2ActivitiesQueue = (IndexingStatus.REINDEX.equals(status) ? reindexActivitiesQueueName : updateActivitiesQueueName);
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
-        do {
-            
+        do {            
             try {
                 if(IndexingStatus.FORCE_INDEXING.equals(status)) {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
@@ -178,9 +176,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
             }
             LOG.info("processing batch of " + orcidsForIndexing.size());
 
-            for (Pair<String, IndexingStatus> p : orcidsForIndexing) {
-                String orcid = p.getLeft();
-
+            for (String orcid : orcidsForIndexing) {
                 Date last = profileLastModifiedDaoReadOnly.retrieveLastModifiedDate(orcid);
                 LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
                 

@@ -13,7 +13,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
@@ -75,26 +74,30 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      *         and object[1] contains the indexing status
      */
     @Override
-    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {        
-        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p INNER JOIN oauth2_token_detail o ON p.orcid = o.user_orcid WHERE p.indexing_status = :indexingStatus ");
-        if(delay != null && delay > 0) {
-            builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
-        }
-        if (!orcidsToExclude.isEmpty()) {
-            builder.append(" AND p.orcid NOT IN :orcidsToExclude");
+    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {                
+        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status = :indexingStatus ");
+        if(!IndexingStatus.FORCE_INDEXING.equals(indexingStatus)) {           
+            builder.append(" AND exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid) ");
+            if(delay != null && delay > 0) {
+                builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
+            }
+            if (!orcidsToExclude.isEmpty()) {
+                builder.append(" AND p.orcid NOT IN :orcidsToExclude");
+            }
         }
         // Ordering by indexing status will force re-indexing to be lower
         // priority than normal indexing
-        builder.append(" ORDER BY (p.last_modified > (NOW() - CAST('1' as INTERVAL HOUR))) DESC, indexing_status, p.last_modified");
-        Query query = entityManager.createNativeQuery(builder.toString(), String.class);
-        query.setParameter("indexingStatus", indexingStatus);
+        builder.append(" ORDER BY p.last_modified DESC");
+        Query query = entityManager.createNativeQuery(builder.toString());
+        query.setParameter("indexingStatus", indexingStatus.name());
         if (!orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
         query.setMaxResults(maxResults);
         // Sets a timeout for this query
         query.setHint("javax.persistence.query.timeout", queryTimeout);
-        return query.getResultList();
+        List<String> result = query.getResultList(); 
+        return result;
     }
 
     @SuppressWarnings("unchecked")

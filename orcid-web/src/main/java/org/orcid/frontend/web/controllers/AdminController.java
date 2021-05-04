@@ -969,4 +969,24 @@ public class AdminController extends BaseController {
         return resendIdMap;
     }
     
+    @RequestMapping(value = "/force-indexing", method = RequestMethod.POST)
+    public @ResponseBody List<String> forceReindex(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String emailsOrOrcids)
+            throws IllegalAccessException, UnsupportedEncodingException {
+        isAdmin(serverRequest, response);
+        emailsOrOrcids = URLDecoder.decode(emailsOrOrcids, "UTF-8").trim();
+        // Get a list of valid ORCID ids from the params
+        List<String> orcidIds = new ArrayList<String>();
+        if (StringUtils.isNotBlank(emailsOrOrcids)) {
+            StringTokenizer tokenizer = new StringTokenizer(emailsOrOrcids, INP_STRING_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                orcidIds.add(getOrcidFromParam(tokenizer.nextToken()));
+            }
+        }
+        
+        // Set the FORCE_INDEXING status on them
+        profileEntityManager.forceReindex(orcidIds);
+        
+        return orcidIds;
+    }    
+    
 }
