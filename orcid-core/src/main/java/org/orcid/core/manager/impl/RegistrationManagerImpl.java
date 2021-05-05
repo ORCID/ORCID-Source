@@ -230,8 +230,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
         newRecord.setLastLogin(now);
         newRecord.setCreationMethod(PojoUtil.isEmpty(registration.getCreationType()) ? CreationMethod.DIRECT.value() : registration.getCreationType().getValue());
         newRecord.setLocale(locale == null ? AvailableLocales.EN.name() : AvailableLocales.fromValue(locale.toString()).name());
-        // Set indexing status that guarantee it will be indexed soon
-        newRecord.setIndexingStatus(IndexingStatus.REINDEX);
         // Visibility defaults
         newRecord.setActivitiesVisibilityDefault(registration.getActivitiesVisibilityDefault().getVisibility().name());
 
