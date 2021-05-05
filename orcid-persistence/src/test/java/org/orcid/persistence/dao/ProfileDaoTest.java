@@ -8,11 +8,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -29,11 +29,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -240,17 +238,69 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     public void testOrcidsFindByIndexingStatus() {
+        String o1 = "4444-4444-4444-4445";
+        String o2 = "4444-4444-4444-4446";
+        String o3 = "0000-0000-0000-0001";
+        
+        Calendar c = Calendar.getInstance();
+        Date d1 = new Date(c.getTimeInMillis());
+        Date d2 = new Date(c.getTimeInMillis() + 1000);
+        Date d3 = new Date(c.getTimeInMillis() + 2000);
+               
+        profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o1, d1, IndexingStatus.PENDING);
+        profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o2, d2, IndexingStatus.PENDING);
+        profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o3, d3, IndexingStatus.PENDING);
+        
         List<String> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
         assertNotNull(results);
+        // None of the records have an active token
+        assertEquals(0, results.size());
+        
+        // Lets add a token to user 1
+        OrcidOauth2TokenDetail user1Token = addToken(o1);
+        
+        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertTrue(results.contains(o1));
+        
+        // Lets add a token to user 2
+        OrcidOauth2TokenDetail user2Token = addToken(o2);
+        
+        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
+        assertNotNull(results);
         assertEquals(2, results.size());
-        assertEquals("4444-4444-4444-4445", results.get(0));
-        assertEquals("4444-4444-4444-4446", results.get(1));
-
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0);
-        assertEquals(20, results.size());
-
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3, 0);
-        assertEquals(3, results.size());
+        assertTrue(results.contains(o1));
+        assertTrue(results.contains(o2));
+        
+        // o3 never had a token, so, it should never be part of the results
+        
+        // Check max limit works, so, it should fetch just the one with the oldest last modified time
+        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 1, 0);
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertTrue(results.contains(o1));        
+        
+        // Set other indexing status to user 1
+        profileDao.updateIndexingStatus(o1, IndexingStatus.REINDEX);
+        
+        // Check that record doesnt appear anymore
+        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertTrue(results.contains(o2));
+        
+        // Set other indexing status to user 2
+        profileDao.updateIndexingStatus(o2, IndexingStatus.REINDEX);
+        
+        // Check list is empty
+        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+        
+        // Delete the token
+        orcidOauth2TokenDetailDao.remove(user1Token.getId());
+        orcidOauth2TokenDetailDao.remove(user2Token.getId());
     }
 
     @Test
@@ -294,28 +344,26 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     public void testUpdateIndexingStatus() {
         Date now = new Date();
+        
         int startCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
+        
         String orcid = "4444-4444-4444-4446";
         ProfileEntity profileEntity = profileDao.find(orcid);
         assertEquals(IndexingStatus.PENDING, profileEntity.getIndexingStatus());
         profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+        
         ProfileEntity result = profileDao.find(orcid);
         assertEquals(IndexingStatus.DONE, result.getIndexingStatus());
         assertNotNull(result.getLastIndexedDate());
         assertFalse(now.after(new Date(result.getLastIndexedDate().getTime())));
+        
         int endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
+        
         // Should return same number of results until user have a token
         assertEquals(startCount, endCount);
         
         // Lets add a token
-        OrcidOauth2TokenDetail userToken = new OrcidOauth2TokenDetail();
-        userToken.setApproved(true);
-        userToken.setAuthenticationKey("authenticationKey");
-        userToken.setAuthorizationCode("AAAAAA");
-        userToken.setClientDetailsId("APP-5555555555555555");
-        userToken.setProfile(new ProfileEntity(orcid));
-        userToken.setScope("/read-public");        
-        orcidOauth2TokenDetailDao.persist(userToken);
+        OrcidOauth2TokenDetail userToken = addToken(orcid);
         
         // Check again
         endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
@@ -331,6 +379,33 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(startCount, endCount);
         
         profileDao.updateIndexingStatus(orcid, IndexingStatus.PENDING);
+    }
+    
+    @Test
+    public void testFetchRecordsWithForceIndexingStatus() {        
+        String o1 = "0000-0000-0000-0001";
+        String o2 = "0000-0000-0000-0002";
+        String o3 = "0000-0000-0000-0003";
+                
+        assertEquals(0, profileDao.findOrcidsByIndexingStatus(IndexingStatus.FORCE_INDEXING, Integer.MAX_VALUE, 0).size());
+        
+        profileDao.updateIndexingStatus(o1, IndexingStatus.FORCE_INDEXING);
+        List<String> orcidIds = profileDao.findOrcidsByIndexingStatus(IndexingStatus.FORCE_INDEXING, Integer.MAX_VALUE, 0); 
+        assertEquals(1, orcidIds.size());
+        assertTrue(orcidIds.contains(o1));
+        
+        profileDao.updateIndexingStatus(o2, IndexingStatus.FORCE_INDEXING);
+        orcidIds = profileDao.findOrcidsByIndexingStatus(IndexingStatus.FORCE_INDEXING, Integer.MAX_VALUE, 0); 
+        assertEquals(2, orcidIds.size());
+        assertTrue(orcidIds.contains(o1));
+        assertTrue(orcidIds.contains(o2));
+        
+        profileDao.updateIndexingStatus(o3, IndexingStatus.FORCE_INDEXING);
+        orcidIds = profileDao.findOrcidsByIndexingStatus(IndexingStatus.FORCE_INDEXING, Integer.MAX_VALUE, 0); 
+        assertEquals(3, orcidIds.size());
+        assertTrue(orcidIds.contains(o1));
+        assertTrue(orcidIds.contains(o2));
+        assertTrue(orcidIds.contains(o3));
     }
 
     @Test
@@ -516,5 +591,18 @@ public class ProfileDaoTest extends DBUnitTest {
         q.setParameter("dateCreated", dateCreated);
         q.setParameter("lastModified", dateCreated);
         return q.executeUpdate();
+    }
+    
+    private OrcidOauth2TokenDetail addToken(String orcid) {
+        // Lets add a token
+        OrcidOauth2TokenDetail userToken = new OrcidOauth2TokenDetail();
+        userToken.setApproved(true);
+        userToken.setAuthenticationKey("authenticationKey");
+        userToken.setAuthorizationCode("AAAAAA");
+        userToken.setClientDetailsId("APP-5555555555555555");
+        userToken.setProfile(new ProfileEntity(orcid));
+        userToken.setScope("/read-public");
+        orcidOauth2TokenDetailDao.persist(userToken);
+        return userToken;
     }
 }

@@ -73,9 +73,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
+    @SuppressWarnings("unchecked")
     @Override
     public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {                
         StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status = :indexingStatus ");
+        // Unless FORCE_INDEXING we should check if a record have a trusted party before returning it
         if(!IndexingStatus.FORCE_INDEXING.equals(indexingStatus)) {           
             builder.append(" AND exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid) ");
             if(delay != null && delay > 0) {
@@ -85,9 +87,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 builder.append(" AND p.orcid NOT IN :orcidsToExclude");
             }
         }
-        // Ordering by indexing status will force re-indexing to be lower
-        // priority than normal indexing
-        builder.append(" ORDER BY p.last_modified DESC");
+        // Ordering by last modified so we get the oldest modified first
+        builder.append(" ORDER BY p.last_modified");
         Query query = entityManager.createNativeQuery(builder.toString());
         query.setParameter("indexingStatus", indexingStatus.name());
         if (!orcidsToExclude.isEmpty()) {
@@ -96,8 +97,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setMaxResults(maxResults);
         // Sets a timeout for this query
         query.setHint("javax.persistence.query.timeout", queryTimeout);
-        List<String> result = query.getResultList(); 
-        return result;
+        return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
@@ -801,6 +801,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public List<String> registeredBetween(Date startDate, Date endDate) {
