@@ -124,7 +124,7 @@ public class PasswordResetController extends BaseController {
             if (profileEntityManager.isDeactivated(orcid)) {
                 notificationManager.sendReactivationEmail(forgotIdRequest.getEmail(), orcid);
             } else if (!profileEntityManager.isProfileClaimedByEmail(forgotIdRequest.getEmail())) {
-                notificationManager.sendApiRecordCreationEmail(forgotIdRequest.getEmail(), orcid);
+                notificationManager.sendClaimReminderEmail(orcid,0,forgotIdRequest.getEmail());
             } else {
                 notificationManager.sendForgottenIdEmail(forgotIdRequest.getEmail(), orcid);
             }
@@ -162,7 +162,7 @@ public class PasswordResetController extends BaseController {
                         notificationManager.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
                     } else if (!profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
                         LOGGER.info("Password reset: API record creation email sent to '{}'", passwordResetRequest.getEmail());
-                        notificationManager.sendApiRecordCreationEmail(passwordResetRequest.getEmail(), orcid);
+                        notificationManager.sendClaimReminderEmail(orcid,0,passwordResetRequest.getEmail());
                     } else {
                         LOGGER.info("Password reset: Reset password email sent to '{}'", passwordResetRequest.getEmail());
                         notificationManager.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
