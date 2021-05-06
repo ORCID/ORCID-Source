@@ -564,7 +564,7 @@ the software.
             <dependency>
                 <groupId>org.springframework.security.oauth</groupId>
                 <artifactId>spring-security-oauth2</artifactId>
-                <version>2.5.0.RELEASE</version>
+                <version>2.3.8.RELEASE</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -1006,7 +1006,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.0.6-SNAPSHOT</version>
+               <version>3.0.6</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>

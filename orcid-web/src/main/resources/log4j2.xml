@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Properties>
-        <Property name="basePath">/Users/camelia/Desktop/logs</Property>
+        <Property name="basePath">/tmp</Property>
     </Properties>
  
     <Appenders>
