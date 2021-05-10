@@ -155,6 +155,11 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
             for (Contributor c : work.getWorkContributors().getContributor()) {
                 if (c.getCreditName() != null && c.getCreditName().getContent() != null) {
                     names.add(c.getCreditName().getContent());
+                } else if (c.getContributorOrcid() != null && c.getContributorOrcid().getPath() != null) {
+                    String contributor = getCreditName(c.getContributorOrcid().getPath());
+                    if (!names.contains(contributor)) {
+                        names.add(contributor);
+                    }
                 }
             }
         }
