@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.orcid.core.manager.DOIManager;
 import org.orcid.core.manager.v3.ActivitiesSummaryManager;
@@ -156,9 +157,12 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
                 if (c.getCreditName() != null && c.getCreditName().getContent() != null) {
                     names.add(c.getCreditName().getContent());
                 } else if (c.getContributorOrcid() != null && c.getContributorOrcid().getPath() != null) {
-                    String contributor = getCreditName(c.getContributorOrcid().getPath());
-                    if (!names.contains(contributor)) {
-                        names.add(contributor);
+                    try {
+                        String contributor = getCreditName(c.getContributorOrcid().getPath());
+                        if (!names.contains(contributor)) {
+                            names.add(contributor);
+                        }
+                    } catch(NoResultException nre) {
                     }
                 }
             }
