@@ -270,13 +270,14 @@ public class MemberV2ApiServiceDelegatorImpl implements
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtils.setSourceName(w);
+        ActivityUtils.filterFundedByRelationshipForV2(w);
         return Response.ok(w).build();
     }
 
     @Override
     public Response viewWorks(String orcid) {
         List<WorkSummary> worksList = workManagerReadOnly.getWorksSummaryList(orcid);
-
+        ActivityUtils.filterFundedByRelationshipForV2(worksList);
         // Lets copy the list so we don't modify the cached collection
         List<WorkSummary> filteredList = null;
         if (worksList != null) {

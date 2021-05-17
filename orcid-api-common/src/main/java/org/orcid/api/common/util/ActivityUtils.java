@@ -3,6 +3,8 @@ package org.orcid.api.common.util;
 import java.util.List;
 
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.exception.OrcidNonPublicElementException;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common_v2.Contributor;
 import org.orcid.jaxb.model.common_v2.Organization;
 import org.orcid.jaxb.model.common_v2.OrganizationHolder;
@@ -24,6 +26,7 @@ import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Activity;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
+import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.FundingContributor;
 import org.orcid.jaxb.model.record_v2.PeerReview;
@@ -318,4 +321,27 @@ public class ActivityUtils {
         }
 
     }
+    
+    public static void filterFundedByRelationshipForV2(Work work) {
+        for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+            if (Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
+                work.getExternalIdentifiers().getExternalIdentifier().remove(extId);
+            }
+        }
+    }
+    
+    public static void filterFundedByRelationshipForV2(WorkSummary work) {
+        for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+            if (Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
+                work.getExternalIdentifiers().getExternalIdentifier().remove(extId);
+            }
+        }
+    }
+    
+    public static void filterFundedByRelationshipForV2(List<WorkSummary> works) {
+        if(works != null) {
+            works.stream().forEach(e -> filterFundedByRelationshipForV2(e));
+        }
+    }
+    
 }
