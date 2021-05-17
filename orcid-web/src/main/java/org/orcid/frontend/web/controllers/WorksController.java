@@ -21,6 +21,7 @@ import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.activities.ExternalIdentifierFundedByHelper;
 import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.WorksPaginator;
@@ -64,10 +65,6 @@ public class WorksController extends BaseWorkspaceController {
 
     private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
     private static final String PAGE_SIZE_DEFAULT = "50";
-    private static final String EXT_ID_GRANT_NUMBER = "grant_number";
-    private static final String EXT_ID_PROPOSAL_ID = "proposal-id";
-    private static final String EXT_ID_URI = "uri";
-    private static final String EXT_ID_DOI = "doi";
 
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
@@ -698,10 +695,7 @@ public class WorksController extends BaseWorkspaceController {
                 }
                 
                 if (Relationship.FUNDED_BY.value().equals(wId.getRelationship().getValue())) {
-                     if(wId.getExternalIdentifierType().getValue() != null && !StringUtils.equalsIgnoreCase(wId.getExternalIdentifierType().getValue(),EXT_ID_GRANT_NUMBER)
-                            && !StringUtils.equalsIgnoreCase(wId.getExternalIdentifierType().getValue(),EXT_ID_PROPOSAL_ID)
-                            && !StringUtils.equalsIgnoreCase(wId.getExternalIdentifierType().getValue(),EXT_ID_URI)
-                            && !StringUtils.equalsIgnoreCase(wId.getExternalIdentifierType().getValue(),EXT_ID_DOI)) {
+                    if(!ExternalIdentifierFundedByHelper.isExtIdTypeAllowedForFundedBy(wId.getExternalIdentifierType().getValue())) {
                         setError(wId.getExternalIdentifierType(), "manualWork.ext_ids.funded_by");   
                     }
                 }

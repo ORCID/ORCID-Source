@@ -471,6 +471,7 @@ public class SourceInActivitiesTest extends BaseTest {
         ExternalID extId = new ExternalID();
         extId.setValue("111");
         extId.setType(WorkExternalIdentifierType.DOI.value());
+        extId.setRelationship(Relationship.SELF);
         ExternalIDs extIdentifiers = new ExternalIDs();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);

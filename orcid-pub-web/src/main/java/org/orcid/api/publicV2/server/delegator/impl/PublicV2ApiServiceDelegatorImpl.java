@@ -16,6 +16,7 @@ import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
+import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.exception.SearchStartParameterLimitExceededException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -224,6 +225,7 @@ public class PublicV2ApiServiceDelegatorImpl
         contributorUtilsReadOnly.filterContributorPrivateData(w);        
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
+        ActivityUtils.filterFundedByRelationshipForV2(w);
         sourceUtilsReadOnly.setSourceName(w);
         return Response.ok(w).build();
     }
@@ -231,8 +233,11 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     public Response viewWorks(String orcid) {
         List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
+        ActivityUtils.filterFundedByRelationshipForV2(works);
+        
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
         publicAPISecurityManagerV2.filter(publicWorks);
+        
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(publicWorks);
