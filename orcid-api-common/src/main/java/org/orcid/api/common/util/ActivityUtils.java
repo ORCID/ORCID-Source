@@ -332,7 +332,7 @@ public class ActivityUtils {
     
     public static void filterFundedByRelationshipForV2(WorkSummary work) {
         for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-            if (Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
+            if (extId.getRelationship()!=null  && Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
                 work.getExternalIdentifiers().getExternalIdentifier().remove(extId);
             }
         }
