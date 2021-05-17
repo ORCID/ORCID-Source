@@ -239,7 +239,7 @@ public class ActivityValidator {
                     }
                 }
                 
-                if (Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
+                if (extId.getRelationship() != null && Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
                     if(!ExternalIdentifierFundedByHelper.isExtIdTypeAllowedForFundedBy(extId.getType())) {
                         throw new OrcidValidationException("External ID " + extId.getType() + " not supported for relationship funded_by"); 
                     }
