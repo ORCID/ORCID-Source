@@ -29,6 +29,7 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.StartDateAfterEndDateException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.activities.ExternalIdentifierFundedByHelper;
 import org.orcid.core.utils.v3.FuzzyDateUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverService;
@@ -235,6 +236,12 @@ public class ActivityValidator {
                         resolverService.resolve(extId.getType(), extId.getValue());
                     } catch (IllegalArgumentException iae) {
                         LOGGER.warn("Invalid DOI provided: " + extId.getValue());
+                    }
+                }
+                
+                if (extId.getRelationship() != null && Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
+                    if(!ExternalIdentifierFundedByHelper.isExtIdTypeAllowedForFundedBy(extId.getType())) {
+                        throw new OrcidValidationException("External ID " + extId.getType() + " not supported for relationship funded_by"); 
                     }
                 }
             }

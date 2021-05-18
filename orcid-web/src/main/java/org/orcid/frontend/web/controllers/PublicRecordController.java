@@ -249,7 +249,14 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         publicRecord.setExternalIdentifier(ExternalIdentifiersForm.valueOf(publicPersonExternalIdentifiers));
 
+        Long lastModifiedTime = getLastModifiedTime(orcid);
+
+        publicRecord.setLastModifiedTime(new java.util.Date(lastModifiedTime));
+
         return publicRecord;
     }
 
+    private Long getLastModifiedTime(String orcid) {
+        return profileEntityManager.getLastModified(orcid);
+    }
 }
