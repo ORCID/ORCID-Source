@@ -92,6 +92,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         if (!enabled) {
             throw new LoadSourceDisabledException(getSourceName());
         }
+        LOGGER.warn("Loading RINGGOLD data...");
         return importData();
     }
 
@@ -107,23 +108,30 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         Map<Integer, JsonNode> dnNameMap = new HashMap<>();
         Map<Integer, Integer> deletedElementsMap = new HashMap<>();
 
+        LOGGER.warn("Starting the importData process");
         try (ZipFile zip = new ZipFile(ftpsFileDownloader.getLocalFilePath())) {
+            LOGGER.warn("Starting ProcessAltNamesFile");
             processAltNamesFile(zip, altNamesMap, dnNameMap);
+            LOGGER.warn("Starting processIdentifiersFile");
             processIdentifiersFile(zip, identifiersMap);
+            LOGGER.warn("Starting processDeletedElementsFile");
             processDeletedElementsFile(zip, deletedElementsMap);
+            LOGGER.warn("Starting processInstitutions");
             processInstitutions(zip, altNamesMap, identifiersMap, dnNameMap);
+            LOGGER.warn("Starting processDeletedElements");
             processDeletedElements(deletedElementsMap);
+            LOGGER.warn("Done");
             return true;
         } catch (Exception e) {
             LOGGER.error("Error importing RINGGOLD data", e);
             return false;
         } finally {
-            LOGGER.info("Ringgold import completed");
+            LOGGER.warn("Ringgold import completed");
         }
     }
     
     private JsonNode getJsonNode(ZipFile zip, ZipEntry entry) throws IOException, UnsupportedEncodingException {
-        LOGGER.info("Generating json node for: " + entry.getName());
+        LOGGER.warn("Generating json node for: " + entry.getName());
         try (Reader reader = new InputStreamReader(zip.getInputStream(entry), RINGGOLD_CHARACTER_ENCODING)){
             JsonNode node = JsonUtils.read(reader);
             return node;
@@ -132,7 +140,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
     private void processAltNamesFile(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap)
             throws UnsupportedEncodingException, IOException {
-        LOGGER.info("Processing alt names");
+        LOGGER.warn("Processing alt names");
         JsonNode altNames = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_alt_names.json"));
         processAltNames(altNames, altNamesMap, dnNameMap);
     }
@@ -140,6 +148,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     private void processAltNames(JsonNode altNames, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap) {
         altNames.forEach(altName -> {
             Integer ringgoldId = altName.get("ringgold_id").asInt();
+            LOGGER.warn("processAltNames: " + ringgoldId);
             if (altName.has("notes") && "DN".equals(altName.get("notes").asText())) {
                 // If there is already a DN name for this org, lets keep just
                 // the newest one
@@ -177,10 +186,11 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     }
 
     private void processIdentifiers(JsonNode identifiers, Map<Integer, List<JsonNode>> identifiersMap) {
-        LOGGER.info("Processing identifiers");
+        LOGGER.warn("Processing identifiers");
         identifiers.forEach(identifier -> {
             Integer ringgoldId = identifier.get("ringgold_id").asInt();
             String identifierType = identifier.get("identifier_type").asText();
+            LOGGER.warn("processIdentifiers: " + ringgoldId);
             if (ALLOWED_EXTERNAL_IDENTIFIERS.contains(identifierType)) {
                 identifiersMap.computeIfAbsent(ringgoldId, element -> new ArrayList<>()).add(identifier);
             } else {
@@ -199,21 +209,25 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         deletedIds.forEach(element -> {
             Integer oldId = element.has("old_ringgold_id") ? element.get("old_ringgold_id").asInt() : null;
             Integer newId = element.has("new_ringgold_id") ? element.get("new_ringgold_id").asInt() : null;
+            LOGGER.warn("processDeletedElements: " + oldId);
             deletedElementsMap.put(oldId, newId);
         });
     }
 
     private void processInstitutions(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, List<JsonNode>> identifiersMap,
             Map<Integer, JsonNode> dnNameMap) throws UnsupportedEncodingException, IOException {
+        LOGGER.warn("Before getJsonNode");
         JsonNode institutions = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_institutions.json"));
+        LOGGER.warn("After getJsonNode");
         processInstitutions(institutions, altNamesMap, identifiersMap, dnNameMap);
     }
 
     private void processInstitutions(JsonNode institutions, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, List<JsonNode>> identifiersMap,
             Map<Integer, JsonNode> dnNameMap) {
-        LOGGER.info("Processing institutions");
+        LOGGER.warn("Processing institutions");
         institutions.forEach(institution -> {
             Integer ringgoldId = institution.get("ringgold_id").asInt();
+            LOGGER.warn("processInstitutions: " + ringgoldId);
             OrgDisambiguatedEntity entity = processInstitution(institution, dnNameMap);
             generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
 
@@ -225,14 +239,14 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     }
 
     private void processDeletedElements(Map<Integer, Integer> deletedElementsMap) {
-        LOGGER.info("Processing deleted elements");
+        LOGGER.warn("Processing deleted elements");
         deletedElementsMap.forEach((oldId, newId) -> {
             OrganizationStatus status = OrganizationStatus.OBSOLETE;
             if (newId != null) {
                 status = OrganizationStatus.DEPRECATED;
             }
 
-            LOGGER.info("Deleting org {} with status {}", oldId, status);
+            LOGGER.warn("Deleting org {} with status {}", oldId, status);
             OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(oldId), OrgDisambiguatedSourceType.RINGGOLD.name());
             OrgDisambiguatedEntity replacementEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(newId), OrgDisambiguatedSourceType.RINGGOLD.name());
             if (existingEntity != null) {
@@ -260,7 +274,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     private OrgDisambiguatedEntity processInstitution(JsonNode institution, Map<Integer, JsonNode> dnNameMap) {
         Integer recId = institution.get("rec_id").asInt();
         Integer ringgoldId = institution.get("ringgold_id").asInt();
-        LOGGER.info("Processing ringgold_id: {} rec_id: {}", ringgoldId, recId);
+        LOGGER.warn("Processing ringgold_id: {} rec_id: {}", ringgoldId, recId);
         Integer parentId = institution.get("parent_ringgold_id").asInt() == 0 ? null : institution.get("parent_ringgold_id").asInt();
         String name = institution.get("name").asText();
         Iso3166Country country = Iso3166Country.fromValue(institution.get("country").asText());
@@ -359,7 +373,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     private void generateOrganizations(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> altNames) {
         altNames.forEach(altName -> {
             String name = altName.get("name").asText();
-            LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
+            LOGGER.warn("Processing organization {} for {}", name, disambiguatedEntity.getId());
             String city = altName.get("city").asText();
             Iso3166Country country = Iso3166Country.fromValue(altName.get("country").asText());
             OrgEntity existingOrg = orgDao.findByNameCityRegionCountryAndType(name, city, "", country.name(), "RINGGOLD");
