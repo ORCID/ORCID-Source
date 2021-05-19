@@ -110,17 +110,11 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
         LOGGER.warn("Starting the importData process");
         try (ZipFile zip = new ZipFile(ftpsFileDownloader.getLocalFilePath())) {
-            LOGGER.warn("Starting ProcessAltNamesFile");
             processAltNamesFile(zip, altNamesMap, dnNameMap);
-            LOGGER.warn("Starting processIdentifiersFile");
             processIdentifiersFile(zip, identifiersMap);
-            LOGGER.warn("Starting processDeletedElementsFile");
             processDeletedElementsFile(zip, deletedElementsMap);
-            LOGGER.warn("Starting processInstitutions");
             processInstitutions(zip, altNamesMap, identifiersMap, dnNameMap);
-            LOGGER.warn("Starting processDeletedElements");
             processDeletedElements(deletedElementsMap);
-            LOGGER.warn("Done");
             return true;
         } catch (Exception e) {
             LOGGER.error("Error importing RINGGOLD data", e);
@@ -131,7 +125,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     }
     
     private JsonNode getJsonNode(ZipFile zip, ZipEntry entry) throws IOException, UnsupportedEncodingException {
-        LOGGER.warn("Generating json node for: " + entry.getName());
+        LOGGER.info("Generating json node for: " + entry.getName());
         try (Reader reader = new InputStreamReader(zip.getInputStream(entry), RINGGOLD_CHARACTER_ENCODING)){
             JsonNode node = JsonUtils.read(reader);
             return node;
@@ -140,7 +134,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
     private void processAltNamesFile(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap)
             throws UnsupportedEncodingException, IOException {
-        LOGGER.warn("Processing alt names");
+        LOGGER.info("Processing alt names");
         JsonNode altNames = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_alt_names.json"));
         processAltNames(altNames, altNamesMap, dnNameMap);
     }
@@ -148,7 +142,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     private void processAltNames(JsonNode altNames, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap) {
         altNames.forEach(altName -> {
             Integer ringgoldId = altName.get("ringgold_id").asInt();
-            LOGGER.warn("processAltNames: " + ringgoldId);
+            LOGGER.info("processAltNames: " + ringgoldId);
             if (altName.has("notes") && "DN".equals(altName.get("notes").asText())) {
                 // If there is already a DN name for this org, lets keep just
                 // the newest one
@@ -186,7 +180,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     }
 
     private void processIdentifiers(JsonNode identifiers, Map<Integer, List<JsonNode>> identifiersMap) {
-        LOGGER.warn("Processing identifiers");
+        LOGGER.info("Processing identifiers");
         identifiers.forEach(identifier -> {
             Integer ringgoldId = identifier.get("ringgold_id").asInt();
             String identifierType = identifier.get("identifier_type").asText();
@@ -216,7 +210,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
     private void processInstitutions(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, List<JsonNode>> identifiersMap,
             Map<Integer, JsonNode> dnNameMap) throws UnsupportedEncodingException, IOException {
-        LOGGER.warn("Before getJsonNode");
+        LOGGER.info("Before getJsonNode");
         JsonNode institutions = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_institutions.json"));
         LOGGER.warn("After getJsonNode");
         processInstitutions(institutions, altNamesMap, identifiersMap, dnNameMap);
@@ -224,7 +218,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
     private void processInstitutions(JsonNode institutions, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, List<JsonNode>> identifiersMap,
             Map<Integer, JsonNode> dnNameMap) {
-        LOGGER.warn("Processing institutions");
+        LOGGER.info("Processing institutions");
         institutions.forEach(institution -> {
             Integer ringgoldId = institution.get("ringgold_id").asInt();
             LOGGER.warn("processInstitutions: " + ringgoldId);
@@ -239,7 +233,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     }
 
     private void processDeletedElements(Map<Integer, Integer> deletedElementsMap) {
-        LOGGER.warn("Processing deleted elements");
+        LOGGER.info("Processing deleted elements");
         deletedElementsMap.forEach((oldId, newId) -> {
             OrganizationStatus status = OrganizationStatus.OBSOLETE;
             if (newId != null) {
@@ -274,7 +268,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     private OrgDisambiguatedEntity processInstitution(JsonNode institution, Map<Integer, JsonNode> dnNameMap) {
         Integer recId = institution.get("rec_id").asInt();
         Integer ringgoldId = institution.get("ringgold_id").asInt();
-        LOGGER.warn("Processing ringgold_id: {} rec_id: {}", ringgoldId, recId);
+        LOGGER.info("Processing ringgold_id: {} rec_id: {}", ringgoldId, recId);
         Integer parentId = institution.get("parent_ringgold_id").asInt() == 0 ? null : institution.get("parent_ringgold_id").asInt();
         String name = institution.get("name").asText();
         Iso3166Country country = Iso3166Country.fromValue(institution.get("country").asText());
@@ -373,7 +367,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     private void generateOrganizations(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> altNames) {
         altNames.forEach(altName -> {
             String name = altName.get("name").asText();
-            LOGGER.warn("Processing organization {} for {}", name, disambiguatedEntity.getId());
+            LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
             String city = altName.get("city").asText();
             Iso3166Country country = Iso3166Country.fromValue(altName.get("country").asText());
             OrgEntity existingOrg = orgDao.findByNameCityRegionCountryAndType(name, city, "", country.name(), "RINGGOLD");
