@@ -142,7 +142,6 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     private void processAltNames(JsonNode altNames, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap) {
         altNames.forEach(altName -> {
             Integer ringgoldId = altName.get("ringgold_id").asInt();
-            LOGGER.info("processAltNames: " + ringgoldId);
             if (altName.has("notes") && "DN".equals(altName.get("notes").asText())) {
                 // If there is already a DN name for this org, lets keep just
                 // the newest one
@@ -234,7 +233,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             if (newId != null) {
                 status = OrganizationStatus.DEPRECATED;
             }
-
+            LOGGER.info("Deleting org {} with status {}", oldId, status);
             OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(oldId), OrgDisambiguatedSourceType.RINGGOLD.name());
             OrgDisambiguatedEntity replacementEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(newId), OrgDisambiguatedSourceType.RINGGOLD.name());
             if (existingEntity != null) {
