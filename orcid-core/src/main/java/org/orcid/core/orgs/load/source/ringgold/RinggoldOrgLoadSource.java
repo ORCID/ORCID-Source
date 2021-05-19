@@ -108,7 +108,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         Map<Integer, JsonNode> dnNameMap = new HashMap<>();
         Map<Integer, Integer> deletedElementsMap = new HashMap<>();
 
-        LOGGER.warn("Starting the importData process");
+        LOGGER.info("Starting the importData process");
         try (ZipFile zip = new ZipFile(ftpsFileDownloader.getLocalFilePath())) {
             processAltNamesFile(zip, altNamesMap, dnNameMap);
             processIdentifiersFile(zip, identifiersMap);
@@ -184,7 +184,6 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         identifiers.forEach(identifier -> {
             Integer ringgoldId = identifier.get("ringgold_id").asInt();
             String identifierType = identifier.get("identifier_type").asText();
-            LOGGER.warn("processIdentifiers: " + ringgoldId);
             if (ALLOWED_EXTERNAL_IDENTIFIERS.contains(identifierType)) {
                 identifiersMap.computeIfAbsent(ringgoldId, element -> new ArrayList<>()).add(identifier);
             } else {
@@ -203,16 +202,13 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         deletedIds.forEach(element -> {
             Integer oldId = element.has("old_ringgold_id") ? element.get("old_ringgold_id").asInt() : null;
             Integer newId = element.has("new_ringgold_id") ? element.get("new_ringgold_id").asInt() : null;
-            LOGGER.warn("processDeletedElements: " + oldId);
             deletedElementsMap.put(oldId, newId);
         });
     }
 
     private void processInstitutions(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, List<JsonNode>> identifiersMap,
             Map<Integer, JsonNode> dnNameMap) throws UnsupportedEncodingException, IOException {
-        LOGGER.info("Before getJsonNode");
         JsonNode institutions = getJsonNode(mainFile, mainFile.getEntry("Ringgold_Identify_json_institutions.json"));
-        LOGGER.warn("After getJsonNode");
         processInstitutions(institutions, altNamesMap, identifiersMap, dnNameMap);
     }
 
@@ -221,7 +217,6 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         LOGGER.info("Processing institutions");
         institutions.forEach(institution -> {
             Integer ringgoldId = institution.get("ringgold_id").asInt();
-            LOGGER.warn("processInstitutions: " + ringgoldId);
             OrgDisambiguatedEntity entity = processInstitution(institution, dnNameMap);
             generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
 
@@ -240,7 +235,6 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 status = OrganizationStatus.DEPRECATED;
             }
 
-            LOGGER.warn("Deleting org {} with status {}", oldId, status);
             OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(oldId), OrgDisambiguatedSourceType.RINGGOLD.name());
             OrgDisambiguatedEntity replacementEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(newId), OrgDisambiguatedSourceType.RINGGOLD.name());
             if (existingEntity != null) {
