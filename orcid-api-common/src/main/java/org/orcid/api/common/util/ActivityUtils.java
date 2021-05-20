@@ -323,34 +323,4 @@ public class ActivityUtils {
 
     }
     
-    public static void filterFundedByRelationshipForV2(Work work) {
-        if(work.getExternalIdentifiers() != null) {
-        	ExternalIDs extIds = new ExternalIDs();
-            for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-                if (extId.getRelationship() != null && !Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
-                    extIds.getExternalIdentifier().add(extId);
-                }
-            }
-            work.setWorkExternalIdentifiers(extIds);
-        }
-    }
-    
-    public static void filterFundedByRelationshipForV2(WorkSummary work) {
-        if(work.getExternalIdentifiers() != null) {
-        	ExternalIDs extIds = new ExternalIDs();
-            for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-            	if (extId.getRelationship() != null && !Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
-                    extIds.getExternalIdentifier().add(extId);
-                }
-            }
-            work.setExternalIdentifiers(extIds);
-        }
-    }
-    
-    public static void filterFundedByRelationshipForV2(List<WorkSummary> works) {
-        if(works != null) {
-            works.stream().forEach(e -> filterFundedByRelationshipForV2(e));
-        }
-    }
-    
 }

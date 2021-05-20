@@ -225,16 +225,14 @@ public class PublicV2ApiServiceDelegatorImpl
         contributorUtilsReadOnly.filterContributorPrivateData(w);        
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
-        ActivityUtils.filterFundedByRelationshipForV2(w);
+
         sourceUtilsReadOnly.setSourceName(w);
         return Response.ok(w).build();
     }
 
     @Override
     public Response viewWorks(String orcid) {
-        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
-        ActivityUtils.filterFundedByRelationshipForV2(works);
-        
+        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);       
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
         publicAPISecurityManagerV2.filter(publicWorks);
         

@@ -17,11 +17,13 @@ import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.activities.WorkComparators;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.GroupAble;
 import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.jaxb.model.record_v2.Work;
@@ -94,13 +96,17 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public Work getWork(String orcid, Long workId) {
         WorkEntity work = workDao.getWork(orcid, workId);
-        return jpaJaxbWorkAdapter.toWork(work);
+        Work w = jpaJaxbWorkAdapter.toWork(work);
+        filterFundedByRelationshipForV2(w);
+        return w;
     }
 
     @Override
     public WorkSummary getWorkSummary(String orcid, Long workId) {
         WorkEntity work = workDao.getWork(orcid, workId);
-        return jpaJaxbWorkAdapter.toWorkSummary(work);
+        WorkSummary w = jpaJaxbWorkAdapter.toWorkSummary(work);
+        filterFundedByRelationshipForV2(w);
+        return w;
     }
 
     /**
@@ -114,7 +120,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<WorkSummary> getWorksSummaryList(String orcid) {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
-        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
+        List<WorkSummary>  worksList = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
+        filterFundedByRelationshipForV2(worksList);
+        return worksList;
     }
 
     /**
@@ -201,6 +209,36 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             throw new ExceedMaxNumberOfPutCodesException(maxWorksToRead);
         }
         return putCodeArray;
+    }
+    
+    private void filterFundedByRelationshipForV2(Work work) {
+        if(work.getExternalIdentifiers() != null) {
+        	ExternalIDs extIds = new ExternalIDs();
+            for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                if (extId.getRelationship() != null && !Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
+                    extIds.getExternalIdentifier().add(extId);
+                }
+            }
+            work.setWorkExternalIdentifiers(extIds);
+        }
+    }
+    
+    private void filterFundedByRelationshipForV2(WorkSummary work) {
+        if(work.getExternalIdentifiers() != null) {
+        	ExternalIDs extIds = new ExternalIDs();
+            for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+            	if (extId.getRelationship() != null && !Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
+                    extIds.getExternalIdentifier().add(extId);
+                }
+            }
+            work.setExternalIdentifiers(extIds);
+        }
+    }
+    
+    private void filterFundedByRelationshipForV2(List<WorkSummary> works) {
+        if(works != null) {
+            works.stream().forEach(e -> filterFundedByRelationshipForV2(e));
+        }
     }
 
 }
