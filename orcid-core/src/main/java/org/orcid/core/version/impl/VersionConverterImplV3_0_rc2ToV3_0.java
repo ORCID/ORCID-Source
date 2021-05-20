@@ -348,6 +348,7 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
                     v3ExtId.setUrl(new Url(rc2ExtId.getUrl().getValue()));
                 }
                 v3ExtId.setValue(rc2ExtId.getValue());
+                a.getExternalIdentifier().add(v3ExtId);
             });                        
         }
         
