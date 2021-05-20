@@ -50,6 +50,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.jaxb.model.v3.release.common.Url;
 
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
@@ -90,14 +91,15 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
         WorkContributorRoleMapper workContributorRoleMapper = new WorkContributorRoleMapper();
         
         FundingContributorRoleMapper fundingContributorRoleMapper = new FundingContributorRoleMapper();
+        
+        ExtIDsMapper extIDsMapper = new ExtIDsMapper();
 
         // GROUP ID
         mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecords.class).byDefault().register();
         mapperFactory.classMap(GroupIdRecord.class, org.orcid.jaxb.model.v3.rc2.groupid.GroupIdRecord.class).byDefault().register();
 
         // ExternalIDs
-        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs.class).byDefault().register();
-        mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.v3.rc2.record.ExternalID.class).byDefault().register();
+        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs.class).customize(extIDsMapper).register();
         
         // Contributor
         mapperFactory.classMap(ContributorOrcid.class, org.orcid.jaxb.model.v3.rc2.common.ContributorOrcid.class).customize(orcidIdBaseMapper).register();
@@ -333,4 +335,36 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
             }
         }
     }   
+    
+    private class ExtIDsMapper<Y, A> extends CustomMapper<ExternalIDs, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs> {
+
+        @Override
+        public void mapBtoA(org.orcid.jaxb.model.v3.rc2.record.ExternalIDs b, ExternalIDs a, MappingContext context) {            
+            b.getExternalIdentifier().forEach(rc2ExtId -> {
+                ExternalID v3ExtId = new ExternalID();
+                v3ExtId.setRelationship(rc2ExtId.getRelationship());
+                v3ExtId.setType(rc2ExtId.getType());                
+                if(rc2ExtId.getUrl() != null) {
+                    v3ExtId.setUrl(new Url(rc2ExtId.getUrl().getValue()));
+                }
+                v3ExtId.setValue(rc2ExtId.getValue());
+            });                        
+        }
+        
+        @Override
+        public void mapAtoB(ExternalIDs a, org.orcid.jaxb.model.v3.rc2.record.ExternalIDs b, MappingContext context) {
+            a.getExternalIdentifier().stream()
+            .filter(e -> !org.orcid.jaxb.model.common.Relationship.FUNDED_BY.equals(e.getRelationship()))
+            .forEach(v3ExtId -> { 
+                org.orcid.jaxb.model.v3.rc2.record.ExternalID rc2ExtId = new org.orcid.jaxb.model.v3.rc2.record.ExternalID();
+                rc2ExtId.setRelationship(v3ExtId.getRelationship());
+                rc2ExtId.setType(v3ExtId.getType());
+                if(v3ExtId.getUrl() != null) {
+                    rc2ExtId.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url(v3ExtId.getUrl().getValue()));
+                }
+                rc2ExtId.setValue(v3ExtId.getValue());
+                b.getExternalIdentifier().add(rc2ExtId);
+            });
+        }
+    }    
 }
