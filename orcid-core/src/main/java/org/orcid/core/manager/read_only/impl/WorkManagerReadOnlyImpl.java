@@ -215,7 +215,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         if(work.getExternalIdentifiers() != null) {
         	ExternalIDs extIds = new ExternalIDs();
             for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-                if (extId.getRelationship() != null && !Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
+            	if (extId.getRelationship() == null  || (extId.getRelationship() != null && !Relationship.FUNDED_BY.value().equals(extId.getRelationship().value()))) {
                     extIds.getExternalIdentifier().add(extId);
                 }
             }
@@ -227,7 +227,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         if(work.getExternalIdentifiers() != null) {
         	ExternalIDs extIds = new ExternalIDs();
             for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-            	if (extId.getRelationship() != null && !Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
+            	if (extId.getRelationship() == null  || (extId.getRelationship() != null && !Relationship.FUNDED_BY.value().equals(extId.getRelationship().value()))) {
                     extIds.getExternalIdentifier().add(extId);
                 }
             }
