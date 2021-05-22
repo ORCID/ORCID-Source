@@ -315,7 +315,7 @@
                 <div class="row full-height-row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
                         <p>
-                            <@orcid.msg 'workspace.bibtexImporter.instructions'/>  <a href="<@orcid.msg 'common.kb_uri_default'/>360006973353" target="workspace.bibtexImporter.learnMore"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
+                            <@orcid.msg 'workspace.bibtexImporter.instructions'/> <a href="https://support.orcid.org/hc/en-us/articles/360006894794-Importing-works-from-a-BibTeX-file" rel="noopener noreferrer" target="orcid.blank"><@orcid.msg 'workspace.bibtexImporter.learnMore'/></a>.
                         </p> 
                     </div>
                     <div class="col-md-3 col-sm-3 col-xs-4">

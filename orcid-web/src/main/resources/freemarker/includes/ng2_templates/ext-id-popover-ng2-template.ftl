@@ -17,7 +17,9 @@
 
 -->
 <script type="text/ng-template" id="ext-id-popover-ng2-template">
-    <span *ngIf="relationship && relationship == 'part-of'" class='italic'><@orcid.msg 'common.part_of'/> </span><span>{{type | uppercase}}: </span>
+    <span *ngIf="relationship && relationship == 'part-of'" class='italic'><@orcid.msg 'common.part_of'/> </span> 
+    <span *ngIf="relationship && relationship == 'funded-by'" class='italic'><@orcid.msg 'common.funded_by'/> </span>
+    <span>{{type | uppercase}}: </span>
     <span *ngIf="value && !url">{{value}}</span> 
     <a *ngIf="value && url" rel="noopener noreferrer" href="{{url}}" class="truncate-anchor-peer-review inline" target="orcid.blank" (mouseenter)="showAffiliationExtIdPopOver(putCode)" (mouseleave)="hideAffiliationExtIdPopOver(putCode)">{{value}}</a>
     <div *ngIf="url" class="popover-pos">

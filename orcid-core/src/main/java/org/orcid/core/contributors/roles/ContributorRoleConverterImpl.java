@@ -118,10 +118,12 @@ public abstract class ContributorRoleConverterImpl implements ContributorRoleCon
         }
 
         try {
-            CreditRole creditRole = CreditRole.valueOf(dbRoleString);
-            if (creditRole != null) {
-                LegacyContributorRole legacyRole = conversionMappings.get(creditRole);
-                return legacyRole != null ? legacyRole.name() : null;
+            if (dbRoleString != null) {
+                CreditRole creditRole = CreditRole.valueOf(dbRoleString);
+                if (creditRole != null) {
+                    LegacyContributorRole legacyRole = conversionMappings.get(creditRole);
+                    return legacyRole != null ? legacyRole.name() : null;
+                }
             }
         } catch (IllegalArgumentException e) {
             // ignore
@@ -134,14 +136,17 @@ public abstract class ContributorRoleConverterImpl implements ContributorRoleCon
         if (legacyRoles == null) {
             legacyRoles = getLegacyRoles();
         }
-        for (LegacyContributorRole role : legacyRoles) {
-            if (name.equals(role.name())) {
-                return role;
-            }
-            if (name.equals(role.value())) {
-                return role;
+        if (name != null) {
+            for (LegacyContributorRole role : legacyRoles) {
+                if (name.equals(role.name())) {
+                    return role;
+                }
+                if (name.equals(role.value())) {
+                    return role;
+                }
             }
         }
+
         return null;
     }
 

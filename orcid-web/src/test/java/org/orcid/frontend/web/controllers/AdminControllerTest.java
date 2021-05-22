@@ -851,6 +851,10 @@ public class AdminControllerTest extends BaseControllerTest {
         map.put("successful-email3@test.com", "successful-email3@test.com");
         map.put("successful-email4@test.com", "successful-email4@test.com");              
 
+        Email emailFromOrcid = new Email();
+        emailFromOrcid.setEmail("email@test.com");
+        Mockito.when(emailManager.findPrimaryEmail(Mockito.anyString())).thenReturn(emailFromOrcid);
+        Mockito.when(emailManager.findOricdIdsByCommaSeparatedEmails(Mockito.anyString())).thenReturn(map);
         Mockito.when(emailManager.findOricdIdsByCommaSeparatedEmails(Mockito.anyString())).thenReturn(map);
         Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
         Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
@@ -894,7 +898,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertTrue(results.get("successful").contains("https://orcid.org/0000-0000-0000-0004"));
 
         Mockito.verify(emailManager, Mockito.times(8)).emailExists(Mockito.anyString());        
-        Mockito.verify(notificationManager, Mockito.times(6)).sendApiRecordCreationEmail(Mockito.nullable(String.class), Mockito.anyString());
+        Mockito.verify(notificationManager, Mockito.times(6)).sendClaimReminderEmail(Mockito.anyString(),Mockito.anyInt(), Mockito.nullable(String.class));
     }
 
     @Test

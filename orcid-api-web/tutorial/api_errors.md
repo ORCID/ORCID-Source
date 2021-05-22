@@ -42,6 +42,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 |401|	An Authentication object was not found in the SecurityContext | Some or all of the data isn't making it to the API endpoint. If you're using Postman, try switching the data type to "x-www-form-urlencoded". If you're using an online tool to submit your curl, please try a different tool.|
 |401|	Bad client credentials|	Ensure that your client secret is correct|--|
 |401|	Invalid access token|1.	Ensure that the access token used for the call is complete, matched to the ORCID iD and scope of the call, and is not expired, or that the user has not revoked access 2. Check that you are calling the correct API for the client |Example of incorrect API  (api.orcid.org not api.sandbox.orcid.org for example.)|
+|401| Client (...) is deactivated|The client_id used in the API call is deactivated||
 |403|	Access Denied	|Check the URL of the request|--|
 |403|Forbidden: You are not the source of the work, so you are not allowed to update it|This is because you are trying to modify something that your API client did not put there in the first place ( if the user added an address for example you wouldn't be able to update it)|--|
 |403|If you get this  an error with HTML tags and 'Oops an error happened!'. This is because you are using the Web URL not the api url. |Make sure your URL has 'api' at the start|

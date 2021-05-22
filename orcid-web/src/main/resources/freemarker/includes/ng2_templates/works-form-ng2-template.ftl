@@ -38,13 +38,12 @@
                 <!-- Main content -->       
                 <div class="row">
                     <!-- Left Column -->            
-                    <div class="col-md-6 col-sm-6 col-xs-12">   
-                        
+                    <div class="col-md-6 col-sm-6 col-xs-12">            
                         <div class="form-group">
                             <label class="relative"><@orcid.msg 'manual_work_form_contents.labelworkcategory'/></label>
                             <span *ngIf="editWork?.workCategory?.value" class="required" [ngClass]="isValidClass(editWork.workCategory)">*</span>
                             <div class="relative" *ngIf="editWork?.workCategory">
-                                <select id="workCategory" name="workCategory" class="form-control" [(ngModel)]="editWork.workCategory.value" (ngModelChange)="loadWorkTypes(); clearErrors(); applyLabelWorkType(); updateRelationships();">
+                                <select id="workCategory" name="workCategory" class="form-control" [(ngModel)]="editWork.workCategory.value" (ngModelChange)="loadWorkTypes(); clearErrors(); applyLabelWorkType();updateRelationships();">
                                     <option value=""><@orcid.msg 'org.orcid.jaxb.model.record.WorkCategory.empty' /></option>
                                     <#list workCategories?keys as key>
                                         <option value="${key}">${workCategories[key]}</option>
@@ -254,20 +253,26 @@
                                     </div>
                                 </label>
                                 <div class="relative">                          
-                                    <label class="checkbox-inline">
+                                    <label class="checkbox-inline checkbox-inline-work">
                                         <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="self" />
                                         <@orcid.msg "common.self" />
                                     </label>
                                                                                             
-                                    <label class="checkbox-inline">
+                                    <label class="checkbox-inline checkbox-inline-work">
                                         <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="part-of" />
                                         <@orcid.msg "common.part_of" />
-                                    </label>                            
-                                    
-                                    <label class="checkbox-inline">
+                                    </label>  
+                                                              
+                                    <label class="checkbox-inline checkbox-inline-work">
                                         <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="version-of" />
                                         <@orcid.msg "common.version_of" />
-                                    </label>    
+                                    </label>
+                                    
+                                    <label class="checkbox-inline checkbox-inline-work">
+                                        <input type="radio" name="relationship{{i}}" [(ngModel)]="editWork.workExternalIdentifiers[i].relationship.value" value="funded-by" />
+                                        <@orcid.msg "common.funded_by" />
+                                    </label>
+         
                                     <button *ngIf="editWork.workExternalIdentifiers.length > 1" (click)="deleteExternalIdentifier(i)" class="glyphicon glyphicon-trash grey action-icon-align-right"></button>                            
                                     <span class="orcid-error" *ngIf="editWork?.workExternalIdentifiers[i].relationship?.errors?.length > 0">
                                         <div *ngFor='let error of editWork.workExternalIdentifiers[i].relationship.errors' [innerHtml]="error"></div>

@@ -447,6 +447,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     @Transactional
+    @Deprecated
     public void sendApiRecordCreationEmail(String toEmail, String orcid) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
         String creatorName = record.getSource() == null ? null : sourceEntityUtils.getSourceName(record.getSource());

@@ -21,6 +21,7 @@ import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.activities.ExternalIdentifierFundedByHelper;
 import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.WorksPaginator;
@@ -692,7 +693,14 @@ public class WorksController extends BaseWorkspaceController {
                 if (Relationship.SELF.value().equals(wId.getRelationship().getValue())) {
                     hasSelfOfIdentifier = true;
                 }
+                
+                if (Relationship.FUNDED_BY.value().equals(wId.getRelationship().getValue())) {
+                    if(!ExternalIdentifierFundedByHelper.isExtIdTypeAllowedForFundedBy(wId.getExternalIdentifierType().getValue())) {
+                        setError(wId.getExternalIdentifierType(), "manualWork.ext_ids.funded_by");   
+                    }
+                }
             }
+            
         }
 
         if (lastVersionOfIdentifier != null && !hasSelfOfIdentifier) {

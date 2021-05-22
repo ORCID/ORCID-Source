@@ -1,34 +1,10 @@
 package org.orcid.core.manager.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.EmailMessage;
-import org.orcid.core.manager.EmailMessageSender;
-import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
@@ -43,11 +19,7 @@ import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermi
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.NotificationDao;
-import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.NotificationEntity;
-import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
-import org.orcid.persistence.jpa.entities.NotificationTipEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.*;
 import org.orcid.pojo.DigestEmail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -57,6 +29,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -199,7 +180,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         List<String> sortedClientIds = updatesByClient.keySet().stream().sorted().collect(Collectors.toList());
         List<ClientUpdates> sortedClientUpdates = new ArrayList<ClientUpdates>();
         sortedClientIds.stream().forEach(s -> {sortedClientUpdates.add(updatesByClient.get(s));});
-        
+
         String emailName = notificationManager.deriveEmailFriendlyName(record.getId());
         String subject = messages.getMessage("email.subject.digest", new String[] { emailName }, locale);
         Map<String, Object> params = new HashMap<>();
@@ -577,40 +558,42 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }       
         
         public void addElement(XMLGregorianCalendar createdDate, Item item) {
-            if(counter < maxNotificationsToShowPerClient) {
-                init(item.getItemType().name(), item.getActionType() == null ? null : item.getActionType().name());
-                String value = null;
-                switch(item.getItemType()) {
-                case DISTINCTION:
-                case EDUCATION:
-                case EMPLOYMENT:
-                case INVITED_POSITION:
-                case MEMBERSHIP:
-                case QUALIFICATION:
-                case SERVICE:
-                    value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + (item.getItemName() != null ? item.getItemName() : "") +  " (" + renderCreationDate (createdDate) + ')';
-                    break;
-                default:
-                    value = item.getItemName() != null ? item.getItemName() : "";
-                    if(item.getExternalIdentifier() != null) {
-                        value += " " + item.getExternalIdentifier().getType() + ": " + item.getExternalIdentifier().getValue();
-                    }
-                    value += " (" + renderCreationDate (createdDate) + ')';
-                    break;
-                }   
-                
-                Set<String> elements;
-                if (item.getActionType() != null) {
-                    elements = updates.get(item.getItemType().name()).get(item.getActionType().name());
-                } else {
-                    elements = updates.get(item.getItemType().name()).get(ActionType.UNKNOWN.name());
+            init(item.getItemType().name(), item.getActionType() == null ? null : item.getActionType().name());
+            String value = null;
+            switch (item.getItemType()) {
+            case DISTINCTION:
+            case EDUCATION:
+            case EMPLOYMENT:
+            case INVITED_POSITION:
+            case MEMBERSHIP:
+            case QUALIFICATION:
+            case SERVICE:
+                value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + (item.getItemName() != null ? item.getItemName() : "") + " ("
+                        + renderCreationDate(createdDate) + ')';
+                break;
+            default:
+                value = item.getItemName() != null ? item.getItemName() : "";
+                if (item.getExternalIdentifier() != null) {
+                    value += " " + item.getExternalIdentifier().getType() + ": " + item.getExternalIdentifier().getValue();
                 }
-                if (!elements.contains(value)) {
+                value += " (" + renderCreationDate(createdDate) + ')';
+                break;
+            }
+
+            Set<String> elements;
+            if (item.getActionType() != null) {
+                elements = updates.get(item.getItemType().name()).get(item.getActionType().name());
+            } else {
+                elements = updates.get(item.getItemType().name()).get(ActionType.UNKNOWN.name());
+            }
+            if (!elements.contains(value)) {
+                if (counter < maxNotificationsToShowPerClient) {
                     elements.add(value);
-                    counter += 1;
                 }
-            }            
-        }        
+                counter += 1;
+            }
+
+        }  
 
         private void init(String itemType, String actionType) {
             if (!updates.containsKey(itemType)) {

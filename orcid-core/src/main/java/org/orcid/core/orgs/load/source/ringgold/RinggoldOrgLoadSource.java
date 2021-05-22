@@ -92,6 +92,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         if (!enabled) {
             throw new LoadSourceDisabledException(getSourceName());
         }
+        LOGGER.warn("Loading RINGGOLD data...");
         return importData();
     }
 
@@ -107,6 +108,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         Map<Integer, JsonNode> dnNameMap = new HashMap<>();
         Map<Integer, Integer> deletedElementsMap = new HashMap<>();
 
+        LOGGER.info("Starting the importData process");
         try (ZipFile zip = new ZipFile(ftpsFileDownloader.getLocalFilePath())) {
             processAltNamesFile(zip, altNamesMap, dnNameMap);
             processIdentifiersFile(zip, identifiersMap);
@@ -118,7 +120,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             LOGGER.error("Error importing RINGGOLD data", e);
             return false;
         } finally {
-            LOGGER.info("Ringgold import completed");
+            LOGGER.warn("Ringgold import completed");
         }
     }
     
@@ -231,7 +233,6 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             if (newId != null) {
                 status = OrganizationStatus.DEPRECATED;
             }
-
             LOGGER.info("Deleting org {} with status {}", oldId, status);
             OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(oldId), OrgDisambiguatedSourceType.RINGGOLD.name());
             OrgDisambiguatedEntity replacementEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(newId), OrgDisambiguatedSourceType.RINGGOLD.name());

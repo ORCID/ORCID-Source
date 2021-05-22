@@ -28,7 +28,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.common.manager.EmailFrequencyManager;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
@@ -83,16 +82,10 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     private ProfileHistoryEventManager profileHistoryEventManager;
     
     @Mock
-    private NotificationManager mockNotificationManager; 
-    
-    @Mock
     private org.orcid.core.manager.v3.NotificationManager mockV3NotificationManager;
     
     @Resource
     ProfileDao profileDao;
-    
-    @Resource
-    NotificationManager notificationManager;
     
     @Resource(name = "notificationManagerV3")
     org.orcid.core.manager.v3.NotificationManager notificationV3Manager;
@@ -114,8 +107,8 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationManager, "emailFrequencyManager", mockEmailFrequencyManager);        
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
         
-        TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", mockNotificationManager);
-        doNothing().when(mockNotificationManager).sendAutoDeprecateNotification(Mockito.anyString(), Mockito.anyString());
+        TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", mockV3NotificationManager);
+        doNothing().when(mockV3NotificationManager).sendAutoDeprecateNotification(Mockito.anyString(), Mockito.anyString());
         
         TargetProxyHelper.injectIntoProxy(profileEntityManager, "notificationManager", mockV3NotificationManager);
         doNothing().when(mockV3NotificationManager).send2FADisabledEmail(Mockito.anyString());
@@ -136,7 +129,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     @After
     public void after() {
         TargetProxyHelper.injectIntoProxy(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
-        TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", notificationManager);
+        TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", notificationV3Manager);
     }
     
     @Test

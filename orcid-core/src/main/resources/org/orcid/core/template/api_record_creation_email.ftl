@@ -1,3 +1,5 @@
+## THIS EMAIL IS NOT USE, TESTED OR TRANSLATED 
+
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 

@@ -928,6 +928,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             public void mapAtoB(PeerReview a, PeerReviewEntity b, MappingContext context) {
                 b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
                 b.setSubjectUrl(a.getSubjectUrl() == null ? null : a.getSubjectUrl().getValue());
+                b.setSubjectName(
+                        (a.getSubjectName() == null || a.getSubjectName().getTitle() == null) ? null : a.getSubjectName().getTitle().getContent());
                 b.setSubjectTranslatedName(
                         (a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getContent());
                 b.setSubjectTranslatedNameLanguageCode((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null
