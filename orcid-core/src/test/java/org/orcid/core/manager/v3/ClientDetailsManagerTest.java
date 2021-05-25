@@ -11,14 +11,21 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.exception.ClientAlreadyActiveException;
 import org.orcid.core.exception.ClientAlreadyDeactivatedException;
 import org.orcid.core.manager.v3.impl.ClientDetailsManagerImpl;
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class ClientDetailsManagerTest {
     
     @Mock
     private ClientDetailsDao clientDetailsDao;
+    
+    @Mock
+    private ProfileEntityManager profileEntityManager;
     
     @InjectMocks
     private ClientDetailsManagerImpl clientDetailsManager;
@@ -62,6 +69,27 @@ public class ClientDetailsManagerTest {
     public void testActivateClientDetailsAlreadyActive() throws ClientAlreadyActiveException {
         Mockito.when(clientDetailsDao.find(Mockito.eq("client"))).thenReturn(getActiveClientDetails("client"));
         clientDetailsManager.activateClientDetails("client");
+    }
+    
+    @Test
+    public void testConvertPublicClientToMember() {
+        ProfileEntity premiumGroup = new ProfileEntity();
+        premiumGroup.setOrcidType(OrcidType.GROUP.name());
+        premiumGroup.setGroupType(MemberType.PREMIUM.name());
+        
+        ProfileEntity basicGroup = new ProfileEntity();
+        basicGroup.setOrcidType(OrcidType.GROUP.name());
+        basicGroup.setGroupType(MemberType.BASIC.name());
+        
+        Mockito.doNothing().when(clientDetailsDao).convertPublicClientToMember(Mockito.eq("client"), Mockito.anyString(), Mockito.anyString());
+        Mockito.when(profileEntityManager.findByOrcid(Mockito.eq("premium"))).thenReturn(premiumGroup);
+        Mockito.when(profileEntityManager.findByOrcid(Mockito.eq("basic"))).thenReturn(basicGroup);
+        
+        clientDetailsManager.convertPublicClientToMember("client", "basic");
+        Mockito.verify(clientDetailsDao).convertPublicClientToMember(Mockito.eq("client"), Mockito.eq("basic"), Mockito.eq(ClientType.UPDATER.name()));
+        
+        clientDetailsManager.convertPublicClientToMember("client", "premium");        
+        Mockito.verify(clientDetailsDao).convertPublicClientToMember(Mockito.eq("client"), Mockito.eq("premium"), Mockito.eq(ClientType.PREMIUM_UPDATER.name()));
     }
     
     private ClientDetailsEntity getDeactivedClientDetails(String id) {

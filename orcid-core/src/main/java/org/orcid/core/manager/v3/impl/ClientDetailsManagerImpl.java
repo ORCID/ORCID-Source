@@ -23,6 +23,7 @@ import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.impl.ClientDetailsManagerReadOnlyImpl;
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -38,6 +39,7 @@ import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -419,6 +421,13 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             throw new ClientAlreadyActiveException("Client already active");
         }
         clientDetailsDao.activateClient(clientDetailsId);
+    }
+
+    @Override
+    public void convertPublicClientToMember(String clientId, String groupId) {
+        ProfileEntity group = profileEntityManager.findByOrcid(groupId);
+        ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
+        clientDetailsDao.convertPublicClientToMember(clientId, groupId, clientType.name());
     }
     
 }
