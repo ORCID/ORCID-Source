@@ -253,4 +253,10 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         });
     }
 
+    @Override
+    public void processUnindexableRecords() {
+        Integer unindexableRecordsFound = profileDao.markUnindexableRecordsAsDone(indexingDelay);
+        LOG.info("Number of unindexable orcid ids found: " + unindexableRecordsFound);
+    }
+
 }
