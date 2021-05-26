@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,19 +16,26 @@ import javax.ws.rs.core.Response;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -36,7 +45,7 @@ import org.springframework.test.context.ContextConfiguration;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml", "classpath:orcid-persistence-context.xml"})
 public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
 
     private static final String CLIENT_ID_1 = "APP-5555555555555555";
@@ -50,11 +59,23 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
 
     @Resource
     private OpenIDConnectKeyService keyManager;
-
+    
+    @Mock
+    private ProfileLastModifiedDao profileLastModifiedDaoMock;
+    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDao;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(
                 Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml"));
+    }
+    
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(orcidClientCredentialEndPointDelegator, "profileLastModifiedDao", profileLastModifiedDaoMock);
     }
 
     @AfterClass
@@ -66,6 +87,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
     @After
     public void after() {
         SecurityContextHolder.clearContext();
+        TargetProxyHelper.injectIntoProxy(orcidClientCredentialEndPointDelegator, "profileLastModifiedDao", profileLastModifiedDao);
     }
 
     private OrcidOauth2AuthoriziationCodeDetail createAuthorizationCode(String value, String clientId, String redirectUri, boolean persistent, String... scopes) {
@@ -102,6 +124,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         assertTrue(!PojoUtil.isEmpty(token.getValue()));
         assertNotNull(token.getRefreshToken());
         assertTrue(!PojoUtil.isEmpty(token.getRefreshToken().getValue()));
+        verify(profileLastModifiedDaoMock, times(1)).updateIndexingStatus(Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -120,7 +143,9 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         assertNotNull(token);
         assertTrue(!PojoUtil.isEmpty(token.getValue()));
         assertNotNull(token.getRefreshToken());
-        assertTrue(!PojoUtil.isEmpty(token.getRefreshToken().getValue()));
+        assertTrue(!PojoUtil.isEmpty(token.getRefreshToken().getValue()));   
+        
+        verify(profileLastModifiedDaoMock, times(0)).updateIndexingStatus(Arrays.asList(USER_ORCID), IndexingStatus.PENDING);
     }
 
     @Test(expected = InvalidScopeException.class)

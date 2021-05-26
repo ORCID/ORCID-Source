@@ -29,7 +29,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
-    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
+    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
 
     /**
      * Get a list of the ORCID ids with the given indexing status
@@ -43,7 +43,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
-    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
+    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
     
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 
@@ -149,4 +149,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateIndexingStatus(List<String> ids, IndexingStatus reindex);
     
     public List<String> registeredBetween(Date startDate, Date endDate);
+    
+    Integer markUnindexableRecordsAsDone(Integer lastModifiedDelay);
 }

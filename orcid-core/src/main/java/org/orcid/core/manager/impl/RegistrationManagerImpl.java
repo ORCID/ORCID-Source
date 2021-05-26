@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ProfileDeprecationRequest;
