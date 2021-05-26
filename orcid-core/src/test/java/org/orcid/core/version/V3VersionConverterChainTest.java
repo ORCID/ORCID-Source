@@ -19,6 +19,8 @@ import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.ResourceType;
 import org.orcid.jaxb.model.common.SequenceType;
+import org.orcid.jaxb.model.v3.release.common.TransientError;
+import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
@@ -1467,7 +1469,7 @@ public class V3VersionConverterChainTest {
         e1Self.setRelationship(Relationship.SELF);
         e1Self.setType("type-self");
         e1Self.setUrl(new Url("https://qa.orcid.org/0000-0000-0000-0000"));
-        e1Self.setValue("ext-id-self");
+        e1Self.setValue("ext-id-self");        
         extIds.getExternalIdentifier().add(e1Self);
         
         ExternalID e2PartOf = new ExternalID();
@@ -1576,5 +1578,33 @@ public class V3VersionConverterChainTest {
         assertNotNull(rc2ExtIds);
         assertTrue(rc2ExtIds.getExternalIdentifier().isEmpty());
         
+    }
+    
+    @Test
+    public void externalIdDowngradeTest() {        
+        ExternalID e = new ExternalID();
+        e.setRelationship(Relationship.SELF);
+        e.setType("type-self");
+        e.setUrl(new Url("https://qa.orcid.org/0000-0000-0000-0000"));
+        e.setValue("ext-id-self");
+        e.setNormalized(new TransientNonEmptyString("non-empty-string-1"));
+        e.setNormalizedError(new TransientError("01", "m01"));
+        e.setNormalizedUrl(new TransientNonEmptyString("non-empty-string-2"));
+        e.setNormalizedUrlError(new TransientError("02", "m02"));
+        
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID rc2ExtId = (org.orcid.jaxb.model.v3.rc2.record.ExternalID) (v3VersionConverterChain
+                .downgrade(new V3Convertible(e, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2ExtId);
+        assertEquals(Relationship.SELF, rc2ExtId.getRelationship());
+        assertEquals("type-self", rc2ExtId.getType());
+        assertEquals("https://qa.orcid.org/0000-0000-0000-0000", rc2ExtId.getUrl().getValue());
+        assertEquals("ext-id-self", rc2ExtId.getValue());
+        assertEquals("non-empty-string-1", rc2ExtId.getNormalized().getValue());
+        assertEquals("01", rc2ExtId.getNormalizedError().getErrorCode());
+        assertEquals("m01", rc2ExtId.getNormalizedError().getErrorMessage());
+        assertEquals("non-empty-string-2", rc2ExtId.getNormalizedUrl().getValue());
+        assertEquals("02", rc2ExtId.getNormalizedUrlError().getErrorCode());
+        assertEquals("m02", rc2ExtId.getNormalizedUrlError().getErrorMessage());        
     }
 }

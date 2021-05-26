@@ -13,6 +13,7 @@ import org.orcid.jaxb.model.v3.release.common.OrcidIdBase;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecords;
@@ -50,7 +51,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
-import org.orcid.jaxb.model.v3.release.common.Url;
 
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
@@ -364,6 +364,23 @@ public class VersionConverterImplV3_0_rc2ToV3_0 implements V3VersionConverter {
                     rc2ExtId.setUrl(new org.orcid.jaxb.model.v3.rc2.common.Url(v3ExtId.getUrl().getValue()));
                 }
                 rc2ExtId.setValue(v3ExtId.getValue());
+                
+                if(v3ExtId.getNormalized() != null) {                    
+                    rc2ExtId.setNormalized(new org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString(v3ExtId.getNormalized().getValue()));  
+                }
+                
+                if(v3ExtId.getNormalizedError() != null) {
+                    rc2ExtId.setNormalizedError(new org.orcid.jaxb.model.v3.rc2.common.TransientError(v3ExtId.getNormalizedError().getErrorCode(), v3ExtId.getNormalizedError().getErrorMessage()));
+                }
+                
+                if(v3ExtId.getNormalizedUrl() != null) {
+                    rc2ExtId.setNormalizedUrl(new org.orcid.jaxb.model.v3.rc2.common.TransientNonEmptyString(v3ExtId.getNormalizedUrl().getValue()));
+                }
+                
+                if(v3ExtId.getNormalizedUrlError() != null) {
+                    rc2ExtId.setNormalizedUrlError(new org.orcid.jaxb.model.v3.rc2.common.TransientError(v3ExtId.getNormalizedUrlError().getErrorCode(), v3ExtId.getNormalizedUrlError().getErrorMessage()));
+                }
+                
                 b.getExternalIdentifier().add(rc2ExtId);
             });
         }

@@ -495,4 +495,24 @@
     </div>
 </div>
 
+<!-- Force indexing -->
+<div class="workspace-accordion-item" id="force-indexing">
+    <p>
+        <a *ngIf="showForceIndexing" (click)="showForceIndexing = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.force_indexing' /></a>
+        <a *ngIf="!showForceIndexing" (click)="showForceIndexing = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.force_indexing' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showForceIndexing">
+        <div class="form-group">            
+            <label for="email"><@orcid.msg 'admin.force_indexing.title' /></label>
+            <input type="text" (keyup.enter)="forceIndexing()" [(ngModel)]="idsToIndex" placeholder="<@orcid.msg 'admin.force_indexing.placeholder' />" class="input-xlarge" />                                                                                    
+        </div>
+        <div *ngIf="forceIndexingMessage != null && forceIndexingMessageShowMessages">
+            <span class="orcid-error" [innerHTML]="forceIndexingMessage"></span>
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="verify-email" (click)="forceIndexing()" class="btn btn-primary"><@orcid.msg 'admin.force_indexing.btn'/></span>                      
+        </div>        
+    </div>
+</div>
+
 </script>

@@ -114,7 +114,11 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     disable2FAResults: any;
     toDisableIdsOrEmails: string; 
     
-
+    // Force indexing
+    showForceIndexing: boolean;
+    forceIndexingMessage: string;
+    idsToIndex: string;
+    forceIndexingMessageShowMessages: boolean;
 
     // General
     ids: string;
@@ -189,7 +193,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showDisable2FA = false;
 		this.disable2FAResults = {};
 		this.toDisableIdsOrEmails= '';
-		
+
+        this.showForceIndexing = false;
+        this.forceIndexingMessage = '';
+        this.forceIndexingMessageShowMessages = false;
 
         // General
         this.ids = '';
@@ -621,9 +628,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
-
     disable2FA(): void {
-        
         this.adminActionsService.disable2FA( this.toDisableIdsOrEmails )
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -642,6 +647,24 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
     
+    forceIndexing(): void {
+        this.adminActionsService.forceIndexing( this.idsToIndex )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.forceIndexingMessage = 'Following ids has been sent to index, the process could take up to 30 minutes: ' + data;
+				this.forceIndexingMessageShowMessages = true;
+                setTimeout (() => {
+                    this.forceIndexingMessageShowMessages = false;
+                }, 10000);         
+            },
+            error => {
+                console.log('admin: forceIndexing', error);
+            } 
+        );
+    };
       
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
