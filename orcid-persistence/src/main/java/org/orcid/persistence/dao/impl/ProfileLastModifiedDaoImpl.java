@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -40,6 +39,21 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
         query.executeUpdate();
     }
 
+    /**
+     * This method is used to update the indexing status
+     * without triggering last update events
+     * 
+     * @param orcid
+     * @param indexingStatus
+     */
+    @Override
+    @Transactional
+    public boolean updateIndexingStatus(List<String> orcidIds, IndexingStatus indexingStatus) {
+        Query updateQuery = entityManager.createQuery("update ProfileEntity set indexingStatus = :indexingStatus where orcid IN :orcid");
+        updateQuery.setParameter("orcid", orcidIds);
+        updateQuery.setParameter("indexingStatus", indexingStatus);
+        return updateQuery.executeUpdate() > 0;
+    }
 
     @SuppressWarnings("unchecked")
     @Override

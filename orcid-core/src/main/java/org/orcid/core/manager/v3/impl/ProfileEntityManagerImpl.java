@@ -732,4 +732,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PRIVATE, orcid, "deactivated/deprecated");
         }
     }
+
+    @Override
+    public boolean forceReindex(List<String> orcidIds) {
+        return profileLastModifiedDao.updateIndexingStatus(orcidIds, IndexingStatus.FORCE_INDEXING);
+    }
 }
