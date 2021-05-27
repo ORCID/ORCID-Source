@@ -379,34 +379,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(startCount, endCount);
         
         profileDao.updateIndexingStatus(orcid, IndexingStatus.PENDING);
-    }
-    
-    @Test
-    public void testFetchRecordsWithForceIndexingStatus() {        
-        String o1 = "0000-0000-0000-0001";
-        String o2 = "0000-0000-0000-0002";
-        String o3 = "0000-0000-0000-0003";
-                
-        assertEquals(0, profileDao.findOrcidsByIndexingStatus(IndexingStatus.FORCE_INDEXING, Integer.MAX_VALUE, 0).size());
-        
-        profileDao.updateIndexingStatus(o1, IndexingStatus.FORCE_INDEXING);
-        List<String> orcidIds = profileDao.findOrcidsByIndexingStatus(IndexingStatus.FORCE_INDEXING, Integer.MAX_VALUE, 0); 
-        assertEquals(1, orcidIds.size());
-        assertTrue(orcidIds.contains(o1));
-        
-        profileDao.updateIndexingStatus(o2, IndexingStatus.FORCE_INDEXING);
-        orcidIds = profileDao.findOrcidsByIndexingStatus(IndexingStatus.FORCE_INDEXING, Integer.MAX_VALUE, 0); 
-        assertEquals(2, orcidIds.size());
-        assertTrue(orcidIds.contains(o1));
-        assertTrue(orcidIds.contains(o2));
-        
-        profileDao.updateIndexingStatus(o3, IndexingStatus.FORCE_INDEXING);
-        orcidIds = profileDao.findOrcidsByIndexingStatus(IndexingStatus.FORCE_INDEXING, Integer.MAX_VALUE, 0); 
-        assertEquals(3, orcidIds.size());
-        assertTrue(orcidIds.contains(o1));
-        assertTrue(orcidIds.contains(o2));
-        assertTrue(orcidIds.contains(o3));
-    }
+    }        
 
     @Test
     @Rollback(true)

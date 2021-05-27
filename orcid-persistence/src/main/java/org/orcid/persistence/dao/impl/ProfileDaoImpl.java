@@ -77,15 +77,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {                
         StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status = :indexingStatus ");
-        // Unless FORCE_INDEXING we should check if a record have a trusted party before returning it
-        if(!IndexingStatus.FORCE_INDEXING.equals(indexingStatus)) {           
-            builder.append(" AND exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid) ");
-            if(delay != null && delay > 0) {
-                builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
-            }
-            if (!orcidsToExclude.isEmpty()) {
-                builder.append(" AND p.orcid NOT IN :orcidsToExclude");
-            }
+        builder.append(" AND (reviewed is true OR exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid)) ");
+        if(delay != null && delay > 0) {
+            builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
+        }
+        if (!orcidsToExclude.isEmpty()) {
+            builder.append(" AND p.orcid NOT IN :orcidsToExclude");
         }
         // Ordering by last modified so we get the oldest modified first
         builder.append(" ORDER BY p.last_modified");
@@ -824,7 +821,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public Integer markUnindexableRecordsAsDone(Integer lastModifiedDelay) {
-        Query query = entityManager.createNativeQuery("UPDATE profile p SET indexing_status = 'DONE' WHERE p.indexing_status = 'PENDING' AND NOT exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid) AND (p.last_modified < now() - INTERVAL '" + lastModifiedDelay +" min')");
+        Query query = entityManager.createNativeQuery("UPDATE profile p SET indexing_status = 'DONE' WHERE p.indexing_status = 'PENDING' AND reviewed IS NOT true AND NOT exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid) AND (p.last_modified < now() - INTERVAL '" + lastModifiedDelay +" min')");
         // Sets a timeout for this query
         query.setHint("javax.persistence.query.timeout", queryTimeout);
         return query.executeUpdate();

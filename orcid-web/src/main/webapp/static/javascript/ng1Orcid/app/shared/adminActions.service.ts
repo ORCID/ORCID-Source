@@ -179,13 +179,5 @@ export class AdminActionsService {
                 encodeURIComponent(obj), 
                 { headers: this.headers }
         )
-    };
-    
-    forceIndexing( obj ): Observable<any> {
-        return this.http.post( 
-                getBaseUri() + '/admin-actions/force-indexing', 
-                encodeURIComponent(obj), 
-                { headers: this.headers }
-        )
-    };
+    };   
 }
