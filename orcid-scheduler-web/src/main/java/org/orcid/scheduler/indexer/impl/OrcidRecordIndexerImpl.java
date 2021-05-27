@@ -116,7 +116,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     }    
     
     @Override 
-    public void processProfilesWithFroceIndexingFlagAndAddToMessageQueue() {
+    public void processProfilesWithForceIndexingFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FORCE_INDEXING);
     }
     
