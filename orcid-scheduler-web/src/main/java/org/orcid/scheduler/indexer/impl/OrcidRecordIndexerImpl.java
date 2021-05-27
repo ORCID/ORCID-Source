@@ -115,6 +115,11 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.S3_V3_REINDEX);
     }    
     
+    @Override 
+    public void processProfilesWithFroceIndexingFlagAndAddToMessageQueue() {
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FORCE_INDEXING);
+    }
+    
     @Override
     synchronized public void processUnclaimedProfilesToFlagForIndexing() {
         LOG.info("About to process unclaimed profiles to flag for indexing");
@@ -152,7 +157,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
         do {            
             try {
-                if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
+                if (IndexingStatus.FORCE_INDEXING.equals(status) || IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
                 } else {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);

@@ -77,9 +77,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {                
         StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status = :indexingStatus ");
-        builder.append(" AND (reviewed is true OR exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid)) ");
-        if(delay != null && delay > 0) {
-            builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
+        if(!IndexingStatus.FORCE_INDEXING.equals(indexingStatus)) {
+            builder.append(" AND (reviewed is true OR exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid)) ");
+            if(delay != null && delay > 0) {
+                builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
+            }            
         }
         if (!orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
@@ -599,11 +601,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     private boolean changeLockedStatus(String orcid, boolean locked, String reason, String description) {
         Query query = entityManager.createNativeQuery(
-                "update profile set last_modified=now(), indexing_status='REINDEX', record_locked=:locked, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
+                "update profile set last_modified=now(), indexing_status=:indexingStatus, record_locked=:locked, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("locked", locked);
         query.setParameter("lockReason", reason);
         query.setParameter("description", description);
+        query.setParameter("indexingStatus", (locked ? IndexingStatus.FORCE_INDEXING.name() : IndexingStatus.PENDING.name()));
         return query.executeUpdate() > 0;
     }
 
@@ -727,7 +730,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean deactivate(String orcid) {
-        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), profile_deactivation_date = now(), indexing_status = 'REINDEX' where orcid = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), profile_deactivation_date = now(), indexing_status = 'FORCE_INDEXING' where orcid = :orcid");
         query.setParameter("orcid", orcid);        
         return query.executeUpdate() > 0;
     }
