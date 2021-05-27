@@ -238,9 +238,9 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     public void testOrcidsFindByIndexingStatus() {
-        String o1 = "4444-4444-4444-4445";
-        String o2 = "4444-4444-4444-4446";
-        String o3 = "0000-0000-0000-0001";
+        String o1 = "0000-0000-0000-0001";
+        String o2 = "4444-4444-4444-4445";
+        String o3 = "4444-4444-4444-4446";
         
         Calendar c = Calendar.getInstance();
         Date d1 = new Date(c.getTimeInMillis());
@@ -253,14 +253,7 @@ public class ProfileDaoTest extends DBUnitTest {
         
         List<String> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
         assertNotNull(results);
-        // None of the records have an active token
-        assertEquals(0, results.size());
-        
-        // Lets add a token to user 1
-        OrcidOauth2TokenDetail user1Token = addToken(o1);
-        
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
-        assertNotNull(results);
+        // None of the records have an active token, but o1 is verified
         assertEquals(1, results.size());
         assertTrue(results.contains(o1));
         
@@ -298,8 +291,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNotNull(results);
         assertTrue(results.isEmpty());
         
-        // Delete the token
-        orcidOauth2TokenDetailDao.remove(user1Token.getId());
+        // Delete the token        
         orcidOauth2TokenDetailDao.remove(user2Token.getId());
     }
 
