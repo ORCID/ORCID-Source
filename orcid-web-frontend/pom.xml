@@ -161,6 +161,18 @@
             </properties>
         </profile>
         <profile>
+            <id>int</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>int</value>
+                </property>
+            </activation>
+            <properties>
+                <buildEnv>int</buildEnv>
+            </properties>
+        </profile>
+        <profile>
             <id>local</id>
             <activation>
                 <property>
