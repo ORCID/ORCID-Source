@@ -22,7 +22,7 @@
 		<task:scheduled ref="notificationManagerV3" method="processUnverifiedEmails2Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails2Days:0 10 * * * *}"/>
 		<task:scheduled ref="notificationManagerV3" method="archiveOffsetNotifications" cron="${org.orcid.scheduler.web.archiveOffsetNotifications:08 08 3 * * *}"/>
 		<task:scheduled ref="notificationManagerV3" method="deleteOffsetNotifications" cron="${org.orcid.scheduler.web.deleteOffsetNotifications:09 09 4 * * *}"/>	
-		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithForceIndexingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesForceIndexingDelaySeconds:300}000"/>
+		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithForceIndexingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:120}000"/>
 		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
 		<task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
 		<task:scheduled ref="orcidRecordIndexer" method="processUnindexableRecords" fixed-delay="${org.orcid.scheduler.web.processUnindexableRecordsDelaySeconds:3600}000"/>
