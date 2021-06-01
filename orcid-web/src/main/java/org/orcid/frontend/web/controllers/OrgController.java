@@ -1,9 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
-import java.io.IOException;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.OrgManager;
@@ -24,23 +21,7 @@ public class OrgController {
     private OrgManager orgManager;
 
     @Resource
-    private OrgDisambiguatedManager orgDisambiguatedManager;
-    
-    @RequestMapping(value = "ambiguous", method = RequestMethod.GET, produces = "text/csv")
-    public void getAmbiguousOrgs(HttpServletResponse response) throws IOException {
-        // response.setContentType("text/csv");
-        // response.addHeader("Content-Disposition", "attachment; filename=\"ambiguous_orgs.csv\"");
-        // orgManager.writeAmbiguousOrgs(response.getWriter());
-        response.setStatus(HttpStatus.GONE.value());
-    }
-    
-    @RequestMapping(value = "disambiguated", method = RequestMethod.GET, produces = "text/csv")
-    public void getDisambiguatedOrgs(HttpServletResponse response) throws IOException {
-        // response.setContentType("text/csv");
-        // response.addHeader("Content-Disposition", "attachment; filename=\"disambiguated_orgs.csv\"");
-        // orgManager.writeDisambiguatedOrgs(response.getWriter());
-        response.setStatus(HttpStatus.GONE.value());
-    }
+    private OrgDisambiguatedManager orgDisambiguatedManager;       
     
     @RequestMapping(value = "/disambiguated/{idType}", method = RequestMethod.GET)
     public ResponseEntity<OrgDisambiguated> getDisambiguatedOrg( @PathVariable("idType") String idType, @RequestParam("value") String idValue){
