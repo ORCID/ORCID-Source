@@ -134,7 +134,6 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
     
     confirmAddDelegateByOrcid(orcidSearchResult): void {  
         this.orcidSearchResult = orcidSearchResult;    
-        console.log('Funcking confirmAddDelegateByOrcid')
         this.accountService.notifyOther({orcidSearchResult:this.orcidSearchResult, input:this.input});
         this.modalService.notifyOther({action:'open', moduleId: 'modalAddDelegate'});
     };
