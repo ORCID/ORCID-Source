@@ -288,7 +288,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", orcid);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
-    }
+    }    
 
     @Override
     public void remove(String giverOrcid, String receiverOrcid) {
@@ -347,15 +347,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("messageOrcid", messageOrcid);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
-    }
-
-    @Override
-    public boolean exists(String orcid) {
-        TypedQuery<Long> query = entityManager.createQuery("select count(p.id) from ProfileEntity p where p.id = :orcid", Long.class);
-        query.setParameter("orcid", orcid);
-        Long result = query.getSingleResult();
-        return (result != null && result > 0);
-    }
+    }    
 
     @Override
     public IndexingStatus retrieveIndexingStatus(String orcid) {
@@ -828,5 +820,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         // Sets a timeout for this query
         query.setHint("javax.persistence.query.timeout", queryTimeout);
         return query.executeUpdate();
+    }
+    
+    @Override
+    public boolean isOrcidValidAsDelegate(String orcid) {
+        TypedQuery<Long> query = entityManager.createQuery("SELECT count(orcid) FROM ProfileEntity WHERE orcid=:orcid AND profile_deactivation_date is NULL AND deprecated_date is NULL AND primary_record is NULL AND (record_locked is NULL OR record_locked is FALSE)", Long.class);
+        query.setParameter("orcid", orcid);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
     }
 }
