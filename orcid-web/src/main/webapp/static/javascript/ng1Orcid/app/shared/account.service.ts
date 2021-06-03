@@ -54,6 +54,17 @@ export class AccountService {
         )
         
     }
+    
+    addDelegateByOrcid( obj ): Observable<any> {
+        let encoded_data = JSON.stringify(obj);
+        
+        return this.http.post( 
+            getBaseUri() + '/account/addDelegateByOrcid.json', 
+            encoded_data, 
+            { headers: this.headers }
+        )
+        
+    }
 
     delayVerifyEmail(): Observable<any> {
         return this.http.get(
@@ -111,11 +122,16 @@ export class AccountService {
         
     }
 
-    searchByEmail( input ): Observable<any> {
+    searchByEmail( input ): Observable<any> { 
         return this.http.get(
            getBaseUri() + '/manage/search-for-delegate-by-email/' + encodeURIComponent(input) + '/',
-        )
-        
+        )        
+    }
+
+    searchByOrcid( input ): Observable<any> { 
+        return this.http.get(
+           getBaseUri() + '/manage/search-for-delegate-by-orcid/' + encodeURIComponent(input) + '/',
+        )        
     }
 
     searchDelegators( input ): Observable<any> {
