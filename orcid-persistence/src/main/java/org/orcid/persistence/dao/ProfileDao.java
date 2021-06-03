@@ -13,8 +13,6 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 
 public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
-    public boolean exists(String orcid);
-
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not, boolean checkQuarterlyTipsEnabled);
@@ -151,4 +149,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public List<String> registeredBetween(Date startDate, Date endDate);
     
     Integer markUnindexableRecordsAsDone(Integer lastModifiedDelay);
+    
+    boolean isOrcidValidAsDelegate(String orcid);
 }
