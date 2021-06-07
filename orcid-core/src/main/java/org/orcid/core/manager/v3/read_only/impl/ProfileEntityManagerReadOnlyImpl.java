@@ -29,5 +29,10 @@ public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     @Override
     public String getLockedReason(String orcid) {
         return profileDao.getLockedReason(orcid);
+    }
+
+    @Override
+    public Boolean isOrcidValidAsDelegate(String orcid) {
+        return profileDao.isOrcidValidAsDelegate(orcid);
     }   
 }

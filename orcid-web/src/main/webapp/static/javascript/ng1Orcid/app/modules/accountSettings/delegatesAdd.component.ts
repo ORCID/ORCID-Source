@@ -33,6 +33,7 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
     delegateToAdd: any;
     effectiveUserOrcid: any;
     emailSearchResult: any;
+    orcidSearchResult: any;
     errors: any;
     input: any;
     isPasswordConfirmationRequired: any;
@@ -103,6 +104,34 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
+    
+    addDelegateByOrcid(): void {
+        var addDelegate = {
+            delegateToManage: null,
+            password: null
+        };
+        this.errors = [];
+        addDelegate.delegateToManage = this.input.text;
+        addDelegate.password = this.password;
+        this.accountService.addDelegateByOrcid( addDelegate )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                if(data.errors.length === 0){
+                    this.accountService.notifyOther({action:'add', successful:true});
+                    this.closeModal();
+                }
+                else{
+                    this.errors = data.errors;
+                }
+            },
+            error => {
+                //console.log('setformDataError', error);
+            } 
+        );
+    };
 
     closeModal(): void {
         this.modalService.notifyOther({action:'close', moduleId: 'modalAddDelegate'});
@@ -116,6 +145,9 @@ export class DelegatesAddComponent implements AfterViewInit, OnDestroy, OnInit {
                 console.log(res);
                 if( res.emailSearchResult ) {
                     this.emailSearchResult = res.emailSearchResult;
+                }
+                if( res.orcidSearchResult ) {
+                    this.orcidSearchResult = res.orcidSearchResult;
                 }
                 if( res.input ) {
                     this.input = res.input;
