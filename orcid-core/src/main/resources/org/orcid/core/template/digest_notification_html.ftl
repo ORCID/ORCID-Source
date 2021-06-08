@@ -57,6 +57,7 @@
                     </#if>
                     <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
                         <#if notificationType == 'PERMISSION'>
+                            <p><#if notification.notificationIntro??>${notification.notificationIntro}</#if></p>
                             <p><#if notification.notificationSubject??>${notification.notificationSubject} <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if><#else><@emailMacros.msg "email.digest.requesttoadd" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></#if></p>
                             <#assign itemsByType=notification.items.itemsByType>
                             <#list itemsByType?keys?sort as itemType>
