@@ -21,7 +21,7 @@ public class InvalidRecordDataChangeEntity extends BaseEntity<Long>{
     @Id
     @Override
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "invalid_record_change_seq")
-    @SequenceGenerator(name = "invalid_record_change_seq", sequenceName = "invalid_record_change_seq")
+    @SequenceGenerator(name = "invalid_record_change_seq", sequenceName = "invalid_record_change_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

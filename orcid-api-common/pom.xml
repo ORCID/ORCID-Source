@@ -8,7 +8,7 @@
 		<groupId>org.orcid</groupId>
 		<artifactId>orcid-parent</artifactId>        
 		<relativePath>../pom.xml</relativePath>
-		<version>release-1.289.0</version>
+		<version>release-2.0.0</version>
 	</parent>
     
 	<properties>
@@ -92,9 +92,9 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-        </dependency>
+			  <groupId>org.hibernate</groupId>
+			  <artifactId>hibernate-agroal</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>

@@ -22,7 +22,7 @@ public class RefDataEntity extends BaseEntity<Integer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "reference_data_seq")
-    @SequenceGenerator(name = "reference_data_seq", sequenceName = "reference_data_seq")
+    @SequenceGenerator(name = "reference_data_seq", sequenceName = "reference_data_seq", allocationSize = 1)
     @Column(name = "id")
     public Integer getId() {
         return id;

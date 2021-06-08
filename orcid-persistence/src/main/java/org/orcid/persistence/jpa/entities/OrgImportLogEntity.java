@@ -30,7 +30,7 @@ public class OrgImportLogEntity extends BaseEntity<Long> implements Serializable
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "org_import_log_seq")
-    @SequenceGenerator(name = "org_import_log_seq", sequenceName = "org_import_log_seq")
+    @SequenceGenerator(name = "org_import_log_seq", sequenceName = "org_import_log_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

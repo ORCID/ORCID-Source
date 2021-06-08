@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.orcid</groupId>
         <artifactId>orcid-parent</artifactId>
-        <version>release-1.289.0</version>
+        <version>release-2.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -53,6 +53,23 @@
             <artifactId>solr-solrj</artifactId>
             <version>${solr.version}</version>
         </dependency>
+        
+        <!-- javax.xml -->
+            <dependency>
+<groupId>javax.xml.bind</groupId>
+<artifactId>jaxb-api</artifactId>
+<version>2.3.0</version>
+</dependency>
+<dependency>
+<groupId>com.sun.xml.bind</groupId>
+<artifactId>jaxb-core</artifactId>
+<version>2.3.0</version>
+</dependency>
+<dependency>
+<groupId>com.sun.xml.bind</groupId>
+<artifactId>jaxb-impl</artifactId>
+<version>2.3.0</version>
+</dependency>
 
         <!-- Test dependencies -->
 

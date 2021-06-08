@@ -30,7 +30,7 @@ public class AddressEntity extends SourceAwareEntity<Long> implements ProfileAwa
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "address_seq")
-    @SequenceGenerator(name = "address_seq", sequenceName = "address_seq")
+    @SequenceGenerator(name = "address_seq", sequenceName = "address_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

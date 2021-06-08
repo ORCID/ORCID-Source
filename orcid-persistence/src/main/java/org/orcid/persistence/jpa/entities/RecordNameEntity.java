@@ -29,7 +29,7 @@ public class RecordNameEntity extends BaseEntity<Long> implements OrcidAware {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "record_name_seq")
-    @SequenceGenerator(name = "record_name_seq", sequenceName = "record_name_seq")
+    @SequenceGenerator(name = "record_name_seq", sequenceName = "record_name_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

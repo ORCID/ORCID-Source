@@ -32,7 +32,7 @@ public class BiographyEntity extends BaseEntity<Long> implements OrcidAware {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "biography_seq")
-    @SequenceGenerator(name = "biography_seq", sequenceName = "biography_seq")
+    @SequenceGenerator(name = "biography_seq", sequenceName = "biography_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

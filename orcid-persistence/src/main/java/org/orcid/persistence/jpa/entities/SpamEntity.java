@@ -30,7 +30,7 @@ public class SpamEntity extends BaseEntity<Long> implements OrcidAware {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "spam_seq")
-    @SequenceGenerator(name = "spam_seq", sequenceName = "spam_seq")
+    @SequenceGenerator(name = "spam_seq", sequenceName = "spam_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

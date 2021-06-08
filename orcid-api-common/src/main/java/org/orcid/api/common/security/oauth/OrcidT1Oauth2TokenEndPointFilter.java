@@ -59,7 +59,7 @@ public class OrcidT1Oauth2TokenEndPointFilter extends ClientCredentialsTokenEndp
         }
 
         clientId = clientId.trim();
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(clientId, clientSecret);
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(clientId, "{noop}"+clientSecret);
 
         Authentication authenticationResult = this.getAuthenticationManager().authenticate(authRequest);
         if (authenticationResult != null) {

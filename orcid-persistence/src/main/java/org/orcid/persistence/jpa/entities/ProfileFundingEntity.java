@@ -54,7 +54,7 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_funding_seq")
-    @SequenceGenerator(name = "profile_funding_seq", sequenceName = "profile_funding_seq")
+    @SequenceGenerator(name = "profile_funding_seq", sequenceName = "profile_funding_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }
