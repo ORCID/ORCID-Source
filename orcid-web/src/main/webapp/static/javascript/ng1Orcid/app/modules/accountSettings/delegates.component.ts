@@ -1,5 +1,6 @@
 declare var $: any;
 declare var isEmail: any;
+declare var isOrcid: any;
 declare var orcidVar: any;
 
 //Import all the angular components
@@ -43,6 +44,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
     delegation: any;
     effectiveUserOrcid: any;
     emailSearchResult: any;
+    orcidSearchResult: any;
     input: any;
     isPasswordConfirmationRequired: any;
     newResults: any;
@@ -72,6 +74,7 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         this.delegation = null;
         this.effectiveUserOrcid = orcidVar.orcidId;
         this.emailSearchResult = null;
+        this.orcidSearchResult = null;
         this.input = {};
         this.input.rows = 10;
         this.input.start = 0;
@@ -126,6 +129,12 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
     confirmAddDelegateByEmail(emailSearchResult): void {
         this.emailSearchResult = emailSearchResult;
         this.accountService.notifyOther({emailSearchResult:this.emailSearchResult, input:this.input});
+        this.modalService.notifyOther({action:'open', moduleId: 'modalAddDelegate'});
+    };
+    
+    confirmAddDelegateByOrcid(orcidSearchResult): void {  
+        this.orcidSearchResult = orcidSearchResult;    
+        this.accountService.notifyOther({orcidSearchResult:this.orcidSearchResult, input:this.input});
         this.modalService.notifyOther({action:'open', moduleId: 'modalAddDelegate'});
     };
 
@@ -250,8 +259,12 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
             this.start = 0;
             this.areMoreResults = 0;
             this.searchByEmail();
-        }
-        else{
+        } else if(isOrcid(this.input.text)) {            
+            this.numFound = 0;
+            this.start = 0;
+            this.areMoreResults = 0;
+            this.searchByOrcid();
+        } else{
             this.getResults();
         }
     };
@@ -264,6 +277,22 @@ export class DelegatesComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.confirmAddDelegateByEmail(data);
+                this.showLoader = false;
+            },
+            error => {
+                //console.log('setformDataError', error);
+            } 
+        );
+    };
+
+    searchByOrcid(): void {
+        this.accountService.searchByOrcid( this.input.text )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.confirmAddDelegateByOrcid(data);
                 this.showLoader = false;
             },
             error => {

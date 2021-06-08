@@ -79,9 +79,5 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     void enable2FA(String orcid);
 
-    void update2FASecret(String orcid, String secret);
-    
-    boolean forceReindex(List<String> orcidIds);
-
-    
+    void update2FASecret(String orcid, String secret);       
 }

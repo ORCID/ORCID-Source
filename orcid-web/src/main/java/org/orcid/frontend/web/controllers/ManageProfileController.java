@@ -27,6 +27,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
@@ -90,6 +91,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
+    @Resource(name = "profileEntityManagerReadOnlyV3")
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
+    
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
 
@@ -147,6 +151,20 @@ public class ManageProfileController extends BaseWorkspaceController {
             return map;
         }
     }    
+    
+    @RequestMapping(value = "/search-for-delegate-by-orcid/{orcid}/")
+    public @ResponseBody Map<String, Boolean> searchForDelegateByOrcid(@PathVariable String orcid) {
+        Map<String, Boolean> map = new HashMap<>();
+        Boolean isValidForDelegate = profileEntityManagerReadOnly.isOrcidValidAsDelegate(orcid);
+        if (isValidForDelegate == null || isValidForDelegate.booleanValue() == false) {
+            map.put(FOUND, Boolean.FALSE);
+            return map;
+        } else {
+            map.put(FOUND, Boolean.TRUE);
+            map.put(IS_SELF, orcid.equals(getCurrentUserOrcid()));
+            return map;
+        }
+    } 
 
     @RequestMapping(value = "/delegates.json", method = RequestMethod.GET)
     public @ResponseBody List<DelegateForm>  getDelegates() {
@@ -177,6 +195,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         return addDelegate(addDelegate);
     }
 
+    @RequestMapping(value = "/addDelegateByOrcid.json")
+    public @ResponseBody ManageDelegate addDelegateByOrcid(@RequestBody ManageDelegate addDelegate) {
+        addDelegate.setDelegateToManage(addDelegate.getDelegateToManage());
+        return addDelegate(addDelegate);
+    }
+    
     @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
     public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
         // Check password

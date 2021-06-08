@@ -122,7 +122,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     // General
     ids: string;
-    
+        
     constructor(
         private adminActionsService: AdminActionsService,
         private commonSrvc: CommonService
@@ -647,25 +647,6 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
     
-    forceIndexing(): void {
-        this.adminActionsService.forceIndexing( this.idsToIndex )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            data => {
-                this.forceIndexingMessage = 'Following ids has been sent to index, the process could take up to 30 minutes: ' + data;
-				this.forceIndexingMessageShowMessages = true;
-                setTimeout (() => {
-                    this.forceIndexingMessageShowMessages = false;
-                }, 10000);         
-            },
-            error => {
-                console.log('admin: forceIndexing', error);
-            } 
-        );
-    };
-      
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives
