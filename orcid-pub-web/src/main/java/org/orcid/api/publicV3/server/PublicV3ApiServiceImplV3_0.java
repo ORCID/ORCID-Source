@@ -137,9 +137,6 @@ public class PublicV3ApiServiceImplV3_0 {
 
     protected PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> serviceDelegator;
 
-    @Value("${org.orcid.core.baseUri}")
-    protected String baseUri;
-
     @Value("${org.orcid.core.pubBaseUri}")
     protected String pubBaseUri;
     
@@ -161,7 +158,7 @@ public class PublicV3ApiServiceImplV3_0 {
     @Path("/")
     @ApiOperation( nickname="viewSwaggerv3", value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
-        return new SwaggerUIBuilder().buildSwaggerHTML(baseUri, pubBaseUri, false);
+        return new SwaggerUIBuilder().buildSwaggerHTML(pubBaseUri, false);
     }
 
     @GET

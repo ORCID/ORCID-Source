@@ -115,9 +115,6 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberApiServiceImplHelper {
     @Context
     private UriInfo uriInfo;
 
-    @Value("${org.orcid.core.baseUri}")
-    protected String baseUri;
-
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
 
@@ -144,7 +141,7 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberApiServiceImplHelper {
     @Path("/")
     @ApiOperation(value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
-        return new SwaggerUIBuilder().buildSwaggerHTML(baseUri, apiBaseUri, true);
+        return new SwaggerUIBuilder().buildSwaggerHTML(apiBaseUri, true);
     }
 
     /**
