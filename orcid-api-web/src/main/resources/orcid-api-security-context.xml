@@ -14,8 +14,7 @@
 	<sec:http pattern="/resources/**" security="none"/>
 	
 	<!-- enable swagger -->
-	<sec:http pattern="/favicon.ico" security="none" create-session="stateless" />
-    <sec:http pattern="/static/**" security="none" create-session="stateless" />
+	<sec:http pattern="/static/**" security="none" create-session="stateless" />
 	
 	<sec:http pattern="/v2**/" security="none"/>
 	<sec:http pattern="/v2**/o2c.html" security="none"/>

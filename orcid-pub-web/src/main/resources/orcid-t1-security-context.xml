@@ -9,7 +9,6 @@
 
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
 	
-    <sec:http pattern="/favicon.ico" security="none" create-session="stateless" />
     <sec:http pattern="/static/**" security="none" create-session="stateless" />
 
 	<!-- Authenticate the client before reaching the token endpoint -->
