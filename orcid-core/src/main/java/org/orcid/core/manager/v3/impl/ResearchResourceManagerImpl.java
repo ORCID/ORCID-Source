@@ -140,7 +140,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
 
         rre = rrDao.merge(rre);
         rrDao.flush();
-        if (!isApiRequest) {
+        if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(rre, ActionType.UPDATE));
         }
         return jpaJaxbResearchResourceAdapter.toModel(rre);
