@@ -39,6 +39,7 @@ import static org.orcid.core.api.OrcidApiConstants.JSON_LD;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -111,8 +112,8 @@ public class PublicV2ApiServiceImplV2_1 {
 
     protected PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
 
-    @Value("${org.orcid.core.pubBaseUri}")
-    protected String pubBaseUri;
+    @Resource
+    protected SwaggerUIBuilder swaggerUIBuilder;
 
     public void setServiceDelegator(
             PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
@@ -129,7 +130,7 @@ public class PublicV2ApiServiceImplV2_1 {
     @Path("/")
     @ApiOperation( nickname="viewSwaggerV21",  value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
-        return new SwaggerUIBuilder().buildSwaggerHTML(pubBaseUri, false);
+        return swaggerUIBuilder.build();
     }
 
     @GET

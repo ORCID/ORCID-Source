@@ -65,6 +65,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -158,8 +159,8 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Context
     private HttpServletRequest httpRequest;
 
-    @Value("${org.orcid.core.apiBaseUri}")
-    protected String apiBaseUri;
+    @Resource
+    protected SwaggerUIBuilder swaggerUIBuilder;
     
     protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
 
@@ -184,7 +185,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path("/")
     @ApiOperation( nickname="viewSwaggerv3", value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
-        return new SwaggerUIBuilder().buildSwaggerHTML(apiBaseUri, true);
+        return swaggerUIBuilder.build();
     }
 
     /**
@@ -197,7 +198,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path("/o2c.html")
     @ApiOperation( nickname="viewSwaggerO2cv3", value = "Fetch the swagger OAuth component", hidden = true)
     public Response viewSwaggerO2c() {
-        return new SwaggerUIBuilder().buildSwaggerO2CHTML();
+        return swaggerUIBuilder.buildSwaggerO2CHTML();
     }
 
     /**

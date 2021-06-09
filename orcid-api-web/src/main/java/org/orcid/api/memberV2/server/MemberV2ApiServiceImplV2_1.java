@@ -43,6 +43,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -124,8 +125,8 @@ public class MemberV2ApiServiceImplV2_1 extends MemberApiServiceImplHelper {
     @Context
     private UriInfo uriInfo;
 
-    @Value("${org.orcid.core.apiBaseUri}")
-    protected String apiBaseUri;
+    @Resource
+    protected SwaggerUIBuilder swaggerUIBuilder;
     
     protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
@@ -150,7 +151,7 @@ public class MemberV2ApiServiceImplV2_1 extends MemberApiServiceImplHelper {
     @Path("/")
     @ApiOperation( nickname="viewSwaggerV21", value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
-        return new SwaggerUIBuilder().buildSwaggerHTML(apiBaseUri, true);
+        return swaggerUIBuilder.build();
     }
 
     /**
@@ -163,7 +164,7 @@ public class MemberV2ApiServiceImplV2_1 extends MemberApiServiceImplHelper {
     @Path("/o2c.html")
     @ApiOperation( nickname="viewSwaggerO2cV21", value = "Fetch the swagger OAuth component", hidden = true)
     public Response viewSwaggerO2c() {
-        return new SwaggerUIBuilder().buildSwaggerO2CHTML();
+        return swaggerUIBuilder.buildSwaggerO2CHTML();
     }
 
     /**

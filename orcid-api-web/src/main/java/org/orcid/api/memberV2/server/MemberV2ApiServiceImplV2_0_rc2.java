@@ -34,6 +34,7 @@ import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 
 import java.net.URI;
 
+import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -102,8 +103,8 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @Context
     private UriInfo uriInfo;
 
-    @Value("${org.orcid.core.apiBaseUri}")
-    protected String apiBaseUri;
+    @Resource
+    protected SwaggerUIBuilder swaggerUIBuilder;
     
     protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, ?, Address, Keyword> serviceDelegator;
 
@@ -128,7 +129,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @Path("/")
     @ApiOperation(value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
-        return new SwaggerUIBuilder().buildSwaggerHTML(apiBaseUri, true);
+        return swaggerUIBuilder.build();
     }
 
     /**
@@ -141,7 +142,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberApiServiceImplHelper {
     @Path("/o2c.html")
     @ApiOperation(value = "Fetch the swagger OAuth component", hidden = true)
     public Response viewSwaggerO2c() {
-        return new SwaggerUIBuilder().buildSwaggerO2CHTML();
+        return swaggerUIBuilder.build();
     }
 
     /**

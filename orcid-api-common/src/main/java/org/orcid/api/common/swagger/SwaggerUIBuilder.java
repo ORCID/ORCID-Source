@@ -28,41 +28,50 @@ public class SwaggerUIBuilder {
     private static final String SWAGGER_FTL_PATH = "/org/orcid/api/common/swagger";
     private static final String SWAGGER_STATIC_HTML_PATH = "/static/swagger/";
 
-    public SwaggerUIBuilder() {
+    private final String swaggerHtml;
+    
+    public SwaggerUIBuilder(String baseUri, String apiUri, boolean showOAuth) {
         if (freeMarkerConfiguration == null) {
             configureFreemarker();
         }
+        swaggerHtml = buildSwaggerHTML(baseUri, apiUri, showOAuth);
     }
 
     /**
-     * Build the swagger UI HTML page
-     *
      * @param baseUri
      *            the URL of the main website. e.g. http://orcid.org
      * @param apiUri
      *            the URL of the API e.g. http://pub.orcid.org
      * @param showOAuth
      *            if true, input boxes allowing user to enter client id and
-     *            secret will be shown
-     * @return a 200 response containing the HTML as text.
-     */
-    public Response buildSwaggerHTML(String apiUri, boolean showOAuth) {
+     *            secret will be shown           
+    */
+    private String buildSwaggerHTML(String baseUri, String apiUri, boolean showOAuth) {
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("swaggerJsonUrl", apiUri + OrcidApiConstants.SWAGGER_PATH + OrcidApiConstants.SWAGGER_FILE);
         map.put("swaggerBaseUrl", apiUri + SWAGGER_STATIC_HTML_PATH);
         map.put("showOAuth", showOAuth);
-        map.put("baseUri", apiUri);
+        map.put("baseUri", baseUri);
         map.put("apiUri", apiUri);
         try {
             Template template = freeMarkerConfiguration.getTemplate(SWAGGER_UI_FTL);
             StringWriter result = new StringWriter();
             template.process(map, result);
-            return Response.ok(result.toString()).build();
+            return result.toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    /**
+     * Build the swagger UI HTML page
+     *
+     * @return a 200 response containing the HTML as text.
+     */
+    public Response build() {
+        return Response.ok(swaggerHtml).build();
     }
 
     /**
