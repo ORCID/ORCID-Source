@@ -218,4 +218,28 @@ public class NotificationsTest {
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
+    @Test
+    public void ignoreDates() throws JSONException {
+        NotificationPermission notification = unmarshallFromPath("/notification_3.0/samples/notification-permission-3.0.xml");
+        notification.setPutCode(null);
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
+
+        ClientResponse postResponse = notificationsClient_V3_0.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        String locationPath = postResponse.getLocation().getPath();
+        assertTrue("Location header path should match pattern, but was " + locationPath,
+                locationPath.matches(".*/v3.0/" + testUser1OrcidId + "/notification-permission/\\d+"));
+        String putCodeString = locationPath.substring(locationPath.lastIndexOf('/') + 1);
+        Long putCode = Long.valueOf(putCodeString);
+
+        ClientResponse viewResponse = notificationsClient_V3_0.viewPermissionNotificationXml(testUser1OrcidId, putCode, accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), viewResponse.getStatus());
+        NotificationPermission retrievedNotification = viewResponse.getEntity(NotificationPermission.class);
+        assertNotNull(retrievedNotification);
+        assertNull(retrievedNotification.getSentDate());
+        assertNull(retrievedNotification.getReadDate());
+        assertNull(retrievedNotification.getArchivedDate());
+    }
+
 }
