@@ -255,7 +255,7 @@ public class OrcidRecordToSolrDocument {
                                         organisationIds.get(SolrConstants.GRID_ORGANISATION_ID)
                                                 .add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                     } else if (SolrConstants.FUNDREF_ORG_TYPE.equals(sourceType)) {
-                                        organisationIds.get(SolrConstants.FUNDREF_ORG_TYPE)
+                                        organisationIds.get(SolrConstants.FUNDREF_ORGANISATION_ID)
                                                 .add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                     }
                                 }
@@ -314,7 +314,7 @@ public class OrcidRecordToSolrDocument {
                                             organisationIds.get(SolrConstants.GRID_ORGANISATION_ID)
                                                     .add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                         } else if (SolrConstants.FUNDREF_ORG_TYPE.equals(sourceType)) {
-                                            organisationIds.get(SolrConstants.FUNDREF_ORG_TYPE)
+                                            organisationIds.get(SolrConstants.FUNDREF_ORGANISATION_ID)
                                                     .add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                         }
                                     }

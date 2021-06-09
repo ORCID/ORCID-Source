@@ -14,8 +14,12 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.orcid.jaxb.model.common.PeerReviewType;
 import org.orcid.jaxb.model.common.Role;
+import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
+import org.orcid.jaxb.model.v3.release.record.ResearchResourceHosts;
+import org.orcid.jaxb.model.v3.release.record.ResearchResourceItem;
 import org.orcid.listener.solr.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.SolrConstants;
@@ -27,6 +31,23 @@ public class OrcidRecordToSolrDocumentTest {
         //as above, but with PDB identifier
         Record record = getRecord("/record_3.0/samples/read_samples/record-3.0.xml");
         ResearchResource researchResource = getResearchResource("/record_3.0/samples/read_samples/research-resource-3.0.xml");
+        
+        ResearchResourceHosts rrh = new ResearchResourceHosts();
+        Organization org = new Organization();
+        org.setName("ORCID");
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguationSource("FUNDREF");
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("ORCID_ORG_ID");
+        disambiguatedOrg.setId(1000L);
+        org.setDisambiguatedOrganization(disambiguatedOrg);
+        rrh.setOrganization(Arrays.asList(org));
+        
+        for(ResearchResourceItem rri : researchResource.getResourceItems()) {
+            if(rri.getName().contains("Giant Laser 1")) {
+                rri.setHosts(rrh);
+            }
+        }
+        
         
         OrcidRecordToSolrDocument v3 = new  OrcidRecordToSolrDocument(false);
         OrcidSolrDocument v3Doc = v3.convert(record, Arrays.asList(researchResource));
@@ -63,8 +84,9 @@ public class OrcidRecordToSolrDocumentTest {
         assertEquals(1, v3Doc.getKeywords().size());
         assertEquals("keyword1", v3Doc.getKeywords().get(0));
         assertEquals(3, v3Doc.getOrganisationIds().size());
-        assertEquals(1, v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).size());
+        assertEquals(2, v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).size());
         assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-funding"));
+        assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).contains("ORCID_ORG_ID"));
         assertEquals(4, v3Doc.getOrganisationIds().get(SolrConstants.GRID_ORGANISATION_ID).size());
         assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.GRID_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-invited-position"));
         assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.GRID_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-distinction"));
@@ -92,7 +114,7 @@ public class OrcidRecordToSolrDocumentTest {
         assertTrue(v3Doc.getResearchResourceProposalTitles().contains("Giant Laser Award2"));
         assertEquals(2, v3Doc.getResearchResourceItemNames().size());
         assertTrue(v3Doc.getResearchResourceItemNames().contains("Giant Laser 1")); 
-        assertTrue(v3Doc.getResearchResourceItemNames().contains("Moon Targets"));         
+        assertTrue(v3Doc.getResearchResourceItemNames().contains("Moon Targets"));        
     }
     
     private Record getRecord(String name) throws JAXBException {
