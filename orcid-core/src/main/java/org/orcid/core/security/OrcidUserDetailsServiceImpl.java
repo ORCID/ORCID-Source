@@ -29,6 +29,7 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
 import org.orcid.persistence.dao.EmailDao;
@@ -125,8 +126,25 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         } else {
             userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
         }
-        if (!salesForceManager.retrieveAccountIdsByOrcid(profile.getId()).isEmpty()) {
-            userDetails.getAuthorities().add(OrcidWebRole.ROLE_SELF_SERVICE);
+        
+        List<String> ids = salesForceManager.retrieveAccountIdsByOrcid(profile.getId());
+        if (!ids.isEmpty()) {
+            for (String id : ids) {
+                try {
+                    MemberDetails memberDetails = salesForceManager.retrieveDetails(id);
+                    String consortiumLeadId = (memberDetails.getMember() != null) ? memberDetails.getMember().getConsortiumLeadId() : null;
+                    if (salesForceManager.isActiveContact(id, consortiumLeadId, profile.getId())) {
+                        userDetails.getAuthorities().add(OrcidWebRole.ROLE_SELF_SERVICE);
+                        break;
+                    }
+                } catch (Exception e) {
+                    // If salesforce integration is down for any reason, lets
+                    // add the ROLE since we know the user have access at least
+                    // from the registry point of view
+                    LOGGER.warn("Salesforce integration seems to be down, couldn't verify user " + profile.getId(), e);                    
+                    userDetails.getAuthorities().add(OrcidWebRole.ROLE_SELF_SERVICE);
+                }
+            }
         }
         return userDetails;
     }
