@@ -30,7 +30,7 @@ public class GroupIdRecordEntity extends SourceAwareEntity<Long> implements Comp
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "group_id_record_seq")
-    @SequenceGenerator(name = "group_id_record_seq", sequenceName = "group_id_record_seq")
+    @SequenceGenerator(name = "group_id_record_seq", sequenceName = "group_id_record_seq", allocationSize = 1)
     public Long getId() {
         return this.id;
     }

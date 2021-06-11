@@ -27,7 +27,7 @@ public class ProfileHistoryEventEntity extends BaseEntity<Long> implements Seria
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_history_event_seq")
-    @SequenceGenerator(name = "profile_history_event_seq", sequenceName = "profile_history_event_seq")
+    @SequenceGenerator(name = "profile_history_event_seq", sequenceName = "profile_history_event_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

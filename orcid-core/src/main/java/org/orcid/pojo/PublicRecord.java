@@ -2,6 +2,8 @@ package org.orcid.pojo;
 
 import org.orcid.pojo.ajaxForm.*;
 
+import java.util.Date;
+
 public class PublicRecord {
 
     private String title;
@@ -14,6 +16,7 @@ public class PublicRecord {
     private Emails emails;
     private ExternalIdentifiersForm externalIdentifier;
     private WebsitesForm website;
+    private Date lastModifiedTime;
 
     public String getTitle() {
         return title;
@@ -93,5 +96,13 @@ public class PublicRecord {
 
     public void setWebsite(WebsitesForm website) {
         this.website = website;
+    }
+
+    public Date getLastModifiedTime() {
+        return lastModifiedTime;
+    }
+
+    public void setLastModifiedTime(Date lastModifiedTime) {
+        this.lastModifiedTime = lastModifiedTime;
     }
 }

@@ -53,7 +53,7 @@ public class OrcidOAuth2AuthenticationEntryPoint extends OAuth2AuthenticationEnt
     public void handleAsOrcidError(HttpServletRequest request, HttpServletResponse response, Exception authException) throws IOException, ServletException {
         try {
             ResponseEntity<OAuth2Exception> result = exceptionTranslator.translate(authException);
-            result = enhanceResponse(result, authException);
+            result = (ResponseEntity<OAuth2Exception>) enhanceResponse(result, authException);
             OrcidError orcidError = new OrcidError();
             orcidError.setResponseCode(result.getStatusCode().value());
             orcidError.setDeveloperMessage(result.getBody().getLocalizedMessage());

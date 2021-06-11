@@ -37,7 +37,7 @@ public class StatisticValuesEntity implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "values_seq")
-    @SequenceGenerator(name = "values_seq", sequenceName = "values_seq")
+    @SequenceGenerator(name = "values_seq", sequenceName = "values_seq", allocationSize = 1)
     @Column(name = "id")
     public Long getId() {
         return id;

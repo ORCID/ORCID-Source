@@ -13,7 +13,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
@@ -56,7 +55,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
+    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST, delay);
     }
 
@@ -74,54 +73,30 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
-    @Override
-    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {
-        List<IndexingStatus> indexingStatuses = new ArrayList<>(1);
-        indexingStatuses.add(indexingStatus);
-        return findOrcidsByIndexingStatus(indexingStatuses, maxResults, orcidsToExclude, delay);
-    }
-
-    /**
-     * Get a list of the ORCID id's with the given indexing status
-     * 
-     * @param indexingStatuses
-     *            The list of desired indexing status
-     * @param maxResults
-     *            Max number of results
-     * @param orcidsToExclude
-     *            List of ORCID id's to exclude from the results
-     * @return a list of object arrays where the object[0] contains the orcid id
-     *         and object[1] contains the indexing status
-     */
     @SuppressWarnings("unchecked")
-    private List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults,
-            Collection<String> orcidsToExclude, Integer delay) {
-        StringBuilder builder = new StringBuilder("SELECT p.orcid, p.indexing_status FROM profile p WHERE p.indexing_status IN :indexingStatus ");
-        if(delay != null && delay > 0) {
-            builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
+    @Override
+    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {                
+        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status = :indexingStatus ");
+        if(!IndexingStatus.FORCE_INDEXING.equals(indexingStatus)) {
+            builder.append(" AND (reviewed is true OR exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid)) ");
+            if(delay != null && delay > 0) {
+                builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
+            }            
         }
         if (!orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
         }
-        // Ordering by indexing status will force re-indexing to be lower
-        // priority than normal indexing
-        builder.append(" ORDER BY (p.last_modified > (NOW() - CAST('1' as INTERVAL HOUR))) DESC, indexing_status, p.last_modified");
+        // Ordering by last modified so we get the oldest modified first
+        builder.append(" ORDER BY p.last_modified");
         Query query = entityManager.createNativeQuery(builder.toString());
-        query.setParameter("indexingStatus", IndexingStatus.getNames(indexingStatuses));
+        query.setParameter("indexingStatus", indexingStatus.name());
         if (!orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
         query.setMaxResults(maxResults);
         // Sets a timeout for this query
         query.setHint("javax.persistence.query.timeout", queryTimeout);
-        List<Object[]> dbInfo = query.getResultList();
-        List<Pair<String, IndexingStatus>> results = new ArrayList<Pair<String, IndexingStatus>>();
-        dbInfo.stream().forEach(element -> {
-            IndexingStatus i = element[1] == null ? null : IndexingStatus.valueOf((String) element[1]);
-            Pair<String, IndexingStatus> pair = Pair.of((String) element[0], i);
-            results.add(pair);
-        });
-        return results;
+        return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
@@ -313,7 +288,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", orcid);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
-    }
+    }    
 
     @Override
     public void remove(String giverOrcid, String receiverOrcid) {
@@ -372,15 +347,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("messageOrcid", messageOrcid);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
-    }
-
-    @Override
-    public boolean exists(String orcid) {
-        TypedQuery<Long> query = entityManager.createQuery("select count(p.id) from ProfileEntity p where p.id = :orcid", Long.class);
-        query.setParameter("orcid", orcid);
-        Long result = query.getSingleResult();
-        return (result != null && result > 0);
-    }
+    }    
 
     @Override
     public IndexingStatus retrieveIndexingStatus(String orcid) {
@@ -626,11 +593,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     private boolean changeLockedStatus(String orcid, boolean locked, String reason, String description) {
         Query query = entityManager.createNativeQuery(
-                "update profile set last_modified=now(), indexing_status='REINDEX', record_locked=:locked, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
+                "update profile set last_modified=now(), indexing_status=:indexingStatus, record_locked=:locked, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("locked", locked);
         query.setParameter("lockReason", reason);
         query.setParameter("description", description);
+        query.setParameter("indexingStatus", (locked ? IndexingStatus.FORCE_INDEXING.name() : IndexingStatus.PENDING.name()));
         return query.executeUpdate() > 0;
     }
 
@@ -754,7 +722,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean deactivate(String orcid) {
-        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), profile_deactivation_date = now(), indexing_status = 'REINDEX' where orcid = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), profile_deactivation_date = now(), indexing_status = 'FORCE_INDEXING' where orcid = :orcid");
         query.setParameter("orcid", orcid);        
         return query.executeUpdate() > 0;
     }
@@ -825,6 +793,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     @Transactional
     public List<String> registeredBetween(Date startDate, Date endDate) {
@@ -839,5 +808,25 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public ProfileEntity merge(ProfileEntity entity) {
         return super.merge(entity);
+    }
+
+    /**
+     * Unindexable records are the ones that has been created or modified but have not granted permissions to a third party yet
+     * */    
+    @Override
+    @Transactional
+    public Integer markUnindexableRecordsAsDone(Integer lastModifiedDelay) {
+        Query query = entityManager.createNativeQuery("UPDATE profile p SET indexing_status = 'DONE' WHERE p.indexing_status = 'PENDING' AND reviewed IS NOT true AND NOT exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid) AND (p.last_modified < now() - INTERVAL '" + lastModifiedDelay +" min')");
+        // Sets a timeout for this query
+        query.setHint("javax.persistence.query.timeout", queryTimeout);
+        return query.executeUpdate();
+    }
+    
+    @Override
+    public boolean isOrcidValidAsDelegate(String orcid) {
+        TypedQuery<Long> query = entityManager.createQuery("SELECT count(orcid) FROM ProfileEntity WHERE orcid=:orcid AND profile_deactivation_date is NULL AND deprecated_date is NULL AND primary_record is NULL AND (record_locked is NULL OR record_locked is FALSE)", Long.class);
+        query.setParameter("orcid", orcid);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
     }
 }

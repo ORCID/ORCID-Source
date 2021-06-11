@@ -24,6 +24,9 @@ import { AccountService }
 import { GenericService } 
     from '../../shared/generic.service'; 
 
+import { AdminActionsService } 
+    from '../../shared/adminActions.service';   
+
 import { CommonService } 
     from '../../shared/common.service';
 
@@ -42,6 +45,7 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor(
         private delegatorsService: GenericService,
         private accountService: AccountService,
+        private adminActionsService: AdminActionsService,
         private commonSrvc: CommonService
     ) {
         this.sort = {
@@ -105,7 +109,17 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
       );
 
     selectDelegator(datum): void {
-        window.location.href = getBaseUri() + '/switch-user?username=' + datum.orcid;
+		this.adminActionsService.switchUserPost(datum.orcid).subscribe(
+		        data => {
+		          window.location.replace(getBaseUri() + '/my-orcid');
+		        },
+		        error => {
+		          // reload page anyway
+		          // switchUser request is handled by OrcidSwitchUserFilter.java which redirects /switch-user to /my-orcid
+		          // in non-local environments neither request completes successfully, although the user has been successfully switched
+		          window.location.replace(getBaseUri() + '/my-orcid');
+		        }
+		      );
     };
     
     //Default init functions provided by Angular Core

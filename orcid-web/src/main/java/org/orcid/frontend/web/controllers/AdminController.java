@@ -974,5 +974,4 @@ public class AdminController extends BaseController {
         resendIdMap.put("disabledIds", disabledIds);
         return resendIdMap;
     }
-    
 }
