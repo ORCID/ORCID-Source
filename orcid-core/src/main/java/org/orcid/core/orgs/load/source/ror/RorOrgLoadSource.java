@@ -1,4 +1,4 @@
-package org.orcid.core.orgs.load.source.grid;
+package org.orcid.core.orgs.load.source.ror;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,29 +45,29 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.sun.jersey.api.client.GenericType;
 
 @Component
-public class GridOrgLoadSource implements OrgLoadSource {
+public class RorOrgLoadSource implements OrgLoadSource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GridOrgLoadSource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RorOrgLoadSource.class);
 
     private static final String WIKIPEDIA_URL = "wikipedia_url";
 
     private static final String FILE_EXTENSION = ".zip";
 
-    private static final String DATA_FILE_NAME = "grid.json";
+    private static final String DATA_FILE_NAME = "ror.json";
 
-    @Value("${org.orcid.core.orgs.grid.enabled:true}")
+    @Value("${org.orcid.core.orgs.ror.enabled:true}")
     private boolean enabled;
 
     @Value("${org.orcid.core.orgs.clients.userAgent}")
     private String userAgent;
 
-    @Resource(name = "gridOrgDataClient")
+    @Resource(name = "rorOrgDataClient")
     private OrgDataClient orgDataClient;
 
-    @Value("${org.orcid.core.orgs.grid.localZipPath:/tmp/grid/grid.zip}")
+    @Value("${org.orcid.core.orgs.ror.localZipPath:/tmp/grid/ror.zip}")
     private String zipFilePath;
 
-    @Value("${org.orcid.core.orgs.grid.localDataPath:/tmp/grid/grid.json}")
+    @Value("${org.orcid.core.orgs.ror.localDataPath:/tmp/grid/ror.json}")
     private String localDataPath;
 
     @Resource
@@ -79,18 +79,18 @@ public class GridOrgLoadSource implements OrgLoadSource {
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
 
-    @Value("${org.orcid.core.orgs.grid.figshareCollectionArticlesUrl:https://api.figshare.com/v2/collections/3812929/articles}")
-    private String gridFigshareCollectionUrl;
+    @Value("${org.orcid.core.orgs.ror.figshareCollectionArticlesUrl:https://api.figshare.com/v2/collections/4596503/articles}")
+    private String rorFigshareCollectionUrl;
 
-    @Value("${org.orcid.core.orgs.grid.figshareArticleUrl:https://api.figshare.com/v2/articles/}")
-    private String gridFigshareArticleUrl;
+    @Value("${org.orcid.core.orgs.ror.figshareArticleUrl:https://api.figshare.com/v2/articles/}")
+    private String rorFigshareArticleUrl;
 
     @Resource
     private FileRotator fileRotator;
 
     @Override
     public String getSourceName() {
-        return "GRID";
+        return "ror";
     }
 
     @Override
@@ -108,7 +108,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
             fileRotator.removeFileIfExists(zipFilePath);
             fileRotator.removeFileIfExists(localDataPath);
             orgDataClient.init();
-            List<FigshareCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(gridFigshareCollectionUrl, userAgent,
+            List<FigshareCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(rorFigshareCollectionUrl, userAgent,
                     new GenericType<List<FigshareCollectionArticleSummary>>() {
                     });
             FigshareCollectionArticleSummary latest = null;
@@ -123,7 +123,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
                 }
             }
 
-            FigshareCollectionArticleDetails details = orgDataClient.get(gridFigshareArticleUrl + latest.getId(), userAgent,
+            FigshareCollectionArticleDetails details = orgDataClient.get(rorFigshareArticleUrl + latest.getId(), userAgent,
                     new GenericType<FigshareCollectionArticleDetails>() {
                     });
             List<FigshareCollectionArticleFile> files = details.getFiles();
@@ -171,17 +171,18 @@ public class GridOrgLoadSource implements OrgLoadSource {
 
     private boolean loadData() {
         try {
-            LOGGER.info("Loading GRID data...");
+            LOGGER.info("Loading ROR data...");
             Instant start = Instant.now();
             File fileToLoad = new File(localDataPath);
             if (!fileToLoad.exists()) {
                 LOGGER.error("File {} doesn't exist", localDataPath);
                 return false;
             }
-
+            
+            //ror returns the JSON as Array of institutes
             JsonNode rootNode = JsonUtils.read(fileToLoad);
-            ArrayNode institutes = (ArrayNode) rootNode.get("institutes");
-            institutes.forEach(institute -> {
+
+            rootNode.forEach(institute -> {
                 String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
                 String status = institute.get("status").isNull() ? null : institute.get("status").asText();
                 if ("active".equals(status)) {
@@ -230,13 +231,13 @@ public class GridOrgLoadSource implements OrgLoadSource {
             LOGGER.info("Time taken to process the data: {}", Duration.between(start, Instant.now()).toString());
             return true;
         } catch (Exception e) {
-            LOGGER.error("Error loading GRID data", e);
+            LOGGER.error("Error loading ROR data", e);
             return false;
         }
     }
 
     private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
-        OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.GRID.name());
+        OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.ROR.name());
         if (existingBySourceId != null) {
             if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType)) {
                 existingBySourceId.setCity(city);
@@ -373,7 +374,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
         orgDisambiguatedEntity.setUrl(url);
         orgDisambiguatedEntity.setOrgType(orgType);
         orgDisambiguatedEntity.setSourceId(sourceId);
-        orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+        orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
         orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;
     }
@@ -398,7 +399,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
      */
     private void deprecateOrg(String sourceId, String primarySourceId) {
         LOGGER.info("Deprecating org {} for {}", sourceId, primarySourceId);
-        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.GRID.name());
+        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.ROR.name());
         if (existingEntity != null) {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.DEPRECATED.name())
                     || !existingEntity.getSourceParentId().equals(primarySourceId)) {
@@ -409,7 +410,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
             }
         } else {
             OrgDisambiguatedEntity deprecatedEntity = new OrgDisambiguatedEntity();
-            deprecatedEntity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+            deprecatedEntity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
             deprecatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
             deprecatedEntity.setSourceId(sourceId);
             deprecatedEntity.setSourceParentId(primarySourceId);
@@ -424,7 +425,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
      */
     private void obsoleteOrg(String sourceId) {
         LOGGER.info("Marking or as obsolete {}", sourceId);
-        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.GRID.name());
+        OrgDisambiguatedEntity existingEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.ROR.name());
         if (existingEntity != null) {
             if (existingEntity.getStatus() == null || !existingEntity.getStatus().equals(OrganizationStatus.OBSOLETE.name())) {
                 existingEntity.setStatus(OrganizationStatus.OBSOLETE.name());
@@ -433,7 +434,7 @@ public class GridOrgLoadSource implements OrgLoadSource {
             }
         } else {
             OrgDisambiguatedEntity obsoletedEntity = new OrgDisambiguatedEntity();
-            obsoletedEntity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+            obsoletedEntity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
             obsoletedEntity.setStatus(OrganizationStatus.OBSOLETE.name());
             obsoletedEntity.setSourceId(sourceId);
             // We don't need to index it
