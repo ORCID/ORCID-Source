@@ -366,6 +366,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/dupicateResearcher.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/duplicateResearcher.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/claim/.*"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/resend-claim(\?.*)?"
