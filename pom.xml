@@ -27,7 +27,7 @@ the software.
     <properties>
         <spring.version>5.2.8.RELEASE</spring.version>
         <security.version>5.3.4.RELEASE</security.version>
-        <liquibase.version>4.3.1</liquibase.version>
+        <liquibase.version>3.10.3</liquibase.version>
         <jersey.version>1.19.1</jersey.version>
         <swagger.version>1.5.16</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
@@ -783,6 +783,16 @@ the software.
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
                 <version>${liquibase.version}</version>
+                <exclusions>
+			        <exclusion>
+			            <artifactId>logback-classic</artifactId>
+			            <groupId>ch.qos.logback</groupId>
+			        </exclusion>
+			        <exclusion>
+			            <artifactId>log4j-over-slf4j</artifactId>
+			            <groupId>org.slf4j</groupId>
+			        </exclusion>
+			    </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.ehcache</groupId>
