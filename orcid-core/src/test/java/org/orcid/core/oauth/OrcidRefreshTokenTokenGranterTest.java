@@ -413,7 +413,7 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         String tokenValue = "parent-token-" + time;
         String refreshTokenValue = "refresh-token-" + time;
         Boolean revokeOld = true;
-        Date parentTokenExpiration = new Date(time + 10000);
+        Date parentTokenExpiration = new Date(time + 15000);
         Long expireIn = null;
         
         OrcidOauth2TokenDetail parent = createToken(CLIENT_ID_1, USER_ORCID, tokenValue, refreshTokenValue, parentTokenExpiration, parentScope);

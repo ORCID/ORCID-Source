@@ -30,7 +30,7 @@ public class GivenPermissionToEntity extends BaseEntity<Long> implements Profile
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "given_permission_to_seq")
-    @SequenceGenerator(name = "given_permission_to_seq", sequenceName = "given_permission_to_seq")
+    @SequenceGenerator(name = "given_permission_to_seq", sequenceName = "given_permission_to_seq", allocationSize = 1)
     @Column(name = "given_permission_to_id")
     public Long getId() {
         return id;

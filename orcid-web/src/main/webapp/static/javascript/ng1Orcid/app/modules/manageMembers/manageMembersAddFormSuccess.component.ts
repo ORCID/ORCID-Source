@@ -20,6 +20,8 @@ import {
 import { Observable, Subject, Subscription } from "rxjs";
 import { ModalService } from "../../shared/modal.service";
 import { ManageMembersService } from "../../shared/manageMembers.service"
+import { AdminActionsService } 
+    from '../../shared/adminActions.service';  
 
 @Component({
   selector: "manage-member-add-form-success-ng2",
@@ -30,7 +32,8 @@ export class ManageMemberAddFormSuccessComponent
   private ngUnsubscribe: Subject<void> = new Subject<void>();
   newMember
 
-  constructor(private modalService: ModalService) {
+  constructor(private modalService: ModalService,
+			  private adminActionsService: AdminActionsService) {
 
   }
 
@@ -53,6 +56,20 @@ export class ManageMemberAddFormSuccessComponent
     })
 
   }
+
+   switchUser(obj): void {
+		this.adminActionsService.switchUserPost(obj).subscribe(
+		        data => {
+		          window.location.replace(getBaseUri() + '/my-orcid');
+		        },
+		        error => {
+		          // reload page anyway
+		          // switchUser request is handled by OrcidSwitchUserFilter.java which redirects /switch-user to /my-orcid
+		          // in non-local environments neither request completes successfully, although the user has been successfully switched
+		          window.location.replace(getBaseUri() + '/my-orcid');
+		        }
+		      );
+    };
 
   closeModal() {
     this.modalService.notifyOther({

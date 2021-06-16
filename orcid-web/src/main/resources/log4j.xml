@@ -4,7 +4,7 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
 	<appender name="FILE_APPENDER" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="./logs/orcid-web.log" />
+		<param name="File" value="/Users/camelia/Desktop/logs/orcid-web.log" />
 		<param name="Append" value="true" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5p [%t] %C{2} (%F:%L) - %m%n" />
@@ -35,7 +35,7 @@
     </logger>
 
 	<logger name="org.hibernate">
-		<level value="INFO" />
+		<level value="ERROR" />
 	</logger>
 	
 	<logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener">
@@ -60,7 +60,7 @@
 	<!-- Root Logger -->
 	<root>
 		<level value="DEBUG" />
-		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE_APPENDER" />
 	</root>
 
 </log4j:configuration>

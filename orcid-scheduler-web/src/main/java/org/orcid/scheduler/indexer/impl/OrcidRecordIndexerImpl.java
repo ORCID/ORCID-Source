@@ -1,7 +1,6 @@
 package org.orcid.scheduler.indexer.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -119,34 +118,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     public void processProfilesWithForceIndexingFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FORCE_INDEXING);
     }
-    
-    @Override
-    synchronized public void processUnclaimedProfilesToFlagForIndexing() {
-        LOG.info("About to process unclaimed profiles to flag for indexing");
-        List<String> orcidsToFlag = Collections.<String> emptyList();
-        do {
-            orcidsToFlag = profileDaoReadOnly.findUnclaimedNotIndexedAfterWaitPeriod(claimWaitPeriodDays, claimWaitPeriodDays * 2, INDEXING_BATCH_SIZE, orcidsToFlag);
-            LOG.info("Got batch of {} unclaimed profiles to flag for indexing", orcidsToFlag.size());
-            for (String orcid : orcidsToFlag) {
-                LOG.info("About to flag unclaimed profile for indexing: {}", orcid);
-                profileEntityManager.updateLastModifedAndIndexingStatus(orcid);
-            }
-        } while (!orcidsToFlag.isEmpty());
-    }
-    
-    @Override
-    synchronized public void processUnclaimedProfilesForReminder() {
-        LOG.info("About to process unclaimed profiles for reminder");
-        List<String> orcidsToRemind = Collections.<String> emptyList();
-        do {
-            orcidsToRemind = profileDaoReadOnly.findUnclaimedNeedingReminder(claimReminderAfterDays, INDEXING_BATCH_SIZE, orcidsToRemind);
-            LOG.info("Got batch of {} unclaimed profiles for reminder", orcidsToRemind.size());
-            for (final String orcid : orcidsToRemind) {
-                processUnclaimedProfileForReminderInTransaction(orcid);
-            }
-        } while (!orcidsToRemind.isEmpty());
-    }
-
+        
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status) {
         LOG.info("processing profiles with " + status.name() + " flag.");
         List<String> orcidsForIndexing = new ArrayList<>();

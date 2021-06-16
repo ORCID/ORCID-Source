@@ -35,7 +35,7 @@ public class EmailEventEntity extends BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "email_event_seq")
-    @SequenceGenerator(name = "email_event_seq", sequenceName = "email_event_seq")
+    @SequenceGenerator(name = "email_event_seq", sequenceName = "email_event_seq", allocationSize = 1)
     @Override
     public Long getId() {
         return id;

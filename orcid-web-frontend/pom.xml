@@ -5,7 +5,7 @@
     <packaging>war</packaging>
     <name>ORCID - Web frontend</name>
     <description>A web application the serves the Angular frontend of the ORCID Registry</description>
-	<version>-prod-release-1.289.0</version>    
+	<version>-prod-test-openjdk-11-v3</version>    
 		
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,7 +25,7 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-war-plugin</artifactId>
-              <version>2.6</version>
+              <version>3.2.2</version>
               <configuration>
                  <failOnMissingWebXml>false</failOnMissingWebXml>
               </configuration>

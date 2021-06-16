@@ -33,7 +33,7 @@ public class EmailScheduleEntity extends BaseEntity<Long> {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "email_schedule_seq")
-    @SequenceGenerator(name = "email_schedule_seq", sequenceName = "email_schedule_seq")
+    @SequenceGenerator(name = "email_schedule_seq", sequenceName = "email_schedule_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

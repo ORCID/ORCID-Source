@@ -59,7 +59,7 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "access_token_seq")
-    @SequenceGenerator(name = "access_token_seq", sequenceName = "access_token_seq")
+    @SequenceGenerator(name = "access_token_seq", sequenceName = "access_token_seq", allocationSize = 1)
     @Column(name = "id")
     public Long getId() {
         return id;

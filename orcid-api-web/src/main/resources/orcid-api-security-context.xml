@@ -4,7 +4,7 @@
        xmlns:sec="http://www.springframework.org/schema/security"
        xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.3.xsd
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
@@ -14,6 +14,8 @@
 	<sec:http pattern="/resources/**" security="none"/>
 	
 	<!-- enable swagger -->
+	<sec:http pattern="/static/**" security="none" create-session="stateless" />
+	
 	<sec:http pattern="/v2**/" security="none"/>
 	<sec:http pattern="/v2**/o2c.html" security="none"/>
 	<sec:http pattern="/v3**/" security="none"/>
@@ -21,7 +23,7 @@
 	
 	<!--  Status check -->
 	<sec:http pattern="/v*/apiStatus" security="none"/>
-
+	
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
         <sec:csrf disabled="true"/>

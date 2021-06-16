@@ -12,10 +12,7 @@
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
-    
-    <listener>
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-    </listener>
+
 
     <!-- Tell Spring where to find the context file -->
     <context-param>
@@ -158,6 +155,10 @@
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
             <param-value>org.orcid.api.filters.AnalyticsFilter</param-value>
         </init-param>
+        <init-param>
+			<param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
+			<param-value>/static/.*</param-value>
+		</init-param>
         <init-param>
         	<param-name>com.sun.jersey.config.feature.DisableWADL</param-name>
         	<param-value>true</param-value>

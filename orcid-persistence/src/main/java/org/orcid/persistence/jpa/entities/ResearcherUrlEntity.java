@@ -37,7 +37,7 @@ public class ResearcherUrlEntity extends SourceAwareEntity<Long> implements Comp
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "researcher_url_seq")
-    @SequenceGenerator(name = "researcher_url_seq", sequenceName = "researcher_url_seq")
+    @SequenceGenerator(name = "researcher_url_seq", sequenceName = "researcher_url_seq", allocationSize = 1)
     @Column(name = "id")
     public Long getId() {
         return id;

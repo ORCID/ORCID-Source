@@ -45,7 +45,7 @@ public class RevokeTokenEndpointFilter extends GenericFilterBean {
                 clientSecret = "";
             }
             
-            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(clientId, clientSecret);
+            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(clientId, "{noop}"+clientSecret);
 
             try {
                 Authentication auth = clientAuthenticationProvider.authenticate(authRequest);    

@@ -1,0 +1,35 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-SEQUENCES-HSQLDB-TESTS" author="Camelia Dumitru" dbms="hsqldb" context="default">
+        <createSequence sequenceName="address_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="author_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="author_other_name_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="institution_department_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="institution_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="reference_data_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="registration_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="related_url_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="work_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="biography_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="external_identifier_id_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="identifier_type_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="notification_seq" startValue="10000000" incrementBy="1"/>
+        <createSequence sequenceName="access_token_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="org_disambiguated_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="org_seq" startValue="10000" incrementBy="1"/>
+        <createSequence sequenceName="peer_review_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="profile_event_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="email_event_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="profile_funding_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="record_name_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="research_resource_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="research_resource_item_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="researcher_url_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="spam_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="org_affiliation_relation_seq" startValue="1000000" incrementBy="1"/>
+        <createSequence sequenceName="group_id_record_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="given_permission_to_seq" startValue="1000" incrementBy="1"/>
+        <createSequence sequenceName="notification_item_seq" startValue="1000" incrementBy="1"/>
+    </changeSet>    
+</databaseChangeLog>
