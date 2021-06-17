@@ -795,6 +795,11 @@ the software.
 			    </exclusions>
             </dependency>
             <dependency>
+    			<groupId>com.github.blagerweij</groupId>
+    			<artifactId>liquibase-sessionlock</artifactId>
+    			<version>1.2.5</version>
+			</dependency>
+            <dependency>
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>3.5.2</version>
