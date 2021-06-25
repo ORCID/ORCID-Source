@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -528,6 +529,10 @@ public class RegistrationController extends BaseController {
                 drList.add(dr);
             }
         }
+
+        Comparator<DupicateResearcher> comparator = Comparator.comparing(DupicateResearcher::getInstitution, Comparator.nullsLast(Comparator.naturalOrder()));
+        drList.sort(comparator);
+
         return drList;
     }
 
