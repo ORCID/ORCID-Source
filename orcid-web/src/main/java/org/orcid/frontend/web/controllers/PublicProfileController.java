@@ -296,21 +296,22 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
             Affiliation aff = affMap.get(Long.valueOf(id));
-            validateVisibility(aff.getVisibility());
-            AffiliationForm form = AffiliationForm.valueOf(aff);
-            form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
-            if (form.getOrgDisambiguatedId() != null) {
-                OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
-                form.setOrgDisambiguatedName(orgDisambiguated.getValue());
-                form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
-                form.setOrgDisambiguatedCity(orgDisambiguated.getCity());
-                form.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
-                form.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
-                if (orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
-                    form.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
+            if (aff != null && validateVisibility(aff.getVisibility())) {                          
+                AffiliationForm form = AffiliationForm.valueOf(aff);
+                form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
+                if (form.getOrgDisambiguatedId() != null) {
+                    OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
+                    form.setOrgDisambiguatedName(orgDisambiguated.getValue());
+                    form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
+                    form.setOrgDisambiguatedCity(orgDisambiguated.getCity());
+                    form.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
+                    form.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
+                    if (orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                        form.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
+                    }
                 }
+                affs.add(form);
             }
-            affs.add(form);
         }
 
         return affs;
@@ -322,8 +323,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             return null;
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         Funding funding = profileFundingManagerReadOnly.getFunding(orcid, id);
-        if (funding != null) {
-            validateVisibility(funding.getVisibility());
+        if (funding != null && validateVisibility(funding.getVisibility())) { ;
             sourceUtils.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);
 
@@ -346,7 +346,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
             return form;
         }
-        return null;
+        return new FundingForm();
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundingGroups.json")
@@ -397,7 +397,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResource.json", method = RequestMethod.GET)
     public @ResponseBody ResearchResource getResearchResource(@PathVariable("orcid") String orcid, @RequestParam("id") int id) {
         org.orcid.jaxb.model.v3.release.record.ResearchResource r = researchResourceManagerReadOnly.getResearchResource(orcid, Long.valueOf(id));
-        validateVisibility(r.getVisibility());
+        if (!validateVisibility(r.getVisibility())) {
+            return new ResearchResource();
+        }
         sourceUtils.setSourceName(r);
         return ResearchResource.fromValue(r);
     }
@@ -416,8 +418,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             return null;
 
         Work workObj = workManagerReadOnly.getWork(orcid, workId);
-        if (workObj != null) {
-            validateVisibility(workObj.getVisibility());
+        if (workObj != null && validateVisibility(workObj.getVisibility())) {
             sourceUtils.setSourceName(workObj);
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
@@ -450,13 +451,15 @@ public class PublicProfileController extends BaseWorkspaceController {
 
             return work;
         }
-        return null;
+        return new WorkForm();
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-review.json", method = RequestMethod.GET)
     public @ResponseBody PeerReviewForm getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") Long putCode) {
         PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
-        validateVisibility(peerReview.getVisibility());
+        if (!validateVisibility(peerReview.getVisibility())) {
+            return new PeerReviewForm();
+        }
         sourceUtils.setSourceName(peerReview);
         return PeerReviewForm.valueOf(peerReview);
     }
@@ -514,10 +517,8 @@ public class PublicProfileController extends BaseWorkspaceController {
         return numberFormat.format(bigDecimal);
     }
 
-    private void validateVisibility(Visibility v) {
-        if (!Visibility.PUBLIC.equals(v)) {
-            throw new IllegalArgumentException("Invalid request");
-        }
+    private boolean validateVisibility(Visibility v) {
+        return Visibility.PUBLIC.equals(v);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationDetails.json", method = RequestMethod.GET)
@@ -541,7 +542,9 @@ public class PublicProfileController extends BaseWorkspaceController {
             throw new IllegalArgumentException("Invalid affiliation type: " + type);
         }
 
-        validateVisibility(aff.getVisibility());
+        if (!validateVisibility(aff.getVisibility())) {
+            return new AffiliationForm();
+        }
         sourceUtils.setSourceName(aff);
         return AffiliationForm.valueOf(aff);
     }

@@ -3,6 +3,7 @@ package org.orcid.core.manager.impl;
 import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -70,7 +71,7 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
 
     private static final String OPPORTUNITY_INITIAL_STAGE_NAME = "Negotiation/Review";
 
-    private static final String OPPORTUNITY_PUBLIC_STAGE_NAME = "Invoice Paid";
+    private static final List<String> OPPORTUNITY_PUBLIC_STAGE_NAMES = Arrays.asList("Invoice Paid", "Agreement Signed", "Invoice Sent", "Partial Payment", "In Collections");
 
     private static final String OPPORTUNITY_NAME = "Opportunity from registry";
 
@@ -179,8 +180,8 @@ public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements Sa
             details.setMember(salesForceMember);
             List<SubMember> allSubMembers = findSubMembers(memberId);
             if (publicOnly) {
-                details.setSubMembers(
-                        allSubMembers.stream().filter(m -> OPPORTUNITY_PUBLIC_STAGE_NAME.equals(m.getOpportunity().getStageName())).collect(Collectors.toList()));
+                details.setSubMembers( 
+                        allSubMembers.stream().filter(m -> OPPORTUNITY_PUBLIC_STAGE_NAMES.contains(m.getOpportunity().getStageName())).collect(Collectors.toList()));
             } else {
                 details.setSubMembers(allSubMembers);
             }
