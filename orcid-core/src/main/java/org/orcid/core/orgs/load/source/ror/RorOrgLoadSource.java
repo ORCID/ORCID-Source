@@ -8,7 +8,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
@@ -24,9 +23,9 @@ import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
-import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleDetails;
-import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleFile;
-import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleSummary;
+import org.orcid.core.orgs.load.source.zenodo.api.ZenodoRecords;
+import org.orcid.core.orgs.load.source.zenodo.api.ZenodoRecordsHit;
+
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -35,14 +34,17 @@ import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.sun.jersey.api.client.GenericType;
+
 
 @Component
 public class RorOrgLoadSource implements OrgLoadSource {
@@ -78,12 +80,9 @@ public class RorOrgLoadSource implements OrgLoadSource {
 
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
-
-    @Value("${org.orcid.core.orgs.ror.figshareCollectionArticlesUrl:https://api.figshare.com/v2/collections/4596503/articles}")
-    private String rorFigshareCollectionUrl;
-
-    @Value("${org.orcid.core.orgs.ror.figshareArticleUrl:https://api.figshare.com/v2/articles/}")
-    private String rorFigshareArticleUrl;
+    
+    @Value("${org.orcid.core.orgs.ror.zenodoRecordsUrl:https://zenodo.org/api/records/?communities=ror-data}")
+    private String rorZenodoRecordsUrl;
 
     @Resource
     private FileRotator fileRotator;
@@ -108,41 +107,31 @@ public class RorOrgLoadSource implements OrgLoadSource {
             fileRotator.removeFileIfExists(zipFilePath);
             fileRotator.removeFileIfExists(localDataPath);
             orgDataClient.init();
-            List<FigshareCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(rorFigshareCollectionUrl, userAgent,
-                    new GenericType<List<FigshareCollectionArticleSummary>>() {
+            
+            ZenodoRecords zenodoRecords = orgDataClient.get(rorZenodoRecordsUrl+"&sort=-publication_date&size=1", userAgent,
+                    new GenericType<ZenodoRecords>() {
                     });
-            FigshareCollectionArticleSummary latest = null;
-            for (FigshareCollectionArticleSummary article : gridCollectionArticles) {
-                if (latest == null) {
-                    latest = article;
-                    continue;
-                }
-                Date posted = article.getTimeline().getPostedAsDate();
-                if (posted.after(latest.getTimeline().getPostedAsDate())) {
-                    latest = article;
-                }
-            }
-
-            FigshareCollectionArticleDetails details = orgDataClient.get(rorFigshareArticleUrl + latest.getId(), userAgent,
-                    new GenericType<FigshareCollectionArticleDetails>() {
-                    });
-            List<FigshareCollectionArticleFile> files = details.getFiles();
+            
+            ZenodoRecordsHit zenodoHit = zenodoRecords.getHits().getHits().get(0);
+     
             boolean success = false;
-            for (FigshareCollectionArticleFile file : files) {
-                if (file.getName().endsWith(FILE_EXTENSION)) {
-                    success = orgDataClient.downloadFile(file.getDownloadUrl(), userAgent, zipFilePath);
-                }
-            }
+            
+            //we are returning the collection ordered by last publication date and size 1, just need to get first element in the list
+            String zenodoUrl = zenodoHit.getFiles().get(0).getLinks().getSelf();
+            
+            success = orgDataClient.downloadFile(zenodoUrl, userAgent, zipFilePath);
             orgDataClient.cleanUp();
+         
             try {
+                LOGGER.info("Unzipping  ROR ....");
                 unzipData();
             } catch (IOException e) {
-                LOGGER.error("Error unzipping GRID data", e);
+                LOGGER.error("Error unzipping Zenodo ROR data", e);
                 throw new RuntimeException(e);
             }
             return success;
         } catch (Exception e) {
-            LOGGER.error("Error downloading GRID data", e);
+            LOGGER.error("Error downloading Zenodo ROR data", e);
             return false;
         }
     }
@@ -152,7 +141,6 @@ public class RorOrgLoadSource implements OrgLoadSource {
         ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath));
         ZipEntry zipEntry = zis.getNextEntry();
         while (zipEntry != null) {
-            if (DATA_FILE_NAME.equals(zipEntry.getName())) {
                 File jsonData = new File(localDataPath);
                 FileOutputStream fos = new FileOutputStream(jsonData);
                 int len;
@@ -161,9 +149,6 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 }
                 fos.close();
                 break;
-            } else {
-                zipEntry = zis.getNextEntry();
-            }
         }
         zis.closeEntry();
         zis.close();
@@ -193,18 +178,21 @@ public class RorOrgLoadSource implements OrgLoadSource {
                         ((ArrayNode) institute.get("types")).forEach(x -> sj.add(x.textValue()));
                         orgType = sj.toString();
                     }
-
+                    JsonNode countryNode = institute.get("country").isNull() ? null : (JsonNode) institute.get("country");
+                    Iso3166Country country = null;
+                    if(countryNode != null) {
+                        String countryCode = countryNode.get("country_code").isNull() ? null : countryNode.get("country_code").asText();
+                        country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
+                    }
                     ArrayNode addresses = institute.get("addresses").isNull() ? null : (ArrayNode) institute.get("addresses");
                     String city = null;
                     String region = null;
-                    Iso3166Country country = null;
+                    
                     if (addresses != null) {
                         for (JsonNode address : addresses) {
                             if (addresses.size() == 1 || (address.get("primary") != null && address.get("primary").asBoolean())) {
                                 city = address.get("city").isNull() ? null : address.get("city").asText();
-                                region = address.get("state").isNull() ? null : address.get("state").asText();
-                                String countryCode = address.get("country_code").isNull() ? null : address.get("country_code").asText();
-                                country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
+                                region = address.get("state").isNull() ? null : address.get("state").asText(); 
                             }
                         }
                     }
@@ -266,28 +254,14 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 Map.Entry<String, JsonNode> entry = (Map.Entry<String, JsonNode>) nodes.next();
                 String identifierTypeName = entry.getKey().toUpperCase();
                 String preferredId = entry.getValue().get("preferred").isNull() ? null : entry.getValue().get("preferred").asText();
-                ArrayNode elements = (ArrayNode) entry.getValue().get("all");
-                for (JsonNode extId : elements) {
-                    // If the external identifier doesn't exists yet
-                    OrgDisambiguatedExternalIdentifierEntity existingExternalId = orgDisambiguatedExternalIdentifierDao.findByDetails(org.getId(), extId.asText(),
-                            identifierTypeName);
-                    Boolean preferred = extId.asText().equals(preferredId);
-                    if (existingExternalId == null) {
-                        if (preferred) {
-                            createExternalIdentifier(org, extId.asText(), identifierTypeName, true);
-                        } else {
-                            createExternalIdentifier(org, extId.asText(), identifierTypeName, false);
-                        }
-                    } else {
-                        if (existingExternalId.getPreferred() != preferred) {
-                            existingExternalId.setPreferred(preferred);
-                            orgDisambiguatedManager.updateOrgDisambiguatedExternalIdentifier(existingExternalId);
-                            LOGGER.info("External identifier for {} with ext id {} and type {} was updated",
-                                    new Object[] { org.getId(), extId.asText(), identifierTypeName });
-                        } else {
-                            LOGGER.info("External identifier for {} with ext id {} and type {} already exists",
-                                    new Object[] { org.getId(), extId.asText(), identifierTypeName });
-                        }
+                if(StringUtils.equalsIgnoreCase(OrgDisambiguatedSourceType.GRID.name(), identifierTypeName)) {
+                    JsonNode extId = (JsonNode) entry.getValue().get("all");
+                    setExternalId(org, identifierTypeName, preferredId, extId);
+                }
+                else {
+                    ArrayNode elements = (ArrayNode) entry.getValue().get("all");
+                    for (JsonNode extId : elements) {
+                        setExternalId(org, identifierTypeName, preferredId, extId);
                     }
                 }
             }
@@ -300,6 +274,30 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 createExternalIdentifier(org, url, WIKIPEDIA_URL.toUpperCase(), true);
             } else {
                 LOGGER.info("Wikipedia URL for {} already exists", org.getId());
+            }
+        }
+    }
+    
+    private void setExternalId(OrgDisambiguatedEntity org, String identifierTypeName, String preferredId, JsonNode extId) {
+        // If the external identifier doesn't exists yet
+        OrgDisambiguatedExternalIdentifierEntity existingExternalId = orgDisambiguatedExternalIdentifierDao.findByDetails(org.getId(), extId.asText(),
+                identifierTypeName);
+        Boolean preferred = extId.asText().equals(preferredId);
+        if (existingExternalId == null) {
+            if (preferred) {
+                createExternalIdentifier(org, extId.asText(), identifierTypeName, true);
+            } else {
+                createExternalIdentifier(org, extId.asText(), identifierTypeName, false);
+            }
+        } else {
+            if (existingExternalId.getPreferred() != preferred) {
+                existingExternalId.setPreferred(preferred);
+                orgDisambiguatedManager.updateOrgDisambiguatedExternalIdentifier(existingExternalId);
+                LOGGER.info("External identifier for {} with ext id {} and type {} was updated",
+                        new Object[] { org.getId(), extId.asText(), identifierTypeName });
+            } else {
+                LOGGER.info("External identifier for {} with ext id {} and type {} already exists",
+                        new Object[] { org.getId(), extId.asText(), identifierTypeName });
             }
         }
     }
@@ -446,6 +444,6 @@ public class RorOrgLoadSource implements OrgLoadSource {
     @Override
     public boolean isEnabled() {
         return enabled;
-    }
-
+    }   
+    
 }

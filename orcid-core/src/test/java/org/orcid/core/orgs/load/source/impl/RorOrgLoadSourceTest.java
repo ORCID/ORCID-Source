@@ -72,14 +72,10 @@ public class RorOrgLoadSourceTest {
         MockitoAnnotations.initMocks(this);
         
         ReflectionTestUtils.setField(rorOrgLoadSource, "userAgent", "userAgent");
-        ReflectionTestUtils.setField(rorOrgLoadSource, "rorFigshareCollectionUrl", "rorFigshareCollectionUrl");
-        ReflectionTestUtils.setField(rorOrgLoadSource, "rorFigshareArticleUrl", "rorFigshareArticleUrl/");
+        ReflectionTestUtils.setField(rorOrgLoadSource, "rorZenodoRecordsUrl", "rorZenodoRecordsUrl");
         ReflectionTestUtils.setField(rorOrgLoadSource, "enabled", true);
         
-        when(orgDataClient.get(Mockito.eq("rorFigshareCollectionUrl"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(Arrays.asList(getFigsharerorCollectionArticleSummary(1, "2019-01-01T07:00:00"), getFigsharerorCollectionArticleSummary(2, "2020-01-01T07:00:00"), getFigsharerorCollectionArticleSummary(3, "2020-06-01T07:00:00")));
-        when(orgDataClient.get(Mockito.eq("rorFigshareArticleUrl/1"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigsharerorCollectionArticleDetails(1));
-        when(orgDataClient.get(Mockito.eq("rorFigshareArticleUrl/2"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigsharerorCollectionArticleDetails(2));
-        when(orgDataClient.get(Mockito.eq("rorFigshareArticleUrl/3"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigsharerorCollectionArticleDetails(3));
+        when(orgDataClient.get(Mockito.eq("rorZenodoRecordsUrl"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(Arrays.asList(getFigsharerorCollectionArticleSummary(1, "2019-01-01T07:00:00"), getFigsharerorCollectionArticleSummary(2, "2020-01-01T07:00:00"), getFigsharerorCollectionArticleSummary(3, "2020-06-01T07:00:00")));
         when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
@@ -112,13 +108,7 @@ public class RorOrgLoadSourceTest {
         verify(fileRotator, Mockito.times(1)).removeFileIfExists(Mockito.eq(testFile.getAbsolutePath()));
         
         // verify collection with identifier 3 (see setUp method) is chosen
-        verify(orgDataClient, Mockito.times(1)).get(Mockito.eq("rorFigshareCollectionUrl"), Mockito.eq("userAgent"), Mockito.any());
-        verify(orgDataClient, Mockito.never()).get(Mockito.eq("rorFigshareArticleUrl/1"), Mockito.eq("userAgent"), Mockito.any());
-        verify(orgDataClient, Mockito.never()).get(Mockito.eq("rorFigshareArticleUrl/2"), Mockito.eq("userAgent"), Mockito.any());
-        verify(orgDataClient, Mockito.times(1)).get(Mockito.eq("rorFigshareArticleUrl/3"), Mockito.eq("userAgent"), Mockito.any());
-        verify(orgDataClient, Mockito.never()).downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString(), Mockito.anyString());
-        verify(orgDataClient, Mockito.never()).downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString(), Mockito.anyString());
-        verify(orgDataClient, Mockito.times(1)).downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString(), Mockito.anyString());
+        verify(orgDataClient, Mockito.never()).get(Mockito.eq("rorZenodoRecordsUrl"), Mockito.eq("userAgent"), Mockito.any());
     }
 
     @Test
@@ -278,7 +268,7 @@ public class RorOrgLoadSourceTest {
         OrgDisambiguatedEntity orgToBeUpdated = captor.getValue();
         assertNotEquals(OrganizationStatus.DEPRECATED.name(), orgToBeUpdated.getStatus());
         assertNotEquals(OrganizationStatus.OBSOLETE.name(), orgToBeUpdated.getStatus());
-        assertEquals(Iso3166Country.CR.name(), orgToBeUpdated.getCountry());
+        assertEquals(Iso3166Country.AU.name(), orgToBeUpdated.getCountry());
         assertEquals(Long.valueOf(1), orgToBeUpdated.getId());
         assertEquals("City One Updated", orgToBeUpdated.getCity());
         assertEquals(IndexingStatus.PENDING, orgToBeUpdated.getIndexingStatus());
