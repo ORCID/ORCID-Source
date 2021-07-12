@@ -38,7 +38,11 @@ public class Email implements ErrorsInterface {
             email.setValue(e.getEmail());
             email.setVerified(e.isVerified());
             email.setVisibility(e.getVisibility());
-            
+
+            if (e.getSource().getSourceName() != null) {
+                email.setSourceName(e.getSource().getSourceName().getContent());
+            }
+
             if (e.getSource().getAssertionOriginClientId() != null) {
                 email.setAssertionOriginClientId(e.getSource().getAssertionOriginClientId().getPath());
             }
