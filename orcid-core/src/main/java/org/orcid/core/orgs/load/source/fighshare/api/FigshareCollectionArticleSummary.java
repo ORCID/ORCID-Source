@@ -1,4 +1,4 @@
-package org.orcid.core.orgs.load.source.grid.api;
+package org.orcid.core.orgs.load.source.fighshare.api;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "defined_type_name", "handle", "url_private_html", "timeline", "url_private_api", "url_public_api", "id", "doi", "thumb", "title", "url",
         "defined_type", "resource_title", "url_public_html", "resource_doi", "published_date", "group_id" })
-public class FigshareGridCollectionArticleSummary {
+public class FigshareCollectionArticleSummary {
 
     @JsonProperty("defined_type_name")
     private String definedTypeName;
@@ -22,7 +22,7 @@ public class FigshareGridCollectionArticleSummary {
     @JsonProperty("url_private_html")
     private String urlPrivateHtml;
     @JsonProperty("timeline")
-    private GridCollectionTimeline timeline;
+    private FigshareCollectionTimeline timeline;
     @JsonProperty("url_private_api")
     private String urlPrivateApi;
     @JsonProperty("url_public_api")
@@ -83,12 +83,12 @@ public class FigshareGridCollectionArticleSummary {
     }
 
     @JsonProperty("timeline")
-    public GridCollectionTimeline getTimeline() {
+    public FigshareCollectionTimeline getTimeline() {
         return timeline;
     }
 
     @JsonProperty("timeline")
-    public void setTimeline(GridCollectionTimeline timeline) {
+    public void setTimeline(FigshareCollectionTimeline timeline) {
         this.timeline = timeline;
     }
 

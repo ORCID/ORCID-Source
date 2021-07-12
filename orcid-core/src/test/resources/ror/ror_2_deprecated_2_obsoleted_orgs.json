@@ -1,0 +1,6 @@
+[
+		{"id":"ror.r.1","status":"redirected","redirect":"ror.1"},
+		{"id":"ror.r.2","status":"redirected","redirect":"ror.2"},
+		{"id":"ror.o.1","status":"obsolete"},
+		{"id":"ror.o.2","status":"obsolete"}
+	]

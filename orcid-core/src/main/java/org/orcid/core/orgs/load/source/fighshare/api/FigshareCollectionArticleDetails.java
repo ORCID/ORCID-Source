@@ -1,4 +1,4 @@
-package org.orcid.core.orgs.load.source.grid.api;
+package org.orcid.core.orgs.load.source.fighshare.api;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(value = { "embargo_options", "embargo_title" })
-public class FigshareGridCollectionArticleDetails {
+public class FigshareCollectionArticleDetails {
 
     @JsonProperty("defined_type_name")
     private String definedTypeName;
@@ -55,7 +55,7 @@ public class FigshareGridCollectionArticleDetails {
     @JsonProperty("confidential_reason")
     private String confidentialReason;
     @JsonProperty("files")
-    private List<FigshareGridCollectionArticleFile> files = null;
+    private List<FigshareCollectionArticleFile> files = null;
     @JsonProperty("handle")
     private String handle;
     @JsonProperty("description")
@@ -63,7 +63,7 @@ public class FigshareGridCollectionArticleDetails {
     @JsonProperty("tags")
     private List<String> tags = null;
     @JsonProperty("timeline")
-    private GridCollectionTimeline timeline;
+    private FigshareCollectionTimeline timeline;
     @JsonProperty("url_private_html")
     private String urlPrivateHtml;
     @JsonProperty("published_date")
@@ -71,11 +71,11 @@ public class FigshareGridCollectionArticleDetails {
     @JsonProperty("modified_date")
     private String modifiedDate;
     @JsonProperty("authors")
-    private List<FigshareGridCollectionArticleAuthor> authors = null;
+    private List<FigshareCollectionArticleAuthor> authors = null;
     @JsonProperty("is_public")
     private Boolean isPublic;
     @JsonProperty("categories")
-    private List<FigshareGridCollectionArticleCategory> categories = null;
+    private List<FigshareCollectionArticleCategory> categories = null;
     @JsonProperty("thumb")
     private String thumb;
     @JsonProperty("is_confidential")
@@ -85,7 +85,7 @@ public class FigshareGridCollectionArticleDetails {
     @JsonProperty("has_linked_file")
     private Boolean hasLinkedFile;
     @JsonProperty("license")
-    private FigshareGridCollectionArticleLicense license;
+    private FigshareCollectionArticleLicense license;
     @JsonProperty("url")
     private String url;
     @JsonProperty("resource_title")
@@ -320,12 +320,12 @@ public class FigshareGridCollectionArticleDetails {
     }
 
     @JsonProperty("files")
-    public List<FigshareGridCollectionArticleFile> getFiles() {
+    public List<FigshareCollectionArticleFile> getFiles() {
         return files;
     }
 
     @JsonProperty("files")
-    public void setFiles(List<FigshareGridCollectionArticleFile> files) {
+    public void setFiles(List<FigshareCollectionArticleFile> files) {
         this.files = files;
     }
 
@@ -360,12 +360,12 @@ public class FigshareGridCollectionArticleDetails {
     }
 
     @JsonProperty("timeline")
-    public GridCollectionTimeline getTimeline() {
+    public FigshareCollectionTimeline getTimeline() {
         return timeline;
     }
 
     @JsonProperty("timeline")
-    public void setTimeline(GridCollectionTimeline timeline) {
+    public void setTimeline(FigshareCollectionTimeline timeline) {
         this.timeline = timeline;
     }
 
@@ -400,12 +400,12 @@ public class FigshareGridCollectionArticleDetails {
     }
 
     @JsonProperty("authors")
-    public List<FigshareGridCollectionArticleAuthor> getAuthors() {
+    public List<FigshareCollectionArticleAuthor> getAuthors() {
         return authors;
     }
 
     @JsonProperty("authors")
-    public void setAuthors(List<FigshareGridCollectionArticleAuthor> authors) {
+    public void setAuthors(List<FigshareCollectionArticleAuthor> authors) {
         this.authors = authors;
     }
 
@@ -420,12 +420,12 @@ public class FigshareGridCollectionArticleDetails {
     }
 
     @JsonProperty("categories")
-    public List<FigshareGridCollectionArticleCategory> getCategories() {
+    public List<FigshareCollectionArticleCategory> getCategories() {
         return categories;
     }
 
     @JsonProperty("categories")
-    public void setCategories(List<FigshareGridCollectionArticleCategory> categories) {
+    public void setCategories(List<FigshareCollectionArticleCategory> categories) {
         this.categories = categories;
     }
 
@@ -470,12 +470,12 @@ public class FigshareGridCollectionArticleDetails {
     }
 
     @JsonProperty("license")
-    public FigshareGridCollectionArticleLicense getLicense() {
+    public FigshareCollectionArticleLicense getLicense() {
         return license;
     }
 
     @JsonProperty("license")
-    public void setLicense(FigshareGridCollectionArticleLicense license) {
+    public void setLicense(FigshareCollectionArticleLicense license) {
         this.license = license;
     }
 

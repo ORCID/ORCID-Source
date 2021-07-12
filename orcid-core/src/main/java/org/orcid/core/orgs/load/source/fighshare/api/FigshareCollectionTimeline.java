@@ -1,4 +1,4 @@
-package org.orcid.core.orgs.load.source.grid.api;
+package org.orcid.core.orgs.load.source.fighshare.api;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "revision", "firstOnline", "posted" })
-public class GridCollectionTimeline {
+public class FigshareCollectionTimeline {
     
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 

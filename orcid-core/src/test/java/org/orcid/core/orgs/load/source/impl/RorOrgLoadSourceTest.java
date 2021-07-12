@@ -37,7 +37,7 @@ import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleDe
 import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleFile;
 import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleSummary;
 import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionTimeline;
-import org.orcid.core.orgs.load.source.grid.GridOrgLoadSource;
+import org.orcid.core.orgs.load.source.ror.RorOrgLoadSource;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -47,7 +47,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class GridOrgLoadSourceTest {
+public class RorOrgLoadSourceTest {
 
     @Mock
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
@@ -65,69 +65,59 @@ public class GridOrgLoadSourceTest {
     private OrgDataClient orgDataClient;
     
     @InjectMocks
-    private GridOrgLoadSource gridOrgLoadSource;
+    private RorOrgLoadSource rorOrgLoadSource;
 
     @Before
     public void before() throws URISyntaxException {
         MockitoAnnotations.initMocks(this);
         
-        ReflectionTestUtils.setField(gridOrgLoadSource, "userAgent", "userAgent");
-        ReflectionTestUtils.setField(gridOrgLoadSource, "gridFigshareCollectionUrl", "gridFigshareCollectionUrl");
-        ReflectionTestUtils.setField(gridOrgLoadSource, "gridFigshareArticleUrl", "gridFigshareArticleUrl/");
-        ReflectionTestUtils.setField(gridOrgLoadSource, "enabled", true);
+        ReflectionTestUtils.setField(rorOrgLoadSource, "userAgent", "userAgent");
+        ReflectionTestUtils.setField(rorOrgLoadSource, "rorZenodoRecordsUrl", "rorZenodoRecordsUrl");
+        ReflectionTestUtils.setField(rorOrgLoadSource, "enabled", true);
         
-        when(orgDataClient.get(Mockito.eq("gridFigshareCollectionUrl"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(Arrays.asList(getFigshareGridCollectionArticleSummary(1, "2019-01-01T07:00:00"), getFigshareGridCollectionArticleSummary(2, "2020-01-01T07:00:00"), getFigshareGridCollectionArticleSummary(3, "2020-06-01T07:00:00")));
-        when(orgDataClient.get(Mockito.eq("gridFigshareArticleUrl/1"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigshareGridCollectionArticleDetails(1));
-        when(orgDataClient.get(Mockito.eq("gridFigshareArticleUrl/2"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigshareGridCollectionArticleDetails(2));
-        when(orgDataClient.get(Mockito.eq("gridFigshareArticleUrl/3"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigshareGridCollectionArticleDetails(3));
+        when(orgDataClient.get(Mockito.eq("rorZenodoRecordsUrl"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(Arrays.asList(getFigsharerorCollectionArticleSummary(1, "2019-01-01T07:00:00"), getFigsharerorCollectionArticleSummary(2, "2020-01-01T07:00:00"), getFigsharerorCollectionArticleSummary(3, "2020-06-01T07:00:00")));
         when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
         
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/dummy.zip").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/dummy.zip").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "zipFilePath", testFile.getAbsolutePath());
+        ReflectionTestUtils.setField(rorOrgLoadSource, "zipFilePath", testFile.getAbsolutePath());
     }
     
     @Test
     public void testGetSourceName() {
-        assertEquals("GRID", gridOrgLoadSource.getSourceName());
+        assertEquals("ror", rorOrgLoadSource.getSourceName());
     }
     
     @Test(expected = LoadSourceDisabledException.class)
     public void testSetDisabled() {
-        ReflectionTestUtils.setField(gridOrgLoadSource, "enabled", false);
-        gridOrgLoadSource.loadOrgData();
+        ReflectionTestUtils.setField(rorOrgLoadSource, "enabled", false);
+        rorOrgLoadSource.loadOrgData();
     }
     
     @Test
     public void testDownloadOrgData() throws URISyntaxException {
         // doesn't matter which data file we choose as this test isn't testing data loading
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
 
-        gridOrgLoadSource.downloadOrgData();
+        rorOrgLoadSource.downloadOrgData();
         
         verify(fileRotator, Mockito.times(1)).removeFileIfExists(Mockito.eq(testFile.getAbsolutePath()));
         
         // verify collection with identifier 3 (see setUp method) is chosen
-        verify(orgDataClient, Mockito.times(1)).get(Mockito.eq("gridFigshareCollectionUrl"), Mockito.eq("userAgent"), Mockito.any());
-        verify(orgDataClient, Mockito.never()).get(Mockito.eq("gridFigshareArticleUrl/1"), Mockito.eq("userAgent"), Mockito.any());
-        verify(orgDataClient, Mockito.never()).get(Mockito.eq("gridFigshareArticleUrl/2"), Mockito.eq("userAgent"), Mockito.any());
-        verify(orgDataClient, Mockito.times(1)).get(Mockito.eq("gridFigshareArticleUrl/3"), Mockito.eq("userAgent"), Mockito.any());
-        verify(orgDataClient, Mockito.never()).downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString(), Mockito.anyString());
-        verify(orgDataClient, Mockito.never()).downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString(), Mockito.anyString());
-        verify(orgDataClient, Mockito.times(1)).downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString(), Mockito.anyString());
+        verify(orgDataClient, Mockito.never()).get(Mockito.eq("rorZenodoRecordsUrl"), Mockito.eq("userAgent"), Mockito.any());
     }
 
     @Test
     public void execute_Stats_Test_1() throws URISyntaxException {
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
 
-        gridOrgLoadSource.loadOrgData();
+        rorOrgLoadSource.loadOrgData();
 
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(orgDisambiguatedManager, Mockito.times(1)).createOrgDisambiguated(captor.capture());
@@ -142,10 +132,10 @@ public class GridOrgLoadSourceTest {
 
     @Test
     public void execute_Stats_Test_2() throws URISyntaxException {
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_4_orgs_27_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_4_orgs_27_external_identifiers.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadOrgData();
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        rorOrgLoadSource.loadOrgData();
 
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
         verify(orgDisambiguatedManager, Mockito.times(4)).createOrgDisambiguated(captor.capture());
@@ -161,15 +151,15 @@ public class GridOrgLoadSourceTest {
 
     @Test
     public void execute_Stats_Test_3() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.1", OrgDisambiguatedSourceType.GRID.name())).thenReturn(new OrgDisambiguatedEntity());
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.2", OrgDisambiguatedSourceType.GRID.name())).thenReturn(new OrgDisambiguatedEntity());
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.1", OrgDisambiguatedSourceType.GRID.name())).thenReturn(new OrgDisambiguatedEntity());
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.2", OrgDisambiguatedSourceType.GRID.name())).thenReturn(new OrgDisambiguatedEntity());
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.r.1", OrgDisambiguatedSourceType.ROR.name())).thenReturn(new OrgDisambiguatedEntity());
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.r.2", OrgDisambiguatedSourceType.ROR.name())).thenReturn(new OrgDisambiguatedEntity());
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.o.1", OrgDisambiguatedSourceType.ROR.name())).thenReturn(new OrgDisambiguatedEntity());
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.o.2", OrgDisambiguatedSourceType.ROR.name())).thenReturn(new OrgDisambiguatedEntity());
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadOrgData();
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        rorOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, Mockito.never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -195,18 +185,18 @@ public class GridOrgLoadSourceTest {
 
     @Test
     public void execute_JustAddOneExeternalIdentifier_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.1", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(1L);
                 entity.setName("org_1");
-                entity.setSourceId("grid.1");
+                entity.setSourceId("ror.1");
                 entity.setCity("City One");
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+                entity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
                 entity.setUrl("http://link1.com");
                 return entity;
             }
@@ -221,10 +211,10 @@ public class GridOrgLoadSourceTest {
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_6_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_1_org_6_external_identifiers.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadOrgData();
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        rorOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
 
@@ -236,18 +226,18 @@ public class GridOrgLoadSourceTest {
 
     @Test
     public void execute_UpdateExistingInstitute_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.1", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(1L);
                 entity.setName("org_1");
-                entity.setSourceId("grid.1");
+                entity.setSourceId("ror.1");
                 entity.setCity("City One");
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+                entity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
                 entity.setStatus("active");
                 entity.setUrl("http://link1.com");
                 return entity;
@@ -263,10 +253,10 @@ public class GridOrgLoadSourceTest {
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_updated_5_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_1_org_updated_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadOrgData();
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        rorOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -278,33 +268,33 @@ public class GridOrgLoadSourceTest {
         OrgDisambiguatedEntity orgToBeUpdated = captor.getValue();
         assertNotEquals(OrganizationStatus.DEPRECATED.name(), orgToBeUpdated.getStatus());
         assertNotEquals(OrganizationStatus.OBSOLETE.name(), orgToBeUpdated.getStatus());
-        assertEquals(Iso3166Country.CR.name(), orgToBeUpdated.getCountry());
+        assertEquals(Iso3166Country.AU.name(), orgToBeUpdated.getCountry());
         assertEquals(Long.valueOf(1), orgToBeUpdated.getId());
         assertEquals("City One Updated", orgToBeUpdated.getCity());
         assertEquals(IndexingStatus.PENDING, orgToBeUpdated.getIndexingStatus());
         assertEquals("org_1_updated", orgToBeUpdated.getName());
         assertEquals("type_1,type_2", orgToBeUpdated.getOrgType());
         assertEquals("San Jose", orgToBeUpdated.getRegion());
-        assertEquals("grid.1", orgToBeUpdated.getSourceId());
-        assertEquals(OrgDisambiguatedSourceType.GRID.name(), orgToBeUpdated.getSourceType());
+        assertEquals("ror.1", orgToBeUpdated.getSourceId());
+        assertEquals(OrgDisambiguatedSourceType.ROR.name(), orgToBeUpdated.getSourceType());
         assertEquals("active", orgToBeUpdated.getStatus());
         assertEquals("http://link1.com/updated", orgToBeUpdated.getUrl());
     }
 
     @Test
     public void execute_NothingToCreateNothingToUpdate_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.1", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(1L);
                 entity.setName("org_1");
-                entity.setSourceId("grid.1");
+                entity.setSourceId("ror.1");
                 entity.setCity("City One");
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+                entity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
                 entity.setUrl("http://link1.com");
                 return entity;
             }
@@ -319,10 +309,10 @@ public class GridOrgLoadSourceTest {
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadOrgData();
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        rorOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -332,48 +322,48 @@ public class GridOrgLoadSourceTest {
 
     @Test
     public void execute_DeprecatedObsoleteInstitutes_1_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.o.1", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(1L);
-                entity.setSourceId("grid.o.1");
+                entity.setSourceId("ror.o.1");
                 return entity;
             }
         });
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.o.2", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.o.2", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(2L);
-                entity.setSourceId("grid.o.2");
+                entity.setSourceId("ror.o.2");
                 return entity;
             }
         });
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.r.1", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(3L);
-                entity.setSourceId("grid.r.1");
+                entity.setSourceId("ror.r.1");
                 return entity;
             }
         });
 
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.r.2", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.r.2", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(4L);
-                entity.setSourceId("grid.r.2");
+                entity.setSourceId("ror.r.2");
                 return entity;
             }
         });
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadOrgData();
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        rorOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).persist(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -390,18 +380,18 @@ public class GridOrgLoadSourceTest {
         for (OrgDisambiguatedEntity entity : orgsToBeUpdated) {
             if ("OBSOLETE".equals(entity.getStatus())) {
                 if (entity.getId() == 1L) {
-                    assertEquals("grid.o.1", entity.getSourceId());
+                    assertEquals("ror.o.1", entity.getSourceId());
                 } else if (entity.getId() == 2L) {
-                    assertEquals("grid.o.2", entity.getSourceId());
+                    assertEquals("ror.o.2", entity.getSourceId());
                 } else {
                     fail("Invalid obsolete org id: " + entity.getId());
                 }
                 obsoleteCount++;
             } else if ("DEPRECATED".equals(entity.getStatus())) {
                 if (entity.getId() == 3L) {
-                    assertEquals("grid.1", entity.getSourceParentId());
+                    assertEquals("ror.1", entity.getSourceParentId());
                 } else if (entity.getId() == 4L) {
-                    assertEquals("grid.2", entity.getSourceParentId());
+                    assertEquals("ror.2", entity.getSourceParentId());
                 } else {
                     fail("Invalid deprecated org id: " + entity.getId());
                 }
@@ -414,10 +404,10 @@ public class GridOrgLoadSourceTest {
 
     @Test
     public void execute_DeprecatedObsoleteInstitutes_2_Test() throws URISyntaxException {
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_2_deprecated_2_obsoleted_orgs.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_2_deprecated_2_obsoleted_orgs.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadOrgData();
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        rorOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).merge(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -433,10 +423,10 @@ public class GridOrgLoadSourceTest {
         List<OrgDisambiguatedEntity> orgsToBeUpdated = captor.getAllValues();
         for (OrgDisambiguatedEntity entity : orgsToBeUpdated) {
             if ("OBSOLETE".equals(entity.getStatus())) {
-                assertThat(entity.getSourceId(), anyOf(is("grid.o.1"), is("grid.o.2")));
+                assertThat(entity.getSourceId(), anyOf(is("ror.o.1"), is("ror.o.2")));
                 obsoleteCount++;
             } else if ("DEPRECATED".equals(entity.getStatus())) {
-                assertThat(entity.getSourceId(), anyOf(is("grid.r.1"), is("grid.r.2")));
+                assertThat(entity.getSourceId(), anyOf(is("ror.r.1"), is("ror.r.2")));
                 deprecatedCount++;
             }
         }
@@ -446,18 +436,18 @@ public class GridOrgLoadSourceTest {
 
     @Test
     public void execute_AddMissingWikipediaExtId_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.1", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(1L);
                 entity.setName("org_1");
-                entity.setSourceId("grid.1");
+                entity.setSourceId("ror.1");
                 entity.setCity("City One");
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+                entity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
                 entity.setStatus("active");
                 entity.setUrl("http://link1.com");
                 return entity;
@@ -474,10 +464,10 @@ public class GridOrgLoadSourceTest {
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_5_external_identifiers.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_1_org_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        gridOrgLoadSource.loadOrgData();
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        rorOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -496,18 +486,18 @@ public class GridOrgLoadSourceTest {
 
     @Test
     public void execute_UpdatePreferredIndicator_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("grid.1", OrgDisambiguatedSourceType.GRID.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.1", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
             @Override
             public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
                 OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
                 entity.setId(1L);
                 entity.setName("org_1");
-                entity.setSourceId("grid.1");
+                entity.setSourceId("ror.1");
                 entity.setCity("City One");
                 entity.setCountry(Iso3166Country.US.name());
                 entity.setOrgType("type_1");
                 entity.setRegion("Alabama");
-                entity.setSourceType(OrgDisambiguatedSourceType.GRID.name());
+                entity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
                 entity.setUrl("http://link1.com");
                 return entity;
             }
@@ -528,11 +518,11 @@ public class GridOrgLoadSourceTest {
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(wikidata1);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA2", "WIKIDATA")).thenReturn(wikidata2);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource("grid/grid_1_org_2_ext_ids_#2_preferred.json").toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_1_org_2_ext_ids_#2_preferred.json").toURI());
         File testFile = path.toFile();
-        ReflectionTestUtils.setField(gridOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
+        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
         
-        gridOrgLoadSource.loadOrgData();
+        rorOrgLoadSource.loadOrgData();
 
         verify(orgDisambiguatedDao, never()).merge(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
@@ -558,7 +548,7 @@ public class GridOrgLoadSourceTest {
     }
     
 
-    private FigshareCollectionArticleSummary getFigshareGridCollectionArticleSummary(int id, String date) {
+    private FigshareCollectionArticleSummary getFigsharerorCollectionArticleSummary(int id, String date) {
         FigshareCollectionArticleSummary summary = new FigshareCollectionArticleSummary();
         summary.setId(id);
         FigshareCollectionTimeline timeline = new FigshareCollectionTimeline();
@@ -567,10 +557,10 @@ public class GridOrgLoadSourceTest {
         return summary;
     }
     
-    private FigshareCollectionArticleDetails getFigshareGridCollectionArticleDetails(int identifier) {
+    private FigshareCollectionArticleDetails getFigsharerorCollectionArticleDetails(int identifier) {
         FigshareCollectionArticleDetails details = new FigshareCollectionArticleDetails();
         FigshareCollectionArticleFile file = new FigshareCollectionArticleFile();
-        file.setName("grid.zip");
+        file.setName("ror.zip");
         file.setDownloadUrl("downloadUrl/" + identifier);
         details.setFiles(Arrays.asList(file));
         return details;

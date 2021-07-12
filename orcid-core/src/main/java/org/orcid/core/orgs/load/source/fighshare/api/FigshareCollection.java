@@ -1,24 +1,24 @@
-package org.orcid.core.orgs.load.source.grid.api;
+package org.orcid.core.orgs.load.source.fighshare.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class FigshareGridCollection {
+public class FigshareCollection {
 
     @JsonProperty("timeline")
-    private GridCollectionTimeline timeline;
+    private FigshareCollectionTimeline timeline;
 
     @JsonProperty("id")
     private Integer id;
 
     @JsonProperty("timeline")
-    public GridCollectionTimeline getTimeline() {
+    public FigshareCollectionTimeline getTimeline() {
         return timeline;
     }
 
     @JsonProperty("timeline")
-    public void setTimeline(GridCollectionTimeline timeline) {
+    public void setTimeline(FigshareCollectionTimeline timeline) {
         this.timeline = timeline;
     }
 
