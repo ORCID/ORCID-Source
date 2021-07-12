@@ -806,18 +806,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public ProfileEntity merge(ProfileEntity entity) {
         return super.merge(entity);
     }
-
-    /**
-     * Unindexable records are the ones that has been created or modified but have not granted permissions to a third party yet
-     * */    
-    @Override
-    @Transactional
-    public Integer markUnindexableRecordsAsDone(Integer lastModifiedDelay) {
-        Query query = entityManager.createNativeQuery("UPDATE profile p SET indexing_status = 'DONE' WHERE p.indexing_status = 'PENDING' AND reviewed IS NOT true AND NOT exists (SELECT 1 FROM oauth2_token_detail o WHERE p.orcid = o.user_orcid) AND (p.last_modified < now() - INTERVAL '" + lastModifiedDelay +" min')");
-        // Sets a timeout for this query
-        query.setHint("javax.persistence.query.timeout", queryTimeout);
-        return query.executeUpdate();
-    }
     
     @Override
     public boolean isOrcidValidAsDelegate(String orcid) {

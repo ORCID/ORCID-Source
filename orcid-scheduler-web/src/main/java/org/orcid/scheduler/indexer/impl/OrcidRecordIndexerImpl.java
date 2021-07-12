@@ -205,23 +205,4 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         }
         return false;
     }
-    
-    private void processUnclaimedProfileForReminderInTransaction(final String orcid) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                LOG.info("About to process unclaimed profile for reminder: {}", orcid);  
-                Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
-                if(email != null) 
-                    notificationManager.sendClaimReminderEmail(orcid, claimWaitPeriodDays - claimReminderAfterDays, email.getEmail());
-            }
-        });
-    }
-
-    @Override
-    public void processUnindexableRecords() {
-        Integer unindexableRecordsFound = profileDao.markUnindexableRecordsAsDone(indexingDelay);
-        LOG.info("Number of unindexable orcid ids found: " + unindexableRecordsFound);
-    }
-
 }
