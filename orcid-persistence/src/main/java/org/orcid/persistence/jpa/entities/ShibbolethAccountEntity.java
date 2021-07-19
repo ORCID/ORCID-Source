@@ -32,7 +32,7 @@ public class ShibbolethAccountEntity extends BaseEntity<Long> implements Profile
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "shibboleth_account_seq")
-    @SequenceGenerator(name = "shibboleth_account_seq", sequenceName = "shibboleth_account_seq")
+    @SequenceGenerator(name = "shibboleth_account_seq", sequenceName = "shibboleth_account_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

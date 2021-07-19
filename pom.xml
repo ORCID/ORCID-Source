@@ -19,18 +19,19 @@ the software.
 
     <groupId>org.orcid</groupId>
     <artifactId>orcid-parent</artifactId>
-    <version>release-1.289.0</version>
+    <version>release-2.0.0</version>
     <packaging>pom</packaging>
     <name>ORCID - Parent</name>
     <description>The parent ORCID pom that all sub-projects reside under</description>
 
     <properties>
-        <spring.version>4.3.18.RELEASE</spring.version>
-        <security.version>4.2.13.RELEASE</security.version>
+        <spring.version>5.2.8.RELEASE</spring.version>
+        <security.version>5.3.4.RELEASE</security.version>
+        <liquibase.version>3.10.3</liquibase.version>
         <jersey.version>1.19.1</jersey.version>
         <swagger.version>1.5.16</swagger.version>
-        <aspectj.version>1.8.4</aspectj.version>
-        <jena.version>3.0.0</jena.version>
+        <aspectj.version>1.9.6</aspectj.version>
+        <jena.version>3.6.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
@@ -96,6 +97,28 @@ the software.
 
     <build>
         <plugins>
+<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+            <execution>
+            <id>enforce-versions</id>
+            <goals>
+                <goal>enforce</goal>
+            </goals>
+            <configuration>
+                <rules>
+                    <requireMavenVersion>
+                        <version>3.6.3</version>
+                    </requireMavenVersion>
+                    <requireJavaVersion>
+                        <version>11</version>
+                    </requireJavaVersion>
+                </rules>
+            </configuration>
+            </execution>
+        </executions>
+        </plugin>
             <plugin>
                 <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
                 <artifactId>maven-java-formatter-plugin</artifactId>
@@ -175,15 +198,20 @@ the software.
 
         <pluginManagement>
             <plugins>
+            	<plugin>
+        			<groupId>org.apache.maven.plugins</groupId>
+        			<artifactId>maven-enforcer-plugin</artifactId>
+        			<version>3.0.0-M3</version>
+        </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>3.8.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>3.0.0-M5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -193,12 +221,12 @@ the software.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>2.8</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.liquibase</groupId>
                     <artifactId>liquibase-maven-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>${liquibase.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
@@ -232,7 +260,7 @@ the software.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.12</version>
+                    <version>3.0.0-M5</version>
                     <executions>
                         <execution>
                             <id>perform-it</id>
@@ -267,7 +295,7 @@ the software.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.zeroturnaround</groupId>
@@ -324,7 +352,25 @@ the software.
             <artifactId>jsoup</artifactId>
             <version>1.9.2</version>
         </dependency>
-        <dependency>
+        
+        <!-- Log4j2 -->
+	      <dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>2.14.1</version>
+		  </dependency>
+		  <dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-slf4j-impl</artifactId>
+		    <version>2.14.1</version>
+		  </dependency>
+		  <dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-1.2-api</artifactId>
+		    <version>2.14.1</version>
+		  </dependency>
+		  
+        <!-- dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
         </dependency>
@@ -347,7 +393,7 @@ the software.
 	        <groupId>log4j</groupId>
 	        <artifactId>apache-log4j-extras</artifactId>
 	        <scope>compile</scope>
-        </dependency>
+        </dependency -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -361,6 +407,8 @@ the software.
             <artifactId>mockito-core</artifactId>
             <scope>compile</scope>
         </dependency>
+        
+        
 
         <!-- Test -->
         <dependency>
@@ -516,7 +564,7 @@ the software.
             <dependency>
                 <groupId>org.springframework.security.oauth</groupId>
                 <artifactId>spring-security-oauth2</artifactId>
-                <version>2.1.0.RELEASE</version>
+                <version>2.2.0.RELEASE</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -634,7 +682,7 @@ the software.
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>4.0.1</version>
-                <scope>provided</scope>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -717,32 +765,40 @@ the software.
                 <version>42.0.0</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>4.3.11.Final</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>4.3.11.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.javax.persistence</groupId>
-                <artifactId>hibernate-jpa-2.1-api</artifactId>
-                <version>1.0.0.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-c3p0</artifactId>
-                <version>4.3.11.Final</version>
-                <scope>compile</scope>
-            </dependency>
+			  <groupId>org.hibernate</groupId>
+			  <artifactId>hibernate-agroal</artifactId>
+			  <version>5.4.27.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+    			<artifactId>hibernate-c3p0</artifactId>
+    			<version>5.3.6.Final</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.hibernate</groupId>
+    			<artifactId>hibernate-validator</artifactId>
+   				 <version>5.4.3.Final</version>
+			</dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.2.0</version>
-            </dependency>
+                <version>${liquibase.version}</version>
+                <exclusions>
+			        <exclusion>
+			            <artifactId>logback-classic</artifactId>
+			            <groupId>ch.qos.logback</groupId>
+			        </exclusion>
+			        <exclusion>
+			            <artifactId>log4j-over-slf4j</artifactId>
+			            <groupId>org.slf4j</groupId>
+			        </exclusion>
+			    </exclusions>
+          </dependency> 
+          <dependency>
+    			  <groupId>com.github.blagerweij</groupId>
+    			  <artifactId>liquibase-sessionlock</artifactId>
+    			  <version>1.2.5</version>
+			    </dependency>
             <dependency>
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
@@ -755,7 +811,7 @@ the software.
             </dependency>
 
             <!-- Logging -->
-            <dependency>
+            <!--  dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>1.6.2</version>
@@ -783,7 +839,7 @@ the software.
                     <groupId>log4j</groupId>
                     <artifactId>apache-log4j-extras</artifactId>
                     <version>1.1</version>
-            </dependency>
+            </dependency -->
 
             <!-- AOP -->
             <dependency>
@@ -814,16 +870,10 @@ the software.
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>1.0.0.GA</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
-                <version>4.3.2.Final</version>
-                <scope>compile</scope>
-            </dependency>
+    			<groupId>javax.validation</groupId>
+    			<artifactId>validation-api</artifactId>
+    			<version>2.0.1.Final</version>
+			</dependency>
             <dependency>
                 <groupId>args4j</groupId>
                 <artifactId>args4j</artifactId>
@@ -833,13 +883,13 @@ the software.
             <dependency>
                 <groupId>org.jasypt</groupId>
                 <artifactId>jasypt</artifactId>
-                <version>1.9.2</version>
+                <version>1.9.3</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.jasypt</groupId>
-                <artifactId>jasypt-hibernate4</artifactId>
-                <version>1.9.2</version>
+                <artifactId>jasypt-hibernate5</artifactId>
+                <version>1.9.3</version>
             </dependency>
             <dependency>
                 <groupId>org.jbibtex</groupId>
@@ -879,22 +929,6 @@ the software.
 
             <!-- Test -->
             <dependency>
-                <groupId>org.jmock</groupId>
-                <artifactId>jmock-junit3</artifactId>
-                <version>2.5.1</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-library</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
@@ -908,22 +942,35 @@ the software.
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>1.3</version>
+                <artifactId>hamcrest</artifactId>
+                <version>2.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.7.5</version>
-                <scope>test</scope>
-                <exclusions> 
-                    <exclusion>
+                <version>3.3.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy-agent</artifactId>
+                </exclusion>
+                <exclusion>
                         <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+                        <artifactId>hamcrest</artifactId>
+                 </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.10.5</version>
+        </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>

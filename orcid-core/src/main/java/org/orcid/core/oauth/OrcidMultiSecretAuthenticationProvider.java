@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 /**
  * 
@@ -35,9 +36,13 @@ public class OrcidMultiSecretAuthenticationProvider extends DaoAuthenticationPro
         }
 
         String presentedPassword = authentication.getCredentials().toString();
+        
         ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(userDetails.getUsername());
         for (ClientSecretEntity clientSecretEntity : clientDetailsEntity.getClientSecrets()) {
-            if (getPasswordEncoder().isPasswordValid(encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret()), presentedPassword, null)) {
+            if(!presentedPassword.startsWith("{noop}")){
+                presentedPassword = "{noop}" + presentedPassword;
+            }
+            if (getPasswordEncoder().matches(encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret()), presentedPassword)) {
                 return;
             }
         }

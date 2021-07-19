@@ -33,7 +33,7 @@ public class ExternalIdentifierEntity extends SourceAwareEntity<Long> implements
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "external_identifier_id_seq")
-    @SequenceGenerator(name = "external_identifier_id_seq", sequenceName = "external_identifier_id_seq")
+    @SequenceGenerator(name = "external_identifier_id_seq", sequenceName = "external_identifier_id_seq", allocationSize = 1)
     @Override
     public Long getId() {
         return id;

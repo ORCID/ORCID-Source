@@ -1,6 +1,7 @@
 package org.orcid.core.oauth.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,8 @@ import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -52,7 +55,10 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
     @Resource
-    protected LocaleManager localeManager;        
+    protected LocaleManager localeManager;  
+    
+    @Resource(name="profileLastModifiedDao")
+    private ProfileLastModifiedDao profileLastModifiedDao;
     
     @Transactional
     public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
@@ -139,6 +145,16 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 
         try{
             OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken, revokeOld, expiresIn, subjectToken, subjectTokenType, requestedTokenType);
+            
+            //Lets check if the user needs to be indexed
+            if(token != null && token.getAdditionalInformation() != null) {
+                if(token.getAdditionalInformation().containsKey(OrcidOauth2Constants.ORCID)) {
+                    String orcidId = (String) token.getAdditionalInformation().get(OrcidOauth2Constants.ORCID);
+                    if(!PojoUtil.isEmpty(orcidId)) {
+                        profileLastModifiedDao.updateIndexingStatus(Arrays.asList(orcidId), IndexingStatus.PENDING);
+                    }                    
+                }                
+            }
             return getResponse(token);
         } catch (InvalidGrantException e){ //this needs to be caught here so the transaction doesn't roll back
             OAuthError error = OAuthErrorUtils.getOAuthError(e);

@@ -36,7 +36,7 @@ public class WorkBaseEntity extends SourceAwareEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "work_seq")
-    @SequenceGenerator(name = "work_seq", sequenceName = "work_seq")
+    @SequenceGenerator(name = "work_seq", sequenceName = "work_seq", allocationSize = 1)
     @Column(name = "work_id")
     public Long getId() {
         return id;

@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,7 +62,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
+//import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
  * @author Will Simpson
@@ -196,14 +198,25 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = { "/my-orcid3", "/my-orcid", "/workspace" }, method = RequestMethod.GET)
-    public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
+    public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo, @RequestParam(value = "maxResults", defaultValue = "200") int maxResults, @RequestParam(value = "orcid", defaultValue = "") String orcid) throws ServletException, IOException {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+       
+        if (!orcid.equals(profile.getId())){
+            String redirectUrl = request.getRequestURL().toString();
+            if (request.getQueryString() != null && orcid.equals("")){
+                redirectUrl += "?"+request.getQueryString();
+            }
+            redirectUrl += "?orcid="+profile.getId();
+            response.sendRedirect(redirectUrl);
+            
+        }
+
         return new ModelAndView("workspace_v3");
     }
 
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.GET)
     public @ResponseBody
-    KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {     
+    KeywordsForm getKeywordsFormJson(HttpServletRequest request) {     
         Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid());        
         KeywordsForm form = KeywordsForm.valueOf(keywords);
         
@@ -220,7 +233,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
     public @ResponseBody
-    KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
+    KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf)  {
         kf.setErrors(new ArrayList<String>());              
         if(kf != null) {
             Iterator<KeywordForm> it = kf.getKeywords().iterator();            
@@ -257,7 +270,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.GET)
     public @ResponseBody
-    OtherNamesForm getOtherNamesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    OtherNamesForm getOtherNamesFormJson(HttpServletRequest request)  {
         OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid());                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
         //Set the default visibility
@@ -272,7 +285,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.POST)
     public @ResponseBody
-    OtherNamesForm setOtherNamesFormJson(@RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
+    OtherNamesForm setOtherNamesFormJson(@RequestBody OtherNamesForm onf) {
         onf.setErrors(new ArrayList<String>());        
         if(onf != null) {
             Iterator<OtherNameForm> it = onf.getOtherNames().iterator();
@@ -310,7 +323,7 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.GET)
     public @ResponseBody
-    WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    WebsitesForm getWebsitesFormJson(HttpServletRequest request)  {
         ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid());                 
         WebsitesForm form = WebsitesForm.valueOf(rUrls);
         //Set the default visibility
@@ -328,7 +341,7 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/my-orcid/websitesForms.json", method = RequestMethod.POST)
     public @ResponseBody
-    WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
+    WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws)  {
         ws.setErrors(new ArrayList<String>());
         if(ws != null) {
             Set<String> existingUrls = new HashSet<String>();
@@ -375,7 +388,7 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */    
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
-    ExternalIdentifiersForm getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    ExternalIdentifiersForm getExternalIdentifiersJson(HttpServletRequest request) {
         PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid()); 
         ExternalIdentifiersForm form = ExternalIdentifiersForm.valueOf(extIds);
         //Set the default visibility

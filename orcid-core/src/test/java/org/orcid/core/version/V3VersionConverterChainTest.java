@@ -3,6 +3,8 @@ package org.orcid.core.version;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.GregorianCalendar;
 
@@ -17,6 +19,11 @@ import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.ResourceType;
 import org.orcid.jaxb.model.common.SequenceType;
+import org.orcid.jaxb.model.v3.release.common.TransientError;
+import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
@@ -294,8 +301,7 @@ public class V3VersionConverterChainTest {
         assertEquals("item1", rrRc1.getResourceItems().get(0).getResourceName());
         assertEquals("infrastructures", rrRc1.getResourceItems().get(0).getResourceType());
         assertEquals("http://orcid.org", rrRc1.getResourceItems().get(0).getUrl().getValue());         
-        
-        
+                
         // Summary
         org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary rrsRc2 = new org.orcid.jaxb.model.v3.rc2.record.summary.ResearchResourceSummary();
         rrsRc2.setProposal(rp);
@@ -1455,4 +1461,150 @@ public class V3VersionConverterChainTest {
         assertNotNull(rc2FundingContributorAttributes);
         assertNull(rc2FundingContributorAttributes.getContributorRole());
     }   
+    
+    @Test
+    public void externalIdsFilterFundedByIdsOnRCsTest() {
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID e1Self = new ExternalID();
+        e1Self.setRelationship(Relationship.SELF);
+        e1Self.setType("type-self");
+        e1Self.setUrl(new Url("https://qa.orcid.org/0000-0000-0000-0000"));
+        e1Self.setValue("ext-id-self");        
+        extIds.getExternalIdentifier().add(e1Self);
+        
+        ExternalID e2PartOf = new ExternalID();
+        e2PartOf.setRelationship(Relationship.PART_OF);
+        e2PartOf.setType("type-part-of");
+        e2PartOf.setUrl(new Url("https://qa.orcid.org/0000-0000-0000-0000"));
+        e2PartOf.setValue("ext-id-part-of");
+        extIds.getExternalIdentifier().add(e2PartOf);
+        
+        ExternalID e3VersionOf = new ExternalID();
+        e3VersionOf.setRelationship(Relationship.VERSION_OF);
+        e3VersionOf.setType("type-version-of");
+        e3VersionOf.setUrl(new Url("https://qa.orcid.org/0000-0000-0000-0000"));
+        e3VersionOf.setValue("ext-id-version-of");
+        extIds.getExternalIdentifier().add(e3VersionOf);
+        
+        ExternalID e4FundedBy = new ExternalID();
+        e4FundedBy.setRelationship(Relationship.FUNDED_BY);
+        e4FundedBy.setType("type-funded-by");
+        e4FundedBy.setUrl(new Url("https://qa.orcid.org/0000-0000-0000-0000"));
+        e4FundedBy.setValue("ext-id-funded-by");
+        extIds.getExternalIdentifier().add(e4FundedBy);
+        
+        boolean foundSelf = false;
+        boolean foundPartOf = false;
+        boolean foundVersionOf = false;
+        
+        // Verify a list with all four types of relationships filter just the FOUNDED_BY one
+        org.orcid.jaxb.model.v3.rc2.record.ExternalIDs rc2ExtIds =         
+                (org.orcid.jaxb.model.v3.rc2.record.ExternalIDs) (v3VersionConverterChain
+                .downgrade(new V3Convertible(extIds, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2ExtIds);
+        assertEquals(3, rc2ExtIds.getExternalIdentifier().size());
+        
+        for(org.orcid.jaxb.model.v3.rc2.record.ExternalID rc2ExtId : rc2ExtIds.getExternalIdentifier()) {
+            if(Relationship.SELF.equals(rc2ExtId.getRelationship())) {
+                foundSelf = true;
+            } else if(Relationship.PART_OF.equals(rc2ExtId.getRelationship())) {
+                foundPartOf = true;
+            } else if(Relationship.VERSION_OF.equals(rc2ExtId.getRelationship())) {
+                foundVersionOf = true;
+            } else {
+                fail("Invalid external id found: " + rc2ExtId.getValue() + " -> " + rc2ExtId.getRelationship());
+            }
+        }
+        
+        assertTrue(foundSelf);
+        assertTrue(foundPartOf);
+        assertTrue(foundVersionOf);
+        
+        // Verify a list with only one element returns empty just when the FOUNDED_BY is found
+        // Clear the list first
+        extIds.getExternalIdentifier().clear();
+        
+        extIds.getExternalIdentifier().add(e1Self);
+        
+        rc2ExtIds = (org.orcid.jaxb.model.v3.rc2.record.ExternalIDs) (v3VersionConverterChain
+                .downgrade(new V3Convertible(extIds, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2ExtIds);
+        assertEquals(1, rc2ExtIds.getExternalIdentifier().size());
+        assertEquals(e1Self.getRelationship(), rc2ExtIds.getExternalIdentifier().get(0).getRelationship());
+        assertEquals(e1Self.getType(), rc2ExtIds.getExternalIdentifier().get(0).getType());
+        assertEquals(e1Self.getUrl().getValue(), rc2ExtIds.getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals(e1Self.getValue(), rc2ExtIds.getExternalIdentifier().get(0).getValue());
+        
+        // Clear again
+        extIds.getExternalIdentifier().clear();
+        
+        extIds.getExternalIdentifier().add(e2PartOf);
+        
+        rc2ExtIds = (org.orcid.jaxb.model.v3.rc2.record.ExternalIDs) (v3VersionConverterChain
+                .downgrade(new V3Convertible(extIds, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2ExtIds);
+        assertEquals(1, rc2ExtIds.getExternalIdentifier().size());
+        assertEquals(e2PartOf.getRelationship(), rc2ExtIds.getExternalIdentifier().get(0).getRelationship());
+        assertEquals(e2PartOf.getType(), rc2ExtIds.getExternalIdentifier().get(0).getType());
+        assertEquals(e2PartOf.getUrl().getValue(), rc2ExtIds.getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals(e2PartOf.getValue(), rc2ExtIds.getExternalIdentifier().get(0).getValue());
+        
+        // Clear again
+        extIds.getExternalIdentifier().clear();
+        
+        extIds.getExternalIdentifier().add(e3VersionOf);
+        
+        rc2ExtIds = (org.orcid.jaxb.model.v3.rc2.record.ExternalIDs) (v3VersionConverterChain
+                .downgrade(new V3Convertible(extIds, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2ExtIds);
+        assertEquals(1, rc2ExtIds.getExternalIdentifier().size());
+        assertEquals(e3VersionOf.getRelationship(), rc2ExtIds.getExternalIdentifier().get(0).getRelationship());
+        assertEquals(e3VersionOf.getType(), rc2ExtIds.getExternalIdentifier().get(0).getType());
+        assertEquals(e3VersionOf.getUrl().getValue(), rc2ExtIds.getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals(e3VersionOf.getValue(), rc2ExtIds.getExternalIdentifier().get(0).getValue());
+        
+        // Clear again
+        extIds.getExternalIdentifier().clear();
+        
+        extIds.getExternalIdentifier().add(e4FundedBy);
+        
+        rc2ExtIds = (org.orcid.jaxb.model.v3.rc2.record.ExternalIDs) (v3VersionConverterChain
+                .downgrade(new V3Convertible(extIds, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2ExtIds);
+        assertTrue(rc2ExtIds.getExternalIdentifier().isEmpty());
+        
+    }
+    
+    @Test
+    public void externalIdDowngradeTest() {        
+        ExternalID e = new ExternalID();
+        e.setRelationship(Relationship.SELF);
+        e.setType("type-self");
+        e.setUrl(new Url("https://qa.orcid.org/0000-0000-0000-0000"));
+        e.setValue("ext-id-self");
+        e.setNormalized(new TransientNonEmptyString("non-empty-string-1"));
+        e.setNormalizedError(new TransientError("01", "m01"));
+        e.setNormalizedUrl(new TransientNonEmptyString("non-empty-string-2"));
+        e.setNormalizedUrlError(new TransientError("02", "m02"));
+        
+        org.orcid.jaxb.model.v3.rc2.record.ExternalID rc2ExtId = (org.orcid.jaxb.model.v3.rc2.record.ExternalID) (v3VersionConverterChain
+                .downgrade(new V3Convertible(e, "3.0"), "3.0_rc2")).getObjectToConvert();
+        
+        assertNotNull(rc2ExtId);
+        assertEquals(Relationship.SELF, rc2ExtId.getRelationship());
+        assertEquals("type-self", rc2ExtId.getType());
+        assertEquals("https://qa.orcid.org/0000-0000-0000-0000", rc2ExtId.getUrl().getValue());
+        assertEquals("ext-id-self", rc2ExtId.getValue());
+        assertEquals("non-empty-string-1", rc2ExtId.getNormalized().getValue());
+        assertEquals("01", rc2ExtId.getNormalizedError().getErrorCode());
+        assertEquals("m01", rc2ExtId.getNormalizedError().getErrorMessage());
+        assertEquals("non-empty-string-2", rc2ExtId.getNormalizedUrl().getValue());
+        assertEquals("02", rc2ExtId.getNormalizedUrlError().getErrorCode());
+        assertEquals("m02", rc2ExtId.getNormalizedUrlError().getErrorMessage());        
+    }
 }

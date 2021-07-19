@@ -44,7 +44,7 @@ public class ResearchResourceItemEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "research_resource_item_seq")
-    @SequenceGenerator(name = "research_resource_item_seq", sequenceName = "research_resource_item_seq")
+    @SequenceGenerator(name = "research_resource_item_seq", sequenceName = "research_resource_item_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

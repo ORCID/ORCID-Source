@@ -541,7 +541,7 @@
     </changeSet>
 
 	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="hsqldb" context="default">
-		<createSequence sequenceName="other_name_seq"/>
+		<createSequence sequenceName="other_name_seq" startValue="1000" incrementBy="1"/>
 	</changeSet>
 
     <changeSet id="CREATE-AUTO-COLS" author="Declan Newman" dbms="hsqldb" context="default">        

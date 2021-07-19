@@ -57,7 +57,7 @@ Editing the work section of a record requires a 3 step OAuth token with the ```/
 
 - **external-id-url** _(optional)_ A url the identifier resolves to
 
-- **external-id-relationship** _(required)_ Select self for identifiers that apply to the work itself or part-of for identifiers that apply to a collection the work is part of.
+- **external-id-relationship** _(required)_ Identifiers that apply only to the work being added should be marked as _self_. Identifiers that apply to a larger collection this work belongs to should be set to _part-of_. Identifiers that apply to alternate versions of the work should be set to _version-of_. Identifiers that apply to the funding for the work should be set to _funded-by_.
 
 - **work-url** _(optional)_ A url linking to the work
 

@@ -16,9 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder, InitializingBean {
+public class EncryptionManagerImpl implements EncryptionManager,PasswordEncoder, InitializingBean  {
 
     private String passPhraseForInternalEncryption;
 
@@ -166,8 +166,8 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
      * @return encoded password
      */
     @Override
-    public String encodePassword(String rawPass, Object salt) {
-        return hashForInternalUse(rawPass);
+    public String encode(CharSequence rawPass) {
+        return hashForInternalUse(rawPass.toString());
     }
 
     /**
@@ -195,7 +195,6 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
      *            password before encoding. A <code>null</code> value is legal.
      * @return true if the password is valid , false otherwise
      */
-    @Override
     public boolean isPasswordValid(String encPass, String rawPass, Object salt) {
         LOGGER.debug("About to start password check");
         StopWatch stopWatch = new StopWatch();
@@ -224,5 +223,16 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
         } catch(NoSuchAlgorithmException nsae) {
             throw new RuntimeException(nsae);
         }
-    } 
+    }
+
+	@Override
+	public boolean matches(CharSequence rawPass, String encPass) {
+	        LOGGER.debug("About to start password check");
+	        StopWatch stopWatch = new StopWatch();
+	        stopWatch.start();
+	        boolean result = hashMatches(rawPass.toString(), encPass);
+	        stopWatch.stop();
+	        LOGGER.debug("Password check took {} ms", stopWatch.getTime());
+	        return result;
+	    } 
 }

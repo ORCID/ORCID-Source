@@ -23,7 +23,7 @@ public class StatisticKeyEntity implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "key_seq")
-    @SequenceGenerator(name = "key_seq", sequenceName = "key_seq")
+    @SequenceGenerator(name = "key_seq", sequenceName = "key_seq", allocationSize = 1)
     @Column(name = "id")
     public Long getId() {
         return id;

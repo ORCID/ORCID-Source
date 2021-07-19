@@ -24,8 +24,14 @@ import { AccountService }
 import { GenericService } 
     from '../../shared/generic.service'; 
 
+import { AdminActionsService } 
+    from '../../shared/adminActions.service';   
+
 import { CommonService } 
     from '../../shared/common.service';
+    
+import { SwitchUserService } 
+	from "../../shared/switchUser.service";
 
 @Component({
     selector: 'delegators-ng2',
@@ -42,6 +48,8 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor(
         private delegatorsService: GenericService,
         private accountService: AccountService,
+        private adminActionsService: AdminActionsService,
+        private switchUserService: SwitchUserService,
         private commonSrvc: CommonService
     ) {
         this.sort = {
@@ -91,6 +99,23 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
 
     };
+    
+    switchUser(targetOrcid): void {
+	    this.switchUserService
+	      .switchUser(targetOrcid)
+	      .pipe(takeUntil(this.ngUnsubscribe))
+	      .subscribe(
+	        data => {
+	           window.location.replace(getBaseUri() + '/my-orcid');
+	        },
+	        error => {
+	          // reload page anyway
+	          // switchUser request is handled by OrcidSwitchUserFilter.java which redirects /switch-user to /my-orcid
+	          // in non-local environments neither request completes successfully, although the user has been successfully switched
+	          window.location.replace(getBaseUri() + '/my-orcid');
+	        }
+	      );
+	};
 
     searchDelegators = (text$: Observable<string>) =>
     text$.pipe(
@@ -105,7 +130,17 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
       );
 
     selectDelegator(datum): void {
-        window.location.href = getBaseUri() + '/switch-user?username=' + datum.orcid;
+		this.adminActionsService.switchUserPost(datum.orcid).subscribe(
+		        data => {
+		          window.location.replace(getBaseUri() + '/my-orcid');
+		        },
+		        error => {
+		          // reload page anyway
+		          // switchUser request is handled by OrcidSwitchUserFilter.java which redirects /switch-user to /my-orcid
+		          // in non-local environments neither request completes successfully, although the user has been successfully switched
+		          window.location.replace(getBaseUri() + '/my-orcid');
+		        }
+		      );
     };
     
     //Default init functions provided by Angular Core

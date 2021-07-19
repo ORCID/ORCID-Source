@@ -50,8 +50,8 @@
     </changeSet>
     
     <changeSet id="CREATE-ORG-SEQUENCES" author="Will Simpson" dbms="postgresql">
-        <createSequence sequenceName="org_affiliation_relation_seq" startValue="1000"/>
-        <createSequence sequenceName="org_seq" startValue="1000"/>
+        <createSequence sequenceName="org_affiliation_relation_seq" startValue="10000"/>
+        <createSequence sequenceName="org_seq" startValue="10000"/>
     </changeSet>
     
     <changeSet id="CREATE-ORG-AUTOCOLS" author="Will Simpson" dbms="hsqldb">
