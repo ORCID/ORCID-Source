@@ -41,7 +41,7 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "org_affiliation_relation_seq")
-    @SequenceGenerator(name = "org_affiliation_relation_seq", sequenceName = "org_affiliation_relation_seq")
+    @SequenceGenerator(name = "org_affiliation_relation_seq", sequenceName = "org_affiliation_relation_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

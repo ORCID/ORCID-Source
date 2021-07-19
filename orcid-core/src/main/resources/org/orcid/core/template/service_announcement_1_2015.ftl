@@ -1,7 +1,7 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.service_announcement.dear1" />${emailName}<@emailMacros.msg "email.service_announcement.dear2" />,
 
-<@emailMacros.msg "email.service_announcement.body_intro" /><@emailMacros.msg "email.service_announcement.privacy_link" /> (https://orcid.org/privacy-policy)<@emailMacros.msg "email.service_announcement.dot_bottom" />
+<@emailMacros.msg "email.service_announcement.body_intro" /><@emailMacros.msg "email.service_announcement.privacy_link" /> (https://orcid.org/privacy-policy)<@emailMacros.msg "email.common.period" />
 
 <@emailMacros.msg "email.service_announcement.body_inbox_title" />
 

@@ -572,6 +572,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         templateParams.put("emailName", emailNameForDelegate);
         templateParams.put("orcidValue", userReceivingPermission);
         templateParams.put("emailNameGrantingPermission", emailNameGrantingPermission);
+        templateParams.put("emailNameGrantingPermissionWithApostrophe", emailNameGrantingPermission + "'s");
         templateParams.put("grantingOrcidValue", userGrantingPermission);
         templateParams.put("grantingOrcidName", deriveEmailFriendlyName(userGrantingPermission));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -841,7 +842,9 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("trustedOrcidName", trustedOrcidName);
         templateParams.put("trustedOrcidValue", trustedOrcid);
+        templateParams.put("trustedOrcidValueWithParenthesis", trustedOrcid + ")");
         templateParams.put("managedOrcidValue", managedOrcid);
+        templateParams.put("managedOrcidValueWithFullPoint", managedOrcid + ".");
 
         String primaryEmail = emailManager.findPrimaryEmail(managedOrcid).getEmail();
         if (primaryEmail == null) {

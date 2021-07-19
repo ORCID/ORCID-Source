@@ -1,0 +1,186 @@
+## This file is a backup copy of the configuration file of transifex. 
+## it does not affect the functionality of the integration here in any way. 
+
+filters:
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/about_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/about_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_added_as_delegate_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_added_as_delegate_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_admin_delegate_request_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_admin_delegate_request_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_new_claim_reminder_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_new_claim_reminder_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_common_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_common_en.properties
+
+  - filter_type: file
+
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_deactivate_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_deactivate_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_digest_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_digest_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_forgotten_id_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_forgotten_id_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_institutional_connection_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_institutional_connection_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_locked_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_locked_en.properties
+
+  - filter_type: file
+
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_notification_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_notification_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_reactivation_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_reactivation_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_removed_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_removed_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_reset_password_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_reset_password_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_reset_password_not_found_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_reset_password_not_found_en.properties
+
+  - filter_type: file
+
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_subject_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_subject_en.properties
+
+  - filter_type: file
+
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_tips_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_tips_en.properties
+
+  - filter_type: file
+
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_verify_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_verify_en.properties
+
+  - filter_type: file
+
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_welcome_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_welcome_en.properties
+
+  - filter_type: file
+
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/identifiers_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/identifiers_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/javascript_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/javascript_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/messages_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/messages_en.properties
+
+  - filter_type: file
+
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/notification_digest_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/notification_digest_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/notification_delegate_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/notification_delegate_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/notification_announcement_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/notification_announcement_en.properties
+
+  - filter_type: file
+
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/notification_admin_delegate_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/notification_admin_delegate_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/notification_share_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/notification_share_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email2faDisabled_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email2faDisabled_en.properties
+
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/layout_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/layout_en.properties

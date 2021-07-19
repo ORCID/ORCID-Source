@@ -60,9 +60,9 @@ public class OrcidWebOauth2TokenEndPointFilter extends ClientCredentialsTokenEnd
         }
 
         clientId = clientId.trim();
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(clientId, clientSecret);
-
-        return this.getAuthenticationManager().authenticate(authRequest);
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(clientId, "{noop}"+clientSecret);
+        authentication = this.getAuthenticationManager().authenticate(authRequest);
+        return authentication;
     }
 
 }

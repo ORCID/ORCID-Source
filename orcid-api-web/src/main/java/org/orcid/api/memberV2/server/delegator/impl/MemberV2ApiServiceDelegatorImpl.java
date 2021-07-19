@@ -276,7 +276,6 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Override
     public Response viewWorks(String orcid) {
         List<WorkSummary> worksList = workManagerReadOnly.getWorksSummaryList(orcid);
-
         // Lets copy the list so we don't modify the cached collection
         List<WorkSummary> filteredList = null;
         if (worksList != null) {

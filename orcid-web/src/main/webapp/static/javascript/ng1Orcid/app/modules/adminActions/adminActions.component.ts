@@ -32,6 +32,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     switchId: string;
     showSwitchUser: boolean;
     switchUserError: boolean;
+    switchUserParams: any;
     
     // Find ids
     csvIdsOrEmails: string;
@@ -119,10 +120,16 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     // convert public client
     showConvertClient: boolean;
     convertClient: any;
-    
+
+    // Force indexing
+    showForceIndexing: boolean;
+    forceIndexingMessage: string;
+    idsToIndex: string;
+    forceIndexingMessageShowMessages: boolean;
+
     // General
     ids: string;
-    
+        
     constructor(
         private adminActionsService: AdminActionsService,
         private commonSrvc: CommonService,
@@ -130,6 +137,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     ) {
         this.showSwitchUser = false;
         this.switchUserError = false;
+        this.switchUserParams = {};
         
         this.csvIdsOrEmails = '';
         this.showFindIds = false;
@@ -197,6 +205,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
 		this.showConvertClient = false;
         this.convertClient = {};
 
+        this.showForceIndexing = false;
+        this.forceIndexingMessage = '';
+        this.forceIndexingMessageShowMessages = false;
+
         // General
         this.ids = '';
         
@@ -232,7 +244,18 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             data => {                
                 if(data != null && data.errorMessg == null) {
                     this.switchUserError = false;
-                    window.location.replace(getBaseUri() + '/switch-user?username=' + data.id);                    
+                    this.adminActionsService.switchUserPost(data.id).subscribe(
+				        data => {
+				          window.location.replace(getBaseUri() + '/my-orcid');
+				        },
+				        error => {
+				          // reload page anyway
+				          // switchUser request is handled by OrcidSwitchUserFilter.java which redirects /switch-user to /my-orcid
+				          // in non-local environments neither request completes successfully, although the user has been successfully switched
+				          window.location.replace(getBaseUri() + '/my-orcid');
+				        }
+				      );
+                                      
                 } else {
                     this.switchUserError = true;
                 }
@@ -616,9 +639,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     }
 
-
     disable2FA(): void {
-        
         this.adminActionsService.disable2FA( this.toDisableIdsOrEmails )
         .pipe(    
             takeUntil(this.ngUnsubscribe)

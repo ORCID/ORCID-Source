@@ -16,7 +16,7 @@
                 <@emailMacros.msg "notification.footer.settings" />
             </a>
         </p>
-        <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/inbox" target="_blank">
+        <a style="text-decoration: underline;color: #085c77;" href="https://support.orcid.org/hc/en-us/articles/360006972953" target="_blank">
             <@emailMacros.msg "notification.footer.inbox" />
         </a>
     </div>

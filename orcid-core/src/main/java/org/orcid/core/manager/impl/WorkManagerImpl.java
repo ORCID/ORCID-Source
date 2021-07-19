@@ -299,7 +299,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 if (work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
                     for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
                         // Don't include PART_OF external ids
-                        if (!Relationship.PART_OF.equals(extId.getRelationship())) {
+                        if (!Relationship.PART_OF.equals(extId.getRelationship()) || !Relationship.FUNDED_BY.equals(extId.getRelationship())) {
                             existingExternalIds.add(extId);
                         }
                     }
@@ -314,7 +314,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         if (work != null && work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
             for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
                 // Don't include PART_OF external ids
-                if (!Relationship.PART_OF.equals(extId.getRelationship())) {
+                if (!Relationship.PART_OF.equals(extId.getRelationship()) || !Relationship.FUNDED_BY.equals(extId.getRelationship())) {
                     existingExternalIDs.add(extId);
                 }
 

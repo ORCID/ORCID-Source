@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.orcid.core.contributors.roles.InvalidContributorRoleException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -76,6 +77,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidIssnException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9053));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidAmountException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9054));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(StartDateAfterEndDateException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9055));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidContributorRoleException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9058));
         
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));

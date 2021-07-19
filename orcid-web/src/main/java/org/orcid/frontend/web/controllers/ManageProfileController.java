@@ -27,6 +27,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
@@ -39,6 +40,7 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.pojo.AddEmail;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.DelegateForm;
@@ -50,6 +52,7 @@ import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.AddressesForm;
 import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.EditEmail;
+import org.orcid.pojo.ajaxForm.Email;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -88,6 +91,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
+    @Resource(name = "profileEntityManagerReadOnlyV3")
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
+    
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
 
@@ -145,6 +151,20 @@ public class ManageProfileController extends BaseWorkspaceController {
             return map;
         }
     }    
+    
+    @RequestMapping(value = "/search-for-delegate-by-orcid/{orcid}/")
+    public @ResponseBody Map<String, Boolean> searchForDelegateByOrcid(@PathVariable String orcid) {
+        Map<String, Boolean> map = new HashMap<>();
+        Boolean isValidForDelegate = profileEntityManagerReadOnly.isOrcidValidAsDelegate(orcid);
+        if (isValidForDelegate == null || isValidForDelegate.booleanValue() == false) {
+            map.put(FOUND, Boolean.FALSE);
+            return map;
+        } else {
+            map.put(FOUND, Boolean.TRUE);
+            map.put(IS_SELF, orcid.equals(getCurrentUserOrcid()));
+            return map;
+        }
+    } 
 
     @RequestMapping(value = "/delegates.json", method = RequestMethod.GET)
     public @ResponseBody List<DelegateForm>  getDelegates() {
@@ -175,6 +195,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         return addDelegate(addDelegate);
     }
 
+    @RequestMapping(value = "/addDelegateByOrcid.json")
+    public @ResponseBody ManageDelegate addDelegateByOrcid(@RequestBody ManageDelegate addDelegate) {
+        addDelegate.setDelegateToManage(addDelegate.getDelegateToManage());
+        return addDelegate(addDelegate);
+    }
+    
     @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
     public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
         // Check password
@@ -490,6 +516,77 @@ public class ManageProfileController extends BaseWorkspaceController {
         return org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails);
     }
 
+    @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails setEmails(HttpServletRequest request,  @RequestBody org.orcid.pojo.ajaxForm.Emails newEmailSet) {                                
+        Emails oldEmailSet = emailManager.getEmails(getCurrentUserOrcid());  
+        List<org.orcid.jaxb.model.v3.release.record.Email> deletedEmails = new ArrayList<org.orcid.jaxb.model.v3.release.record.Email>();
+        List<Email> newEmails = new ArrayList<Email>();
+        String orcid = getCurrentUserOrcid();
+        List<String> errors = new ArrayList<String>();
+        
+        for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
+            boolean isNewEmail = true;
+            for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail:   oldEmailSet.getEmails()) {
+                if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
+                    isNewEmail = false;
+                    // VISIBILITY UPDATE
+                    if (!newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())){
+                        updateEmailVisibility(newJsonEmail);
+                    }
+                    // Primary email UPDATE
+                    if (newJsonEmail.isPrimary() != null &&  newJsonEmail.isPrimary() && !oldJsonEmail.isPrimary()) {
+                        org.orcid.pojo.ajaxForm.Email response  = setPrimary(request, newJsonEmail);
+                        errors.addAll(response.getErrors());
+                    }
+                }
+            }
+            if (isNewEmail) {
+                // List emails to be added
+                newEmails.add(newJsonEmail);
+            }
+        }
+        
+        for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail : oldEmailSet.getEmails()) {
+            boolean emailWasDeleted = true;
+            for (org.orcid.pojo.ajaxForm.Email  newJsonEmail:   newEmailSet.getEmails()) {
+                if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
+                    emailWasDeleted = false;
+                }
+            }
+            if (emailWasDeleted) {
+                // List emails to be deleted
+                deletedEmails.add(oldJsonEmail);
+            }
+        }
+        
+        
+        for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
+            deleteEmailJson ( deletedEmail.getEmail() );
+            
+        }
+        for (Email newEmail : newEmails) {
+            AddEmail newEmailCasted = new org.orcid.pojo.AddEmail();
+            newEmailCasted.setCurrent(true);
+            newEmailCasted.setValue(newEmail.getValue());
+            newEmailCasted.setVisibility(newEmail.getVisibility());
+            newEmailCasted.setPrimary(false);
+            newEmailCasted.setVerified(false);
+            org.orcid.pojo.ajaxForm.Email response  = addEmails ( request, newEmailCasted);
+            errors.addAll(response.getErrors());
+            if (newEmail.isPrimary() != null &&  newEmail.isPrimary()) {
+                org.orcid.pojo.ajaxForm.Email setAsPrimaryResponse  = setPrimary(request, newEmail);
+                errors.addAll(setAsPrimaryResponse.getErrors());
+            }
+            
+        }
+    
+    
+        Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
+        org.orcid.pojo.ajaxForm.Emails emailsResponse = org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet);
+        emailsResponse.setErrors(errors);
+        return emailsResponse;
+    }
+
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
     public @ResponseBody org.orcid.pojo.ajaxForm.Email addEmails(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
@@ -536,6 +633,33 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return email;
     }
+    
+    @RequestMapping(value = "/validateEmail.json", method = RequestMethod.POST)
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email validatEmail(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
+        List<String> errors = new ArrayList<String>();
+
+        MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
+        // Clean the email address so it doesn't contains any horizontal white spaces
+        email.setValue(OrcidStringUtils.filterEmailAddress(email.getValue()));
+        
+        validateEmailAddress(email.getValue(), true, false, request, mbr);
+        
+        for (ObjectError oe : mbr.getAllErrors()) {
+            if (oe.getCode() != null) {
+                errors.add(getMessage(oe.getCode(), oe.getArguments()));
+            } else {
+                errors.add(oe.getDefaultMessage());
+            }
+        }
+        if (!errors.isEmpty()) {
+            email.setErrors(errors);
+                          
+        } 
+        return email;
+
+    }
+
+    
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
     public @ResponseBody Errors deleteEmailJson(@RequestParam("email") String email) {

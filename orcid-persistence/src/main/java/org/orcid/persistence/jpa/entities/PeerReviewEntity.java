@@ -44,7 +44,7 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "peer_review_seq")
-    @SequenceGenerator(name = "peer_review_seq", sequenceName = "peer_review_seq")
+    @SequenceGenerator(name = "peer_review_seq", sequenceName = "peer_review_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

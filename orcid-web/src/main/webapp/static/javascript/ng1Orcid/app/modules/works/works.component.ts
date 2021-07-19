@@ -1302,13 +1302,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         return false;
     };
 
-    userIsContributor(contributor): boolean {
-        if (contributor.orcid && contributor.orcid.value == orcidVar.orcidId){
-            return true;
-        }
-        return false;
-    };
-
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directivesload

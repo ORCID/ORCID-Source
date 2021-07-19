@@ -57,10 +57,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     public Locale retrieveLocale(String orcid);      
     
-    boolean lockProfile(String orcid, String lockReason, String description);
-
-    boolean unlockProfile(String orcid);
-
     Date getLastLogin(String orcid);
     
     void disable2FA(String orcid);

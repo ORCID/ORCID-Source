@@ -16,7 +16,7 @@
             <column name="event_type" type="VARCHAR(50)"/>      
             <column name="comment" type="TEXT"/>      
         </createTable>           
-        <createSequence sequenceName="profile_history_event_seq"/>
+        <createSequence sequenceName="profile_history_event_seq" startValue="1000" incrementBy="1"/>
     </changeSet>
     
     <changeSet id="ADD-PROFILE-HISTORY-EVENT-INDEX" author="George Nash">

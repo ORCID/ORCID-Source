@@ -26,6 +26,8 @@ import org.orcid.core.adapter.v3.converter.OrgConverter;
 import org.orcid.core.adapter.v3.converter.VisibilityConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.contributors.roles.fundings.FundingContributorRoleConverter;
+import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -182,6 +184,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private LocaleManager localeManager;
+    
+    @Resource
+    private WorkContributorRoleConverter workContributorsRoleConverter;
+    
+    @Resource
+    private FundingContributorRoleConverter fundingContributorsRoleConverter;
 
     @Override
     public MapperFacade getObject() throws Exception {
@@ -515,7 +523,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, localeManager));
-        converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter());
+        converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter(workContributorsRoleConverter));
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
@@ -689,7 +697,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new JSONFundingExternalIdentifiersConverterV3());
-        converterFactory.registerConverter("fundingContributorsConverterId", new FundingContributorsConverter());
+        converterFactory.registerConverter("fundingContributorsConverterId", new FundingContributorsConverter(fundingContributorsRoleConverter));
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
         converterFactory.registerConverter("orgConverter", new OrgConverter());
 
@@ -916,6 +924,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             public void mapAtoB(PeerReview a, PeerReviewEntity b, MappingContext context) {
                 b.setUrl(a.getUrl() == null ? null : a.getUrl().getValue());
                 b.setSubjectUrl(a.getSubjectUrl() == null ? null : a.getSubjectUrl().getValue());
+                b.setSubjectName(
+                        (a.getSubjectName() == null || a.getSubjectName().getTitle() == null) ? null : a.getSubjectName().getTitle().getContent());
                 b.setSubjectTranslatedName(
                         (a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null : a.getSubjectName().getTranslatedTitle().getContent());
                 b.setSubjectTranslatedNameLanguageCode((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null

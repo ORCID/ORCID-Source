@@ -42,10 +42,19 @@ export class SwitchUserService {
         );
     };
     
-    switchUser(id): Observable<any> {          
-        return this.http.get(
-                getBaseUri() + '/switch-user?username=' + id
-        );        
+    switchUser(id): Observable<any> {     
+        var body = 'username=' + id; 
+        return this.http.post(
+            getBaseUri() + '/switch-user',
+            body, 
+            { headers: new HttpHeaders(
+            				{
+                			'Access-Control-Allow-Origin':'*',
+                			'Content-Type': 'application/x-www-form-urlencoded'
+            				} 
+            				)}
+       
+        )           
     };
     
     notifyOther(): void {

@@ -42,7 +42,7 @@ public class ProfileEventEntity extends BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_event_seq")
-    @SequenceGenerator(name = "profile_event_seq", sequenceName = "profile_event_seq")
+    @SequenceGenerator(name = "profile_event_seq", sequenceName = "profile_event_seq", allocationSize = 1)
     @Override
     public Long getId() {
         return id;

@@ -115,18 +115,6 @@ _This email is sent to a user who has decided to deactivate their account. A lin
 
 ### RECORD ACTIONS
 
-### Your ORCID Record was amended
-_Email to the ORCID user when an organization has edited their record. This email is subject to the opt out rules (send change notifications)_
-
-* [amend\_email.ftl](https://github.com/ORCID/ORCID-Source/blob/master/orcid-core/src/main/resources/org/orcid/core/template/amend_email.ftl)
-* [Internal Spec](https://docs.google.com/a/orcid.org/document/d/1eK7mNZCPAtcUTeB-JKCBNW956KdWtw0SlI4jYN5-DUY/edit#heading=h.aphbwgthy0cy)
-* Variables:
-	* ${emailName} - Name of the email recipient. Either 1)  Credit name, 2) First_Name Last_Name, or 3) “ORCID Registry User”
-	* ${orcid} - Numeric portion of the ORCID iD of the email recipient
-	* ${amenderName} - Name of the person or organization who amended the ORCID Record
-	* ${baseUri} - The Base URI of the site sending the email
-
-
 ### FUTURE
 
 ### You've been made an Account Delegate!

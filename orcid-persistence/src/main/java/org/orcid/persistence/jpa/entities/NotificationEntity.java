@@ -83,7 +83,7 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "notification_seq")
-    @SequenceGenerator(name = "notification_seq", sequenceName = "notification_seq")
+    @SequenceGenerator(name = "notification_seq", sequenceName = "notification_seq", allocationSize = 1)
     public Long getId() {
         return id;
     }

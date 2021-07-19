@@ -234,15 +234,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     public boolean deactivateRecord(String orcid) {
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
-                LOGGER.info("About to deactivate record {}", orcid);
-                if (profileDao.deactivate(orcid)) {
-                    clearRecord(orcid, true);
-                    emailManager.hideAllEmails(orcid);
-                    notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
-                    LOGGER.info("Record {} successfully deactivated", orcid);
-                    return true;
-                }
-                return false;
+                LOGGER.info("About to deactivate record {}", orcid);                
+                clearRecord(orcid, true);
+                emailManager.hideAllEmails(orcid);
+                notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
+                profileDao.deactivate(orcid);
+                LOGGER.info("Record {} successfully deactivated", orcid);
+                return true;                
             }
         });
     }
@@ -551,6 +549,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 ProfileEntity profileEntity = profileDao.find(orcid);
                 profileEntity.setDeactivationDate(null);
                 profileEntity.setClaimed(true);
+                profileEntity.setIndexingStatus(IndexingStatus.PENDING);
                 if (reactivation != null) {
                     profileEntity.setEncryptedPassword(encryptionManager.hashForInternalUse(reactivation.getPassword().getValue()));
                     profileEntity.setActivitiesVisibilityDefault(reactivation.getActivitiesVisibilityDefault().getVisibility().name());                    

@@ -8,11 +8,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -29,11 +29,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
@@ -73,6 +72,9 @@ public class ProfileDaoTest extends DBUnitTest {
     @Resource(name="entityManager")
     protected EntityManager entityManager;
 
+    @Resource
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -236,17 +238,26 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     public void testOrcidsFindByIndexingStatus() {
-        List<Pair<String, IndexingStatus>> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
+        String o1 = "0000-0000-0000-0001";
+        String o2 = "4444-4444-4444-4445";
+        String o3 = "4444-4444-4444-4446";
+        
+        Calendar c = Calendar.getInstance();
+        Date d1 = new Date(c.getTimeInMillis());
+        Date d2 = new Date(c.getTimeInMillis() + 1000);
+        Date d3 = new Date(c.getTimeInMillis() + 2000);
+               
+        profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o1, d1, IndexingStatus.PENDING);
+        profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o2, d2, IndexingStatus.PENDING);
+        profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o3, d3, IndexingStatus.PENDING);
+        
+        List<String> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
         assertNotNull(results);
-        assertEquals(2, results.size());
-        assertEquals("4444-4444-4444-4445", results.get(0).getLeft());
-        assertEquals("4444-4444-4444-4446", results.get(1).getLeft());
-
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0);
-        assertEquals(20, results.size());
-
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3, 0);
+        
         assertEquals(3, results.size());
+        assertTrue(results.contains(o1));
+        assertTrue(results.contains(o2));
+        assertTrue(results.contains(o3));       
     }
 
     @Test
@@ -290,19 +301,24 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     public void testUpdateIndexingStatus() {
         Date now = new Date();
+        
         int startCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
+        
         String orcid = "4444-4444-4444-4446";
         ProfileEntity profileEntity = profileDao.find(orcid);
         assertEquals(IndexingStatus.PENDING, profileEntity.getIndexingStatus());
         profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+        
         ProfileEntity result = profileDao.find(orcid);
         assertEquals(IndexingStatus.DONE, result.getIndexingStatus());
         assertNotNull(result.getLastIndexedDate());
         assertFalse(now.after(new Date(result.getLastIndexedDate().getTime())));
+        
         int endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
         assertEquals(startCount + 1, endCount);
+        
         profileDao.updateIndexingStatus(orcid, IndexingStatus.PENDING);
-    }
+    }        
 
     @Test
     @Rollback(true)

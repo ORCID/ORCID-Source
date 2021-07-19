@@ -1929,7 +1929,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input {
     word-wrap: break-word;
     padding-bottom: 10px;
     float: left;
-    max-width: 215px
 }
 
 .privacy-list,.workspace-body-list {
@@ -4080,7 +4079,11 @@ ul#body-membership-list>li {
 }
 
 #social-networks #sections .checkbox-inline,#social-networks #social-network-options .checkbox-inline {
-    margin: 15px 30px 0 0
+    margin: 10px 10px 0 0
+}
+
+.checkbox-inline-work {
+    padding-left: 5px !important
 }
 
 .confirm-oauth-access .top-header .logo h1 {

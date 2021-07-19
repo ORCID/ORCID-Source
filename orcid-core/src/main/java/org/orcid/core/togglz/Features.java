@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Orcid Angular Public Page")
+    ORCID_ANGULAR_PUBLIC_PAGE,
+
     @Label("Disable Badges")
     DISABLE_BADGES,
 

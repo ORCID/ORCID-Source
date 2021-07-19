@@ -120,6 +120,13 @@ function isEmail(email) {
     return re.test(email);
 }
 
+function isOrcid(orcid) {
+    var orcidId = /(\d{4}-){3,}\d{3}[\dX]/;
+    var orcidUrl = /(http|https):\/\/([^\/]*orcid\.org|localhost.*\/orcid-web)\/(\d{4}-){3,}\d{3}[\dX]/;    
+    return orcidId.test(orcid) || orcidUrl.test(orcid);
+}
+
+
 function getParameterByName(name) {
     var name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -428,7 +435,7 @@ $(function() {
 
     // fire off  check, if this page wasn't loaded via iframe (or html5
     // foo)
-    if (location == parent.location) {
+    if (location == parent.location && !$("#error-page").length) {
         checkOrcidLoggedIn();
         setInterval(checkOrcidLoggedIn, 30000);
     }
