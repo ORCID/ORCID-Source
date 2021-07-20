@@ -17,10 +17,6 @@ public class Email implements ErrorsInterface {
 
     protected Visibility visibility;
 
-    private Date createdDate;
-
-    private Date lastModified;
-
     private String source;
 
     private String sourceName;
@@ -147,23 +143,7 @@ public class Email implements ErrorsInterface {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
+    }    
 
     public String getSource() {
         return source;
