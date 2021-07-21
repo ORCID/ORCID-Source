@@ -833,9 +833,10 @@ public class WorksController extends BaseWorkspaceController {
      * enforce the encoding over the wire.
      */
     @RequestMapping(value = "/works.bib", method = RequestMethod.GET, produces = "text/plain; charset=utf-8")
-    public @ResponseBody String fetchBibtex() {
-        return bibtexManager.generateBibtexReferenceList(getEffectiveUserOrcid());
-    }
+    public @ResponseBody String fetchBibtex(@PathVariable("workIdsStr") String workIdsStr) {
+        List<Long> workIds = Arrays.stream(workIdsStr.split(",")).mapToLong(n -> Long.parseLong(n)).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);        
+        return bibtexManager.generateBibtexReferenceList(getEffectiveUserOrcid(), workIds);
+    }        
 
     /**
      * Search DB for id types to suggest to user if list empty, suggest the top
