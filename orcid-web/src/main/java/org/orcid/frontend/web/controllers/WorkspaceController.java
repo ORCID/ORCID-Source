@@ -203,10 +203,10 @@ public class WorkspaceController extends BaseWorkspaceController {
        
         if (!orcid.equals(profile.getId())){
             String redirectUrl = request.getRequestURL().toString();
-            if (request.getQueryString() != null && orcid.equals("")){
-                redirectUrl += "?"+request.getQueryString();
-            }
             redirectUrl += "?orcid="+profile.getId();
+            if (request.getQueryString() != null && orcid.equals("")){
+                redirectUrl += "&"+request.getQueryString();
+            }
             response.sendRedirect(redirectUrl);
             
         }
