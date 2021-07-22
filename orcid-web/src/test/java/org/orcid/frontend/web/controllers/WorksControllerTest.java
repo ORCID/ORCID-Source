@@ -18,19 +18,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
+import org.orcid.core.manager.v3.ActivitiesSummaryManager;
+import org.orcid.core.manager.v3.BibtexManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.frontend.web.util.BaseControllerTest;
+import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkTitle;
+import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -58,6 +66,15 @@ public class WorksControllerTest extends BaseControllerTest {
     @Resource
     WorksController worksController;
 
+    @Resource(name = "bibtexManagerV3")
+    BibtexManager bibtexManager;
+    
+    @Mock
+    WorkManager workManagerMock;
+    
+    @Mock
+    ActivitiesSummaryManager activitiesSummaryManagerMock;
+    
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
 
@@ -342,4 +359,78 @@ public class WorksControllerTest extends BaseControllerTest {
 
         }
     }
+    
+    @Test
+    public void testExportToBibtex() throws Exception {        
+        ReflectionTestUtils.setField(bibtexManager, "workManager", workManagerMock);                
+        ReflectionTestUtils.setField(bibtexManager, "activitiesManager", activitiesSummaryManagerMock);
+        
+        String orcid = getAuthentication().getName();
+        Work w1 = getWork(1);
+        Work w2 = getWork(2);
+        Work w3 = getWork(3);
+        ActivitiesSummary as = getActivitySummaryWithWorks(3);
+        
+        when(activitiesSummaryManagerMock.getActivitiesSummary(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(as);
+        when(workManagerMock.getWork(Mockito.eq(orcid), Mockito.eq(1L))).thenReturn(w1);
+        when(workManagerMock.getWork(Mockito.eq(orcid), Mockito.eq(2L))).thenReturn(w2);
+        when(workManagerMock.getWork(Mockito.eq(orcid), Mockito.eq(3L))).thenReturn(w3);
+        
+        assertEquals("@book{B._Holiday_1,\n" + 
+                "title={Work Title 1},\n" + 
+                "author={B. Holiday}\n" + 
+                "},\n" + 
+                "@book{B._Holiday_2,\n" + 
+                "title={Work Title 2},\n" + 
+                "author={B. Holiday}\n" + 
+                "},\n" + 
+                "@book{B._Holiday_3,\n" + 
+                "title={Work Title 3},\n" + 
+                "author={B. Holiday}\n" + 
+                "}", worksController.exportAsBibtex("1,2,3"));
+        
+        assertEquals("@book{B._Holiday_1,\n" + 
+                "title={Work Title 1},\n" + 
+                "author={B. Holiday}\n" + 
+                "},\n" + 
+                "@book{B._Holiday_3,\n" + 
+                "title={Work Title 3},\n" + 
+                "author={B. Holiday}\n" + 
+                "}", worksController.exportAsBibtex("1,3"));        
+        assertEquals("@book{B._Holiday_1,\n" + 
+                "title={Work Title 1},\n" + 
+                "author={B. Holiday}\n" + 
+                "}", worksController.exportAsBibtex("1"));
+        
+    }
+    
+    private ActivitiesSummary getActivitySummaryWithWorks(int numWorks) {
+        ActivitiesSummary summary = new ActivitiesSummary ();
+        for(int i = 1; i <= numWorks; i++) {
+            WorkSummary ws = new WorkSummary();
+            ws.setPutCode(Long.valueOf(i));
+            ws.setTitle(getWorkTitle(i));
+            WorkGroup wg1 = new WorkGroup();
+            wg1.getWorkSummary().add(ws);
+            summary.getWorks().getWorkGroup().add(wg1);
+        }
+        return summary;
+    }
+    
+    private Work getWork(long id) {
+        Work w = new Work();
+        w.setPutCode(id);
+        WorkTitle wt = new WorkTitle();
+        wt.setTitle(new Title("Work Title " + id));
+        w.setWorkTitle(wt);
+        w.setWorkType(WorkType.BOOK);
+        return w;
+    }
+    
+    private WorkTitle getWorkTitle(long id) {
+        WorkTitle wt = new WorkTitle();
+        wt.setTitle(new Title("Work Title " + id));
+        return wt;
+    }
 }
+
