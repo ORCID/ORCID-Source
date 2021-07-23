@@ -24,14 +24,18 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
+import org.orcid.pojo.ConvertClient;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
@@ -74,13 +78,13 @@ public class AdminController extends BaseController {
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
-    
+
     @Resource(name = "clientDetailsManagerV3")
     private ClientDetailsManager clientDetailsManager;
 
     @Resource(name = "spamManager")
-    SpamManager spamManager;     
-    
+    SpamManager spamManager;
+
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
     private static final String DEPRECATED = "(deprecated)";
@@ -466,7 +470,7 @@ public class AdminController extends BaseController {
                         ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
                         if (entity.getDeactivationDate() != null) {
                             deactivatedIds.add(nextToken);
-                        } else if(OrcidType.GROUP.name().equals(entity.getOrcidType())) {
+                        } else if (OrcidType.GROUP.name().equals(entity.getOrcidType())) {
                             members.add(nextToken);
                         } else {
                             profileEntityManager.deactivateRecord(orcidId);
@@ -974,4 +978,68 @@ public class AdminController extends BaseController {
         resendIdMap.put("disabledIds", disabledIds);
         return resendIdMap;
     }
+
+    @RequestMapping(value = "/validate-client-conversion.json", method = RequestMethod.POST)
+    public @ResponseBody ConvertClient validateClientConversion(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        if (PojoUtil.isEmpty(data.getClientId()) || !clientDetailsManager.exists(data.getClientId())) {
+            data.setClientNotFound(true);
+            return data;
+        }
+        data.setClientNotFound(false);
+
+        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(data.getClientId());
+        if (!ClientType.PUBLIC_CLIENT.name().equals(clientDetailsEntity.getClientType())) {
+            data.setAlreadyMember(true);
+            return data;
+        }
+        data.setAlreadyMember(false);
+
+        if (PojoUtil.isEmpty(data.getGroupId())) {
+            data.setGroupIdNotFound(true);
+            return data;
+        }
+
+        try {
+            ProfileEntity group = profileEntityCacheManager.retrieve(data.getGroupId());
+            if (group == null || !OrcidType.GROUP.name().equals(group.getOrcidType())) {
+                data.setGroupIdNotFound(true);
+                return data;
+            }
+
+            ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
+            data.setTargetClientType(clientType.name());
+        } catch (IllegalArgumentException e) {
+            // invalid group id
+            data.setGroupIdNotFound(true);
+            return data;
+        }
+        data.setGroupIdNotFound(false);
+
+        return data;
+    }
+
+    @RequestMapping(value = "/convert-client.json", method = RequestMethod.POST)
+    public @ResponseBody ConvertClient convertClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        data = validateClientConversion(serverRequest, response, data);
+        if (data.isClientNotFound() || data.isAlreadyMember() || data.isGroupIdNotFound()) {
+            data.setError("Invalid data");
+            data.setSuccess(false);
+            return data;
+        }
+
+        try {
+            clientDetailsManager.convertPublicClientToMember(data.getClientId(), data.getGroupId());
+            data.setSuccess(true);
+            return data;
+        } catch (Exception e) {
+            data.setSuccess(false);
+            data.setError(e.getMessage());
+            return data;
+        }
+    }
+
 }

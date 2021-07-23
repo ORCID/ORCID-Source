@@ -18,6 +18,9 @@ import { AdminActionsService }
 import { CommonService } 
     from '../../shared/common.service';
     
+import { ModalService } 
+    from "../../shared/modal.service";
+
 @Component({
     selector: 'admin-actions-ng2',
     template:  scriptTmpl("admin-actions-ng2-template")
@@ -114,6 +117,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     disable2FAResults: any;
     toDisableIdsOrEmails: string; 
     
+    // convert public client
+    showConvertClient: boolean;
+    convertClient: any;
+
     // Force indexing
     showForceIndexing: boolean;
     forceIndexingMessage: string;
@@ -125,7 +132,8 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         
     constructor(
         private adminActionsService: AdminActionsService,
-        private commonSrvc: CommonService
+        private commonSrvc: CommonService,
+        private modalService: ModalService
     ) {
         this.showSwitchUser = false;
         this.switchUserError = false;
@@ -193,6 +201,9 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showDisable2FA = false;
 		this.disable2FAResults = {};
 		this.toDisableIdsOrEmails= '';
+		
+		this.showConvertClient = false;
+        this.convertClient = {};
 
         this.showForceIndexing = false;
         this.forceIndexingMessage = '';
@@ -647,6 +658,29 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
     
+    processClientConversion(): void {
+        console.log(JSON.stringify(this.convertClient));
+        this.adminActionsService.validateClientConversion(this.convertClient)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.convertClient = data;
+                if (!this.convertClient.clientNotFound && !this.convertClient.groupIdNotFound && !this.convertClient.alreadyMember) {
+                    this.modalService.notifyOther({convertClient:this.convertClient});
+                    this.modalService.notifyOther({
+                        action: "open",
+                        moduleId: "confirmConvertClient"
+                    });
+                }
+            },
+            error => {
+                console.log('admin: error validating public client data to convert', error);
+            } 
+        );
+    };
+      
     //Default init functions provided by Angular Core
     ngAfterViewInit() {
         //Fire functions AFTER the view inited. Useful when DOM is required or access children directives

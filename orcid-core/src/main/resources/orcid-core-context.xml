@@ -1666,4 +1666,6 @@
 
     <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
     
+    <bean id="rorOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
+    
 </beans>

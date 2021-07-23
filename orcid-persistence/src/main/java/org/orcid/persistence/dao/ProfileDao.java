@@ -147,8 +147,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateIndexingStatus(List<String> ids, IndexingStatus reindex);
     
     public List<String> registeredBetween(Date startDate, Date endDate);
-    
-    Integer markUnindexableRecordsAsDone(Integer lastModifiedDelay);
-    
+        
     boolean isOrcidValidAsDelegate(String orcid);
 }

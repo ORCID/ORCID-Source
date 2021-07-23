@@ -1,7 +1,6 @@
 package org.orcid.scheduler.indexer.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -115,38 +114,6 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.S3_V3_REINDEX);
     }    
     
-    @Override 
-    public void processProfilesWithForceIndexingFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FORCE_INDEXING);
-    }
-    
-    @Override
-    synchronized public void processUnclaimedProfilesToFlagForIndexing() {
-        LOG.info("About to process unclaimed profiles to flag for indexing");
-        List<String> orcidsToFlag = Collections.<String> emptyList();
-        do {
-            orcidsToFlag = profileDaoReadOnly.findUnclaimedNotIndexedAfterWaitPeriod(claimWaitPeriodDays, claimWaitPeriodDays * 2, INDEXING_BATCH_SIZE, orcidsToFlag);
-            LOG.info("Got batch of {} unclaimed profiles to flag for indexing", orcidsToFlag.size());
-            for (String orcid : orcidsToFlag) {
-                LOG.info("About to flag unclaimed profile for indexing: {}", orcid);
-                profileEntityManager.updateLastModifedAndIndexingStatus(orcid);
-            }
-        } while (!orcidsToFlag.isEmpty());
-    }
-    
-    @Override
-    synchronized public void processUnclaimedProfilesForReminder() {
-        LOG.info("About to process unclaimed profiles for reminder");
-        List<String> orcidsToRemind = Collections.<String> emptyList();
-        do {
-            orcidsToRemind = profileDaoReadOnly.findUnclaimedNeedingReminder(claimReminderAfterDays, INDEXING_BATCH_SIZE, orcidsToRemind);
-            LOG.info("Got batch of {} unclaimed profiles for reminder", orcidsToRemind.size());
-            for (final String orcid : orcidsToRemind) {
-                processUnclaimedProfileForReminderInTransaction(orcid);
-            }
-        } while (!orcidsToRemind.isEmpty());
-    }
-
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status) {
         LOG.info("processing profiles with " + status.name() + " flag.");
         List<String> orcidsForIndexing = new ArrayList<>();
@@ -157,7 +124,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
         do {            
             try {
-                if (IndexingStatus.FORCE_INDEXING.equals(status) || IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
+                if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
                 } else {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);
@@ -248,23 +215,4 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         }
         return false;
     }
-    
-    private void processUnclaimedProfileForReminderInTransaction(final String orcid) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                LOG.info("About to process unclaimed profile for reminder: {}", orcid);  
-                Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
-                if(email != null) 
-                    notificationManager.sendClaimReminderEmail(orcid, claimWaitPeriodDays - claimReminderAfterDays, email.getEmail());
-            }
-        });
-    }
-
-    @Override
-    public void processUnindexableRecords() {
-        Integer unindexableRecordsFound = profileDao.markUnindexableRecordsAsDone(indexingDelay);
-        LOG.info("Number of unindexable orcid ids found: " + unindexableRecordsFound);
-    }
-
 }

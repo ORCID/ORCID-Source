@@ -9,6 +9,9 @@ import { downgradeComponent, UpgradeModule }
 
 import { AdminActionsComponent } 
     from './adminActions.component';
+    
+import { ConvertClientConfirmComponent } 
+    from './convertClient.component';
 
 import { CommonNg2Module }
     from './../common/common';
@@ -26,10 +29,10 @@ export const AdminActionsModule = angular.module(
             CommonNg2Module
         ],
         declarations: [ 
-            AdminActionsComponent
+            AdminActionsComponent, ConvertClientConfirmComponent
         ],
         entryComponents: [ 
-            AdminActionsComponent 
+            AdminActionsComponent, ConvertClientConfirmComponent 
         ]
     }
 )
@@ -37,11 +40,8 @@ export class AdminActionsNg2Module {}
 
 // components migrated to angular 2 should be downgraded here
 //Must convert as much as possible of our code to directives
-AdminActionsModule.directive(
-    'adminActionsNg2', 
-    <any>downgradeComponent(
-        {
-            component: AdminActionsComponent,
-        }
-    )
-);
+AdminActionsModule.directive('adminActionsNg2', <any>downgradeComponent({
+  component: AdminActionsComponent,
+})).directive('convertClientConfirmNg2', <any>downgradeComponent({
+  component: ConvertClientConfirmComponent
+}));
