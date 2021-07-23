@@ -198,7 +198,17 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                         connectionIssue = indexV3Record(mess, v3Queue, status);
                 }                
                 
-                profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                try {
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                } catch(Exception e) {
+                    LOG.error("Exception updating indexing status for record " + orcid, e);
+                    // Send a slack notification every 'slackIntervalMinutes' minutes
+                    if(lastSlackNotification == null || System.currentTimeMillis() > (lastSlackNotification.getTime() + (slackIntervalMinutes * 60 * 1000))) {
+                        String message = String.format("Unable to update indexing status for record: %s, this causes that SOLR and S3 might be falling behind. For troubleshooting please refere to https://github.com/ORCID/orcid-devops/wiki/Troubleshooting#indexing-status", orcid);                
+                        slackManager.sendSystemAlert(message);
+                        lastSlackNotification = new Date();
+                    }                
+                }
             }
         } while (!connectionIssue && !orcidsForIndexing.isEmpty());
     }
