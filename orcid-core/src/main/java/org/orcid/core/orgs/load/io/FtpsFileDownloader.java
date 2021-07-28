@@ -9,21 +9,30 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPSClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FtpsFileDownloader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FtpsFileDownloader.class);
 
+    @Value("${org.orcid.core.orgs.ringgold.ftpHost:host}")
     private String host;
 
+    @Value("${org.orcid.core.orgs.ringgold.fptPort:990}")
     private int port;
 
+    @Value("${org.orcid.core.orgs.ringgold.fptUsername:username}")
     private String username;
 
+    @Value("${org.orcid.core.orgs.ringgold.fptPassword:password}")
     private String password;
 
+    @Value("${org.orcid.core.orgs.ringgold.ftpRemoteFilePath:/tmp/ringgold/ringold-import.zip}")
     private String remoteFilePath;
 
+    @Value("${org.orcid.core.orgs.ringgold.fptLocalFilePath:/remote/filepath}")
     private String localFilePath;
 
     private FTPSClient client;
