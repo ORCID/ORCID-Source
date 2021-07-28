@@ -17,22 +17,22 @@ public class FtpsFileDownloader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FtpsFileDownloader.class);
 
-    @Value("${org.orcid.core.orgs.ringgold.ftpHost}")
+    @Value("${org.orcid.core.orgs.ringgold.ftpHost:host}")
     private String host;
 
-    @Value("${org.orcid.core.orgs.ringgold.fptPort}")
+    @Value("${org.orcid.core.orgs.ringgold.fptPort:990}")
     private int port;
 
-    @Value("${org.orcid.core.orgs.ringgold.fptUsername}")
+    @Value("${org.orcid.core.orgs.ringgold.fptUsername:username}")
     private String username;
 
-    @Value("${org.orcid.core.orgs.ringgold.fptPassword}")
+    @Value("${org.orcid.core.orgs.ringgold.fptPassword:password}")
     private String password;
 
-    @Value("${org.orcid.core.orgs.ringgold.ftpRemoteFilePath}")
+    @Value("${org.orcid.core.orgs.ringgold.ftpRemoteFilePath:/tmp/ringgold/ringold-import.zip}")
     private String remoteFilePath;
 
-    @Value("${org.orcid.core.orgs.ringgold.fptLocalFilePath}")
+    @Value("${org.orcid.core.orgs.ringgold.fptLocalFilePath:/remote/filepath}")
     private String localFilePath;
 
     private FTPSClient client;
