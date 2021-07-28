@@ -89,7 +89,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
 
     @Override
     public String getSourceName() {
-        return "ror";
+        return "ROR";
     }
 
     @Override
