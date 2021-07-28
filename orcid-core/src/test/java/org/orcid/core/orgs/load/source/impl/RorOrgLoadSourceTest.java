@@ -87,7 +87,7 @@ public class RorOrgLoadSourceTest {
     
     @Test
     public void testGetSourceName() {
-        assertEquals("ror", rorOrgLoadSource.getSourceName());
+        assertEquals("ROR", rorOrgLoadSource.getSourceName());
     }
     
     @Test(expected = LoadSourceDisabledException.class)
