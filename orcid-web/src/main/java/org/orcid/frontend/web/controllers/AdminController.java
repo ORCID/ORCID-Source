@@ -24,6 +24,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -982,6 +983,10 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/validate-client-conversion.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient validateClientConversion(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
+        if(!Features.UPGRADE_PUBLIC_CLIENT.isActive()) {
+            throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
+        }
+        
         isAdmin(serverRequest, response);
         if (PojoUtil.isEmpty(data.getClientId()) || !clientDetailsManager.exists(data.getClientId())) {
             data.setClientNotFound(true);
@@ -1023,6 +1028,10 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/convert-client.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient convertClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
+        if(!Features.UPGRADE_PUBLIC_CLIENT.isActive()) {
+            throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
+        }
+            
         isAdmin(serverRequest, response);
         data = validateClientConversion(serverRequest, response, data);
         if (data.isClientNotFound() || data.isAlreadyMember() || data.isGroupIdNotFound()) {
