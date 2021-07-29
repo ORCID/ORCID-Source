@@ -20,19 +20,19 @@ public class FtpsFileDownloader {
     @Value("${org.orcid.core.orgs.ringgold.ftpHost:host}")
     private String host;
 
-    @Value("${org.orcid.core.orgs.ringgold.fptPort:990}")
+    @Value("${org.orcid.core.orgs.ringgold.ftpPort:990}")
     private int port;
 
-    @Value("${org.orcid.core.orgs.ringgold.fptUsername:username}")
+    @Value("${org.orcid.core.orgs.ringgold.ftpUsername:username}")
     private String username;
 
-    @Value("${org.orcid.core.orgs.ringgold.fptPassword:password}")
+    @Value("${org.orcid.core.orgs.ringgold.ftpPassword:password}")
     private String password;
 
     @Value("${org.orcid.core.orgs.ringgold.ftpRemoteFilePath:/tmp/ringgold/ringold-import.zip}")
     private String remoteFilePath;
 
-    @Value("${org.orcid.core.orgs.ringgold.fptLocalFilePath:/remote/filepath}")
+    @Value("${org.orcid.core.orgs.ringgold.ftpLocalFilePath:/remote/filepath}")
     private String localFilePath;
 
     private FTPSClient client;
