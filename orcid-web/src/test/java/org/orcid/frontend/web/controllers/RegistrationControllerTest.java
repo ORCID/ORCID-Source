@@ -531,6 +531,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(false);
         when(emailManager.verifyEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
@@ -540,8 +541,6 @@ public class RegistrationControllerTest extends DBUnitTest {
         ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
         assertEquals("redirect:/my-orcid", mav.getViewName());
-        assertTrue(ra.getFlashAttributes().containsKey("emailVerified"));
-        assertTrue((Boolean) ra.getFlashAttributes().get("emailVerified"));
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(orcid, email);
         verify(profileEntityManager, times(1)).updateLocale(eq(orcid), eq(AvailableLocales.EN));
@@ -566,7 +565,6 @@ public class RegistrationControllerTest extends DBUnitTest {
         ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
         assertEquals("redirect:/signin", mav.getViewName());
-        assertFalse(ra.getFlashAttributes().containsKey("emailVerified"));
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
@@ -580,6 +578,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(false);
         // For some reason the email wasn't verified
         when(emailManager.verifyEmail(orcid, email)).thenReturn(false);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
@@ -590,8 +589,6 @@ public class RegistrationControllerTest extends DBUnitTest {
         ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
         assertEquals("redirect:/my-orcid", mav.getViewName());
-        assertTrue(ra.getFlashAttributes().containsKey("emailVerified"));
-        assertFalse((Boolean) ra.getFlashAttributes().get("emailVerified"));
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
