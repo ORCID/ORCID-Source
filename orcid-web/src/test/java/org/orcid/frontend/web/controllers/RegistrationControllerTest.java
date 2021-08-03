@@ -531,10 +531,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
-        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(false);
         when(emailManager.verifyEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
-        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(false, true);
         
         RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
         
@@ -578,11 +577,10 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenReturn(email);
         when(emailManagerReadOnlyMock.emailExists(email)).thenReturn(true);
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
-        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(false);
         // For some reason the email wasn't verified
         when(emailManager.verifyEmail(orcid, email)).thenReturn(false);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
-        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(false, true);
         
         RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
         
