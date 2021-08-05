@@ -552,13 +552,14 @@ public class RegistrationController extends BaseController {
                 }
 
                 if (emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
-                    if (currentUser != null && currentUser.equals(orcid)) {
-                        redirect = "redirect:/my-orcid";
-                    }
-                    
                     if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
                         redirect = "redirect:"+ orcidUrlManager.getBaseUrl() +"/signin";
                     }
+
+                    if (currentUser != null && currentUser.equals(orcid)) {
+                        redirect = "redirect:/my-orcid";
+                    }
+
                     return new ModelAndView(redirect);
                 }
 
