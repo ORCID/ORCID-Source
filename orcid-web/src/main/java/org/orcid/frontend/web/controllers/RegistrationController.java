@@ -551,15 +551,23 @@ public class RegistrationController extends BaseController {
                     return new ModelAndView("wrong_user");
                 }
 
+                if (emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
+                    if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+                        redirect = "redirect:"+ orcidUrlManager.getBaseUrl() +"/signin";
+                    }
+
+                    if (currentUser != null && currentUser.equals(orcid)) {
+                        redirect = "redirect:/my-orcid";
+                    }
+
+                    return new ModelAndView(redirect);
+                }
+
                 boolean verified = emailManager.verifyEmail(orcid, decryptedEmail);
                 if (verified) {
                     profileEntityManager.updateLocale(orcid, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
                     redirectAttributes.addFlashAttribute("emailVerified", true);
-                    redirectAttributes.addFlashAttribute("verifiedEmail", decryptedEmail);
                     sb.append("emailVerified=true");
-                    sb.append("&");
-                    sb.append("verifiedEmail=");
-                    sb.append(decryptedEmail);
 
                     if (!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
