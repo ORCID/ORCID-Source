@@ -47,4 +47,19 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @return true if it was possible to set the client secret as primary
      * */
     boolean setAsPrimary(ClientSecretEntity clientSecret);    
+    
+    /**
+     * Get a list of non-primary keys which have not been modified in over 24 hours
+     * 
+     * @return A list of client secrets with non-primary keys
+     * */
+    List<ClientSecretEntity> getNonPrimaryKeys();
+    
+    /**
+     * Performs a delete query with a custom conditional statement
+     * 
+     * @param conditional statement for the return query
+     * @return true if the condition was met and all keys were removed
+     * */
+    boolean removeWithCustomCondition(String condition);
 }

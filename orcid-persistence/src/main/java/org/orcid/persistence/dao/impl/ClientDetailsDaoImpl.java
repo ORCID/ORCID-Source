@@ -64,6 +64,14 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
     }
+    
+    @Override
+    @Transactional
+    public void updateLastModifiedBulk(List<String> clientIds) {
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now() where id in :clientIds");
+        updateQuery.setParameter("clientIds", clientIds);
+        updateQuery.executeUpdate();
+    }
 
     @Override
     @Transactional
