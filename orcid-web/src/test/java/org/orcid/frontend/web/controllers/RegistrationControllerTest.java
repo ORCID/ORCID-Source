@@ -533,7 +533,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(emailManagerReadOnlyMock.findOrcidIdByEmail(email)).thenReturn(orcid);
         when(emailManager.verifyEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
-        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(false, true);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
         RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
         
@@ -580,7 +580,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         // For some reason the email wasn't verified
         when(emailManager.verifyEmail(orcid, email)).thenReturn(false);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
-        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(false, true);
+        when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
         RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
         
