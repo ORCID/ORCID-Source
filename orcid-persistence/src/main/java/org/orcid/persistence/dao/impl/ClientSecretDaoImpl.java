@@ -95,14 +95,15 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
     @Override
     @Transactional
     public List<ClientSecretEntity> getNonPrimaryKeys() {
-        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE is_primary = true and last_modified + '24 hours' > '2021-01-01'", ClientSecretEntity.class);
+        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE is_primary = false and last_modified + '24 hours' < now()",
+                ClientSecretEntity.class);
         return query.getResultList();
     }
-    
+
     @Override
     @Transactional
     public boolean removeWithCustomCondition(String condition) {
-        Query query = entityManager.createNativeQuery("UPDATE client_secret SET last_modified=now() WHERE " + condition);
+        Query query = entityManager.createNativeQuery("delete from client_secret WHERE " + condition);
         return query.executeUpdate() > 0;
     }
 }
