@@ -13,24 +13,21 @@
         </div>
       </strong>
   </div>
-    <!--If user verified an email-->
-    <#if emailVerified?? && emailVerified>
-      <div class="alert alert-success">
-          <strong>
-            <@spring.message "orcid.frontend.web.email_verified"/>
-              <#if primaryEmailUnverified?? && primaryEmailUnverified>
-                  <div class="row">
-                    <div class="col-md-12 col-xs-12 col-sm-12">
-                        <@spring.message "orcid.frontend.web.primary_email_unverified"/>
-                        <div class="topBuffer">
-                            <button class="btn btn-primary" id="modal-close" (click)="verifyEmail()"><@orcid.msg 'orcid.frontend.workspace.send_verification'/></button>
-                        </div>
-                    </div>
-                </div>
-              </#if>
-          </strong>
-      </div>
-    </#if>
+  <!--If user verified an email-->    
+  <div *ngIf="emailVerified" class="alert alert-success">
+      <strong>
+          <@spring.message "orcid.frontend.web.email_verified"/>
+          <div *ngIf="primaryEmailUnverified" class="row">
+              <div class="col-md-12 col-xs-12 col-sm-12">
+                  <@spring.message "orcid.frontend.web.primary_email_unverified"/>
+                  <div class="topBuffer">
+                      <button class="btn btn-primary" id="modal-close" (click)="verifyEmail()"><@orcid.msg 'orcid.frontend.workspace.send_verification'/></button>
+                  </div>
+              </div>
+          </div>
+      </strong>
+  </div>
+    
     <!--If admin user tried to switch to an invalid ORCID ID-->
     <#if invalidOrcid?? && invalidOrcid>
       <div class="alert alert-success">
