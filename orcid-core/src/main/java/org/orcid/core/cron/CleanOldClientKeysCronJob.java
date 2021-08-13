@@ -31,6 +31,7 @@ public class CleanOldClientKeysCronJob {
      */
     @Transactional
     public void cleanOldClientKeys() {
+        // fetch nonprimary keys
         List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys();
         if (nonPrimaryKeys.size() > 0) {
             int i = 0;
@@ -41,6 +42,7 @@ public class CleanOldClientKeysCronJob {
                 ClientDetailsEntity clientDetails = e.getClientDetailsEntity();
                 String clientId = clientDetails.getId();
                 String key = e.getClientSecret();
+                // build string for the condition in the db delete query
                 String s = String.format("(client_details_id = '%1$s' and client_secret = '%2$s')", clientId, key);
                 queryCondition.append(s);
                 clientIds.add(clientId);
@@ -51,9 +53,11 @@ public class CleanOldClientKeysCronJob {
             String queryConditionString = queryCondition.toString();
             LOGGER.warn("The following keys are going to be deleted:\n"
                     + queryConditionString.replace(" =", ":").replace(" and", ",").replace(" or ", "\n").replace("'", ""));
+            // remove fetched keys
             boolean removeNonPrimaryKeys = clientSecretDao.removeWithCustomCondition(queryConditionString);
             if (removeNonPrimaryKeys) {
                 LOGGER.info("Done removing old keys");
+                // update last_modified if successful
                 this.clientDetailsDao.updateLastModifiedBulk(clientIds);
             }
         }
