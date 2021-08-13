@@ -1,7 +1,5 @@
 package org.orcid.core.cron;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.orcid.core.cron.CleanOldClientKeysCronJob;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -60,7 +56,6 @@ public class CleanOldClientKeysCronJobTest {
         list.add(entity);
         Mockito.when(clientSecretDao.getNonPrimaryKeys()).thenReturn(list);
         Mockito.when(clientSecretDao.removeWithCustomCondition(Mockito.anyString())).thenReturn(true);
-       // Mockito.doNothing().when(clientDetailsDao.updateLastModifiedBulk(Mockito.anyList()));
         CleanUpJob.cleanOldClientKeys();
         Mockito.verify(clientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
         Mockito.verify(clientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
@@ -81,7 +76,6 @@ public class CleanOldClientKeysCronJobTest {
         list.add(entityTwo);
         Mockito.when(clientSecretDao.getNonPrimaryKeys()).thenReturn(list);
         Mockito.when(clientSecretDao.removeWithCustomCondition(Mockito.anyString())).thenReturn(true);
-       // Mockito.doNothing().when(clientDetailsDao.updateLastModifiedBulk(Mockito.anyList()));
         CleanUpJob.cleanOldClientKeys();
         Mockito.verify(clientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
         Mockito.verify(clientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
