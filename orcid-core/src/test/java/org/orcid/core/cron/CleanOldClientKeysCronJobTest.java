@@ -1,5 +1,7 @@
 package org.orcid.core.cron;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +44,7 @@ public class CleanOldClientKeysCronJobTest {
         Mockito.when(clientSecretDao.getNonPrimaryKeys()).thenReturn(new ArrayList<ClientSecretEntity>());
         CleanUpJob.cleanOldClientKeys();
         Mockito.verify(clientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
-        Mockito.verify(clientSecretDao, Mockito.times(0)).removeWithCustomCondition(condition.capture());
+        Mockito.verify(clientSecretDao, Mockito.times(0)).removeWithCustomCondition("anything");
         Mockito.verify(clientDetailsDao, Mockito.times(0)).updateLastModifiedBulk(Mockito.anyList());
     }
     
@@ -60,6 +62,7 @@ public class CleanOldClientKeysCronJobTest {
         Mockito.verify(clientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
         Mockito.verify(clientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
         Mockito.verify(clientDetailsDao, Mockito.times(1)).updateLastModifiedBulk(Mockito.anyList());
+        assertEquals(condition.getValue(), "(client_details_id = 'anything' and client_secret = 'anything')");
     }
     
     @Test
@@ -80,6 +83,7 @@ public class CleanOldClientKeysCronJobTest {
         Mockito.verify(clientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
         Mockito.verify(clientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
         Mockito.verify(clientDetailsDao, Mockito.times(1)).updateLastModifiedBulk(Mockito.anyList());
+        assertEquals(condition.getValue(), "(client_details_id = 'anything' and client_secret = 'anything') or (client_details_id = 'anything' and client_secret = 'anything again')");
     }
     
 }
