@@ -26,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ClientSecretDaoTest extends DBUnitTest {
-    private static String CLIENT_ID = "APP-5555555555555556";
-    private static String CLIENT_SECRET = "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx";
+    private static String CLIENT_ID = "APP-5555555555555555";
+    private static String CLIENT_SECRET = "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBt";
     private static String CONDITION = String.format("(client_details_id = '%1$s' and client_secret = '%2$s')", CLIENT_ID, CLIENT_SECRET);
 
     @Resource
@@ -50,7 +50,7 @@ public class ClientSecretDaoTest extends DBUnitTest {
     @Transactional
     public void testGetNonPrimaryKeys() {
         List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys();
-        assertEquals(nonPrimaryKeys.size(), 1);
+        assertEquals(nonPrimaryKeys.size(), 2);
         ClientSecretEntity secret = nonPrimaryKeys.get(0);
         ClientDetailsEntity client = secret.getClientDetailsEntity();
         assertNotNull(secret.getDateCreated());
