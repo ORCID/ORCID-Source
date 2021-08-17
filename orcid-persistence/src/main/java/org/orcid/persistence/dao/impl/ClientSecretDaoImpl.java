@@ -5,6 +5,9 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientSecretPk;
@@ -95,8 +98,12 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
     @Override
     @Transactional
     public List<ClientSecretEntity> getNonPrimaryKeys() {
-        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE is_primary = false and last_modified + '24 hours' < now()",
+        DateTime dt = DateTime.now();
+        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        String yesterday = fmt.print(dt);
+        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE is_primary = false and last_modified < timestamp (:yesterday)",
                 ClientSecretEntity.class);
+        query.setParameter("yesterday", yesterday);
         return query.getResultList();
     }
 

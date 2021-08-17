@@ -21,7 +21,7 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     
     void updateLastModified(String clientId);
     
-    void updateLastModifiedBulk(List<String> clientIds);
+    int updateLastModifiedBulk(List<String> clientIds);
     
     void updateClientType(String clientType, String clientId);
     

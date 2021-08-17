@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -18,72 +19,103 @@ import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
+import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
 
-public class CleanOldClientKeysCronJobTest {
-    
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+public class CleanOldClientKeysCronJobTest extends DBUnitTest {
+
     @InjectMocks
     private CleanOldClientKeysCronJob CleanUpJob;
-    
+
     @Mock
-    private ClientSecretDao clientSecretDao;
-    
+    private ClientSecretDao mockClientSecretDao;
+
     @Mock
-    private ClientDetailsDao clientDetailsDao;
-    
+    private ClientDetailsDao mockClientDetailsDao;
+
     @Captor
     private ArgumentCaptor<String> condition;
-    
-    
+
+    @Captor
+    private ArgumentCaptor<List<String>> updateReturn;
+
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
     }
-    
+
     @Test
     public void testGetNoResults() {
-        Mockito.when(clientSecretDao.getNonPrimaryKeys()).thenReturn(new ArrayList<ClientSecretEntity>());
+        Mockito.when(mockClientSecretDao.getNonPrimaryKeys()).thenReturn(new ArrayList<ClientSecretEntity>());
         CleanUpJob.cleanOldClientKeys();
-        Mockito.verify(clientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
-        Mockito.verify(clientSecretDao, Mockito.times(0)).removeWithCustomCondition("anything");
-        Mockito.verify(clientDetailsDao, Mockito.times(0)).updateLastModifiedBulk(Mockito.anyList());
+        Mockito.verify(mockClientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
+        Mockito.verify(mockClientSecretDao, Mockito.times(0)).removeWithCustomCondition(Mockito.anyString());
+        Mockito.verify(mockClientDetailsDao, Mockito.times(0)).updateLastModifiedBulk(Mockito.anyList());
     }
-    
+
     @Test
     public void testGetOneResult() {
-        List<ClientSecretEntity> list = new ArrayList<ClientSecretEntity>();
-        ClientDetailsEntity client = new ClientDetailsEntity("anything", "anything");
+        List<ClientSecretEntity> secretList = new ArrayList<ClientSecretEntity>();
+        List<String> clientList = new ArrayList<String>();
+
+        // populate list of clients for updateLastModifiedBulk
+        String clientId = "clientId";
+        clientList.add(clientId);
+
+        // populate list of client secret entities for removeWithCustomCondition
+        ClientDetailsEntity client = new ClientDetailsEntity(clientId, "clientName");
         ClientSecretEntity entity = new ClientSecretEntity();
-        entity.setClientSecret("anything");
+        entity.setClientSecret("clientSecret");
         entity.setClientDetailsEntity(client);
-        list.add(entity);
-        Mockito.when(clientSecretDao.getNonPrimaryKeys()).thenReturn(list);
-        Mockito.when(clientSecretDao.removeWithCustomCondition(Mockito.anyString())).thenReturn(true);
+        secretList.add(entity);
+
+        Mockito.when(mockClientSecretDao.getNonPrimaryKeys()).thenReturn(secretList);
+        Mockito.when(mockClientSecretDao.removeWithCustomCondition(Mockito.anyString())).thenReturn(true);
+
         CleanUpJob.cleanOldClientKeys();
-        Mockito.verify(clientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
-        Mockito.verify(clientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
-        Mockito.verify(clientDetailsDao, Mockito.times(1)).updateLastModifiedBulk(Mockito.anyList());
-        assertEquals(condition.getValue(), "(client_details_id = 'anything' and client_secret = 'anything')");
+        Mockito.verify(mockClientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
+        Mockito.verify(mockClientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
+        Mockito.verify(mockClientDetailsDao, Mockito.times(1)).updateLastModifiedBulk(updateReturn.capture());
+        assertEquals(updateReturn.getValue(), clientList);
+        assertEquals(condition.getValue(), "(client_details_id = 'clientId' and client_secret = 'clientSecret')");
     }
-    
+
     @Test
     public void testGetMultipleResults() {
-        List<ClientSecretEntity> list = new ArrayList<ClientSecretEntity>();
-        ClientDetailsEntity client = new ClientDetailsEntity("anything", "anything");
+        List<ClientSecretEntity> secretList = new ArrayList<ClientSecretEntity>();
+        List<String> clientList = new ArrayList<String>();
+
+        // populate list of clients for updateLastModifiedBulk
+        String clientId = "clientId";
+        String clientIdTwo = "clientIdTwo";
+        clientList.add(clientId);
+        clientList.add(clientIdTwo);
+
+        // populate list of client secret entities for removeWithCustomCondition
+        ClientDetailsEntity client = new ClientDetailsEntity(clientId, "clientName");
+        ClientDetailsEntity clientTwo = new ClientDetailsEntity(clientIdTwo, "clientNameTwo");
         ClientSecretEntity entityOne = new ClientSecretEntity();
-        entityOne.setClientSecret("anything");
+        entityOne.setClientSecret("clientSecret");
         entityOne.setClientDetailsEntity(client);
         ClientSecretEntity entityTwo = new ClientSecretEntity();
-        entityTwo.setClientSecret("anything again");
-        entityTwo.setClientDetailsEntity(client);
-        list.add(entityOne);
-        list.add(entityTwo);
-        Mockito.when(clientSecretDao.getNonPrimaryKeys()).thenReturn(list);
-        Mockito.when(clientSecretDao.removeWithCustomCondition(Mockito.anyString())).thenReturn(true);
+        entityTwo.setClientSecret("clientSecretTwo");
+        entityTwo.setClientDetailsEntity(clientTwo);
+        secretList.add(entityOne);
+        secretList.add(entityTwo);
+
+        Mockito.when(mockClientSecretDao.getNonPrimaryKeys()).thenReturn(secretList);
+        Mockito.when(mockClientSecretDao.removeWithCustomCondition(Mockito.anyString())).thenReturn(true);
+
         CleanUpJob.cleanOldClientKeys();
-        Mockito.verify(clientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
-        Mockito.verify(clientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
-        Mockito.verify(clientDetailsDao, Mockito.times(1)).updateLastModifiedBulk(Mockito.anyList());
-        assertEquals(condition.getValue(), "(client_details_id = 'anything' and client_secret = 'anything') or (client_details_id = 'anything' and client_secret = 'anything again')");
+        Mockito.verify(mockClientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
+        Mockito.verify(mockClientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
+        Mockito.verify(mockClientDetailsDao, Mockito.times(1)).updateLastModifiedBulk(updateReturn.capture());
+        assertEquals(updateReturn.getValue(), clientList);
+        assertEquals(condition.getValue(),
+                "(client_details_id = 'clientId' and client_secret = 'clientSecret') or (client_details_id = 'clientIdTwo' and client_secret = 'clientSecretTwo')");
     }
-    
+
 }

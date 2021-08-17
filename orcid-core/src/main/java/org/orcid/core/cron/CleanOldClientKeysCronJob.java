@@ -49,7 +49,7 @@ public class CleanOldClientKeysCronJob {
                 if (i != nonPrimaryKeys.size())
                     queryCondition.append(" or ");
             }
-            ;
+
             String queryConditionString = queryCondition.toString();
             LOGGER.warn("The following keys are going to be deleted:\n"
                     + queryConditionString.replace(" =", ":").replace(" and", ",").replace(" or ", "\n").replace("'", ""));
