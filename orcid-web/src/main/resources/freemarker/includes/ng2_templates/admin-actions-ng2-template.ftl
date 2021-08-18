@@ -1,3 +1,5 @@
+<#include "/includes/ng2_templates/convert-client-confirm-ng2-template.ftl">
+
 <script type="text/ng-template" id="admin-actions-ng2-template">
 <!-- Switch user -->
 <div class="workspace-accordion-item" id="switch-user">
@@ -494,4 +496,45 @@
         </div>
     </div>
 </div>
+
+<!-- convert public client to member client -->
+<@orcid.checkFeatureStatus featureName='UPGRADE_PUBLIC_CLIENT'>
+	<div class="workspace-accordion-item" id="convert-client">
+	    <p>
+	        <a *ngIf="showConvertClient" (click)="showConvertClient = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.convert_client.title' /></a>
+	        <a *ngIf="!showConvertClient" (click)="showConvertClient = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.convert_client.title' /></a>
+	    </p>
+	    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showConvertClient">
+	       <div>
+	            <div class="alert alert-success" *ngIf="convertClient.clientNotFound">
+	                <@spring.message "admin.convert_client.client_not_found"/>
+	            </div>
+	            <div class="alert alert-success" *ngIf="convertClient.groupIdNotFound">
+	                <@spring.message "admin.convert_client.group_id_not_found"/>
+	            </div>
+	            <div class="alert alert-success" *ngIf="convertClient.alreadyMember">
+	                <@spring.message "admin.convert_client.already_member"/>
+	            </div>
+	        </div>
+	        <div class="form-group">
+	            <label for="client_to_convert"><@orcid.msg 'admin.convert_client.client_id.label' /></label>
+	            <input type="text" id="client_to_convert" [(ngModel)]="convertClient.clientId" placeholder="<@orcid.msg 'admin.convert_client.client_id.placeholder' />" class="input-xlarge" />
+	        </div>
+	        <div class="form-group">
+	            <label for="client_group_id"><@orcid.msg 'admin.convert_client.group_id.label' /></label>
+	            <input type="text" id="client_group_id" (keyup.enter)="processClientConversion()" [(ngModel)]="convertClient.groupId" placeholder="<@orcid.msg 'admin.convert_client.group_id.placeholder' />" class="input-xlarge" />
+	        </div>
+	        <div class="controls save-btns pull-left">
+	            <span id="bottom-convert-client" (click)="processClientConversion()" class="btn btn-primary"><@orcid.msg 'admin.convert_client.convert_button_text'/></span>
+	        </div>
+	    </div>
+	</div>
+</@orcid.checkFeatureStatus>
 </script>
+	
+<@orcid.checkFeatureStatus featureName='UPGRADE_PUBLIC_CLIENT'>	
+	<modalngcomponent elementHeight="370" elementId="confirmConvertClient" elementWidth="400">
+	    <convert-client-confirm-ng2></convert-client-confirm-ng2>
+	</modalngcomponent>
+</@orcid.checkFeatureStatus>
+

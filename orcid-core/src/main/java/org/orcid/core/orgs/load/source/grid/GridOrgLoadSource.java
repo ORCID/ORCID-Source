@@ -24,9 +24,9 @@ import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
-import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleDetails;
-import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleFile;
-import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleSummary;
+import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleDetails;
+import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleFile;
+import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleSummary;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -108,11 +108,11 @@ public class GridOrgLoadSource implements OrgLoadSource {
             fileRotator.removeFileIfExists(zipFilePath);
             fileRotator.removeFileIfExists(localDataPath);
             orgDataClient.init();
-            List<FigshareGridCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(gridFigshareCollectionUrl, userAgent,
-                    new GenericType<List<FigshareGridCollectionArticleSummary>>() {
+            List<FigshareCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(gridFigshareCollectionUrl, userAgent,
+                    new GenericType<List<FigshareCollectionArticleSummary>>() {
                     });
-            FigshareGridCollectionArticleSummary latest = null;
-            for (FigshareGridCollectionArticleSummary article : gridCollectionArticles) {
+            FigshareCollectionArticleSummary latest = null;
+            for (FigshareCollectionArticleSummary article : gridCollectionArticles) {
                 if (latest == null) {
                     latest = article;
                     continue;
@@ -123,12 +123,12 @@ public class GridOrgLoadSource implements OrgLoadSource {
                 }
             }
 
-            FigshareGridCollectionArticleDetails details = orgDataClient.get(gridFigshareArticleUrl + latest.getId(), userAgent,
-                    new GenericType<FigshareGridCollectionArticleDetails>() {
+            FigshareCollectionArticleDetails details = orgDataClient.get(gridFigshareArticleUrl + latest.getId(), userAgent,
+                    new GenericType<FigshareCollectionArticleDetails>() {
                     });
-            List<FigshareGridCollectionArticleFile> files = details.getFiles();
+            List<FigshareCollectionArticleFile> files = details.getFiles();
             boolean success = false;
-            for (FigshareGridCollectionArticleFile file : files) {
+            for (FigshareCollectionArticleFile file : files) {
                 if (file.getName().endsWith(FILE_EXTENSION)) {
                     success = orgDataClient.downloadFile(file.getDownloadUrl(), userAgent, zipFilePath);
                 }

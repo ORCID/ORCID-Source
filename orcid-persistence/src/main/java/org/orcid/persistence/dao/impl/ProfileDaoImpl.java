@@ -366,6 +366,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createQuery(queryString);
         query.setParameter("orcid", orcid);
         query.setParameter("indexingStatus", indexingStatus);
+        // Sets a timeout for this query
+        query.setHint("javax.persistence.query.timeout", queryTimeout);
         query.executeUpdate();
     }
 

@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -196,8 +198,19 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = { "/my-orcid3", "/my-orcid", "/workspace" }, method = RequestMethod.GET)
-    public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
+    public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo, @RequestParam(value = "maxResults", defaultValue = "200") int maxResults, @RequestParam(value = "orcid", defaultValue = "") String orcid) throws ServletException, IOException {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+       
+        if (!orcid.equals(profile.getId())){
+            String redirectUrl = request.getRequestURL().toString();
+            redirectUrl += "?orcid="+profile.getId();
+            if (request.getQueryString() != null && orcid.equals("")){
+                redirectUrl += "&"+request.getQueryString();
+            }
+            response.sendRedirect(redirectUrl);
+            
+        }
+
         return new ModelAndView("workspace_v3");
     }
 

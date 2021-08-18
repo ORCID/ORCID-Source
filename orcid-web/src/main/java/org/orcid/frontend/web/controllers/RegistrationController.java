@@ -555,11 +555,7 @@ public class RegistrationController extends BaseController {
                 if (verified) {
                     profileEntityManager.updateLocale(orcid, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
                     redirectAttributes.addFlashAttribute("emailVerified", true);
-                    redirectAttributes.addFlashAttribute("verifiedEmail", decryptedEmail);
                     sb.append("emailVerified=true");
-                    sb.append("&");
-                    sb.append("verifiedEmail=");
-                    sb.append(decryptedEmail);
 
                     if (!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
@@ -574,22 +570,18 @@ public class RegistrationController extends BaseController {
                 }
 
                 if (currentUser != null && currentUser.equals(orcid)) {
-                    redirect = "redirect:/my-orcid";
+                    redirect = "redirect:/my-orcid?" + sb.toString();
+                } else {
+                    redirect = "redirect:" + orcidUrlManager.getBaseUrl() + "/signin?" + sb.toString();
                 }
             }
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
             sb.append("invalidVerifyUrl=true");
+            redirect = "redirect:" + orcidUrlManager.getBaseUrl() + "/signin?" + sb.toString();
             SecurityContextHolder.clearContext();
-        }
-
-        if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-            // TODO add parameters to my-orcid redirect @DanielPalafox
-            if (redirect.indexOf("signin") > 0) {
-                redirect = "redirect:"+ orcidUrlManager.getBaseUrl() +"/signin?" + sb.toString();
-            }
-        }
+        }       
 
         return new ModelAndView(redirect);
     }
