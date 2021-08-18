@@ -96,8 +96,8 @@
     <client_scope client_details_id="APP-5555555555555556" scope_type="/read-public"/>
     <client_scope client_details_id="APP-5555555555555556" scope_type="/orcid-profile/create"/>
     
-    <client_secret client_details_id="APP-5555555555555555" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
-    <client_secret client_details_id="APP-5555555555555556" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+    <client_secret client_details_id="APP-5555555555555555" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" is_primary="true"/>
+    <client_secret client_details_id="APP-5555555555555556" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" is_primary="true"/>
     <client_secret client_details_id="APP-5555555555555555" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBt" date_created="2021-08-15" last_modified="2021-08-15" is_primary="false"/>
     <client_secret client_details_id="APP-5555555555555556" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBt" date_created="2021-08-15" last_modified="2021-08-15" is_primary="false"/>
     
