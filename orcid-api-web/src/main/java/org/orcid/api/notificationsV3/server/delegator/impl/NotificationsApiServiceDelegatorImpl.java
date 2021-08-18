@@ -3,6 +3,7 @@ package org.orcid.api.notificationsV3.server.delegator.impl;
 import org.orcid.api.notificationsV3.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.OrcidNotificationNotFoundException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -137,7 +138,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
         Notification createdNotification = notificationManager.createPermissionNotification(orcid, notification);
         try {
             if(createdNotification == null) {
-                return Response.notModified().build();
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("orcid", orcid);
+                throw new OrcidNotificationException(params);                
             }
             return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode())).build();
         } catch (URISyntaxException e) {
