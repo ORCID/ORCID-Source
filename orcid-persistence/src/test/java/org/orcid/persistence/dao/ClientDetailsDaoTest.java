@@ -20,8 +20,8 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 public class ClientDetailsDaoTest extends DBUnitTest {
 
-    private static String CLIENT_ID = "APP-5555555555555556";
-    private static String CLIENT_ID_TWO = "APP-5555555555555555";
+    private static String CLIENT_ID = "APP-5555555555555557";
+    private static String CLIENT_ID_TWO = "APP-5555555555555558";
 
     @Resource
     ClientSecretDao clientSecretDao;
