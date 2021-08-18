@@ -199,11 +199,10 @@ public class WorkspaceController extends BaseWorkspaceController {
 
     @RequestMapping(value = { "/my-orcid3", "/my-orcid", "/workspace" }, method = RequestMethod.GET)
     public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo, @RequestParam(value = "maxResults", defaultValue = "200") int maxResults, @RequestParam(value = "orcid", defaultValue = "") String orcid) throws ServletException, IOException {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
        
-        if (!orcid.equals(profile.getId())){
+        if (!orcid.equals(getCurrentUserOrcid())){
             String redirectUrl = request.getRequestURL().toString();
-            redirectUrl += "?orcid="+profile.getId();
+            redirectUrl += "?orcid="+getCurrentUserOrcid();
             if (request.getQueryString() != null && orcid.equals("")){
                 redirectUrl += "&"+request.getQueryString();
             }
