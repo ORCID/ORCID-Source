@@ -63,7 +63,8 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @Transactional
     public void testLoadClientByClientId() throws Exception {
         List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        String[] clientExceptionList = new String[]{"APP-5555555555555555", "APP-5555555555555556", "APP-5555555555555557", "APP-5555555555555558", "APP-6666666666666666"};        
+        String[] clientExceptionList = new String[] { "APP-5555555555555555", "APP-5555555555555556", "APP-5555555555555557", "APP-5555555555555558",
+                "APP-6666666666666666" };     
         assertEquals(12, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
