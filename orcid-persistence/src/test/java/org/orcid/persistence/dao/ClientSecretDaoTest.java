@@ -26,7 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class ClientSecretDaoTest extends DBUnitTest {
     private static String CLIENT_ID = "APP-5555555555555557";
     private static String CLIENT_ID_TWO = "APP-5555555555555558";
-    private static String CLIENT_SECRET = "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBt";
+    private static String CLIENT_SECRET = "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx";
     private static String CONDITION = String.format("(client_details_id = '%1$s' and client_secret = '%2$s') or (client_details_id = '%3$s' and client_secret = '%2$s')", CLIENT_ID, CLIENT_SECRET, CLIENT_ID_TWO);
 
     @Resource
