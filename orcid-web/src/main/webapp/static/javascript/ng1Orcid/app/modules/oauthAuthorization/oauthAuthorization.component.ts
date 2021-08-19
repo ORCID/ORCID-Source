@@ -486,39 +486,6 @@ ok: "${error.ok}"
 
     };
 
-    getDuplicates(): void{
-        let url = getBaseUri() + '/dupicateResearcher.json?familyNames=' + this.registrationForm.familyNames.value + '&givenNames=' + this.registrationForm.givenNames.value;
-        this.oauthService.getDuplicates( url )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            duplicates => {
-                var diffDate = new Date();
-                // reg was filled out to fast reload the page
-                if (this.loadTime + 5000 > diffDate.getTime()) {
-                    window.location.reload();
-                    return;
-                }
-                if (duplicates.length > 0 ) {
-                    this.showRegisterProcessing = false;
-                    this.openDialog(duplicates)
-                } else {
-                    this.oauth2ScreensPostRegisterConfirm();                          
-                }
-
-            },
-            error => {
-                // something bad is happening!
-                console.log("error fetching dupicateResearcher.json");
-                // continue to registration, as solr dup lookup failed.
-                this.oauth2ScreensPostRegisterConfirm();
-        } 
-        );
-
-    };
-
-
     openDialog(duplicateRecords): void {
         const dialogParams = {
             width: `1078px`,
@@ -672,10 +639,7 @@ ok: "${error.ok}"
         .subscribe(
             data => {
                 this.registrationForm = data;
-                if (this.registrationForm.errors == undefined 
-                    || this.registrationForm.errors.length == 0) {                                 
-                    this.getDuplicates();
-                } else {
+                if (this.registrationForm.errors && this.registrationForm.errors.length > 0) {
                     this.theFormWasSubmittedAndHasSomeErrors = true
                     if(this.registrationForm.email.errors.length > 0) {
                         this.errorEmail = data.email.value;
