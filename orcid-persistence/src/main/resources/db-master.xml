@@ -348,6 +348,7 @@
   <include file="/db/updates/identifier-types/update-osti-identifier-prefix.xml" />  
   <include file="/db/updates/identifier-types/identifier-type-45-ppr.xml" />
   <include file="/db/updates/hsql_grant_seq.xml" /> 
-  <include file="/db/updates/identifier-types/update-proposal-id-and-grant-number-primary-use.xml" />
+  <include file="/db/updates/identifier-types/update-proposal-id-and-grant-number-primary-use.xml" />  
+  <include file="/db/updates/identifier-types/identifier-type-46-empiar.xml" />    
   <include file="/db/updates/add_primary_key_to_dw_active_users.xml" />  
 </databaseChangeLog>
