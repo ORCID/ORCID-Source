@@ -98,7 +98,7 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
     @Override
     @Transactional
     public List<ClientSecretEntity> getNonPrimaryKeys() {
-        DateTime dt = DateTime.now();
+        DateTime dt = DateTime.now().minusDays(1);
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         String yesterday = fmt.print(dt);
         TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE is_primary = false and last_modified < timestamp (:yesterday)",
