@@ -47,7 +47,6 @@ export class NotificationBodyComponent implements OnInit {
     updatedList: string[];
     deletedList: string[];
     unknownList: string[];
-    TOGGLZ_VERBOSE_NOTIFICATIONS: boolean;
     MAX_ELEMENTS_TO_SHOW: number;
     showClientDescription: boolean;
     
@@ -58,7 +57,6 @@ export class NotificationBodyComponent implements OnInit {
         private featuresService: FeaturesService,
     ) {
         this.notification = elementRef.nativeElement.getAttribute('notification');
-        this.TOGGLZ_VERBOSE_NOTIFICATIONS = this.featuresService.isFeatureEnabled('VERBOSE_NOTIFICATIONS');
         this.MAX_ELEMENTS_TO_SHOW = 20;
         this.educationsCount = 0;
         this.employmentsCount = 0;

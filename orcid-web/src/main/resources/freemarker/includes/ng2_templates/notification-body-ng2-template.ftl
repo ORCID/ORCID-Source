@@ -3,7 +3,7 @@
         <div class="notifications-inner">
             <!--AMENDED-->
             <div *ngIf="notification.notificationType=='AMENDED'">
-                <div *ngIf="TOGGLZ_VERBOSE_NOTIFICATIONS; else defaultNotifications">
+                <div>
                     <div *ngIf="(addedList.length > 0 || updatedList.length > 0 || deletedList.length > 0 || unknownList.length > 0); else noItemNotification">
                         <p><strong>{{notification?.source?.sourceName?.content}}</strong>&nbsp;<a
                                     (click)="toggleClientDescription()"
@@ -212,7 +212,7 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="!TOGGLZ_VERBOSE_NOTIFICATIONS">
+            <div>
                 <div *ngIf="notification?.sourceDescription" class="topBuffer clear-fix">
                     <p><strong><@orcid.msg 'notifications.about' />
                             {{notification?.source?.sourceName?.content}}</strong><br>

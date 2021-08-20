@@ -343,13 +343,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 
                 if(!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                    EmailMessage digestMessage;
-                    if(Features.VERBOSE_NOTIFICATIONS.isActive()) {
-                        digestMessage = createDigest(orcid, notifications);
-                    } else {
-                        digestMessage = createDigestLegacy(orcid, notifications);
-                    }
-                    
+                    EmailMessage digestMessage = createDigest(orcid, notifications);                    
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
                     digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
