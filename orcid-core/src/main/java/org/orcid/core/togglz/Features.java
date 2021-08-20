@@ -131,9 +131,6 @@ public enum Features implements Feature {
 
     @Label("Works failure debug")
     WORKS_FAILURE_DEBUG,
-    
-    @Label("Set the 3.0 API as the default one in the public API")
-    PUB_API_DEFAULT_TO_V3,
 
     @Label("Set the 3.0 API as the default one in the members API")
     MEMBER_API_DEFAULT_TO_V3,

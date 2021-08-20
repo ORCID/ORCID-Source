@@ -58,14 +58,9 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
                     String redirectUri = orcidUrlManager.getPubBaseUrl() + OrcidApiConstants.EXPERIMENTAL_RDF_V1 + path;
                     response.sendRedirect(redirectUri);
                 } else {
-                    String baseUrl = Features.PUB_API_DEFAULT_TO_V3.equals(feature) ? orcidUrlManager.getPubBaseUrl() : orcidUrlManager.getApiBaseUrl();
-                    if (feature.isActive()) {
-                        String redirectUri = baseUrl + "/v3.0" + path;
-                        response.sendRedirect(redirectUri);
-                    } else {
-                        String redirectUri = baseUrl + "/v2.0" + path;
-                        response.sendRedirect(redirectUri);
-                    }
+                    String baseUrl = feature.name().equals("PUB_API_DEFAULT_TO_V3") ? orcidUrlManager.getPubBaseUrl() : orcidUrlManager.getApiBaseUrl();
+                    String redirectUri = baseUrl + "/v3.0" + path;
+                    response.sendRedirect(redirectUri);
                 }
             } else {
                 filterChain.doFilter(request, response);
