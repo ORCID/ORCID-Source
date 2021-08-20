@@ -113,4 +113,13 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
         Query query = entityManager.createNativeQuery("delete from client_secret WHERE " + condition);
         return query.executeUpdate() > 0;
     }
+    
+    @Override
+    @Transactional
+    public boolean updateLastModified(String clientId, String clientSecret) {
+        Query updateQuery = entityManager.createQuery("update ClientSecretEntity set lastModified = now() where client_details_id = :clientId AND client_secret = :clientSecret");
+        updateQuery.setParameter("clientId", clientId);
+        updateQuery.setParameter("clientSecret", clientSecret);
+        return updateQuery.executeUpdate() > 0;
+    }
 }
