@@ -81,7 +81,7 @@ public class ClientDetailsManagerTest {
         basicGroup.setOrcidType(OrcidType.GROUP.name());
         basicGroup.setGroupType(MemberType.BASIC.name());
         
-        Mockito.doNothing().when(clientDetailsDao).convertPublicClientToMember(Mockito.eq("client"), Mockito.anyString(), Mockito.anyString());
+        Mockito.doReturn(Boolean.FALSE).when(clientDetailsDao).convertPublicClientToMember(Mockito.eq("client"), Mockito.anyString(), Mockito.anyString());
         Mockito.when(profileEntityManager.findByOrcid(Mockito.eq("premium"))).thenReturn(premiumGroup);
         Mockito.when(profileEntityManager.findByOrcid(Mockito.eq("basic"))).thenReturn(basicGroup);
         
@@ -90,6 +90,10 @@ public class ClientDetailsManagerTest {
         
         clientDetailsManager.convertPublicClientToMember("client", "premium");        
         Mockito.verify(clientDetailsDao).convertPublicClientToMember(Mockito.eq("client"), Mockito.eq("premium"), Mockito.eq(ClientType.PREMIUM_UPDATER.name()));
+        
+        
+        // Working on unit tests
+        
     }
     
     private ClientDetailsEntity getDeactivedClientDetails(String id) {
