@@ -30,7 +30,6 @@ export class SearchComponent implements OnDestroy, OnInit {
     newResults: any;
     numFound: any;
     searchResults: any;
-    searchResultsAffiliationsFeatureEnabled: boolean = this.featuresService.isFeatureEnabled('SEARCH_RESULTS_AFFILIATIONS');
     searchResultsLoading: boolean;
     showMoreLoading: boolean;
     showNoResultsAlert: boolean;

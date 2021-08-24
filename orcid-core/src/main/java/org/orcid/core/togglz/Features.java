@@ -84,9 +84,6 @@ public enum Features implements Feature {
     @Label("Revoke access token if authorization code is reused")
     REVOKE_TOKEN_ON_CODE_REUSE,
 
-    @Label("Affiliations in search results")
-    SEARCH_RESULTS_AFFILIATIONS,
-
     @Label("Survey link")
     SURVEY,
 
