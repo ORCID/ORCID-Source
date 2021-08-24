@@ -14,6 +14,8 @@ public class ConvertClient implements Serializable {
     
     private boolean groupIdNotFound;
     
+    private boolean groupIdDeactivated;
+    
     private boolean alreadyMember;
     
     private boolean success;
@@ -84,6 +86,14 @@ public class ConvertClient implements Serializable {
 
     public void setTargetClientType(String targetClientType) {
         this.targetClientType = targetClientType;
+    }
+
+    public boolean isGroupIdDeactivated() {
+        return groupIdDeactivated;
+    }
+
+    public void setGroupIdDeactivated(boolean groupIdDeactivated) {
+        this.groupIdDeactivated = groupIdDeactivated;
     }
     
 }

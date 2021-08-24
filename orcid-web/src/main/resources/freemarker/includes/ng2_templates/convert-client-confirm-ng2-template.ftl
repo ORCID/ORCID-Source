@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12"> 
                 <div class="control-group">
-                    <button (click)="confirmConvertClient()" class="btn btn-primary"><@orcid.msg 'admin.convert_client.confirmation.button.label'/></button>
+                    <button (click)="confirmConvertClient()" class="btn btn-primary"><@orcid.msg 'admin.convert_client.confirmation.button.label'/></button>&nbsp;
                     <a class="cancel-action" (click)="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
                 </div>
             </div>                          
