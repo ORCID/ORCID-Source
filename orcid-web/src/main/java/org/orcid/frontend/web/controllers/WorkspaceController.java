@@ -467,8 +467,12 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/countryNamesToCountryCodes.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> getCountryNamesToCountryCodesMap() {
         Locale locale = localeManager.getLocale();
+        if (locale.getLanguage().equals(new Locale("lr").getLanguage())|| locale.getLanguage().equals(new Locale("rl").getLanguage()) || locale.getLanguage().equals(new Locale("xx").getLanguage())) {
+            locale = new Locale("en");
+        }
         Map<String, String> countryMap = localeManager.getCountries(locale);
         Map<String, String> mapInversed = countryMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        
         return mapInversed;
     }
     
