@@ -16,7 +16,6 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidGenerationManager;
-import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.MembersManager;
@@ -61,9 +60,6 @@ public class MembersManagerImpl implements MembersManager {
 
     @Resource(name = "profileEntityManagerV3")
     ProfileEntityManager profileEntityManager;
-
-    @Resource
-    private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -212,8 +208,7 @@ public class MembersManagerImpl implements MembersManager {
                 if (!email.equals(primaryEmail.getEmail())) {
                     if (emailManager.emailExists(email)) {
                         throw new IllegalArgumentException("Email already exists");
-                    }
-                    Date now = new Date();
+                    }                    
                     EmailEntity newPrimaryEmail = new EmailEntity();
                     newPrimaryEmail.setCurrent(true);
                     newPrimaryEmail.setEmail(email);
@@ -231,8 +226,7 @@ public class MembersManagerImpl implements MembersManager {
                 }
             }
         });
-        
-        clearCache();
+                
         return member;
     }
 
@@ -284,18 +278,6 @@ public class MembersManagerImpl implements MembersManager {
 
     private String getMessage(String message) {
         return localeManager.resolveMessage(message);
-    }
-
-    /**
-     * Since the groups have changed, the cache version must be updated on
-     * database and all caches have to be evicted.
-     */
-    @Override
-    public void clearCache() {
-        // Updates cache database version
-        thirdPartyLinkManager.updateDatabaseCacheVersion();
-        // Evict current cache
-        thirdPartyLinkManager.evictAll();
     }    
     
     /**
@@ -325,8 +307,7 @@ public class MembersManagerImpl implements MembersManager {
     
     private void updateClientTypeDueMemberTypeUpdate(String memberId, MemberType memberType) {
         List<ClientDetailsEntity> clients = clientDetailsDao.findByGroupId(memberId);
-        ClientType clientType = this.getClientType(memberType);
-        Date now = new Date();
+        ClientType clientType = this.getClientType(memberType);        
         for (ClientDetailsEntity client : clients) {
             Set<String> newSetOfScopes = ClientType.getScopes(clientType);
             Set<ClientScopeEntity> existingScopes = client.getClientScopes();
