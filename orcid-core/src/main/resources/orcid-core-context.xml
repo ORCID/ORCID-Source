@@ -738,8 +738,6 @@
 
 	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />	
 
-	<bean id="thirdPartyLinkManager" class="org.orcid.core.manager.impl.ThirdPartyLinkManagerImpl" />
-
 	<bean id="passwordGenerationManager"
 		class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl">
 		<constructor-arg value="12"></constructor-arg>
