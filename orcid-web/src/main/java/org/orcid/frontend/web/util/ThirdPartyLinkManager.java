@@ -86,10 +86,10 @@ public class ThirdPartyLinkManager {
                         elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.articles", locale));
                         break;
                     case "Data":
-                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.books", locale));
+                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.data", locale));
                         break;
                     case "Books":
-                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.data", locale));
+                        elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.books", locale));
                         break;
                     case "Student Publications":
                         elements.add(localeManager.resolveMessage("workspace.works.import_wizzard.work_type.student_publications", locale));
