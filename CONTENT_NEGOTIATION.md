@@ -25,7 +25,7 @@ ORCID supports the following types:
 | [ORCID XML](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/record-3.0.xsd)  | application/orcid+xml  |
 | [ORCID XML](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/record-3.0.xsd)  | application/vnd.orcid+xml  |
 | ORCID JSON  | application/json  |
-| ORCID JSON  | application/json  |
+| ORCID JSON  | application/orcid+json  |
 | ORCID JSON  | application/vnd.orcid+json  |
 | [Schema.org](https://schema.org) [JSON LD](https://json-ld.org/spec/latest/json-ld/) | application/ld+json |
 | [RDF Turtle](https://www.w3.org/TR/turtle/) | text/turtle |
