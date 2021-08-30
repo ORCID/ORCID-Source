@@ -188,7 +188,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
     }
 
     public Date getCreatedDate() {
-        return createdDate;
+        return null;
     }
 
     public void setCreatedDate(Date createdDate) {
@@ -196,7 +196,7 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
     }
 
     public Date getLastModified() {
-        return lastModified;
+        return null;
     }
 
     public void setLastModified(Date lastModified) {
@@ -291,7 +291,6 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
         }
         
         peerReviewForm.setCompletionDate(getCompletionDate(peerReviewSummary.getCompletionDate()));
-        peerReviewForm.setCreatedDate(getCreatedDate(peerReviewSummary.getCreatedDate().getValue()));
 
         peerReviewForm.setSource(peerReviewSummary.getSource().retrieveSourcePath());
 
@@ -490,16 +489,6 @@ public class PeerReviewForm extends VisibilityForm implements ErrorsInterface, S
             if (peerReview.getSource().getAssertionOriginName() != null) {
                 form.setAssertionOriginName(peerReview.getSource().getAssertionOriginName().getContent());
             }
-        }
-
-        // Created Date
-        if (peerReview.getCreatedDate() != null) {
-            form.setCreatedDate(Date.valueOf(peerReview.getCreatedDate()));
-        }
-
-        // Last modified
-        if (peerReview.getLastModifiedDate() != null) {
-            form.setLastModified(Date.valueOf(peerReview.getLastModifiedDate()));
         }
 
         return form;
