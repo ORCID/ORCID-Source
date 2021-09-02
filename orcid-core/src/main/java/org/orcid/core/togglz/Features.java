@@ -116,9 +116,6 @@ public enum Features implements Feature {
     
     @Label("User OBO")
     USER_OBO,
-    
-    @Label("Verbose notifications")
-    VERBOSE_NOTIFICATIONS,
 
     @Label("Works failure debug")
     WORKS_FAILURE_DEBUG,
