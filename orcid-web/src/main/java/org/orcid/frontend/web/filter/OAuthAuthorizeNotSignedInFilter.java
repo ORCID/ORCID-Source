@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -62,14 +61,10 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
             if (forceLogin || baseControllerUtil.getCurrentUser(sci) == null) {
                 if (session != null) {
                     new HttpSessionRequestCache().saveRequest(request, response);
-                }
-                
-                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                    RequestInfoForm rif = oauthHelper.generateRequestInfoForm(request.getQueryString());
-                    request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, rif);
-                    request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
-                }
-                
+                }                
+                RequestInfoForm rif = oauthHelper.generateRequestInfoForm(request.getQueryString());
+                request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, rif);
+                request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
                 response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);                                             
                 return;                              
             }

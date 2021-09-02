@@ -21,9 +21,6 @@ public enum Features implements Feature {
     @Label("New Info Site")
     NEW_INFO_SITE,
 
-    @Label("Orcid Angular Signin")
-    ORCID_ANGULAR_SIGNIN,
-
     @Label("Spam button")
     SPAM_BUTTON,
 
