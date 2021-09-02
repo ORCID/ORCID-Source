@@ -72,9 +72,6 @@ public enum Features implements Feature {
     @Label("New footer")
     NEW_FOOTER,
     
-    @Label("Research resource activities section in the UI")
-    RESEARCH_RESOURCE,
-    
     @Label("Reset password send email in all cases")
     RESET_PASSWORD_EMAIL,
 

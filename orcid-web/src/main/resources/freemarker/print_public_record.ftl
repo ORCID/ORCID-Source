@@ -29,13 +29,11 @@
                         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
                         <funding-ng2  publicView="true"></funding-ng2>
                     </#if>
-                    <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>
 	                    <#if !(researchResourcesEmpty)??>  
 	                        <!-- Research resources -->
 	                        <#include "/includes/ng2_templates/research-resource-ng2-template.ftl">
 	                        <research-resource-ng2  publicView="true"></research-resource-ng2>
 	                    </#if>
-                    </@orcid.checkFeatureStatus>
                     <!-- Works -->
                     <#if !(worksEmpty)??> 
 	                    <#include "/includes/ng2_templates/works-ng2-template.ftl">
