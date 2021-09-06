@@ -61,10 +61,10 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
             if (forceLogin || baseControllerUtil.getCurrentUser(sci) == null) {
                 if (session != null) {
                     new HttpSessionRequestCache().saveRequest(request, response);
+                    RequestInfoForm rif = oauthHelper.generateRequestInfoForm(request.getQueryString());
+                    request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, rif);
+                    request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
                 }                
-                RequestInfoForm rif = oauthHelper.generateRequestInfoForm(request.getQueryString());
-                request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, rif);
-                request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
                 response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);                                             
                 return;                              
             }
