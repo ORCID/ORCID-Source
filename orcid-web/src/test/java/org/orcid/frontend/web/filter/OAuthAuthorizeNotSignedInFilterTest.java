@@ -61,8 +61,8 @@ public class OAuthAuthorizeNotSignedInFilterTest {
     @Mock
     OrcidProfileUserDetails orcidProfileUserDetails;
 
-    @Rule
-    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
+   // @Rule
+   // public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
     
     @Before
     public void setup() {
@@ -75,7 +75,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(request.getRequestURL()).thenReturn(new StringBuffer("really, we should break up"));
         
         // Disable all features by default
-        togglzRule.disableAll();
+      //  togglzRule.disableAll();
     }
 
     @Test
