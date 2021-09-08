@@ -7,7 +7,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
@@ -97,8 +96,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Value("${org.notifications.max_elements_to_show:20}")
     private Integer maxNotificationsToShowPerClient;
-    
-    protected Features feature;
     
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
             @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
@@ -204,10 +201,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
 
-        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
-            bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
-            bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
-        }
+        bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
+        bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
 
         EmailMessage emailMessage = new EmailMessage();
 

@@ -15,9 +15,6 @@ public enum Features implements Feature {
     @Label("Orcid Angular My Orcid")
     ORCID_ANGULAR_MY_ORCID,
 
-    @Label("Orcid Angular Inbox")
-    ORCID_ANGULAR_INBOX,
-
     @Label("New Info Site")
     NEW_INFO_SITE,
 
