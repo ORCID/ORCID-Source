@@ -1,7 +1,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
     
-   <changeSet id="ALTER_DW-ORG_AFFLIATION_RELATION_WITH_ORIGIN" author="Camelia Dumitru">
+   <changeSet id="ALTER_DW-ORG_AFFLIATION_RELATION_WITH_ORIGIN" author="Camelia Dumitru" dbms="postgresql">
         <dropView  viewName="dw_org_affiliation_relation"/>  
         
         <createView viewName="dw_org_affiliation_relation">
