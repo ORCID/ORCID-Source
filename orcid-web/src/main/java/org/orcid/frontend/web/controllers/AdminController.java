@@ -1011,6 +1011,9 @@ public class AdminController extends BaseController {
             if (group == null || !OrcidType.GROUP.name().equals(group.getOrcidType())) {
                 data.setGroupIdNotFound(true);
                 return data;
+            } else if (!group.isEnabled() || group.getRecordLocked() || group.getDeactivationDate() != null) {
+                data.setGroupIdDeactivated(true);
+                return data;
             }
 
             ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
@@ -1021,6 +1024,7 @@ public class AdminController extends BaseController {
             return data;
         }
         data.setGroupIdNotFound(false);
+        data.setGroupIdDeactivated(false);
 
         return data;
     }

@@ -41,38 +41,6 @@
         <ehcache:heap unit="entries">500</ehcache:heap>
     </ehcache:cache>
     
-    <ehcache:cache alias="import-works-clients" uses-template="defaultTemplate">
-        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
-        <ehcache:expiry>
-            <ehcache:none />
-        </ehcache:expiry>
-        <ehcache:heap unit="entries">200</ehcache:heap>
-    </ehcache:cache>
-    
-    <ehcache:cache alias="import-funding-clients" uses-template="defaultTemplate">
-        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
-        <ehcache:expiry>
-            <ehcache:none />
-        </ehcache:expiry>
-        <ehcache:heap unit="entries">200</ehcache:heap>
-    </ehcache:cache>
-    
-    <ehcache:cache alias="import-peer-review-clients" uses-template="defaultTemplate">
-        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
-        <ehcache:expiry>
-            <ehcache:none />
-        </ehcache:expiry>
-        <ehcache:heap unit="entries">200</ehcache:heap>
-    </ehcache:cache>
-    
-    <ehcache:cache alias="read-access-clients" uses-template="defaultTemplate">
-         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
-        <ehcache:expiry>
-            <ehcache:none />
-        </ehcache:expiry>
-        <ehcache:heap unit="entries">200</ehcache:heap>
-    </ehcache:cache>
-    
     <ehcache:cache alias="locale-messages" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:heap unit="entries">2000</ehcache:heap>

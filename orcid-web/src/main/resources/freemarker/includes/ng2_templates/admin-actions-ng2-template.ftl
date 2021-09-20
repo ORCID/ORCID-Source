@@ -512,9 +512,12 @@
 	            <div class="alert alert-success" *ngIf="convertClient.groupIdNotFound">
 	                <@spring.message "admin.convert_client.group_id_not_found"/>
 	            </div>
+	            <div class="alert alert-success" *ngIf="convertClient.groupIdDeactivated">
+	                <@spring.message "admin.convert_client.group_id.invalid"/>
+	            </div>
 	            <div class="alert alert-success" *ngIf="convertClient.alreadyMember">
 	                <@spring.message "admin.convert_client.already_member"/>
-	            </div>
+	            </div>	            
 	        </div>
 	        <div class="form-group">
 	            <label for="client_to_convert"><@orcid.msg 'admin.convert_client.client_id.label' /></label>

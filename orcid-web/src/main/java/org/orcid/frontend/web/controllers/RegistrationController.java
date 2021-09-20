@@ -32,7 +32,6 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
@@ -50,7 +49,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.persistence.constants.SendEmailFrequency;
-import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
@@ -312,11 +310,9 @@ public class RegistrationController extends BaseController {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
         String redirectUrl = calculateRedirectUrl(request, response, true);
-        
-        if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-            if (request.getQueryString() == null || request.getQueryString().isEmpty()){
-                redirectUrl = calculateRedirectUrl(request, response, true, true);
-            }
+
+        if (request.getQueryString() == null || request.getQueryString().isEmpty()) {
+            redirectUrl = calculateRedirectUrl(request, response, true, true);
         } 
         r.setUrl(redirectUrl);
         return r;
@@ -473,62 +469,6 @@ public class RegistrationController extends BaseController {
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         LOGGER.debug("Saved url before registration is: " + (savedRequest != null ? savedRequest.getRedirectUrl() : " no saved request"));
         return mav;
-    }
-
-    @RequestMapping(value = "/dupicateResearcher.json", method = RequestMethod.GET)
-    public @ResponseBody List<DupicateResearcher> getDupicateResearcher(@RequestParam("givenNames") String givenNames, @RequestParam("familyNames") String familyNames) {
-        List<DupicateResearcher> drList = new ArrayList<DupicateResearcher>();
-        Search potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(givenNames, familyNames);
-        if (potentialDuplicates != null) {
-            List<String> orcidIds = potentialDuplicates.getResults().stream().map(Result::getOrcidIdentifier).map(x -> x.getPath()).collect(Collectors.toList());
-            for (String orcid : orcidIds) {
-                DupicateResearcher dr = new DupicateResearcher();
-                Email pm = emailManagerReadOnly.findPrimaryEmail(orcid);
-                if (Visibility.PUBLIC.equals(pm.getVisibility())) {
-                    dr.setEmail(pm.getEmail());
-                }
-                Name n = recordNameManagerReadOnly.getRecordName(orcid);
-                if (Visibility.PUBLIC.equals(n.getVisibility())) {
-                    dr.setFamilyNames(n.getFamilyName() == null ? null : n.getFamilyName().getContent());
-                    dr.setGivenNames(n.getGivenNames() == null ? null : n.getGivenNames().getContent());
-                    
-                }
-                
-                Date createdDate = profileEntityCacheManager.retrieve(orcid).getDateCreated();
-                String pattern = "yyyy-MM-dd zzz";
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-                dr.setCreatedDate(createdDate == null? null: simpleDateFormat.format(createdDate));
-
-                List<String> institutions = new ArrayList<String>();
-
-                Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid, true);
-                for (AffiliationType type : AffiliationType.values()) {
-                    if ((type == AffiliationType.EDUCATION || type == AffiliationType.EMPLOYMENT) && affiliationsMap.containsKey(type)) {
-                        List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
-                        IntStream.range(0, elementsList.size()).forEach(idx -> {
-                            AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), type.name() + '_' + idx, orcid);
-                            // Fill country on the default affiliation
-                            AffiliationForm defaultAffiliation = groupForm.getDefaultAffiliation();
-                            if (defaultAffiliation != null) {
-                                if (!PojoUtil.isEmpty(groupForm.getDefaultAffiliation().getAffiliationName())) {
-
-                                    if (!institutions.contains(groupForm.getDefaultAffiliation().getAffiliationName().getValue())) {
-                                        institutions.add(groupForm.getDefaultAffiliation().getAffiliationName().getValue());
-                                    }
-                                }
-                            }
-                        });
-
-                    }
-                }
-                if (institutions.size() > 0) {
-                    dr.setInstitution(String.join(", ", institutions));
-                }
-                dr.setOrcid(orcid);
-                drList.add(dr);
-            }
-        }
-        return drList;
     }
 
     @RequestMapping(value = "/verify-email/{encryptedEmail}", method = RequestMethod.GET)
