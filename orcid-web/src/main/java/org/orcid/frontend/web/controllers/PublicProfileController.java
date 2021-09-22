@@ -340,6 +340,11 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<FundingGroup> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam("sort") String sort,
             @RequestParam("sortAsc") boolean sortAsc) {
         List<FundingGroup> fundingGroups = new ArrayList<>();
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return fundingGroups;
+        }
         List<FundingSummary> summaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
         Fundings fundings = profileFundingManagerReadOnly.groupFundings(summaries, true);
         for (org.orcid.jaxb.model.v3.release.record.summary.FundingGroup group : fundings.getFundingGroup()) {
@@ -372,12 +377,23 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
             @RequestParam("sortAsc") boolean sortAsc) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new Page<WorkGroup>();
+        }
         return worksPaginator.getWorksPage(orcid, offset, pageSize, true, sort, sortAsc);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
     public @ResponseBody Page<ResearchResourceGroupPojo> getResearchResourceGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset,
             @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc, @RequestParam("pageSize") int pageSize) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new Page<ResearchResourceGroupPojo>();
+        }
+            
         return researchResourcePaginator.getPage(orcid, offset, pageSize, true, sort, sortAsc);
     }
 
@@ -400,6 +416,12 @@ public class PublicProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<Object> getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") Long workId) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
+        
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (workId == null)
             return null;
@@ -443,7 +465,13 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-review.json", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<Object> getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") Long putCode) {
+    public @ResponseBody ResponseEntity<Object> getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") Long putCode) { 
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
+        
         PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
         if (!validateVisibility(peerReview.getVisibility())) {
             return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
@@ -455,6 +483,12 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
     public @ResponseBody List<PeerReviewGroup> getPeerReviewsJson(@PathVariable("orcid") String orcid, @RequestParam("sortAsc") boolean sortAsc) {
         List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return peerReviewGroups;
+        }
+        
         List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
         PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, true);
         for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
@@ -511,6 +545,13 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationDetails.json", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<Object> getAffiliationDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id, @RequestParam("type") String type) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
+        
+
         Affiliation aff;
         if (type.equals("distinction")) {
             aff = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, id);
@@ -539,7 +580,13 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationGroups.json", method = RequestMethod.GET)
     public @ResponseBody AffiliationGroupContainer getGroupedAffiliations(@PathVariable("orcid") String orcid) {
+
         AffiliationGroupContainer result = new AffiliationGroupContainer();
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return result;
+        }
         Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid, true);
         for (AffiliationType type : AffiliationType.values()) {
             if (affiliationsMap.containsKey(type)) {
