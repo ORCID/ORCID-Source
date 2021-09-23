@@ -119,7 +119,10 @@ public enum Features implements Feature {
     
     @Label("Disable the 2.0 release candidates")
     V2_DISABLE_RELEASE_CANDIDATES,
-
+    
+    @Label("Disable the 3.0 release candidates")
+    V3_DISABLE_RELEASE_CANDIDATES,
+    
     @Label("Salesforce: Enable opportunities and org record types")
     SF_ENABLE_OPP_ORG_RECORD_TYPES,
 
