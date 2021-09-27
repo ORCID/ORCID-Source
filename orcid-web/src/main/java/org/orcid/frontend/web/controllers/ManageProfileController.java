@@ -526,7 +526,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         
         for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
             boolean isNewEmail = true;
-            for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail:   oldEmailSet.getEmails()) {
+            for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail: oldEmailSet.getEmails()) {
                 if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
                     isNewEmail = false;
                     // VISIBILITY UPDATE
@@ -558,12 +558,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 deletedEmails.add(oldJsonEmail);
             }
         }
-        
-        
-        for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
-            deleteEmailJson ( deletedEmail.getEmail() );
-            
-        }
+                      
         for (Email newEmail : newEmails) {
             AddEmail newEmailCasted = new org.orcid.pojo.AddEmail();
             newEmailCasted.setCurrent(true);
@@ -579,8 +574,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
             
         }
-    
-    
+        
+        for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
+            deleteEmailJson ( deletedEmail.getEmail() );            
+        }
+        
         Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
         org.orcid.pojo.ajaxForm.Emails emailsResponse = org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet);
         emailsResponse.setErrors(errors);
