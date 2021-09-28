@@ -477,7 +477,7 @@ public class BaseController {
             // add protocol if missing
             boolean valid = false;
             try {
-                valid = OrcidStringUtils.isValidURL(encodeUrl(urlString.getValue()));
+                valid = OrcidStringUtils.isValidURL(urlString.getValue());
                 if (!valid) {
                     String tempUrl = encodeUrl("http://" + urlString.getValue());
                     // test validity again
