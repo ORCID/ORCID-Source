@@ -211,8 +211,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
         List<BulkElement> works = new ArrayList<>();        
+        List<WorkEntity> entities = new ArrayList<>();
         List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());        
-        List<WorkEntity> entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);
+        if (Features.READ_BULK_WORKS_DIRECTLY_FROM_DB.isActive()) {
+            entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);            
+        } else {
+            entities = workDao.getWorkEntities(orcid, putCodes);            
+        }
         
         for(WorkEntity entity : entities) {
             works.add(jpaJaxbWorkAdapter.toWork(entity));
