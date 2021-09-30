@@ -74,7 +74,7 @@ public class OrcidStringUtils {
     }
 
     public static boolean isValidURL(String url) {
-        if (StringUtils.isNotBlank(url)) {
+        if (StringUtils.isNotBlank(url) && url.length() <= 2000) {
             return urlPattern.matcher(url).matches();
         } else {
             return false;
