@@ -225,7 +225,7 @@ Editing the peer-review section of a record requires a 3 step OAuth token with t
 
 **Describing the organization the review was done for**
 
-- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc.). The organization identifiers such as RINGOLD, GRID, FUNDREF or LEI identifier _are not required_.
+- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc.). The organization identifiers such as RINGOLD, ROR, GRID, FUNDREF or LEI identifier _are not required_.
 
 
 ## Read a summary of all peer-review items on a record
