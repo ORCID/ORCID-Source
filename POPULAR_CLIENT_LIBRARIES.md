@@ -1,6 +1,10 @@
 # POPULAR CLIENT LIBRARIES
 List of popular API client libraries. Please feel free to add to the list below.
 
+## C#
+
+   * [C# example of a 3 legged OAuth2 sign in and retrieve read-limited data from ORCID.)](https://github.com/AminurRouf/orcid-oauth-2/).
+   
 ## Java
 
    * [ORCID Example Client Application (JOPMTS)](https://github.com/ORCID/ORCID-Example-Client-Application).
