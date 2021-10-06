@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -572,8 +573,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @Override
     @Transactional
-    public boolean lockProfile(String orcid, String reason, String description) {
-        return changeLockedStatus(orcid, true, reason, description);
+    public boolean lockProfile(String orcid, String reason, String description, String adminUser) {
+        Query query = entityManager.createNativeQuery(
+                "update profile set record_locked=true, last_modified=now(), record_locked_date=now(), record_locked_admin_id=:adminUser, indexing_status=:indexingStatus, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("lockReason", reason);
+        query.setParameter("description", description);
+        query.setParameter("adminUser", adminUser);
+        query.setParameter("indexingStatus", IndexingStatus.REINDEX.name());
+        return query.executeUpdate() > 0;
     }
 
     /**
@@ -586,17 +594,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean unlockProfile(String orcid) {
-        return changeLockedStatus(orcid, false, null, null);
-    }
-
-    @Transactional
-    private boolean changeLockedStatus(String orcid, boolean locked, String reason, String description) {
         Query query = entityManager.createNativeQuery(
-                "update profile set last_modified=now(), indexing_status=:indexingStatus, record_locked=:locked, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
+                "update profile set record_locked=false, last_modified=now(), record_locked_date=null, record_locked_admin_id=null, indexing_status=:indexingStatus, reason_locked=null, reason_locked_description=null where orcid=:orcid");
         query.setParameter("orcid", orcid);
-        query.setParameter("locked", locked);
-        query.setParameter("lockReason", reason);
-        query.setParameter("description", description);
         query.setParameter("indexingStatus", IndexingStatus.REINDEX.name());
         return query.executeUpdate() > 0;
     }
@@ -746,12 +746,29 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @SuppressWarnings("unchecked")
     @Override
     public String getLockedReason(String orcid) {
-        Query query = entityManager.createNativeQuery("SELECT reason_locked, reason_locked_description from profile where orcid = :orcid");
+        Query query = entityManager.createNativeQuery("SELECT reason_locked, reason_locked_description, record_locked_admin_id, record_locked_date, last_indexed_date from profile where orcid = :orcid");
         query.setParameter("orcid", orcid); 
+        // Format results
         List<Object[]> result = query.getResultList();
-        String reason = (String) result.get(0)[0];
-        String description = (String) result.get(0)[1];
-        return reason != null ? reason + (description != null ? " (" + description + ")" : "") : null;
+        String reason = " for: " + (String) result.get(0)[0];
+        String description = " - " + (String) result.get(0)[1];
+        String adminUser = " by " + (String) result.get(0)[2];
+        String strDate = "";
+        Date date = new Date();
+        // If record_locked_date is missing, try to use last_indexed_date
+        if ((Date) result.get(0)[3] == null) {
+            date = (Date) result.get(0)[4];
+        } else if ((Date) result.get(0)[4] != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            strDate = " on " + sdf.format(date);            
+        } else strDate = "";
+        // adminUser (record_locked_admin_id) was introduced once the description (reason_locked_description) field had become mandatory 
+        if (description == null || description.isEmpty()) {
+            adminUser = "";
+            description = "";
+        }
+
+        return reason != null ? adminUser + strDate + reason + description : null;
     }
 
     @Override

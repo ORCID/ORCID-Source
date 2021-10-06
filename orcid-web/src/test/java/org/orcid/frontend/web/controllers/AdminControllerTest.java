@@ -553,7 +553,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertTrue(results.get("reviewed").contains("reviewed-email@test.com"));
 
         Mockito.verify(emailManager, Mockito.times(9)).emailExists(Mockito.anyString());
-        Mockito.verify(profileEntityManager, Mockito.times(6)).lockProfile(Mockito.anyString(), Mockito.anyString(), isNull());
+        Mockito.verify(profileEntityManager, Mockito.times(6)).lockProfile(Mockito.anyString(), Mockito.anyString(), isNull(), Mockito.anyString());
     }
 
     @Test

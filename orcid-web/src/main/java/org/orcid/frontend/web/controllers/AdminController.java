@@ -347,7 +347,7 @@ public class AdminController extends BaseController {
                 tempObj.setStatus("Unclaimed");
             } else if (profileEntityManager.isLocked(entry.getValue())) {
                 String reason = profileEntityManager.getLockedReason(entry.getValue());
-                tempObj.setStatus("Locked" + (reason != null ? " - " + reason : ""));
+                tempObj.setStatus("Locked" + (reason != null ? reason : ""));
             } else if (profileEntityManager.isDeactivated(entry.getValue())) {
                 tempObj.setStatus("Deactivated");
             } else {
@@ -390,7 +390,8 @@ public class AdminController extends BaseController {
                         if (!profileEntityManager.isProfileClaimed(orcid)) {
                             builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(UNCLAIMED).append(OUT_STRING_SEPARATOR);
                         } else if (profileEntityManager.isLocked(orcid)) {
-                            builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(LOCKED).append(OUT_STRING_SEPARATOR);
+                            String locked = "(locked" + profileEntityManager.getLockedReason(orcid) + ")";
+                            builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(locked).append(OUT_STRING_SEPARATOR);
                         } else if (profileEntityManager.isProfileDeprecated(orcid)) {
                             builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(DEPRECATED).append(OUT_STRING_SEPARATOR);
                         } else if (profileEntityManager.isDeactivated(orcid)) {
@@ -718,6 +719,7 @@ public class AdminController extends BaseController {
         Set<String> lockedIds = new HashSet<String>();
         Set<String> successIds = new HashSet<String>();
         Set<String> notFoundIds = new HashSet<String>();
+        Set<String> descriptionMissing = new HashSet<String>();
         Set<String> reviewedIds = new HashSet<String>();
         String orcidIds = URLDecoder.decode(lockAccounts.getOrcidsToLock(), "UTF-8").trim();
 
@@ -737,8 +739,10 @@ public class AdminController extends BaseController {
                             lockedIds.add(nextToken);
                         } else if (entity.isReviewed()) {
                             reviewedIds.add(nextToken);
+                        } else if (lockAccounts.getDescription() == null || lockAccounts.getDescription().isEmpty()) {
+                            descriptionMissing.add(nextToken);
                         } else {
-                            profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription());
+                            profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription(), getCurrentUserOrcid());
                             successIds.add(nextToken);
                         }
                     }
@@ -751,6 +755,7 @@ public class AdminController extends BaseController {
         resendIdMap.put("successful", successIds);
         resendIdMap.put("alreadyLocked", lockedIds);
         resendIdMap.put("reviewed", reviewedIds);
+        resendIdMap.put("descriptionMissing", descriptionMissing);
         return resendIdMap;
     }
 

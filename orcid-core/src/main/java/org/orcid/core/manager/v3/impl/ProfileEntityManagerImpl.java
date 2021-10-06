@@ -609,8 +609,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the account was locked
      */
     @Override
-    public boolean lockProfile(String orcid, String lockReason, String description) {
-        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description);
+    public boolean lockProfile(String orcid, String lockReason, String description, String adminUser) {
+        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description, adminUser);
         if (wasLocked) {
             notificationManager.sendOrcidLockedEmail(orcid);
         }
