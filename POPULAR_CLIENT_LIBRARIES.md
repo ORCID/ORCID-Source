@@ -10,6 +10,8 @@ List of popular API client libraries. Please feel free to add to the list below.
 ## PHP 
  
   * [WordPress plugin that displays ORCIDs in comments and posts](https://github.com/ServerDotBiz/orcid)
+
+  * [PHP client to authenticate iDs and push works to ORCID records](https://github.com/TKouchoanou/orcid-php-client)
   
 ## PYTHON
 
