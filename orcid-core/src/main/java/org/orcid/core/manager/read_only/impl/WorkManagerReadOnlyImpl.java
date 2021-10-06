@@ -14,7 +14,6 @@ import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.activities.WorkComparators;
@@ -185,14 +184,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
-        List<BulkElement> works = new ArrayList<>();   
-        List<WorkEntity> entities = new ArrayList<>();
-        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());   
-        if (Features.READ_BULK_WORKS_DIRECTLY_FROM_DB.isActive()) {
-            entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);            
-        } else {
-            entities = workDao.getWorkEntities(orcid, putCodes);            
-        }
+        List<BulkElement> works = new ArrayList<>();        
+        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());        
+        List<WorkEntity> entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);
         
         for(WorkEntity entity : entities) {
             works.add(jpaJaxbWorkAdapter.toWork(entity));
