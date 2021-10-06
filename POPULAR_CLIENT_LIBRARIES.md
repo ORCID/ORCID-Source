@@ -19,3 +19,4 @@ List of popular API client libraries. Please feel free to add to the list below.
 
    * [A Rails engine for orcid.org integration](https://github.com/projecthydra-labs/orcid)
 
+   * [ORCID OAuth 2.0 Strategy for the OmniAuth Ruby authentication framework.](https://github.com/growkudos/omniauth-orcid)
