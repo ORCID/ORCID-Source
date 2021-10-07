@@ -527,7 +527,8 @@ public class AdminControllerTest extends BaseControllerTest {
         LockAccounts lockAccounts = new LockAccounts();
         lockAccounts.setOrcidsToLock(commaSeparatedValues);
         lockAccounts.setLockReason(LockReason.SPAM.getLabel());
-
+        lockAccounts.setDescription("Test description");
+        
         Map<String, Set<String>> results = adminController.lockRecords(mockRequest, mockResponse, lockAccounts);
         assertEquals(3, results.get("notFound").size());
         assertTrue(results.get("notFound").contains("not-found-email1@test.com"));
