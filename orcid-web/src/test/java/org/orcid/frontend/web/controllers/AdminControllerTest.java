@@ -34,6 +34,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -148,6 +150,9 @@ public class AdminControllerTest extends BaseControllerTest {
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
     
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+    
+    @Captor
+    private ArgumentCaptor<String> adminUser;
     
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -527,7 +532,6 @@ public class AdminControllerTest extends BaseControllerTest {
         LockAccounts lockAccounts = new LockAccounts();
         lockAccounts.setOrcidsToLock(commaSeparatedValues);
         lockAccounts.setLockReason(LockReason.SPAM.getLabel());
-        lockAccounts.setDescription("Test description");
         
         Map<String, Set<String>> results = adminController.lockRecords(mockRequest, mockResponse, lockAccounts);
         assertEquals(3, results.get("notFound").size());
@@ -540,6 +544,13 @@ public class AdminControllerTest extends BaseControllerTest {
         assertTrue(results.get("alreadyLocked").contains("record-locked-email2@test.com"));
         assertTrue(results.get("alreadyLocked").contains("0000-0000-0000-0001"));
         assertTrue(results.get("alreadyLocked").contains("https://orcid.org/0000-0000-0000-0002"));
+        
+        assertTrue(results.get("descriptionMissing").contains("successful-email1@test.com"));
+        
+        Mockito.verify(profileEntityManager, Mockito.times(0)).lockProfile(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        
+        lockAccounts.setDescription("Test description");
+        results = adminController.lockRecords(mockRequest, mockResponse, lockAccounts);
 
         assertEquals(6, results.get("successful").size());
         assertTrue(results.get("successful").contains("successful-email1@test.com"));
@@ -553,8 +564,9 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(1, results.get("reviewed").size());
         assertTrue(results.get("reviewed").contains("reviewed-email@test.com"));
 
-        Mockito.verify(emailManager, Mockito.times(9)).emailExists(Mockito.anyString());
-        Mockito.verify(profileEntityManager, Mockito.times(6)).lockProfile(Mockito.anyString(), Mockito.anyString(), isNull(), Mockito.anyString());
+        Mockito.verify(emailManager, Mockito.times(18)).emailExists(Mockito.anyString());
+        Mockito.verify(profileEntityManager, Mockito.times(6)).lockProfile(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), adminUser.capture());
+        assertEquals(adminUser.getValue(), "4444-4444-4444-4440");
     }
 
     @Test
@@ -820,7 +832,7 @@ public class AdminControllerTest extends BaseControllerTest {
         ReflectionTestUtils.setField(adminController, "adminManager", adminManager);
         TargetProxyHelper.injectIntoProxy(adminController, "orcidSecurityManager", mockOrcidSecurityManager);
         
-        adminController.getLockReasons();
+        List<String> reasons = adminController.getLockReasons();
 
         Mockito.verify(adminManager, Mockito.times(1)).getLockReasons();
     }
