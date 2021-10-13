@@ -29,6 +29,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.log4j.Logger;
+import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
@@ -355,11 +356,14 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     
     @Resource
     LocaleManager localeManager;
+    
+    @Resource
+    private ApiUtils apiUtils;
 
     @Override
     public Unmarshaller getContext(Class<?> type) {
         try {
-            String apiVersion = getApiVersion();
+            String apiVersion = apiUtils.getApiVersion();
             String schemaFilenamePrefix = getSchemaFilenamePrefix(type, apiVersion);
             Unmarshaller unmarshaller = getJAXBContext(apiVersion).createUnmarshaller();
             // Old OrcidMessage APIs - do not validate here as we will
@@ -389,7 +393,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     }
 
     public void validate(Object toValidate) {
-        String apiVersion = getApiVersion();
+        String apiVersion = apiUtils.getApiVersion();
         validate(toValidate, apiVersion);
     }
     
@@ -541,12 +545,6 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         schemaFactory.setResourceResolver(new OrcidResourceResolver(schemaFactory.getResourceResolver()));
         return schemaFactory;
-    }
-
-    private String getApiVersion() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
-        return apiVersion;
     }
 
     private Response getResponse(Throwable e) {

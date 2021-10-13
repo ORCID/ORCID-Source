@@ -15,6 +15,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.DeactivatedException;
@@ -94,6 +95,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Resource
     private OrcidSecurityManager securityManager;
+    
+    @Resource
+    private ApiUtils apiUtils;
 
     @Override
     public Response toResponse(Throwable t) {
@@ -131,7 +135,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             return oAuthErrorResponse(t);
         }
 
-        String apiVersion = getApiVersion();
+        String apiVersion = apiUtils.getApiVersion();
 
         if (!PojoUtil.isEmpty(apiVersion)) {
             switch (apiVersion) {
@@ -349,12 +353,6 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ApiSection apiSection = (ApiSection) requestAttributes.getAttribute(ApiVersionFilter.API_SECTION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
         return apiSection != null ? apiSection : ApiSection.V1;
-    }
-
-    private String getApiVersion() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
-        return apiVersion;
     }
 
     private boolean isOAuthTokenRequest() {
