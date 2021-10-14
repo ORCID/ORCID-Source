@@ -310,7 +310,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(work);
         Work w = workManager.createWork(orcid, work, true);
         sourceUtils.setSourceName(w);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(w.getPutCode()), "apiError.creatework_response.exception");
+        return apiUtils.buildApiResponse(orcid, "work", String.valueOf(w.getPutCode()), "apiError.creatework_response.exception");
     }
 
     @Override
@@ -398,7 +398,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(funding);
         Funding f = profileFundingManager.createFunding(orcid, funding, true);
         sourceUtils.setSourceName(f);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(f.getPutCode()), "apiError.createfunding_response.exception");
+        return apiUtils.buildApiResponse(orcid, "funding", String.valueOf(f.getPutCode()), "apiError.createfunding_response.exception");
     }
 
     @Override
@@ -467,7 +467,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(education);
         Education e = affiliationsManager.createEducationAffiliation(orcid, education, true);
         sourceUtils.setSourceName(e);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(e.getPutCode()), "apiError.createeducation_response.exception");
+        return apiUtils.buildApiResponse(orcid, "education", String.valueOf(e.getPutCode()), "apiError.createeducation_response.exception");
     }
 
     @Override
@@ -529,7 +529,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(employment);
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment, true);
         sourceUtils.setSourceName(e);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(e.getPutCode()), "apiError.createemployment_response.exception");
+        return apiUtils.buildApiResponse(orcid, "employment", String.valueOf(e.getPutCode()), "apiError.createemployment_response.exception");
     }
 
     @Override
@@ -599,7 +599,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(peerReview);
         PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
         sourceUtils.setSourceName(newPeerReview);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(newPeerReview.getPutCode()), "apiError.createpeerreview_response.exception");
+        return apiUtils.buildApiResponse(orcid, "peer-review", String.valueOf(newPeerReview.getPutCode()), "apiError.createpeerreview_response.exception");
     }
 
     @Override
@@ -643,7 +643,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         }
         
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
-        return apiUtils.buildApiResponse("group-id-record", String.valueOf(newRecord.getPutCode()), "apiError.creategroupidrecord_response.exception");
+        return apiUtils.buildApiResponse(null, "group-id-record", String.valueOf(newRecord.getPutCode()), "apiError.creategroupidrecord_response.exception");
     }
 
     @Override
@@ -748,7 +748,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(researcherUrl);
         researcherUrl = researcherUrlManager.createResearcherUrl(orcid, researcherUrl, true);
         sourceUtils.setSourceName(researcherUrl);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(researcherUrl.getPutCode()), "apiError.createelement_response.exception");
+        return apiUtils.buildApiResponse(orcid, "researcher-urls", String.valueOf(researcherUrl.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override
@@ -833,7 +833,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(otherName);
         otherName = otherNameManager.createOtherName(orcid, otherName, true);
         sourceUtils.setSourceName(otherName);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(otherName.getPutCode()), "apiError.createelement_response.exception");
+        return apiUtils.buildApiResponse(orcid, "other-names", String.valueOf(otherName.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override
@@ -907,7 +907,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
         clearSource(externalIdentifier);
         externalIdentifier = externalIdentifierManager.createExternalIdentifier(orcid, externalIdentifier, true);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(externalIdentifier.getPutCode()), "apiError.createelement_response.exception");
+        return apiUtils.buildApiResponse(orcid, "external-identifiers", String.valueOf(externalIdentifier.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override
@@ -950,7 +950,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(keyword);
         keyword = profileKeywordManager.createKeyword(orcid, keyword, true);
         sourceUtils.setSourceName(keyword);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(keyword.getPutCode()), "apiError.createelement_response.exception");
+        return apiUtils.buildApiResponse(orcid, "keywords", String.valueOf(keyword.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override
@@ -1010,7 +1010,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(address);
         address = addressManager.createAddress(orcid, address, true);
         sourceUtils.setSourceName(address);
-        return apiUtils.buildApiResponse(orcid, String.valueOf(address.getPutCode()), "apiError.createelement_response.exception");
+        return apiUtils.buildApiResponse(orcid, "address", String.valueOf(address.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override

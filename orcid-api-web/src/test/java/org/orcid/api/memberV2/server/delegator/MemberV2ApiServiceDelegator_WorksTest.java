@@ -37,7 +37,6 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;

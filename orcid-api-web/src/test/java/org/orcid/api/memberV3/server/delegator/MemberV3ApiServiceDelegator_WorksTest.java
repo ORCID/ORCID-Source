@@ -108,7 +108,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     
     @Mock
     protected EmailFrequencyManager mockEmailFrequencyManager;
-        
+    
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
@@ -470,6 +470,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         Work work = Utils.getWork(title);
 
         response = serviceDelegator.createWork("4444-4444-4444-4445", work);
+        //assertEquals(response.getMetadata(), "Asd");
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         Long putCode = Utils.getPutCode(response);
 

@@ -21,14 +21,20 @@ public class ApiUtils {
     private LocaleManager localeManager;
     
     public String getApiVersion() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
-        return apiVersion;
+        try {
+            RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
+            return apiVersion;            
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
     
-    public Response buildApiResponse(String target, String putcode, String exception) {
+    public Response buildApiResponse(String orcid, String target, String putcode, String exception) {
         try {
-            URI responseUri = new URI((orcidUrlManager.getApiBaseUrl() + "/" + getApiVersion() + "/" + target + "/" + putcode));
+            // ORCID is null if the request relates to a group-id
+            String version = getApiVersion();
+            URI responseUri = new URI((orcidUrlManager.getApiBaseUrl() + (version != null ? "/v" + version : "")  + "/" + (orcid != null ? orcid + "/" : "") + target + "/" + putcode));
             return Response.created(responseUri).build();
         } catch (URISyntaxException e) {
             throw new RuntimeException(localeManager.resolveMessage(exception), e);
