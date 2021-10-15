@@ -321,11 +321,7 @@ public class MemberV2ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         response = serviceDelegator.createEmployment("4444-4444-4444-4447", Utils.getEmployment());
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         response = serviceDelegator.viewActivities("4444-4444-4444-4447");
         assertNotNull(response);

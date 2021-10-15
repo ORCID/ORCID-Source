@@ -309,11 +309,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         response = serviceDelegator.createEducation(ORCID, (Education) Utils.getAffiliation(AffiliationType.EDUCATION));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
@@ -380,11 +376,7 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         try {
             Education duplicate = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
@@ -514,20 +506,12 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode1 = Utils.getPutCode(response);
 
         Education another = (Education) Utils.getAffiliation(AffiliationType.EDUCATION);
         response = serviceDelegator.createEducation(ORCID, another);
         
-        map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode2 = Utils.getPutCode(response);
         
         response = serviceDelegator.viewEducation(ORCID, putCode2);
         another = (Education) response.getEntity();

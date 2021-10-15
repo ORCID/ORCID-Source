@@ -708,11 +708,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
         Response response = serviceDelegator.createWork(orcid, work);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         // Delete it to roll back the test data
         response = serviceDelegator.deleteWork(orcid, putCode);

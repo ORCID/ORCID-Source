@@ -312,11 +312,7 @@ public class MemberV3ApiServiceDelegator_MembershipsTest extends DBUnitTest {
         response = serviceDelegator.createMembership(ORCID, (Membership) Utils.getAffiliation(AffiliationType.MEMBERSHIP));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
@@ -382,11 +378,7 @@ public class MemberV3ApiServiceDelegator_MembershipsTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         try {
             Membership duplicate = (Membership) Utils.getAffiliation(AffiliationType.MEMBERSHIP);
@@ -516,20 +508,12 @@ public class MemberV3ApiServiceDelegator_MembershipsTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode1 = Utils.getPutCode(response);
 
         Membership another = (Membership) Utils.getAffiliation(AffiliationType.MEMBERSHIP);
         response = serviceDelegator.createMembership(ORCID, another);
         
-        map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode2 = Utils.getPutCode(response);
         
         response = serviceDelegator.viewMembership(ORCID, putCode2);
         another = (Membership) response.getEntity();
