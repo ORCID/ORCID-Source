@@ -9,9 +9,11 @@ import javax.ws.rs.core.Response;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.web.filters.ApiVersionFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
+@Component
 public class ApiUtils {
     
     @Resource
@@ -20,7 +22,7 @@ public class ApiUtils {
     @Resource
     private LocaleManager localeManager;
     
-    public String getApiVersion() {
+    public static String getApiVersion() {
         try {
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);

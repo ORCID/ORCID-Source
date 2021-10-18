@@ -37,6 +37,7 @@ import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
@@ -356,14 +357,11 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     
     @Resource
     LocaleManager localeManager;
-    
-    @Resource
-    private ApiUtils apiUtils;
 
     @Override
     public Unmarshaller getContext(Class<?> type) {
         try {
-            String apiVersion = apiUtils.getApiVersion();
+            String apiVersion = ApiUtils.getApiVersion();
             String schemaFilenamePrefix = getSchemaFilenamePrefix(type, apiVersion);
             Unmarshaller unmarshaller = getJAXBContext(apiVersion).createUnmarshaller();
             // Old OrcidMessage APIs - do not validate here as we will
@@ -393,7 +391,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     }
 
     public void validate(Object toValidate) {
-        String apiVersion = apiUtils.getApiVersion();
+        String apiVersion = ApiUtils.getApiVersion();
         validate(toValidate, apiVersion);
     }
     
