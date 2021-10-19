@@ -48,6 +48,9 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.common.collect.Sets;
 
@@ -66,7 +69,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int ietfTokenExchangeValiditySeconds;
     
-    private TokenStore orcidTokenStore;
+    private OrcidTokenStore orcidTokenStore;
 
     private TokenEnhancer customTokenEnhancer;
     
@@ -256,32 +259,46 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     }
 
     @Override
-    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {        
-        OAuth2AccessToken accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
-        if (accessToken == null) {
-            throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
-        } else {
-            // If it is, respect the token expiration
-            if (accessToken.isExpired()) {
-                orcidTokenStore.removeAccessToken(accessToken);
-                throw new InvalidTokenException("Access token expired: " + accessTokenValue);
+    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {  
+        OAuth2AccessToken accessToken;
+        
+        //TODO
+        ServletRequestAttributes attr = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        System.out.println("=========================================");
+        System.out.println("Method:" + attr.getRequest().getMethod());
+        System.out.println("=========================================");
+        
+        if(RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
+            accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);
+            if (accessToken == null) {
+                throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
             }
-            Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
-            if(additionalInfo != null) {
-                String clientId = (String)additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
-                ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
-                try {
-                    orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
-                } catch (LockedException le) {
-                    throw new InvalidTokenException(le.getMessage());
-                } catch (ClientDeactivatedException e) {
-                    throw new InvalidTokenException(e.getMessage());
+        } else {
+            accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
+            if (accessToken == null) {
+                throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
+            } else {
+                // If it is, respect the token expiration
+                if (accessToken.isExpired()) {
+                    orcidTokenStore.removeAccessToken(accessToken);
+                    throw new InvalidTokenException("Access token expired: " + accessTokenValue);
                 }
-            }                        
-        }
+                Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
+                if(additionalInfo != null) {
+                    String clientId = (String)additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
+                    ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
+                    try {
+                        orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
+                    } catch (LockedException le) {
+                        throw new InvalidTokenException(le.getMessage());
+                    } catch (ClientDeactivatedException e) {
+                        throw new InvalidTokenException(e.getMessage());
+                    }
+                }                        
+            }   
+        }        
                 
-        OAuth2Authentication result = orcidTokenStore.readAuthentication(accessToken);
-        return result;
+        return orcidTokenStore.readAuthentication(accessToken);
     }    
     
     public void setOrcidtokenStore(TokenStore orcidTokenStore) {

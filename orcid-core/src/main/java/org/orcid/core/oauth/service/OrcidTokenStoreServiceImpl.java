@@ -35,7 +35,6 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +46,7 @@ import com.nimbusds.jwt.SignedJWT;
  */
 
 @Service("orcidTokenStore")
-public class OrcidTokenStoreServiceImpl implements TokenStore {
+public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
@@ -109,11 +108,41 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      */
     @Override
     public OAuth2AccessToken readAccessToken(String tokenValue) {
+        return readAccessToken(tokenValue, false);
+    }
+
+    /**
+     * Read an access token from the store even if they are marked as disabled.
+     * 
+     * @param tokenValue
+     *            The token value.
+     * @return The access token to read.
+     */
+    @Override
+    public OAuth2AccessToken readEvenDisabledAccessToken(String tokenValue) {
+        return readAccessToken(tokenValue, true);
+    }
+
+    /**
+     * Read an access token from the store. If `includeDisabled` is false, the
+     * token will not be returned if it is disabled
+     * 
+     * @param tokenValue
+     *            The token value.
+     * @param includeDisabled
+     * @return The access token to read.
+     */
+    private OAuth2AccessToken readAccessToken(String tokenValue, boolean includeDisabled) {
         if (tokenValue == null) {
             return null;
         }
 
-        OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(tokenValue);
+        OrcidOauth2TokenDetail detail;
+        if (includeDisabled) {
+            detail = orcidOauthTokenDetailService.findIgnoringDisabledByTokenValue(tokenValue);
+        } else {
+            detail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(tokenValue);
+        }
         return getOauth2AccessTokenFromDetails(detail);
     }
 
