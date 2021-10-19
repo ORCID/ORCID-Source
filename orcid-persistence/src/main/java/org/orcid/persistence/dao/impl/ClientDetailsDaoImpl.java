@@ -228,4 +228,23 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         updateQuery.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public boolean convertPublicClientToMember(String clientId, String groupId, String clientType) {
+        Query updateQuery = entityManager.createNativeQuery("UPDATE client_details SET last_modified = now(), group_orcid = :groupId, client_type = :clientType WHERE client_details_id = :clientId");
+        updateQuery.setParameter("clientId", clientId);
+        updateQuery.setParameter("groupId", groupId);
+        updateQuery.setParameter("clientType", clientType);
+        return updateQuery.executeUpdate() > 0;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateClientGrantedAuthority(String clientId, String grantedAuthority) {
+        Query updateGrantedAuthorityQuery = entityManager.createNativeQuery("UPDATE client_granted_authority SET granted_authority = :authority WHERE client_details_id = :clientId");
+        updateGrantedAuthorityQuery.setParameter("authority", grantedAuthority);
+        updateGrantedAuthorityQuery.setParameter("clientId", clientId);
+        return updateGrantedAuthorityQuery.executeUpdate() > 0;
+    }
+
 }

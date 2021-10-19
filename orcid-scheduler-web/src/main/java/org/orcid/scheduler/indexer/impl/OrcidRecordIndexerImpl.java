@@ -114,11 +114,6 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.S3_V3_REINDEX);
     }    
     
-    @Override 
-    public void processProfilesWithForceIndexingFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FORCE_INDEXING);
-    }
-        
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status) {
         LOG.info("processing profiles with " + status.name() + " flag.");
         List<String> orcidsForIndexing = new ArrayList<>();
@@ -129,7 +124,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
         do {            
             try {
-                if (IndexingStatus.FORCE_INDEXING.equals(status) || IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
+                if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
                 } else {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);
@@ -170,7 +165,17 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                         connectionIssue = indexV3Record(mess, v3Queue, status);
                 }                
                 
-                profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                try {
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                } catch(Exception e) {
+                    LOG.error("Exception updating indexing status for record " + orcid, e);
+                    // Send a slack notification every 'slackIntervalMinutes' minutes
+                    if(lastSlackNotification == null || System.currentTimeMillis() > (lastSlackNotification.getTime() + (slackIntervalMinutes * 60 * 1000))) {
+                        String message = String.format("Unable to update indexing status for record: %s, this causes that SOLR and S3 might be falling behind. For troubleshooting please refere to https://github.com/ORCID/orcid-devops/wiki/Troubleshooting#indexing-status", orcid);                
+                        slackManager.sendSystemAlert(message);
+                        lastSlackNotification = new Date();
+                    }                
+                }
             }
         } while (!connectionIssue && !orcidsForIndexing.isEmpty());
     }
@@ -210,23 +215,4 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         }
         return false;
     }
-    
-    private void processUnclaimedProfileForReminderInTransaction(final String orcid) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                LOG.info("About to process unclaimed profile for reminder: {}", orcid);  
-                Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
-                if(email != null) 
-                    notificationManager.sendClaimReminderEmail(orcid, claimWaitPeriodDays - claimReminderAfterDays, email.getEmail());
-            }
-        });
-    }
-
-    @Override
-    public void processUnindexableRecords() {
-        Integer unindexableRecordsFound = profileDao.markUnindexableRecordsAsDone(indexingDelay);
-        LOG.info("Number of unindexable orcid ids found: " + unindexableRecordsFound);
-    }
-
 }

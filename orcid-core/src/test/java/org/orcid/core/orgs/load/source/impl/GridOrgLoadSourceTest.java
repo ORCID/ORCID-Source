@@ -33,11 +33,11 @@ import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
+import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleDetails;
+import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleFile;
+import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionArticleSummary;
+import org.orcid.core.orgs.load.source.fighshare.api.FigshareCollectionTimeline;
 import org.orcid.core.orgs.load.source.grid.GridOrgLoadSource;
-import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleDetails;
-import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleFile;
-import org.orcid.core.orgs.load.source.grid.api.FigshareGridCollectionArticleSummary;
-import org.orcid.core.orgs.load.source.grid.api.GridCollectionTimeline;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -558,18 +558,18 @@ public class GridOrgLoadSourceTest {
     }
     
 
-    private FigshareGridCollectionArticleSummary getFigshareGridCollectionArticleSummary(int id, String date) {
-        FigshareGridCollectionArticleSummary summary = new FigshareGridCollectionArticleSummary();
+    private FigshareCollectionArticleSummary getFigshareGridCollectionArticleSummary(int id, String date) {
+        FigshareCollectionArticleSummary summary = new FigshareCollectionArticleSummary();
         summary.setId(id);
-        GridCollectionTimeline timeline = new GridCollectionTimeline();
+        FigshareCollectionTimeline timeline = new FigshareCollectionTimeline();
         timeline.setPosted(date);
         summary.setTimeline(timeline);
         return summary;
     }
     
-    private FigshareGridCollectionArticleDetails getFigshareGridCollectionArticleDetails(int identifier) {
-        FigshareGridCollectionArticleDetails details = new FigshareGridCollectionArticleDetails();
-        FigshareGridCollectionArticleFile file = new FigshareGridCollectionArticleFile();
+    private FigshareCollectionArticleDetails getFigshareGridCollectionArticleDetails(int identifier) {
+        FigshareCollectionArticleDetails details = new FigshareCollectionArticleDetails();
+        FigshareCollectionArticleFile file = new FigshareCollectionArticleFile();
         file.setName("grid.zip");
         file.setDownloadUrl("downloadUrl/" + identifier);
         details.setFiles(Arrays.asList(file));

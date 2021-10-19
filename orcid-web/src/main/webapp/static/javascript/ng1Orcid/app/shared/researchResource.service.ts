@@ -83,7 +83,7 @@ export class ResearchResourceService {
     getPublicResearchResourcePage(sort, sortAsc): Observable<any> {
         this.loading = true;
         return this.http.get(
-            getBaseUri() + '/' + orcidVar.orcidId + '/researchResourcePage.json?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc
+            getBaseUri() + '/' + orcidVar.orcidId + '/researchResourcePage.json?offset=' + this.offset + '&sort=' + sort + '&sortAsc=' + sortAsc + '&pageSize=0'
         );
     }
 

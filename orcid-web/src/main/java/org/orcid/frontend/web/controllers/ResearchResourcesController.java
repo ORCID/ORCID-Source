@@ -34,7 +34,7 @@ public class ResearchResourcesController extends BaseWorkspaceController {
     @RequestMapping(value = "/researchResourcePage.json", method = RequestMethod.GET)
     public @ResponseBody Page<ResearchResourceGroupPojo> getresearchResourcePage(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getCurrentUserOrcid();        
-        return paginator.getPage(orcid, offset,false, sort, sortAsc);
+        return paginator.getPage(orcid, offset, 0, false, sort, sortAsc);
     }
     
     @RequestMapping(value = "/researchResource.json", method = RequestMethod.GET)

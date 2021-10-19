@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.orcid.core.manager.DOIManager;
 import org.orcid.core.manager.v3.ActivitiesSummaryManager;
@@ -92,6 +93,18 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
     }
     
     @Override
+    public String generateBibtexReferenceList(String orcid, List<Long> workIds) {
+        List<String> citations = new ArrayList<String>();
+        for(Long workId : workIds) {            
+            Work work = workManager.getWork(orcid, workId);
+            String bibtex = generateBibtex(orcid, work); 
+            if (bibtex != null)
+                citations.add(bibtex);
+        }
+        return Joiner.on(",\n").join(citations);
+    }
+    
+    @Override
     public String generateBibtex(String orcid, Work work){
         //if we have a citation use that
         if (work.getWorkCitation() != null && work.getWorkCitation().getWorkCitationType() != null
@@ -155,6 +168,14 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
             for (Contributor c : work.getWorkContributors().getContributor()) {
                 if (c.getCreditName() != null && c.getCreditName().getContent() != null) {
                     names.add(c.getCreditName().getContent());
+                } else if (c.getContributorOrcid() != null && c.getContributorOrcid().getPath() != null) {
+                    try {
+                        String contributor = getCreditName(c.getContributorOrcid().getPath());
+                        if (!names.contains(contributor)) {
+                            names.add(contributor);
+                        }
+                    } catch(NoResultException nre) {
+                    }
                 }
             }
         }

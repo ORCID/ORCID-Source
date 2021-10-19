@@ -178,7 +178,7 @@ public class WebhookManagerImpl implements WebhookManager {
         try {
             int statusCode = doPost(uri);
             if (statusCode >= 200 && statusCode < 300) {
-                LOGGER.info("Webhook {} for Client: {} With ORCID: {} has been processed", new Object[] { webhook.getUri(), clientId, orcid });
+                LOGGER.debug("Webhook {} for Client: {} With ORCID: {} has been processed", new Object[] { webhook.getUri(), clientId, orcid });
                 webhook.setLastSent(new Date());
                 webhook.setFailedAttemptCount(0);
             } else {

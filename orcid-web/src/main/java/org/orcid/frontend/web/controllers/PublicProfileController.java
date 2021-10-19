@@ -25,13 +25,7 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.MembersManager;
-import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
@@ -43,17 +37,8 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.release.record.Affiliation;
-import org.orcid.jaxb.model.v3.release.record.AffiliationType;
-import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.release.record.*;
+import org.orcid.jaxb.model.v3.release.record.summary.*;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -64,6 +49,7 @@ import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Contributor;
+import org.orcid.pojo.ajaxForm.EmptyJsonResponse;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -74,6 +60,7 @@ import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.orcid.pojo.grouping.WorkGroup;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -296,34 +283,34 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
             Affiliation aff = affMap.get(Long.valueOf(id));
-            validateVisibility(aff.getVisibility());
-            AffiliationForm form = AffiliationForm.valueOf(aff);
-            form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
-            if (form.getOrgDisambiguatedId() != null) {
-                OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
-                form.setOrgDisambiguatedName(orgDisambiguated.getValue());
-                form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
-                form.setOrgDisambiguatedCity(orgDisambiguated.getCity());
-                form.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
-                form.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
-                if (orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
-                    form.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
+            if (aff != null && validateVisibility(aff.getVisibility())) {                          
+                AffiliationForm form = AffiliationForm.valueOf(aff);
+                form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, aff.getOrganization().getAddress().getCountry().name())));
+                if (form.getOrgDisambiguatedId() != null) {
+                    OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.parseLong(form.getOrgDisambiguatedId().getValue()));
+                    form.setOrgDisambiguatedName(orgDisambiguated.getValue());
+                    form.setOrgDisambiguatedUrl(orgDisambiguated.getUrl());
+                    form.setOrgDisambiguatedCity(orgDisambiguated.getCity());
+                    form.setOrgDisambiguatedRegion(orgDisambiguated.getRegion());
+                    form.setOrgDisambiguatedCountry(orgDisambiguated.getCountry());
+                    if (orgDisambiguated.getOrgDisambiguatedExternalIdentifiers() != null) {
+                        form.setOrgDisambiguatedExternalIdentifiers(orgDisambiguated.getOrgDisambiguatedExternalIdentifiers());
+                    }
                 }
+                affs.add(form);
             }
-            affs.add(form);
         }
 
         return affs;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundingDetails.json", method = RequestMethod.GET)
-    public @ResponseBody FundingForm getFundingDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id) {
+    public @ResponseBody ResponseEntity<Object> getFundingDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id) {
         if (id == null)
             return null;
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         Funding funding = profileFundingManagerReadOnly.getFunding(orcid, id);
-        if (funding != null) {
-            validateVisibility(funding.getVisibility());
+        if (funding != null && validateVisibility(funding.getVisibility())) { ;
             sourceUtils.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);
 
@@ -344,15 +331,20 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
 
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
-            return form;
+            return new ResponseEntity<>(form, HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundingGroups.json")
     public @ResponseBody List<FundingGroup> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam("sort") String sort,
             @RequestParam("sortAsc") boolean sortAsc) {
         List<FundingGroup> fundingGroups = new ArrayList<>();
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return fundingGroups;
+        }
         List<FundingSummary> summaries = profileFundingManagerReadOnly.getFundingSummaryList(orcid);
         Fundings fundings = profileFundingManagerReadOnly.groupFundings(summaries, true);
         for (org.orcid.jaxb.model.v3.release.record.summary.FundingGroup group : fundings.getFundingGroup()) {
@@ -385,21 +377,34 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksPage.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getWorkGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
             @RequestParam("sortAsc") boolean sortAsc) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new Page<WorkGroup>();
+        }
         return worksPaginator.getWorksPage(orcid, offset, pageSize, true, sort, sortAsc);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
     public @ResponseBody Page<ResearchResourceGroupPojo> getResearchResourceGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset,
-            @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
-        return researchResourcePaginator.getPage(orcid, offset, true, sort, sortAsc);
+            @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc, @RequestParam("pageSize") int pageSize) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new Page<ResearchResourceGroupPojo>();
+        }
+            
+        return researchResourcePaginator.getPage(orcid, offset, pageSize, true, sort, sortAsc);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResource.json", method = RequestMethod.GET)
-    public @ResponseBody ResearchResource getResearchResource(@PathVariable("orcid") String orcid, @RequestParam("id") int id) {
+    public @ResponseBody ResponseEntity<Object> getResearchResource(@PathVariable("orcid") String orcid, @RequestParam("id") int id) {
         org.orcid.jaxb.model.v3.release.record.ResearchResource r = researchResourceManagerReadOnly.getResearchResource(orcid, Long.valueOf(id));
-        validateVisibility(r.getVisibility());
+        if (!validateVisibility(r.getVisibility())) {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
         sourceUtils.setSourceName(r);
-        return ResearchResource.fromValue(r);
+        return new ResponseEntity<>(ResearchResource.fromValue(r), HttpStatus.OK);
     }
 
     /**
@@ -410,14 +415,19 @@ public class PublicProfileController extends BaseWorkspaceController {
      * @return the content of that work
      */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
-    public @ResponseBody WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") Long workId) {
+    public @ResponseBody ResponseEntity<Object> getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") Long workId) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
+        
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (workId == null)
             return null;
 
         Work workObj = workManagerReadOnly.getWork(orcid, workId);
-        if (workObj != null) {
-            validateVisibility(workObj.getVisibility());
+        if (workObj != null && validateVisibility(workObj.getVisibility())) {
             sourceUtils.setSourceName(workObj);
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
@@ -448,22 +458,37 @@ public class PublicProfileController extends BaseWorkspaceController {
                 }
             }
 
-            return work;
+            return new ResponseEntity<>(work, HttpStatus.OK);
         }
-        return null;
+        
+        return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-review.json", method = RequestMethod.GET)
-    public @ResponseBody PeerReviewForm getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") Long putCode) {
+    public @ResponseBody ResponseEntity<Object> getPeerReview(@PathVariable("orcid") String orcid, @RequestParam("putCode") Long putCode) { 
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
+        
         PeerReview peerReview = peerReviewManagerReadOnly.getPeerReview(orcid, putCode);
-        validateVisibility(peerReview.getVisibility());
+        if (!validateVisibility(peerReview.getVisibility())) {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
         sourceUtils.setSourceName(peerReview);
-        return PeerReviewForm.valueOf(peerReview);
+        return new ResponseEntity<>(PeerReviewForm.valueOf(peerReview), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews.json")
     public @ResponseBody List<PeerReviewGroup> getPeerReviewsJson(@PathVariable("orcid") String orcid, @RequestParam("sortAsc") boolean sortAsc) {
         List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return peerReviewGroups;
+        }
+        
         List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryList(orcid);
         PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, true);
         for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
@@ -514,14 +539,19 @@ public class PublicProfileController extends BaseWorkspaceController {
         return numberFormat.format(bigDecimal);
     }
 
-    private void validateVisibility(Visibility v) {
-        if (!Visibility.PUBLIC.equals(v)) {
-            throw new IllegalArgumentException("Invalid request");
-        }
+    private boolean validateVisibility(Visibility v) {
+        return Visibility.PUBLIC.equals(v);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationDetails.json", method = RequestMethod.GET)
-    public @ResponseBody AffiliationForm getAffiliationDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id, @RequestParam("type") String type) {
+    public @ResponseBody ResponseEntity<Object> getAffiliationDetails(@PathVariable("orcid") String orcid, @RequestParam("id") Long id, @RequestParam("type") String type) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
+        
+
         Affiliation aff;
         if (type.equals("distinction")) {
             aff = affiliationsManagerReadOnly.getDistinctionAffiliation(orcid, id);
@@ -541,14 +571,22 @@ public class PublicProfileController extends BaseWorkspaceController {
             throw new IllegalArgumentException("Invalid affiliation type: " + type);
         }
 
-        validateVisibility(aff.getVisibility());
+        if (!validateVisibility(aff.getVisibility())) {
+            return new ResponseEntity<>(new EmptyJsonResponse(), HttpStatus.OK);
+        }
         sourceUtils.setSourceName(aff);
-        return AffiliationForm.valueOf(aff);
+        return new ResponseEntity<>(AffiliationForm.valueOf(aff), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/affiliationGroups.json", method = RequestMethod.GET)
     public @ResponseBody AffiliationGroupContainer getGroupedAffiliations(@PathVariable("orcid") String orcid) {
+
         AffiliationGroupContainer result = new AffiliationGroupContainer();
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return result;
+        }
         Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid, true);
         for (AffiliationType type : AffiliationType.values()) {
             if (affiliationsMap.containsKey(type)) {
