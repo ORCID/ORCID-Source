@@ -20,6 +20,7 @@ import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -46,7 +47,6 @@ import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -268,40 +268,40 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         System.out.println("Method:" + attr.getRequest().getMethod());
         System.out.println("=========================================");
         
-        if(RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
-            accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);
-            if (accessToken == null) {
-                throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
-            }
+        // Feature flag: If the request is to delete an element, allow
+        if(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive() && RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
+            accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);            
         } else {
             accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
-            if (accessToken == null) {
-                throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
-            } else {
-                // If it is, respect the token expiration
-                if (accessToken.isExpired()) {
-                    orcidTokenStore.removeAccessToken(accessToken);
-                    throw new InvalidTokenException("Access token expired: " + accessTokenValue);
+        }
+        
+        // Throw an exception if access token is not found
+        if (accessToken == null) {
+            throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
+        } else {
+            // Throw an exception if the token is expired
+            if (accessToken.isExpired()) {
+                orcidTokenStore.removeAccessToken(accessToken);
+                throw new InvalidTokenException("Access token expired: " + accessTokenValue);
+            }
+            Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
+            if(additionalInfo != null) {
+                String clientId = (String)additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
+                ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
+                try {
+                    orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
+                } catch (LockedException le) {
+                    throw new InvalidTokenException(le.getMessage());
+                } catch (ClientDeactivatedException e) {
+                    throw new InvalidTokenException(e.getMessage());
                 }
-                Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
-                if(additionalInfo != null) {
-                    String clientId = (String)additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
-                    ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
-                    try {
-                        orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
-                    } catch (LockedException le) {
-                        throw new InvalidTokenException(le.getMessage());
-                    } catch (ClientDeactivatedException e) {
-                        throw new InvalidTokenException(e.getMessage());
-                    }
-                }                        
-            }   
-        }        
+            }                        
+        }                  
                 
         return orcidTokenStore.readAuthentication(accessToken);
     }    
     
-    public void setOrcidtokenStore(TokenStore orcidTokenStore) {
+    public void setOrcidtokenStore(OrcidTokenStore orcidTokenStore) {
         super.setTokenStore(orcidTokenStore);
         this.orcidTokenStore = orcidTokenStore;
     }
