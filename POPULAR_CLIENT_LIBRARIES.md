@@ -11,6 +11,10 @@ List of popular API client libraries. Please feel free to add to the list below.
 
    * [ORCID client library written in java. Lightwieght, easy to use, with the complete ORCID message schema modelled as POJOs](https://github.com/TomDemeranville/orcid-java-client) 
 
+## JavaScript
+
+   * [ORCID Share my iD. Simple node.js app that collects authenticated ORCID iDs and uploads them to a Google document](https://github.com/ORCID/share-my-id).
+   
 ## PHP 
  
   * [WordPress plugin that displays ORCIDs in comments and posts](https://github.com/ServerDotBiz/orcid)
