@@ -259,9 +259,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     }
 
     @Override
-    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {  
-        OAuth2AccessToken accessToken;
-        
+    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {                  
         //TODO
         ServletRequestAttributes attr = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         System.out.println("=========================================");
@@ -270,19 +268,25 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         
         // Feature flag: If the request is to delete an element, allow
         if(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive() && RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
-            accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);            
+            OAuth2AccessToken accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);
+            validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
+            return orcidTokenStore.readAuthenticationEvenOnDisabledTokens(accessTokenValue);
         } else {
-            accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
-        }
-        
+            OAuth2AccessToken accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
+            validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
+            return orcidTokenStore.readAuthentication(accessTokenValue);
+        }                                                            
+    }
+    
+    private void validateTokenExpirationAndClientStatus(OAuth2AccessToken accessToken, String tokenValue) {
         // Throw an exception if access token is not found
         if (accessToken == null) {
-            throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
+            throw new InvalidTokenException("Invalid access token: " + tokenValue);
         } else {
             // Throw an exception if the token is expired
             if (accessToken.isExpired()) {
                 orcidTokenStore.removeAccessToken(accessToken);
-                throw new InvalidTokenException("Access token expired: " + accessTokenValue);
+                throw new InvalidTokenException("Access token expired: " + tokenValue);
             }
             Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
             if(additionalInfo != null) {
@@ -296,10 +300,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                     throw new InvalidTokenException(e.getMessage());
                 }
             }                        
-        }                  
-                
-        return orcidTokenStore.readAuthentication(accessToken);
-    }    
+        }      
+    }
     
     public void setOrcidtokenStore(OrcidTokenStore orcidTokenStore) {
         super.setTokenStore(orcidTokenStore);

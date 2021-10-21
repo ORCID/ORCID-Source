@@ -76,6 +76,13 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
         OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(token);
         return getOAuth2AuthenticationFromDetails(detail);
     }
+    
+    @Override
+    @Transactional
+    public OAuth2Authentication readAuthenticationEvenOnDisabledTokens(String token) {
+        OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findIgnoringDisabledByTokenValue(token);
+        return getOAuth2AuthenticationFromDetails(detail);
+    }
 
     @Override
     @Transactional
