@@ -18,6 +18,7 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -57,9 +58,9 @@ import io.swagger.annotations.ApiResponses;
 public class PublicV2ApiServiceImplV2_0_rc1 {
     protected PublicV2ApiServiceDelegator<Education, Employment, ?, Funding, GroupIdRecord, ?, PeerReview, ?, Work> serviceDelegator;
 
-    @Value("${org.orcid.core.baseUri}")
-    protected String baseUri;
-
+    @Resource
+    protected SwaggerUIBuilder swaggerUIBuilder;
+    
     @Value("${org.orcid.core.pubBaseUri}")
     protected String pubBaseUri;
 
@@ -78,7 +79,7 @@ public class PublicV2ApiServiceImplV2_0_rc1 {
     @Path("/")
     @ApiOperation(value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
-        return new SwaggerUIBuilder().buildSwaggerHTML(baseUri, pubBaseUri, true);
+        return swaggerUIBuilder.build();
     }
 
     @GET

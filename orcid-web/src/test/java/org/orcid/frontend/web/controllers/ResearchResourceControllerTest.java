@@ -87,7 +87,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
     public void testReadPage() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        Page<ResearchResourceGroupPojo> page = controller.getresearchResourcePage(0, "title", true);
+        Page<ResearchResourceGroupPojo> page = controller.getresearchResourcePage(0, 0, "title", true);
         assertNotNull(page);
         assertEquals(2, page.getTotalGroups());
         assertEquals(2, page.getGroups().size());
@@ -160,20 +160,20 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
 
-        Page<ResearchResourceGroupPojo> pageBefore = controller.getresearchResourcePage(0, "title", true);
+        Page<ResearchResourceGroupPojo> pageBefore = controller.getresearchResourcePage(0, 0, "title", true);
         int bgBefore = getBigGroupIndex(pageBefore);
         assertEquals("2", pageBefore.getGroups().get(bgBefore).getDefaultResearchResource().getPutCode());
         assertEquals("2", pageBefore.getGroups().get(bgBefore).getDefaultResearchResource().getDisplayIndex());
 
         controller.updateToMaxDisplay(1l);
-        Page<ResearchResourceGroupPojo> pageAfter = controller.getresearchResourcePage(0, "title", true);
+        Page<ResearchResourceGroupPojo> pageAfter = controller.getresearchResourcePage(0, 0, "title", true);
         int bgAfter = getBigGroupIndex(pageAfter);
         assertEquals("4", pageAfter.getGroups().get(bgAfter).getDefaultResearchResource().getDisplayIndex());
         assertEquals("1", pageAfter.getGroups().get(bgAfter).getDefaultResearchResource().getPutCode());
 
         // set back
         controller.updateToMaxDisplay(2l);
-        Page<ResearchResourceGroupPojo> pageLast = controller.getresearchResourcePage(0, "title", true);
+        Page<ResearchResourceGroupPojo> pageLast = controller.getresearchResourcePage(0, 0, "title", true);
         int bgLast = getBigGroupIndex(pageLast);
         assertEquals("2", pageLast.getGroups().get(bgLast).getDefaultResearchResource().getPutCode());
     }
@@ -183,19 +183,19 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
 
-        Page<ResearchResourceGroupPojo> page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.TITLE_SORT_KEY, true);
+        Page<ResearchResourceGroupPojo> page1 = controller.getresearchResourcePage(0, 0, ResearchResourcePaginator.TITLE_SORT_KEY, true);
         assertEquals("the title2", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title3", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.TITLE_SORT_KEY, false);
+        page1 = controller.getresearchResourcePage(0, 0, ResearchResourcePaginator.TITLE_SORT_KEY, false);
         assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.DATE_SORT_KEY, true);
+        page1 = controller.getresearchResourcePage(0, 0, ResearchResourcePaginator.DATE_SORT_KEY, true);
         assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.DATE_SORT_KEY, false);
+        page1 = controller.getresearchResourcePage(0, 0, ResearchResourcePaginator.DATE_SORT_KEY, false);
         assertEquals("the title2", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title3", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 

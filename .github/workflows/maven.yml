@@ -5,7 +5,7 @@ name: ORCID-Source CI
 
 on:  
   pull_request:
-    branches: [ master ]
+    branches: [ development ]
 
 jobs:
   build-and-test:

@@ -135,7 +135,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
         Notification createdNotification = notificationManager.createPermissionNotification(orcid, notification);
         try {
             if(createdNotification == null) {
-                return Response.notModified().build();
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("orcid", orcid);
+                throw new OrcidNotificationException(params);  
             }
             return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode())).build();
         } catch (URISyntaxException e) {

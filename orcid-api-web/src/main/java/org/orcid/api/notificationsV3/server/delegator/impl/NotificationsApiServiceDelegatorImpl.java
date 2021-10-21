@@ -1,21 +1,9 @@
 package org.orcid.api.notificationsV3.server.delegator.impl;
 
-import static org.orcid.core.api.OrcidApiConstants.MAX_NOTIFICATIONS_AVAILABLE;
-import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.AccessControlException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
 import org.orcid.api.notificationsV3.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.OrcidNotificationNotFoundException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -35,6 +23,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.AccessControlException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.orcid.core.api.OrcidApiConstants.MAX_NOTIFICATIONS_AVAILABLE;
+import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 /**
  * 
@@ -134,10 +134,13 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     public Response addPermissionNotification(UriInfo uriInfo, String orcid, NotificationPermission notification) {
         checkProfileStatus(orcid, false);
         notificationValidationManager.validateNotificationPermission(notification);
+        eraseDates(notification);
         Notification createdNotification = notificationManager.createPermissionNotification(orcid, notification);
         try {
             if(createdNotification == null) {
-                return Response.notModified().build();
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("orcid", orcid);
+                throw new OrcidNotificationException(params);                
             }
             return Response.created(new URI(uriInfo.getAbsolutePath() + "/" + createdNotification.getPutCode())).build();
         } catch (URISyntaxException e) {
@@ -155,5 +158,11 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
                 throw e;
             }
         }
+    }
+
+    private void eraseDates(NotificationPermission notification) {
+        notification.setSentDate(null);
+        notification.setReadDate(null);
+        notification.setArchivedDate(null);
     }
 }

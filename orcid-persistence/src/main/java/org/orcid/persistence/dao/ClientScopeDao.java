@@ -1,5 +1,7 @@
 package org.orcid.persistence.dao;
 
+import java.util.List;
+
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 
@@ -8,4 +10,6 @@ public interface ClientScopeDao extends GenericDao<ClientScopeEntity, ClientScop
     boolean deleteScope(String clientId, String scopeType);
 
     void insertClientScope(String clientDetailsId, String scope);
+    
+    List<String> getActiveScopes(String clientDetailsId);
 }
