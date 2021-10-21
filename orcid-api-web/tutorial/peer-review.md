@@ -191,7 +191,7 @@ See sample 2.1 [peer-review-group](https://github.com/ORCID/orcid-model/blob/mas
 ## 2. About Peer Review Items
 
 ### Permission to edit the record
-Editing the peer-review section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading peer-review activities. See [Authentciating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
+Editing the peer-review section of a record requires a 3 step OAuth token with the ```/activities/update``` scope, the ```/read-limited``` scope should also be requested for reading peer-review activities. See [Authenticating using OAuth](https://github.com/ORCID/ORCID-Source/blob/master/orcid-api-web/README.md#authenticating-users-and-using-oauth--openid-connect) for steps to obtain a token.
 
 ### Peer-review fields
 
@@ -226,7 +226,6 @@ Editing the peer-review section of a record requires a 3 step OAuth token with t
 **Describing the organization the review was done for**
 
 - **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc.). The organization identifiers such as RINGGOLD, GRID, ROR, FUNDREF or LEI identifier _are not required_.
-
 
 ## Read a summary of all peer-review items on a record
 

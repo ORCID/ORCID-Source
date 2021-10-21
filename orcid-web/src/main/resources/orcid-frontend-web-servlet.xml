@@ -97,5 +97,7 @@
     <bean id="userCookieGenerator" class="org.orcid.frontend.spring.web.social.config.UserCookieGenerator" />
     
     <bean id="socialSignInUtils" class="org.orcid.frontend.spring.web.social.config.SocialSignInUtils" />
+    
+    <bean id="thirdPartyLinkManager" class="org.orcid.frontend.web.util.ThirdPartyLinkManager" />
 
 </beans>
