@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -28,6 +29,8 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.togglz.Features;
+import org.orcid.frontend.web.controllers.helper.OauthHelper;
+import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.togglz.junit.TogglzRule;
@@ -60,9 +63,9 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
     @Mock
     OrcidProfileUserDetails orcidProfileUserDetails;
-
-    @Rule
-    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
+    
+    @Mock
+    OauthHelper oauthHelper;
     
     @Before
     public void setup() {
@@ -73,9 +76,6 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>());
         when(request.getScheme()).thenReturn("i hate you with all my heart spring mvc");
         when(request.getRequestURL()).thenReturn(new StringBuffer("really, we should break up"));
-        
-        // Disable all features by default
-        togglzRule.disableAll();
     }
 
     @Test
@@ -153,15 +153,16 @@ public class OAuthAuthorizeNotSignedInFilterTest {
     
     @Test
     public void oauth2ScreensFeatureEnabledTest() throws IOException, ServletException {
+        
         when(request.getContextPath()).thenReturn("http://test.com");
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession()).thenReturn(session);
         when(request.getSession(false)).thenReturn(session);
-        when(session.getAttribute("SPRING_SECURITY_CONTEXT")).thenReturn(context);
-
+        when(session.getAttribute("SPRING_SECURITY_CONTEXT")).thenReturn(context);        
+           
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);        
-        
+
         verify(response).sendRedirect("http://test.com/signin?oauth&test_param=param");
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
     }

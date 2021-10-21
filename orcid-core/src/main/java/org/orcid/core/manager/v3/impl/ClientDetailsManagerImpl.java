@@ -23,6 +23,7 @@ import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.impl.ClientDetailsManagerReadOnlyImpl;
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -38,6 +39,7 @@ import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -419,6 +421,45 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             throw new ClientAlreadyActiveException("Client already active");
         }
         clientDetailsDao.activateClient(clientDetailsId);
+    }
+
+    @Override
+    @Transactional
+    public void convertPublicClientToMember(String clientId, String groupId) {
+        LOGGER.info("Promoting client {} as member with groupId {}", clientId, groupId);
+        ProfileEntity group = profileEntityManager.findByOrcid(groupId);
+        ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
+        LOGGER.info("Client {} will be a {}", clientId, clientType);
+        // Change client type
+        if (clientDetailsDao.convertPublicClientToMember(clientId, groupId, clientType.name())) {
+            // Change role from 'ROLE_PUBLIC' to 'ROLE_CLIENT'
+            LOGGER.info("Updating granted authority for client {}", clientId);
+            clientDetailsDao.updateClientGrantedAuthority(clientId, "ROLE_CLIENT");
+            // Assign scopes to client
+            List<String> clientScopes = clientScopeDao.getActiveScopes(clientId);
+            Set<String> newScopes = null;
+            if (clientType.equals(ClientType.PREMIUM_UPDATER)) {
+                newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
+            } else {
+                newScopes = ClientType.getScopes(ClientType.UPDATER);
+            }
+
+            for (String activeScope : clientScopes) {
+                if (!newScopes.contains(activeScope)) {
+                    // Delete scope
+                    LOGGER.info("Deleting scope {} from client {}", activeScope, clientId);
+                    clientScopeDao.deleteScope(clientId, activeScope);
+                }
+            }
+
+            for (String newScope : newScopes) {
+                if (!clientScopes.contains(newScope)) {
+                    LOGGER.info("Adding scope {} to client {}", newScope, clientId);
+                    clientScopeDao.insertClientScope(clientId, newScope);
+                }
+            }
+            LOGGER.info("Client {} was succesfully promoted to {}", clientId, clientType);
+        }
     }
     
 }

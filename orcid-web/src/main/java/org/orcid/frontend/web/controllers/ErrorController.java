@@ -27,7 +27,13 @@ public class ErrorController extends BaseController {
 
     @RequestMapping(value = "/not-found")
     public ModelAndView error404Page(ModelAndView mav) {
-        mav.setViewName("error-404");
+        String orcid = getCurrentUserOrcid();
+        if (orcid != null) {
+            return new ModelAndView("redirect:/my-orcid");
+        } else {
+            mav.setViewName("error-404");
+        }
+
         mav.addObject("noIndex", true);
         return mav;
     }

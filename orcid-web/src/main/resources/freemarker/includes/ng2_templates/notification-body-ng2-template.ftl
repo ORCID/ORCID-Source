@@ -3,7 +3,7 @@
         <div class="notifications-inner">
             <!--AMENDED-->
             <div *ngIf="notification.notificationType=='AMENDED'">
-                <div *ngIf="TOGGLZ_VERBOSE_NOTIFICATIONS; else defaultNotifications">
+                <div>
                     <div *ngIf="(addedList.length > 0 || updatedList.length > 0 || deletedList.length > 0 || unknownList.length > 0); else noItemNotification">
                         <p><strong>{{notification?.source?.sourceName?.content}}</strong>&nbsp;<a
                                     (click)="toggleClientDescription()"
@@ -119,20 +119,6 @@
                                 class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button>
                     </div>
                 </div>
-                <ng-template #defaultNotifications>
-                    <div>
-                        <p>
-                            <strong>{{notification?.source?.sourceName?.content}}</strong> <@orcid.msg 'notifications.has_updated'/>
-                            {{notification?.amendedSection | replaceSeparatorWithSpace |
-                            titlecase}} <@orcid.msg 'notifications.section_of'/></p>
-                        <div class="pull-right topBuffer">
-                            <button *ngIf="!notification?.archivedDate" (click)="archive(notification.putCode)"
-                                    class="btn btn-white-no-border cancel-left"><@orcid.msg 'notifications.archive'/></button>
-                            <a href="{{getBaseUri()}}/my-orcid" target="_parent"
-                               class="btn btn-primary"><@orcid.msg 'notifications.view_on_your_record'/></a>
-                        </div>
-                    </div>
-                </ng-template>
             </div>
 
             <!--CUSTOM-->
@@ -212,7 +198,7 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="!TOGGLZ_VERBOSE_NOTIFICATIONS">
+            <div>
                 <div *ngIf="notification?.sourceDescription" class="topBuffer clear-fix">
                     <p><strong><@orcid.msg 'notifications.about' />
                             {{notification?.source?.sourceName?.content}}</strong><br>

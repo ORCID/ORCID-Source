@@ -117,20 +117,6 @@ public class EmailMessageSenderTest extends BaseTest {
     }
 
     @Test
-    public void testCreateDigestLegacy() throws IOException {
-        EmailMessage emailMessage = emailMessageSender.createDigestLegacy("0000-0000-0000-0000", generateNotifications());
-
-        assertNotNull(emailMessage);
-        String html = emailMessage.getBodyHtml();
-        String text = emailMessage.getBodyText();
-        String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body_legacy.txt"));
-        String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body_legacy.html"));
-        assertEquals("[ORCID] John Watson you have new notifications", emailMessage.getSubject());
-        assertEquals(expectedBodyHtml, html);
-        assertEquals(expectedBodyText, text);
-    }
-
-    @Test
     public void testCreateDigest() throws IOException {
         EmailMessage emailMessage = emailMessageSender.createDigest("0000-0000-0000-0000", generateNotifications());
         assertNotNull(emailMessage);
@@ -142,24 +128,6 @@ public class EmailMessageSenderTest extends BaseTest {
         assertEquals(expectedBodyHtml, html);
         assertEquals(expectedBodyText, text);
     }
-
-    @Test
-    public void testCreateDigestLegacyNotification() throws IOException {
-        togglzRule.enable(Features.ORCID_ANGULAR_INBOX);
-        EmailMessage emailMessage = emailMessageSender.createDigestLegacy("0000-0000-0000-0000", generateNotifications());
-
-        assertNotNull(emailMessage);
-        String html = emailMessage.getBodyHtml().trim().replaceAll("\\s","");
-        String text = emailMessage.getBodyText().trim().replaceAll("\\s","");
-        String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_notification_body_legacy.txt"));
-        String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_notification_body_legacy.html"));
-        String rExpectedBodyText = expectedBodyText.replace("\r\n", "\n").replace("\r", "\n").trim().replaceAll("\\s","");
-        String rExpectedBodyHtml = expectedBodyHtml.replace("\r\n", "\n").replace("\r", "\n").trim().replaceAll("\\s","");
-        assertEquals("[ORCID] John Watson you have new notifications", emailMessage.getSubject());
-        assertEquals(rExpectedBodyHtml, html);
-        assertEquals(rExpectedBodyText, text);
-    }
-
 
     private List<Notification> generateNotifications() {
         List<Notification> notifications = new ArrayList<>();
