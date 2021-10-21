@@ -18,15 +18,19 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidApiException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.exception.OrcidNotClaimedException;
+import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -110,6 +114,14 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (t instanceof OrcidBadRequestException) {
             logShortError(t, clientId);
         } else if (t instanceof RedirectMismatchException) {
+            logShortError(t, clientId);
+        } else if (t instanceof DuplicatedGroupIdRecordException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidDuplicatedActivityException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidDuplicatedElementException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidNotificationException) {
             logShortError(t, clientId);
         } else {
                 LOGGER.error("An exception has occured processing request from client " + clientId, t);

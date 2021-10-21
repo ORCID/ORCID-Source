@@ -210,8 +210,7 @@ public class ManageMembersController extends BaseController {
 
         if (client.getErrors().isEmpty()) {           
             org.orcid.jaxb.model.v3.release.client.Client modelObject = clientManager.edit(client.toModelObject(), true);
-            client = Client.fromModelObject(modelObject);
-            membersManager.clearCache();
+            client = Client.fromModelObject(modelObject);            
         }
 
         return client;

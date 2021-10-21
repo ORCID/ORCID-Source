@@ -194,5 +194,21 @@ export class AdminActionsService {
                 encodeURIComponent(obj), 
                 { headers: this.headers }
         )
-    };   
+    };
+    
+    validateClientConversion( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/validate-client-conversion.json', 
+                JSON.stringify(obj), 
+                { headers: this.headers }
+        )
+    };
+    
+    convertClient( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/convert-client.json', 
+                JSON.stringify(obj), 
+                { headers: this.headers }
+        )
+    };        
 }
