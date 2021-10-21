@@ -19,6 +19,8 @@ List of popular API client libraries. Please feel free to add to the list below.
 
    * [A simple wrapper around the ORCID.org API.](https://github.com/scholrly/orcid-python)
 
+   * [ORCID OAuth 2.0 Sign in/up for Invenio](https://github.com/zenodo/invenio/blob/zenodo-master/invenio/modules/oauthclient/contrib/orcid.py)
+
 ## RUBY
 
    * [A Rails engine for orcid.org integration](https://github.com/projecthydra-labs/orcid)
