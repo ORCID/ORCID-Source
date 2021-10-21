@@ -477,11 +477,11 @@ public class BaseController {
             // add protocol if missing
             boolean valid = false;
             try {
-                valid = urlValidator.isValid(encodeUrl(urlString.getValue()));
+                valid = OrcidStringUtils.isValidURL(urlString.getValue());
                 if (!valid) {
                     String tempUrl = encodeUrl("http://" + urlString.getValue());
                     // test validity again
-                    valid = urlValidator.isValid(tempUrl);
+                    valid = OrcidStringUtils.isValidURL(tempUrl);
                     if (valid) {
                         urlString.setValue("http://" + urlString.getValue());
                     } 
@@ -602,10 +602,7 @@ public class BaseController {
             }
             targetUrl += '?' + queryString;
             request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-            if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                // Remove the prompt parameter after a successful login 
-                targetUrl = removeParameterFromURI(targetUrl, OrcidOauth2Constants.PROMPT.toString());
-            }
+            targetUrl = removeParameterFromURI(targetUrl, OrcidOauth2Constants.PROMPT.toString());
         } else {
             targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
         }

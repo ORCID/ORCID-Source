@@ -5,16 +5,8 @@ public interface OrcidRecordIndexer {
 
     void processProfilesWithFailedFlagAndAddToMessageQueue();
 
-    void processProfilesWithPendingFlagAndAddToMessageQueue();
+    void processProfilesWithPendingFlagAndAddToMessageQueue();        
     
-    void processProfilesWithForceIndexingFlagAndAddToMessageQueue();
-    
-    void processUnindexableRecords();
-    
-    void processUnclaimedProfilesToFlagForIndexing();
-    
-    void processUnclaimedProfilesForReminder();
-
     void reindexRecordsOnSolr();
     
     void reindexV3RecordsOnS3();

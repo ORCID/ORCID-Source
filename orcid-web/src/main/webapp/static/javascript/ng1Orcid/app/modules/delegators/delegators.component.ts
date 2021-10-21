@@ -29,6 +29,9 @@ import { AdminActionsService }
 
 import { CommonService } 
     from '../../shared/common.service';
+    
+import { SwitchUserService } 
+	from "../../shared/switchUser.service";
 
 @Component({
     selector: 'delegators-ng2',
@@ -46,6 +49,7 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
         private delegatorsService: GenericService,
         private accountService: AccountService,
         private adminActionsService: AdminActionsService,
+        private switchUserService: SwitchUserService,
         private commonSrvc: CommonService
     ) {
         this.sort = {
@@ -95,6 +99,23 @@ export class DelegatorsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
 
     };
+    
+    switchUser(targetOrcid): void {
+	    this.switchUserService
+	      .switchUser(targetOrcid)
+	      .pipe(takeUntil(this.ngUnsubscribe))
+	      .subscribe(
+	        data => {
+	           window.location.replace(getBaseUri() + '/my-orcid');
+	        },
+	        error => {
+	          // reload page anyway
+	          // switchUser request is handled by OrcidSwitchUserFilter.java which redirects /switch-user to /my-orcid
+	          // in non-local environments neither request completes successfully, although the user has been successfully switched
+	          window.location.replace(getBaseUri() + '/my-orcid');
+	        }
+	      );
+	};
 
     searchDelegators = (text$: Observable<string>) =>
     text$.pipe(

@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
@@ -47,9 +46,6 @@ import org.springframework.web.servlet.ModelAndView;
 @PreAuthorize("!@sourceManagerV3.isInDelegationMode() OR @sourceManagerV3.isDelegatedByAnAdmin()")
 public class ClientsController extends BaseWorkspaceController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientsController.class);
-
-    @Resource
-    private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @Resource(name = "clientDetailsManagerV3")
     private ClientDetailsManager clientDetailsManager;
@@ -200,8 +196,7 @@ public class ClientsController extends BaseWorkspaceController {
             try {
                 // Updating from the clients edit page should not overwrite
                 // configuration values on the DB
-                clientToEdit = clientManager.edit(clientToEdit, false);
-                clearCache();
+                clientToEdit = clientManager.edit(clientToEdit, false);                
             } catch (OrcidClientGroupManagementException e) {
                 LOGGER.error(e.getMessage());
                 String errorDesciption = getMessage("manage.developer_tools.group.unable_to_update") + " " + e.getMessage();
@@ -270,16 +265,5 @@ public class ClientsController extends BaseWorkspaceController {
         for (RedirectUri redirectUri : client.getRedirectUris()) {
             copyErrors(redirectUri, client);
         }
-    }
-
-    /**
-     * Since the groups have changed, the cache version must be updated on
-     * database and all caches have to be evicted.
-     */
-    public void clearCache() {
-        // Updates cache database version
-        thirdPartyLinkManager.updateDatabaseCacheVersion();
-        // Evict current cache
-        thirdPartyLinkManager.evictAll();
     }
 }

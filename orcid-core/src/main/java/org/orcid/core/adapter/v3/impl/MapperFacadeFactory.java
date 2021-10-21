@@ -750,12 +750,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingSummaryClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         
         fundingSummaryClassMap.fieldMap("organization", "org").converter("orgConverter").add();
+        mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
         
         fundingSummaryClassMap.byDefault();
         fundingSummaryClassMap.register();
 
-        mapperFactory.classMap(FuzzyDate.class, StartDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
-        mapperFactory.classMap(FuzzyDate.class, EndDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day").register();
         return mapperFactory.getMapperFacade();
     }
 

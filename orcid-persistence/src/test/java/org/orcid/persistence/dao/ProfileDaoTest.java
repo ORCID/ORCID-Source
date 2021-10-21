@@ -253,46 +253,11 @@ public class ProfileDaoTest extends DBUnitTest {
         
         List<String> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
         assertNotNull(results);
-        // None of the records have an active token, but o1 is verified
-        assertEquals(1, results.size());
-        assertTrue(results.contains(o1));
         
-        // Lets add a token to user 2
-        OrcidOauth2TokenDetail user2Token = addToken(o2);
-        
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
-        assertNotNull(results);
-        assertEquals(2, results.size());
+        assertEquals(3, results.size());
         assertTrue(results.contains(o1));
         assertTrue(results.contains(o2));
-        
-        // o3 never had a token, so, it should never be part of the results
-        
-        // Check max limit works, so, it should fetch just the one with the oldest last modified time
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 1, 0);
-        assertNotNull(results);
-        assertEquals(1, results.size());
-        assertTrue(results.contains(o1));        
-        
-        // Set other indexing status to user 1
-        profileDao.updateIndexingStatus(o1, IndexingStatus.REINDEX);
-        
-        // Check that record doesnt appear anymore
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
-        assertNotNull(results);
-        assertEquals(1, results.size());
-        assertTrue(results.contains(o2));
-        
-        // Set other indexing status to user 2
-        profileDao.updateIndexingStatus(o2, IndexingStatus.REINDEX);
-        
-        // Check list is empty
-        results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
-        assertNotNull(results);
-        assertTrue(results.isEmpty());
-        
-        // Delete the token        
-        orcidOauth2TokenDetailDao.remove(user2Token.getId());
+        assertTrue(results.contains(o3));       
     }
 
     @Test
@@ -350,25 +315,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertFalse(now.after(new Date(result.getLastIndexedDate().getTime())));
         
         int endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
-        
-        // Should return same number of results until user have a token
-        assertEquals(startCount, endCount);
-        
-        // Lets add a token
-        OrcidOauth2TokenDetail userToken = addToken(orcid);
-        
-        // Check again
-        endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
-        // Should return same number of results until user have a token
         assertEquals(startCount + 1, endCount);
-        
-        // Delete the token
-        orcidOauth2TokenDetailDao.remove(userToken.getId());
-        
-        // Check again
-        endCount = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE, 0).size();
-        // Should return same number of results until user have a token
-        assertEquals(startCount, endCount);
         
         profileDao.updateIndexingStatus(orcid, IndexingStatus.PENDING);
     }        
@@ -556,18 +503,5 @@ public class ProfileDaoTest extends DBUnitTest {
         q.setParameter("dateCreated", dateCreated);
         q.setParameter("lastModified", dateCreated);
         return q.executeUpdate();
-    }
-    
-    private OrcidOauth2TokenDetail addToken(String orcid) {
-        // Lets add a token
-        OrcidOauth2TokenDetail userToken = new OrcidOauth2TokenDetail();
-        userToken.setApproved(true);
-        userToken.setAuthenticationKey("authenticationKey");
-        userToken.setAuthorizationCode("AAAAAA");
-        userToken.setClientDetailsId("APP-5555555555555555");
-        userToken.setProfile(new ProfileEntity(orcid));
-        userToken.setScope("/read-public");
-        orcidOauth2TokenDetailDao.persist(userToken);
-        return userToken;
     }
 }

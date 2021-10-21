@@ -562,7 +562,7 @@ public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
         LOGGER.info("About get consortium from SalesForce");
         validateSalesForceId(consortiumId);
         WebResource resource = createQueryResource(
-                "SELECT (SELECT Id, AccountId, Account.Name, Account.Public_Display_Name__c, StageName, NextStep, Consortium_member_removal_requested__c, Consortia_Lead__c FROM ConsortiaOpportunities__r WHERE StageName In ('Negotiation/Review', 'Invoice Paid') AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Account.Public_Display_Name__c) from Account WHERE Id='%s'",
+                "SELECT (SELECT Id, AccountId, Account.Name, Account.Public_Display_Name__c, StageName, NextStep, Consortium_member_removal_requested__c, Consortia_Lead__c FROM ConsortiaOpportunities__r WHERE StageName In ('Negotiation/Review', 'Invoice Paid', 'Agreement Signed', 'Invoice Sent', 'Partial Payment', 'In Collections') AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Account.Public_Display_Name__c) from Account WHERE Id='%s'",
                 consortiumId);
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
