@@ -46,11 +46,9 @@
         <#include "/includes/ng2_templates/funding-ng2-template.ftl">
         <funding-ng2 role="presentation"></funding-ng2>
         <!-- Research resources -->
-        <@orcid.checkFeatureStatus 'RESEARCH_RESOURCE'>
           <!--Research resources-->
           <#include "/includes/ng2_templates/research-resource-ng2-template.ftl">
           <research-resource-ng2 publicView="false" role="presentation"></research-resource-ng2>
-        </@orcid.checkFeatureStatus>
         <!-- Works -->
         <#include "/includes/ng2_templates/works-ng2-template.ftl">
         <works-ng2 role="presentation"></works-ng2>

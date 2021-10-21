@@ -9,6 +9,8 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.orgs.load.manager.OrgLoadManager;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
+import org.orcid.core.orgs.load.source.grid.GridOrgLoadSource;
+import org.orcid.core.orgs.load.source.ror.RorOrgLoadSource;
 import org.orcid.persistence.dao.OrgImportLogDao;
 import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
 import org.slf4j.Logger;
@@ -39,6 +41,13 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
     @Override
     public void loadOrgs() {
         OrgLoadSource loader = getNextOrgLoader();
+        if (loader != null) {
+            loadOrg(loader);
+        }
+    }
+    
+    @Override
+    public void loadOrg(OrgLoadSource loader) {
         if (loader != null) {
             OrgImportLogEntity importLog = getOrgImportLogEntity(loader);
             boolean success = loader.downloadOrgData();
@@ -94,5 +103,4 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
             }
         });
     }
-
 }

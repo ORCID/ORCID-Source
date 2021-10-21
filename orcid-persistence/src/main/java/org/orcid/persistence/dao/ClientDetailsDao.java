@@ -55,4 +55,8 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
 
     void deactivateClient(String clientDetailsId, String deactivatedBy);
 
+    boolean convertPublicClientToMember(String clientId, String groupId, String name);
+    
+    boolean updateClientGrantedAuthority(String clientId, String grantedAuthority);
+
 }
