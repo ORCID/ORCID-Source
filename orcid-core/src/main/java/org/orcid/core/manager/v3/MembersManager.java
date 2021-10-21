@@ -9,6 +9,4 @@ public interface MembersManager {
     Member updateMemeber(Member member) throws IllegalArgumentException;
 
     Member getMember(String memberId);
-
-    void clearCache();
 }

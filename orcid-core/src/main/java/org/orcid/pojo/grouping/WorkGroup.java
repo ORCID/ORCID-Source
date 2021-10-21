@@ -1,18 +1,14 @@
 package org.orcid.pojo.grouping;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
-import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
-import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.WorkForm;
+import org.orcid.pojo.ajaxForm.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorkGroup extends ActivityGroup {
 
@@ -119,6 +115,8 @@ public class WorkGroup extends ActivityGroup {
         workForm.setWorkType(Text.valueOf(workSummary.getType().value()));
         workForm.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(workSummary.getVisibility()));
         WorkForm.populateExternalIdentifiers(workSummary.getExternalIdentifiers(), workForm, workSummary.getType());
+        workForm.setCreatedDate(Date.valueOf(workSummary.getCreatedDate()));
+        workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));      
         return workForm;
     }
 

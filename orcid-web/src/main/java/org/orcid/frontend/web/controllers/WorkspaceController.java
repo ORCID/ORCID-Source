@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashSet;
@@ -13,13 +14,13 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
@@ -27,6 +28,7 @@ import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.frontend.web.util.ThirdPartyLinkManager;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.message.ContributorRole;
 import org.orcid.jaxb.model.message.FundingContributorRole;
@@ -72,7 +74,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     private ThirdPartyLinkManager thirdPartyLinkManager;
 
     @Resource(name = "externalIdentifierManagerV3")
-    private ExternalIdentifierManager externalIdentifierManager;    
+    private ExternalIdentifierManager externalIdentifierManager;
     
     @Resource(name = "profileKeywordManagerV3")
     private ProfileKeywordManager profileKeywordManager;
@@ -196,8 +198,18 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = { "/my-orcid3", "/my-orcid", "/workspace" }, method = RequestMethod.GET)
-    public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo,
-            @RequestParam(value = "maxResults", defaultValue = "200") int maxResults) {
+    public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo, @RequestParam(value = "maxResults", defaultValue = "200") int maxResults, @RequestParam(value = "orcid", defaultValue = "") String orcid) throws ServletException, IOException {
+       
+        if (!orcid.equals(getCurrentUserOrcid())){
+            String redirectUrl = request.getRequestURL().toString();
+            redirectUrl += "?orcid="+getCurrentUserOrcid();
+            if (request.getQueryString() != null && orcid.equals("")){
+                redirectUrl += "&"+request.getQueryString();
+            }
+            response.sendRedirect(redirectUrl);
+            
+        }
+
         return new ModelAndView("workspace_v3");
     }
 
@@ -435,8 +447,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             return tpr;
         }        
         String sourcStr = SourceEntityUtils.getSourceId(profile.getSource());     
-        // Check that the cache is up to date
-        evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients
         List<ImportWizzardClientForm> clients = thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeReadAccess(localeManager.getLocale());
         for (ImportWizzardClientForm client : clients) {
@@ -455,26 +465,13 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/countryNamesToCountryCodes.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> getCountryNamesToCountryCodesMap() {
         Locale locale = localeManager.getLocale();
+        if (locale.getLanguage().equals(new Locale("lr").getLanguage())|| locale.getLanguage().equals(new Locale("rl").getLanguage()) || locale.getLanguage().equals(new Locale("xx").getLanguage())) {
+            locale = new Locale("en");
+        }
         Map<String, String> countryMap = localeManager.getCountries(locale);
         Map<String, String> mapInversed = countryMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        
         return mapInversed;
     }
-    
-    /**
-     * Reads the latest cache version from database, compare it against the
-     * local version; if they are different, evicts all caches.
-     * 
-     * @return true if the local cache version is different than the one on
-     *         database
-     * */
-    private boolean evictThirdPartyLinkManagerCacheIfNeeded() {
-        long currentCachedVersion = thirdPartyLinkManager.getLocalCacheVersion();
-        long dbCacheVersion = thirdPartyLinkManager.getDatabaseCacheVersion();
-        if (currentCachedVersion < dbCacheVersion) {
-            // If version changed, evict the cache
-            thirdPartyLinkManager.evictAll();
-            return true;
-        }
-        return false;
-    }    
+        
 }

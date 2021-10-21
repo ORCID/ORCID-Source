@@ -723,8 +723,8 @@
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
 		<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
-		<property name="numberOfWebhookThreads" value="${org.orcid.core.numberOfWebhookThreads:4}" />
-        <property name="retryDelayMinutes" value="${org.orcid.core.webhookRetryDelayMinutes:5}" />
+		<property name="numberOfWebhookThreads" value="${org.orcid.core.numberOfWebhookThreads:6}" />
+        <property name="retryDelayMinutes" value="${org.orcid.core.webhookRetryDelayMinutes:10}" />
         <property name="maxPerRun" value="${org.orcid.core.webhookMaxPerRun:10000}" />
 	</bean>	
 
@@ -737,8 +737,6 @@
 	<bean id="orcidSearchManagerReadOnly" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />
 
 	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />	
-
-	<bean id="thirdPartyLinkManager" class="org.orcid.core.manager.impl.ThirdPartyLinkManagerImpl" />
 
 	<bean id="passwordGenerationManager"
 		class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl">
@@ -1653,17 +1651,12 @@
 		<property name="mapperFacade" ref="spamMapperFacade"/>
 	</bean>
 	
-	<bean id="ringgoldFtpsFileDownloader" class="org.orcid.core.orgs.load.io.FtpsFileDownloader">
-	    <property name="host" value="${org.orcid.core.orgs.ringgold.ftpHost:host}" />
-	    <property name="port" value="${org.orcid.core.orgs.ringgold.ftpPort:990}" />
-	    <property name="localFilePath" value="${org.orcid.core.orgs.ringgold.ftpLocalFilePath:/tmp/ringgold/ringold-import.zip}" />
-	    <property name="remoteFilePath" value="${org.orcid.core.orgs.ringgold.ftpRemoteFilePath:/remote/filepath}" />
-        <property name="username" value="${org.orcid.core.orgs.ringgold.ftpUsername:username}" />
-        <property name="password" value="${org.orcid.core.orgs.ringgold.ftpPassword:password}" />
-	</bean>
-	
+	<bean id="ringgoldFtpsFileDownloader" class="org.orcid.core.orgs.load.io.FtpsFileDownloader" />
+
 	<bean id="fundrefOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
 
     <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
+    
+    <bean id="rorOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
     
 </beans>
