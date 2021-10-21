@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.groupIds.issn.IssnPortalUrlBuilder;
 import org.orcid.core.manager.OrgDisambiguatedManager;
@@ -125,7 +126,8 @@ public class PublicRecordController extends BaseWorkspaceController {
             return publicRecord;
         } catch (OrcidDeprecatedException e) {
             isDeprecated = true;
-
+        } catch (OrcidNoResultException e) {
+            return publicRecord; 
         }
 
         publicRecord = getRecord(orcid);

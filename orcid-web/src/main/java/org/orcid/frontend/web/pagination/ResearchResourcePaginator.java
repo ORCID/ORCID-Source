@@ -1,18 +1,17 @@
 package org.orcid.frontend.web.pagination;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.orcid.core.manager.v3.ResearchResourceManager;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.pojo.ResearchResourceGroupPojo;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class ResearchResourcePaginator {
 
@@ -26,21 +25,27 @@ public class ResearchResourcePaginator {
     @Resource(name = "researchResourceManagerV3")
     ResearchResourceManager researchResourceManager;
     
-    public Page<ResearchResourceGroupPojo> getPage(String orcid, int offset, boolean justPublic, String sort, boolean sortAsc) {
+    public Page<ResearchResourceGroupPojo> getPage(String orcid, int offset, int pageSize, boolean justPublic, String sort, boolean sortAsc) {
         List<ResearchResourceSummary> r = researchResourceManager.getResearchResourceSummaryList(orcid);
         ResearchResources rr = researchResourceManager.groupResearchResources(r, justPublic);
         List<ResearchResourceGroup> sortedGroups = sort(rr.getResearchResourceGroup(), sort, sortAsc);
         
         Page<ResearchResourceGroupPojo> page = new Page<ResearchResourceGroupPojo>();
         page.setGroups(new ArrayList<ResearchResourceGroupPojo>());
-        
-        for (int i = offset; i < Math.min(offset + PAGE_SIZE, rr.getResearchResourceGroup().size()); i++) {
+
+
+        int pageSizeResearch = PAGE_SIZE;
+        if (pageSize != 0) {
+           pageSizeResearch = pageSize;
+        }
+
+        for (int i = offset; i < Math.min(offset + pageSizeResearch, rr.getResearchResourceGroup().size()); i++) {
             org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup group = rr.getResearchResourceGroup().get(i);
             page.getGroups().add(ResearchResourceGroupPojo.valueOf(group, i, orcid));
         }
         page.setTotalGroups(sortedGroups.size());
         
-        page.setNextOffset(offset+PAGE_SIZE);
+        page.setNextOffset(offset + pageSizeResearch);
         return page;
     }
     
