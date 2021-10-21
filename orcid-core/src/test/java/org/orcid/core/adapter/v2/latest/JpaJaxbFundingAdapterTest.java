@@ -16,7 +16,9 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.FundingType;
@@ -187,6 +189,8 @@ public class JpaJaxbFundingAdapterTest {
         assertNull(pfe.getTranslatedTitle());
         assertNull(pfe.getTranslatedTitleLanguageCode());
         assertNull(pfe.getUrl());
+       
+        
         // Enums
         assertEquals(Visibility.PRIVATE.name(), pfe.getVisibility());
         assertEquals(FundingType.GRANT.name(), pfe.getType());
@@ -220,8 +224,30 @@ public class JpaJaxbFundingAdapterTest {
         // Source
         assertNull(pfe.getSourceId());        
         assertNull(pfe.getClientSourceId());        
-        assertNull(pfe.getElementSourceId());        
+        assertNull(pfe.getElementSourceId()); 
+        
+        
+        
     }
+    
+    @Test
+    public void clearMonthFieldsForFundingDateTest() throws JAXBException {
+        Funding f = getFunding(true);
+        assertNotNull(f);
+        ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
+        
+        FuzzyDate startDate = FuzzyDate.valueOf(2021, null, null);
+        FuzzyDate endDate = FuzzyDate.valueOf(2022, null, null);
+        f.setStartDate(startDate);
+        f.setEndDate(endDate);
+        jpaJaxbFundingAdapter.toProfileFundingEntity(f, pfe);
+        assertNull(pfe.getStartDate().getMonth());
+        assertEquals(Integer.valueOf(2021), pfe.getStartDate().getYear());
+        assertNull(pfe.getEndDate().getMonth());
+        assertEquals(Integer.valueOf(2022),pfe.getEndDate().getYear());
+    }
+    
+    
     
     private Funding getFunding(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });

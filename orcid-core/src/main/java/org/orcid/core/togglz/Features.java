@@ -6,20 +6,17 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Orcid Angular Public Page")
+    ORCID_ANGULAR_PUBLIC_PAGE,
+
     @Label("Disable Badges")
     DISABLE_BADGES,
 
     @Label("Orcid Angular My Orcid")
     ORCID_ANGULAR_MY_ORCID,
 
-    @Label("Orcid Angular Inbox")
-    ORCID_ANGULAR_INBOX,
-
     @Label("New Info Site")
     NEW_INFO_SITE,
-
-    @Label("Orcid Angular Signin")
-    ORCID_ANGULAR_SIGNIN,
 
     @Label("Spam button")
     SPAM_BUTTON,
@@ -66,23 +63,14 @@ public enum Features implements Feature {
     @Label("Arabic translation")
     LANG_AR,
 
-    @Label("Last modified")
-    LAST_MOD,
-
     @Label("New footer")
     NEW_FOOTER,
-    
-    @Label("Research resource activities section in the UI")
-    RESEARCH_RESOURCE,
     
     @Label("Reset password send email in all cases")
     RESET_PASSWORD_EMAIL,
 
     @Label("Revoke access token if authorization code is reused")
     REVOKE_TOKEN_ON_CODE_REUSE,
-
-    @Label("Affiliations in search results")
-    SEARCH_RESULTS_AFFILIATIONS,
 
     @Label("Survey link")
     SURVEY,
@@ -102,9 +90,6 @@ public enum Features implements Feature {
     @Label("Remove https://orcid.org from OpenID id_tokens")
     OPENID_SIMPLE_SUBJECT,
     
-    @Label("Enable group affiliations")
-    GROUP_AFFILIATIONS,
-    
     @Label("Enable manual work grouping")
     MANUAL_WORK_GROUPING,
 
@@ -122,9 +107,6 @@ public enum Features implements Feature {
     
     @Label("User OBO")
     USER_OBO,
-    
-    @Label("Verbose notifications")
-    VERBOSE_NOTIFICATIONS,
 
     @Label("Works failure debug")
     WORKS_FAILURE_DEBUG,
@@ -145,7 +127,10 @@ public enum Features implements Feature {
     ID_TOKEN_24_HOURS_LIFESPAN,
     
     @Label("Send the 2FA Disabled Email")
-    TWO_FA_DEACTIVATE_EMAIL;
+    TWO_FA_DEACTIVATE_EMAIL, 
+    
+    @Label("Promote a client from public client to be a member")
+    UPGRADE_PUBLIC_CLIENT;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

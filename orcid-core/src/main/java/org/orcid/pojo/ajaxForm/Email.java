@@ -27,6 +27,10 @@ public class Email implements ErrorsInterface {
     
     private String assertionOriginName;
 
+    private Date createdDate;
+
+    private Date lastModified;
+
     private List<String> errors = new ArrayList<String>();
 
     public static Email valueOf(org.orcid.jaxb.model.v3.release.record.Email e) {
@@ -34,10 +38,30 @@ public class Email implements ErrorsInterface {
         if (e != null) {
             email.setCurrent(e.isCurrent());
             email.setPrimary(e.isPrimary());
-            email.setSource(e.retrieveSourcePath());
+            email.setSource(e.getSource().retrieveSourcePath());
             email.setValue(e.getEmail());
             email.setVerified(e.isVerified());
             email.setVisibility(e.getVisibility());
+
+            if (e.getCreatedDate() != null) {
+                Date createdDate = new Date();
+                createdDate.setYear(String.valueOf(e.getCreatedDate().getValue().getYear()));
+                createdDate.setMonth(String.valueOf(e.getCreatedDate().getValue().getMonth()));
+                createdDate.setDay(String.valueOf(e.getCreatedDate().getValue().getDay()));
+                email.setCreatedDate(createdDate);
+            }
+
+            if (e.getLastModifiedDate() != null) {
+                Date lastModifiedDate = new Date();
+                lastModifiedDate.setYear(String.valueOf(e.getLastModifiedDate().getValue().getYear()));
+                lastModifiedDate.setMonth(String.valueOf(e.getLastModifiedDate().getValue().getMonth()));
+                lastModifiedDate.setDay(String.valueOf(e.getLastModifiedDate().getValue().getDay()));
+                email.setLastModified(lastModifiedDate);
+            }
+
+            if (e.getSource().getSourceName() != null) {
+                email.setSourceName(e.getSource().getSourceName().getContent());
+            }
             
             if (e.getSource().getAssertionOriginClientId() != null) {
                 email.setAssertionOriginClientId(e.getSource().getAssertionOriginClientId().getPath());
@@ -49,6 +73,22 @@ public class Email implements ErrorsInterface {
             
             if (e.getSource().getAssertionOriginName() != null) {
                 email.setAssertionOriginName(e.getSource().getAssertionOriginName().getContent());
+            }
+
+            if (e.getCreatedDate() != null) {
+                Date createdDate = new Date();
+                createdDate.setYear(String.valueOf(e.getCreatedDate().getValue().getYear()));
+                createdDate.setMonth(String.valueOf(e.getCreatedDate().getValue().getMonth()));
+                createdDate.setDay(String.valueOf(e.getCreatedDate().getValue().getDay()));
+                email.setCreatedDate(createdDate);
+            }
+
+            if (e.getLastModifiedDate() != null) {
+                Date lastModifiedDate = new Date();
+                lastModifiedDate.setYear(String.valueOf(e.getLastModifiedDate().getValue().getYear()));
+                lastModifiedDate.setMonth(String.valueOf(e.getLastModifiedDate().getValue().getMonth()));
+                lastModifiedDate.setDay(String.valueOf(e.getLastModifiedDate().getValue().getDay()));
+                email.setLastModified(lastModifiedDate);
             }
         }
         return email;
@@ -103,7 +143,7 @@ public class Email implements ErrorsInterface {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }
+    }    
 
     public String getSource() {
         return source;
@@ -143,6 +183,22 @@ public class Email implements ErrorsInterface {
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 
     public List<String> getErrors() {

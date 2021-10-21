@@ -46,7 +46,7 @@
                             'width': this.elementWidth + 'px'
                             }"
                         >
-                            <div class="lightbox-container">
+                            <div class="lightbox-container" *ngIf="assetsPath">
                                 <div class="orcidCloseButtonModal" *ngIf="disableclickoutside"  (click)="closeModal()">
                                 <img   src="{{assetsPath}}/img/svg/close-24px.svg" aria-label="Close modal"/>
                                 </div>

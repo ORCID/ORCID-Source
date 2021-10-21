@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller("researchResourceController")
 @RequestMapping(value = { "/research-resources" })
 public class ResearchResourcesController extends BaseWorkspaceController {
-    
-    static final int PAGE_SIZE = 50;
-    
+
+    private static final String PAGE_SIZE_DEFAULT = "50";
+
     @Resource(name = "researchResourceManagerV3")
     ResearchResourceManager researchResourceManager;
     
@@ -32,9 +32,10 @@ public class ResearchResourcesController extends BaseWorkspaceController {
      * List research resources associated with a profile
      * */
     @RequestMapping(value = "/researchResourcePage.json", method = RequestMethod.GET)
-    public @ResponseBody Page<ResearchResourceGroupPojo> getresearchResourcePage(@RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
+    public @ResponseBody Page<ResearchResourceGroupPojo> getresearchResourcePage(@RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize,
+            @RequestParam("offset") int offset, @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getCurrentUserOrcid();        
-        return paginator.getPage(orcid, offset,false, sort, sortAsc);
+        return paginator.getPage(orcid, offset, pageSize, false, sort, sortAsc);
     }
     
     @RequestMapping(value = "/researchResource.json", method = RequestMethod.GET)
