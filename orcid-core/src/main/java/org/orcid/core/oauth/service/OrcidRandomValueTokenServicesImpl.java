@@ -269,6 +269,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         // Feature flag: If the request is to delete an element, allow
         if(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive() && RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
             OAuth2AccessToken accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);
+            // TODO: Validate revoke reason
+            // ((OrcidOauth2TokenDetail)accessToken).getRevokeReason();            
             validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
             return orcidTokenStore.readAuthenticationEvenOnDisabledTokens(accessTokenValue);
         } else {
