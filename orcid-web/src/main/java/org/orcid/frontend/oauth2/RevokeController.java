@@ -40,7 +40,7 @@ public class RevokeController {
             throw new IllegalArgumentException("Please provide the token to be param");
         }
 
-        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailService.findNonDisabledByTokenValue(tokenToRevoke);
+        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue(tokenToRevoke);
         if (token == null) {
             // Try to find it by refresh token
             token = orcidOauth2TokenDetailService.findByRefreshTokenValue(tokenToRevoke);

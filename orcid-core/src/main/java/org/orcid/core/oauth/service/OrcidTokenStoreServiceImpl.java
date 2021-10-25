@@ -63,6 +63,11 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
     @Resource
     private AuthenticationKeyGenerator authenticationKeyGenerator;
 
+    @Override
+    public OrcidOauth2TokenDetail readOrcidOauth2TokenDetail(String token) {
+        return orcidOauthTokenDetailService.findIgnoringDisabledByTokenValue(token);
+    }
+    
     /**
      * Read the authentication stored under the specified token value.
      * 
