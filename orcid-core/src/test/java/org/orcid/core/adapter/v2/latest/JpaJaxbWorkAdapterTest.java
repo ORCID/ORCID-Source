@@ -22,15 +22,19 @@ import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.PublicationDate;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -350,4 +354,20 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 + "{\"relationship\":\"VERSION_OF\",\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"456\"}}]}");
         return work;
     }
+    
+    
+    @Test
+    public void clearPublicationDateFieldsForWorkTest() throws IllegalAccessException {
+        WorkEntity work = getWorkEntity();
+        assertNotNull(work);
+        work.setPublicationDate(new PublicationDateEntity(2000, null, null));
+        jpaJaxbWorkAdapter.toWork(work);
+        assertNull(work.getPublicationMonth());
+        assertNull(work.getPublicationDay());
+        assertEquals(Integer.valueOf(2000), work.getPublicationYear());
+        work.setPublicationDate(new PublicationDateEntity(null, null, null));
+        jpaJaxbWorkAdapter.toWork(work);
+        assertNull(work.getPublicationYear());
+    }
+     
 }

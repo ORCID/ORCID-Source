@@ -531,7 +531,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addV3DateFields(workClassMap);
         registerSourceConverters(mapperFactory, workClassMap);
         workClassMap.field("shortDescription", "description");
-        workClassMap.field("publicationDate", "publicationDate");
         workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
         workClassMap.field("languageCode", "languageCode");
@@ -688,6 +687,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
                 .register();
+        
+        mapFuzzyDateToPublicationDateEntity(mapperFactory);
 
         return mapperFactory.getMapperFacade();
     }
@@ -1200,6 +1201,54 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private void addV3DateFields(ClassMapBuilder<?, ?> classMap) {
         classMap.fieldBToA("dateCreated", "createdDate.value");
         classMap.fieldBToA("lastModified", "lastModifiedDate.value");
+    }
+    
+    private void mapFuzzyDateToPublicationDateEntity(MapperFactory mapperFactory) {
+        mapperFactory.classMap(FuzzyDate.class, PublicationDateEntity.class).customize(new CustomMapper<FuzzyDate, PublicationDateEntity>() {
+            @Override
+            public void mapAtoB(FuzzyDate fuzzyDate, PublicationDateEntity entity, MappingContext context) {
+                if (fuzzyDate.getYear() != null) {
+                    entity.setYear(Integer.valueOf(fuzzyDate.getYear().getValue()));
+                } else {
+                    entity.setYear(null);
+                }
+
+                if (fuzzyDate.getMonth() != null) {
+                    entity.setMonth(Integer.valueOf(fuzzyDate.getMonth().getValue()));
+                } else {
+                    entity.setMonth(null);
+                }
+
+                if (fuzzyDate.getDay() != null) {
+                    entity.setDay(Integer.valueOf(fuzzyDate.getDay().getValue()));
+                } else {
+                    entity.setDay(null);
+                }
+            }
+
+            @Override
+            public void mapBtoA(PublicationDateEntity entity, FuzzyDate fuzzyDate, MappingContext context) {
+                if (entity.getYear() != null) {
+                    fuzzyDate.setYear(new Year(entity.getYear()));
+                } else {
+                    fuzzyDate.setYear(null);
+                }
+
+                if (entity.getMonth() != null) {
+                    fuzzyDate.setMonth(new Month(entity.getMonth()));
+                } else {
+                    fuzzyDate.setMonth(null);
+                }
+
+                if (entity.getDay() != null) {
+                    fuzzyDate.setDay(new Day(entity.getDay()));
+                } else {
+                    fuzzyDate.setDay(null);
+                }
+            }
+        }).register();
+        
+        
     }
 
     private void mapFuzzyDateToStartDateEntityAndEndDateEntity(MapperFactory mapperFactory) {
