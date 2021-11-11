@@ -17,6 +17,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +29,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidOauth2TokenDetailServiceImpl.class);
 
-    @Resource
+    @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+    
+    @Resource(name="orcidOauth2TokenDetailDaoReadOnly")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
 
     @Override
     public void setOrcidOauth2TokenDetailDao(OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao) {
@@ -39,7 +43,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     public OrcidOauth2TokenDetail findNonDisabledByTokenValue(String token) {
         try {
-            return orcidOauth2TokenDetailDao.findNonDisabledByTokenValue(token);
+            return orcidOauth2TokenDetailDaoReadOnly.findNonDisabledByTokenValue(token);
         } catch (NoResultException e) {
             LOGGER.debug("No token found for token value {}", e, token);
             return null;
@@ -49,34 +53,17 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     public OrcidOauth2TokenDetail findIgnoringDisabledByTokenValue(String token) {
         try {
-            return orcidOauth2TokenDetailDao.findByTokenValue(token);
+            return orcidOauth2TokenDetailDaoReadOnly.findByTokenValue(token);
         } catch (NoResultException e) {
             LOGGER.debug("No token found for token value {}", e, token);
             return null;
         }
-    }
-
-    @Override
-    public List<OrcidOauth2TokenDetail> getAll() {
-        return orcidOauth2TokenDetailDao.getAll();
-    }
-
-    @Override
-    @Transactional
-    public void saveOrUpdate(OrcidOauth2TokenDetail detail) {
-        if (detail.getId() != null) detail = orcidOauth2TokenDetailDao.merge(detail);
-        orcidOauth2TokenDetailDao.persist(detail);
-    }
-
-    @Override
-    public Long getCount() {
-        return orcidOauth2TokenDetailDao.countAll();
-    }
-
+    }    
+    
     @Override
     public OrcidOauth2TokenDetail findByRefreshTokenValue(String refreshTokenValue) {
         try {
-            return orcidOauth2TokenDetailDao.findByRefreshTokenValue(refreshTokenValue);
+            return orcidOauth2TokenDetailDaoReadOnly.findByRefreshTokenValue(refreshTokenValue);
         } catch (NoResultException e) {
             LOGGER.debug("No token found for refresh token value {}", e, refreshTokenValue);
             return null;
@@ -92,7 +79,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     public List<OrcidOauth2TokenDetail> findByAuthenticationKey(String authKey) {
         try {
-            return orcidOauth2TokenDetailDao.findByAuthenticationKey(authKey);
+            return orcidOauth2TokenDetailDaoReadOnly.findByAuthenticationKey(authKey);
         } catch (NoResultException e) {
             LOGGER.debug("No token found for auth token {}", e, authKey);
             return null;
@@ -102,7 +89,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     public List<OrcidOauth2TokenDetail> findByUserName(String userName) {
         try {
-            return orcidOauth2TokenDetailDao.findByUserName(userName);
+            return orcidOauth2TokenDetailDaoReadOnly.findByUserName(userName);
         } catch (NoResultException e) {
             LOGGER.debug("No token found for username {}", e, userName);
             return null;
@@ -112,13 +99,13 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Cacheable(value = "count-tokens", key = "#userName.concat('-').concat(#lastModified)")
     public boolean hasToken(String userName, long lastModified) {
-        return orcidOauth2TokenDetailDao.hasToken(userName);
+        return orcidOauth2TokenDetailDaoReadOnly.hasToken(userName);
     }
 
     @Override
     public List<OrcidOauth2TokenDetail> findByClientId(String clientId) {
         try {
-            return orcidOauth2TokenDetailDao.findByClientId(clientId);
+            return orcidOauth2TokenDetailDaoReadOnly.findByClientId(clientId);
         } catch (NoResultException e) {
             LOGGER.debug("No token found for client id {}", e, clientId);
             return null;
@@ -201,7 +188,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     public List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName) {
         try {
-            return orcidOauth2TokenDetailDao.findByClientIdAndUserName(clientId, userName);
+            return orcidOauth2TokenDetailDaoReadOnly.findByClientIdAndUserName(clientId, userName);
         } catch (NoResultException e) {
             LOGGER.debug("No token found for client id {}", e, clientId);
             return null;
@@ -210,7 +197,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Override
     public boolean doesClientKnowUser(String clientId, String userOrcid) {
-        List<OrcidOauth2TokenDetail> existingTokens = orcidOauth2TokenDetailDao.findByClientIdAndUserName(clientId, userOrcid);
+        List<OrcidOauth2TokenDetail> existingTokens = orcidOauth2TokenDetailDaoReadOnly.findByClientIdAndUserName(clientId, userOrcid);
         if (existingTokens == null || existingTokens.isEmpty()) {
             return false;
         }
@@ -247,5 +234,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Transactional
     public void disableClientAccess(String clientDetailsId, String userOrcid) {
         orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
-    }        
+    }
+    
+    @Override
+    @Transactional
+    public boolean updateScopes(String acessToken, Set<String> newScopes) {
+        return orcidOauth2TokenDetailDao.updateScopes(acessToken, OAuth2Utils.formatParameterList(newScopes));        
+    }
 }

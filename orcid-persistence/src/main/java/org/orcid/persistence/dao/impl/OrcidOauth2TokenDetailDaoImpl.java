@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -210,5 +211,14 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     @Transactional
     public OrcidOauth2TokenDetail merge(OrcidOauth2TokenDetail token) {
         return super.merge(token);
+    }
+    
+    @Override
+    @Transactional
+    public boolean updateScopes(String accessTokenValue, String newScopes) {
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set scope = :scopes where tokenValue = :accessTokenValue");
+        query.setParameter("accessTokenValue", accessTokenValue);
+        query.setParameter("scopes", newScopes);
+        return query.executeUpdate() > 0;
     }
 }

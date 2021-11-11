@@ -74,8 +74,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
 
     private TokenEnhancer customTokenEnhancer;
     
-    @Resource
-    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;       
+    @Resource(name="orcidOauth2AuthoriziationCodeDetailDaoReadOnly")
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDaoReadOnly;       
 
     @Resource
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
@@ -84,7 +84,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     
     private boolean customSupportRefreshToken;
     
-    @Resource
+    @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
     @Resource
@@ -232,8 +232,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                     }
                 } else if (params.containsKey("code")) {
                     String code = params.get("code");
-                    if (orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
-                        if (orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
+                    if (orcidOauth2AuthoriziationCodeDetailDaoReadOnly.find(code) != null) {
+                        if (orcidOauth2AuthoriziationCodeDetailDaoReadOnly.isPersistentToken(code)) {
                             return true;
                         }
                     }

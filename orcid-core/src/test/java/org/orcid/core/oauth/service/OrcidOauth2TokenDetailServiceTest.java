@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -45,6 +46,9 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
+    
+    @Resource(name="orcidOauth2TokenDetailDao")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -201,6 +205,18 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         }
     }
     
+    @Test
+    @Transactional
+    public void updateScopesTest() {
+        //We will test deleting this token
+        Long token1Id = createToken(CLIENT_ID_1, "token-1", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/person/read-limited /activities/update /read-limited", false).getId(); //Delete
+        OrcidOauth2TokenDetail token1 = orcidOauth2TokenDetailDao.find(token1Id);
+        assertNotNull(token1);
+        assertEquals(CLIENT_ID_1, token1.getClientDetailsId());
+        assertEquals("token-1", token1.getTokenValue());
+        fail();
+    }
+    
     private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
@@ -211,7 +227,7 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         token.setTokenExpiration(expirationDate);
         token.setTokenType("bearer");
         token.setTokenValue(tokenValue);
-        orcidOauth2TokenDetailService.saveOrUpdate(token);
+        orcidOauth2TokenDetailDao.persist(token);
         return token;
     }
 }
