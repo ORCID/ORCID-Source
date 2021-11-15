@@ -1,0 +1,17 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+    <changeSet id="CREATE-DW-WORK-EXTERNAL-ID-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_work_external_id" replaceIfExists="true">
+             with t as (select work_id,orcid, date_created, last_modified, json_array_elements(external_ids_json->'workExternalIdentifier') as external_json from work)  select work_id, orcid,  date_created, last_modified, external_json->'workExternalIdentifierId'->>'content' as workExternalIdentifierId, external_json->>'relationship'as relationship,  external_json->'url'->>'value'as url, external_json->>'workExternalIdentifierType' as workExternalIdentifierType  from t order by last_modified
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-WORK-EXTERNAL-ID" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_work_external_id to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>
