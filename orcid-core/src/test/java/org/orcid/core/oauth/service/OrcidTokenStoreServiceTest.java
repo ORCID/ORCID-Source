@@ -31,8 +31,8 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -65,8 +65,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     @Resource
     private ProfileEntityManager profileEntityManager;
     
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
+    @Resource(name="orcidOauth2TokenDetailDao")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -101,7 +101,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test 
-    @Transactional
     public void testReadAuthentication() throws Exception {
         OAuth2Authentication oAuth2Authentication = orcidTokenStoreService.readAuthentication("persistent-token-2");
         assertNotNull(oAuth2Authentication);
@@ -113,7 +112,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
     public void testStoreAccessToken() throws Exception {
         String clientId = "4444-4444-4444-4441";
         DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken("some-long-oauth2-token-value-9");
@@ -150,7 +148,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional    
     public void testRemoveAccessToken() throws Exception {
         OAuth2AccessToken accessToken = new DefaultOAuth2AccessToken("code3");
         orcidTokenStoreService.removeAccessToken(accessToken);
@@ -159,7 +156,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
     public void testReadAuthenticationForRefreshToken() throws Exception {
         OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken("some-long-oauth2-refresh-value-1");
         OAuth2Authentication oAuth2Authentication = orcidTokenStoreService.readAuthenticationForRefreshToken(refreshToken);
@@ -167,7 +163,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
     public void testRemoveByRefreshToken() throws Exception {
         OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-3");       
         assertNotNull(token);
@@ -177,7 +172,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
     public void testRemoveAccessTokenUsingRefreshToken() throws Exception {
         OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("persistent-token-1");
         orcidTokenStoreService.removeAccessTokenUsingRefreshToken(token.getRefreshToken());
@@ -186,7 +180,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
     public void testGetAccessToken() throws Exception {
         String clientId = "4444-4444-4444-4441";
         Map<String, String> parameters = new HashMap<String, String>();
@@ -266,6 +259,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         }
     }
     
+    @Transactional
     private OrcidOauth2TokenDetail createAccessToken(String tokenValue, String scope, String clientId, String userOrcid, boolean disabled) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
@@ -274,7 +268,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         token.setScope(scope);
         token.setTokenDisabled(disabled);
         token.setTokenValue(tokenValue);        
-        orcidOauth2TokenDetailService.saveOrUpdate(token);
+        orcidOauth2TokenDetailDao.persist(token);
         assertNotNull(token.getDateCreated());
         assertNotNull(token.getLastModified());
         return token;

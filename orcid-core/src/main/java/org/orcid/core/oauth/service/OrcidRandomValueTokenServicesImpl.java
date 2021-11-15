@@ -261,7 +261,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
 
     @Override
     public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {                  
-        ServletRequestAttributes attr = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         // Feature flag: If the request is to delete an element, allow
         if(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive() && RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {            
             OrcidOauth2TokenDetail orcidAccessToken = orcidTokenStore.readOrcidOauth2TokenDetail(accessTokenValue);

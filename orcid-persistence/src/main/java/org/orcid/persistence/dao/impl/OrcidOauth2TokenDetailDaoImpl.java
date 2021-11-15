@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -71,9 +72,10 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
 
     @Override
     public List<OrcidOauth2TokenDetail> findByUserName(String userName) {
-        TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from OrcidOauth2TokenDetail where profile.id = :userName and tokenExpiration > now() and (tokenDisabled IS NULL OR tokenDisabled = FALSE)",
+        TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from OrcidOauth2TokenDetail where profile.id = :userName and tokenExpiration > :now and (tokenDisabled IS NULL OR tokenDisabled = FALSE)",
                 OrcidOauth2TokenDetail.class);
         query.setParameter("userName", userName);
+        query.setParameter("now", new Date());
         return query.getResultList();
     }
 

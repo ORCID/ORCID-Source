@@ -9,12 +9,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -27,9 +29,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -63,17 +63,15 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     }  
     
     @Test
-    @Transactional
-    @Rollback
     public void dontGetExpiredTokensTest() {
         //Token # 1: expired
-        createToken(CLIENT_ID_1, "expired-1", USER_ORCID, new Date(System.currentTimeMillis() - 1000), "/read-limited", false);
+        Long token1Id = createToken(CLIENT_ID_1, "expired-1", USER_ORCID, new Date(System.currentTimeMillis() - 100000), "/read-limited", false).getId();
         //Token # 2: /activities/update
-        createToken(CLIENT_ID_1, "active-1", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update", false);
+        Long token2Id = createToken(CLIENT_ID_1, "active-1", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update", false).getId();
         //Token # 3: disabled
-        createToken(CLIENT_ID_1, "disabled-1", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update", true);
+        Long token3Id = createToken(CLIENT_ID_1, "disabled-1", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update", true).getId();
         //Token # 4: /read-limited
-        createToken(CLIENT_ID_1, "active-2", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false);
+        Long token4Id = createToken(CLIENT_ID_1, "active-2", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/read-limited", false).getId();
         //Fetch all active tokens
         List<OrcidOauth2TokenDetail> activeTokens = orcidOauth2TokenDetailService.findByUserName(USER_ORCID);
         assertNotNull(activeTokens);
@@ -99,11 +97,14 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         assertEquals(1, activeTokens.size());
         assertEquals("/read-limited", activeTokens.get(0).getScope());
         assertEquals("active-2", activeTokens.get(0).getTokenValue());
+        
+        orcidOauth2TokenDetailDao.remove(token1Id);
+        orcidOauth2TokenDetailDao.remove(token2Id);
+        orcidOauth2TokenDetailDao.remove(token3Id);
+        orcidOauth2TokenDetailDao.remove(token4Id);        
     }
     
-    @Test
-    @Transactional
-    @Rollback    
+    @Test    
     public void removeAllTokensWithSameScopesTest() {
         //We will test deleting this token
         Long token1Id = createToken(CLIENT_ID_1, "token-1", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/activities/update /read-limited", false).getId(); //Delete
@@ -136,7 +137,17 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         for(OrcidOauth2TokenDetail token : activeTokens) {
             assertThat(token.getId(), allOf(not(token1Id), not(token4Id), not(token9Id)));
             assertThat(token.getId(), anyOf(is(token2Id), is(token3Id), is(token5Id), is(token6Id), is(token7Id), is(token8Id)));
-        }        
+        }
+        
+        orcidOauth2TokenDetailDao.remove(token1Id);
+        orcidOauth2TokenDetailDao.remove(token2Id);
+        orcidOauth2TokenDetailDao.remove(token3Id);
+        orcidOauth2TokenDetailDao.remove(token4Id);
+        orcidOauth2TokenDetailDao.remove(token5Id);
+        orcidOauth2TokenDetailDao.remove(token6Id);
+        orcidOauth2TokenDetailDao.remove(token7Id);
+        orcidOauth2TokenDetailDao.remove(token8Id);
+        orcidOauth2TokenDetailDao.remove(token9Id);
     }
     
     @Test
@@ -205,16 +216,48 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         }
     }
     
-    @Test
-    @Transactional
+    @Test    
     public void updateScopesTest() {
+        String tokenValue = "TOKEN123";
+        String scopes1 = "/person/read-limited /activities/update /read-limited";
+        String scopes2 = "/person/read-limited /read-limited";        
+        String scopes3 = "/read-limited";
         //We will test deleting this token
-        Long token1Id = createToken(CLIENT_ID_1, "token-1", USER_ORCID, new Date(System.currentTimeMillis() + 100000), "/person/read-limited /activities/update /read-limited", false).getId(); //Delete
+        Long token1Id = createToken(CLIENT_ID_1, tokenValue, USER_ORCID, new Date(System.currentTimeMillis() + 100000), scopes1, false).getId(); //Delete
         OrcidOauth2TokenDetail token1 = orcidOauth2TokenDetailDao.find(token1Id);
         assertNotNull(token1);
         assertEquals(CLIENT_ID_1, token1.getClientDetailsId());
-        assertEquals("token-1", token1.getTokenValue());
-        fail();
+        assertEquals(tokenValue, token1.getTokenValue());
+        assertEquals(USER_ORCID, token1.getProfile().getId());
+        assertEquals(scopes1, token1.getScope());
+        assertEquals("bearer", token1.getTokenType());
+        
+        orcidOauth2TokenDetailDao.updateScopes(tokenValue, scopes2);
+        OrcidOauth2TokenDetail token2 = orcidOauth2TokenDetailDao.findByTokenValue(tokenValue);
+        assertNotNull(token2);
+        assertEquals(CLIENT_ID_1, token2.getClientDetailsId());
+        assertEquals(tokenValue, token2.getTokenValue());
+        assertEquals(USER_ORCID, token2.getProfile().getId());
+        assertEquals(scopes2, token2.getScope());
+        assertEquals("bearer", token2.getTokenType());
+                
+        orcidOauth2TokenDetailDao.updateScopes(tokenValue, scopes3);
+        OrcidOauth2TokenDetail token3 = orcidOauth2TokenDetailDao.findByTokenValue(tokenValue);
+        assertNotNull(token3);
+        assertEquals(CLIENT_ID_1, token3.getClientDetailsId());
+        assertEquals(tokenValue, token3.getTokenValue());
+        assertEquals(USER_ORCID, token3.getProfile().getId());
+        assertEquals(scopes3, token3.getScope());
+        assertEquals("bearer", token3.getTokenType()); 
+        
+        orcidOauth2TokenDetailDao.remove(token1Id);
+        
+        try {
+            orcidOauth2TokenDetailDao.findByTokenValue(tokenValue);
+            fail();
+        } catch(NoResultException nre) {
+            //Expected behavior
+        }
     }
     
     private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {

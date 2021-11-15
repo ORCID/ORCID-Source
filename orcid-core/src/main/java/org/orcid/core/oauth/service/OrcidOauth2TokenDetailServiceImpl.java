@@ -147,11 +147,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         }
         
         //Iterate over all tokens that belongs to this user and client, to remove all the ones that have the same scopes
-        OrcidOauth2TokenDetail tokenToDisable = orcidOauth2TokenDetailDao.find(tokenId);
+        OrcidOauth2TokenDetail tokenToDisable = orcidOauth2TokenDetailDaoReadOnly.find(tokenId);
         String scopesToDisableString = tokenToDisable.getScope();
         Set<ScopePathType> scopesToDisable = ScopePathType.getScopesFromSpaceSeparatedString(scopesToDisableString);
         
-        List<OrcidOauth2TokenDetail> allTokens = orcidOauth2TokenDetailDao.findByClientIdAndUserName(tokenToDisable.getClientDetailsId(), userOrcid);
+        List<OrcidOauth2TokenDetail> allTokens = orcidOauth2TokenDetailDaoReadOnly.findByClientIdAndUserName(tokenToDisable.getClientDetailsId(), userOrcid);
         //Iterate over all tokens and verify we disable all the ones that have the same scopes
         for(OrcidOauth2TokenDetail token : allTokens) {
             if(token.getTokenDisabled() == null || !token.getTokenDisabled()) {
