@@ -130,7 +130,10 @@ public enum Features implements Feature {
     TWO_FA_DEACTIVATE_EMAIL, 
     
     @Label("Promote a client from public client to be a member")
-    UPGRADE_PUBLIC_CLIENT;
+    UPGRADE_PUBLIC_CLIENT,
+    
+    @Label("Stop caching works when doing bulk reads")
+    READ_BULK_WORKS_DIRECTLY_FROM_DB;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
