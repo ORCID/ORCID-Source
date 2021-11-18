@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Orcid Angular Works Contributors")
+    ORCID_ANGULAR_WORKS_CONTRIBUTORS,
+
     @Label("Orcid Angular Public Page")
     ORCID_ANGULAR_PUBLIC_PAGE,
 
@@ -35,9 +38,6 @@ public enum Features implements Feature {
 
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
-
-    @Label("Wider grid")
-    WIDE_GRID,
 	
     @Label("Add works based on ArXiv, DOI or PubMed id metadata")
     ADD_WORKS_WITH_EXTERNAL_ID,
@@ -120,6 +120,9 @@ public enum Features implements Feature {
     @Label("Disable the 2.0 release candidates")
     V2_DISABLE_RELEASE_CANDIDATES,
 
+    @Label("Disable the 3.0 release candidates")
+    V3_DISABLE_RELEASE_CANDIDATES,
+
     @Label("Salesforce: Enable opportunities and org record types")
     SF_ENABLE_OPP_ORG_RECORD_TYPES,
 
@@ -130,10 +133,7 @@ public enum Features implements Feature {
     TWO_FA_DEACTIVATE_EMAIL, 
     
     @Label("Promote a client from public client to be a member")
-    UPGRADE_PUBLIC_CLIENT,
-    
-    @Label("something")
-    READ_BULK_WORKS_DIRECTLY_FROM_DB;
+    UPGRADE_PUBLIC_CLIENT;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

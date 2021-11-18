@@ -25,6 +25,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.common.FundingType;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.FundingContributor;
@@ -414,6 +415,23 @@ public class JpaJaxbFundingAdapterTest {
         assertNotNull(pfe.getContributorsJson());
         assertEquals("{\"contributor\":[{\"contributorOrcid\":null,\"creditName\":null,\"contributorEmail\":null,\"contributorAttributes\":{\"contributorRole\":\"OTHER_CONTRIBUTION\"}}]}", pfe.getContributorsJson());
         
+    }
+    
+    @Test
+    public void clearMonthFieldsForFundingDateTest() throws JAXBException {
+        Funding f = getFunding(true);
+        assertNotNull(f);
+        ProfileFundingEntity pfe = jpaJaxbFundingAdapter.toProfileFundingEntity(f);
+        
+        FuzzyDate startDate = FuzzyDate.valueOf(2021, null, null);
+        FuzzyDate endDate = FuzzyDate.valueOf(2022, null, null);
+        f.setStartDate(startDate);
+        f.setEndDate(endDate);
+        jpaJaxbFundingAdapter.toProfileFundingEntity(f, pfe);
+        assertNull(pfe.getStartDate().getMonth());
+        assertEquals(Integer.valueOf(2021), pfe.getStartDate().getYear());
+        assertNull(pfe.getEndDate().getMonth());
+        assertEquals(Integer.valueOf(2022),pfe.getEndDate().getYear());
     }
     
     private Funding getFunding(boolean full) throws JAXBException {

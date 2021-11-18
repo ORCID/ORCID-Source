@@ -60,12 +60,6 @@ public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
      * */
     boolean resetClientSecret(String clientId, String clientSecret);
 
-    /**
-     * Removes all non primary client secret keys
-     * 
-     * @param clientId
-     * */
-    void cleanOldClientKeys();
 
     /**
      * Utility function that will help us to create and persist a clientDetailsEntity giving all the details
