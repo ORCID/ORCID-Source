@@ -493,4 +493,19 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
                 + "{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"AGR\",\"workExternalIdentifierId\":{\"content\":\"abc\"}}]}");
         return work;
     }
+    
+    @Test
+    public void clearPublicationDateFieldsForWorkTest() throws IllegalAccessException {
+        WorkEntity work = getWorkEntity();
+        assertNotNull(work);
+        work.setPublicationDate(new PublicationDateEntity(2000, null, null));
+        jpaJaxbWorkAdapter.toWork(work);
+        assertNull(work.getPublicationMonth());
+        assertNull(work.getPublicationDay());
+        assertEquals(Integer.valueOf(2000), work.getPublicationYear());
+        work.setPublicationDate(new PublicationDateEntity(null, null, null));
+        jpaJaxbWorkAdapter.toWork(work);
+        assertNull(work.getPublicationYear());
+        
+    }
 }

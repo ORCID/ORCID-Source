@@ -35,6 +35,8 @@
 			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
 	</bean>
 	
+	<bean id="cleanOldClientKeysCronJob" class="org.orcid.core.cron.CleanOldClientKeysCronJob" />
+	
 	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
 	
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
@@ -723,8 +725,8 @@
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
 		<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
-		<property name="numberOfWebhookThreads" value="${org.orcid.core.numberOfWebhookThreads:4}" />
-        <property name="retryDelayMinutes" value="${org.orcid.core.webhookRetryDelayMinutes:5}" />
+		<property name="numberOfWebhookThreads" value="${org.orcid.core.numberOfWebhookThreads:6}" />
+        <property name="retryDelayMinutes" value="${org.orcid.core.webhookRetryDelayMinutes:10}" />
         <property name="maxPerRun" value="${org.orcid.core.webhookMaxPerRun:10000}" />
 	</bean>	
 
@@ -899,8 +901,6 @@
 	
 	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />			
 
-	<bean id="internalSSOManager" class="org.orcid.core.manager.impl.InternalSSOManagerImpl" />		
-	
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 
 	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />

@@ -555,13 +555,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
         String emailNameGrantingPermission = deriveEmailFriendlyName(userGrantingPermission);
 
-        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
-            StringBuffer sb = new StringBuffer();
-            sb.append(emailNameGrantingPermission);
-            sb.append(" ");
-            sb.append(getSubject("notification.delegate.receipt.trustedIndividual", userLocale));
-            subject = sb.toString();
-        }
+        StringBuffer sb = new StringBuffer();
+        sb.append(emailNameGrantingPermission);
+        sb.append(" ");
+        sb.append(getSubject("notification.delegate.receipt.trustedIndividual", userLocale));
+        subject = sb.toString();
 
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
@@ -586,13 +584,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         String text = null;        
         String html = null;
 
-        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
-            text = templateManager.processTemplate("delegate_recipient_notification.ftl", templateParams);
-            html = templateManager.processTemplate("delegate_recipient_notification_html.ftl", templateParams);
-        } else {
-            text = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
-            html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);    
-        }
+        text = templateManager.processTemplate("delegate_recipient_notification.ftl", templateParams);
+        html = templateManager.processTemplate("delegate_recipient_notification_html.ftl", templateParams);
 
         NotificationAdministrative notification = new NotificationAdministrative();
         notification.setNotificationType(NotificationType.ADMINISTRATIVE);
@@ -612,13 +605,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         String subject = getSubject("email.subject.delegate.recipient", userLocale);
         String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
 
-        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
-            StringBuffer sb = new StringBuffer();
-            sb.append(emailNameForDelegate);
-            sb.append(" ");
-            sb.append(getSubject("notification.delegate.trustedIndividual", userLocale));
-            subject = sb.toString();
-        }
+        StringBuffer sb = new StringBuffer();
+        sb.append(emailNameForDelegate);
+        sb.append(" ");
+        sb.append(getSubject("notification.delegate.trustedIndividual", userLocale));
+        subject = sb.toString();
 
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
@@ -679,45 +670,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
 
         mailGunManager.sendEmail(EMAIL_CHANGED_NOTIFY_ORCID_ORG, oldEmail, subject, body, html);
-    }
-
-    @Override
-    @Transactional
-    public void sendApiRecordCreationEmail(String toEmail, String orcid) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
-        String creatorName = record.getSource() == null ? null : sourceEntityUtils.getSourceName(record.getSource());
-        Locale userLocale = getUserLocaleFromProfileEntity(record);
-        
-        String email = toEmail != null ? toEmail : emailManager.findPrimaryEmail(orcid).getEmail();
-        String emailName = deriveEmailFriendlyName(orcid);
-        String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());        
-
-        String subject = null;
-        String body = null;
-        String htmlBody = null;
-        
-        subject = getSubject("email.subject.api_record_creation", userLocale);
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", emailName);
-        templateParams.put("orcid", orcid);
-        templateParams.put("subject", subject);
-        templateParams.put("creatorName", creatorName);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("verificationUrl", verificationUrl);
-
-        addMessageParams(templateParams, userLocale);
-        // Generate body from template
-        body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
-        htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
-
-        // Send message
-        if (apiRecordCreationEmailEnabled) {
-                mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, subject, body, htmlBody);
-        } else {
-            LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", body);
-        }
     }
 
     @Override
@@ -864,11 +816,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         
         String htmlBody = null;
 
-        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
-            htmlBody = templateManager.processTemplate("admin_delegate_request_notification_html.ftl", templateParams);
-        } else {
-            htmlBody = templateManager.processTemplate("admin_delegate_request_html.ftl", templateParams);
-        }
+        htmlBody = templateManager.processTemplate("admin_delegate_request_notification_html.ftl", templateParams);
 
         // Send message
         if (apiRecordCreationEmailEnabled) {

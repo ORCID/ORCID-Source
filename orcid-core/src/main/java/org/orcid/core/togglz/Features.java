@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Orcid Angular Works Contributors")
+    ORCID_ANGULAR_WORKS_CONTRIBUTORS,
+
     @Label("Orcid Angular Public Page")
     ORCID_ANGULAR_PUBLIC_PAGE,
 
@@ -14,12 +17,6 @@ public enum Features implements Feature {
 
     @Label("Orcid Angular My Orcid")
     ORCID_ANGULAR_MY_ORCID,
-
-    @Label("Orcid Angular Inbox")
-    ORCID_ANGULAR_INBOX,
-
-    @Label("Orcid Angular Signin")
-    ORCID_ANGULAR_SIGNIN,
 
     @Label("Spam button")
     SPAM_BUTTON,
@@ -38,9 +35,6 @@ public enum Features implements Feature {
 
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
-
-    @Label("Wider grid")
-    WIDE_GRID,
 	
     @Label("Add works based on ArXiv, DOI or PubMed id metadata")
     ADD_WORKS_WITH_EXTERNAL_ID,
@@ -68,9 +62,6 @@ public enum Features implements Feature {
 
     @Label("New footer")
     NEW_FOOTER,
-    
-    @Label("Research resource activities section in the UI")
-    RESEARCH_RESOURCE,
     
     @Label("Reset password send email in all cases")
     RESET_PASSWORD_EMAIL,
@@ -113,9 +104,6 @@ public enum Features implements Feature {
     
     @Label("User OBO")
     USER_OBO,
-    
-    @Label("Verbose notifications")
-    VERBOSE_NOTIFICATIONS,
 
     @Label("Works failure debug")
     WORKS_FAILURE_DEBUG,
@@ -128,6 +116,9 @@ public enum Features implements Feature {
     
     @Label("Disable the 2.0 release candidates")
     V2_DISABLE_RELEASE_CANDIDATES,
+
+    @Label("Disable the 3.0 release candidates")
+    V3_DISABLE_RELEASE_CANDIDATES,
 
     @Label("Salesforce: Enable opportunities and org record types")
     SF_ENABLE_OPP_ORG_RECORD_TYPES,
