@@ -42,10 +42,6 @@ import { GenericService }
     from '../../shared/generic.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { IsThisYouComponent } from '@bit/orcid.angular.is-this-you';
-
-import { PlatformInfoService } from '@bit/orcid.angular.platform-info';
-
 @Component({
     selector: 'oauth-authorization-ng2',
     template:  scriptTmpl("oauth-authorization-ng2-template")
@@ -139,8 +135,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         private oauthService: OauthService,
         private searchSrvc: SearchService,
         private nameService: GenericService,
-        public dialog: MatDialog,
-        public _platformInfo: PlatformInfoService
+        public dialog: MatDialog
     ) {
         window['angularComponentReference'] = {
             zone: this.zone,
@@ -218,10 +213,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                   this.userInfo = {};
               } 
           );
-
-        _platformInfo.get().subscribe(platformInfo => {
-            this.isMobileView = platformInfo.tabletOrHandset
-        })
         
     }
 
@@ -512,13 +503,6 @@ ok: "${error.ok}"
             dialogParams["maxHeight"] = "95vh"
         }
 
-        const dialogRef = this.dialog.open(IsThisYouComponent, dialogParams);
-
-        dialogRef.afterClosed().subscribe(confirmRegistration => {
-            if (confirmRegistration) {
-                this.oauth2ScreensPostRegisterConfirm()
-            }
-        });
     }
 
     sendReactivationEmail(email, $event?): void {        

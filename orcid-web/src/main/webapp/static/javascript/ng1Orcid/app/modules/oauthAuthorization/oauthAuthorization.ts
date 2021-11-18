@@ -6,8 +6,6 @@ import { CommonNg2Module } from "./../common/common";
 import { OauthAuthorizationComponent, DialogOverviewExampleDialog } from "./oauthAuthorization.component";
 import { idBannerNg2Module } from "./../idBanner/idBanner";
 import { MatDialogModule } from '@angular/material/dialog';
-import { IsThisYouModule, IsThisYouComponent } from "@bit/orcid.angular.is-this-you"
-
 
 // This is the Angular 1 part of the module
 export const OauthAuthorizationModule = angular.module(
@@ -19,9 +17,8 @@ export const OauthAuthorizationModule = angular.module(
 
 @NgModule({
     declarations: [OauthAuthorizationComponent, DialogOverviewExampleDialog],
-    entryComponents: [OauthAuthorizationComponent, DialogOverviewExampleDialog, IsThisYouComponent],
-    imports: [CommonNg2Module, idBannerNg2Module, MatDialogModule,
-       IsThisYouModule
+    entryComponents: [OauthAuthorizationComponent, DialogOverviewExampleDialog],
+    imports: [CommonNg2Module, idBannerNg2Module, MatDialogModule
        ],
     providers: []
 })
