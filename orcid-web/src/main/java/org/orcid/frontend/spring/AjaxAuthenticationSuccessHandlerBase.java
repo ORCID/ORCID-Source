@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.LocaleUtils;
-import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -22,9 +21,6 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
     private OrcidUrlManager orcidUrlManager;
 
     @Resource
-    protected InternalSSOManager internalSSOManager;
-
-    @Resource
     protected SourceManager sourceManager;
 
     @Resource
@@ -37,10 +33,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
         String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
         if (authentication != null) {
             String orcidId = authentication.getName();
-            checkLocale(request, response, orcidId);
-            if (internalSSOManager.enableCookie()) {
-                internalSSOManager.writeCookie(orcidId, request, response);
-            }
+            checkLocale(request, response, orcidId);            
             profileEntityManager.updateLastLoginDetails(orcidId, OrcidRequestUtil.getIpAddress(request));
         }
         if (targetUrl == null) {
