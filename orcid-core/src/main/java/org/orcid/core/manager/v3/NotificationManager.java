@@ -44,9 +44,7 @@ public interface NotificationManager {
 
     void sendOrcidDeactivateEmail(String userOrcid);
 
-    void sendOrcidLockedEmail(String orcidToLock);
-
-    void sendApiRecordCreationEmail(String toEmail, String orcid);        
+    void sendOrcidLockedEmail(String orcidToLock);   
 
     void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
 

@@ -35,6 +35,8 @@
 			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
 	</bean>
 	
+	<bean id="cleanOldClientKeysCronJob" class="org.orcid.core.cron.CleanOldClientKeysCronJob" />
+	
 	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
 	
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
@@ -899,8 +901,6 @@
 	
 	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />			
 
-	<bean id="internalSSOManager" class="org.orcid.core.manager.impl.InternalSSOManagerImpl" />		
-	
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 
 	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />

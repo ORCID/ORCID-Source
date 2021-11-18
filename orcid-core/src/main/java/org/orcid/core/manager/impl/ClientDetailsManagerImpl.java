@@ -254,45 +254,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         return result;
     }
 
-    /**
-     * Removes all non primary client secret keys
-     * 
-     * @param clientId
-     * */
-    @Override
-    @Transactional
-    public void cleanOldClientKeys() {
-        LOGGER.info("Starting cron to delete non primary client keys");
-        Date currentDate = new Date();
-        List<ClientDetailsEntity> allClientDetails = this.getAll();
-        if (allClientDetails != null && allClientDetails != null) {
-            for (ClientDetailsEntity clientDetails : allClientDetails) {
-                String clientId = clientDetails.getClientId();
-                LOGGER.info("Deleting non primary keys for client: {}", clientId);
-                Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
-                boolean anyRemoved = false;
-                for (ClientSecretEntity clientSecret : clientSecrets) {
-                    if (!clientSecret.isPrimary()) {
-                        Date dateRevoked = clientSecret.getLastModified();
-                        Date timeToDeleteMe = DateUtils.addHours(dateRevoked, 24);
-                        // If the key have been revoked more than 24 hours ago
-                        if (timeToDeleteMe.before(currentDate)) {
-                            LOGGER.info("Deleting key for client {}", clientId);
-                            boolean removed = clientSecretDao.removeClientSecret(clientId, clientSecret.getClientSecret());
-                            if(removed) {
-                                anyRemoved = true;
-                            }
-                        }
-                    }
-                }
-                // Update the last modified on the client record
-                if(anyRemoved) {
-                    this.updateLastModified(clientId);
-                }
-            }
-        }
-        LOGGER.info("Cron done");
-    }
 
     @Override
     public List<ClientDetailsEntity> getAll() {
