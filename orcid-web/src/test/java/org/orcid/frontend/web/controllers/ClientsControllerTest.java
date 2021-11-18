@@ -254,12 +254,18 @@ public class ClientsControllerTest extends BaseControllerTest {
     public void getClientsTest() {
         List<Client> clients = controller.getClients();
         assertNotNull(clients);
-        assertEquals(2, clients.size());
+        assertEquals(4, clients.size());
         Client client1 = clients.get(0);
         assertEquals("APP-5555555555555555", client1.getClientId().getValue());
 
         Client client2 = clients.get(1);
         assertEquals("APP-5555555555555556", client2.getClientId().getValue());
+        
+        Client client3 = clients.get(2);
+        assertEquals("APP-5555555555555557", client3.getClientId().getValue());
+        
+        Client client4 = clients.get(3);
+        assertEquals("APP-5555555555555558", client4.getClientId().getValue());
     }
 
     @Test
@@ -308,7 +314,7 @@ public class ClientsControllerTest extends BaseControllerTest {
         List<Client> clients = controller.getClients();
         int clientsSoFar = clients.size();
         assertNotNull(clients);
-        assertEquals(2, clients.size());
+        assertEquals(4, clients.size());
         Client client = clients.get(0);
         assertEquals("APP-5555555555555555", client.getClientId().getValue());
 

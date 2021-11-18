@@ -35,6 +35,8 @@
 			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
 	</bean>
 	
+	<bean id="cleanOldClientKeysCronJob" class="org.orcid.core.cron.CleanOldClientKeysCronJob" />
+	
 	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
 	
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
