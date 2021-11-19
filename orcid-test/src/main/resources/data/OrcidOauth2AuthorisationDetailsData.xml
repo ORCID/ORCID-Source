@@ -157,7 +157,7 @@
            state="a-state"
            scope_type="/read-limited"
            resource_id="orcid"
-           authentication_key="an-authentication-key-6"
+           authentication_key="097843f6f740d94d5825f3684e0d4c6e"
            persistent="false"
            date_created="2020-01-01 00:00:00.00"            
            last_modified="2020-01-01 00:00:00.00"  

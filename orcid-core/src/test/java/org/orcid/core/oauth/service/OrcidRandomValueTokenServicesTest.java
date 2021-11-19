@@ -230,205 +230,93 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     }                            
         
     @Test    
-    public void tokenExpiredDoesntWorkTest() {
-        // Mock request attributes        
+    public void expiredTokenDoesntWorkOnGetPostPutTest() {
+        // Mock request attributes  
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        mockHttpServletRequest.setMethod(RequestMethod.GET.name());        
         RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
         RequestContextHolder.setRequestAttributes(attrs);
         
-        // Togglz off
-        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
-        
-        OrcidOauth2TokenDetail expiredToken = createExpiredToken("token-value", null);        
-        orcidOauthTokenDetailService.createNew(expiredToken);
-        
-        // The first time we try to use it, we get a InvalidTokenException with message Access token expired: token-value
-        try {
-            tokenServices.loadAuthentication("token-value");
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Access token expired: token-value", e.getMessage());
-        }
+        // Check GET requests fail
+        checkAuthenticationFailsOnExpiredTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.GET);
+        // Check POST requests fail
+        checkAuthenticationFailsOnExpiredTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.POST);
+        // Check PUT requests fail
+        checkAuthenticationFailsOnExpiredTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.PUT);
                 
-        // Second time we try to use it, we get a InvalidTokenException with message Invalid access token: token-value
-        try {
-            tokenServices.loadAuthentication("token-value");
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Invalid access token: token-value", e.getMessage());
-        }
-        
-        // Togglz on
-        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
-        // Try again
-        expiredToken = createExpiredToken("token-value-2", null);        
-        orcidOauthTokenDetailService.createNew(expiredToken);
-        
-        // The first time we try to use it, we get a InvalidTokenException with message Access token expired: token-value
-        try {
-            tokenServices.loadAuthentication("token-value-2");
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Access token expired: token-value-2", e.getMessage());
-        }
-                
-        // Second time we try to use it, we get a InvalidTokenException with message Invalid access token: token-value
-        try {
-            tokenServices.loadAuthentication("token-value-2");
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Invalid access token: token-value-2", e.getMessage());
-        }
-        
-        
         // Disable togglz again
         togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
     }
     
     @Test
-    public void expiredTokenDoesntWorkOnDeleteWithTogglzOnTest() {
-        togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
-
-        // Mock request attributes
-        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        mockHttpServletRequest.setMethod(RequestMethod.DELETE.name());
-        RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
-        RequestContextHolder.setRequestAttributes(attrs);
-
-        // Work on USER_REVOKED tokens
-        OrcidOauth2TokenDetail expiredToken = createExpiredToken("token-USER_REVOKED", RevokeReason.USER_REVOKED);
-        orcidOauthTokenDetailService.createNew(expiredToken);
-
-        // Doesnt work on USER_REVOKED
-        try {
-            tokenServices.loadAuthentication("token-USER_REVOKED");
-            fail();
-        } catch (InvalidTokenException e) {
-            assertEquals("Access token expired: token-USER_REVOKED", e.getMessage());
-        }
-
-        // Doesnt work on CLIENT_REVOKED
-        expiredToken = createExpiredToken("token-CLIENT_REVOKED", RevokeReason.CLIENT_REVOKED);
-        orcidOauthTokenDetailService.createNew(expiredToken);
-
-        // It should work on USER_REVOKED tokens
-        try {
-            tokenServices.loadAuthentication("token-CLIENT_REVOKED");
-            fail();
-        } catch (InvalidTokenException e) {
-            assertEquals("Invalid access token: token-CLIENT_REVOKED, revoke reason: CLIENT_REVOKED", e.getMessage());
-        }
-
-        // Doesnt work on STAFF_REVOKED
-        expiredToken = createExpiredToken("token-STAFF_REVOKED", RevokeReason.STAFF_REVOKED);
-        orcidOauthTokenDetailService.createNew(expiredToken);
-
-        // It should work on USER_REVOKED tokens
-        try {
-            tokenServices.loadAuthentication("token-STAFF_REVOKED");
-            fail();
-        } catch (InvalidTokenException e) {
-            assertEquals("Invalid access token: token-STAFF_REVOKED, revoke reason: STAFF_REVOKED", e.getMessage());
-        }
-
-        // Doesnt work on RECORD_DEACTIVATED
-        expiredToken = createExpiredToken("token-RECORD_DEACTIVATED", RevokeReason.RECORD_DEACTIVATED);
-        orcidOauthTokenDetailService.createNew(expiredToken);
-
-        // It should work on USER_REVOKED tokens
-        try {
-            tokenServices.loadAuthentication("token-RECORD_DEACTIVATED");
-            fail();
-        } catch (InvalidTokenException e) {
-            assertEquals("Invalid access token: token-RECORD_DEACTIVATED, revoke reason: RECORD_DEACTIVATED", e.getMessage());
-        }
-        // Doesnt work on AUTH_CODE_REUSED
-        expiredToken = createExpiredToken("token-AUTH_CODE_REUSED", RevokeReason.AUTH_CODE_REUSED);
-        orcidOauthTokenDetailService.createNew(expiredToken);
-
-        // It should work on USER_REVOKED tokens
-        try {
-            tokenServices.loadAuthentication("token-AUTH_CODE_REUSED");
-            fail();
-        } catch (InvalidTokenException e) {
-            assertEquals("Invalid access token: token-AUTH_CODE_REUSED, revoke reason: AUTH_CODE_REUSED", e.getMessage());
-        }
-        
-        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
+    public void disabedTokenDoesntWorkOnGetPostPutTest() {
+        //TODO: Test that disabled tokens doesn't work on GET, POST or PUT
+        fail();
+    }
+    
+    @Test
+    public void disabledTokenOnDeleteWithTogglzOnTest() {
+        //TODO: Test that disable tokens works only when they have been disabled by the user and with the togglz on
+        fail();
     }
     
     @Test    
-    public void expiredTokenDoesntWorkOnDeleteWithTogglzOffTest() {
-        // Togglz off
+    public void disabledTokenOnDeleteWithTogglzOffTest() {
+        //TODO: Test that disabled tokens doesnt work if togglz is off
+        fail();        
+    }
+    
+    private void checkAuthenticationFailsOnExpiredTokenWithRequestMethod(MockHttpServletRequest mockHttpServletRequest, RequestMethod rm) {
+        mockHttpServletRequest.setMethod(rm.name());        
+        
+        ///////////////        
+        // Togglz off//
+        ///////////////
         togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
         
-        // Mock request attributes        
-        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        mockHttpServletRequest.setMethod(RequestMethod.DELETE.name());        
-        RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
-        RequestContextHolder.setRequestAttributes(attrs);
-        
-        OrcidOauth2TokenDetail expiredToken = createExpiredToken("token-value-togglz-off", null);        
+        OrcidOauth2TokenDetail expiredToken = buildExpiredToken("token-value-" + rm.name());        
         orcidOauthTokenDetailService.createNew(expiredToken);
         
         // The first time we try to use it, we get a InvalidTokenException with message Access token expired: token-value
         try {
-            tokenServices.loadAuthentication("token-value-togglz-off");
+            tokenServices.loadAuthentication("token-value-" + rm.name());
             fail();
         } catch(InvalidTokenException e) {
-            assertEquals("Access token expired: token-value-togglz-off", e.getMessage());
+            assertEquals("Access token expired: token-value-" + rm.name(), e.getMessage());
         }
                 
         // Second time we try to use it, we get a InvalidTokenException with message Invalid access token: token-value
         try {
-            tokenServices.loadAuthentication("token-value-togglz-off");
+            tokenServices.loadAuthentication("token-value-" + rm.name());
             fail();
         } catch(InvalidTokenException e) {
-            assertEquals("Invalid access token: token-value-togglz-off", e.getMessage());
-        }        
-    }
-    
-    
-    @Test
-    public void nonExpiredTokensWorkOnDeleteWithTogglzOnTest() {
-        fail();
-    }
-    
-    @Test
-    public void nonExpiredTokensDoesntWorkOnDeleteWithTogglzOffTest() {
-        fail();
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+            assertEquals("Invalid access token: token-value-" + rm.name(), e.getMessage());
+        }
+        
+        ///////////////        
+        // Togglz on//
+        ///////////////
+        togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
+        // Try again
+        expiredToken = buildExpiredToken("token-value-2-" + rm.name());        
+        orcidOauthTokenDetailService.createNew(expiredToken);
+        
+        // The first time we try to use it, we get a InvalidTokenException with message Access token expired: token-value
+        try {
+            tokenServices.loadAuthentication("token-value-2-" + rm.name());
+            fail();
+        } catch(InvalidTokenException e) {
+            assertEquals("Access token expired: token-value-2-" + rm.name(), e.getMessage());
+        }
+                
+        // Second time we try to use it, we get a InvalidTokenException with message Invalid access token: token-value
+        try {
+            tokenServices.loadAuthentication("token-value-2-" + rm.name());
+            fail();
+        } catch(InvalidTokenException e) {
+            assertEquals("Invalid access token: token-value-2-" + rm.name(), e.getMessage());
+        }
+    }        
+            
     /**
      * Load authentication using a persistent token
      * */
@@ -442,19 +330,31 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         }               
     }
     
-    private OrcidOauth2TokenDetail createExpiredToken(String tokenValue, RevokeReason revokeReason) {
-        OrcidOauth2TokenDetail expiredToken = new OrcidOauth2TokenDetail();
-        expiredToken.setApproved(true);
-        expiredToken.setAuthenticationKey("authentication-key");
-        expiredToken.setClientDetailsId("4444-4444-4444-4441");        
-        expiredToken.setProfile(new ProfileEntity("4444-4444-4444-4442"));
-        expiredToken.setResourceId("orcid");
-        expiredToken.setScope("/read-limited");
-        expiredToken.setTokenExpiration(new Date(System.currentTimeMillis() - 1000));
-        expiredToken.setTokenValue(tokenValue);
-        if(revokeReason != null) {
-            expiredToken.setRevokeReason(revokeReason.name());
-        }
-        return expiredToken;
+    private OrcidOauth2TokenDetail buildExpiredToken(String tokenValue) {
+        return buildExpiredOrDisabledToken(tokenValue, null, null);
+    }
+    
+    private OrcidOauth2TokenDetail buildDisabledToken(String tokenValue, RevokeReason revokeReason, Boolean buildExpired) {
+        return buildExpiredOrDisabledToken(tokenValue, buildExpired, revokeReason);
+    }
+    
+    private OrcidOauth2TokenDetail buildExpiredOrDisabledToken(String tokenValue, Boolean buildExpired, RevokeReason revokeReason) {
+        OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
+        token.setApproved(true);
+        token.setAuthenticationKey("authentication-key");
+        token.setClientDetailsId("4444-4444-4444-4441");        
+        token.setProfile(new ProfileEntity("4444-4444-4444-4442"));
+        token.setResourceId("orcid");
+        token.setScope("/read-limited");
+        if(buildExpired) {
+            token.setTokenExpiration(new Date(System.currentTimeMillis() - 60000));
+        } else {
+            token.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
+            token.setTokenDisabled(true);
+            token.setRevokeReason(revokeReason.name());
+            token.setRevocationDate(new Date());
+        }        
+        token.setTokenValue(tokenValue);
+        return token;
     }
 }

@@ -100,7 +100,7 @@ public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
     @Rollback
     public void testFindByTokenValue() throws Exception {
         List<OrcidOauth2TokenDetail> all = orcidOauth2TokenDetailDao.getAll();
-        assertEquals(6, all.size());
+        assertEquals(6, all.size()); 
 
         for (OrcidOauth2TokenDetail detail : all) {
             List<OrcidOauth2TokenDetail> another = orcidOauth2TokenDetailDao.findByAuthenticationKey(detail.getAuthenticationKey());            

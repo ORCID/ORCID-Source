@@ -47,7 +47,6 @@ import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -192,8 +191,8 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         String accessTokenValue = "00000000-0000-0000-0000-00000000000";
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("client_id", clientId);
-        parameters.put("state", "read");
-        parameters.put("scope", "/orcid-profile/write");
+        parameters.put("state", "a-state");
+        parameters.put("scope", "/read-limited");
         parameters.put("redirect_uri", "http://www.google.com/");
         parameters.put("response_type", "bearer");
         OAuth2Request request = 
