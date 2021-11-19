@@ -18,9 +18,6 @@ public enum Features implements Feature {
     @Label("Orcid Angular My Orcid")
     ORCID_ANGULAR_MY_ORCID,
 
-    @Label("New Info Site")
-    NEW_INFO_SITE,
-
     @Label("Spam button")
     SPAM_BUTTON,
 
@@ -111,12 +108,6 @@ public enum Features implements Feature {
     @Label("Works failure debug")
     WORKS_FAILURE_DEBUG,
     
-    @Label("Set the 3.0 API as the default one in the public API")
-    PUB_API_DEFAULT_TO_V3,
-
-    @Label("Set the 3.0 API as the default one in the members API")
-    MEMBER_API_DEFAULT_TO_V3,
-    
     @Label("Disable the 2.0 release candidates")
     V2_DISABLE_RELEASE_CANDIDATES,
 
@@ -136,7 +127,10 @@ public enum Features implements Feature {
     UPGRADE_PUBLIC_CLIENT, 
     
     @Label("Allow members to delete their own elements even with revoked tokens")
-    ALLOW_DELETE_WITH_REVOKED_TOKENS;
+    ALLOW_DELETE_WITH_REVOKED_TOKENS,
+    
+    @Label("Stop caching works when doing bulk reads")
+    READ_BULK_WORKS_DIRECTLY_FROM_DB;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

@@ -143,7 +143,7 @@
 		persistent="true"
 		/>
 	<oauth2_token_detail
-           id="1"
+           id="6"
            token_value="00000000-0000-0000-0000-00000000000"
            token_type="bearer"
            token_expiration="2030-01-01"
@@ -157,7 +157,7 @@
            state="a-state"
            scope_type="/read-limited"
            resource_id="orcid"
-           authentication_key="an-authentication-key-1"
+           authentication_key="an-authentication-key-6"
            persistent="false"
            date_created="2020-01-01 00:00:00.00"            
            last_modified="2020-01-01 00:00:00.00"  

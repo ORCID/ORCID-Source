@@ -50,7 +50,7 @@ public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
     @Rollback
     public void testFindById() throws Exception {
         List<OrcidOauth2TokenDetail> all = orcidOauth2TokenDetailDao.getAll();
-        assertEquals(5, all.size());
+        assertEquals(6, all.size());
 
         for (OrcidOauth2TokenDetail detail : all) {
             OrcidOauth2TokenDetail another = orcidOauth2TokenDetailDao.find(detail.getId());
@@ -67,7 +67,7 @@ public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
     @Rollback
     public void testFindByRefreshTokenValue() throws Exception {
         List<OrcidOauth2TokenDetail> all = orcidOauth2TokenDetailDao.getAll();
-        assertEquals(5, all.size());
+        assertEquals(6, all.size());
 
         for (OrcidOauth2TokenDetail detail : all) {
             String refreshToken = detail.getRefreshTokenValue();
@@ -84,7 +84,7 @@ public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
     @Rollback
     public void testFindByAuthenticationKey() throws Exception {
         List<OrcidOauth2TokenDetail> all = orcidOauth2TokenDetailDao.getAll();
-        assertEquals(5, all.size());
+        assertEquals(6, all.size());
 
         for (OrcidOauth2TokenDetail detail : all) {
             OrcidOauth2TokenDetail another = orcidOauth2TokenDetailDao.findByTokenValue(detail.getTokenValue());
@@ -100,7 +100,7 @@ public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
     @Rollback
     public void testFindByTokenValue() throws Exception {
         List<OrcidOauth2TokenDetail> all = orcidOauth2TokenDetailDao.getAll();
-        assertEquals(5, all.size());
+        assertEquals(6, all.size());
 
         for (OrcidOauth2TokenDetail detail : all) {
             List<OrcidOauth2TokenDetail> another = orcidOauth2TokenDetailDao.findByAuthenticationKey(detail.getAuthenticationKey());            
@@ -119,7 +119,7 @@ public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
     @Rollback
     public void testFindByUsername() throws Exception {
         List<OrcidOauth2TokenDetail> all = orcidOauth2TokenDetailDao.getAll();
-        assertEquals(5, all.size());
+        assertEquals(6, all.size());
 
         for (OrcidOauth2TokenDetail detail : all) {
             List<OrcidOauth2TokenDetail> allForClient = orcidOauth2TokenDetailDao.findByUserName(detail.getProfile().getId());
@@ -132,7 +132,7 @@ public class OrcidOauth2AuthorizationDetailsDaoTest extends DBUnitTest {
     @Rollback
     public void testFindByClientId() throws Exception {
         List<OrcidOauth2TokenDetail> all = orcidOauth2TokenDetailDao.getAll();
-        assertEquals(5, all.size());
+        assertEquals(6, all.size());
 
         for (OrcidOauth2TokenDetail detail : all) {
             List<OrcidOauth2TokenDetail> allForClient = orcidOauth2TokenDetailDao.findByClientId(detail.getClientDetailsId());
