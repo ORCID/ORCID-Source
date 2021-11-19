@@ -90,5 +90,6 @@
     <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
     
     <bean id="disable20RCApiFilter" class="org.orcid.api.common.filter.Disable20RCApiFilter" />
+    <bean id="disable30RCApiFilter" class="org.orcid.api.common.filter.Disable30RCApiFilter" />
     
 </beans>      
