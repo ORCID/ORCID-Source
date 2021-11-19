@@ -1,6 +1,5 @@
 package org.orcid.persistence.dao.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -578,7 +577,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 "update profile set record_locked=true, last_modified=now(), record_locked_date=now(), record_locked_admin_id=:adminUser, indexing_status=:indexingStatus, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("lockReason", reason);
-        query.setParameter("description", description);
+        query.setParameter("description", description.trim());
         query.setParameter("adminUser", adminUser);
         query.setParameter("indexingStatus", IndexingStatus.REINDEX.name());
         return query.executeUpdate() > 0;
@@ -745,30 +744,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getLockedReason(String orcid) {
+    public List<Object[]> getLockedReason(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT reason_locked, reason_locked_description, record_locked_admin_id, record_locked_date, last_indexed_date from profile where orcid = :orcid");
         query.setParameter("orcid", orcid); 
-        // Format results
-        List<Object[]> result = query.getResultList();
-        String reason = " for: " + (String) result.get(0)[0];
-        String description = " - " + (String) result.get(0)[1];
-        String adminUser = " by " + (String) result.get(0)[2];
-        String strDate = "";
-        Date date = new Date();
-        // If record_locked_date is missing, try to use last_indexed_date
-        if ((Date) result.get(0)[3] == null) {
-            date = (Date) result.get(0)[4];
-        } else if ((Date) result.get(0)[4] != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            strDate = " on " + sdf.format(date);            
-        } else strDate = "";
-        // adminUser (record_locked_admin_id) was introduced once the description (reason_locked_description) field had become mandatory 
-        if (description == null || description.isEmpty()) {
-            adminUser = "";
-            description = "";
-        }
-
-        return reason != null ? adminUser + strDate + reason + description : null;
+        return query.getResultList();
     }
 
     @Override
