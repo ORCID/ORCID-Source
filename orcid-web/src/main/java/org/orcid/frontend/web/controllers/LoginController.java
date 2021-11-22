@@ -261,7 +261,7 @@ public class LoginController extends OauthControllerBase {
             @RequestParam(name = "error_reason", required = false) String errorReason) throws UnsupportedEncodingException, IOException, JSONException {
         String facebookSessionState = (String) request.getSession().getAttribute("f_state");
         if (!state.equals(facebookSessionState)) {
-            LOGGER.warn("Google session state doesnt match");
+            LOGGER.warn("Facebook session state doesnt match");
             return new ModelAndView("redirect:/login");
         }
 
@@ -334,10 +334,6 @@ public class LoginController extends OauthControllerBase {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
         }
         userCookieGenerator.addCookie(userConnectionId, response);
-        
-        if ("social_2FA".equals(view.getViewName())) {
-            return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/2fa-signin?social=true");
-        }                   
 
         return view;
     }
