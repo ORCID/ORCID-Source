@@ -79,14 +79,17 @@
     <bean id="publicAPISecurityManagerV3" class="org.orcid.api.publicV3.server.security.impl.PublicAPISecurityManagerV3Impl" />
     
     
-    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />      
-    
-    <bean id="pubDefaultApiVersionFilter" class="org.orcid.api.common.filter.DefaultApiVersionFilter">
-        <property name="feature" value="PUB_API_DEFAULT_TO_V3" />
-    </bean>  
+    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />
+
+	<bean id="pubDefaultApiVersionFilter"
+		class="org.orcid.api.common.filter.DefaultApiVersionFilter">
+		<property name="isPublicApi" value="true" />
+	</bean>  
+
     
     <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
     
     <bean id="disable20RCApiFilter" class="org.orcid.api.common.filter.Disable20RCApiFilter" />
+    <bean id="disable30RCApiFilter" class="org.orcid.api.common.filter.Disable30RCApiFilter" />
     
 </beans>      

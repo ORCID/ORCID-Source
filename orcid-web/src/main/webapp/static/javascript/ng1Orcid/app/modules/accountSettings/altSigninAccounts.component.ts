@@ -108,7 +108,7 @@ export class AltSigninAccountsComponent implements AfterViewInit, OnDestroy, OnI
             } else if(this.feed) {
                 account.idpName = this.discoService.getIdpName(account.id.providerid, this.feed, this.widgetService.getLocale());
             } else {
-                account.idpName = "";
+                account.idpName = account.id.providerid;
             } 
         }
     };

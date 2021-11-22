@@ -137,11 +137,12 @@
     </bean>
        
     <bean id="memberDefaultApiVersionFilter" class="org.orcid.api.common.filter.DefaultApiVersionFilter">
-        <property name="feature" value="MEMBER_API_DEFAULT_TO_V3" />
+        <property name="isPublicApi" value="false" />
     </bean>        
     
     <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
     
     <bean id="disable20RCApiFilter" class="org.orcid.api.common.filter.Disable20RCApiFilter" />
+    <bean id="disable30RCApiFilter" class="org.orcid.api.common.filter.Disable30RCApiFilter" />
         
 </beans>

@@ -2,9 +2,7 @@
     <!DOCTYPE html>
     <html class="no-js oldie" lang="en">
     <#include "/common/html-head.ftl" />
-    <body
-    <@orcid.checkFeatureStatus 'WIDE_GRID'> class="wide-grid" </@orcid.checkFeatureStatus> 
-    >
+    <body class="wide-grid">
     <div id="skip-link">
         <a href="#main" class="a11yLinks">Skip to main content</a>
     </div>
