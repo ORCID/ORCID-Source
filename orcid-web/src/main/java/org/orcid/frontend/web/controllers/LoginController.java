@@ -334,10 +334,6 @@ public class LoginController extends OauthControllerBase {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
         }
         userCookieGenerator.addCookie(userConnectionId, response);
-        
-        if ("social_2FA".equals(view.getViewName())) {
-            new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/2fa-signin?social=true");
-        }                   
 
         return view;
     }
