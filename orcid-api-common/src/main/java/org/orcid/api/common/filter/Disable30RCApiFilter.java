@@ -41,10 +41,10 @@ public class Disable30RCApiFilter extends OncePerRequestFilter {
     private String getXmlResponse() throws JAXBException {
         if (XML_RESPONSE == null) {
             OrcidError error = new OrcidError();
-            error.setDeveloperMessage(localeManager.resolveMessage("apiError.9056.developerMessage"));
-            error.setUserMessage(localeManager.resolveMessage("apiError.9056.userMessage"));
+            error.setDeveloperMessage(localeManager.resolveMessage("apiError.9059.developerMessage"));
+            error.setUserMessage(localeManager.resolveMessage("apiError.9059.userMessage"));
             error.setResponseCode(PERMANENT_REDIRECT);
-            error.setErrorCode(9056);
+            error.setErrorCode(9059);
 
             JAXBContext context = JAXBContext.newInstance(error.getClass());
             StringWriter writer = new StringWriter();
@@ -59,10 +59,10 @@ public class Disable30RCApiFilter extends OncePerRequestFilter {
     private String getJsonResponse() {
         if (JSON_RESPONSE == null) {
             OrcidError error = new OrcidError();
-            error.setDeveloperMessage(localeManager.resolveMessage("apiError.9056.developerMessage"));
-            error.setUserMessage(localeManager.resolveMessage("apiError.9056.userMessage"));
+            error.setDeveloperMessage(localeManager.resolveMessage("apiError.9059.developerMessage"));
+            error.setUserMessage(localeManager.resolveMessage("apiError.9059.userMessage"));
             error.setResponseCode(HttpServletResponse.SC_MOVED_PERMANENTLY);
-            error.setErrorCode(9056);
+            error.setErrorCode(9059);
             JSON_RESPONSE = JsonUtils.convertToJsonString(error);
         }
         return JSON_RESPONSE;
@@ -96,7 +96,7 @@ public class Disable30RCApiFilter extends OncePerRequestFilter {
                     response.getWriter().println(getXmlResponse());
                 } catch (Exception e) {
                     LOGGER.error("Unable to generate XML message", e);
-                    response.getWriter().println(localeManager.resolveMessage("apiError.9056.developerMessage"));
+                    response.getWriter().println(localeManager.resolveMessage("apiError.9059.developerMessage"));
                 }
             }
 
