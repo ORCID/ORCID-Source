@@ -14,11 +14,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -80,7 +80,12 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/OrcidOauth2AuthorisationDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
                 "/data/SubjectEntityData.xml"));
-    }          
+    }
+    
+    @Before
+    public void before() {
+        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
+    }
     
     @Test
     public void testCreateReadLimitedAccessToken() {
@@ -230,7 +235,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     }                            
         
     @Test    
-    public void expiredTokenDoesntWorkOnGetPostPutTest() {
+    public void expiredTokenDoesntWorkOnGetPostPutWithTogglzOnTest() {
         // Mock request attributes  
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
@@ -241,28 +246,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         // Check POST requests fail
         checkAuthenticationFailsOnExpiredTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.POST);
         // Check PUT requests fail
-        checkAuthenticationFailsOnExpiredTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.PUT);
-                
-        // Disable togglz again
-        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
-    }
-    
-    @Test
-    public void disabedTokenDoesntWorkOnGetPostPutTest() {
-        //TODO: Test that disabled tokens doesn't work on GET, POST or PUT
-        fail();
-    }
-    
-    @Test
-    public void disabledTokenOnDeleteWithTogglzOnTest() {
-        //TODO: Test that disable tokens works only when they have been disabled by the user and with the togglz on
-        fail();
-    }
-    
-    @Test    
-    public void disabledTokenOnDeleteWithTogglzOffTest() {
-        //TODO: Test that disabled tokens doesnt work if togglz is off
-        fail();        
+        checkAuthenticationFailsOnExpiredTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.PUT);               
     }
     
     private void checkAuthenticationFailsOnExpiredTokenWithRequestMethod(MockHttpServletRequest mockHttpServletRequest, RequestMethod rm) {
@@ -317,6 +301,86 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         }
     }        
             
+    @Test
+    public void disabedTokenDoesntWorkOnGetPostPutTest() {
+        // Mock request attributes  
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
+        RequestContextHolder.setRequestAttributes(attrs);
+        
+        // All GET requests should fail, regardless of the RevokeReason
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.GET, RevokeReason.AUTH_CODE_REUSED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.GET, RevokeReason.CLIENT_REVOKED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.GET, RevokeReason.RECORD_DEACTIVATED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.GET, RevokeReason.STAFF_REVOKED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.GET, RevokeReason.USER_REVOKED);
+
+        // All POST requests should fail, regardless of the RevokeReason
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.POST, RevokeReason.AUTH_CODE_REUSED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.POST, RevokeReason.CLIENT_REVOKED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.POST, RevokeReason.RECORD_DEACTIVATED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.POST, RevokeReason.STAFF_REVOKED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.POST, RevokeReason.USER_REVOKED);
+        
+        // All PUT requests should fail, regardless of the RevokeReason
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.PUT, RevokeReason.AUTH_CODE_REUSED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.PUT, RevokeReason.CLIENT_REVOKED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.PUT, RevokeReason.RECORD_DEACTIVATED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.PUT, RevokeReason.STAFF_REVOKED);
+        checkAuthenticationFailsOnDisabledTokenWithRequestMethod(mockHttpServletRequest, RequestMethod.PUT, RevokeReason.USER_REVOKED);        
+    }
+    
+    private void checkAuthenticationFailsOnDisabledTokenWithRequestMethod(MockHttpServletRequest mockHttpServletRequest, RequestMethod rm, RevokeReason revokeReason) {
+        mockHttpServletRequest.setMethod(rm.name());        
+        
+        ///////////////        
+        // Togglz off//
+        ///////////////
+        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
+        
+        OrcidOauth2TokenDetail disabledToken = buildDisabledToken("token-value-" + rm.name() + revokeReason.name(), revokeReason);        
+        orcidOauthTokenDetailService.createNew(disabledToken);
+        
+        try {
+            tokenServices.loadAuthentication("token-value-" + rm.name());
+            fail();
+        } catch(InvalidTokenException e) {
+            assertEquals("Invalid access token: token-value-" + rm.name(), e.getMessage());
+        }                        
+        
+        ///////////////        
+        // Togglz on//
+        ///////////////
+        togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
+        // Try again
+        disabledToken = buildDisabledToken("token-value-2-" + rm.name() + revokeReason.name(), revokeReason);        
+        orcidOauthTokenDetailService.createNew(disabledToken);
+        
+        try {
+            tokenServices.loadAuthentication("token-value-2-" + rm.name());
+            fail();
+        } catch(InvalidTokenException e) {
+            assertEquals("Invalid access token: token-value-2-" + rm.name(), e.getMessage());
+        }
+    }
+    
+    @Test
+    public void disabledTokenOnDeleteWithTogglzOnTest() {
+        ///////////////        
+        // Togglz on//
+        ///////////////
+        togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
+        // Try again
+        OrcidOauth2TokenDetail disabledToken = buildDisabledToken("token-value-2-" + rm.name() + revokeReason.name(), revokeReason);        
+        orcidOauthTokenDetailService.createNew(expiredToken);
+    }
+    
+    @Test    
+    public void disabledTokenOnDeleteWithTogglzOffTest() {
+        //TODO: Test that disabled tokens doesnt work if togglz is off
+        fail();        
+    }
+    
     /**
      * Load authentication using a persistent token
      * */
@@ -331,11 +395,11 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     }
     
     private OrcidOauth2TokenDetail buildExpiredToken(String tokenValue) {
-        return buildExpiredOrDisabledToken(tokenValue, null, null);
+        return buildExpiredOrDisabledToken(tokenValue, true, null);
     }
     
-    private OrcidOauth2TokenDetail buildDisabledToken(String tokenValue, RevokeReason revokeReason, Boolean buildExpired) {
-        return buildExpiredOrDisabledToken(tokenValue, buildExpired, revokeReason);
+    private OrcidOauth2TokenDetail buildDisabledToken(String tokenValue, RevokeReason revokeReason) {
+        return buildExpiredOrDisabledToken(tokenValue, false, revokeReason);
     }
     
     private OrcidOauth2TokenDetail buildExpiredOrDisabledToken(String tokenValue, Boolean buildExpired, RevokeReason revokeReason) {
