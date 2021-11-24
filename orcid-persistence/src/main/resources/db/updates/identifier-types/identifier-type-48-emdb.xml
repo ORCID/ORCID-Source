@@ -5,7 +5,7 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">select count(*) from identifier_type where id_name='EMDB';</sqlCheck>
         </preConditions>
-        <sql>INSERT INTO identifier_type (id, id_name, id_resolution_prefix, id_deprecated, date_created, last_modified, primary_use) VALUES (48, 'EMDB', 'https://emdb-empiar.org/', false, now(), now(), 'work');</sql>
+        <sql>INSERT INTO identifier_type (id, id_name, id_resolution_prefix, id_deprecated, date_created, last_modified, primary_use) VALUES (48, 'EMDB', 'https://www.ebi.ac.uk/emdb/', false, now(), now(), 'work');</sql>
         <sql>UPDATE identifier_type SET "case_sensitive" = true WHERE id_name = 'EMDB';</sql>
     </changeSet>
 </databaseChangeLog>
