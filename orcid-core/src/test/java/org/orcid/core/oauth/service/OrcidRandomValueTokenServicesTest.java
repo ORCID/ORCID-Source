@@ -366,19 +366,136 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     
     @Test
     public void disabledTokenOnDeleteWithTogglzOnTest() {
+        // Mock request attributes  
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
+        RequestContextHolder.setRequestAttributes(attrs);
+        mockHttpServletRequest.setMethod(RequestMethod.DELETE.name());
+        
         ///////////////        
         // Togglz on//
         ///////////////
         togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
-        // Try again
-        OrcidOauth2TokenDetail disabledToken = buildDisabledToken("token-value-2-" + rm.name() + revokeReason.name(), revokeReason);        
-        orcidOauthTokenDetailService.createNew(expiredToken);
+        
+        
+        //////////////////////////////
+        // USER_REVOKED should work //
+        //////////////////////////////
+        String tokenValue = "token-value-" + RequestMethod.DELETE + RevokeReason.USER_REVOKED;
+        OrcidOauth2TokenDetail userRevokedDisabledToken = buildDisabledToken(tokenValue, RevokeReason.USER_REVOKED);        
+        orcidOauthTokenDetailService.createNew(userRevokedDisabledToken);
+        
+        try {
+            tokenServices.loadAuthentication(tokenValue);
+        } catch(InvalidTokenException e) {            
+            fail(e.getMessage());
+        }
+        
+        ///////////////////////////
+        // All other should fail //
+        ///////////////////////////
+        disabledTokensOnDeleteShouldAllwaysFailIfTheRevokeReasonIsNotUserRevoked();
     }
     
-    @Test    
+    @Test
     public void disabledTokenOnDeleteWithTogglzOffTest() {
-        //TODO: Test that disabled tokens doesnt work if togglz is off
-        fail();        
+        // Mock request attributes
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
+        RequestContextHolder.setRequestAttributes(attrs);
+        mockHttpServletRequest.setMethod(RequestMethod.DELETE.name());
+
+        ///////////////
+        // Togglz off//
+        ///////////////
+        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
+
+        //////////////////////////////
+        // USER_REVOKED should fail //
+        //////////////////////////////
+        String tokenValue = "token-value-"+ Math.random() + "-" + RequestMethod.DELETE + RevokeReason.USER_REVOKED;
+        OrcidOauth2TokenDetail userRevokedDisabledToken = buildDisabledToken(tokenValue, RevokeReason.USER_REVOKED);
+        orcidOauthTokenDetailService.createNew(userRevokedDisabledToken);
+
+        try {
+            tokenServices.loadAuthentication(tokenValue);
+            fail();
+        } catch (InvalidTokenException e) {
+            assertEquals("Invalid access token: " + tokenValue, e.getMessage());
+        }
+
+        ///////////////////////////////////
+        // All other should fail as well //
+        ///////////////////////////////////
+        disabledTokensOnDeleteShouldAllwaysFailIfTheRevokeReasonIsNotUserRevoked();
+    }
+
+    private void disabledTokensOnDeleteShouldAllwaysFailIfTheRevokeReasonIsNotUserRevoked() {
+        boolean isTogglzOn = Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive();
+        
+        // AUTH_CODE_REUSED should fail
+        String tokenValue = "token-value-" + Math.random() + "-" + RequestMethod.DELETE + RevokeReason.AUTH_CODE_REUSED;
+        OrcidOauth2TokenDetail disabledToken = buildDisabledToken(tokenValue, RevokeReason.AUTH_CODE_REUSED);        
+        orcidOauthTokenDetailService.createNew(disabledToken);
+        
+        try {
+            tokenServices.loadAuthentication(tokenValue);
+            fail();
+        } catch(InvalidTokenException e) {
+            if(isTogglzOn) { 
+                assertEquals("Invalid access token: " + tokenValue + ", revoke reason: AUTH_CODE_REUSED", e.getMessage());
+            } else {
+                assertEquals("Invalid access token: " + tokenValue, e.getMessage());
+            }
+        }
+        
+        // CLIENT_REVOKED should fail
+        tokenValue = "token-value-" + Math.random() + "-" + RequestMethod.DELETE + RevokeReason.CLIENT_REVOKED;
+        disabledToken = buildDisabledToken(tokenValue, RevokeReason.CLIENT_REVOKED);        
+        orcidOauthTokenDetailService.createNew(disabledToken);
+        
+        try {
+            tokenServices.loadAuthentication(tokenValue);
+            fail();
+        } catch(InvalidTokenException e) {
+            if(isTogglzOn) {
+                assertEquals("Invalid access token: " + tokenValue + ", revoke reason: CLIENT_REVOKED", e.getMessage());
+            } else {
+                assertEquals("Invalid access token: " + tokenValue, e.getMessage());
+            }
+        }
+        
+        // RECORD_DEACTIVATED should fail
+        tokenValue = "token-value-" + Math.random() + "-" + RequestMethod.DELETE + RevokeReason.RECORD_DEACTIVATED;
+        disabledToken = buildDisabledToken(tokenValue, RevokeReason.RECORD_DEACTIVATED);        
+        orcidOauthTokenDetailService.createNew(disabledToken);
+        
+        try {
+            tokenServices.loadAuthentication(tokenValue);
+            fail();
+        } catch(InvalidTokenException e) {
+            if(isTogglzOn) {
+                assertEquals("Invalid access token: " + tokenValue + ", revoke reason: RECORD_DEACTIVATED", e.getMessage());
+            } else {
+                assertEquals("Invalid access token: " + tokenValue, e.getMessage());
+            }
+        }
+        
+        // STAFF_REVOKED should fail
+        tokenValue = "token-value-"  + Math.random() + "-" + RequestMethod.DELETE + RevokeReason.STAFF_REVOKED;
+        disabledToken = buildDisabledToken(tokenValue, RevokeReason.STAFF_REVOKED);        
+        orcidOauthTokenDetailService.createNew(disabledToken);
+        
+        try {
+            tokenServices.loadAuthentication(tokenValue);
+            fail();
+        } catch(InvalidTokenException e) {
+            if(isTogglzOn) {
+                assertEquals("Invalid access token: " + tokenValue + ", revoke reason: STAFF_REVOKED", e.getMessage());
+            } else { 
+                assertEquals("Invalid access token: " + tokenValue, e.getMessage());
+            }
+        }
     }
     
     /**
