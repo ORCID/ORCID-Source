@@ -13,8 +13,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.manager.v3.WorksCacheManager;
+import org.orcid.core.manager.v3.WorksExtendedCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.Day;
@@ -28,10 +31,14 @@ import org.orcid.jaxb.model.v3.release.common.Subtitle;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.common.Year;
+import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.pojo.WorkGroupExtended;
+import org.orcid.pojo.WorkSummaryExtended;
+import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;
 
@@ -39,7 +46,10 @@ public class WorksPaginatorTest {
 
     @Mock
     private WorksCacheManager worksCacheManager;
-    
+
+    @Mock
+    private WorksExtendedCacheManager worksExtendedCacheManager;
+
     @Mock
     private WorkManagerReadOnly workManagerReadOnly;
 
@@ -97,7 +107,56 @@ public class WorksPaginatorTest {
             }
         }
     }
-    
+
+    @Test
+    public void testGetWorksExtendedPage() {
+        int pageSize = 100;
+
+        Mockito.when(worksExtendedCacheManager.getGroupedWorksExtended(Mockito.anyString())).thenReturn(get1000PublicWorkGroupsExtended());
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorksPaginator.DATE_SORT_KEY, true);
+        assertEquals(pageSize, page.getGroups().size());
+        assertEquals(2, page.getGroups().get(0).getWorks().get(0).getContributors().size());
+        org.orcid.pojo.grouping.WorkGroup workGroupPage1 = page.getGroups().get(0);
+
+        Page<org.orcid.pojo.grouping.WorkGroup> page2 = worksPaginator.getWorksExtendedPage("orcid", page.getNextOffset(), pageSize, false, WorksPaginator.DATE_SORT_KEY, true);
+        org.orcid.pojo.grouping.WorkGroup workGroupPage2 = page2.getGroups().get(0);
+
+        assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
+
+        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitle = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorksPaginator.TITLE_SORT_KEY, false);
+        workGroupPage1 = sortedByTitle.getGroups().get(0);
+        assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
+
+        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitlePage2 = worksPaginator.getWorksExtendedPage("orcid", sortedByTitle.getNextOffset(), pageSize, false, WorksPaginator.TITLE_SORT_KEY, false);
+        workGroupPage2 = sortedByTitlePage2.getGroups().get(0);
+        assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
+
+        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitle = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorksPaginator.TITLE_SORT_KEY, true);
+        workGroupPage1 = sortedByTitle.getGroups().get(0);
+        assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
+
+        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitlePage2 = worksPaginator.getWorksExtendedPage("orcid", reversedSortedByTitle.getNextOffset(), pageSize, false, WorksPaginator.TITLE_SORT_KEY, true);
+        workGroupPage2 = reversedSortedByTitlePage2.getGroups().get(0);
+        assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
+    }
+
+    @Test
+    public void testGetPublicWorksExtendedPage() {
+        int pageSize = 100;
+
+        Mockito.when(worksExtendedCacheManager.getGroupedWorksExtended(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroupsExtended());
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, true, WorksPaginator.DATE_SORT_KEY, true);
+        assertFalse(pageSize == page.getGroups().size());
+        assertTrue((pageSize / 2) == page.getGroups().size());
+        assertEquals(2, page.getGroups().get(0).getWorks().get(0).getContributors().size());
+
+        for (org.orcid.pojo.grouping.WorkGroup workGroup : page.getGroups()) {
+            for (WorkForm workForm : workGroup.getWorks()) {
+                assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
+            }
+        }
+    }
+
     @Test
     public void testTitleSortCaseInsensitive() {
         int pageSize = 100; 
@@ -209,6 +268,17 @@ public class WorksPaginatorTest {
         return works;
     }
 
+    private WorksExtended get1000PublicWorkGroupsExtended() {
+        WorksExtended works = new WorksExtended();
+        works.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        works.setPath("some path");
+
+        for (int i = 0; i < 1000; i++) {
+            works.getWorkGroup().add(getPublicWorkGroupExtended(i));
+        }
+        return works;
+    }
+
     private Works getPageSizeOfMixedWorkGroups() {
         int pageSize = 100; 
         
@@ -221,7 +291,20 @@ public class WorksPaginatorTest {
         }
         return works;
     }
-    
+
+    private WorksExtended getPageSizeOfMixedWorkGroupsExtended() {
+        int pageSize = 100;
+
+        WorksExtended works = new WorksExtended();
+        works.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        works.setPath("some path");
+
+        for (int i = 0; i < pageSize; i++) {
+            works.getWorkGroup().add(getMixedWorkGroupExtended(i));
+        }
+        return works;
+    }
+
     private WorkGroup getMixedWorkGroup(int i) {
         WorkGroup workGroup = new WorkGroup();
         workGroup.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
@@ -255,6 +338,62 @@ public class WorksPaginatorTest {
             workGroup.getWorkSummary().add(workSummary);
         }
         return workGroup;
+    }
+
+    private WorkGroupExtended getMixedWorkGroupExtended(int i) {
+        WorkGroupExtended workGroup = new WorkGroupExtended();
+        workGroup.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        for (int x = 0; x < 10; x++) {
+            WorkSummaryExtended workSummary = new WorkSummaryExtended();
+            workSummary.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+            workSummary.setTitle(getTitle(i));
+            workSummary.setVisibility(i % 2 == 0 ? Visibility.PUBLIC : Visibility.PRIVATE);
+            workSummary.setDisplayIndex(Integer.toString(x));
+            workSummary.setPutCode(Long.valueOf(new StringBuilder(i).append(x).toString()));
+            workSummary.setSource(getSource());
+            workSummary.setType(WorkType.EDITED_BOOK);
+            workSummary.setContributors(getWorkContributors());
+            workGroup.getWorkSummary().add(workSummary);
+        }
+        return workGroup;
+    }
+
+    private WorkGroupExtended getPublicWorkGroupExtended(int i) {
+        WorkGroupExtended workGroup = new WorkGroupExtended();
+        workGroup.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        for (int x = 0; x < 10; x++) {
+            WorkSummaryExtended workSummary = new WorkSummaryExtended();
+            workSummary.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+            workSummary.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2017), new Month(x), new Day(x))));
+            workSummary.setTitle(getTitle(i));
+            workSummary.setVisibility(Visibility.PUBLIC);
+            workSummary.setDisplayIndex(Integer.toString(x));
+            workSummary.setPutCode(Long.valueOf(new StringBuilder(i).append(x).toString()));
+            workSummary.setSource(getSource());
+            workSummary.setType(WorkType.EDITED_BOOK);
+            workSummary.setContributors(getWorkContributors());
+            workGroup.getWorkSummary().add(workSummary);
+        }
+        return workGroup;
+    }
+
+    private WorkContributors getWorkContributors() {
+        WorkContributors workContributors = new WorkContributors();
+        workContributors.getContributor().add(getContributor(CreditRole.FUNDING_ACQUISITION.value()));
+        workContributors.getContributor().add(getContributor(CreditRole.FORMAL_ANALYSIS.value()));
+        return workContributors;
+    }
+
+    private Contributor getContributor(String contributorRole) {
+        Contributor contributor = new Contributor();
+        contributor.setContributorOrcid(new ContributorOrcid("orcid"));
+        contributor.setContributorEmail(new ContributorEmail("email"));
+        contributor.setCreditName(new CreditName("creditName"));
+        ContributorAttributes contributorAttributes = new ContributorAttributes();
+        contributorAttributes.setContributorSequence(SequenceType.FIRST);
+        contributorAttributes.setContributorRole(contributorRole);
+        contributor.setContributorAttributes(contributorAttributes);
+        return contributor;
     }
 
     private WorkTitle getTitle(int i) {

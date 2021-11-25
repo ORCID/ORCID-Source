@@ -1,13 +1,5 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
@@ -21,24 +13,30 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.release.record.ExternalID;
-import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.release.record.GroupAble;
-import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.WorkGroupExtended;
+import org.orcid.pojo.WorkSummaryExtended;
+import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
     
@@ -147,7 +145,20 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
-    
+
+    /**
+     * Get the list of works that belongs to a user
+     *
+     * @param orcid
+     * @return the list of works that belongs to this user
+     */
+    @Override
+    public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
+        List<MinimizedExtendedWorkEntity> works = workEntityCacheManager.retrieveMinimizedExtendedWorks(orcid, getLastModified(orcid));
+        return jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
+    }
+
+
     /**
      * Get the list of works specified by the list of put codes
      * 
@@ -183,7 +194,22 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         }
         return works;
     }
-    
+
+    @Override
+    public WorksExtended groupWorksExtendedAndGenerateGroupingSuggestions(List<WorkSummaryExtended> summaries, String orcid) {
+        WorkGroupAndGroupingSuggestionGenerator groupGenerator = new WorkGroupAndGroupingSuggestionGenerator();
+        for (WorkSummaryExtended work : summaries) {
+            groupGenerator.group(work);
+        }
+        WorksExtended works = processGroupedWorksExtended(groupGenerator.getGroups());
+
+        if (Features.GROUPING_SUGGESTIONS.isActive()) {
+            List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+            groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
+        }
+        return works;
+    }
+
     /**
      * Generate a grouped list of works with the given list of works
      * 
@@ -232,6 +258,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public Works getWorksAsGroups(String orcid) {
         return groupWorksAndGenerateGroupingSuggestions(getWorksSummaryList(orcid), orcid);
+    }
+
+    @Override
+    public WorksExtended getWorksExtendedAsGroups(String orcid) {
+        return groupWorksExtendedAndGenerateGroupingSuggestions(getWorksSummaryExtendedList(orcid), orcid);
     }
 
     private String[] getPutCodeArray(String putCodesAsString) {
@@ -297,4 +328,37 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         result.getWorkGroup().sort(WorkComparators.GROUP);
         return result;
     }
+
+    private WorksExtended processGroupedWorksExtended(List<ActivitiesGroup> groups) {
+        WorksExtended result = new WorksExtended();
+        for (ActivitiesGroup group : groups) {
+            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
+            Set<GroupableActivity> activities = group.getActivities();
+            WorkGroupExtended workGroup = new WorkGroupExtended();
+            // Fill the work groups with the external identifiers
+            if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
+                // Initialize the ids as an empty list
+                workGroup.getIdentifiers().getExternalIdentifier();
+            } else {
+                for (GroupAble extId : externalIdentifiers) {
+                    ExternalID workExtId = (ExternalID) extId;
+                    workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
+                }
+            }
+
+            // Fill the work group with the list of activities
+            for (GroupableActivity activity : activities) {
+                WorkSummaryExtended workSummary = (WorkSummaryExtended) activity;
+                workGroup.getWorkSummary().add(workSummary);
+            }
+
+            // Sort the works
+            workGroup.getWorkSummary().sort(WorkComparators.WORKS_WITHIN_GROUP);
+            result.getWorkGroup().add(workGroup);
+        }
+        // Sort the groups!
+        result.getWorkGroup().sort(WorkComparators.GROUP_WORK_SUMMARY_EXTENDED);
+        return result;
+    }
+
 }
