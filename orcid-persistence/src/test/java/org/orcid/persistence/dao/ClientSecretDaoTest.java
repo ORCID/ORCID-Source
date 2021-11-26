@@ -8,15 +8,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.Query;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
