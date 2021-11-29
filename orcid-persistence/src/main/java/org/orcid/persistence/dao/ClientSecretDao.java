@@ -51,9 +51,10 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
     /**
      * Get a list of non-primary keys which have not been modified in over 24 hours
      * 
+     * @param limit the amount of results fetched by the query
      * @return A list of client secrets with non-primary keys
      * */
-    List<ClientSecretEntity> getNonPrimaryKeys();
+    List<ClientSecretEntity> getNonPrimaryKeys(Integer limit);
     
     /**
      * Performs a delete query with a custom conditional statement
