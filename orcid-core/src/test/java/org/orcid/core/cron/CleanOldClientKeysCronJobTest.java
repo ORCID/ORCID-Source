@@ -49,9 +49,9 @@ public class CleanOldClientKeysCronJobTest extends DBUnitTest {
 
     @Test
     public void testGetNoResults() {
-        Mockito.when(mockClientSecretDao.getNonPrimaryKeys()).thenReturn(new ArrayList<ClientSecretEntity>());
+        Mockito.when(mockClientSecretDao.getNonPrimaryKeys(Mockito.anyInt())).thenReturn(new ArrayList<ClientSecretEntity>());
         CleanUpJob.cleanOldClientKeys();
-        Mockito.verify(mockClientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
+        Mockito.verify(mockClientSecretDao, Mockito.times(1)).getNonPrimaryKeys(Mockito.anyInt());
         Mockito.verify(mockClientSecretDao, Mockito.times(0)).removeWithCustomCondition(Mockito.anyString());
         Mockito.verify(mockClientDetailsDao, Mockito.times(0)).updateLastModifiedBulk(Mockito.anyList());
     }
@@ -72,11 +72,11 @@ public class CleanOldClientKeysCronJobTest extends DBUnitTest {
         entity.setClientDetailsEntity(client);
         secretList.add(entity);
 
-        Mockito.when(mockClientSecretDao.getNonPrimaryKeys()).thenReturn(secretList);
+        Mockito.when(mockClientSecretDao.getNonPrimaryKeys(100)).thenReturn(secretList);
         Mockito.when(mockClientSecretDao.removeWithCustomCondition(Mockito.anyString())).thenReturn(true);
 
         CleanUpJob.cleanOldClientKeys();
-        Mockito.verify(mockClientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
+        Mockito.verify(mockClientSecretDao, Mockito.times(1)).getNonPrimaryKeys(100);
         Mockito.verify(mockClientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
         Mockito.verify(mockClientDetailsDao, Mockito.times(1)).updateLastModifiedBulk(updateReturn.capture());
         assertEquals(updateReturn.getValue(), clientList);
@@ -106,11 +106,11 @@ public class CleanOldClientKeysCronJobTest extends DBUnitTest {
         secretList.add(entityOne);
         secretList.add(entityTwo);
 
-        Mockito.when(mockClientSecretDao.getNonPrimaryKeys()).thenReturn(secretList);
+        Mockito.when(mockClientSecretDao.getNonPrimaryKeys(100)).thenReturn(secretList);
         Mockito.when(mockClientSecretDao.removeWithCustomCondition(Mockito.anyString())).thenReturn(true);
 
         CleanUpJob.cleanOldClientKeys();
-        Mockito.verify(mockClientSecretDao, Mockito.times(1)).getNonPrimaryKeys();
+        Mockito.verify(mockClientSecretDao, Mockito.times(1)).getNonPrimaryKeys(100);
         Mockito.verify(mockClientSecretDao, Mockito.times(1)).removeWithCustomCondition(condition.capture());
         Mockito.verify(mockClientDetailsDao, Mockito.times(1)).updateLastModifiedBulk(updateReturn.capture());
         assertEquals(updateReturn.getValue(), clientList);

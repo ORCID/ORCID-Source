@@ -32,7 +32,7 @@ public class CleanOldClientKeysCronJob {
     @Transactional
     public void cleanOldClientKeys() {
         // fetch nonprimary keys
-        List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys();
+        List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys(100);
         if (nonPrimaryKeys.size() > 0) {
             int i = 0;
             StringBuilder queryCondition = new StringBuilder();

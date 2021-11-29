@@ -52,7 +52,7 @@ public class ClientSecretDaoTest extends DBUnitTest {
 
     @Test
     public void testGetNonPrimaryKeys() {
-        List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys();
+        List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys(100);
         assertEquals(nonPrimaryKeys.size(), 2);
         for (ClientSecretEntity secret : nonPrimaryKeys) {           
             assertNotNull(secret.getDateCreated());
@@ -62,6 +62,18 @@ public class ClientSecretDaoTest extends DBUnitTest {
         }
     }
 
+    @Test
+    public void testLimitedNonPrimaryKeys() {
+        List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys(1);
+        assertEquals(nonPrimaryKeys.size(), 1);
+        for (ClientSecretEntity secret : nonPrimaryKeys) {           
+            assertNotNull(secret.getDateCreated());
+            assertNotNull(secret.getLastModified());
+            assertEquals(secret.getDateCreated(), secret.getLastModified());
+            assertEquals(secret.getClientSecret(), CLIENT_SECRET);
+        }
+    }
+    
     @Test
     public void testRemoveWithCustomCondition() {
         boolean removeNonPrimaryKeys = clientSecretDao.removeWithCustomCondition(CONDITION);
