@@ -189,7 +189,7 @@
     </bean>
 
     <bean id="clientScopeDao" class="org.orcid.persistence.dao.impl.ClientScopeDaoImpl" />            
-	<bean id="clientAuthorizedGrantTypeDao" class="org.orcid.persistence.dao.impl.ClientAuthorizedGrantTypeDaoImpl" />
+    <bean id="clientAuthorizedGrantTypeDao" class="org.orcid.persistence.dao.impl.ClientAuthorizedGrantTypeDaoImpl" />
 
     <bean id="givenPermissionToDao" class="org.orcid.persistence.dao.impl.GivenPermissionToDaoImpl" />
 
@@ -205,11 +205,10 @@
     
     <bean id="orcidOauth2AuthoriziationCodeDetailDao" class="org.orcid.persistence.dao.impl.OrcidOauth2AuthoriziationCodeDetailDaoImpl" />            
 	
-	<bean id="orcidOauth2AuthoriziationCodeDetailDaoReadOnly" class="org.orcid.persistence.dao.impl.OrcidOauth2AuthoriziationCodeDetailDaoImpl">
-		<property name="entityManager" ref="entityManagerReadOnly" />
-	</bean>
+    <bean id="orcidOauth2AuthoriziationCodeDetailDaoReadOnly" class="org.orcid.persistence.dao.impl.OrcidOauth2AuthoriziationCodeDetailDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
 	
-
     <bean id="isoCountryReferenceDataDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.CountryIsoEntity" />
     </bean>
