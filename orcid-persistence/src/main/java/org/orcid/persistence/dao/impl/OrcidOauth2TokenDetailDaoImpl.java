@@ -2,7 +2,6 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;

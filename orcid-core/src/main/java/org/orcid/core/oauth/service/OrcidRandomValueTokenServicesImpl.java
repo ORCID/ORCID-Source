@@ -260,24 +260,24 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     }
 
     @Override
-    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {                  
+    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         // Feature flag: If the request is to delete an element, allow
-        if(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive() && RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {            
+        if (Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive() && RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
             OrcidOauth2TokenDetail orcidAccessToken = orcidTokenStore.readOrcidOauth2TokenDetail(accessTokenValue);
             String revokeReason = orcidAccessToken.getRevokeReason();
-            if(!PojoUtil.isEmpty(revokeReason) && RevokeReason.USER_REVOKED.equals(RevokeReason.valueOf(revokeReason))) {
+            if (!PojoUtil.isEmpty(revokeReason) && RevokeReason.USER_REVOKED.equals(RevokeReason.valueOf(revokeReason))) {
                 OAuth2AccessToken accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);
                 validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
                 return orcidTokenStore.readAuthenticationEvenOnDisabledTokens(accessTokenValue);
             } else {
                 throw new InvalidTokenException("Invalid access token: " + accessTokenValue + ", revoke reason: " + revokeReason);
-            }                                    
+            }
         } else {
             OAuth2AccessToken accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
             validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
             return orcidTokenStore.readAuthentication(accessTokenValue);
-        }                                                            
+        }
     }
     
     private void validateTokenExpirationAndClientStatus(OAuth2AccessToken accessToken, String tokenValue) {
