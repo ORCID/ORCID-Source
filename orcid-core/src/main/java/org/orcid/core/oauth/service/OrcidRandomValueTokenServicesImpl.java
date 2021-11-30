@@ -282,17 +282,15 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     
     private void validateTokenExpirationAndClientStatus(OAuth2AccessToken accessToken, String tokenValue) {
         // Throw an exception if access token is not found
-        if (accessToken == null) {
-            throw new InvalidTokenException("Invalid access token: " + tokenValue);
-        } else {
+        if (accessToken != null) {
             // Throw an exception if the token is expired
             if (accessToken.isExpired()) {
                 orcidTokenStore.removeAccessToken(accessToken);
                 throw new InvalidTokenException("Access token expired: " + tokenValue);
             }
             Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
-            if(additionalInfo != null) {
-                String clientId = (String)additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
+            if (additionalInfo != null) {
+                String clientId = (String) additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
                 ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
                 try {
                     orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
@@ -301,8 +299,11 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                 } catch (ClientDeactivatedException e) {
                     throw new InvalidTokenException(e.getMessage());
                 }
-            }                        
-        }      
+            }
+        } else {
+            // Access token not found
+            throw new InvalidTokenException("Invalid access token: " + tokenValue);
+        }
     }
     
     public void setOrcidtokenStore(OrcidTokenStore orcidTokenStore) {
