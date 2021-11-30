@@ -97,13 +97,12 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
     
     @Override
     @Transactional
-    public List<ClientSecretEntity> getNonPrimaryKeys() {
+    @SuppressWarnings("unchecked")
+    public List<ClientSecretEntity> getNonPrimaryKeys(Integer limit) {
         DateTime dt = DateTime.now().minusDays(1);
-        DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        String yesterday = fmt.print(dt);
-        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE is_primary = false and last_modified < timestamp (:yesterday)",
-                ClientSecretEntity.class);
-        query.setParameter("yesterday", yesterday);
+        Query query = entityManager.createNativeQuery("select * From client_secret WHERE is_primary = false and last_modified < :yesterday", ClientSecretEntity.class);
+        query.setParameter("yesterday", dt.toDate());
+        query.setMaxResults(limit);
         return query.getResultList();
     }
 

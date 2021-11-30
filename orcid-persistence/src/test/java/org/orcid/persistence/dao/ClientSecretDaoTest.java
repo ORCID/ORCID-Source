@@ -8,15 +8,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.Query;
 
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -53,7 +52,7 @@ public class ClientSecretDaoTest extends DBUnitTest {
 
     @Test
     public void testGetNonPrimaryKeys() {
-        List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys();
+        List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys(100);
         assertEquals(nonPrimaryKeys.size(), 2);
         for (ClientSecretEntity secret : nonPrimaryKeys) {           
             assertNotNull(secret.getDateCreated());
@@ -63,6 +62,18 @@ public class ClientSecretDaoTest extends DBUnitTest {
         }
     }
 
+    @Test
+    public void testLimitedNonPrimaryKeys() {
+        List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys(1);
+        assertEquals(nonPrimaryKeys.size(), 1);
+        for (ClientSecretEntity secret : nonPrimaryKeys) {           
+            assertNotNull(secret.getDateCreated());
+            assertNotNull(secret.getLastModified());
+            assertEquals(secret.getDateCreated(), secret.getLastModified());
+            assertEquals(secret.getClientSecret(), CLIENT_SECRET);
+        }
+    }
+    
     @Test
     public void testRemoveWithCustomCondition() {
         boolean removeNonPrimaryKeys = clientSecretDao.removeWithCustomCondition(CONDITION);
