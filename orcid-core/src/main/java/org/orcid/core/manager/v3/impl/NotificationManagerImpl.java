@@ -673,45 +673,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    @Transactional
-    public void sendApiRecordCreationEmail(String toEmail, String orcid) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
-        String creatorName = record.getSource() == null ? null : sourceEntityUtils.getSourceName(record.getSource());
-        Locale userLocale = getUserLocaleFromProfileEntity(record);
-        
-        String email = toEmail != null ? toEmail : emailManager.findPrimaryEmail(orcid).getEmail();
-        String emailName = deriveEmailFriendlyName(orcid);
-        String verificationUrl = createClaimVerificationUrl(email, orcidUrlManager.getBaseUrl());        
-
-        String subject = null;
-        String body = null;
-        String htmlBody = null;
-        
-        subject = getSubject("email.subject.api_record_creation", userLocale);
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", emailName);
-        templateParams.put("orcid", orcid);
-        templateParams.put("subject", subject);
-        templateParams.put("creatorName", creatorName);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("verificationUrl", verificationUrl);
-
-        addMessageParams(templateParams, userLocale);
-        // Generate body from template
-        body = templateManager.processTemplate("api_record_creation_email.ftl", templateParams);
-        htmlBody = templateManager.processTemplate("api_record_creation_email_html.ftl", templateParams);
-
-        // Send message
-        if (apiRecordCreationEmailEnabled) {
-                mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, subject, body, htmlBody);
-        } else {
-            LOGGER.debug("Not sending API record creation email, because option is disabled. Message would have been: {}", body);
-        }
-    }
-
-    @Override
     public void sendClaimReminderEmail(String userOrcid, int daysUntilActivation, String email) {
         ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
         String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();

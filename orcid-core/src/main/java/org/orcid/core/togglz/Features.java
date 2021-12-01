@@ -18,9 +18,6 @@ public enum Features implements Feature {
     @Label("Orcid Angular My Orcid")
     ORCID_ANGULAR_MY_ORCID,
 
-    @Label("New Info Site")
-    NEW_INFO_SITE,
-
     @Label("Spam button")
     SPAM_BUTTON,
 
@@ -38,9 +35,6 @@ public enum Features implements Feature {
 
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
-
-    @Label("Wider grid")
-    WIDE_GRID,
 	
     @Label("Add works based on ArXiv, DOI or PubMed id metadata")
     ADD_WORKS_WITH_EXTERNAL_ID,
@@ -114,14 +108,11 @@ public enum Features implements Feature {
     @Label("Works failure debug")
     WORKS_FAILURE_DEBUG,
     
-    @Label("Set the 3.0 API as the default one in the public API")
-    PUB_API_DEFAULT_TO_V3,
-
-    @Label("Set the 3.0 API as the default one in the members API")
-    MEMBER_API_DEFAULT_TO_V3,
-    
     @Label("Disable the 2.0 release candidates")
     V2_DISABLE_RELEASE_CANDIDATES,
+
+    @Label("Disable the 3.0 release candidates")
+    V3_DISABLE_RELEASE_CANDIDATES,
 
     @Label("Salesforce: Enable opportunities and org record types")
     SF_ENABLE_OPP_ORG_RECORD_TYPES,
@@ -133,7 +124,10 @@ public enum Features implements Feature {
     TWO_FA_DEACTIVATE_EMAIL, 
     
     @Label("Promote a client from public client to be a member")
-    UPGRADE_PUBLIC_CLIENT;
+    UPGRADE_PUBLIC_CLIENT,
+    
+    @Label("Stop caching works when doing bulk reads")
+    READ_BULK_WORKS_DIRECTLY_FROM_DB;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

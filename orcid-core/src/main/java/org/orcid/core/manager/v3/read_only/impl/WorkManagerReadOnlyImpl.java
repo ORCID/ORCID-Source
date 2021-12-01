@@ -36,14 +36,10 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
     
-    private static final Logger LOG = LoggerFactory.getLogger(WorkManagerReadOnlyImpl.class);
-
     public static final String BULK_PUT_CODES_DELIMITER = ",";
 
     @Resource(name = "jpaJaxbWorkAdapterV3")
@@ -211,8 +207,14 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
         List<BulkElement> works = new ArrayList<>();        
-        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());        
-        List<WorkEntity> entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);
+        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());                        
+        List<WorkEntity> entities = new ArrayList<>();
+        
+        if (Features.READ_BULK_WORKS_DIRECTLY_FROM_DB.isActive()) {
+            entities = workDao.getWorkEntities(orcid, putCodes);            
+        } else {
+            entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);
+        }
         
         for(WorkEntity entity : entities) {
             works.add(jpaJaxbWorkAdapter.toWork(entity));
