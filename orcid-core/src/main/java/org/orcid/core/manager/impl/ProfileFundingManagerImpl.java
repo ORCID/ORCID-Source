@@ -243,7 +243,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         String existingClientSourceId = pfe.getClientSourceId();
 
         activityValidator.validateFunding(funding, sourceEntity, false, isApiRequest, originalVisibility);
-        if (!isApiRequest) {
+        if (isApiRequest) {
             List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
             for (ProfileFundingEntity existingFunding : existingFundings) {
                 Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
@@ -269,7 +269,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
         pfe = profileFundingDao.merge(pfe);
         profileFundingDao.flush();
-        if (!isApiRequest) {
+        if (isApiRequest) {
             notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, ActionType.UPDATE));
         }
         return jpaJaxbFundingAdapter.toFunding(pfe);
