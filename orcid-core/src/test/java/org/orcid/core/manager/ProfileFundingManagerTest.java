@@ -22,9 +22,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Organization;
 import org.orcid.jaxb.model.common_v2.OrganizationAddress;
+import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -411,6 +414,43 @@ public class ProfileFundingManagerTest extends BaseTest {
         assertTrue(foundEmptyGroup);
         assertTrue(found2);
         assertTrue(found3);
+    }
+    
+    @Test
+    public void updateFundingDuplicateChecksTest() {
+        String orcid = "0000-0000-0000-0003";
+        String clientId = "APP-5555555555555555";
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(clientId)));
+        Funding funding = getFunding("3");
+        funding.setPutCode(12L);
+        funding.setVisibility(null);
+        Source s = new Source();
+        s.setSourceClientId(new SourceClientId(clientId));
+        funding.setSource(s);
+        // Add an extra identifier that matches one that already exists
+        ExternalID dup = new ExternalID();
+        dup.setRelationship(Relationship.SELF);
+        dup.setType("grant_number");
+        dup.setUrl(new Url("http://test.orcid.org/2.com"));
+        dup.setValue("2");        
+        
+        // Add the dup
+        funding.getExternalIdentifiers().getExternalIdentifier().add(dup);
+        
+        // Updating funding from the API should not allow creating duplicates, it should fail with an OrcidDuplicatedActivityException
+        try {
+            profileFundingManager.updateFunding(orcid, funding, true);
+            fail();
+        } catch(OrcidDuplicatedActivityException E) {
+            
+        }
+        
+        // Updating funding from the UI should allow creating duplicates
+        try {
+            profileFundingManager.updateFunding(orcid, funding, false);            
+        } catch(OrcidDuplicatedActivityException E) {
+            fail();
+        }        
     }
 
     private FundingSummary getFundingSummary(String titleValue, String extIdValue, Visibility visibility) {

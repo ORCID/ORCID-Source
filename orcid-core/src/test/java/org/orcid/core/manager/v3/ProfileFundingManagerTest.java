@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -38,6 +37,7 @@ import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -54,6 +54,8 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import liquibase.pro.packaged.du;
 
 public class ProfileFundingManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
@@ -545,6 +547,43 @@ public class ProfileFundingManagerTest extends BaseTest {
         }
     }
     
+    @Test
+    public void updateFundingDuplicateChecksTest() {
+        String orcid = "0000-0000-0000-0003";
+        String clientId = "APP-5555555555555555";
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(clientId));
+        Funding funding = getFunding("3");
+        funding.setPutCode(12L);
+        funding.setVisibility(null);
+        Source s = new Source();
+        s.setSourceClientId(new SourceClientId(clientId));
+        funding.setSource(s);
+        // Add an extra identifier that matches one that already exists
+        ExternalID dup = new ExternalID();
+        dup.setRelationship(Relationship.SELF);
+        dup.setType("grant_number");
+        dup.setUrl(new Url("http://test.orcid.org/2.com"));
+        dup.setValue("2");        
+        
+        // Add the dup
+        funding.getExternalIdentifiers().getExternalIdentifier().add(dup);
+        
+        // Updating funding from the API should not allow creating duplicates, it should fail with an OrcidDuplicatedActivityException
+        try {
+            profileFundingManager.updateFunding(orcid, funding, true);
+            fail();
+        } catch(OrcidDuplicatedActivityException E) {
+            
+        }
+        
+        // Updating funding from the UI should allow creating duplicates
+        try {
+            profileFundingManager.updateFunding(orcid, funding, false);            
+        } catch(OrcidDuplicatedActivityException E) {
+            fail();
+        }        
+    }
+           
     private FundingSummary getFundingSummary(String titleValue, String extIdValue, Visibility visibility) {
         FundingSummary summary = new FundingSummary();
         FundingTitle fundingTitle = new FundingTitle();
