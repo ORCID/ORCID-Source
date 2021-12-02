@@ -82,6 +82,7 @@ public class SolrConstants {
     public static final String RINGGOLD_ORGANISATION_ID = "ringgold-org-id";
     public static final String FUNDREF_ORGANISATION_ID = "fundref-org-id";
     public static final String GRID_ORGANISATION_ID = "grid-org-id";
+    public static final String ROR_ORGANISATION_ID = "ror-org-id";
     public static final String DYNAMIC_ORGANISATION_NAME = "-org-name";
     public static final String AFFILIATION_ORGANISATION_NAME = "affiliation-org-name";
     public static final String FUNDING_ORGANISATION_NAME = "funding-org-name";
@@ -93,6 +94,7 @@ public class SolrConstants {
     public static final String RINGGOLD_ORG_TYPE = "RINGGOLD";
     public static final String GRID_ORG_TYPE = "GRID";
     public static final String FUNDREF_ORG_TYPE = "FUNDREF";
+    public static final String ROR_ORG_TYPE = "ROR";
 
     public static final String RESEARCH_RESOURCE_PROPOSAL_TITLES = "research-resource-proposal-title";
     public static final String RESEARCH_RESOURCE_PROPOSAL_HOSTS_NAME = "research-resource-proposal-org-name";

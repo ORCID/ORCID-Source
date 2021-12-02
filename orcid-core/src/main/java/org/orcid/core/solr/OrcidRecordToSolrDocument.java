@@ -218,6 +218,9 @@ public class OrcidRecordToSolrDocument {
                                     } else if(SolrConstants.FUNDREF_ORG_TYPE.equals(sourceType)) {
                                         organisationIds.get(SolrConstants.FUNDREF_ORG_TYPE).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                     }
+                                    else if(SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
+                                        organisationIds.get(SolrConstants.ROR_ORG_TYPE).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                                    }
                                 }
                             }
                         }
@@ -266,6 +269,9 @@ public class OrcidRecordToSolrDocument {
                                             organisationIds.get(SolrConstants.GRID_ORGANISATION_ID).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                         } else if(SolrConstants.FUNDREF_ORG_TYPE.equals(sourceType)) {
                                             organisationIds.get(SolrConstants.FUNDREF_ORG_TYPE).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                                        }
+                                        else if(SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
+                                            organisationIds.get(SolrConstants.ROR_ORG_TYPE).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                         }
                                     }
                                 }
@@ -347,7 +353,9 @@ public class OrcidRecordToSolrDocument {
                                 organisationIds.get(SolrConstants.RINGGOLD_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                             } else if(SolrConstants.GRID_ORG_TYPE.equals(sourceType)) {
                                 organisationIds.get(SolrConstants.GRID_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
-                            }                            
+                            } else if(SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
+                                organisationIds.get(SolrConstants.ROR_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                            } 
                         }                            
                     }
                 }
@@ -363,6 +371,8 @@ public class OrcidRecordToSolrDocument {
                                 organisationIds.get(SolrConstants.RINGGOLD_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                             } else if(SolrConstants.GRID_ORG_TYPE.equals(sourceType)) {
                                 organisationIds.get(SolrConstants.GRID_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
+                            } else if(SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
+                                organisationIds.get(SolrConstants.ROR_ORGANISATION_ID).add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                             } 
                         }                            
                     }
