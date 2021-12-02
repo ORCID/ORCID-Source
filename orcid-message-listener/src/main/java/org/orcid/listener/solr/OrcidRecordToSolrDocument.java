@@ -570,7 +570,7 @@ public class OrcidRecordToSolrDocument {
                                 } else if (SolrConstants.GRID_ORG_TYPE.equals(sourceType)) {
                                     organisationIds.get(SolrConstants.GRID_ORGANISATION_ID)
                                             .add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
-                                }  else if (SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
+                                } else if (SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
                                     organisationIds.get(SolrConstants.ROR_ORGANISATION_ID)
                                     .add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                 }
@@ -596,7 +596,7 @@ public class OrcidRecordToSolrDocument {
                                 } else if (SolrConstants.GRID_ORG_TYPE.equals(sourceType)) {
                                     organisationIds.get(SolrConstants.GRID_ORGANISATION_ID)
                                             .add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
-                                }  else if (SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
+                                } else if (SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
                                     organisationIds.get(SolrConstants.ROR_ORGANISATION_ID)
                                     .add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                 }
@@ -622,7 +622,7 @@ public class OrcidRecordToSolrDocument {
                                 } else if (SolrConstants.GRID_ORG_TYPE.equals(sourceType)) {
                                     organisationIds.get(SolrConstants.GRID_ORGANISATION_ID)
                                             .add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
-                                }  else if (SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
+                                } else if (SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
                                     organisationIds.get(SolrConstants.ROR_ORGANISATION_ID)
                                     .add(e.getOrganization().getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                 }

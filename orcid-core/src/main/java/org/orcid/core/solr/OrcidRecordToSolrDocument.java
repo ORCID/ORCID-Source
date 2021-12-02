@@ -217,8 +217,7 @@ public class OrcidRecordToSolrDocument {
                                         organisationIds.get(SolrConstants.GRID_ORGANISATION_ID).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                     } else if(SolrConstants.FUNDREF_ORG_TYPE.equals(sourceType)) {
                                         organisationIds.get(SolrConstants.FUNDREF_ORG_TYPE).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
-                                    }
-                                    else if(SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
+                                    } else if(SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
                                         organisationIds.get(SolrConstants.ROR_ORG_TYPE).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                     }
                                 }
@@ -269,8 +268,7 @@ public class OrcidRecordToSolrDocument {
                                             organisationIds.get(SolrConstants.GRID_ORGANISATION_ID).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                         } else if(SolrConstants.FUNDREF_ORG_TYPE.equals(sourceType)) {
                                             organisationIds.get(SolrConstants.FUNDREF_ORG_TYPE).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
-                                        }
-                                        else if(SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
+                                        } else if(SolrConstants.ROR_ORG_TYPE.equals(sourceType)) {
                                             organisationIds.get(SolrConstants.ROR_ORG_TYPE).add(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier());
                                         }
                                     }
