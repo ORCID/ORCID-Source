@@ -55,8 +55,6 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import liquibase.pro.packaged.du;
-
 public class ProfileFundingManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml");
@@ -525,10 +523,9 @@ public class ProfileFundingManagerTest extends BaseTest {
         
         //wrong sources:
         try {
-            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
             profileFundingManager.updateFunding(claimedOrcid, f1, true);
             fail();
-        }catch(WrongSourceException e) {
+        }catch(OrcidDuplicatedActivityException e) {
         }
         
         try {
@@ -544,6 +541,14 @@ public class ProfileFundingManagerTest extends BaseTest {
             fail();
         }catch(WrongSourceException e) {
             
+        }
+        
+        try {
+            // Same source should be allowed to update
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_2_ID));  
+            profileFundingManager.updateFunding(claimedOrcid, f1, true);            
+        }catch(Exception e) {           
+            fail();
         }
     }
     
