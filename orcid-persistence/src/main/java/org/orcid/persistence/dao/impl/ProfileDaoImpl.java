@@ -389,7 +389,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     private void updateWebhookProfileLastUpdate(String orcid) {
         Query query = entityManager
-                .createNativeQuery("update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) " + "where orcid = :orcid ");
+                .createNativeQuery("update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) where orcid = :orcid ");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }

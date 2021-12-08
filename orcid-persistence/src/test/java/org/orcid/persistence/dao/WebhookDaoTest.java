@@ -60,7 +60,8 @@ public class WebhookDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     public void testMergeFindAndRemove() {
-        ProfileEntity profile = new ProfileEntity("1234-1234-1234-1234");
+        String orcid = "1234-1234-1234-1234";
+        ProfileEntity profile = new ProfileEntity(orcid);
         profileDao.merge(profile);
         ProfileEntity clientProfile = new ProfileEntity("4444-4444-4444-4449");
         profileDao.merge(clientProfile);
@@ -69,9 +70,10 @@ public class WebhookDaoTest extends DBUnitTest {
         clientDetails.setId(clientProfile.getId());
         clientDetailsDao.merge(clientDetails);
         WebhookEntity webhook = new WebhookEntity();
-        webhook.setProfile(profile);
+        webhook.setProfile(orcid);
+        webhook.setProfileLastModified(profile.getLastModified());
         webhook.setUri("http://semantico.com/orcid/1234");
-        webhook.setClientDetails(clientDetails);
+        webhook.setClientDetailsId(clientProfile.getId());
         webhook = webhookDao.merge(webhook);
 
         assertNotNull(webhook.getId());
@@ -80,14 +82,14 @@ public class WebhookDaoTest extends DBUnitTest {
         assertEquals(webhook.getDateCreated(), webhook.getLastModified());
         
         WebhookEntityPk pk = new WebhookEntityPk();
-        pk.setProfile(profile);
+        pk.setProfile(orcid);
         pk.setUri("http://semantico.com/orcid/1234");
         WebhookEntity retrieved = webhookDao.find(pk);
 
         assertNotNull(retrieved);
-        assertEquals("1234-1234-1234-1234", retrieved.getProfile().getId());
+        assertEquals("1234-1234-1234-1234", retrieved.getProfile());
         assertEquals("http://semantico.com/orcid/1234", retrieved.getUri());
-        assertEquals("4444-4444-4444-4449", retrieved.getClientDetails().getClientId());
+        assertEquals("4444-4444-4444-4449", retrieved.getClientDetailsId());
         assertTrue(retrieved.isEnabled());
         assertEquals(0, retrieved.getFailedAttemptCount());
         assertNull(retrieved.getLastFailed());
@@ -111,7 +113,7 @@ public class WebhookDaoTest extends DBUnitTest {
         assertEquals(1, results.size());
         Set<String> orcids = new HashSet<>();
         for (WebhookEntity result : results) {
-            orcids.add(result.getProfile().getId());
+            orcids.add(result.getProfile());
         }
         assertTrue(orcids.contains("4444-4444-4444-4443"));
     }
@@ -121,15 +123,17 @@ public class WebhookDaoTest extends DBUnitTest {
     public void testFindWebhooksReadyToProcessWhenIsNotReadyForRetry() {
         Date now = new Date();
         WebhookEntityPk pk = new WebhookEntityPk();
-        pk.setProfile(profileDao.find("4444-4444-4444-4443"));
+        pk.setProfile("4444-4444-4444-4443");
         pk.setUri("http://nowhere.com/orcid/4444-4444-4444-4443");
         WebhookEntity webhook = webhookDao.find(pk);
         webhook.setLastFailed(new Date(now.getTime() - 120 * 1000));
         webhook.setFailedAttemptCount(1);
         webhookDao.merge(webhook);
-
+//(w.failed_attempt_count = 0 OR (unix_timestamp(w.last_failed) + w.failed_attempt_count * :retryDelayMinutes * 60) < unix_timestamp(now()))
         List<WebhookEntity> results = webhookDao.findWebhooksReadyToProcess(now, 5, 10);
         assertNotNull(results);
+        System.out.println(webhook.getLastFailed());
+        System.out.println(now);
         assertEquals(0, results.size());
     }
 
@@ -144,8 +148,9 @@ public class WebhookDaoTest extends DBUnitTest {
 
     @Test
     public void mergeTest() {
+        String orcid = "4444-4444-4444-4444";
         ProfileEntity p = new ProfileEntity("4444-4444-4444-4444");
-        WebhookEntityPk pk = new WebhookEntityPk(p, "http://nowhere.com/orcid/4444-4444-4444-4444");
+        WebhookEntityPk pk = new WebhookEntityPk(orcid, "http://nowhere.com/orcid/4444-4444-4444-4444");
         WebhookEntity e = webhookDao.find(pk);
         e.setFailedAttemptCount(100);
         Date dateCreated = e.getDateCreated();
