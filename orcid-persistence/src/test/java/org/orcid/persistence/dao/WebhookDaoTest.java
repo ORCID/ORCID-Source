@@ -129,11 +129,9 @@ public class WebhookDaoTest extends DBUnitTest {
         webhook.setLastFailed(new Date(now.getTime() - 120 * 1000));
         webhook.setFailedAttemptCount(1);
         webhookDao.merge(webhook);
-//(w.failed_attempt_count = 0 OR (unix_timestamp(w.last_failed) + w.failed_attempt_count * :retryDelayMinutes * 60) < unix_timestamp(now()))
+
         List<WebhookEntity> results = webhookDao.findWebhooksReadyToProcess(now, 5, 10);
         assertNotNull(results);
-        System.out.println(webhook.getLastFailed());
-        System.out.println(now);
         assertEquals(0, results.size());
     }
 
