@@ -6,9 +6,6 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
-    @Label("Orcid Angular Works Contributors")
-    ORCID_ANGULAR_WORKS_CONTRIBUTORS,
-
     @Label("Orcid Angular Public Page")
     ORCID_ANGULAR_PUBLIC_PAGE,
 

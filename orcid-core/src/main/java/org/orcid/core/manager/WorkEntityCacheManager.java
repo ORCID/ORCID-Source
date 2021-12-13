@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import org.ehcache.Cache;
 import org.orcid.core.manager.impl.WorkCacheKey;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -29,6 +30,8 @@ public interface WorkEntityCacheManager {
             Function<List<Long>, List<T>> workRetriever);
 
     List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified);
+
+    List<MinimizedExtendedWorkEntity> retrieveMinimizedExtendedWorks(String orcid, long profileLastModified);
 
     List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified);
     

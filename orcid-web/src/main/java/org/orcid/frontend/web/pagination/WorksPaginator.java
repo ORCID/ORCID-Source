@@ -9,11 +9,15 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.WorksCacheManager;
+import org.orcid.core.manager.v3.WorksExtendedCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.pojo.WorkGroupExtended;
+import org.orcid.pojo.WorkSummaryExtended;
+import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.grouping.WorkGroup;
 
 public class WorksPaginator {
@@ -30,6 +34,9 @@ public class WorksPaginator {
     @Resource
     private WorksCacheManager worksCacheManager;
     
+    @Resource
+    private WorksExtendedCacheManager worksExtendedCacheManager;
+    
     public Page<WorkGroup> getWorksPage(String orcid, int offset, int pageSize, boolean justPublic, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
@@ -42,6 +49,26 @@ public class WorksPaginator {
             List<WorkGroup> workGroups = new ArrayList<>();
             for (int i = offset; i < Math.min(offset + pageSize, filteredGroups.size()); i++) {
                 org.orcid.jaxb.model.v3.release.record.summary.WorkGroup group = filteredGroups.get(i);
+                workGroups.add(WorkGroup.valueOf(group, i, orcid));
+            }
+            worksPage.setGroups(workGroups);
+            worksPage.setNextOffset(offset + pageSize);
+        }
+        return worksPage;
+    }
+
+    public Page<WorkGroup> getWorksExtendedPage(String orcid, int offset, int pageSize, boolean justPublic, String sort, boolean sortAsc) {
+        WorksExtended works = worksExtendedCacheManager.getGroupedWorksExtended(orcid);
+        Page<WorkGroup> worksPage = new Page<WorkGroup>();
+        if (works != null) {
+            List<WorkGroupExtended> filteredGroups = filterWorksExtended(works, justPublic);
+            filteredGroups = sortExtended(filteredGroups, sort, sortAsc);
+
+            worksPage.setTotalGroups(filteredGroups.size());
+
+            List<WorkGroup> workGroups = new ArrayList<>();
+            for (int i = offset; i < Math.min(offset + pageSize, filteredGroups.size()); i++) {
+                WorkGroupExtended group = filteredGroups.get(i);
                 workGroups.add(WorkGroup.valueOf(group, i, orcid));
             }
             worksPage.setGroups(workGroups);
@@ -97,7 +124,22 @@ public class WorksPaginator {
         } else if (TYPE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new TypeComparator());
         }
-        
+
+        if (!sortAsc) {
+            Collections.reverse(list);
+        }
+        return list;
+    }
+
+    private List<WorkGroupExtended> sortExtended(List<WorkGroupExtended> list, String sort, boolean sortAsc) {
+        if (TITLE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TitleComparatorWorkGroupExtended());
+        } else if (DATE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new DateComparatorWorkGroupExtended());
+        } else if (TYPE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TypeComparatorWorkGroupExtended());
+        }
+
         if (!sortAsc) {
             Collections.reverse(list);
         }
@@ -123,8 +165,31 @@ public class WorksPaginator {
         return filteredGroups;
     }
 
+    private List<WorkGroupExtended> filterWorksExtended(WorksExtended works, boolean justPublic) {
+        List<WorkGroupExtended> filteredGroups = new ArrayList<>();
+        for (WorkGroupExtended workGroup : works.getWorkGroup()) {
+
+            Iterator<WorkSummaryExtended> summariesIt = workGroup.getWorkSummary().iterator();
+            while(summariesIt.hasNext()) {
+                WorkSummaryExtended w = summariesIt.next();
+                if(justPublic && !Visibility.PUBLIC.equals(w.getVisibility())) {
+                    summariesIt.remove();
+                }
+            }
+
+            if(!workGroup.getWorkSummary().isEmpty()) {
+                filteredGroups.add(workGroup);
+            }
+        }
+        return filteredGroups;
+    }
+
     public void setWorksCacheManager(WorksCacheManager worksCacheManager) {
         this.worksCacheManager = worksCacheManager;
+    }
+
+    public void setWorksExtendedCacheManager(WorksExtendedCacheManager worksExtendedCacheManager) {
+        this.worksExtendedCacheManager = worksExtendedCacheManager;
     }
 
     private class DateComparator implements Comparator<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> {
@@ -243,6 +308,126 @@ public class WorksPaginator {
                 return 1;
             }
             
+            return o1.getWorkSummary().get(0).getType().name().compareTo(o2.getWorkSummary().get(0).getType().name());
+        }
+    }
+
+    private class DateComparatorWorkGroupExtended implements Comparator<WorkGroupExtended> {
+
+        @Override
+        public int compare(WorkGroupExtended o1, WorkGroupExtended o2) {
+            PublicationDate date1 = o1.getWorkSummary().get(0).getPublicationDate();
+            PublicationDate date2 = o2.getWorkSummary().get(0).getPublicationDate();
+            if (date1 == null && date2 == null) {
+                return new TitleComparatorWorkGroupExtended().compare(o1, o2) * -1; // reverse secondary order
+            }
+
+            if (date1 == null) {
+                return -1;
+            }
+
+            if (date2 == null) {
+                return 1;
+            }
+
+            if (date1.compareTo(date2) == 0) {
+                return new TitleComparatorWorkGroupExtended().compare(o1, o2) * -1; // reverse secondary order
+            }
+
+            return o1.getWorkSummary().get(0).getPublicationDate().compareTo(o2.getWorkSummary().get(0).getPublicationDate());
+        }
+    }
+
+    private class TitleComparatorWorkGroupExtended implements Comparator<WorkGroupExtended> {
+
+        @Override
+        public int compare(WorkGroupExtended o1, WorkGroupExtended o2) {
+            String firstTitle = getTitle(o1.getWorkSummary().get(0));
+            String secondTitle = getTitle(o2.getWorkSummary().get(0));
+
+            if (firstTitle == null && secondTitle != null) {
+                return -1;
+            }
+
+            if (secondTitle == null && firstTitle != null) {
+                return 1;
+            }
+
+            int comparison = 0;
+            if (firstTitle != null && secondTitle != null) {
+                comparison = firstTitle.compareTo(secondTitle);
+            }
+
+            if (comparison == 0) {
+                String firstSubtitle = getSubtitle(o1.getWorkSummary().get(0));
+                String secondSubtitle = getSubtitle(o2.getWorkSummary().get(0));
+
+                if (firstSubtitle == null && secondSubtitle == null) {
+                    return 0;
+                }
+
+                if (firstSubtitle == null) {
+                    return -1;
+                }
+
+                if (secondSubtitle == null) {
+                    return 1;
+                }
+
+                comparison = firstSubtitle.compareTo(secondSubtitle);
+            }
+            return comparison;
+        }
+
+        private String getTitle(WorkSummaryExtended workSummary) {
+            if (workSummary.getTitle() == null) {
+                return null;
+            }
+
+            if (workSummary.getTitle().getTitle() == null) {
+                return null;
+            }
+
+            if (workSummary.getTitle().getTitle().getContent() == null) {
+                return null;
+            }
+
+            return workSummary.getTitle().getTitle().getContent().toLowerCase();
+        }
+
+        private String getSubtitle(WorkSummaryExtended workSummary) {
+            if (workSummary.getTitle() == null) {
+                return null;
+            }
+
+            if (workSummary.getTitle().getSubtitle() == null) {
+                return null;
+            }
+
+            if (workSummary.getTitle().getSubtitle().getContent() == null) {
+                return null;
+            }
+
+            return workSummary.getTitle().getSubtitle().getContent().toLowerCase();
+        }
+    }
+
+    private class TypeComparatorWorkGroupExtended implements Comparator<WorkGroupExtended> {
+
+        @Override
+        public int compare(WorkGroupExtended o1, WorkGroupExtended o2) {
+            if (o1.getWorkSummary().get(0).getType() == null && o2.getWorkSummary().get(0).getType() == null) {
+                return 0;
+            }
+
+            if (o1.getWorkSummary().get(0).getType() == null) {
+                return -1;
+            }
+
+            if (o2.getWorkSummary().get(0).getType() == null) {
+                return 1;
+            }
+
             return o1.getWorkSummary().get(0).getType().name().compareTo(o2.getWorkSummary().get(0).getType().name());
         }
     }

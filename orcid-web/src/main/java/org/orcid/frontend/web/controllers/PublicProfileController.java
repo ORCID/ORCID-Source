@@ -385,6 +385,17 @@ public class PublicProfileController extends BaseWorkspaceController {
         return worksPaginator.getWorksPage(orcid, offset, pageSize, true, sort, sortAsc);
     }
 
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksExtendedPage.json", method = RequestMethod.GET)
+    public @ResponseBody Page<WorkGroup> getWorksExtendedGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
+                                                           @RequestParam("sortAsc") boolean sortAsc) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new Page<WorkGroup>();
+        }
+        return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc);
+    }
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
     public @ResponseBody Page<ResearchResourceGroupPojo> getResearchResourceGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset,
             @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc, @RequestParam("pageSize") int pageSize) {

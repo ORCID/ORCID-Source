@@ -1441,9 +1441,11 @@
 	<bean id="preferenceManager" class="org.orcid.core.manager.impl.PreferenceManagerImpl" />
 		
 	<bean id="worksCacheManager" class="org.orcid.core.manager.v3.impl.WorksCacheManagerImpl" />
+
+	<bean id="worksExtendedCacheManager" class="org.orcid.core.manager.v3.impl.WorksExtendedCacheManagerImpl" />
 	
 	<bean id="groupingSuggestionsCacheManager" class="org.orcid.core.manager.v3.impl.GroupingSuggestionsCacheManagerImpl" />
-	
+
 	<bean id="groupedWorksGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="groupedWorksCache" />
         <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
@@ -1451,8 +1453,16 @@
     </bean>
     
     <bean id="groupedWorksRetriever" class="org.orcid.core.cache.impl.GroupedWorksRetriever" />
-    
-    <bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
+
+	<bean id="groupedWorksExtendedGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+	    <property name="cache" ref="groupedWorksCache" />
+	    <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+	    <property name="retriever" ref="groupedWorksExtendedRetriever" />
+	</bean>
+
+	<bean id="groupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.GroupedWorksExtendedRetriever" />
+
+	<bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
 	
 	<bean id="apiAnalyticsTaskExecutor"
         class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">

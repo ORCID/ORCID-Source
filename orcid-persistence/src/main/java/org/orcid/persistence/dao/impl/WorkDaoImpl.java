@@ -12,6 +12,7 @@ import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
@@ -39,6 +40,18 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         List<MinimizedWorkEntity> list = new ArrayList<>();
         for (List<Long> partition : Lists.partition(ids, 50)) {
             TypedQuery<MinimizedWorkEntity> query = entityManager.createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
+            query.setParameter("ids", partition);
+            list.addAll(query.getResultList());
+        }
+        return list;
+    }
+
+    @Override
+    public List<MinimizedExtendedWorkEntity> getMinimizedExtendedWorkEntities(List<Long> ids) {
+        // batch up list into sets of 50;
+        List<MinimizedExtendedWorkEntity> list = new ArrayList<>();
+        for (List<Long> partition : Lists.partition(ids, 50)) {
+            TypedQuery<MinimizedExtendedWorkEntity> query = entityManager.createQuery("SELECT x FROM MinimizedExtendedWorkEntity x WHERE x.id IN :ids", MinimizedExtendedWorkEntity.class);
             query.setParameter("ids", partition);
             list.addAll(query.getResultList());
         }
