@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -70,9 +71,10 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
 
     @Override
     public List<OrcidOauth2TokenDetail> findByUserName(String userName) {
-        TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from OrcidOauth2TokenDetail where profile.id = :userName and tokenExpiration > now() and (tokenDisabled IS NULL OR tokenDisabled = FALSE)",
+        TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from OrcidOauth2TokenDetail where profile.id = :userName and tokenExpiration > :now and (tokenDisabled IS NULL OR tokenDisabled = FALSE)",
                 OrcidOauth2TokenDetail.class);
         query.setParameter("userName", userName);
+        query.setParameter("now", new Date());
         return query.getResultList();
     }
 
@@ -210,5 +212,14 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     @Transactional
     public OrcidOauth2TokenDetail merge(OrcidOauth2TokenDetail token) {
         return super.merge(token);
+    }
+    
+    @Override
+    @Transactional
+    public boolean updateScopes(String accessTokenValue, String newScopes) {
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set scope = :scopes where tokenValue = :accessTokenValue");
+        query.setParameter("accessTokenValue", accessTokenValue);
+        query.setParameter("scopes", newScopes);
+        return query.executeUpdate() > 0;
     }
 }

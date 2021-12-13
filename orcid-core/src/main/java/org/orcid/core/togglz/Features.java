@@ -124,7 +124,10 @@ public enum Features implements Feature {
     TWO_FA_DEACTIVATE_EMAIL, 
     
     @Label("Promote a client from public client to be a member")
-    UPGRADE_PUBLIC_CLIENT,
+    UPGRADE_PUBLIC_CLIENT, 
+    
+    @Label("Allow members to delete their own elements even with revoked tokens")
+    ALLOW_DELETE_WITH_REVOKED_TOKENS,
     
     @Label("Stop caching works when doing bulk reads")
     READ_BULK_WORKS_DIRECTLY_FROM_DB;

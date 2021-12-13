@@ -2,11 +2,11 @@ package org.orcid.core.oauth;
 
 import java.util.Collection;
 
+import org.orcid.core.oauth.service.OrcidTokenStore;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 
 /**
  * @author Angel Montenegro
@@ -21,7 +21,7 @@ public interface OrcidRandomValueTokenServices {
 
     int getReadValiditySeconds();
 
-    void setOrcidtokenStore(TokenStore orcidtokenStore);
+    void setOrcidtokenStore(OrcidTokenStore orcidtokenStore);
 
     void setCustomTokenEnhancer(TokenEnhancer customTokenEnhancer);
     

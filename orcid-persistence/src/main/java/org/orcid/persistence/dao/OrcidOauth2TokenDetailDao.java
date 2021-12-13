@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 
@@ -44,4 +45,6 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
     void revokeAccessToken(String accessToken);
 
     void disableClientAccessTokensByUserOrcid(String userOrcid, String clientDetailsId);
+    
+    boolean updateScopes(String accessTokenValue, String newScopes);
 }

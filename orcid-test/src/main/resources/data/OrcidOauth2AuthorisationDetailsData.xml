@@ -142,5 +142,25 @@
 		last_modified="2010-01-01"
 		persistent="true"
 		/>
+	<oauth2_token_detail
+           id="6"
+           token_value="00000000-0000-0000-0000-00000000000"
+           token_type="bearer"
+           token_expiration="2030-01-01"
+           user_orcid="0000-0000-0000-0001"
+           client_details_id="APP-5555555555555555"
+           refresh_token_value="REFRESH-0000-0000-0000-00000000000"
+           refresh_token_expiration="2030-01-01"
+           is_approved="true"
+           redirect_uri="http://www.google.com/"
+           response_type="bearer"
+           state="a-state"
+           scope_type="/read-limited"
+           resource_id="orcid"
+           authentication_key="097843f6f740d94d5825f3684e0d4c6e"
+           persistent="false"
+           date_created="2020-01-01 00:00:00.00"            
+           last_modified="2020-01-01 00:00:00.00"  
+           />
 
 </dataset>
