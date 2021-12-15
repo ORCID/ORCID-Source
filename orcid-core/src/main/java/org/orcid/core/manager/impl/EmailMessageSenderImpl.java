@@ -198,11 +198,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("bodyHtmlDelegateRecipient", bodyHtmlDelegateRecipient);
         params.put("bodyHtmlAdminDelegate", bodyHtmlAdminDelegate);
 
-        String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
-        String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
-
-        bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
-        bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
+        String bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
+        String bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
 
         EmailMessage emailMessage = new EmailMessage();
 
