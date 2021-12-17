@@ -1,10 +1,8 @@
 <#import "email_macros.ftl" as emailMacros />
 
 <#include "notification_header.ftl"/>
-<@emailMacros.msg "notification.share.record" />
-${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
-
-<@emailMacros.msg "notification.digest.showing" /><@emailMacros.space />${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.outOf" />${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.changes" />
+${'\n'}<@emailMacros.msg "notification.share.record" />
+${'\n'}${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.hasChanges" />
 
 <#if digestEmail.notificationsBySourceId['ORCID']??>
     <@emailMacros.msg "email.digest.orcidwouldlikeyoutoknow" />
@@ -18,6 +16,9 @@ ${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.hasChan
 <#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
     <#if sourceId != 'ORCID'>
         <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
+            <#if sourceId == 'AMENDED' && !verboseNotifications>
+                ${'\n'}<@emailMacros.msg "notification.digest.showing" /><@emailMacros.space />${digestEmail.sources?size}<@emailMacros.space /><@emailMacros.msg "notification.digest.outOf" /><@emailMacros.space />${digestEmail.sources?size}<@emailMacros.space /><@emailMacros.msg "notification.digest.changes" />
+            </#if>
             <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
 
                 <#if notificationType == 'PERMISSION'>

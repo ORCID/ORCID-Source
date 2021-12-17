@@ -2,9 +2,12 @@
 Hi John Watson
 
 You've got new notifications on your ORCID record. To see more details for a particular notification or to take action please visit your ORCID notification inbox.
-Your new notificationsYOUR RECORDJohn Watson has made changes to your ORCID record
 
-Showing John Watson out ofJohn Watson changes made by this client
+Your new notifications
+
+YOUR RECORD
+
+John Watson has made changes to your ORCID record
 
 ORCID would like to let you know
 
