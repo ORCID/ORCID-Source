@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,7 +71,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      * @return the list of works associated to the specific user
      */
     public List<Work> findWorks(String orcid) {
-        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
+        List<MinimizedExtendedWorkEntity> minimizedWorks = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
@@ -82,7 +83,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      * @return the list of works associated to the specific user
      */
     public List<Work> findPublicWorks(String orcid) {
-        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrievePublicMinimizedWorks(orcid, getLastModified(orcid));
+        List<MinimizedExtendedWorkEntity> minimizedWorks = workEntityCacheManager.retrievePublicMinimizedWorks(orcid, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
@@ -120,7 +121,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      */
     @Override
     public List<WorkSummary> getWorksSummaryList(String orcid) {
-        List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
+        List<MinimizedExtendedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
         List<WorkSummary>  worksList = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
         filterFundedByRelationshipForV2(worksList);
         return worksList;

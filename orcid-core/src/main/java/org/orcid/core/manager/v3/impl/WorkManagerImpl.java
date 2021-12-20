@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -418,14 +419,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Override
     public void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException {
-        List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
+        List<MinimizedExtendedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
         JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, localeManager);
         ExternalIDs allExternalIDs = new ExternalIDs();
-        List<MinimizedWorkEntity> userVersions = new ArrayList<>();
-        MinimizedWorkEntity userPreferred = null;
+        List<MinimizedExtendedWorkEntity> userVersions = new ArrayList<>();
+        MinimizedExtendedWorkEntity userPreferred = null;
         
         boolean groupableExternalIdFound = false;
-        for (MinimizedWorkEntity work : works) {
+        for (MinimizedExtendedWorkEntity work : works) {
             if (orcid.equals(work.getSourceId())) {
                 userVersions.add(work);
             }
@@ -453,7 +454,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         String externalIDsJson = externalIdConverter.convertTo(allExternalIDs, null);
         if (!userVersions.isEmpty()) {
-            for (MinimizedWorkEntity userVersion : userVersions) {
+            for (MinimizedExtendedWorkEntity userVersion : userVersions) {
                 WorkEntity userVersionFullEntity = workDao.getWork(orcid, userVersion.getId());
                 userVersionFullEntity.setExternalIdentifiersJson(externalIDsJson);                
                 workDao.merge(userVersionFullEntity);
@@ -465,7 +466,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
     }
     
-    private WorkEntity createCopyOfUserPreferredWork(MinimizedWorkEntity preferred) {
+    private WorkEntity createCopyOfUserPreferredWork(MinimizedExtendedWorkEntity preferred) {
         WorkEntity preferredFullData = workDao.find(preferred.getId());
         
         WorkEntity workEntity = new WorkEntity();

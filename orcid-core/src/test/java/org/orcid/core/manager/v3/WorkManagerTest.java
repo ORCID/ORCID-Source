@@ -63,6 +63,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -1310,7 +1311,7 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManager);
 
         // no work where user is source
-        List<MinimizedWorkEntity> works = getMinimizedWorksListForGrouping();
+        List<MinimizedExtendedWorkEntity> works = getMinimizedWorksListForGrouping();
         Mockito.when(cacheManager.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
 
         // full work matching user preferred id should be loaded from db (10 is
@@ -1332,7 +1333,7 @@ public class WorkManagerTest extends BaseTest {
 
         // now test where user is source of one work
         works = getMinimizedWorksListForGrouping();
-        MinimizedWorkEntity userSource = works.get(0);
+        MinimizedExtendedWorkEntity userSource = works.get(0);
         userSource.setSourceId("some-orcid");
         Mockito.when(cacheManager.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
 
@@ -1370,7 +1371,7 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", mockCacheManager);
 
         // no work where user is source
-        List<MinimizedWorkEntity> works = getMinimizedWorksListForGroupingNoExternalIDs();
+        List<MinimizedExtendedWorkEntity> works = getMinimizedWorksListForGroupingNoExternalIDs();
         Mockito.when(mockCacheManager.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
 
         try {
@@ -1445,21 +1446,21 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManager);
 
-        MinimizedWorkEntity firstWork = getBasicMinimizedWork();
+        MinimizedExtendedWorkEntity firstWork = getBasicMinimizedWork();
         firstWork.setId(1l);
         firstWork.setDisplayIndex(1l);
         firstWork.setSourceId("some-orcid");
         firstWork.setExternalIdentifiersJson(
                 "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"ISSN\",\"workExternalIdentifierId\":{\"content\":\"1234-5678\"}},{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"doi:10.1/123\"}}]}");
 
-        MinimizedWorkEntity secondWork = getBasicMinimizedWork();
+        MinimizedExtendedWorkEntity secondWork = getBasicMinimizedWork();
         secondWork.setId(2l);
         secondWork.setSourceId("some-orcid");
         secondWork.setDisplayIndex(1l);
         secondWork.setExternalIdentifiersJson(
                 "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"ISSN\",\"workExternalIdentifierId\":{\"content\":\"1234-5678\"}}]}");
 
-        List<MinimizedWorkEntity> works = Arrays.asList(firstWork, secondWork);
+        List<MinimizedExtendedWorkEntity> works = Arrays.asList(firstWork, secondWork);
         Mockito.when(cacheManager.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
 
         Mockito.when(mockDao.getWork(Mockito.eq("some-orcid"), Mockito.eq(Long.valueOf(1)))).thenReturn(getUserSourceWorkEntity("some-orcid"));
@@ -1486,11 +1487,11 @@ public class WorkManagerTest extends BaseTest {
         return userPreferred;
     }
 
-    private List<MinimizedWorkEntity> getMinimizedWorksListForGrouping() throws IllegalAccessException {
-        List<MinimizedWorkEntity> minWorks = new ArrayList<>();
+    private List<MinimizedExtendedWorkEntity> getMinimizedWorksListForGrouping() throws IllegalAccessException {
+        List<MinimizedExtendedWorkEntity> minWorks = new ArrayList<>();
 
         for (long l = 1; l <= 4; l++) {
-            MinimizedWorkEntity work = getBasicMinimizedWork();
+            MinimizedExtendedWorkEntity work = getBasicMinimizedWork();
             work.setDisplayIndex(l);
             work.setId(l);
 
@@ -1506,11 +1507,11 @@ public class WorkManagerTest extends BaseTest {
         return minWorks;
     }
 
-    private List<MinimizedWorkEntity> getMinimizedWorksListForGroupingNoExternalIDs() throws IllegalAccessException {
-        List<MinimizedWorkEntity> minWorks = new ArrayList<>();
+    private List<MinimizedExtendedWorkEntity> getMinimizedWorksListForGroupingNoExternalIDs() throws IllegalAccessException {
+        List<MinimizedExtendedWorkEntity> minWorks = new ArrayList<>();
 
         for (long l = 1; l <= 4; l++) {
-            MinimizedWorkEntity work = getBasicMinimizedWork();
+            MinimizedExtendedWorkEntity work = getBasicMinimizedWork();
             work.setDisplayIndex(l);
             work.setId(l);
             work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[]}");
@@ -1520,9 +1521,9 @@ public class WorkManagerTest extends BaseTest {
         return minWorks;
     }
 
-    private MinimizedWorkEntity getBasicMinimizedWork() throws IllegalAccessException {
+    private MinimizedExtendedWorkEntity getBasicMinimizedWork() throws IllegalAccessException {
         Date date = DateUtils.convertToDate("2018-01-01T10:15:20");
-        MinimizedWorkEntity work = new MinimizedWorkEntity();
+        MinimizedExtendedWorkEntity work = new MinimizedExtendedWorkEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(work, date);
         work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         work.setDescription("work:description");

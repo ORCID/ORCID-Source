@@ -157,9 +157,9 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     }
 
     @Override
-    public List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified) {
+    public List<MinimizedExtendedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified) {
         Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
-        List<MinimizedWorkEntity> retrieveWorkList = retrieveWorkList(orcid, workIdsWithLastModified, minimizedWorkEntityCache,
+        List<MinimizedExtendedWorkEntity> retrieveWorkList = retrieveWorkList(orcid, workIdsWithLastModified, minimizedWorkEntityCache,
                 idList -> workDao.getMinimizedWorkEntities(idList));
         return retrieveWorkList;
     }
@@ -173,7 +173,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     }
 
     @Override
-    public List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified) {
+    public List<MinimizedExtendedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified) {
         List<WorkLastModifiedEntity> workLastModifiedList = retrievePublicWorkLastModifiedList(orcid, profileLastModified);
         Map<Long, Date> workIdsWithLastModified = workLastModifiedList.stream()
                 .collect(Collectors.toMap(WorkLastModifiedEntity::getId, WorkLastModifiedEntity::getLastModified, (u, v) -> {
@@ -183,7 +183,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     }
 
     @Override
-    public List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, List<Long> ids, long profileLastModified) {
+    public List<MinimizedExtendedWorkEntity> retrieveMinimizedWorks(String orcid, List<Long> ids, long profileLastModified) {
         Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
         Map<Long, Date> filteredWorkIdsWithLastModified = new HashMap<>();
         for (Long id : ids) {

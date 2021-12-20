@@ -29,13 +29,13 @@ public interface WorkEntityCacheManager {
     <T extends WorkBaseEntity> List<T> retrieveWorkList(String orcid, Map<Long, Date> workIdsWithLastModified, Cache<WorkCacheKey, WorkBaseEntity> workCache,
             Function<List<Long>, List<T>> workRetriever);
 
-    List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified);
+    List<MinimizedExtendedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified);
 
     List<MinimizedExtendedWorkEntity> retrieveMinimizedExtendedWorks(String orcid, long profileLastModified);
 
-    List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified);
+    List<MinimizedExtendedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified);
     
-    List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, List<Long> ids, long profileLastModified);
+    List<MinimizedExtendedWorkEntity> retrieveMinimizedWorks(String orcid, List<Long> ids, long profileLastModified);
 
     WorkEntity retrieveFullWork(String orcid, long workId, long workLastModified);
     

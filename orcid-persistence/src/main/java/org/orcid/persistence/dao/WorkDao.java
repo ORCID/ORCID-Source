@@ -105,7 +105,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     
     boolean increaseDisplayIndexOnAllElements(String orcid);
 
-    List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
+    List<MinimizedExtendedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
 
     List<MinimizedExtendedWorkEntity> getMinimizedExtendedWorkEntities(List<Long> ids);
     
