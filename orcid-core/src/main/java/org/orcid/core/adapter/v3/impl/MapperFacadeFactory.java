@@ -649,6 +649,44 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workSummaryMinimizedClassMap.byDefault();
         workSummaryMinimizedClassMap.register();
 
+        ClassMapBuilder<WorkSummaryExtended, MinimizedExtendedWorkEntity> workSummaryExtendedMinimizedClassMap = mapperFactory.classMap(WorkSummaryExtended.class, MinimizedExtendedWorkEntity.class);
+        addV3CommonFields(workSummaryExtendedMinimizedClassMap);
+        registerSourceConverters(mapperFactory, workSummaryExtendedMinimizedClassMap);
+        workSummaryExtendedMinimizedClassMap.field("title.title.content", "title");
+        workSummaryExtendedMinimizedClassMap.fieldMap("contributors", "contributorsJson").converter("workContributorsConverterId").add();
+        workSummaryExtendedMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
+        workSummaryExtendedMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        workSummaryExtendedMinimizedClassMap.exclude("workType").exclude("journalTitle").customize(new CustomMapper<WorkSummaryExtended, MinimizedExtendedWorkEntity>() {
+            /**
+             * From model object to database object
+             */
+            @Override
+            public void mapAtoB(WorkSummaryExtended a, MinimizedExtendedWorkEntity b, MappingContext context) {
+                b.setWorkType(a.getType().name());
+                b.setJournalTitle(a.getJournalTitle() != null && a.getJournalTitle().getContent() != null ? a.getJournalTitle().getContent() : null);
+
+            }
+
+            /**
+             * From database to model object
+             */
+            @Override
+            public void mapBtoA(MinimizedExtendedWorkEntity b, WorkSummaryExtended a, MappingContext context) {
+                a.setType(WorkType.valueOf(b.getWorkType()));
+                a.setJournalTitle(b.getJournalTitle() != null && !b.getJournalTitle().isEmpty() ? new Title(b.getJournalTitle()) : null);
+            }
+
+        });
+
+        workSummaryExtendedMinimizedClassMap.field("publicationDate.year.value", "publicationYear");
+        workSummaryExtendedMinimizedClassMap.field("publicationDate.month.value", "publicationMonth");
+        workSummaryExtendedMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
+        workSummaryExtendedMinimizedClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workSummaryExtendedMinimizedClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        workSummaryExtendedMinimizedClassMap.field("url.value", "workUrl");
+        workSummaryExtendedMinimizedClassMap.byDefault();
+        workSummaryExtendedMinimizedClassMap.register();
+
         ClassMapBuilder<Work, MinimizedWorkEntity> minimizedWorkClassMap = mapperFactory.classMap(Work.class, MinimizedWorkEntity.class);
         registerSourceConverters(mapperFactory, minimizedWorkClassMap);
         minimizedWorkClassMap.field("putCode", "id");
@@ -691,78 +729,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 .register();
         
         mapFuzzyDateToPublicationDateEntity(mapperFactory);
-
-        ClassMapBuilder<WorkSummaryExtended, WorkEntity> workSummaryExtendedClassMap = mapperFactory.classMap(WorkSummaryExtended.class, WorkEntity.class);
-        addV3CommonFields(workSummaryExtendedClassMap);
-        registerSourceConverters(mapperFactory, workSummaryExtendedClassMap);
-        workSummaryExtendedClassMap.field("putCode", "id");
-        workSummaryExtendedClassMap.field("title.title.content", "title");
-        workSummaryExtendedClassMap.field("title.translatedTitle.content", "translatedTitle");
-        workSummaryExtendedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
-        workSummaryExtendedClassMap.exclude("workType").exclude("journalTitle").customize(new CustomMapper<WorkSummaryExtended, WorkEntity>() {
-            /**
-             * From model object to database object
-             */
-            @Override
-            public void mapAtoB(WorkSummaryExtended a, WorkEntity b, MappingContext context) {
-                b.setWorkType(a.getType().name());
-                b.setJournalTitle(a.getJournalTitle() != null && a.getJournalTitle().getContent() != null ? a.getJournalTitle().getContent() : null);
-            }
-
-            /**
-             * From database to model object
-             */
-            @Override
-            public void mapBtoA(WorkEntity b, WorkSummaryExtended a, MappingContext context) {
-                a.setType(WorkType.valueOf(b.getWorkType()));
-                a.setJournalTitle(b.getJournalTitle() != null && !b.getJournalTitle().isEmpty() ? new Title(b.getJournalTitle()) : null);
-            }
-
-        });
-        workSummaryExtendedClassMap.field("publicationDate", "publicationDate");
-        workSummaryExtendedClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        workSummaryExtendedClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
-        workSummaryExtendedClassMap.field("url.value", "workUrl");
-        workSummaryExtendedClassMap.byDefault();
-        workSummaryExtendedClassMap.register();
-
-        ClassMapBuilder<WorkSummaryExtended, MinimizedExtendedWorkEntity> workSummaryExtendedMinimizedClassMap = mapperFactory.classMap(WorkSummaryExtended.class, MinimizedExtendedWorkEntity.class);
-        addV3CommonFields(workSummaryExtendedMinimizedClassMap);
-        registerSourceConverters(mapperFactory, workSummaryExtendedMinimizedClassMap);
-        workSummaryExtendedMinimizedClassMap.field("title.title.content", "title");
-        workSummaryExtendedMinimizedClassMap.fieldMap("contributors", "contributorsJson").converter("workContributorsConverterId").add();
-        workSummaryExtendedMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
-        workSummaryExtendedMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
-        workSummaryExtendedMinimizedClassMap.exclude("workType").exclude("journalTitle").customize(new CustomMapper<WorkSummaryExtended, MinimizedExtendedWorkEntity>() {
-            /**
-             * From model object to database object
-             */
-            @Override
-            public void mapAtoB(WorkSummaryExtended a, MinimizedExtendedWorkEntity b, MappingContext context) {
-                b.setWorkType(a.getType().name());
-                b.setJournalTitle(a.getJournalTitle() != null && a.getJournalTitle().getContent() != null ? a.getJournalTitle().getContent() : null);
-
-            }
-
-            /**
-             * From database to model object
-             */
-            @Override
-            public void mapBtoA(MinimizedExtendedWorkEntity b, WorkSummaryExtended a, MappingContext context) {
-                a.setType(WorkType.valueOf(b.getWorkType()));
-                a.setJournalTitle(b.getJournalTitle() != null && !b.getJournalTitle().isEmpty() ? new Title(b.getJournalTitle()) : null);
-            }
-
-        });
-        ;
-        workSummaryExtendedMinimizedClassMap.field("publicationDate.year.value", "publicationYear");
-        workSummaryExtendedMinimizedClassMap.field("publicationDate.month.value", "publicationMonth");
-        workSummaryExtendedMinimizedClassMap.field("publicationDate.day.value", "publicationDay");
-        workSummaryExtendedMinimizedClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
-        workSummaryExtendedMinimizedClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
-        workSummaryExtendedMinimizedClassMap.field("url.value", "workUrl");
-        workSummaryExtendedMinimizedClassMap.byDefault();
-        workSummaryExtendedMinimizedClassMap.register();
 
         return mapperFactory.getMapperFacade();
     }

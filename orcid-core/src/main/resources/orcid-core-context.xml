@@ -1119,6 +1119,14 @@
         <property name="timeToIdleSeconds" value="3600" />
         <property name="maxMegaBytesOnDisk" value="256" />
     </bean>
+
+	<bean id="groupedWorksExtendedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="grouped-works-extended" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="maxElementsInMemory" value="500" />
+		<property name="timeToIdleSeconds" value="3600" />
+		<property name="maxMegaBytesOnDisk" value="256" />
+	</bean>
     
     <bean id="groupingSuggestionsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="grouping-suggestions" />
@@ -1455,7 +1463,7 @@
     <bean id="groupedWorksRetriever" class="org.orcid.core.cache.impl.GroupedWorksRetriever" />
 
 	<bean id="groupedWorksExtendedGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
-	    <property name="cache" ref="groupedWorksCache" />
+	    <property name="cache" ref="groupedWorksExtendedCache" />
 	    <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
 	    <property name="retriever" ref="groupedWorksExtendedRetriever" />
 	</bean>
