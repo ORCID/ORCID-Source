@@ -37,6 +37,7 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -354,7 +355,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(w);
         assertEquals(WorkType.DISSERTATION_THESIS, w.getWorkType());        
     
-        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
+        MinimizedExtendedWorkEntity mWork = new MinimizedExtendedWorkEntity();
         mWork.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
         List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
         assertEquals(WorkType.DISSERTATION_THESIS, summaries.get(0).getType());

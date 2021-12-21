@@ -6,6 +6,7 @@ import java.util.List;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 
@@ -66,7 +67,7 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
            
     @Override
-    public List<Work> toMinimizedWork(Collection<MinimizedWorkEntity> minimizedEntities) {
+    public List<Work> toMinimizedWork(Collection<MinimizedExtendedWorkEntity> minimizedEntities) {
         if(minimizedEntities == null) {
             return null;
         }
@@ -82,7 +83,7 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
     
     @Override
-    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities) {
+    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities) {
         if(workEntities == null) {
             return null;
         }

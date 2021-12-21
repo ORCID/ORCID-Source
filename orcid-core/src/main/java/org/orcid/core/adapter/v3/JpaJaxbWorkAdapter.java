@@ -25,11 +25,11 @@ public interface JpaJaxbWorkAdapter {
 
     List<Work> toWork(Collection<WorkEntity> workEntities);
 
-    List<Work> toMinimizedWork(Collection<MinimizedWorkEntity> minimizedEntities);
+    List<Work> toMinimizedWork(Collection<MinimizedExtendedWorkEntity> minimizedEntities);
     
     List<WorkSummary> toWorkSummary(Collection<WorkEntity> workEntities);
     
-    List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities);
+    List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities);
 
     List<WorkSummaryExtended> toWorkSummaryExtendedFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities);
 

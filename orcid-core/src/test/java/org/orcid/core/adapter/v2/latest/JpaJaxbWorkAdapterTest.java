@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -275,7 +276,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(w);
         assertEquals(WorkType.DISSERTATION, w.getWorkType());        
     
-        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
+        MinimizedExtendedWorkEntity mWork = new MinimizedExtendedWorkEntity();
         mWork.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
         List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
         assertEquals(WorkType.DISSERTATION, summaries.get(0).getType());
@@ -304,7 +305,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertNotNull(w);
         assertEquals(WorkType.DISSERTATION, w.getWorkType());        
     
-        MinimizedWorkEntity mWork = new MinimizedWorkEntity();
+        MinimizedExtendedWorkEntity mWork = new MinimizedExtendedWorkEntity();
         mWork.setWorkType(WorkType.DISSERTATION.name());
         List<WorkSummary> summaries = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(Arrays.asList(mWork));
         assertEquals(WorkType.DISSERTATION, summaries.get(0).getType());

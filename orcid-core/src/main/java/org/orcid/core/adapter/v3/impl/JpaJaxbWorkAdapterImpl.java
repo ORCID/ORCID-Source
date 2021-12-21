@@ -68,7 +68,7 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
            
     @Override
-    public List<Work> toMinimizedWork(Collection<MinimizedWorkEntity> minimizedEntities) {
+    public List<Work> toMinimizedWork(Collection<MinimizedExtendedWorkEntity> minimizedEntities) {
         if(minimizedEntities == null) {
             return null;
         }
@@ -84,7 +84,7 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
     
     @Override
-    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities) {
+    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities) {
         if(workEntities == null) {
             return null;
         }
