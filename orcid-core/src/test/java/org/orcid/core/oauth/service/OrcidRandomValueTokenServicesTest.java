@@ -377,6 +377,17 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         ///////////////
         togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
         
+        ///////////////////////////////
+        // Active tokens should work //
+        ///////////////////////////////
+        String activeTokenValue = "active-token-" + Math.random(); 
+        OrcidOauth2TokenDetail activeToken = buildToken(activeTokenValue, "/activites-update");
+        orcidOauthTokenDetailService.createNew(activeToken);
+        try {
+            tokenServices.loadAuthentication(activeTokenValue);
+        } catch(Exception e) {
+            fail(e.getMessage());
+        }
         
         //////////////////////////////
         // USER_REVOKED should work //
@@ -387,14 +398,14 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         
         try {
             tokenServices.loadAuthentication(tokenValue);
-        } catch(InvalidTokenException e) {            
+        } catch(Exception e) {            
             fail(e.getMessage());
         }
         
         ///////////////////////////
         // All other should fail //
         ///////////////////////////
-        disabledTokensOnDeleteShouldAllwaysFailIfTheRevokeReasonIsNotUserRevoked();
+        disabledTokensOnDeleteShouldAllwaysFailIfTheRevokeReasonIsNotUserRevoked();       
     }
     
     @Test
@@ -509,7 +520,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         }               
-    }
+    }    
     
     private OrcidOauth2TokenDetail buildExpiredToken(String tokenValue) {
         return buildExpiredOrDisabledToken(tokenValue, true, null);
@@ -520,13 +531,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     }
     
     private OrcidOauth2TokenDetail buildExpiredOrDisabledToken(String tokenValue, Boolean buildExpired, RevokeReason revokeReason) {
-        OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
-        token.setApproved(true);
-        token.setAuthenticationKey("authentication-key");
-        token.setClientDetailsId("4444-4444-4444-4441");        
-        token.setProfile(new ProfileEntity("4444-4444-4444-4442"));
-        token.setResourceId("orcid");
-        token.setScope("/read-limited");
+        OrcidOauth2TokenDetail token = buildToken(tokenValue, "/read-limited");
         if(buildExpired) {
             token.setTokenExpiration(new Date(System.currentTimeMillis() - 60000));
         } else {
@@ -535,6 +540,17 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
             token.setRevokeReason(revokeReason.name());
             token.setRevocationDate(new Date());
         }        
+        return token;
+    }
+    
+    private OrcidOauth2TokenDetail buildToken(String tokenValue, String scope) {
+        OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
+        token.setApproved(true);
+        token.setAuthenticationKey("authentication-key");
+        token.setClientDetailsId("4444-4444-4444-4441");        
+        token.setProfile(new ProfileEntity("4444-4444-4444-4442"));
+        token.setResourceId("orcid");
+        token.setScope(scope);
         token.setTokenValue(tokenValue);
         return token;
     }
