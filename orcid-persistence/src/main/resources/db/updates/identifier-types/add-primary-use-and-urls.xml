@@ -30,7 +30,7 @@
 		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://openlibrary.org/b/' WHERE id_name = 'OL';</sql> 
 		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.osti.gov/energycitations/product.biblio.jsp?osti_id=' WHERE id_name = 'OSTI';</sql> 
 		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://europepmc.org/articles/' WHERE id_name = 'PMC';</sql> 
-		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.ncbi.nlm.nih.gov/pubmed/' WHERE id_name = 'PMID';</sql> 
+		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://pubmed.ncbi.nlm.nih.gov/' WHERE id_name = 'PMID';</sql> 
 		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://www.rfc-editor.org/rfc/' WHERE id_name = 'RFC';</sql> <!-- + '.txt'; -->
 		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://papers.ssrn.com/abstract_id=' WHERE id_name = 'SSRN';</sql> 
 		<sql>UPDATE identifier_type SET id_resolution_prefix = 'http://zbmath.org/?format=complete&amp;q=' WHERE id_name = 'ZBL';</sql> 

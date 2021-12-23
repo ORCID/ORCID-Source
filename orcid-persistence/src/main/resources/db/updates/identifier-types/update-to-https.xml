@@ -8,7 +8,7 @@
 			<sql>UPDATE identifier_type SET id_resolution_prefix = 'https://www.worldcat.org/isbn/' WHERE id_name = 'ISBN';
 			UPDATE identifier_type SET id_resolution_prefix = 'https://arxiv.org/abs/' WHERE id_name = 'ARXIV';
 			UPDATE identifier_type SET id_resolution_prefix = 'https://europepmc.org/articles/' WHERE id_name = 'PMC';
-			UPDATE identifier_type SET id_resolution_prefix = 'https://www.ncbi.nlm.nih.gov/pubmed/' WHERE id_name = 'PMID';
+			UPDATE identifier_type SET id_resolution_prefix = 'https://pubmed.ncbi.nlm.nih.gov/' WHERE id_name = 'PMID';
 			UPDATE identifier_type SET id_resolution_prefix = 'https://identifiers.org/rrid/' WHERE id_name = 'RRID';</sql>
 	</changeSet>
 	
