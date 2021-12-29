@@ -176,6 +176,48 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         return earliestExpiry.getTime();
     }    
     
+    @Test
+    public void invalidTokenThrowsInvalidTokenExceptionTest() {
+        // Mock request attributes
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
+        RequestContextHolder.setRequestAttributes(attrs);
+        String invalidTokenValue = "invalid";
+        
+        ///////////////
+        // Togglz off//
+        ///////////////
+        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
+        
+        mockHttpServletRequest.setMethod(RequestMethod.GET.name());
+        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
+        
+        mockHttpServletRequest.setMethod(RequestMethod.POST.name());
+        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
+        
+        mockHttpServletRequest.setMethod(RequestMethod.PUT.name());
+        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
+        
+        mockHttpServletRequest.setMethod(RequestMethod.DELETE.name());
+        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
+        ///////////////
+        // Togglz on//
+        ///////////////
+        togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
+        
+        mockHttpServletRequest.setMethod(RequestMethod.GET.name());
+        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
+        
+        mockHttpServletRequest.setMethod(RequestMethod.POST.name());
+        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
+        
+        mockHttpServletRequest.setMethod(RequestMethod.PUT.name());
+        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
+        
+        mockHttpServletRequest.setMethod(RequestMethod.DELETE.name());
+        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
+    }
+            
     /**
      * Check that the token created with a non persistent code will expire within an hour 
      * */
@@ -261,20 +303,10 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         orcidOauthTokenDetailService.createNew(expiredToken);
         
         // The first time we try to use it, we get a InvalidTokenException with message Access token expired: token-value
-        try {
-            tokenServices.loadAuthentication("token-value-" + rm.name());
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Access token expired: token-value-" + rm.name(), e.getMessage());
-        }
+        catchInvalidTokenExceptionOnLoadAuthentication("token-value-" + rm.name(), "Access token expired: token-value-" + rm.name());
                 
         // Second time we try to use it, we get a InvalidTokenException with message Invalid access token: token-value
-        try {
-            tokenServices.loadAuthentication("token-value-" + rm.name());
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Invalid access token: token-value-" + rm.name(), e.getMessage());
-        }
+        catchInvalidTokenExceptionOnLoadAuthentication("token-value-" + rm.name(), "Invalid access token: token-value-" + rm.name());        
         
         ///////////////        
         // Togglz on//
@@ -285,20 +317,10 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         orcidOauthTokenDetailService.createNew(expiredToken);
         
         // The first time we try to use it, we get a InvalidTokenException with message Access token expired: token-value
-        try {
-            tokenServices.loadAuthentication("token-value-2-" + rm.name());
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Access token expired: token-value-2-" + rm.name(), e.getMessage());
-        }
+        catchInvalidTokenExceptionOnLoadAuthentication("token-value-2-" + rm.name(), "Access token expired: token-value-2-" + rm.name());
                 
         // Second time we try to use it, we get a InvalidTokenException with message Invalid access token: token-value
-        try {
-            tokenServices.loadAuthentication("token-value-2-" + rm.name());
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Invalid access token: token-value-2-" + rm.name(), e.getMessage());
-        }
+        catchInvalidTokenExceptionOnLoadAuthentication("token-value-2-" + rm.name(), "Invalid access token: token-value-2-" + rm.name());      
     }        
             
     @Test
@@ -341,12 +363,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         OrcidOauth2TokenDetail disabledToken = buildDisabledToken("token-value-" + rm.name() + revokeReason.name(), revokeReason);        
         orcidOauthTokenDetailService.createNew(disabledToken);
         
-        try {
-            tokenServices.loadAuthentication("token-value-" + rm.name());
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Invalid access token: token-value-" + rm.name(), e.getMessage());
-        }                        
+        catchInvalidTokenExceptionOnLoadAuthentication("token-value-" + rm.name(), "Invalid access token: token-value-" + rm.name());                               
         
         ///////////////        
         // Togglz on//
@@ -356,12 +373,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         disabledToken = buildDisabledToken("token-value-2-" + rm.name() + revokeReason.name(), revokeReason);        
         orcidOauthTokenDetailService.createNew(disabledToken);
         
-        try {
-            tokenServices.loadAuthentication("token-value-2-" + rm.name());
-            fail();
-        } catch(InvalidTokenException e) {
-            assertEquals("Invalid access token: token-value-2-" + rm.name(), e.getMessage());
-        }
+        catchInvalidTokenExceptionOnLoadAuthentication("token-value-2-" + rm.name(), "Invalid access token: token-value-2-" + rm.name());    
     }
     
     @Test
@@ -428,13 +440,8 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         OrcidOauth2TokenDetail userRevokedDisabledToken = buildDisabledToken(tokenValue, RevokeReason.USER_REVOKED);
         orcidOauthTokenDetailService.createNew(userRevokedDisabledToken);
 
-        try {
-            tokenServices.loadAuthentication(tokenValue);
-            fail();
-        } catch (InvalidTokenException e) {
-            assertEquals("Invalid access token: " + tokenValue, e.getMessage());
-        }
-
+        catchInvalidTokenExceptionOnLoadAuthentication(tokenValue, "Invalid access token: " + tokenValue);
+        
         ///////////////////////////////////
         // All other should fail as well //
         ///////////////////////////////////
@@ -521,6 +528,17 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
             fail();
         }               
     }    
+    
+    private void catchInvalidTokenExceptionOnLoadAuthentication(String invalidTokenValue, String expectedMessage) {
+        try {
+            tokenServices.loadAuthentication(invalidTokenValue);
+            fail("Invalid access token must fail");
+        } catch (InvalidTokenException i) {
+            assertEquals(expectedMessage, i.getMessage());
+        } catch (Exception e) {
+            fail("Invalid exception found: " + e.getCause());
+        }
+    }
     
     private OrcidOauth2TokenDetail buildExpiredToken(String tokenValue) {
         return buildExpiredOrDisabledToken(tokenValue, true, null);
