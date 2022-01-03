@@ -238,8 +238,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/revoke-application.json", method = RequestMethod.POST)
     public @ResponseBody boolean revokeApplication(@RequestParam("clientId") String clientId) {
-        String userOrcid = getCurrentUserOrcid();
-        profileEntityManager.disableClientAccess(clientId, userOrcid);
+        profileEntityManager.disableClientAccess(clientId, getCurrentUserOrcid());
         return true;
     }
 
