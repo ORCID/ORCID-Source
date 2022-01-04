@@ -127,12 +127,12 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         // Verify existing non disabled token works
         List<OrcidOauth2TokenDetail> token = orcidOauth2TokenDetailDao.findByAuthenticationKey("097843f6f740d94d5825f3684e0d4c7b");
         assertEquals(1, token.size());
-        validateActiveToken(token.get(0));
+        validateDisabledToken(token.get(0));
         
         // Verify existing disabled token works
         List<OrcidOauth2TokenDetail> disabledToken = orcidOauth2TokenDetailDao.findByAuthenticationKey("097843f6f740d94d5825f3684e0d4c6e");
         assertEquals(1, disabledToken.size());
-        validateDisabledToken(disabledToken.get(0));        
+        validateActiveToken(disabledToken.get(0));        
         
         List<OrcidOauth2TokenDetail> mustBeEmpty = orcidOauth2TokenDetailDao.findByAuthenticationKey("0");
         assertTrue(mustBeEmpty.isEmpty());
@@ -357,34 +357,34 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertEquals(initialRevokationDate, token.getRevocationDate());            
     }
     
-    private void validateActiveToken(OrcidOauth2TokenDetail token) throws ParseException {
+    private void validateDisabledToken(OrcidOauth2TokenDetail token) throws ParseException {
         assertNotNull(token);
-        assertEquals(Long.valueOf(6), token.getId());
-        assertEquals("00000000-0000-0000-0000-00000000000", token.getTokenValue());
+        assertEquals(Long.valueOf(7), token.getId());        
+        assertEquals("00000000-0000-0000-0000-00000000001", token.getTokenValue());
         assertEquals("bearer", token.getTokenType());
         assertEquals("097843f6f740d94d5825f3684e0d4c7b", token.getAuthenticationKey());
+        assertEquals("abcdef", token.getAuthorizationCode());
+        assertEquals("APP-5555555555555555", token.getClientDetailsId());
+        assertEquals("0000-0000-0000-0001", token.getProfile().getId());
+        assertEquals("http://www.google.com/", token.getRedirectUri());
+        assertEquals("/activities-update", token.getScope());
+        assertEquals(expirationDate, token.getTokenExpiration());        
+        assertEquals("AUTH_CODE_REUSED", token.getRevokeReason());
+        assertTrue(token.getTokenDisabled());
+    }
+    
+    private void validateActiveToken(OrcidOauth2TokenDetail token) throws ParseException {
+        assertNotNull(token);
+        assertEquals(Long.valueOf(6), token.getId());        
+        assertEquals("00000000-0000-0000-0000-00000000000", token.getTokenValue());
+        assertEquals("bearer", token.getTokenType());
+        assertEquals("097843f6f740d94d5825f3684e0d4c6e", token.getAuthenticationKey());
         assertEquals("uvwxy", token.getAuthorizationCode());
         assertEquals("APP-5555555555555555", token.getClientDetailsId());
         assertEquals("0000-0000-0000-0001", token.getProfile().getId());
         assertEquals("http://www.google.com/", token.getRedirectUri());
         assertEquals("/read-limited", token.getScope());
-        assertEquals(expirationDate, token.getTokenExpiration());
-        assertNull(token.getTokenDisabled());                
-    }
-    
-    private void validateDisabledToken(OrcidOauth2TokenDetail disabledToken) throws ParseException {
-        assertNotNull(disabledToken);
-        assertEquals(Long.valueOf(7), disabledToken.getId());
-        assertEquals("00000000-0000-0000-0000-00000000001", disabledToken.getTokenValue());
-        assertEquals("bearer", disabledToken.getTokenType());
-        assertEquals("097843f6f740d94d5825f3684e0d4c6e", disabledToken.getAuthenticationKey());
-        assertEquals("abcdef", disabledToken.getAuthorizationCode());
-        assertEquals("APP-5555555555555555", disabledToken.getClientDetailsId());
-        assertEquals("0000-0000-0000-0001", disabledToken.getProfile().getId());
-        assertEquals("http://www.google.com/", disabledToken.getRedirectUri());
-        assertEquals("/activities-update", disabledToken.getScope());
-        assertEquals(expirationDate, disabledToken.getTokenExpiration());
-        assertTrue(disabledToken.getTokenDisabled());
+        assertEquals(expirationDate, token.getTokenExpiration());                       
     }
     
     private OrcidOauth2TokenDetail createToken(String tokenValue) {
