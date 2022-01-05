@@ -2,6 +2,7 @@ package org.orcid.core.adapter.jsonidentifier.converter;
 
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.adapter.jsonidentifier.JSONUrl;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
@@ -79,11 +80,20 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
                     id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
                 }
                 
-                try {
-                    id.setNormalizedUrl(new TransientNonEmptyString(norm.generateNormalisedURL(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
-                } catch (IllegalArgumentException iae) {
-                    
-                }
+                
+                if (workExternalIdentifier.getUrl() != null) {
+                    UrlValidator urlValidator = new UrlValidator();
+                    if (urlValidator.isValid(workExternalIdentifier.getUrl().getValue())){
+                        id.setNormalizedUrl(new TransientNonEmptyString(workExternalIdentifier.getUrl().getValue()));
+                    }                    
+                } else {
+                    try {
+                        id.setNormalizedUrl(new TransientNonEmptyString(norm.generateNormalisedURL(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content)));
+                    } catch (IllegalArgumentException iae) {
+                        
+                    }   
+                }                
+               
                 if (id.getNormalizedUrl() == null || StringUtils.isEmpty(id.getNormalizedUrl().getValue())){
                     id.setNormalizedUrlError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
                 }
