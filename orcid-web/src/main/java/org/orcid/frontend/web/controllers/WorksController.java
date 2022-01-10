@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkCategory;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
@@ -399,6 +400,123 @@ public class WorksController extends BaseWorkspaceController {
         return null;
     }
 
+    @RequestMapping(value = "/worksInfo/{putCodesStr}", method = RequestMethod.GET)
+    public @ResponseBody List<WorkForm> getWorksInfo(@PathVariable("putCodesStr") String putCodesStr) {
+        Map<String, String> countries = retrieveIsoCountries();
+        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
+        if (putCodesStr == null)
+            return null;
+
+        ArrayList<Long> putCodes = new ArrayList<Long>();
+        for (String workId : putCodesStr.split(","))
+            putCodes.add(new Long(workId));
+        List<WorkSummary> works = workManager.getWorksSummaryList(this.getEffectiveUserOrcid(), putCodes);
+        List<WorkForm> workFormList = new ArrayList<>();
+
+        if (works.size() > 0) {
+            works.forEach(workSummary -> {
+                WorkForm workForm = WorkForm.valueOf(workSummary);
+                if (workForm.getPublicationDate() == null) {
+                    initializePublicationDate(workForm);
+                } else {
+                    if (workForm.getPublicationDate().getDay() == null) {
+                        workForm.getPublicationDate().setDay(new String());
+                    }
+                    if (workForm.getPublicationDate().getMonth() == null) {
+                        workForm.getPublicationDate().setMonth(new String());
+                    }
+                    if (workForm.getPublicationDate().getYear() == null) {
+                        workForm.getPublicationDate().setYear(new String());
+                    }
+                }
+
+                if (workForm.getShortDescription() == null) {
+                    workForm.setShortDescription(new Text());
+                }
+
+                if (workForm.getUrl() == null) {
+                    workForm.setUrl(new Text());
+                }
+
+                if (workForm.getJournalTitle() == null) {
+                    workForm.setJournalTitle(new Text());
+                }
+
+                if (workForm.getLanguageCode() == null) {
+                    workForm.setLanguageCode(new Text());
+                }
+
+                if (workForm.getLanguageCode() == null) {
+                    workForm.setLanguageCode(new Text());
+                }
+
+                if (workForm.getLanguageName() == null) {
+                    workForm.setLanguageName(new Text());
+                }
+
+                if (workForm.getCitation() == null) {
+                    workForm.setCitation(new Citation());
+                    workForm.getCitation().setCitationType(new Text());
+                    workForm.getCitation().setCitation(new Text());
+                }
+
+                if (workForm.getSubtitle() == null) {
+                    workForm.setSubtitle(new Text());
+                }
+
+                if (workForm.getTranslatedTitle() == null) {
+                    workForm.setTranslatedTitle(new TranslatedTitleForm());
+                }
+
+                if (workForm.getCountryCode() == null) {
+                    workForm.setCountryCode(new Text());
+                }
+
+                if (workForm.getCountryName() == null) {
+                    workForm.setCountryName(new Text());
+                }
+
+                if (workForm.getJournalTitle() == null) {
+                    workForm.setJournalTitle(new Text());
+                }
+
+                // Set country name
+                if (!PojoUtil.isEmpty(workForm.getCountryCode())) {
+                    Text countryName = Text.valueOf(countries.get(workForm.getCountryCode().getValue()));
+                    workForm.setCountryName(countryName);
+                }
+                // Set language name
+                if (!PojoUtil.isEmpty(workForm.getLanguageCode())) {
+                    Text languageName = Text.valueOf(languages.get(workForm.getLanguageCode().getValue()));
+                    workForm.setLanguageName(languageName);
+                }
+                // Set translated title language name
+                if (!(workForm.getTranslatedTitle() == null) && !StringUtils.isEmpty(workForm.getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(workForm.getTranslatedTitle().getLanguageCode());
+                    workForm.getTranslatedTitle().setLanguageName(languageName);
+                }
+
+                if (workForm.getContributors() != null) {
+                    for (Contributor contributor : workForm.getContributors()) {
+                        if (!PojoUtil.isEmpty(contributor.getOrcid())) {
+                            String contributorOrcid = contributor.getOrcid().getValue();
+                            if (profileEntityManager.orcidExists(contributorOrcid)) {
+                                // contributor is an ORCID user - visibility of
+                                // user's name in record must be taken into
+                                // account
+                                String publicContributorCreditName = activityManager.getPublicCreditName(contributorOrcid);
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                            }
+                        }
+                    }
+                }
+                workFormList.add(workForm);
+            });
+            return workFormList;
+        }
+
+        return null;
+    }
     /**
      * Creates a new work
      * 

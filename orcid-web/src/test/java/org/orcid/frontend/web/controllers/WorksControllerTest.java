@@ -130,6 +130,23 @@ public class WorksControllerTest extends BaseControllerTest {
     }
 
     @Test
+    public void testGetWorksInfo() {
+        List<WorkForm> works = worksController.getWorksInfo("5,6");
+        assertNotNull(works);
+        assertEquals(2, works.size());
+        assertEquals("5", works.get(0).getPutCode().getValue());
+        assertNotNull(works.get(0).getPublicationDate());
+        assertEquals("2011", works.get(0).getPublicationDate().getYear());
+        assertEquals("02", works.get(0).getPublicationDate().getMonth());
+        assertEquals("01", works.get(0).getPublicationDate().getDay());
+        assertNotNull(works.get(0).getTitle());
+        assertEquals("Journal article A", works.get(0).getTitle().getValue());
+        assertNotNull(works.get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC, works.get(0).getVisibility().getVisibility());
+        assertEquals("journal-article", works.get(0).getWorkType().getValue());
+    }
+
+    @Test
     public void testGetWorkInfoWithContributors() throws Exception {
         WorkForm work = worksController.getWorkInfo(Long.valueOf("5"));
         assertNotNull(work);
