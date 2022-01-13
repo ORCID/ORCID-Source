@@ -29,6 +29,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.log4j.Logger;
+import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
@@ -36,6 +37,7 @@ import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
@@ -359,7 +361,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     @Override
     public Unmarshaller getContext(Class<?> type) {
         try {
-            String apiVersion = getApiVersion();
+            String apiVersion = ApiUtils.getApiVersion();
             String schemaFilenamePrefix = getSchemaFilenamePrefix(type, apiVersion);
             Unmarshaller unmarshaller = getJAXBContext(apiVersion).createUnmarshaller();
             // Old OrcidMessage APIs - do not validate here as we will
@@ -389,7 +391,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     }
 
     public void validate(Object toValidate) {
-        String apiVersion = getApiVersion();
+        String apiVersion = ApiUtils.getApiVersion();
         validate(toValidate, apiVersion);
     }
     
@@ -541,12 +543,6 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         schemaFactory.setResourceResolver(new OrcidResourceResolver(schemaFactory.getResourceResolver()));
         return schemaFactory;
-    }
-
-    private String getApiVersion() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
-        return apiVersion;
     }
 
     private Response getResponse(Throwable e) {
