@@ -673,7 +673,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 
                 //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, this should be removed and the mapping should be done directly in the workSummaryExtendedMinimizedClassMap
                 if(Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-                    b.setContributorsJson(wcc.convertTo(a.getContributors(), TypeFactory.typeOf(b.getContributorsJson())));
+                    if(a.getContributors() != null) {
+                        b.setContributorsJson(wcc.convertTo(a.getContributors(), TypeFactory.typeOf(b.getContributorsJson())));
+                    }
                 }
             }
 
@@ -687,7 +689,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 
                 //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, this should be removed and the mapping should be done directly in the workSummaryExtendedMinimizedClassMap
                 if(Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-                    a.setContributors(wcc.convertFrom(b.getContributorsJson(), TypeFactory.typeOf(a.getContributors())));
+                    if(!PojoUtil.isEmpty(b.getContributorsJson())) {
+                        a.setContributors(wcc.convertFrom(b.getContributorsJson(), TypeFactory.typeOf(a.getContributors())));
+                    }
                 }
             }
 
