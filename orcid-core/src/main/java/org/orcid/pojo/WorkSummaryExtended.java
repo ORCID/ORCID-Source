@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlElement;
 public class WorkSummaryExtended extends WorkSummary {
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkContributors contributors;
+    
+    protected int realNumberOfContributors;
 
     public WorkContributors getContributors() {
         return contributors;
@@ -16,4 +18,12 @@ public class WorkSummaryExtended extends WorkSummary {
     public void setContributors(WorkContributors contributors) {
         this.contributors = contributors;
     }
+
+    public int getRealNumberOfContributors() {
+        return realNumberOfContributors;
+    }
+
+    public void setRealNumberOfContributors(int realNumberOfContributors) {
+        this.realNumberOfContributors = realNumberOfContributors;
+    }        
 }

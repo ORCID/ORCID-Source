@@ -55,6 +55,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private GroupingSuggestionManager groupingSuggestionsManager;
     
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
+    
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
         this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
     }
@@ -151,9 +154,18 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
         List<MinimizedExtendedWorkEntity> works = workEntityCacheManager.retrieveMinimizedExtendedWorks(orcid, getLastModified(orcid));
-        return jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
-    }
-
+        List<WorkSummaryExtended> wseList = jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
+        // Filter the contributors list
+        for(WorkSummaryExtended wse : wseList) {
+            if(wse.getContributors() != null) {
+                // Keep track of the real number of contributors
+                wse.setRealNumberOfContributors(wse.getContributors().getContributor().size());
+                // Truncate the contributors list and leave only the maxContributorsForUI first elements
+                // TODO: Add the truncation logic here
+            }
+        }
+        return wseList;
+    }    
 
     /**
      * Get the list of works specified by the list of put codes
