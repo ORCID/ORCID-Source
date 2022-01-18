@@ -255,9 +255,6 @@ import { Observable }
 
 import { HTTP_INTERCEPTORS, HttpHeaders } from '@angular/common/http';
 
-import { PlatformInfoModule } from "@bit/orcid.angular.platform-info";
-
-
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
    constructor() {}
@@ -304,7 +301,6 @@ export class RootCmp {
         FormsModule,
         ReactiveFormsModule,
         HttpClientModule, //angular5,
-        PlatformInfoModule,
         NgbTypeaheadModule,
         UpgradeModule,
         /* User Generated Modules */

@@ -317,6 +317,9 @@
             <div class="alert alert-success" *ngIf="lockResults.successful?.length > 0"><@spring.message "admin.profile_lock.lock_success"/>
                 <br>{{lockResults.successful}}
             </div>
+            <div class="alert alert-success" *ngIf="lockResults.descriptionMissing?.length > 0">
+            	<@spring.message "admin.profile_lock.missing_description"/>
+            </div>
         </div>
         <div class="control-group">
             <label for="orcid_to_lock"><@orcid.msg 'admin.lock_profile.orcid_ids_or_emails' /></label>
@@ -325,7 +328,7 @@
                 <select [(ngModel)]="lockRecordsParams.lockReason">
                     <option *ngFor="let reason of lockReasons" [value]="reason">{{reason}}</option>
                 </select>
-                <textarea id="lock_reason_description" [(ngModel)]="lockRecordsParams.description" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.lock_reason_optional_description' />" ></textarea>
+                <textarea id="lock_reason_description" [(ngModel)]="lockRecordsParams.description" class="input-xlarge one-per-line" placeholder="<@orcid.msg 'admin.lock_profile.lock_reason_description' />" ></textarea>
             </div>
             <span id="bottom-confirm-lock-profile" (click)="lockRecords()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>      
         </div>

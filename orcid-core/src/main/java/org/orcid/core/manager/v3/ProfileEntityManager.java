@@ -69,7 +69,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     public AvailableLocales retrieveLocale(String orcid);      
     
-    boolean lockProfile(String orcid, String lockReason, String description);
+    boolean lockProfile(String orcid, String lockReason, String description, String adminUser);
 
     boolean unlockProfile(String orcid);
 

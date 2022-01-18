@@ -16,6 +16,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkCategory;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 
@@ -185,6 +186,107 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
         // Set external identifiers
         populateExternalIdentifiers(work, w);
+
+        // Set created date
+        w.setCreatedDate(Date.valueOf(work.getCreatedDate()));
+
+        // Set last modified
+        w.setLastModified(Date.valueOf(work.getLastModifiedDate()));
+
+        if(work.getSource() != null) {
+            // Set source
+            w.setSource(work.getSource().retrieveSourcePath());
+            if(work.getSource().getSourceName() != null) {
+                w.setSourceName(work.getSource().getSourceName().getContent());
+            }
+            
+            if (work.getSource().getAssertionOriginClientId() != null) {
+                w.setAssertionOriginClientId(work.getSource().getAssertionOriginClientId().getPath());
+            }
+            
+            if (work.getSource().getAssertionOriginOrcid() != null) {
+                w.setAssertionOriginOrcid(work.getSource().getAssertionOriginOrcid().getPath());
+            }
+            
+            if (work.getSource().getAssertionOriginName() != null) {
+                w.setAssertionOriginName(work.getSource().getAssertionOriginName().getContent());
+            }
+        }
+        return w;
+    }
+
+    public static WorkForm valueOf(WorkSummary work) {
+        if (work == null)
+            return null;
+
+        WorkForm w = new WorkForm();
+
+        // Set work id
+        if (work.getPutCode() != null) {
+            w.setPutCode(Text.valueOf(work.getPutCode()));
+        }
+
+        // Set type
+        if (work.getType() != null) {
+            w.setWorkType(Text.valueOf(work.getType().value()));
+            // Set category
+            WorkCategory category = WorkCategory.fromWorkType(work.getType());
+            w.setWorkCategory(Text.valueOf(category.value()));
+        }
+
+        if (work.getTitle() != null) {
+            // Set title
+            if (work.getTitle().getTitle() != null) {
+                w.setTitle(Text.valueOf(work.getTitle().getTitle().getContent()));
+            }
+            // Set translated title
+            if (work.getTitle().getTranslatedTitle() != null) {
+                TranslatedTitleForm tt = new TranslatedTitleForm();
+                tt.setContent(work.getTitle().getTranslatedTitle().getContent());
+                tt.setLanguageCode(work.getTitle().getTranslatedTitle().getLanguageCode());
+                w.setTranslatedTitle(tt);
+            }
+            // Set subtitle
+            if (work.getTitle().getSubtitle() != null) {
+                w.setSubtitle(Text.valueOf(work.getTitle().getSubtitle().getContent()));
+            }
+        }
+
+        // Set journal title
+        if (work.getJournalTitle() != null ) {
+            w.setJournalTitle(Text.valueOf(work.getJournalTitle().getContent()));
+        }
+
+        // Set url
+        if (work.getUrl() != null ) {
+            w.setUrl(Text.valueOf(work.getUrl().getValue()));
+        }
+
+        // Set visibility
+        if (work.getVisibility() != null) {
+            w.setVisibility(Visibility.valueOf(work.getVisibility()));
+        }
+
+        // Set publication date
+        FuzzyDate fuzzyPublicationDate = null;
+        if (work.getPublicationDate() != null) {
+            org.orcid.jaxb.model.v3.release.common.PublicationDate publicationDate = work.getPublicationDate();
+            Integer year = PojoUtil.isEmpty(publicationDate.getYear()) ? null : Integer.valueOf(publicationDate.getYear().getValue());
+            Integer month = PojoUtil.isEmpty(publicationDate.getMonth()) ? null : Integer.valueOf(publicationDate.getMonth().getValue());
+            Integer day = PojoUtil.isEmpty(publicationDate.getDay()) ? null : Integer.valueOf(publicationDate.getDay().getValue());
+            if(year != null && year == 0) {
+                year = null;
+            }
+            if(month != null && month == 0) {
+                month = null;
+            }
+            if (day != null && day == 0) {
+                day = null;
+            }
+            fuzzyPublicationDate = FuzzyDate.valueOf(year, month, day);
+            w.setPublicationDate(Date.valueOf(fuzzyPublicationDate));
+        }
+        w.setDateSortString(PojoUtil.createDateSortString(null, fuzzyPublicationDate));
 
         // Set created date
         w.setCreatedDate(Date.valueOf(work.getCreatedDate()));

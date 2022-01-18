@@ -104,7 +104,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public boolean removeProfile(String orcid);
 
-    public boolean lockProfile(String orcid, String lockReason, String description);
+    public boolean lockProfile(String orcid, String lockReason, String description, String adminUser);
 
     public boolean unlockProfile(String orcid);
 
@@ -138,7 +138,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypeNames);
 
-    public String getLockedReason(String orcid);
+    public List<Object[]> getLockedReason(String orcid);
 
     int deleteProfilesOfType(String orcidType);
 
