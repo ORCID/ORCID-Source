@@ -14,10 +14,10 @@ import java.nio.file.Paths;
 import org.junit.Test;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.Contributor;
+import org.orcid.jaxb.model.message.ContributorEmail;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.v3.release.common.Url;
-import org.orcid.jaxb.model.message.ContributorEmail;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -246,5 +246,5 @@ public class JsonUtilsTest {
         assertEquals("object_1", rootNode.get("object_array").get(0).get("id").asText());
         assertEquals("object_2", rootNode.get("object_array").get(1).get("id").asText());
         assertEquals("object_3", rootNode.get("object_array").get(2).get("id").asText());
-    }    
+    }      
 }
