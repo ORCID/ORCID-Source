@@ -293,6 +293,8 @@
             access="IS_AUTHENTICATED_ANONYMOUSLY" />			
 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksExtendedPage.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/person.json(\?.*)?"
@@ -505,6 +507,13 @@
 		<property name="exitUserUrl" value="/exit-user" />
 		<property name="targetUrl" value="/my-orcid" />
 		<property name="switchFailureUrl" value="/signin" />
+	</bean>
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+		<property name="redirectHttp10Compatible" value="false" />
 	</bean>
 	
 	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />

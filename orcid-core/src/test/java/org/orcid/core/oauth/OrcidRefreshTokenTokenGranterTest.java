@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
@@ -21,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -46,6 +48,9 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
 
     @Resource
     private OrcidRefreshTokenTokenGranter refreshTokenTokenGranter;
+    
+    @Resource(name="orcidOauth2TokenDetailDao")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -58,6 +63,7 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         removeDBUnitData(Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/SubjectEntityData.xml"));
     }
 
+    @Transactional
     private OrcidOauth2TokenDetail createToken(String clientId, String userOrcid, String tokenValue, String refreshTokenValue, Date expirationDate, String scopes) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
@@ -69,7 +75,7 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         token.setTokenType("bearer");
         token.setTokenValue(tokenValue);
         token.setRefreshTokenValue(refreshTokenValue);
-        orcidOauth2TokenDetailService.saveOrUpdate(token);
+        orcidOauth2TokenDetailDao.persist(token);
         assertNotNull(token.getDateCreated());
         assertNotNull(token.getLastModified());
         return token;

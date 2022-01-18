@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
@@ -105,6 +106,8 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     boolean increaseDisplayIndexOnAllElements(String orcid);
 
     List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
+
+    List<MinimizedExtendedWorkEntity> getMinimizedExtendedWorkEntities(List<Long> ids);
     
     List<WorkEntity> getWorkEntities(String orcid, List<Long> ids);        
 

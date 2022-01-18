@@ -301,7 +301,9 @@ public class Utils {
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
         List<?> resultWithPutCode = (List<?>) map.get("Location");
-        return Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        String location = String.valueOf(resultWithPutCode.get(0));
+        int index=location.lastIndexOf('/');
+        return Long.valueOf(location.substring(index + 1));
     }
     
     public static GroupIdRecord getNonIssnGroupIdRecord() {

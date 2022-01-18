@@ -17,6 +17,7 @@
         <class>org.orcid.persistence.jpa.entities.IdentityProviderEntity</class>
         <class>org.orcid.persistence.jpa.entities.IdentityProviderNameEntity</class>
         <class>org.orcid.persistence.jpa.entities.MinimizedWorkEntity</class>
+        <class>org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationItemEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAddItemsEntity</class>
         <class>org.orcid.persistence.jpa.entities.NotificationAdministrativeEntity</class>

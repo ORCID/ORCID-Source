@@ -161,8 +161,8 @@ public class WebhookManagerImpl implements WebhookManager {
 
     @Override
     public void processWebhook(WebhookEntity webhook) {
-        String clientId = webhook.getClientDetails().getClientId();
-        String orcid = webhook.getProfile().getId();
+        String clientId = webhook.getClientDetailsId();
+        String orcid = webhook.getProfile();
         String uri = webhook.getUri();
 
         if (webhookMaxed(clientId)) {

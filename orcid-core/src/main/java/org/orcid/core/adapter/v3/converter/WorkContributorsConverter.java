@@ -11,6 +11,7 @@ import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.contributors.roles.works.LegacyWorkContributorRole;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
@@ -54,10 +55,13 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
     @Override
     public WorkContributors convertFrom(String source, Type<WorkContributors> destinationType) {
         WorkContributors workContributors = JsonUtils.readObjectFromJsonString(source, WorkContributors.class);
-        workContributors.getContributor().forEach(c -> c.setCreditName("".equals(c.getCreditName()) ? null : c.getCreditName()));
-
+        
         // convert role to API format
         workContributors.getContributor().forEach(c -> {
+            // Set the credit name
+            c.setCreditName((c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) ? null : c.getCreditName());
+            
+            // Set the contributor attributes
             if (c.getContributorAttributes() != null && c.getContributorAttributes().getContributorRole() != null) {
                 c.getContributorAttributes().setContributorRole(roleConverter.toRoleValue(c.getContributorAttributes().getContributorRole()));
             }

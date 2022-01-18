@@ -9,6 +9,9 @@ public enum Features implements Feature {
     @Label("Orcid Angular Works Contributors")
     ORCID_ANGULAR_WORKS_CONTRIBUTORS,
 
+    @Label("Orcid Angular Account settings ")
+    ORCID_ANGULAR_ACCOUNT_SETTINGS,
+
     @Label("Orcid Angular Public Page")
     ORCID_ANGULAR_PUBLIC_PAGE,
 
@@ -124,7 +127,10 @@ public enum Features implements Feature {
     TWO_FA_DEACTIVATE_EMAIL, 
     
     @Label("Promote a client from public client to be a member")
-    UPGRADE_PUBLIC_CLIENT,
+    UPGRADE_PUBLIC_CLIENT, 
+    
+    @Label("Allow members to delete their own elements even with revoked tokens")
+    ALLOW_DELETE_WITH_REVOKED_TOKENS,
     
     @Label("Stop caching works when doing bulk reads")
     READ_BULK_WORKS_DIRECTLY_FROM_DB;

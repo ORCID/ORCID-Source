@@ -30,11 +30,11 @@ import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
         @NamedNativeQuery(name = WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, query = "SELECT *  " + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE
                 + " ORDER BY w.profile_last_modified", resultClass = WebhookEntity.class) })
 @SqlResultSetMapping(name = "countMapping", columns = @ColumnResult(name = "webhook_count"))
-public class WebhookEntity extends BaseEntity<WebhookEntityPk> implements ProfileAware {
+public class WebhookEntity extends BaseEntity<WebhookEntityPk>  {
 
-    private ProfileEntity profile;
+    private String orcid;
     private String uri;
-    private ClientDetailsEntity clientDetails;
+    private String clientDetailsId;
     private Date lastSent;
     private Date profileLastModified;
     private Date lastFailed;
@@ -56,19 +56,17 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> implements Profil
     @Override
     @Transient
     public WebhookEntityPk getId() {
-        return new WebhookEntityPk(profile, uri);
+        return new WebhookEntityPk(orcid, uri);
     }
 
     @Id
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid")
+    public String getProfile() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        if (profile != null) this.profileLastModified = profile.getLastModified();
-        this.profile = profile;
+    public void setProfile(String orcid) {
+        this.orcid = orcid;
     }
 
     @Id
@@ -80,14 +78,13 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk> implements Profil
         this.uri = uri;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "client_details_id", nullable = false)
-    public ClientDetailsEntity getClientDetails() {
-        return clientDetails;
+    @Column(name = "client_details_id", nullable = false)
+    public String getClientDetailsId() {
+        return clientDetailsId;
     }
 
-    public void setClientDetails(ClientDetailsEntity clientDetails) {
-        this.clientDetails = clientDetails;
+    public void setClientDetailsId(String clientDetailsId) {
+        this.clientDetailsId = clientDetailsId;
     }
 
     @Column(name = "last_failed")

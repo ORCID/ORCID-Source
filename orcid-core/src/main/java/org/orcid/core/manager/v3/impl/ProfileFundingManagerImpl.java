@@ -261,7 +261,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         Source originalSource = SourceEntityUtils.extractSourceFromEntity(pfe, clientDetailsEntityCacheManager);
 
         activityValidator.validateFunding(funding, activeSOurce, false, isApiRequest, originalVisibility);
-        if (!isApiRequest) {
+        if (isApiRequest) {
             List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid, getLastModified(orcid));
             for (ProfileFundingEntity existingFunding : existingFundings) {
                 Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);

@@ -254,11 +254,7 @@ public class MemberV2ApiServiceDelegator_AddressesTest extends DBUnitTest {
         Response response = serviceDelegator.createAddress("4444-4444-4444-4442", Utils.getAddress());
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         response = serviceDelegator.viewAddress("4444-4444-4444-4442", putCode);
         assertNotNull(response);

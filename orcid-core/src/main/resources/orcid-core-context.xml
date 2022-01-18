@@ -975,6 +975,15 @@
         <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="true" />
     </bean>
+
+	<bean id="minimizedExtendedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="minimized-extended-work" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.minimizedExtendedWorkEntityCache.maxMegaBytesInMemory:512}" />
+		<property name="timeToIdleSeconds" value="600" />
+		<property name="maxMegaBytesOnDisk" value="0" />
+		<property name="copyValues" value="true" />
+	</bean>
     
     <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="full-work-entity" />
@@ -1119,6 +1128,14 @@
         <property name="timeToIdleSeconds" value="3600" />
         <property name="maxMegaBytesOnDisk" value="256" />
     </bean>
+
+	<bean id="groupedWorksExtendedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="grouped-works-extended" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="maxElementsInMemory" value="500" />
+		<property name="timeToIdleSeconds" value="3600" />
+		<property name="maxMegaBytesOnDisk" value="256" />
+	</bean>
     
     <bean id="groupingSuggestionsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="grouping-suggestions" />
@@ -1441,9 +1458,11 @@
 	<bean id="preferenceManager" class="org.orcid.core.manager.impl.PreferenceManagerImpl" />
 		
 	<bean id="worksCacheManager" class="org.orcid.core.manager.v3.impl.WorksCacheManagerImpl" />
+
+	<bean id="worksExtendedCacheManager" class="org.orcid.core.manager.v3.impl.WorksExtendedCacheManagerImpl" />
 	
 	<bean id="groupingSuggestionsCacheManager" class="org.orcid.core.manager.v3.impl.GroupingSuggestionsCacheManagerImpl" />
-	
+
 	<bean id="groupedWorksGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="groupedWorksCache" />
         <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
@@ -1451,8 +1470,16 @@
     </bean>
     
     <bean id="groupedWorksRetriever" class="org.orcid.core.cache.impl.GroupedWorksRetriever" />
-    
-    <bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
+
+	<bean id="groupedWorksExtendedGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+	    <property name="cache" ref="groupedWorksExtendedCache" />
+	    <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+	    <property name="retriever" ref="groupedWorksExtendedRetriever" />
+	</bean>
+
+	<bean id="groupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.GroupedWorksExtendedRetriever" />
+
+	<bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
 	
 	<bean id="apiAnalyticsTaskExecutor"
         class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">

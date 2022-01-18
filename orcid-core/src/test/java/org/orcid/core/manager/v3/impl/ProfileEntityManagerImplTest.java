@@ -34,6 +34,7 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -92,6 +93,9 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
+    @Resource(name="orcidOauth2TokenDetailDao")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
     @Mock
     private EmailFrequencyManager emailFrequencyManager;
@@ -372,6 +376,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         Mockito.verify(profileDao).disable2FA(Mockito.eq("some-orcid"));
     }
     
+    @Transactional
     private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
@@ -382,7 +387,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         token.setTokenExpiration(expirationDate);
         token.setTokenType("bearer");
         token.setTokenValue(tokenValue);
-        orcidOauth2TokenDetailService.saveOrUpdate(token);
+        orcidOauth2TokenDetailDao.persist(token);
         assertNotNull(token.getDateCreated());
         assertNotNull(token.getLastModified());
         return token;

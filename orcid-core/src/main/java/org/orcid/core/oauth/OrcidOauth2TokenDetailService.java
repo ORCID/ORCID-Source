@@ -1,6 +1,7 @@
 package org.orcid.core.oauth;
 
 import java.util.List;
+import java.util.Set;
 
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -16,12 +17,6 @@ public interface OrcidOauth2TokenDetailService {
     OrcidOauth2TokenDetail findNonDisabledByTokenValue(String token);
 
     OrcidOauth2TokenDetail findIgnoringDisabledByTokenValue(String token);
-
-    List<OrcidOauth2TokenDetail> getAll();
-
-    void saveOrUpdate(OrcidOauth2TokenDetail e);
-
-    Long getCount();    
 
     OrcidOauth2TokenDetail findByRefreshTokenValue(String refreshTokenValue);
 
@@ -82,5 +77,7 @@ public interface OrcidOauth2TokenDetailService {
     void disableAccessTokenByUserOrcid(String userOrcid, RevokeReason reason);
 
     void disableClientAccess(String clientDetailsId, String userOrcid);
+    
+    boolean updateScopes(String acessToken, Set<String> newScopes);
     
 }
