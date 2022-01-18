@@ -36,6 +36,7 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
@@ -523,9 +524,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
+        WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
+        
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, localeManager));
-        converterFactory.registerConverter("workContributorsConverterId", new WorkContributorsConverter(workContributorsRoleConverter));
+        converterFactory.registerConverter("workContributorsConverterId", wcc);
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
@@ -653,7 +656,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addV3CommonFields(workSummaryExtendedMinimizedClassMap);
         registerSourceConverters(mapperFactory, workSummaryExtendedMinimizedClassMap);
         workSummaryExtendedMinimizedClassMap.field("title.title.content", "title");
-        workSummaryExtendedMinimizedClassMap.fieldMap("contributors", "contributorsJson").converter("workContributorsConverterId").add();
+        
+        //TODO: Taking this out of the mapper, so, we can enable it and disable it with the TOGGLZ
+        //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, we can uncomment this line
+        //workSummaryExtendedMinimizedClassMap.fieldMap("contributors", "contributorsJson").converter("workContributorsConverterId").add();
         workSummaryExtendedMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryExtendedMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         workSummaryExtendedMinimizedClassMap.exclude("workType").exclude("journalTitle").customize(new CustomMapper<WorkSummaryExtended, MinimizedExtendedWorkEntity>() {
@@ -664,7 +670,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             public void mapAtoB(WorkSummaryExtended a, MinimizedExtendedWorkEntity b, MappingContext context) {
                 b.setWorkType(a.getType().name());
                 b.setJournalTitle(a.getJournalTitle() != null && a.getJournalTitle().getContent() != null ? a.getJournalTitle().getContent() : null);
-
+                
+                //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, this should be removed and the mapping should be done directly in the workSummaryExtendedMinimizedClassMap
+                if(Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
+                    if(a.getContributors() != null) {
+                        b.setContributorsJson(wcc.convertTo(a.getContributors(), TypeFactory.typeOf(b.getContributorsJson())));
+                    }
+                }
             }
 
             /**
@@ -674,6 +686,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             public void mapBtoA(MinimizedExtendedWorkEntity b, WorkSummaryExtended a, MappingContext context) {
                 a.setType(WorkType.valueOf(b.getWorkType()));
                 a.setJournalTitle(b.getJournalTitle() != null && !b.getJournalTitle().isEmpty() ? new Title(b.getJournalTitle()) : null);
+                
+                //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, this should be removed and the mapping should be done directly in the workSummaryExtendedMinimizedClassMap
+                if(Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
+                    if(!PojoUtil.isEmpty(b.getContributorsJson())) {
+                        a.setContributors(wcc.convertFrom(b.getContributorsJson(), TypeFactory.typeOf(a.getContributors())));
+                    }
+                }
             }
 
         });
