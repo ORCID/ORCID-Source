@@ -49,6 +49,7 @@ import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.pojo.grouping.WorkGroupingSuggestions;
 import org.orcid.pojo.grouping.WorkGroupingSuggestionsCount;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -99,6 +100,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     PIDResolverService resolverService;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
 
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody ArrayList<Long> removeWork(@PathVariable("workIdsStr") String workIdsStr) {
@@ -299,7 +303,7 @@ public class WorksController extends BaseWorkspaceController {
         Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId);
 
         if (work != null) {
-            WorkForm workForm = WorkForm.valueOf(work);
+            WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
             if (workForm.getPublicationDate() == null) {
                 initializePublicationDate(workForm);
             } else {
@@ -1024,7 +1028,7 @@ public class WorksController extends BaseWorkspaceController {
         if (w == null) {
             return null;
         }
-        WorkForm workForm = WorkForm.valueOf(w);
+        WorkForm workForm = WorkForm.valueOf(w, maxContributorsForUI);
         initializeFields (workForm);
         validateWork(workForm);
         return workForm;

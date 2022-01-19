@@ -13,6 +13,7 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
@@ -156,12 +157,17 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<MinimizedExtendedWorkEntity> works = workEntityCacheManager.retrieveMinimizedExtendedWorks(orcid, getLastModified(orcid));
         List<WorkSummaryExtended> wseList = jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
         // Filter the contributors list
-        for(WorkSummaryExtended wse : wseList) {
-            if(wse.getContributors() != null) {
-                // Keep track of the real number of contributors
-                wse.setRealNumberOfContributors(wse.getContributors().getContributor().size());
-                // Truncate the contributors list and leave only the maxContributorsForUI first elements
-                // TODO: Add the truncation logic here
+        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
+            for(WorkSummaryExtended wse : wseList) {
+                if(wse.getContributors() != null) {
+                    // Keep track of the real number of contributors
+                    wse.setRealNumberOfContributors(wse.getContributors().getContributor().size());
+                    // Truncate the contributors list and leave only the maxContributorsForUI first elements
+                    if (wse.getRealNumberOfContributors() > maxContributorsForUI) {
+                        List<Contributor> newContributorsList = new ArrayList<>(wse.getContributors().getContributor().subList(0, maxContributorsForUI));
+                        wse.setContributors(new WorkContributors(newContributorsList));
+                    }
+                }
             }
         }
         return wseList;
