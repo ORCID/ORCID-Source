@@ -36,11 +36,13 @@ import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;
 
 public class WorkFormTest extends XMLTestCase {
-    
+
+    private int maxContributorsForUI = 50;
+
     @Test
     public void testValueOfAndBack() throws Exception {  
         Work work = getWork();
-        WorkForm workForm = WorkForm.valueOf(work);
+        WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
         Work backToWork = workForm.toWork();        
         assertEquals(work, backToWork);        
     }
@@ -48,7 +50,7 @@ public class WorkFormTest extends XMLTestCase {
     @Test
     public void testSerializeWork() throws Exception {
         Work work = getWork();
-        WorkForm workForm =  WorkForm.valueOf(work);
+        WorkForm workForm =  WorkForm.valueOf(work, maxContributorsForUI);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(workForm);

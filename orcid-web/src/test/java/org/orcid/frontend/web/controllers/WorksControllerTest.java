@@ -78,6 +78,8 @@ public class WorksControllerTest extends BaseControllerTest {
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
 
+    private int maxContributorsForUI = 50;
+
     private String _5000chars = null;
 
     @BeforeClass
@@ -174,7 +176,7 @@ public class WorksControllerTest extends BaseControllerTest {
     @Test
     public void testFieldValidators() throws Exception {
         Work work = WorkFormTest.getWork();
-        WorkForm workForm = WorkForm.valueOf(work);
+        WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
 
         worksController.workTitleValidate(workForm);
         assertEquals(0, workForm.getTitle().getErrors().size());
