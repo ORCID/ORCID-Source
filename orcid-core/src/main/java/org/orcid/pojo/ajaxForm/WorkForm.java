@@ -401,7 +401,10 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
         }
         workForm.setContributors(contributorsList);
-        workForm.setRealNumberOfContributors(work.getWorkContributors().getContributor().size());
+        
+        if (work.getWorkContributors() != null) {
+            workForm.setRealNumberOfContributors(work.getWorkContributors().getContributor().size());    
+        }       
     }
     
     private static void populateContributors(WorkForm workForm, Work work) {
