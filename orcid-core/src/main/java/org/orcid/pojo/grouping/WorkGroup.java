@@ -225,6 +225,7 @@ public class WorkGroup extends ActivityGroup {
             }
         }
         workForm.setContributors(contributorsList);
+        workForm.setRealNumberOfContributors(workSummary.getRealNumberOfContributors());
         return workForm;
     }
 

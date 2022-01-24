@@ -59,6 +59,7 @@ import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.orcid.pojo.grouping.WorkGroup;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -123,6 +124,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
 
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
@@ -440,7 +444,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Work workObj = workManagerReadOnly.getWork(orcid, workId);
         if (workObj != null && validateVisibility(workObj.getVisibility())) {
             sourceUtils.setSourceName(workObj);
-            WorkForm work = WorkForm.valueOf(workObj);
+            WorkForm work = WorkForm.valueOf(workObj, maxContributorsForUI);
             // Set country name
             if (!PojoUtil.isEmpty(work.getCountryCode())) {
                 Text countryName = Text.valueOf(retrieveIsoCountries().get(work.getCountryCode().getValue()));

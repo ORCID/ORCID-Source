@@ -55,6 +55,8 @@ public class WorkFormTest {
 
     private DatatypeFactory datatypeFactory = null;
 
+    private int maxContributorsForUI = 50;
+
     @Before
     public void before() {
         try {
@@ -84,7 +86,7 @@ public class WorkFormTest {
     @Test
     public void toWorkFormTest() {
         Work work = getWork();
-        WorkForm form = WorkForm.valueOf(work);
+        WorkForm form = WorkForm.valueOf(work, maxContributorsForUI);
         assertEquals(getWorkForm(), form);
     }
 

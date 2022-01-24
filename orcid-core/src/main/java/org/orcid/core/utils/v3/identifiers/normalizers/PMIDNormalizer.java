@@ -14,7 +14,7 @@ public class PMIDNormalizer implements Normalizer {
 
     private static final List<String> canHandle = Lists.newArrayList("pmid");
     //only match numbers that don't end in a . or -
-    private static final Pattern pattern = Pattern.compile("(?:^\\s*|PMID:?\\s*|pubmed\\/|med\\/)(\\d+)(?:$|[^a-zA-Z0-9\\.\\-])",Pattern.CASE_INSENSITIVE);
+    private static final Pattern pattern = Pattern.compile("(?:^\\s*|PMID:?\\s*|pubmed\\/|med\\/|pubmed.ncbi.nlm.nih.gov\\/)(\\d+)(?:$|[^a-zA-Z0-9\\.\\-])",Pattern.CASE_INSENSITIVE);
     
     @Override
     public List<String> canHandle() {
