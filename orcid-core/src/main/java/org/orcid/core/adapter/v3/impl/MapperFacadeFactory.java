@@ -40,6 +40,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.client.Client;
@@ -185,6 +186,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource(name = "PIDNormalizationService")
     private PIDNormalizationService norm;
 
+    @Resource(name = "PIDResolverService")
+    private PIDResolverService resolverService;
+    
     @Resource
     private LocaleManager localeManager;
     
@@ -527,7 +531,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, localeManager));
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
         converterFactory.registerConverter("workContributorsConverterId", wcc);
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
@@ -954,7 +958,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, localeManager));
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
         converterFactory.registerConverter("workExternalIdentifierConverterId", new JSONPeerReviewWorkExternalIdentifierConverterV3());
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
         converterFactory.registerConverter("orgConverter", new OrgConverter());
@@ -1018,7 +1022,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         registerOrgClassMappings(mapperFactory);
         
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, localeManager));
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
         mapFuzzyDateToStartDateEntityAndEndDateEntity(mapperFactory);
 
