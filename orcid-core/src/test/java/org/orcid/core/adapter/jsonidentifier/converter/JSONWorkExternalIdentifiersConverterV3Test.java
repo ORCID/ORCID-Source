@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
@@ -37,12 +38,14 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     @Resource
     PIDNormalizationService norm;
     @Resource
+    PIDResolverService resolver;
+    @Resource
     LocaleManager localeManager;
     private JSONWorkExternalIdentifiersConverterV3 converter;
 
     @Before
     public void initMocks(){
-        converter = new JSONWorkExternalIdentifiersConverterV3(norm,localeManager);
+        converter = new JSONWorkExternalIdentifiersConverterV3(norm, resolver, localeManager);
     }
     
     @Test

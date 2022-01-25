@@ -30,6 +30,7 @@ import org.orcid.core.manager.v3.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -92,6 +93,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     
     @Resource
     private PIDNormalizationService norm;
+
+    @Resource
+    private PIDResolverService resolver;
     
     private Integer maxWorksToWrite;
     
@@ -419,7 +423,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Override
     public void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
-        JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, localeManager);
+        JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, resolver, localeManager);
         ExternalIDs allExternalIDs = new ExternalIDs();
         List<MinimizedWorkEntity> userVersions = new ArrayList<>();
         MinimizedWorkEntity userPreferred = null;
