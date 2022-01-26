@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
@@ -696,6 +697,12 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new DuplicatedGroupIdRecordException();
         }
         
+        String escapedGroupName = StringEscapeUtils.escapeJava(groupIdRecord.getName());
+        String filteredName = escapedGroupName.replaceAll("(\\u0098|\\u009C", "");
+        if (filteredName != escapedGroupName) {
+            groupIdRecord.setName(StringEscapeUtils.unescapeJava(filteredName));
+        }
+
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         return apiUtils.buildApiResponse(null, "group-id-record", String.valueOf(newRecord.getPutCode()), "apiError.creategroupidrecord_response.exception");
     }
