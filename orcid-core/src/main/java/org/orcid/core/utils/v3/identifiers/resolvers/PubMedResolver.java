@@ -107,6 +107,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
             // Read JSON response and print
             JSONObject json = new JSONObject(response.toString());
+            
             if (json != null) {
                 return getWork(json);
             }
