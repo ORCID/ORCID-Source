@@ -357,4 +357,5 @@
   <include file="/db/updates/dw_work_external_ids.xml"/>
   <include file="/db/updates/identifier-types/identifier-type-47-ismn.xml" />
   <include file="/db/updates/identifier-types/update-pmid-resolution-prefix.xml" />
+  <include file="/db/updates/identifier-types/update-pmc-resolution-prefix.xml" />
 </databaseChangeLog>

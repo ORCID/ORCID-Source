@@ -107,7 +107,6 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
             // Read JSON response and print
             JSONObject json = new JSONObject(response.toString());
-
             if (json != null) {
                 return getWork(json);
             }
@@ -124,6 +123,9 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     // returns PID without prefix or URL etc
     private String getPubMedEndpoint(String apiTypeName, String userInput) {
         String normalised = normalizationService.normalise(apiTypeName, userInput);
+        if (apiTypeName.equals("pmc")) {
+            normalised = "PMC" + normalised;            
+        }
         String endpoint = metadataEndpoint.replace("{id}", normalised);
         if (apiTypeName.equals("pmid")) {
             return endpoint.replace("{type}", "EXT_ID");
