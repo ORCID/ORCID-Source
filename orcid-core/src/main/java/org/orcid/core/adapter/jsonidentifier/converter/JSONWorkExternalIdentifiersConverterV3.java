@@ -9,6 +9,7 @@ import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.release.common.TransientError;
@@ -16,6 +17,7 @@ import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -24,11 +26,13 @@ import ma.glasnost.orika.metadata.Type;
 public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConverter<ExternalIDs, String> {
 
     private PIDNormalizationService norm;
+    private PIDResolverService resolverService;
     private LocaleManager localeManager;
     
-    public JSONWorkExternalIdentifiersConverterV3(PIDNormalizationService norm, LocaleManager localeManager){
-        this.norm=norm;
-        this.localeManager=localeManager;
+    public JSONWorkExternalIdentifiersConverterV3(PIDNormalizationService norm, PIDResolverService resolverService, LocaleManager localeManager) {
+        this.norm = norm;
+        this.resolverService = resolverService;
+        this.localeManager = localeManager;
     }
     
     private ExternalIdentifierTypeConverter conv = new ExternalIdentifierTypeConverter();
@@ -86,8 +90,17 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
                     if (urlValidator.isValid(workExternalIdentifier.getUrl().getValue())){
                         id.setNormalizedUrl(new TransientNonEmptyString(workExternalIdentifier.getUrl().getValue()));
                     }                    
+                } else {
+                    try {
+                        PIDResolutionResult pdr = resolverService.resolve(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content); 
+                        if (pdr.isResolved()) {
+                            id.setNormalizedUrl(new TransientNonEmptyString(pdr.getGeneratedUrl()));
+                        }                       
+                    } catch (IllegalArgumentException iae) {
+
+                    }
                 }
-               
+
                 if (id.getNormalizedUrl() == null || StringUtils.isEmpty(id.getNormalizedUrl().getValue())){
                     id.setNormalizedUrlError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
                 }
