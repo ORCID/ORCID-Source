@@ -13,7 +13,7 @@ import com.google.common.collect.Lists;
 public class PMCNormalizer implements Normalizer {
 
     private static final List<String> canHandle = Lists.newArrayList("pmc");
-    private static final Pattern pattern = Pattern.compile("(?:^|[Pp][Mm][Cc]-?)\\s*(\\d{5,9}(?!.+PMC))(?:$|\\b)");
+    private static final Pattern pattern = Pattern.compile("(?:^|[Pp][Mm][Cc]-?\\/?)\\s*(\\d{5,9}(?!.+PMC))(?:$|\\b)");
     
     @Override
     public List<String> canHandle() {
@@ -28,7 +28,7 @@ public class PMCNormalizer implements Normalizer {
         if (m.find()){
             String n = m.group(1);
             if (n != null){
-                return "PMC"+n;
+                return n;
             }
         }
         return "";
