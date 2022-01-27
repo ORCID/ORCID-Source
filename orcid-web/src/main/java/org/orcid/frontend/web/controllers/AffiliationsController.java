@@ -472,12 +472,12 @@ public class AffiliationsController extends BaseWorkspaceController {
                 }
                 
                 if ("".equals(affiliationForm.getEndDate().getDay())) {
-                    affiliationForm.getEndDate().setDay("01");
+                    affiliationForm.getEndDate().setDay("31");
                     removeEndDateDay = true;
                 }
                 
                 if ("".equals(affiliationForm.getEndDate().getMonth())) {
-                    affiliationForm.getEndDate().setMonth("01");
+                    affiliationForm.getEndDate().setMonth("12");
                     removeEndDateMonth = true;
                 }            
 
