@@ -22,7 +22,7 @@
 		        <@emailMacros.msg "email.new_claim_reminder.review.1" /><@emailMacros.space />${creatorName}<@emailMacros.space /><@emailMacros.msg "email.new_claim_reminder.review.2" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		  		<a href="${verificationUrl}?lang=${locale}">${verificationUrl}</a>
+		  		<a id="verificationUrl" href="${verificationUrl}?lang=${locale}">${verificationUrl}</a>
 		    </p>		    
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 		        <@emailMacros.msg "email.api_record_creation.what_is_orcid" />
