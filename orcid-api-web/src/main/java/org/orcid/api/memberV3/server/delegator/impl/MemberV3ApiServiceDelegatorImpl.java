@@ -696,13 +696,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
             groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupIdRecord.getGroupId(), IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(groupIdRecord.getGroupId()));
             throw new DuplicatedGroupIdRecordException();
         }
-        
-        String escapedGroupName = StringEscapeUtils.escapeJava(groupIdRecord.getName());
-        String filteredName = escapedGroupName.replaceAll("(\\u0098|\\u009C", "");
-        if (filteredName != escapedGroupName) {
-            groupIdRecord.setName(StringEscapeUtils.unescapeJava(filteredName));
-        }
-
+        // filter out invisible control characters such as \u0098
+        groupIdRecord.setName(groupIdRecord.getName().replaceAll("\\p{C}", ""));
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         return apiUtils.buildApiResponse(null, "group-id-record", String.valueOf(newRecord.getPutCode()), "apiError.creategroupidrecord_response.exception");
     }
@@ -713,6 +708,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         if (!putCode.equals(groupIdRecord.getPutCode())) {
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, groupIdRecord.getPutCode()));                            
         }
+        // filter out invisible control characters such as \u0098
+        groupIdRecord.setName(groupIdRecord.getName().replaceAll("\\p{C}", ""));
         GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
         return Response.ok(updatedRecord).build();
     }

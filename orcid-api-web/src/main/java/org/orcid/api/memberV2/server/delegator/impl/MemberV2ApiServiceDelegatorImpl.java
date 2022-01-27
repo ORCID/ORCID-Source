@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.ElementUtils;
@@ -641,7 +642,8 @@ public class MemberV2ApiServiceDelegatorImpl implements
             groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupIdRecord.getGroupId(), matcher.group(1));
             throw new DuplicatedGroupIdRecordException();
         }
-        
+        // filter out invisible control characters such as \u0098
+        groupIdRecord.setName(groupIdRecord.getName().replaceAll("\\p{C}", ""));
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         return apiUtils.buildApiResponse(null, "group-id-record", String.valueOf(newRecord.getPutCode()), "apiError.creategroupidrecord_response.exception");
     }
@@ -655,6 +657,8 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(groupIdRecord.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
+        // filter out invisible control characters such as \u0098
+        groupIdRecord.setName(groupIdRecord.getName().replaceAll("\\p{C}", ""));
         GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
         return Response.ok(updatedRecord).build();
     }
