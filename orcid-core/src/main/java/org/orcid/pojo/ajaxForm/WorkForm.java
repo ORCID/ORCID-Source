@@ -52,6 +52,14 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     private int realNumberOfContributors;
 
+    protected List<String> contributorsGroupedByName;
+
+    protected int numberOfContributorsGroupedByName;
+
+    protected List<String> contributorsGroupedByOrcid;
+
+    protected int numberOfContributorsGroupedByOrcid;
+
     private List<ActivityExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
 
     private String source;
@@ -401,7 +409,6 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
         }
         workForm.setContributors(contributorsList);
-        
         if (work.getWorkContributors() != null) {
             workForm.setRealNumberOfContributors(work.getWorkContributors().getContributor().size());    
         }       
@@ -649,6 +656,38 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     public void setRealNumberOfContributors(int realNumberOfContributors) {
         this.realNumberOfContributors = realNumberOfContributors;
+    }
+
+    public List<String> getContributorsGroupedByName() {
+        return contributorsGroupedByName;
+    }
+
+    public void setContributorsGroupedByName(List<String> contributorsGroupedByName) {
+        this.contributorsGroupedByName = contributorsGroupedByName;
+    }
+
+    public int getNumberOfContributorsGroupedByName() {
+        return numberOfContributorsGroupedByName;
+    }
+
+    public void setNumberOfContributorsGroupedByName(int numberOfContributorsGroupedByName) {
+        this.numberOfContributorsGroupedByName = numberOfContributorsGroupedByName;
+    }
+
+    public List<String> getContributorsGroupedByOrcid() {
+        return contributorsGroupedByOrcid;
+    }
+
+    public void setContributorsGroupedByOrcid(List<String> contributorsGroupedByOrcid) {
+        this.contributorsGroupedByOrcid = contributorsGroupedByOrcid;
+    }
+
+    public int getNumberOfContributorsGroupedByOrcid() {
+        return numberOfContributorsGroupedByOrcid;
+    }
+
+    public void setNumberOfContributorsGroupedByOrcid(int numberOfContributorsGroupedByOrcid) {
+        this.numberOfContributorsGroupedByOrcid = numberOfContributorsGroupedByOrcid;
     }
 
     public List<ActivityExternalIdentifier> getWorkExternalIdentifiers() {
