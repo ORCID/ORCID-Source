@@ -601,8 +601,35 @@ public class FundingsController extends BaseWorkspaceController {
         }            
         
         if (!hasError && !PojoUtil.isEmpty(funding.getStartDate()) && !PojoUtil.isEmpty(funding.getEndDate())) {
-            if (funding.getStartDate().toJavaDate().after(funding.getEndDate().toJavaDate()))
-                setError(funding.getEndDate(), "fundings.endDate.after");
+            if ("".equals(funding.getStartDate().getMonth()) || "".equals(funding.getEndDate().getMonth())) {
+                boolean removeStartDateMonth = false;
+                boolean removeEndDateMonth = false;
+
+                if ("".equals(funding.getStartDate().getMonth())) {
+                    funding.getStartDate().setMonth("01");
+                    removeStartDateMonth = true;
+                }
+
+                if ("".equals(funding.getEndDate().getMonth())) {
+                    funding.getEndDate().setMonth("12");
+                    removeEndDateMonth = true;
+                }
+
+                if (funding.getStartDate().toJavaDate().after(funding.getEndDate().toJavaDate()))
+                    setError(funding.getEndDate(), "fundings.endDate.after");
+
+                if (removeStartDateMonth) {
+                    funding.getStartDate().setMonth("");
+                }
+
+                if (removeEndDateMonth) {
+                    funding.getEndDate().setMonth("");
+                }
+
+            } else {
+                if (funding.getStartDate().toJavaDate().after(funding.getEndDate().toJavaDate()))
+                    setError(funding.getEndDate(), "fundings.endDate.after");
+            }
         }
         return funding;
     }
