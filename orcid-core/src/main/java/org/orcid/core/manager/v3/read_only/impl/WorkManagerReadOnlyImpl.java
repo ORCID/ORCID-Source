@@ -24,6 +24,7 @@ import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
@@ -57,11 +58,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private GroupingSuggestionManager groupingSuggestionsManager;
 
-    @Value("${org.orcid.core.work.contributors.ui.summary.max:10}")
-    private int maxContributorsForUISummary;
-
-    @Value("${org.orcid.core.work.contributors.ui.details.max:50}")
-    private int maxContributorsForUIDetails;
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
     
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
         this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
@@ -164,71 +162,28 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
             for(WorkSummaryExtended wse : wseList) {
                 if(wse.getContributors() != null) {
-
-                    List<String> contributorsGroupedByName = getNumberOfContributorsGroupedByName(wse.getContributors().getContributor());                   
-                    wse.setContributorsGroupedByName(contributorsGroupedByName);                 
-                    wse.setNumberOfContributorsGroupedByName(contributorsGroupedByName.size());
-                    // read class and fill with String combining sequences and roles
-                    List<String> contributorsGroupedByOrcid = new ArrayList<>();
-                    List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = getContributorsGroupedByOrcid(wse.getContributors().getContributor());
-                    contributorsRolesAndSequencesList.forEach(contributorsRolesAndSequences -> {
-                        StringBuffer sb = new StringBuffer();
-                        sb.append(contributorsRolesAndSequences.getOrcid());
-                        sb.append(contributorsRolesAndSequences.getCreditName());
-                        sb.append(contributorsRolesAndSequences.getEmail());
-                        sb.append(contributorsRolesAndSequences.getUri());
-                        contributorsRolesAndSequences.getRolesAndSequences().forEach(rolesAndSequences -> {
-                            sb.append(rolesAndSequences.getContributorRole());
-                            sb.append(rolesAndSequences.getContributorSequence());
-                        });
-                        contributorsGroupedByOrcid.add(sb.toString());
-                    });
-                   
-                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);                  
-                    wse.setNumberOfContributorsGroupedByOrcid(contributorsGroupedByOrcid.size());
-                    // Keep track of the real number of contributors
-                    wse.setRealNumberOfContributors(wse.getContributors().getContributor().size());
-                    // Truncate the contributors list and leave only the maxContributorsForUI first elements
-                    if (wse.getRealNumberOfContributors() > maxContributorsForUISummary) {
-                        List<Contributor> newContributorsList = new ArrayList<>(wse.getContributors().getContributor().subList(0, maxContributorsForUISummary));
-                        wse.setContributors(new WorkContributors(newContributorsList));
+                    List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = getContributorsGroupedByOrcid(wse.getContributors().getContributor());
+                    if (contributorsGroupedByOrcid.size() > maxContributorsForUI) {
+                        wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid.subList(0, maxContributorsForUI));
+                    } else {
+                        wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
                     }
+                    wse.setNumberOfContributorsGroupedByOrcid(contributorsGroupedByOrcid.size());
                 }
             }
         }
         return wseList;
     }
 
-    private List<String> getNumberOfContributorsGroupedByName(List<Contributor> contributors) {
-        List<String> contributorGroupedByName = new ArrayList<>();
-        contributors.forEach(contributor -> {
-            if (contributorGroupedByName.size() == maxContributorsForUISummary) {
-                return;
-            }
-            if (contributor.getCreditName() != null) {
-                String creditName = contributor.getCreditName().getContent();
-                if (!"".equals(creditName)) {
-                    if (!contributorGroupedByName.contains(creditName)) {
-                        contributorGroupedByName.add(creditName);
-                    }
-                }
-            }
-        });
-        return contributorGroupedByName;
-    }
-
     private List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid(List<Contributor> contributors) {
         List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
         contributors.forEach(contributor -> {
-            if (contributorsRolesAndSequencesList.size() == maxContributorsForUIDetails) {
-                return;
-            }
             if (contributor.getContributorOrcid() != null) {
                 String orcid = contributor.getContributorOrcid().getPath();
                 if (!"".equals(orcid)) {
                     if (contributorsRolesAndSequencesList.size() > 0) {
                         contributorsRolesAndSequencesList.forEach(contributorsRolesAndSequences -> {
-                            if (orcid.equals(contributorsRolesAndSequences.orcid)) {
+                            if (orcid.equals(contributorsRolesAndSequences.getContributorOrcid().getPath())) {
                                 ContributorAttributes ca = new ContributorAttributes();
                                 ca.setContributorRole(contributor.getContributorAttributes().getContributorRole());
                                 ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
@@ -251,14 +206,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     private ContributorsRolesAndSequences addContributor(Contributor contributor) {
         ContributorsRolesAndSequences crs = new ContributorsRolesAndSequences();
         if (contributor.getContributorOrcid() != null) {
-            crs.setOrcid(contributor.getContributorOrcid().getPath());
-            crs.setOrcid(contributor.getContributorOrcid().getUri());
+            crs.setContributorOrcid(contributor.getContributorOrcid());
         }
         if (contributor.getCreditName() != null) {
-            crs.setCreditName(contributor.getCreditName().getContent());
+            crs.setCreditName(contributor.getCreditName());
         }
         if (contributor.getContributorEmail() != null) {
-            crs.setCreditName(contributor.getContributorEmail().getValue());
+            crs.setContributorEmail(contributor.getContributorEmail());
         }     
         if (contributor.getContributorAttributes() != null) {
             ContributorAttributes ca = new ContributorAttributes();
@@ -480,52 +434,4 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         return result;
     }
 
-}
-
-class ContributorsRolesAndSequences {
-    String orcid = "";
-    String email = "";
-    String creditName = "";
-    String uri = "";
-    List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
-
-    public String getOrcid() {
-        return orcid;
-    }
-
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getCreditName() {
-        return creditName;
-    }
-
-    public void setCreditName(String creditName) {
-        this.creditName = creditName;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    public List<ContributorAttributes> getRolesAndSequences() {
-        return rolesAndSequences;
-    }
-
-    public void setRolesAndSequences(List<ContributorAttributes> rolesAndSequences) {
-        this.rolesAndSequences = rolesAndSequences;
-    }
 }

@@ -10,11 +10,8 @@ public class WorkSummaryExtended extends WorkSummary {
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkContributors contributors;
     
-    protected int realNumberOfContributors;
-    protected List<String> contributorsGroupedByName;
-    protected int numberOfContributorsGroupedByName;
     protected int numberOfContributorsGroupedByOrcid;
-    protected List<String> contributorsGroupedByOrcid;
+    protected List<ContributorsRolesAndSequences> contributorsGroupedByOrcid;
 
     public WorkContributors getContributors() {
         return contributors;
@@ -24,35 +21,11 @@ public class WorkSummaryExtended extends WorkSummary {
         this.contributors = contributors;
     }
 
-    public int getRealNumberOfContributors() {
-        return realNumberOfContributors;
-    }
-
-    public void setRealNumberOfContributors(int realNumberOfContributors) {
-        this.realNumberOfContributors = realNumberOfContributors;
-    }
-
-    public List<String> getContributorsGroupedByName() {
-        return contributorsGroupedByName;
-    }
-
-    public void setContributorsGroupedByName(List<String> contributorsGroupedByName) {
-        this.contributorsGroupedByName = contributorsGroupedByName;
-    }
-
-    public int getNumberOfContributorsGroupedByName() {
-        return numberOfContributorsGroupedByName;
-    }
-
-    public void setNumberOfContributorsGroupedByName(int numberOfContributorsGroupedByName) {
-        this.numberOfContributorsGroupedByName = numberOfContributorsGroupedByName;
-    }
-
-    public List<String> getContributorsGroupedByOrcid() {
+    public List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid() {
         return contributorsGroupedByOrcid;
     }
 
-    public void setContributorsGroupedByOrcid(List<String> contributorsGroupedByOrcid) {
+    public void setContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> contributorsGroupedByOrcid) {
         this.contributorsGroupedByOrcid = contributorsGroupedByOrcid;
     }
 
