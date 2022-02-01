@@ -215,17 +215,8 @@ public class WorkGroup extends ActivityGroup {
         WorkForm.populateExternalIdentifiers(workSummary.getExternalIdentifiers(), workForm, workSummary.getType());
         workForm.setCreatedDate(Date.valueOf(workSummary.getCreatedDate()));
         workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));
-        List<Contributor> contributorsList = new ArrayList<Contributor>();
-        if(workSummary.getContributors() != null) {
-            org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = workSummary.getContributors();
-            if (contributors != null) {
-                for (org.orcid.jaxb.model.v3.release.common.Contributor contributor : contributors.getContributor()) {
-                    contributorsList.add(Contributor.valueOf(contributor));
-                }
-            }
-        }
-        workForm.setContributors(contributorsList);
-        workForm.setRealNumberOfContributors(workSummary.getRealNumberOfContributors());
+        workForm.setContributorsGroupedByOrcid(workSummary.getContributorsGroupedByOrcid());
+        workForm.setNumberOfContributorsGroupedByOrcid(workSummary.getNumberOfContributorsGroupedByOrcid());
         return workForm;
     }
 

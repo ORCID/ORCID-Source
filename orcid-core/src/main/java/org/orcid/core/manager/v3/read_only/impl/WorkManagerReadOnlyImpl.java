@@ -182,16 +182,21 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 String orcid = contributor.getContributorOrcid().getPath();
                 if (!"".equals(orcid)) {
                     if (contributorsRolesAndSequencesList.size() > 0) {
-                        contributorsRolesAndSequencesList.forEach(contributorsRolesAndSequences -> {
-                            if (orcid.equals(contributorsRolesAndSequences.getContributorOrcid().getPath())) {
-                                ContributorAttributes ca = new ContributorAttributes();
-                                ca.setContributorRole(contributor.getContributorAttributes().getContributorRole());
-                                ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
-                                List<ContributorAttributes> rolesAndSequencesList = contributorsRolesAndSequences.getRolesAndSequences();
-                                rolesAndSequencesList.add(ca);
-                                contributorsRolesAndSequences.setRolesAndSequences(rolesAndSequencesList);
-                            }
-                        });
+                        List<ContributorsRolesAndSequences> c = contributorsRolesAndSequencesList
+                            .stream()
+                            .filter(contr -> contr.getContributorOrcid() != null && orcid.equals(contr.getContributorOrcid().getPath()))                                                                        
+                            .collect(Collectors.toList());
+                        if (c.size() > 0) {
+                            ContributorsRolesAndSequences contributorsRolesAndSequences = c.get(0);
+                            ContributorAttributes ca = new ContributorAttributes();
+                            ca.setContributorRole(contributor.getContributorAttributes().getContributorRole());
+                            ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+                            List<ContributorAttributes> rolesAndSequencesList = contributorsRolesAndSequences.getRolesAndSequences();
+                            rolesAndSequencesList.add(ca);
+                            contributorsRolesAndSequences.setRolesAndSequences(rolesAndSequencesList);
+                        } else {
+                            contributorsRolesAndSequencesList.add(addContributor(contributor));
+                        }
                     } else {
                         contributorsRolesAndSequencesList.add(addContributor(contributor));
                     }
