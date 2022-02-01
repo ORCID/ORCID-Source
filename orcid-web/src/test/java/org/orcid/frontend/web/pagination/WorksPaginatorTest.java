@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -41,6 +44,7 @@ import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
@@ -120,7 +124,7 @@ public class WorksPaginatorTest {
         Mockito.when(worksExtendedCacheManager.getGroupedWorksExtended(Mockito.anyString())).thenReturn(get1000PublicWorkGroupsExtended());
         Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorksPaginator.DATE_SORT_KEY, true);
         assertEquals(pageSize, page.getGroups().size());
-        assertEquals(2, page.getGroups().get(0).getWorks().get(0).getContributors().size());
+        assertEquals(1, page.getGroups().get(0).getWorks().get(0).getContributorsGroupedByOrcid().size());
         org.orcid.pojo.grouping.WorkGroup workGroupPage1 = page.getGroups().get(0);
 
         Page<org.orcid.pojo.grouping.WorkGroup> page2 = worksPaginator.getWorksExtendedPage("orcid", page.getNextOffset(), pageSize, false, WorksPaginator.DATE_SORT_KEY, true);
@@ -153,7 +157,7 @@ public class WorksPaginatorTest {
         Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, true, WorksPaginator.DATE_SORT_KEY, true);
         assertFalse(pageSize == page.getGroups().size());
         assertTrue((pageSize / 2) == page.getGroups().size());
-        assertEquals(2, page.getGroups().get(0).getWorks().get(0).getContributors().size());
+        assertEquals(1, page.getGroups().get(0).getWorks().get(0).getContributorsGroupedByOrcid().size());
 
         for (org.orcid.pojo.grouping.WorkGroup workGroup : page.getGroups()) {
             for (WorkForm workForm : workGroup.getWorks()) {
@@ -358,6 +362,7 @@ public class WorksPaginatorTest {
             workSummary.setSource(getSource());
             workSummary.setType(WorkType.EDITED_BOOK);
             workSummary.setContributors(getWorkContributors());
+            workSummary.setContributorsGroupedByOrcid(getContributorsGroupedByOrcid());
             workGroup.getWorkSummary().add(workSummary);
         }
         return workGroup;
@@ -377,9 +382,19 @@ public class WorksPaginatorTest {
             workSummary.setSource(getSource());
             workSummary.setType(WorkType.EDITED_BOOK);
             workSummary.setContributors(getWorkContributors());
+            workSummary.setContributorsGroupedByOrcid(getContributorsGroupedByOrcid());
             workGroup.getWorkSummary().add(workSummary);
         }
         return workGroup;
+    }
+
+    private List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid() {
+        ContributorsRolesAndSequences contributorsRolesAndSequences = new ContributorsRolesAndSequences();
+        contributorsRolesAndSequences.setContributorOrcid(getContributor(CreditRole.FUNDING_ACQUISITION.value()).getContributorOrcid());
+        contributorsRolesAndSequences.setCreditName(getContributor(CreditRole.FUNDING_ACQUISITION.value()).getCreditName());
+        contributorsRolesAndSequences.setContributorEmail(getContributor(CreditRole.FUNDING_ACQUISITION.value()).getContributorEmail());
+        contributorsRolesAndSequences.setRolesAndSequences(Arrays.asList(getContributor(CreditRole.FUNDING_ACQUISITION.value()).getContributorAttributes()));
+        return Arrays.asList(contributorsRolesAndSequences);
     }
 
     private WorkContributors getWorkContributors() {
