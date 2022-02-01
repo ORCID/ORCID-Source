@@ -18,6 +18,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +51,9 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     private List<Contributor> contributors;
 
-    private int realNumberOfContributors;
+    private List<ContributorsRolesAndSequences> contributorsGroupedByOrcid;
+
+    private int numberOfContributorsGroupedByOrcid;
 
     private List<ActivityExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
 
@@ -401,10 +404,6 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
         }
         workForm.setContributors(contributorsList);
-        
-        if (work.getWorkContributors() != null) {
-            workForm.setRealNumberOfContributors(work.getWorkContributors().getContributor().size());    
-        }       
     }
     
     private static void populateContributors(WorkForm workForm, Work work) {
@@ -643,12 +642,20 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         this.contributors = contributors;
     }
 
-    public int getRealNumberOfContributors() {
-        return realNumberOfContributors;
+    public List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid() {
+        return contributorsGroupedByOrcid;
     }
 
-    public void setRealNumberOfContributors(int realNumberOfContributors) {
-        this.realNumberOfContributors = realNumberOfContributors;
+    public void setContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> contributorsGroupedByOrcid) {
+        this.contributorsGroupedByOrcid = contributorsGroupedByOrcid;
+    }
+
+    public int getNumberOfContributorsGroupedByOrcid() {
+        return numberOfContributorsGroupedByOrcid;
+    }
+
+    public void setNumberOfContributorsGroupedByOrcid(int numberOfContributorsGroupedByOrcid) {
+        this.numberOfContributorsGroupedByOrcid = numberOfContributorsGroupedByOrcid;
     }
 
     public List<ActivityExternalIdentifier> getWorkExternalIdentifiers() {
