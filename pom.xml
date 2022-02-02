@@ -762,7 +762,7 @@ the software.
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>42.0.0</version>
+                <version>42.2.25</version>
             </dependency>
             <dependency>
 			  <groupId>org.hibernate</groupId>
