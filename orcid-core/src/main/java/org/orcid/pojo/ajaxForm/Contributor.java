@@ -115,8 +115,7 @@ public class Contributor implements ErrorsInterface, Serializable {
                 ca.setContributorRole(this.getContributorRole().getValue());
             c.setContributorAttributes(ca);
         }
-        if (this.getEmail() != null)
-            c.setContributorEmail(new ContributorEmail(this.getEmail().getValue()));
+
         if (this.getOrcid() != null) {
             ContributorOrcid contributorOrcid = new ContributorOrcid(this.getOrcid().getValue());
             if (this.getUri() != null) {
