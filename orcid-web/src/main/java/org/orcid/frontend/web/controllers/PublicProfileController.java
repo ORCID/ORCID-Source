@@ -27,6 +27,7 @@ import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
@@ -124,6 +125,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
+
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -314,6 +318,8 @@ public class PublicProfileController extends BaseWorkspaceController {
             return null;
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         Funding funding = profileFundingManagerReadOnly.getFunding(orcid, id);
+        contributorUtils.filterContributorPrivateData(funding);
+
         if (funding != null && validateVisibility(funding.getVisibility())) { ;
             sourceUtils.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);

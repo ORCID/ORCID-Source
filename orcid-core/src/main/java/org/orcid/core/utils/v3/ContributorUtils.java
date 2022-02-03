@@ -22,6 +22,7 @@ import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -75,10 +76,20 @@ public class ContributorUtils {
 
     public void filterContributorPrivateData(Work work) {
         if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
-            List<Contributor> contributorList = work.getWorkContributors().getContributor();
+            filterWorkContributors(work.getWorkContributors().getContributor());
+        }
+    }
+    
+    public void filterContributorPrivateData(WorkSummaryExtended work) {
+        if (work.getContributors() != null && work.getContributors().getContributor() != null) {
+            filterWorkContributors(work.getContributors().getContributor());
+        }
+    }
+
+    private void filterWorkContributors(List<Contributor> contributorList) {
             List<Contributor> contributorsToPopulateName = new ArrayList<Contributor>();
             Set<String> idsToPopulateName = new HashSet<String>();
-            // Populate the credit name of cached contributors and populate the list of names to retrive from the DB
+            // Populate the credit name of cached contributors and populate the list of names to retrieve from the DB
             for (Contributor contributor : contributorList) {
                 contributor.setContributorEmail(null);
                 if (!PojoUtil.isEmpty(contributor.getContributorOrcid())) {
@@ -90,24 +101,23 @@ public class ContributorUtils {
                     } else {
                         CreditName creditName = new CreditName(cachedName);
                         contributor.setCreditName(creditName);
-                    }                    
+                    }
                 }
             }
-            
+
             // Fetch the contributor names
             Map<String, String> contributorNames = getContributorNamesFromDB(idsToPopulateName);
-            
+
             // Populate missing names
             for(Contributor contributor : contributorsToPopulateName) {
                 String orcid = contributor.getContributorOrcid().getPath();
                 // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
                 if(contributorNames.containsKey(orcid)) {
-                    String name = contributorNames.get(orcid);                    
+                    String name = contributorNames.get(orcid);
                     CreditName creditName = new CreditName(name);
-                    contributor.setCreditName(creditName);                    
+                    contributor.setCreditName(creditName);
                 }
             }
-        }
     }
     
     private String getCachedContributorName(String orcid) {

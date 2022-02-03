@@ -9,6 +9,7 @@ import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
@@ -58,6 +59,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     
     @Resource
     private GroupingSuggestionManager groupingSuggestionsManager;
+
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -161,8 +165,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<WorkSummaryExtended> wseList = jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
         // Filter the contributors list
         if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            for(WorkSummaryExtended wse : wseList) {
+            for(WorkSummaryExtended wse : wseList) {               
                 if(wse.getContributors() != null) {
+                    contributorUtils.filterContributorPrivateData(wse);
                     List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = getContributorsGroupedByOrcid(wse.getContributors().getContributor());
                     if (contributorsGroupedByOrcid.size() > maxContributorsForUI) {
                         wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid.subList(0, maxContributorsForUI));
