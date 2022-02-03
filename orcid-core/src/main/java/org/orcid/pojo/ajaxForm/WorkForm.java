@@ -425,10 +425,6 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                     org.orcid.jaxb.model.v3.release.common.CreditName creditName = new org.orcid.jaxb.model.v3.release.common.CreditName(); 
                     creditName.setContent(wfContributor.getCreditName().getValue());
                     workContributor.setCreditName(creditName);
-                }                                
-                
-                if(!PojoUtil.isEmpty(wfContributor.getEmail())) {                    
-                    workContributor.setContributorEmail(new org.orcid.jaxb.model.v3.release.common.ContributorEmail(wfContributor.getEmail().getValue()));
                 }
                 
                 org.orcid.jaxb.model.v3.release.common.ContributorOrcid contributorOrcid = new org.orcid.jaxb.model.v3.release.common.ContributorOrcid(); 

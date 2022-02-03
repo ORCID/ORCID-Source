@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
@@ -189,7 +190,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                         if (c.size() > 0) {
                             ContributorsRolesAndSequences contributorsRolesAndSequences = c.get(0);
                             ContributorAttributes ca = new ContributorAttributes();
-                            ca.setContributorRole(contributor.getContributorAttributes().getContributorRole());
+                            if (contributor.getContributorAttributes().getContributorRole() != null) {
+                                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
+                            }
                             ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
                             List<ContributorAttributes> rolesAndSequencesList = contributorsRolesAndSequences.getRolesAndSequences();
                             rolesAndSequencesList.add(ca);
@@ -216,12 +219,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         if (contributor.getCreditName() != null) {
             crs.setCreditName(contributor.getCreditName());
         }
-        if (contributor.getContributorEmail() != null) {
-            crs.setContributorEmail(contributor.getContributorEmail());
-        }     
         if (contributor.getContributorAttributes() != null) {
             ContributorAttributes ca = new ContributorAttributes();
-            ca.setContributorRole(contributor.getContributorAttributes().getContributorRole());
+            if (contributor.getContributorAttributes().getContributorRole() != null) {
+                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
+            }
             ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
             List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
             rolesAndSequences.add(ca);
@@ -229,6 +231,15 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         }
         
         return crs;
+    }
+
+    private String getCreditRole(String contributorRole) {
+        try {
+            CreditRole cr = CreditRole.fromValue(contributorRole);
+            return cr.getUiValue();
+        } catch(IllegalArgumentException e) {
+            return contributorRole;
+        }
     }
 
     /**
