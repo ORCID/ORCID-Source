@@ -36,7 +36,6 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
@@ -676,10 +675,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 b.setJournalTitle(a.getJournalTitle() != null && a.getJournalTitle().getContent() != null ? a.getJournalTitle().getContent() : null);
                 
                 //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, this should be removed and the mapping should be done directly in the workSummaryExtendedMinimizedClassMap
-                if(Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-                    if(a.getContributors() != null) {
-                        b.setContributorsJson(wcc.convertTo(a.getContributors(), TypeFactory.typeOf(b.getContributorsJson())));
-                    }
+                if(a.getContributors() != null) {
+                    b.setContributorsJson(wcc.convertTo(a.getContributors(), TypeFactory.typeOf(b.getContributorsJson())));
                 }
             }
 
@@ -692,10 +689,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 a.setJournalTitle(b.getJournalTitle() != null && !b.getJournalTitle().isEmpty() ? new Title(b.getJournalTitle()) : null);
                 
                 //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, this should be removed and the mapping should be done directly in the workSummaryExtendedMinimizedClassMap
-                if(Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-                    if(!PojoUtil.isEmpty(b.getContributorsJson())) {
-                        a.setContributors(wcc.convertFrom(b.getContributorsJson(), TypeFactory.typeOf(a.getContributors())));
-                    }
+                if(!PojoUtil.isEmpty(b.getContributorsJson())) {
+                    a.setContributors(wcc.convertFrom(b.getContributorsJson(), TypeFactory.typeOf(a.getContributors())));
                 }
             }
 
