@@ -1063,17 +1063,6 @@ the software.
             </snapshots>
         </repository>
         <repository>
-            <id>spring-s3</id>
-            <name>Spring S3</name>
-            <url>https://maven.springframework.org/milestone</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
             <url>https://maven.restlet.com</url>
