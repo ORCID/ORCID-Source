@@ -31,7 +31,7 @@ import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
@@ -509,7 +509,7 @@ public class AdminController extends BaseController {
         form.setError(null);
         String orcidOrEmail = URLDecoder.decode(form.getOrcidOrEmail(), "UTF-8").trim();
         String password = form.getPassword().trim();
-        if (StringUtils.isNotBlank(password) && password.matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
+        if (StringUtils.isNotBlank(password) && password.matches(PasswordConstants.ORCID_PASSWORD_REGEX)) {
             String orcid = getOrcidFromParam(orcidOrEmail);
             if (orcid != null) {
                 if (profileEntityManager.orcidExists(orcid)) {
@@ -521,7 +521,7 @@ public class AdminController extends BaseController {
                 form.setError(getMessage("admin.errors.unable_to_fetch_info"));
             }
         } else {
-            form.setError(getMessage("admin.reset_password.error.invalid_password"));
+            form.setError(getMessage("admin.reset_password.error.password_invalid"));
         }
 
         return form;

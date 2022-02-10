@@ -14,7 +14,7 @@
                 <ng-container *ngIf="resetPasswordForm?.password?.errors?.length > 0">
                     <span role="alert" class="orcid-error" *ngIf="showPasswordPatterError(resetPasswordForm?.password?.errors)">
                         <div > 
-                             <@spring.message 'Pattern.registrationForm.password'/> 
+                             <@spring.message 'Pattern.registrationForm.passwordRequirement'/> 
                         </div>
                     </span>
                     <ng-container *ngFor='let error of resetPasswordForm.password.errors'>
@@ -37,9 +37,9 @@
        
                 <span class="pattern-errors">
                 <div class="pattern-container">
-                    <img *ngIf="resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
-                    <img *ngIf="!resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
-                    <@spring.message 'Pattern.registrationForm.password.eigthCharacters'/>  
+                    <img *ngIf="resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.passwordLengthLimit')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">
+                    <img *ngIf="!resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.passwordLengthLimit')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met">
+                    <@spring.message 'Pattern.registrationForm.password.passwordLengthLimit'/>  
                 </div>
                 <div class="pattern-container">
                     <img *ngIf="resetPasswordForm?.password?.errors?.includes('Pattern.registrationForm.password.letterOrSymbol')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet">

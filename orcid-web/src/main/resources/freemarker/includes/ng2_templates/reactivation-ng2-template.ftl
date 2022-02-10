@@ -99,7 +99,7 @@
                         <ng-container *ngIf="registrationForm?.password?.errors?.length > 0">
                             <span role="alert" class="orcid-error" *ngIf="showPasswordPatterError(registrationForm?.password?.errors)">
                                 <div > 
-                                    <@spring.message 'Pattern.registrationForm.password'/> 
+                                    <@spring.message 'Pattern.registrationForm.passwordRequirement'/> 
                                 </div>
                             </span>
                             <ng-container *ngFor='let error of registrationForm.password.errors'>
@@ -123,9 +123,9 @@
                         <@orcid.passwordHelpPopup />
                         <span class="pattern-errors" aria-live="polite" >
                             <div class="pattern-container flex" aria-labelledby="eigthCharacters-status eigthCharacters" >
-                                <img aria-hidden="true" tabindex="-1" id="eigthCharacters-status" *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet" aria-label="${springMacroRequestContext.getMessage("a11y.registry.password.unmet")}" >
-                                <img aria-hidden="true" tabindex="-1" id="eigthCharacters-status" *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.eigthCharacters')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met" aria-label="${springMacroRequestContext.getMessage("a11y.registry.password.met")}" >
-                                <div aria-hidden="true" tabindex="-1" id="eigthCharacters"><@spring.message 'Pattern.registrationForm.password.eigthCharacters'/></div>
+                                <img aria-hidden="true" tabindex="-1" id="eigthCharacters-status" *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.passwordLengthLimit')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" alt="unmet" aria-label="${springMacroRequestContext.getMessage("a11y.registry.password.unmet")}" >
+                                <img aria-hidden="true" tabindex="-1" id="eigthCharacters-status" *ngIf="!registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.passwordLengthLimit')" src="${staticCdn}/img/mat-baseline-check_circle.svg" width="20px" height="20px" alt="met" aria-label="${springMacroRequestContext.getMessage("a11y.registry.password.met")}" >
+                                <div aria-hidden="true" tabindex="-1" id="eigthCharacters"><@spring.message 'Pattern.registrationForm.password.passwordLengthLimit'/></div>
                             </div>
                             <div class="pattern-container flex"  aria-labelledby="letterOrSymbol-status letterOrSymbol">
                                 <img aria-hidden="true" tabindex="-1" id="letterOrSymbol-status" *ngIf="registrationForm?.password?.errors?.includes('Pattern.registrationForm.password.letterOrSymbol')" src="${staticCdn}/img/mat-baseline-check_circle_outline.svg" width="20px" height="20px" aria-label="${springMacroRequestContext.getMessage("a11y.registry.password.unmet")}" >
