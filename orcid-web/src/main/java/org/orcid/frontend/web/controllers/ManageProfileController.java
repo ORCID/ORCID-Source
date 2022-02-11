@@ -288,8 +288,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), profile.getEncryptedPassword())) {
-            System.out.println(cp.getOldPassword());
-            System.out.println(profile.getEncryptedPassword());
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
         if (cp.getPassword() != null && !cp.getPassword().isEmpty()) {
