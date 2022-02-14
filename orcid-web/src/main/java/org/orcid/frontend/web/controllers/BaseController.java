@@ -614,7 +614,7 @@ public class BaseController {
         password.setErrors(new ArrayList<String>());
         // validate password regex
         if (password.getValue() == null || !password.getValue().matches(PasswordConstants.ORCID_PASSWORD_CHARACTER_LIMIT)) {
-            password.getErrors().add("Pattern.registrationForm.password.passwordLengthLimit");
+            password.getErrors().add("Pattern.registrationForm.password.eigthCharacters");
         }
 
         if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_LETTER_OR_SYMBOL)) {
