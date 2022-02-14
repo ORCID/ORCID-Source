@@ -14,7 +14,7 @@
                 <ng-container *ngIf="resetPasswordForm?.password?.errors?.length > 0">
                     <span role="alert" class="orcid-error" *ngIf="showPasswordPatterError(resetPasswordForm?.password?.errors)">
                         <div > 
-                             <@spring.message 'Pattern.registrationForm.password'/> 
+                             <@spring.message 'Pattern.registrationForm.passwordRequirement'/> 
                         </div>
                     </span>
                     <ng-container *ngFor='let error of resetPasswordForm.password.errors'>

@@ -36,7 +36,7 @@ import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -277,8 +277,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<String> errors = new ArrayList<String>();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
-        if (cp.getPassword() == null || !cp.getPassword().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            errors.add(getMessage("NotBlank.registrationForm.confirmedPassword"));
+        if (cp.getPassword() == null || !cp.getPassword().matches(PasswordConstants.ORCID_PASSWORD_REGEX)) {
+            errors.add(getMessage("Pattern.registrationForm.passwordRequirement"));
         } else if (!cp.getPassword().equals(cp.getRetypedPassword())) {
             errors.add(getMessage("FieldMatch.registrationForm"));
         } 

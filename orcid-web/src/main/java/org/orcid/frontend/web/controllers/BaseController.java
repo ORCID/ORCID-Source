@@ -45,6 +45,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
@@ -612,7 +613,7 @@ public class BaseController {
     protected void passwordChecklistValidate(Text passwordConfirm, Text password, List<String> userEmails) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
-        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
+        if (password.getValue() == null || !password.getValue().matches(PasswordConstants.ORCID_PASSWORD_CHARACTER_LIMIT)) {
             password.getErrors().add("Pattern.registrationForm.password.eigthCharacters");
         }
 
@@ -647,8 +648,8 @@ public class BaseController {
     protected void passwordValidate(Text passwordConfirm, Text password) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
-        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(password, "Pattern.registrationForm.password");
+        if (password.getValue() == null || !password.getValue().matches(PasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(password, "Pattern.registrationForm.passwordRequirement");
         }
         
         if (CommonPasswords.passwordIsCommon(password.getValue())) {
