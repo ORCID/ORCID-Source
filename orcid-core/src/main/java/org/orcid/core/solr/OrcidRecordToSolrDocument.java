@@ -185,6 +185,7 @@ public class OrcidRecordToSolrDocument {
             organisationIds.put(SolrConstants.FUNDREF_ORGANISATION_ID, new HashSet<String>());
             organisationIds.put(SolrConstants.RINGGOLD_ORGANISATION_ID, new HashSet<String>());
             organisationIds.put(SolrConstants.GRID_ORGANISATION_ID, new HashSet<String>());
+            organisationIds.put(SolrConstants.ROR_ORGANISATION_ID, new HashSet<String>());
             Map<String, Set<String>> organisationNames = new HashMap<String,Set<String>>();
             organisationNames.put(SolrConstants.AFFILIATION_ORGANISATION_NAME, new HashSet<String>()); 
             organisationNames.put(SolrConstants.FUNDING_ORGANISATION_NAME, new HashSet<String>()); 
