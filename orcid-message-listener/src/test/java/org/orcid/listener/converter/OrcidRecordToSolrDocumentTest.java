@@ -83,7 +83,7 @@ public class OrcidRecordToSolrDocumentTest {
         assertEquals("external-id-value-1", v3Doc.getGrantNumbers().get(0));        
         assertEquals(1, v3Doc.getKeywords().size());
         assertEquals("keyword1", v3Doc.getKeywords().get(0));
-        assertEquals(3, v3Doc.getOrganisationIds().size());
+        assertEquals(4, v3Doc.getOrganisationIds().size());
         assertEquals(2, v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).size());
         assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).contains("common:disambiguated-organization-identifier-funding"));
         assertTrue(v3Doc.getOrganisationIds().get(SolrConstants.FUNDREF_ORGANISATION_ID).contains("ORCID_ORG_ID"));
