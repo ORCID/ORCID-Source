@@ -507,7 +507,7 @@
 		<property name="exitUserUrl" value="/exit-user" />
 		<property name="targetUrl" value="/my-orcid" />
 		<property name="switchFailureUrl" value="/signin" />
-	</bean>
+	</bean>	
 	
 	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />
 					

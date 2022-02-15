@@ -1,0 +1,9 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+	<changeSet id="UPDATE-PMC-RESOLUTION-PREFIX" author="aromanov">
+			<preConditions onFail="MARK_RAN">
+				<sqlCheck expectedResult="https://europepmc.org/articles/">select id_resolution_prefix from identifier_type WHERE id_name = 'PMC';</sqlCheck>
+			</preConditions>
+			<sql>UPDATE identifier_type SET id_resolution_prefix = 'https://europepmc.org/article/pmc/' WHERE id_name = 'PMC';</sql>
+	</changeSet>
+</databaseChangeLog>

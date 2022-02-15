@@ -500,10 +500,10 @@ public class PeerReviewManagerTest extends BaseTest {
             if(group.getIdentifiers().getExternalIdentifier().get(0).getValue() == null) {
                 assertEquals("ext-id-1", group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 foundEmptyGroup = true;
-            } else if (group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("Element 2")) {
+            } else if (group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("element 2")) {
                 assertEquals("ext-id-2", group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 found2 = true;
-            } else if (group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("Element 3")) {
+            } else if (group.getIdentifiers().getExternalIdentifier().get(0).getValue().equals("element 3")) {
                 assertEquals("ext-id-3", group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
                 found3 = true;
             } else {

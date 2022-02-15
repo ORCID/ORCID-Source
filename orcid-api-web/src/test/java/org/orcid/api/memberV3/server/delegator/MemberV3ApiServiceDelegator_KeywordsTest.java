@@ -201,11 +201,7 @@ public class MemberV3ApiServiceDelegator_KeywordsTest extends DBUnitTest {
         Response response = serviceDelegator.createKeyword("4444-4444-4444-4441", Utils.getKeyword());
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         response = serviceDelegator.viewKeyword("4444-4444-4444-4441", putCode);
         assertNotNull(response);

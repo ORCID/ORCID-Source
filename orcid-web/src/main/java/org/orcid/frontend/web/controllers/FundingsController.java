@@ -23,6 +23,7 @@ import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.common.FundingType;
@@ -83,6 +84,9 @@ public class FundingsController extends BaseWorkspaceController {
     
     @Resource(name = "activityManagerV3")
     private ActivityManager cacheManager;
+
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
 
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
@@ -206,6 +210,7 @@ public class FundingsController extends BaseWorkspaceController {
             return null;        
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
         Funding funding = profileFundingManager.getFunding(getEffectiveUserOrcid(), id);
+        contributorUtils.filterContributorPrivateData(funding);
         FundingForm form = FundingForm.valueOf(funding);
                
         if (funding.getType() != null) {
@@ -601,8 +606,35 @@ public class FundingsController extends BaseWorkspaceController {
         }            
         
         if (!hasError && !PojoUtil.isEmpty(funding.getStartDate()) && !PojoUtil.isEmpty(funding.getEndDate())) {
-            if (funding.getStartDate().toJavaDate().after(funding.getEndDate().toJavaDate()))
-                setError(funding.getEndDate(), "fundings.endDate.after");
+            if ("".equals(funding.getStartDate().getMonth()) || "".equals(funding.getEndDate().getMonth())) {
+                boolean removeStartDateMonth = false;
+                boolean removeEndDateMonth = false;
+
+                if ("".equals(funding.getStartDate().getMonth())) {
+                    funding.getStartDate().setMonth("01");
+                    removeStartDateMonth = true;
+                }
+
+                if ("".equals(funding.getEndDate().getMonth())) {
+                    funding.getEndDate().setMonth("12");
+                    removeEndDateMonth = true;
+                }
+
+                if (funding.getStartDate().toJavaDate().after(funding.getEndDate().toJavaDate()))
+                    setError(funding.getEndDate(), "fundings.endDate.after");
+
+                if (removeStartDateMonth) {
+                    funding.getStartDate().setMonth("");
+                }
+
+                if (removeEndDateMonth) {
+                    funding.getEndDate().setMonth("");
+                }
+
+            } else {
+                if (funding.getStartDate().toJavaDate().after(funding.getEndDate().toJavaDate()))
+                    setError(funding.getEndDate(), "fundings.endDate.after");
+            }
         }
         return funding;
     }

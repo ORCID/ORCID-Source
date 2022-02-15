@@ -335,6 +335,10 @@ public class LoginController extends OauthControllerBase {
         }
         userCookieGenerator.addCookie(userConnectionId, response);
 
+        if ("social_2FA".equals(view.getViewName())) {
+            return new ModelAndView("redirect:" + orcidUrlManager.getBaseUrl() + "/2fa-signin?social=true");
+        }
+
         return view;
     }
 

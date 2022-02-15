@@ -27,6 +27,7 @@ import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
@@ -59,6 +60,7 @@ import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.orcid.pojo.grouping.WorkGroup;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -123,6 +125,12 @@ public class PublicProfileController extends BaseWorkspaceController {
     
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
+
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
 
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
@@ -310,6 +318,8 @@ public class PublicProfileController extends BaseWorkspaceController {
             return null;
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         Funding funding = profileFundingManagerReadOnly.getFunding(orcid, id);
+        contributorUtils.filterContributorPrivateData(funding);
+
         if (funding != null && validateVisibility(funding.getVisibility())) { ;
             sourceUtils.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);
@@ -440,7 +450,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Work workObj = workManagerReadOnly.getWork(orcid, workId);
         if (workObj != null && validateVisibility(workObj.getVisibility())) {
             sourceUtils.setSourceName(workObj);
-            WorkForm work = WorkForm.valueOf(workObj);
+            WorkForm work = WorkForm.valueOf(workObj, maxContributorsForUI);
             // Set country name
             if (!PojoUtil.isEmpty(work.getCountryCode())) {
                 Text countryName = Text.valueOf(retrieveIsoCountries().get(work.getCountryCode().getValue()));

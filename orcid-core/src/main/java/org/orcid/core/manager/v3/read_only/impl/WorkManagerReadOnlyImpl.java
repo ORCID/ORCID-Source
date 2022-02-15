@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
@@ -8,11 +9,14 @@ import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
@@ -22,6 +26,7 @@ import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
@@ -54,6 +59,12 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     
     @Resource
     private GroupingSuggestionManager groupingSuggestionsManager;
+
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
     
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
         this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
@@ -151,9 +162,88 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
         List<MinimizedExtendedWorkEntity> works = workEntityCacheManager.retrieveMinimizedExtendedWorks(orcid, getLastModified(orcid));
-        return jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
+        List<WorkSummaryExtended> wseList = jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
+        // Filter the contributors list
+        for (WorkSummaryExtended wse : wseList) {
+            if (wse.getContributors() != null) {
+                contributorUtils.filterContributorPrivateData(wse);
+                List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = getContributorsGroupedByOrcid(wse.getContributors().getContributor());
+                if (contributorsGroupedByOrcid.size() > maxContributorsForUI) {
+                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid.subList(0, maxContributorsForUI));
+                } else {
+                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+                }
+                wse.setNumberOfContributorsGroupedByOrcid(contributorsGroupedByOrcid.size());
+            }
+        }
+        return wseList;
     }
 
+    private List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid(List<Contributor> contributors) {
+        List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
+        contributors.forEach(contributor -> {
+            if (contributor.getContributorOrcid() != null) {
+                String orcid = contributor.getContributorOrcid().getPath();
+                if (!"".equals(orcid)) {
+                    if (contributorsRolesAndSequencesList.size() > 0) {
+                        List<ContributorsRolesAndSequences> c = contributorsRolesAndSequencesList
+                            .stream()
+                            .filter(contr -> contr.getContributorOrcid() != null && orcid.equals(contr.getContributorOrcid().getPath()))                                                                        
+                            .collect(Collectors.toList());
+                        if (c.size() > 0) {
+                            ContributorsRolesAndSequences contributorsRolesAndSequences = c.get(0);
+                            ContributorAttributes ca = new ContributorAttributes();
+                            if (contributor.getContributorAttributes().getContributorRole() != null) {
+                                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
+                            }
+                            ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+                            List<ContributorAttributes> rolesAndSequencesList = contributorsRolesAndSequences.getRolesAndSequences();
+                            rolesAndSequencesList.add(ca);
+                            contributorsRolesAndSequences.setRolesAndSequences(rolesAndSequencesList);
+                        } else {
+                            contributorsRolesAndSequencesList.add(addContributor(contributor));
+                        }
+                    } else {
+                        contributorsRolesAndSequencesList.add(addContributor(contributor));
+                    }
+                }
+            } else {
+                contributorsRolesAndSequencesList.add(addContributor(contributor));
+            }
+        });
+        return contributorsRolesAndSequencesList;
+    }
+
+    private ContributorsRolesAndSequences addContributor(Contributor contributor) {
+        ContributorsRolesAndSequences crs = new ContributorsRolesAndSequences();
+        if (contributor.getContributorOrcid() != null) {
+            crs.setContributorOrcid(contributor.getContributorOrcid());
+        }
+        if (contributor.getCreditName() != null) {
+            crs.setCreditName(contributor.getCreditName());
+        }
+        if (contributor.getContributorAttributes() != null) {
+            ContributorAttributes ca = new ContributorAttributes();
+            if (contributor.getContributorAttributes().getContributorRole() != null) {
+                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
+            }
+            ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+            List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
+            rolesAndSequences.add(ca);
+            crs.setRolesAndSequences(rolesAndSequences);
+        }
+        
+        return crs;
+    }
+
+    private String getCreditRole(String contributorRole) {
+        try {
+            CreditRole cr = CreditRole.fromValue(contributorRole);
+            return cr.getUiValue();
+        } catch(IllegalArgumentException e) {
+            return contributorRole;
+        }
+    }
 
     /**
      * Get the list of works specified by the list of put codes

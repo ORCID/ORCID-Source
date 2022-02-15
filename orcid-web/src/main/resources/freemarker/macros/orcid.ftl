@@ -221,7 +221,7 @@ kind of variable. This temp value is only used in this macro lib -->
         <div id="name-help" class="popover bottom">
             <div class="arrow"></div>
             <div class="popover-content">
-                <p>${springMacroRequestContext.getMessage("password_one_time_reset.labelmust8more")}</p>
+                <p>${springMacroRequestContext.getMessage("password_one_time_reset.labelLengthLimit")}</p>
                 <ul>
                     <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast09")}</li>
                     <li>${springMacroRequestContext.getMessage("password_one_time_reset.labelatleast1following")}

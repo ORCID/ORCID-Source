@@ -84,6 +84,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Boolean recordLocked = Boolean.FALSE;
     private String reasonLocked;
     private String reasonLockedDescription;
+    private Date recordLockedDate;
+    private String recordLockingAdmin;
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
     private String referredBy;
@@ -229,6 +231,38 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      */
     public void setReasonLockedDescription(String reasonLockedDescription) {
         this.reasonLockedDescription = reasonLockedDescription;
+    }
+    
+    /**
+     * @return the recordLockedDate
+     */
+    @Column(name = "record_locked_date")
+    public Date getRecordLockedDate() {
+        return recordLockedDate;
+    }
+    
+    /**
+     * @param recordLockedDate
+     *            a timestamp of when the record was locked
+     */
+    public void setRecordLockedDate(Date recordLockedDate) {
+        this.recordLockedDate = recordLockedDate;
+    }
+    
+    /**
+     * @return the recordLockingAdmin
+     */
+    @Column(name = "record_locked_admin_id")
+    public String getRecordLockingAdmin() {
+        return recordLockingAdmin;
+    }
+    
+    /**
+     * @param recordLockingAdmin
+     *            the iD of the admin who locked the record
+     */
+    public void setRecordLockingAdmin(String recordLockingAdmin) {
+        this.recordLockingAdmin = recordLockingAdmin;
     }
     
     /**
