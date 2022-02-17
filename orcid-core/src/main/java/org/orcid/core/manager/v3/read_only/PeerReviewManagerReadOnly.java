@@ -5,6 +5,7 @@ import java.util.List;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
+import org.orcid.pojo.PeerReviewMinimizedSummary;
 
 public interface PeerReviewManagerReadOnly {
     /**
@@ -48,7 +49,19 @@ public interface PeerReviewManagerReadOnly {
      * @return the list of peer reviews that belongs to this user
      * */
     List<PeerReviewSummary> getPeerReviewSummaryList(String orcid);
-    
+
+    /**
+     * Get the list of peer reivews that belongs to a user
+     *
+     * @param orcid
+     * @param justPublic
+     * @return the list of peer reviews that belongs to this user
+     * */
+    List<PeerReviewMinimizedSummary> getPeerReviewMinimizedSummaryList(String orcid, boolean justPublic);
+
+
+    List<PeerReviewSummary> getPeerReviewSummaryListByGroupId(String orcid, String groupId);
+
     /**
      * Generate a grouped list of peer reviews with the given list of peer reviews
      * 
@@ -59,7 +72,7 @@ public interface PeerReviewManagerReadOnly {
      * @return PeerReviews element with the PeerReviewSummary elements grouped                  
      * */
     PeerReviews groupPeerReviews(List<PeerReviewSummary> peerReviews, boolean justPublic);
-    
+
     /**
      * Indicates if the record have public peer reviews
      * 

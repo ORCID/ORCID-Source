@@ -318,8 +318,10 @@
  	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/researchResource.json(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />  	      	 	      	
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 
- 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-review.json(\?.*)?"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-minimized.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-by-group-id.json(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	    
 		
 		<sec:intercept-url pattern="/messages.json(\?.*)?"

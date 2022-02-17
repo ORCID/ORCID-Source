@@ -18,6 +18,7 @@ import org.orcid.core.manager.v3.GroupIdRecordManager;
 import org.orcid.core.manager.v3.PeerReviewManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
+import org.orcid.core.utils.v3.activities.PeerReviewMinimizedSummaryComparator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
@@ -26,10 +27,13 @@ import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,30 +75,24 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/peer-reviews.json", method = RequestMethod.GET)
     public @ResponseBody List<PeerReviewGroup> getPeerReviewsJson(@RequestParam("sortAsc") boolean sortAsc) {
-        List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
-        List<PeerReviewSummary> summaries = peerReviewManager.getPeerReviewSummaryList(getEffectiveUserOrcid());
-        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(summaries, false);
-        for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
-            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
-            GroupIdRecord record = groupIdRecord.get();
-            PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, record);
-            String groupId = record.getGroupId();
-            if (IssnGroupIdPatternMatcher.isIssnGroupType(groupId)) {
-                String issn = IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(groupId);
-                peerReviewGroup.setUrl(issnPortalUrlBuilder.buildIssnPortalUrlForIssn(issn));
-                peerReviewGroup.setGroupType("ISSN");
-                peerReviewGroup.setGroupIdValue(issn);
-            }
-            
-            for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
-                for (PeerReviewForm peerReviewForm : duplicateGroup.getPeerReviews()) {
-                    if (peerReviewForm.getCountry() != null) {
-                        peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
-                    }
-                }
-            }
-            peerReviewGroups.add(peerReviewGroup);
+        List<PeerReviewGroup> peerReviewGroups = getPeerReviewsGrouped(peerReviewManager.getPeerReviewSummaryList(getEffectiveUserOrcid()));
+        peerReviewGroups.sort(new PeerReviewGroupComparator(!sortAsc));
+        return peerReviewGroups;
+    }
+
+    @RequestMapping(value = "/peer-reviews-minimized.json", method = RequestMethod.GET)
+    public ResponseEntity<List<PeerReviewMinimizedSummary>> getPeerReviewsMinimizedJson(@RequestParam("sortAsc") boolean sortAsc){
+        List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = peerReviewManager.getPeerReviewMinimizedSummaryList(getEffectiveUserOrcid(), false);
+        if (peerReviewMinimizedSummaryList.size() == 0) {
+            return new ResponseEntity<List<PeerReviewMinimizedSummary>>(HttpStatus.NOT_FOUND);
         }
+        peerReviewMinimizedSummaryList.sort(new PeerReviewMinimizedSummaryComparator((!sortAsc)));
+        return new ResponseEntity<List<PeerReviewMinimizedSummary>>(peerReviewMinimizedSummaryList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/peer-reviews-by-group-id.json", method = RequestMethod.GET)
+    public @ResponseBody List<PeerReviewGroup> getPeerReviewsJsonByGroupId(@RequestParam("groupId") String groupId, @RequestParam("sortAsc") boolean sortAsc) {
+        List<PeerReviewGroup> peerReviewGroups = getPeerReviewsGrouped(peerReviewManager.getPeerReviewSummaryListByGroupId(getEffectiveUserOrcid(), groupId));
         peerReviewGroups.sort(new PeerReviewGroupComparator(!sortAsc));
         return peerReviewGroups;
     }
@@ -167,5 +165,34 @@ public class PeerReviewsController extends BaseWorkspaceController {
             peerReviewIds.add(new Long(peerReviewId));
         peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
         return peerReviewIds;
+    }
+
+    private List<PeerReviewGroup> getPeerReviewsGrouped(List<PeerReviewSummary> summaries) {
+        List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
+        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(summaries, false);
+        for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManager.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+            if (groupIdRecord.isPresent()) {
+                GroupIdRecord record = groupIdRecord.get();
+                PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, record);
+                String g = record.getGroupId();
+                if (IssnGroupIdPatternMatcher.isIssnGroupType(g)) {
+                    String issn = IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(g);
+                    peerReviewGroup.setUrl(issnPortalUrlBuilder.buildIssnPortalUrlForIssn(issn));
+                    peerReviewGroup.setGroupType("ISSN");
+                    peerReviewGroup.setGroupIdValue(issn);
+                }
+
+                for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
+                    for (PeerReviewForm peerReviewForm : duplicateGroup.getPeerReviews()) {
+                        if (peerReviewForm.getCountry() != null) {
+                            peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
+                        }
+                    }
+                }
+                peerReviewGroups.add(peerReviewGroup);
+            }
+        }
+        return peerReviewGroups;
     }
 }

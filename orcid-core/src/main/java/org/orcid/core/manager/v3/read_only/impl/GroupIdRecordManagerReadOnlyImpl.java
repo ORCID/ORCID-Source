@@ -39,6 +39,9 @@ public class GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManagerRea
     public Optional<GroupIdRecord> findByGroupId(String groupId) {
         try {
             GroupIdRecordEntity entity = groupIdRecordDao.findByGroupId(groupId);
+            if (entity == null) {
+                return Optional.empty();
+            }
             return Optional.of(jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity));
         } catch(NoResultException nre) {
             return Optional.empty();
