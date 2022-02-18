@@ -1,9 +1,11 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -14,6 +16,7 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.PeerReviewDuplicateGroupComparator;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupGenerator;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupKey;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.GroupAble;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
@@ -24,6 +27,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
+import org.orcid.pojo.PeerReviewMinimizedSummary;
 
 public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PeerReviewManagerReadOnly {
    
@@ -69,6 +73,53 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntities);
     }
 
+    /**
+     * Get the list of peer reivews that belongs to a user
+     *
+     * @param orcid
+     * @param justPublic
+     *
+     * @return the list of peer reviews that belongs to this user
+     */
+    @Override
+    public List<PeerReviewMinimizedSummary> getPeerReviewMinimizedSummaryList(String orcid, boolean justPublic) {
+        List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = new ArrayList<>();
+        List<Object[]> list = peerReviewDao.getPeerReviewsByOrcid(orcid, justPublic);
+        for(Object[] q1 : list){
+            BigInteger groupId = (BigInteger) q1[0];
+            String groupIdValue = q1[1].toString();
+            String visibility = q1[2].toString();
+            String groupName = q1[3].toString();
+            if (peerReviewMinimizedSummaryList.size() > 0) {
+                List<PeerReviewMinimizedSummary> peerReviews = peerReviewMinimizedSummaryList
+                        .stream()
+                        .filter(peerReviewMinimizedSummary -> groupId.equals(peerReviewMinimizedSummary.getGroupId()))
+                        .collect(Collectors.toList());
+                if (peerReviews.size() > 0) {
+                    peerReviews.get(0).setDuplicated(peerReviews.get(0).getDuplicated() + 1);
+                } else {
+                    peerReviewMinimizedSummaryList.add(new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, Visibility.fromValue(visibility), groupName, 1));
+                }
+            } else {
+                peerReviewMinimizedSummaryList.add(new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, Visibility.fromValue(visibility), groupName, 1));
+            }
+        }
+        return peerReviewMinimizedSummaryList;
+    }
+
+    /**
+     * Get the list of peer reivews that belongs to a user
+     *
+     * @param orcid
+     * @param groupId
+     *
+     * @return the list of peer reviews that belongs to this user
+     */
+    @Override
+    public List<PeerReviewSummary> getPeerReviewSummaryListByGroupId(String orcid, String groupId) {
+        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getPeerReviewsByOrcidAndGroupId(orcid, groupId);
+        return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntities);
+    }
     /**
      * Generate a grouped list of peer reviews with the given list of peer
      * reviews
