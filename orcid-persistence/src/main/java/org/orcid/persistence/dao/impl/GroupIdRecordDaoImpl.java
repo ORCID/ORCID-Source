@@ -33,14 +33,10 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
 
     @Override
     public GroupIdRecordEntity findByGroupId(String groupId) {
-        GroupIdRecordEntity result = null;
-        if (groupId != null) {
-            TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))",
-                    GroupIdRecordEntity.class);
-            query.setParameter("groupId", groupId);
-            result = query.getSingleResult();
-        }
-
+        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))",
+                GroupIdRecordEntity.class);
+        query.setParameter("groupId", groupId);
+        GroupIdRecordEntity result = query.getSingleResult();
         return result;
     }
 
