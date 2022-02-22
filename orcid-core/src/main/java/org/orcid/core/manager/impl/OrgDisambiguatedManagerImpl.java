@@ -16,8 +16,10 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.extId.normalizer.OrgDisambiguatedExternalIdNormalizer;
+import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.core.togglz.Features;
+import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -26,6 +28,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEnti
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
+import org.orcid.pojo.grouping.OrgGroup;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +82,35 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             for (OrgDisambiguatedEntity entity : entities) {
                 processDisambiguatedOrgInTransaction(entity);
             }
+        } while (!entities.isEmpty());
+
+    }
+    
+    @Override
+    public void markOrgsForIndexingAsGroup () {
+        LOGGER.info("About to process disambiguated orgs for group indexing");
+        List<OrgDisambiguatedEntity> entities = null;
+        int startIndex= 0;
+        do {
+            entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, INDEXING_CHUNK_SIZE);
+            LOGGER.info("GROUP: Found chunk of {} disambiguated orgs for indexing as group", entities.size());
+            for (OrgDisambiguatedEntity entity : entities) {
+                OrgGroup orgGroup = new OrgGrouping(entity, this).getOrganizationGroup();
+                OrgDisambiguatedEntity orgEntity;
+                for(OrgDisambiguated org: orgGroup.getOrgs().values()) {
+                    orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType( org.getSourceId(), org.getSourceType());
+                    if(orgEntity != null) {
+                        if(!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus()) ){
+                            orgEntity.setIndexingStatus(IndexingStatus.PENDING);
+                            if(!orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
+                                orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
+                            }
+                            updateOrgDisambiguated(orgEntity);
+                        }  
+                    }
+                }
+            }
+            startIndex = startIndex + entities.size();
         } while (!entities.isEmpty());
 
     }

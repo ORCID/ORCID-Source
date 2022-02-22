@@ -27,8 +27,6 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     }
 
     @Override
-    @Transactional
-    //todo: do we need to cache?
     public OrgDisambiguatedEntity findBySourceIdAndSourceType(String sourceId, String sourceType) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where sourceId = :sourceId and sourceType = :sourceType",
                 OrgDisambiguatedEntity.class);
@@ -87,6 +85,19 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         return query.getResultList();
     }
 
+    @Override
+    public List<OrgDisambiguatedEntity> findOrgsToGroup(int firstResult, int maxResult) {
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where source_type=:ROR or source_type=:FUNDREF or source_type=:RINGGOLD",
+                OrgDisambiguatedEntity.class);
+        //group by ROR
+        query.setParameter("ROR", "ROR");
+        query.setParameter("RINGGOLD", "RINGGOLD");
+        query.setParameter("FUNDREF", "FUNDREF");
+        query.setFirstResult(0);
+        query.setMaxResults(maxResult);
+        return query.getResultList();
+    }
+    
     @Override
     public List<OrgDisambiguatedEntity> findOrgsPendingIndexing(int firstResult, int maxResult) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where indexingStatus != :indexingStatus",

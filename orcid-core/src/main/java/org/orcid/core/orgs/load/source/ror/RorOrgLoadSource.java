@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
@@ -34,13 +35,13 @@ import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
+import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.grouping.OrgGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.sun.jersey.api.client.GenericType;
@@ -53,9 +54,6 @@ public class RorOrgLoadSource implements OrgLoadSource {
 
     private static final String WIKIPEDIA_URL = "wikipedia_url";
 
-    private static final String FILE_EXTENSION = ".zip";
-
-    private static final String DATA_FILE_NAME = "ror.json";
 
     @Value("${org.orcid.core.orgs.ror.enabled:true}")
     private boolean enabled;
@@ -241,7 +239,27 @@ public class RorOrgLoadSource implements OrgLoadSource {
         }
 
         // Create a new disambiguated org
-        return createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
+        OrgDisambiguatedEntity newOrg=createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
+        try {
+            //get Organization Group for ROR
+            OrgGroup orgGroup = new OrgGrouping(newOrg, orgDisambiguatedManager).getOrganizationGroup();
+            OrgDisambiguatedEntity orgEntity;
+            for(OrgDisambiguated org: orgGroup.getOrgs().values()) {
+                orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceId(), org.getSourceType());
+                if(orgEntity != null && !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
+                    //set the indexing status to PART OF THE GROUP as is part of a ROR group will be removed from SOLR
+                    if(!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus()) ){
+                        orgEntity.setIndexingStatus(IndexingStatus.PENDING);
+                        orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
+                        orgDisambiguatedManager.updateOrgDisambiguated(orgEntity);
+                    }  
+                }
+            }
+        }
+        catch (Exception ex) {
+            LOGGER.error("Error when grouping by ROR and removing related orgs solr index, eating the exception", ex);
+        }
+        return newOrg;
     }
 
     private void processExternalIdentifiers(OrgDisambiguatedEntity org, JsonNode institute) {

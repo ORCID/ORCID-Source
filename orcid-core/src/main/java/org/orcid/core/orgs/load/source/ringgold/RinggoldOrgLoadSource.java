@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.FtpsFileDownloader;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
@@ -36,6 +37,8 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.grouping.OrgGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -294,7 +297,32 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             }
             entity.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
             entity.setIndexingStatus(IndexingStatus.PENDING);
-            orgDisambiguatedManager.createOrgDisambiguated(entity);
+            
+            OrgDisambiguatedEntity newEntity= orgDisambiguatedManager.createOrgDisambiguated(entity);
+            try {
+                //get Organization Group for ROR
+                OrgGroup orgGroup = new OrgGrouping(newEntity, orgDisambiguatedManager).getOrganizationGroup();
+                if(orgGroup.getRorOrg() != null) {
+                    newEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
+                    newEntity.setIndexingStatus(IndexingStatus.PENDING);
+                    orgDisambiguatedManager.updateOrgDisambiguated(newEntity);
+                }
+                OrgDisambiguatedEntity orgEntity;
+                for(OrgDisambiguated org: orgGroup.getOrgs().values()) {
+                    orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceType(), org.getSourceId());
+                    if(orgEntity != null && !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
+                        //set the indexing status to PART OF THE GROUP as is part of a ROR group will be removed from SOLR
+                        if(!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus()) ){
+                            orgEntity.setIndexingStatus(IndexingStatus.PENDING);
+                            orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
+                            orgDisambiguatedManager.updateOrgDisambiguated(orgEntity);
+                        }  
+                    }
+                }
+            }
+            catch (Exception ex) {
+                LOGGER.error("Error when grouping by ROR and removing related orgs solr index, eating the exception", ex);
+            }
         } else {
             // If the element have changed
             if (changed(entity, parentId, name, country, city, state, type)) {
