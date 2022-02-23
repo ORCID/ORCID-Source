@@ -17,6 +17,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEnti
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 import org.orcid.pojo.grouping.OrgGroup;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -64,7 +65,8 @@ public class OrgGrouping implements Serializable {
                         // check for external id type because FUNDREF is stored
                         // as simple id as external identifier, and as
                         // disambiguated org as url
-                        if (externalIdentifiers.getIdentifierType().equals(OrgDisambiguatedSourceType.FUNDREF.name())) {
+                        if (externalIdentifiers.getIdentifierType().equals(OrgDisambiguatedSourceType.FUNDREF.name())
+                                && !OrcidStringUtils.isValidURL(externalIdentifier)) {
                             externalIdentifier = FUNDREF_BASE_URL + externalIdentifier;
                         }
                         org = orgDisambiguatedManager.findInDB(externalIdentifier, externalIdentifiers.getIdentifierType());
